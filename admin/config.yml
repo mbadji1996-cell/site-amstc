@@ -117,7 +117,7 @@ collections:
         label: "6. Sections personnalisées"
         file: "content/home-sections-libres.json"
         fields:
-          - label: "Blocs (affichés entre 'Organisation' et 'Actualités')"
+          - label: "Blocs (affichés entre 'Organisation' et 'Réalisations')"
             name: "sections"
             widget: "list"
             types:
@@ -167,7 +167,7 @@ collections:
                       - { label: "Légende", name: "caption", widget: "string", required: false }
 
   - name: "actualites"
-    label: "Actualités"
+    label: "Réalisations"
     folder: "content/actualites"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -177,3 +177,15 @@ collections:
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Contenu de l'article", name: "body", widget: "markdown" }
+
+  - name: "formations"
+    label: "Formation"
+    folder: "content/formations"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
+      - { label: "Image de couverture", name: "image", widget: "image", required: false }
+      - { label: "Contenu", name: "body", widget: "markdown" }

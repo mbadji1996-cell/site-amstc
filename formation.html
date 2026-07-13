@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formation — AMSTC</title>
+<meta name="description" content="Formations et enseignements post-universitaires de l'AMSTC.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AMSTC">
+<meta property="og:title" content="Formation — AMSTC" id="og-title">
+<meta property="og:description" content="Formations et enseignements post-universitaires de l'AMSTC." id="og-desc">
+<meta property="og:image" content="https://amstc.org/assets/logo-horizontal.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo-mark.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --line:rgba(6,68,28,0.14);
+    --display:'Fraunces',serif; --body:'Public Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.7;}
+  a{color:var(--green);}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .wrap{max-width:720px; margin:0 auto; padding:0 28px;}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .logo-img{height:42px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 20px;}
+  .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2rem; margin:10px 0 28px;}
+  #cover{width:100%; border-radius:14px; margin-bottom:28px; display:none;}
+  #body p{color:#3C4E44; margin-bottom:18px; font-size:1.02rem;}
+  #body h2,#body h3{font-family:var(--display); color:var(--green-deep); margin:28px 0 12px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-wrap">
+    <a href="index.html"><img src="assets/logo-horizontal.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+<div class="wrap">
+  <a class="back" href="formations.html">← Toutes les formations</a>
+  <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="content">
+    <p>Chargement…</p>
+  </div>
+</div>
+
+<script>
+  const REPO = "mbadji1996-cell/site-amstc";
+  const FOLDER = "content/formations";
+
+  function parseFrontMatter(raw) {
+    const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
+    if (!match) return { data: {}, body: raw };
+    const data = {};
+    match[1].split("\n").forEach(line => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return;
+      let key = line.slice(0, idx).trim();
+      let val = line.slice(idx + 1).trim().replace(/^"(.*)"$/, "$1");
+      data[key] = val;
+    });
+    return { data, body: match[2] };
+  }
+
+  async function loadArticle() {
+    const slug = new URLSearchParams(window.location.search).get("slug");
+    const content = document.getElementById("content");
+    if (!slug) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
+    try {
+      const raw = await (await fetch(
+        `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
+      )).text();
+      const { data, body } = parseFrontMatter(raw);
+      document.title = (data.title || "Formation") + " — AMSTC";
+      if (data.title) {
+        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
+      }
+      if (data.excerpt) {
+        document.getElementById('og-desc').setAttribute('content', data.excerpt);
+      }
+      content.innerHTML = `
+        <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+        <h1>${data.title || ''}</h1>
+        ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
+        <div id="body">${marked.parse(body || '')}</div>
+      `;
+    } catch (e) {
+      content.innerHTML = "<p>Impossible de charger cet article.</p>";
+    }
+  }
+  loadArticle();
+</script>
+</body>
+</html>

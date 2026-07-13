@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMSTC - Association Médico-Sociale des Talibés Cheikh</title>
+<title>AMSTC — Association Médico-Sociale des Talibés Cheikh</title>
 <meta name="description" content="L'AMSTC fédère professionnels de santé et du social autour de la santé des talibés au Sénégal : consultations gratuites, prévention, dons de sang et de médicaments, formations.">
 <link rel="canonical" href="https://amstc.org/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="AMSTC - Association Médico-Sociale des Talibés Cheikh">
+<meta property="og:title" content="AMSTC — Association Médico-Sociale des Talibés Cheikh">
 <meta property="og:description" content="L'AMSTC fédère professionnels de santé et du social autour de la santé des talibés au Sénégal : consultations gratuites, prévention, dons de sang et de médicaments, formations.">
 <meta property="og:url" content="https://amstc.org/">
 <meta property="og:image" content="https://amstc.org/assets/logo-horizontal.png">
@@ -291,8 +291,9 @@
     <nav class="nav-links" id="navLinks">
       <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
       <a href="#nos-actions">Nos actions</a>
-      <a href="#realisations">Réalisations</a>
-      <a href="actualites.html">Actualités</a>
+      <a href="#historique">Historique</a>
+      <a href="actualites.html">Réalisations</a>
+      <a href="formations.html">Formation</a>
       <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -411,17 +412,17 @@
           <div><div class="register-title">Campagnes de consultations médicales gratuites</div><div class="register-desc">Consultations et sensibilisation, avec suivi numérique via notre espace dédié.</div></div>
           <span class="register-tag">Médical</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="#realisations">
+        <a class="register-row" href="#historique">
           <span class="register-id">N°02</span>
           <div><div class="register-title">Dons de sang, médicaments et denrées</div><div class="register-desc">Collectes régulières et actions humanitaires ponctuelles.</div></div>
           <span class="register-tag">Solidarité</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="#realisations">
+        <a class="register-row" href="#historique">
           <span class="register-id">N°03</span>
           <div><div class="register-title">Couvertures sanitaires d'événements</div><div class="register-desc">Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).</div></div>
           <span class="register-tag">Terrain</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="#realisations">
+        <a class="register-row" href="#historique">
           <span class="register-id">N°04</span>
           <div><div class="register-title">Enseignements post-universitaires (EPU)</div><div class="register-desc">Conférences médicales ouvertes, animées par des professeurs et praticiens invités.</div></div>
           <span class="register-tag">Formation</span><span class="register-arrow">→</span>
@@ -436,7 +437,7 @@
   </section>
 
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
-  <section class="section-alt" id="realisations">
+  <section class="section-alt" id="historique">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
@@ -483,15 +484,15 @@
     <div class="wrap">
       <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
         <div>
-          <p class="eyebrow">Actualités</p>
-          <h2>Les dernières nouvelles de l'association</h2>
+          <p class="eyebrow">Réalisations</p>
+          <h2>Nos réalisations récentes</h2>
         </div>
-        <a href="actualites.html" class="btn btn-outline">Toutes les actualités</a>
+        <a href="actualites.html" class="btn btn-outline">Toutes nos réalisations</a>
       </div>
       <div class="intro-grid" id="actus-grid">
         <p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
       </div>
-      <noscript><p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir les actualités, ou consultez <a href="actualites.html">la page dédiée</a>.</p></noscript>
+      <noscript><p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos réalisations, ou consultez <a href="actualites.html">la page dédiée</a>.</p></noscript>
     </div>
   </section>
 
@@ -527,7 +528,9 @@
         <ul>
           <li><a href="#qui-sommes-nous">Qui sommes-nous ?</a></li>
           <li><a href="#nos-actions">Nos actions</a></li>
-          <li><a href="#realisations">Réalisations</a></li>
+          <li><a href="#historique">Historique</a></li>
+          <li><a href="actualites.html">Réalisations</a></li>
+          <li><a href="formations.html">Formation</a></li>
           <li><a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a></li>
         </ul>
       </div>
@@ -810,7 +813,7 @@
         </a>
       `).join("");
     } catch (e) {
-      grid.innerHTML = '<p style="color:#465A4E;">Actualités indisponibles pour le moment.</p>';
+      grid.innerHTML = '<p style="color:#465A4E;">Réalisations indisponibles pour le moment.</p>';
     }
   }
   loadLatestActus();
