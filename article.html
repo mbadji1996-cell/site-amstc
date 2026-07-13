@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Article — AMSTC</title>
+<meta name="description" content="Actualités de l'AMSTC — Association Médico-Sociale des Talibés Cheikh.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AMSTC">
+<meta property="og:title" content="Actualités — AMSTC" id="og-title">
+<meta property="og:description" content="Actualités de l'AMSTC — Association Médico-Sociale des Talibés Cheikh." id="og-desc">
+<meta property="og:image" content="https://amstc.org/assets/logo-horizontal.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/logo-mark.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -36,6 +43,7 @@
 </header>
 <div class="wrap">
   <a class="back" href="actualites.html">← Toutes les actualités</a>
+  <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p>Chargement…</p>
   </div>
@@ -69,6 +77,12 @@
       )).text();
       const { data, body } = parseFrontMatter(raw);
       document.title = (data.title || "Article") + " — AMSTC";
+      if (data.title) {
+        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
+      }
+      if (data.excerpt) {
+        document.getElementById('og-desc').setAttribute('content', data.excerpt);
+      }
       content.innerHTML = `
         <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
         <h1>${data.title || ''}</h1>

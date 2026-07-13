@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page introuvable — AMSTC</title>
+<link rel="icon" href="assets/logo-mark.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --line:rgba(6,68,28,0.14);
+    --display:'Fraunces',serif; --body:'Public Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:var(--body); color:var(--ink); background:var(--paper);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:28px;
+  }
+  .box{max-width:480px;}
+  img{height:56px; margin:0 auto 28px;}
+  .code{font-family:var(--mono); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:14px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.7rem; margin-bottom:14px;}
+  p{color:#465A4E; margin-bottom:28px; font-size:1rem;}
+  a.btn{
+    display:inline-flex; font-weight:600; font-size:0.95rem; padding:13px 26px; border-radius:999px;
+    background:var(--green); color:var(--white,#fff); text-decoration:none;
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+    <img src="assets/logo-mark.png" alt="AMSTC">
+    <p class="code">Erreur 404</p>
+    <h1>Cette page n'existe pas ou plus.</h1>
+    <p>Le lien que vous avez suivi est peut-être obsolète, ou l'adresse a été mal saisie.</p>
+    <a class="btn" href="/">Retour à l'accueil</a>
+  </div>
+</body>
+</html>
