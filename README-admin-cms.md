@@ -1,8 +1,8 @@
 # Configurer l'interface d'administration (amstc.org/admin)
 
-Vous avez déjà Cloudflare pour le DNS — on va aussi l'utiliser pour l'authentification, pas besoin d'ouvrir de compte Vercel.
+Vous avez déjà Cloudflare pour le DNS - on va aussi l'utiliser pour l'authentification, pas besoin d'ouvrir de compte Vercel.
 
-Le nom du dépôt (`mbadji1996-cell/site-amstc`) est déjà renseigné dans tous les fichiers — passez directement à l'étape 1.
+Le nom du dépôt (`mbadji1996-cell/site-amstc`) est déjà renseigné dans tous les fichiers - passez directement à l'étape 1.
 
 ## 1. Créer une application OAuth sur GitHub
 
@@ -63,4 +63,4 @@ Allez sur `https://amstc.org/admin`, cliquez **Login with GitHub**, autorisez l'
 
 ## Limite à connaître
 
-Les listes d'articles (page d'accueil + actualites.html) utilisent l'API publique de GitHub pour lister les fichiers, sans authentification. Elle est limitée à 60 requêtes/heure par visiteur — largement suffisant pour un site associatif, mais à garder en tête si le trafic grossit beaucoup. Si besoin plus tard, on pourra passer par une build statique (Eleventy/Hugo) qui génère les pages à l'avance.
+Les listes d'articles (page d'accueil + actualites.html) utilisent l'API publique de GitHub pour lister les fichiers, sans authentification. Elle est limitée à 60 requêtes/heure par visiteur - largement suffisant pour un site associatif, mais à garder en tête si le trafic grossit beaucoup. Si besoin plus tard, on pourra passer par une build statique (Eleventy/Hugo) qui génère les pages à l'avance.

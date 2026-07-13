@@ -41,8 +41,8 @@ collections:
 
           - { label: "Accroche de la section mission", name: "mission_eyebrow", widget: "string" }
           - { label: "Titre de la section mission", name: "mission_title", widget: "string" }
-          - { label: "Mission — paragraphe 1", name: "mission_p1", widget: "markdown" }
-          - { label: "Mission — paragraphe 2", name: "mission_p2", widget: "markdown" }
+          - { label: "Mission - paragraphe 1", name: "mission_p1", widget: "markdown" }
+          - { label: "Mission - paragraphe 2", name: "mission_p2", widget: "markdown" }
           - { label: "Titre du bloc emblème", name: "emblem_title", widget: "string" }
 
           - label: "Symbolique de l'emblème (4 points)"

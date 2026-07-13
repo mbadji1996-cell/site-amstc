@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article — AMSTC</title>
-<meta name="description" content="Actualités de l'AMSTC — Association Médico-Sociale des Talibés Cheikh.">
+<title>Article - AMSTC</title>
+<meta name="description" content="Réalisations de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Actualités — AMSTC" id="og-title">
-<meta property="og:description" content="Actualités de l'AMSTC — Association Médico-Sociale des Talibés Cheikh." id="og-desc">
+<meta property="og:title" content="Réalisations - AMSTC" id="og-title">
+<meta property="og:description" content="Réalisations de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
 <meta property="og:image" content="https://amstc.org/assets/logo-horizontal.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/logo-mark.png">
@@ -42,7 +42,7 @@
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="actualites.html">← Toutes les actualités</a>
+  <a class="back" href="actualites.html">← Toutes nos réalisations</a>
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p>Chargement…</p>
@@ -76,9 +76,9 @@
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
       )).text();
       const { data, body } = parseFrontMatter(raw);
-      document.title = (data.title || "Article") + " — AMSTC";
+      document.title = (data.title || "Article") + " - AMSTC";
       if (data.title) {
-        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
+        document.getElementById('og-title').setAttribute('content', data.title + ' - AMSTC');
       }
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);
