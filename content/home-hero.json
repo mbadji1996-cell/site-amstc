@@ -1,35 +1,34 @@
 {
-  "eyebrow": "Depuis 2014 — Association Médico-Sociale des Talibés Cheikh",
-  "hero_title": "La santé des talibés, suivie, défendue, accompagnée.",
-  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.",
+  "mission_title": "Fédérer les acteurs de la santé autour d'une même cause",
+  "eyebrow": "Association Médico-Sociale des Talibés Cheikh",
   "intro_cards": [
     {
-      "num": "01 — Identité",
+      "num": "01 - Identité",
       "title": "Qui sommes-nous ?",
       "text": "Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».",
       "link_text": "En savoir plus →",
       "link_href": "#qui-sommes-nous"
     },
     {
-      "num": "02 — Terrain",
+      "num": "02 - Terrain",
       "title": "Que faisons-nous ?",
       "text": "Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.",
       "link_text": "Voir nos actions →",
       "link_href": "#nos-actions"
     },
     {
-      "num": "03 — Engagement",
+      "num": "03 - Engagement",
       "title": "Comment participer ?",
       "text": "Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.",
       "link_text": "Faire un don →",
       "link_href": "#don"
     }
   ],
-  "mission_eyebrow": "Notre mission",
-  "mission_title": "Fédérer les acteurs de la santé autour d'une même cause",
-  "mission_p1": "L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.",
-  "mission_p2": "L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.",
   "emblem_title": "Symbolique de l'emblème",
+  "hero_title": "La santé des talibés, suivie, défendue, accompagnée.",
+  "mission_p1": "L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines - chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux - autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.",
+  "mission_p2": "L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.",
+  "mission_eyebrow": "Notre mission",
   "emblem_items": [
     {
       "title": "Le Coran ouvert",
@@ -47,5 +46,6 @@
       "title": "La couleur verte",
       "text": "Référence directe au Paradis coranique, décrit comme un jardin verdoyant."
     }
-  ]
+  ],
+  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins à la population et participer au développement socio-sanitaire du Sénégal."
 }
