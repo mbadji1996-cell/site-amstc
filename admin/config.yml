@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: mbadji1996-cell/site-amstc   # ex: mbadji1996-cell/amstc-site
+  repo: mbadji1996-cell/site-amstc
   branch: main
-  base_url: https://REMPLACER-PAR-VOTRE-PROXY.vercel.app  # URL du proxy OAuth (étape 2 du guide)
+  base_url: https://decap-proxy.mbadji1996.workers.dev
   auth_endpoint: auth
 
 site_url: https://amstc.org
