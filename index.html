@@ -557,9 +557,18 @@
     }).join('');
   }
 
-  // Charge et construit toute la page d'accueil depuis content/home.json (édité via /admin)
-  fetch("content/home.json").then(r => r.ok ? r.json() : null).then(data => {
-    if (!data) return;
+  // Charge et fusionne les 6 fichiers de contenu (édités via /admin), puis construit la page
+  const CONTENT_FILES = [
+    "content/home-hero.json",
+    "content/home-actions.json",
+    "content/home-historique.json",
+    "content/home-gouvernance.json",
+    "content/home-cta-footer.json",
+    "content/home-sections-libres.json"
+  ];
+  Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
+    .then(parts => {
+    const data = Object.assign({}, ...parts);
 
     // Hero
     if (data.eyebrow) document.getElementById('cms-eyebrow').innerHTML = mdInline(data.eyebrow);

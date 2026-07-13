@@ -1,0 +1,47 @@
+{
+  "gov_eyebrow": "Organisation",
+  "gov_title": "Le Bureau Exécutif et ses commissions",
+  "gov_subtitle": "Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.",
+  "governance": [
+    {
+      "title": "Présidium",
+      "text": "Président, Vice-président, Secrétaire général et adjoints"
+    },
+    {
+      "title": "Commission Finance",
+      "text": "Gestion du patrimoine, cotisations, bilan annuel"
+    },
+    {
+      "title": "Commissaires aux comptes",
+      "text": "Audit et régularité des comptes"
+    },
+    {
+      "title": "Commission Organisation",
+      "text": "Mise en œuvre des activités et manifestations"
+    },
+    {
+      "title": "Commission Presse & Information",
+      "text": "Communication interne et externe, réseaux sociaux"
+    },
+    {
+      "title": "Commission Sociale",
+      "text": "Programme des actions caritatives et campagnes médicales"
+    },
+    {
+      "title": "Relations extérieures",
+      "text": "Coopération et recherche de partenaires"
+    },
+    {
+      "title": "Commission Pédagogique",
+      "text": "EPU, débats, conférences, enseignements religieux"
+    },
+    {
+      "title": "Commission Féminine",
+      "text": "Cohésion et initiatives portées par les membres féminines"
+    },
+    {
+      "title": "Comité des Sages",
+      "text": "Organe moral garant des principes de l'association"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "actions_eyebrow": "Nos actions",
+  "actions_title": "Le registre de nos interventions",
+  "actions_subtitle": "Les moyens d'action définis par nos statuts, consignés comme dans un carnet de suivi.",
+  "actions": [
+    {
+      "title": "Campagnes de consultations médicales gratuites",
+      "text": "Consultations et sensibilisation, avec suivi numérique via notre espace dédié.",
+      "tag": "Médical",
+      "href": "https://consultations-amstc.org"
+    },
+    {
+      "title": "Dons de sang, médicaments et denrées",
+      "text": "Collectes régulières et actions humanitaires ponctuelles.",
+      "tag": "Solidarité",
+      "href": "#realisations"
+    },
+    {
+      "title": "Couvertures sanitaires d'événements",
+      "text": "Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).",
+      "tag": "Terrain",
+      "href": "#realisations"
+    },
+    {
+      "title": "Enseignements post-universitaires (EPU)",
+      "text": "Conférences médicales ouvertes, animées par des professeurs et praticiens invités.",
+      "tag": "Formation",
+      "href": "#realisations"
+    },
+    {
+      "title": "Renforcement de compétences et développement personnel",
+      "text": "Ateliers et formations internes destinés aux membres de l'association.",
+      "tag": "Formation",
+      "href": "#contact"
+    }
+  ]
+}

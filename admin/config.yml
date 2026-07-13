@@ -23,7 +23,7 @@ collections:
 
       - name: "hero"
         label: "1. En-tête (hero)"
-        file: "content/home.json"
+        file: "content/home-hero.json"
         fields:
           - { label: "Accroche (eyebrow)", name: "eyebrow", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
           - { label: "Titre principal", name: "hero_title", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
@@ -54,7 +54,7 @@ collections:
 
       - name: "actions"
         label: "2. Nos actions"
-        file: "content/home.json"
+        file: "content/home-actions.json"
         fields:
           - { label: "Accroche", name: "actions_eyebrow", widget: "string" }
           - { label: "Titre de la section", name: "actions_title", widget: "string" }
@@ -71,7 +71,7 @@ collections:
 
       - name: "historique"
         label: "3. Notre histoire"
-        file: "content/home.json"
+        file: "content/home-historique.json"
         fields:
           - { label: "Accroche", name: "history_eyebrow", widget: "string" }
           - { label: "Titre de la section", name: "history_title", widget: "string" }
@@ -87,7 +87,7 @@ collections:
 
       - name: "gouvernance"
         label: "4. Organisation"
-        file: "content/home.json"
+        file: "content/home-gouvernance.json"
         fields:
           - { label: "Accroche", name: "gov_eyebrow", widget: "string" }
           - { label: "Titre de la section", name: "gov_title", widget: "string" }
@@ -102,7 +102,7 @@ collections:
 
       - name: "cta_footer"
         label: "5. Bandeau de don + Pied de page"
-        file: "content/home.json"
+        file: "content/home-cta-footer.json"
         fields:
           - { label: "Titre du bandeau de don", name: "cta_title", widget: "string" }
           - { label: "Texte du bandeau de don", name: "cta_text", widget: "text" }
@@ -115,7 +115,7 @@ collections:
 
       - name: "sections_libres"
         label: "6. Sections personnalisées"
-        file: "content/home.json"
+        file: "content/home-sections-libres.json"
         fields:
           - label: "Blocs (affichés entre 'Organisation' et 'Actualités')"
             name: "sections"
