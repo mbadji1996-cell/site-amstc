@@ -25,34 +25,107 @@
   h2{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.25rem; margin:36px 0 12px;}
   p, li{color:#3C4E44; font-size:0.98rem;}
   ul{padding-left:20px;}
+  li{margin-bottom:6px;}
   .legal-box{background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 26px; margin-top:8px;}
+  table{width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:0.92rem; background:#fff; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  th{background:var(--green); color:#fff; text-align:left; padding:10px 12px; font-size:0.85rem;}
+  td{padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; color:#3C4E44;}
+  tr:last-child td{border-bottom:none;}
+  .note{background:#fff; border:1px dashed var(--gold-deep); border-radius:10px; padding:16px 18px; font-size:0.92rem; color:#3C4E44; margin:12px 0;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <a class="back" href="index.html">Retour à l'accueil</a>
   <h1>Politique de confidentialité</h1>
-  <p class="updated">[Date de mise à jour à compléter]</p>
+  <p class="updated">Dernière mise à jour : 13 juillet 2026</p>
 
-  <h2>Responsable du traitement</h2>
+  <p>
+    La présente politique explique quelles données personnelles sont traitées via le site
+    <strong>amstc.org</strong>, pourquoi, et quels sont vos droits. Elle est distincte de la politique de
+    confidentialité de l'espace de consultation médicale de l'association, décrite plus bas.
+  </p>
+
+  <h2>1. Responsable du traitement</h2>
   <div class="legal-box">
     <p><strong>Association Médico-Sociale des Talibés Cheikh (AMSTC)</strong><br>
     Récépissé de déclaration n° 022909/MISP/DGAT/DLPL/DAPA<br>
-    Domiciliation : Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO), Université Cheikh Anta Diop de Dakar (UCAD), Campus de Fann, BP 5005, Dakar, Sénégal<br>
+    Domiciliation : FMPO - Faculté de Médecine, de Pharmacie et d'Odonto-Stomatologie, Boulevard Martin Luther King, BP 5005, Dakar, Sénégal<br>
     Contact : <a href="mailto:contact@amstc.org">contact@amstc.org</a></p>
   </div>
 
-  <h2>Données collectées sur ce site</h2>
-  <p>Ce site vitrine ne collecte pas de données personnelles autres que celles transmises volontairement par e-mail. [À compléter si un formulaire de contact ou de don est ajouté.]</p>
+  <h2>2. Données collectées sur amstc.org</h2>
+  <p>
+    Ce site vitrine ne collecte pas de données personnelles par formulaire. Les seules données que nous recevons
+    sont celles que vous nous transmettez volontairement par e-mail (contact@amstc.org) : votre adresse
+    e-mail et le contenu de votre message, utilisés uniquement pour vous répondre.
+  </p>
 
-  <h2>Espace consultation</h2>
-  <p>Les données de santé et de suivi médical sont traitées séparément sur notre espace de consultation (consultations-amstc.org), régi par sa propre politique de confidentialité conforme à la législation sénégalaise sur les données personnelles (CDP).</p>
+  <h2>3. Hébergement</h2>
+  <ul>
+    <li><strong>GitHub Pages</strong> - hébergement des fichiers statiques du site amstc.org.</li>
+    <li><strong>Cloudflare</strong> - gestion du nom de domaine, du DNS et de la redirection des e-mails de contact.</li>
+  </ul>
+  <p>
+    Ces prestataires agissent en tant qu'hébergeurs techniques. Nous ne <strong>vendons</strong> ni ne
+    <strong>louons</strong> aucune donnée personnelle, et ne les partageons avec aucun tiers à des fins
+    commerciales ou publicitaires.
+  </p>
 
-  <h2>Cookies</h2>
-  <p>[À compléter selon les outils de mesure d'audience éventuellement utilisés.]</p>
+  <h2>4. Cookies</h2>
+  <p>
+    amstc.org n'utilise actuellement aucun cookie de mesure d'audience ni de traceur publicitaire. Cette section
+    sera mise à jour si un outil de statistiques est ajouté à l'avenir.
+  </p>
 
-  <h2>Vos droits</h2>
-  <p>Conformément à la réglementation sénégalaise applicable, vous disposez d'un droit d'accès, de rectification et de suppression des données vous concernant. Pour l'exercer, contactez <a href="mailto:contact@amstc.org">contact@amstc.org</a>.</p>
+  <h2>5. Espace consultation (données de santé)</h2>
+  <p>
+    Dans le cadre de ses campagnes médicales, l'AMSTC exploite un espace de consultation en ligne distinct
+    (<a href="https://consultations-amstc.org" target="_blank" rel="noopener">consultations-amstc.org</a>),
+    réservé aux professionnels de santé habilités. Cet espace traite des <strong>données de santé</strong> de
+    patients (identité, motifs de consultation, constantes vitales, diagnostic, traitement) ainsi que des
+    données de compte des professionnels utilisateurs (y compris, le cas échéant, via une connexion Google
+    OAuth limitée à l'authentification).
+  </p>
+  <p>
+    Ce traitement, hébergé sur une base de données Supabase dédiée, est régi par sa propre
+    <a href="https://consultations-amstc.org/confidentialite" target="_blank" rel="noopener">politique de confidentialité détaillée</a>,
+    conforme à la <strong>loi sénégalaise n° 2008-12 du 25 janvier 2008</strong> sur la protection des données à
+    caractère personnel et au contrôle de la <strong>Commission de Protection des Données Personnelles (CDP)</strong>.
+    Le site amstc.org lui-même n'a accès à aucune de ces données médicales.
+  </p>
+
+  <h2>6. Base légale et finalités (site amstc.org)</h2>
+  <table>
+    <tr><th>Finalité</th><th>Base légale</th></tr>
+    <tr><td>Répondre à une demande envoyée par e-mail</td><td>Intérêt légitime / demande de la personne concernée</td></tr>
+    <tr><td>Présenter les activités de l'association</td><td>Intérêt légitime de l'association</td></tr>
+  </table>
+
+  <h2>7. Vos droits</h2>
+  <p>
+    Conformément à la loi n° 2008-12, vous disposez d'un droit d'accès, de rectification, d'opposition et de
+    suppression concernant les données que vous nous avez transmises. Pour l'exercer, écrivez à
+    <a href="mailto:contact@amstc.org">contact@amstc.org</a>. Vous pouvez également saisir la
+    <strong>Commission de Protection des Données Personnelles (CDP)</strong> du Sénégal.
+  </p>
+
+  <h2>8. Modifications</h2>
+  <p>
+    Cette politique peut être mise à jour. Toute modification importante sera signalée sur le site et la date
+    de mise à jour ci-dessus sera actualisée.
+  </p>
+
+  <h2>9. Contact</h2>
+  <p>
+    Pour toute question relative à vos données personnelles : <a href="mailto:contact@amstc.org">contact@amstc.org</a>.
+  </p>
+
+  <div class="note">
+    Voir aussi : <a href="cgu.html">Conditions d'utilisation</a> de ce site, et la
+    <a href="https://consultations-amstc.org/confidentialite" target="_blank" rel="noopener">politique de confidentialité propre à l'espace consultation</a>
+    pour tout ce qui concerne les données de santé.
+  </div>
 </div>
 </body>
 </html>
