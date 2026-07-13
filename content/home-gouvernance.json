@@ -5,15 +5,11 @@
   "governance": [
     {
       "title": "Présidium",
-      "text": "Président, Vice-président,\n\n![](/assets/uploads/00.organigramme-amstc-2026_2.jpg \"Président, Vice-président\")\n\n Secrétaire général et adjoints\n\n![](/assets/uploads/00.organigramme-amstc-2026_3.jpg \"Secrétaire général et adjoints\")"
+      "text": "Président, Vice-président, Secrétaire général et adjoints"
     },
     {
       "title": "Commission Finance",
-      "text": "Gestion du patrimoine, cotisations, bilan annuel"
-    },
-    {
-      "title": "Commissaires aux comptes",
-      "text": "Audit et régularité des comptes"
+      "text": "Gestion des cotisations et du patrimoine"
     },
     {
       "title": "Commission Organisation",
@@ -21,7 +17,7 @@
     },
     {
       "title": "Commission Presse & Information",
-      "text": "Communication interne et externe, réseaux sociaux"
+      "text": "Mise en œuvre des activités"
     },
     {
       "title": "Commission Sociale",
@@ -37,7 +33,11 @@
     },
     {
       "title": "Commission Féminine",
-      "text": "Cohésion et initiatives portées par les membres féminines"
+      "text": "EPU, conférences, formations et enseignements religieux"
+    },
+    {
+      "title": "Commissaires aux comptes",
+      "text": "Audit et régularité des comptes"
     },
     {
       "title": "Comité des Sages",
