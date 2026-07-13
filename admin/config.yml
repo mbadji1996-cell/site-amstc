@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: mbadji1996-cell/site-amstc   # ex: mbadji1996-cell/amstc-site
+  repo: mbadji1996-cell/site-amstc
   branch: main
-  base_url: https://REMPLACER-PAR-VOTRE-PROXY.vercel.app  # URL du proxy OAuth (étape 2 du guide)
+  base_url: https://decap-proxy.mbadji1996.workers.dev
   auth_endpoint: auth
 
 site_url: https://amstc.org
@@ -13,7 +13,6 @@ media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
 
 publish_mode: simple
-
 locale: 'fr'
 
 collections:
@@ -21,15 +20,94 @@ collections:
   - name: "accueil"
     label: "Page d'accueil"
     files:
-      - name: "contenu"
-        label: "Textes principaux"
+
+      - name: "hero"
+        label: "1. En-tête (hero)"
         file: "content/home.json"
         fields:
           - { label: "Accroche (eyebrow)", name: "eyebrow", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
           - { label: "Titre principal", name: "hero_title", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
           - { label: "Sous-titre", name: "hero_subtitle", widget: "markdown" }
+
+          - label: "Les 3 cartes d'introduction"
+            name: "intro_cards"
+            widget: "list"
+            fields:
+              - { label: "Numéro / catégorie", name: "num", widget: "string" }
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Texte", name: "text", widget: "markdown" }
+              - { label: "Texte du lien", name: "link_text", widget: "string" }
+              - { label: "Lien (URL ou #ancre)", name: "link_href", widget: "string" }
+
+          - { label: "Accroche de la section mission", name: "mission_eyebrow", widget: "string" }
+          - { label: "Titre de la section mission", name: "mission_title", widget: "string" }
           - { label: "Mission — paragraphe 1", name: "mission_p1", widget: "markdown" }
           - { label: "Mission — paragraphe 2", name: "mission_p2", widget: "markdown" }
+          - { label: "Titre du bloc emblème", name: "emblem_title", widget: "string" }
+
+          - label: "Symbolique de l'emblème (4 points)"
+            name: "emblem_items"
+            widget: "list"
+            fields:
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Texte", name: "text", widget: "markdown" }
+
+      - name: "actions"
+        label: "2. Nos actions"
+        file: "content/home.json"
+        fields:
+          - { label: "Accroche", name: "actions_eyebrow", widget: "string" }
+          - { label: "Titre de la section", name: "actions_title", widget: "string" }
+          - { label: "Sous-titre", name: "actions_subtitle", widget: "text" }
+
+          - label: "Liste des actions (registre)"
+            name: "actions"
+            widget: "list"
+            fields:
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Description", name: "text", widget: "markdown" }
+              - { label: "Étiquette (ex: Médical, Formation...)", name: "tag", widget: "string" }
+              - { label: "Lien (URL ou #ancre)", name: "href", widget: "string" }
+
+      - name: "historique"
+        label: "3. Notre histoire"
+        file: "content/home.json"
+        fields:
+          - { label: "Accroche", name: "history_eyebrow", widget: "string" }
+          - { label: "Titre de la section", name: "history_title", widget: "string" }
+          - { label: "Sous-titre", name: "history_subtitle", widget: "text" }
+
+          - label: "Frise chronologique"
+            name: "timeline"
+            widget: "list"
+            fields:
+              - { label: "Année(s)", name: "year", widget: "string" }
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Texte", name: "text", widget: "markdown" }
+
+      - name: "gouvernance"
+        label: "4. Organisation"
+        file: "content/home.json"
+        fields:
+          - { label: "Accroche", name: "gov_eyebrow", widget: "string" }
+          - { label: "Titre de la section", name: "gov_title", widget: "string" }
+          - { label: "Sous-titre", name: "gov_subtitle", widget: "text" }
+
+          - label: "Bureau et commissions"
+            name: "governance"
+            widget: "list"
+            fields:
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Description", name: "text", widget: "markdown" }
+
+      - name: "cta_footer"
+        label: "5. Bandeau de don + Pied de page"
+        file: "content/home.json"
+        fields:
+          - { label: "Titre du bandeau de don", name: "cta_title", widget: "string" }
+          - { label: "Texte du bandeau de don", name: "cta_text", widget: "text" }
+          - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
+          - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
           - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
           - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }

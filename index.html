@@ -132,6 +132,8 @@
   .intro-card .num{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); margin-bottom:14px; display:block;}
   .intro-card h3{font-size:1.25rem; margin-bottom:10px;}
   .intro-card p{color:#465A4E; font-size:0.96rem; margin-bottom:18px;}
+  .intro-card div p{color:#465A4E; font-size:0.96rem; margin-bottom:12px;}
+  .intro-card img, .gov-card img, .emblem-row img, .tl-item img, .register-desc img{max-width:100%; border-radius:8px; margin:8px 0;}
   .intro-card a{font-weight:600; font-size:0.92rem; color:var(--green); border-bottom:1.5px solid var(--gold);}
 
   section{padding:80px 0;}
@@ -153,6 +155,7 @@
   .emblem-row:first-of-type{border-top:none;}
   .emblem-row .mark{font-family:var(--mono); color:var(--gold); font-size:0.85rem; flex-shrink:0; width:26px;}
   .emblem-row p{font-size:0.92rem; color:rgba(246,247,241,0.82); margin:0;}
+  .emblem-row div p{font-size:0.92rem; color:rgba(246,247,241,0.82); margin:0;}
   .emblem-row strong{display:block; font-family:var(--display); font-size:1rem; margin-bottom:4px; color:var(--white);}
 
   /* ===== Register / Actions ===== */
@@ -166,6 +169,7 @@
   .register-id{font-family:var(--mono); color:var(--gold-deep); font-size:0.85rem;}
   .register-title{font-family:var(--display); font-weight:600; font-size:1.1rem; color:var(--green-deep);}
   .register-desc{font-size:0.92rem; color:#465A4E; margin-top:3px;}
+  .register-desc p{margin:0;}
   .register-tag{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); justify-self:start;}
   .register-arrow{color:var(--gold-deep); font-size:1.2rem; justify-self:end;}
 
@@ -180,6 +184,7 @@
   .tl-year{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); margin-bottom:4px; display:block;}
   .tl-item h4{font-family:var(--display); font-size:1.1rem; color:var(--green-deep); margin-bottom:6px;}
   .tl-item p{font-size:0.94rem; color:#465A4E; max-width:60ch;}
+  .tl-item div p{font-size:0.94rem; color:#465A4E; max-width:60ch; margin:0;}
 
   /* ===== Founders ===== */
   .founders-box{
@@ -198,6 +203,8 @@
   .gov-card{background:var(--white); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
   .gov-card strong{display:block; font-family:var(--display); font-size:1rem; color:var(--green-deep); margin-bottom:4px;}
   .gov-card span{font-size:0.85rem; color:#5A6C60;}
+  .gov-card div{font-size:0.85rem; color:#5A6C60;}
+  .gov-card div p{margin:0;}
 
   /* ===== CTA banner ===== */
   .cta-banner{
@@ -281,94 +288,29 @@
           <span>Moyens d'action — Art. 7 des statuts</span>
           <span>AMSTC</span>
         </div>
-        <div class="ledger-entry">
-          <span class="ledger-num">N°01</span>
-          <div class="ledger-body">
-            <strong>Consultations médicales gratuites</strong>
-            <span>Campagnes de soins et de sensibilisation</span>
-          </div>
-          <span class="ledger-tag">Médical</span>
-        </div>
-        <div class="ledger-entry">
-          <span class="ledger-num">N°02</span>
-          <div class="ledger-body">
-            <strong>Dons de sang et de médicaments</strong>
-            <span>Denrées et actions humanitaires</span>
-          </div>
-          <span class="ledger-tag">Solidarité</span>
-        </div>
-        <div class="ledger-entry">
-          <span class="ledger-num">N°03</span>
-          <div class="ledger-body">
-            <strong>Couvertures sanitaires</strong>
-            <span>Grands rassemblements religieux</span>
-          </div>
-          <span class="ledger-tag">Terrain</span>
-        </div>
-        <div class="ledger-entry">
-          <span class="ledger-num">N°04</span>
-          <div class="ledger-body">
-            <strong>Enseignements post-universitaires</strong>
-            <span>Renforcement des compétences des membres</span>
-          </div>
-          <span class="ledger-tag">Formation</span>
-        </div>
+        <div id="cms-ledger"></div>
       </div>
     </div>
   </section>
 
   <!-- ===== THREE-CARD INTRO ===== -->
   <section class="intro">
-    <div class="wrap intro-grid">
-      <div class="intro-card">
-        <span class="num">01 — Identité</span>
-        <h3>Qui sommes-nous ?</h3>
-        <p>Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».</p>
-        <a href="#qui-sommes-nous">En savoir plus →</a>
-      </div>
-      <div class="intro-card">
-        <span class="num">02 — Terrain</span>
-        <h3>Que faisons-nous ?</h3>
-        <p>Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.</p>
-        <a href="#nos-actions">Voir nos actions →</a>
-      </div>
-      <div class="intro-card">
-        <span class="num">03 — Engagement</span>
-        <h3>Comment participer ?</h3>
-        <p>Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.</p>
-        <a href="#don">Faire un don →</a>
-      </div>
-    </div>
+    <div class="wrap intro-grid" id="cms-intro-cards"></div>
   </section>
 
   <!-- ===== QUI SOMMES-NOUS / MISSION ===== -->
   <section class="section-alt" id="qui-sommes-nous">
     <div class="wrap mission-grid">
       <div class="mission-text">
-        <p class="eyebrow">Notre mission</p>
-        <h2>Fédérer les acteurs de la santé autour d'une même cause</h2>
+        <p class="eyebrow" id="cms-mission-eyebrow">Notre mission</p>
+        <h2 id="cms-mission-title">Fédérer les acteurs de la santé autour d'une même cause</h2>
         <div id="cms-mission-p1"><p>L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p></div>
         <div id="cms-mission-p2"><p>L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p></div>
         <a href="#nos-actions" class="btn btn-outline">Parcourir nos actions</a>
       </div>
       <div class="mission-figure">
-        <h4>Symbolique de l'emblème</h4>
-        <div class="emblem-row">
-          <span class="mark">01</span>
-          <p><strong>Le Coran ouvert</strong>Symbolise la foi profonde en l'islam et l'attachement aux enseignements coraniques.</p>
-        </div>
-        <div class="emblem-row">
-          <span class="mark">02</span>
-          <p><strong>Le caducée</strong>Le serpent d'Asclépios enroulé autour d'un bâton, prolongé d'un miroir : la médecine et la prudence du praticien.</p>
-        </div>
-        <div class="emblem-row">
-          <span class="mark">03</span>
-          <p><strong>Le dôme et le minaret</strong>Reflètent la beauté, la symétrie et la proportion recherchées dans tous les aspects de la vie.</p>
-        </div>
-        <div class="emblem-row">
-          <span class="mark">04</span>
-          <p><strong>La couleur verte</strong>Référence directe au Paradis coranique, décrit comme un jardin verdoyant.</p>
-        </div>
+        <h4 id="cms-emblem-title">Symbolique de l'emblème</h4>
+        <div id="cms-emblem-items"></div>
       </div>
     </div>
   </section>
@@ -377,57 +319,11 @@
   <section id="nos-actions">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Nos actions</p>
-        <h2>Le registre de nos interventions</h2>
-        <p>Les moyens d'action définis par nos statuts, consignés comme dans un carnet de suivi.</p>
+        <p class="eyebrow" id="cms-actions-eyebrow">Nos actions</p>
+        <h2 id="cms-actions-title">Le registre de nos interventions</h2>
+        <p id="cms-actions-subtitle">Les moyens d'action définis par nos statuts, consignés comme dans un carnet de suivi.</p>
       </div>
-      <div class="register-list">
-        <a class="register-row" href="https://consultations-amstc.org" target="_blank" rel="noopener">
-          <span class="register-id">N°01</span>
-          <div>
-            <div class="register-title">Campagnes de consultations médicales gratuites</div>
-            <div class="register-desc">Consultations et sensibilisation, avec suivi numérique via notre espace dédié.</div>
-          </div>
-          <span class="register-tag">Médical</span>
-          <span class="register-arrow">→</span>
-        </a>
-        <a class="register-row" href="#realisations">
-          <span class="register-id">N°02</span>
-          <div>
-            <div class="register-title">Dons de sang, médicaments et denrées</div>
-            <div class="register-desc">Collectes régulières et actions humanitaires ponctuelles.</div>
-          </div>
-          <span class="register-tag">Solidarité</span>
-          <span class="register-arrow">→</span>
-        </a>
-        <a class="register-row" href="#realisations">
-          <span class="register-id">N°03</span>
-          <div>
-            <div class="register-title">Couvertures sanitaires d'événements</div>
-            <div class="register-desc">Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).</div>
-          </div>
-          <span class="register-tag">Terrain</span>
-          <span class="register-arrow">→</span>
-        </a>
-        <a class="register-row" href="#realisations">
-          <span class="register-id">N°04</span>
-          <div>
-            <div class="register-title">Enseignements post-universitaires (EPU)</div>
-            <div class="register-desc">Conférences médicales ouvertes, animées par des professeurs et praticiens invités.</div>
-          </div>
-          <span class="register-tag">Formation</span>
-          <span class="register-arrow">→</span>
-        </a>
-        <a class="register-row" href="#contact">
-          <span class="register-id">N°05</span>
-          <div>
-            <div class="register-title">Renforcement de compétences et développement personnel</div>
-            <div class="register-desc">Ateliers et formations internes destinés aux membres de l'association.</div>
-          </div>
-          <span class="register-tag">Formation</span>
-          <span class="register-arrow">→</span>
-        </a>
-      </div>
+      <div class="register-list" id="cms-register-list"></div>
     </div>
   </section>
 
@@ -435,32 +331,11 @@
   <section class="section-alt" id="realisations">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Notre histoire</p>
-        <h2>Une décennie d'engagement</h2>
-        <p>De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
+        <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
+        <h2 id="cms-history-title">Une décennie d'engagement</h2>
+        <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
       </div>
-      <div class="timeline">
-        <div class="tl-item">
-          <span class="tl-year">2014</span>
-          <h4>Naissance de l'association</h4>
-          <p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p>
-        </div>
-        <div class="tl-item">
-          <span class="tl-year">2015 – 2019</span>
-          <h4>Montée en puissance des campagnes de terrain</h4>
-          <p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p>
-        </div>
-        <div class="tl-item">
-          <span class="tl-year">2020 – 2022</span>
-          <h4>Reprise après la pandémie</h4>
-          <p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p>
-        </div>
-        <div class="tl-item">
-          <span class="tl-year">2023 – 2024</span>
-          <h4>Constitution en association indépendante</h4>
-          <p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p>
-        </div>
-      </div>
+      <div class="timeline" id="cms-timeline"></div>
     </div>
   </section>
 
@@ -468,22 +343,11 @@
   <section>
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Organisation</p>
-        <h2>Le Bureau Exécutif et ses commissions</h2>
-        <p>Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.</p>
+        <p class="eyebrow" id="cms-gov-eyebrow">Organisation</p>
+        <h2 id="cms-gov-title">Le Bureau Exécutif et ses commissions</h2>
+        <p id="cms-gov-subtitle">Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.</p>
       </div>
-      <div class="gov-grid">
-        <div class="gov-card"><strong>Présidium</strong><span>Président, Vice-président, Secrétaire général et adjoints</span></div>
-        <div class="gov-card"><strong>Commission Finance</strong><span>Gestion du patrimoine, cotisations, bilan annuel</span></div>
-        <div class="gov-card"><strong>Commissaires aux comptes</strong><span>Audit et régularité des comptes</span></div>
-        <div class="gov-card"><strong>Commission Organisation</strong><span>Mise en œuvre des activités et manifestations</span></div>
-        <div class="gov-card"><strong>Commission Presse & Information</strong><span>Communication interne et externe, réseaux sociaux</span></div>
-        <div class="gov-card"><strong>Commission Sociale</strong><span>Programme des actions caritatives et campagnes médicales</span></div>
-        <div class="gov-card"><strong>Relations extérieures</strong><span>Coopération et recherche de partenaires</span></div>
-        <div class="gov-card"><strong>Commission Pédagogique</strong><span>EPU, débats, conférences, enseignements religieux</span></div>
-        <div class="gov-card"><strong>Commission Féminine</strong><span>Cohésion et initiatives portées par les membres féminines</span></div>
-        <div class="gov-card"><strong>Comité des Sages</strong><span>Organe moral garant des principes de l'association</span></div>
-      </div>
+      <div class="gov-grid" id="cms-gov-grid"></div>
     </div>
   </section>
 
@@ -508,8 +372,8 @@
     <div class="wrap">
       <div class="cta-banner">
         <div>
-          <h2>Suivez une consultation en temps réel sur notre espace dédié.</h2>
-          <p>Notre plateforme de gestion des consultations est utilisée par nos équipes médicales sur le terrain.</p>
+          <h2 id="cms-cta-title">Suivez une consultation en temps réel sur notre espace dédié.</h2>
+          <p id="cms-cta-text">Notre plateforme de gestion des consultations est utilisée par nos équipes médicales sur le terrain.</p>
         </div>
         <div style="display:flex; gap:14px; flex-wrap:wrap; position:relative; z-index:1;">
           <a href="https://consultations-amstc.org" target="_blank" rel="noopener" class="btn btn-gold">Accéder à l'espace consultation</a>
@@ -527,8 +391,8 @@
     <div class="footer-grid">
       <div>
         <img src="assets/logo-horizontal.png" alt="AMSTC" class="logo-img">
-        <p>Association Médico-Sociale des Talibés Cheikh — association sénégalaise apolitique, confessionnelle et sans but lucratif.</p>
-        <span class="recepisse">Récépissé n° 022909/MISP/DGAT/DLPL/DAPA</span>
+        <p id="cms-footer-description">Association Médico-Sociale des Talibés Cheikh — association sénégalaise apolitique, confessionnelle et sans but lucratif.</p>
+        <span class="recepisse" id="cms-recepisse">Récépissé n° 022909/MISP/DGAT/DLPL/DAPA</span>
       </div>
       <div>
         <h5>Pages</h5>
@@ -542,13 +406,13 @@
       <div>
         <h5>Contact</h5>
         <ul>
-          <li>Tél. : [à compléter]</li>
+          <li id="cms-contact-phone">Tél. : [à compléter]</li>
           <li><a href="mailto:contact@amstc.org">contact@amstc.org</a></li>
         </ul>
       </div>
       <div>
         <h5>Réseaux</h5>
-        <ul>
+        <ul id="cms-social-links">
           <li><a href="#">[Lien Facebook]</a></li>
           <li><a href="#">[Lien LinkedIn]</a></li>
           <li><a href="#">[Lien Instagram]</a></li>
@@ -581,14 +445,118 @@
   // Remplacez par votre compte / dépôt GitHub réels
   const REPO = "mbadji1996-cell/site-amstc";
 
-  // Charge les textes éditables depuis content/home.json (mis à jour via /admin)
+  function mdInline(s){ return s ? marked.parseInline(s) : ''; }
+  function md(s){ return s ? marked.parse(s) : ''; }
+  function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Charge et construit toute la page d'accueil depuis content/home.json (édité via /admin)
   fetch("content/home.json").then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
-    if (data.eyebrow) document.getElementById('cms-eyebrow').innerHTML = marked.parseInline(data.eyebrow);
-    if (data.hero_title) document.getElementById('cms-hero-title').innerHTML = marked.parseInline(data.hero_title);
-    if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').innerHTML = marked.parse(data.hero_subtitle);
-    if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = marked.parse(data.mission_p1);
-    if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = marked.parse(data.mission_p2);
+
+    // Hero
+    if (data.eyebrow) document.getElementById('cms-eyebrow').innerHTML = mdInline(data.eyebrow);
+    if (data.hero_title) document.getElementById('cms-hero-title').innerHTML = mdInline(data.hero_title);
+    if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').innerHTML = md(data.hero_subtitle);
+
+    // Registre miniature du hero (aperçu des 4 premières actions)
+    if (Array.isArray(data.actions)) {
+      document.getElementById('cms-ledger').innerHTML = data.actions.slice(0, 4).map((a, i) => `
+        <div class="ledger-entry">
+          <span class="ledger-num">N°${String(i + 1).padStart(2, '0')}</span>
+          <div class="ledger-body">
+            <strong>${esc(a.title)}</strong>
+            <span>${esc((a.text || '').replace(/[*_#>`]/g, ''))}</span>
+          </div>
+          <span class="ledger-tag">${esc(a.tag)}</span>
+        </div>
+      `).join('');
+    }
+
+    // 3 cartes d'introduction
+    if (Array.isArray(data.intro_cards)) {
+      document.getElementById('cms-intro-cards').innerHTML = data.intro_cards.map(c => `
+        <div class="intro-card">
+          <span class="num">${esc(c.num)}</span>
+          <h3>${esc(c.title)}</h3>
+          <div>${md(c.text)}</div>
+          <a href="${esc(c.link_href)}">${esc(c.link_text)}</a>
+        </div>
+      `).join('');
+    }
+
+    // Mission
+    if (data.mission_eyebrow) document.getElementById('cms-mission-eyebrow').textContent = data.mission_eyebrow;
+    if (data.mission_title) document.getElementById('cms-mission-title').textContent = data.mission_title;
+    if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = md(data.mission_p1);
+    if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = md(data.mission_p2);
+    if (data.emblem_title) document.getElementById('cms-emblem-title').textContent = data.emblem_title;
+    if (Array.isArray(data.emblem_items)) {
+      document.getElementById('cms-emblem-items').innerHTML = data.emblem_items.map((e, i) => `
+        <div class="emblem-row">
+          <span class="mark">${String(i + 1).padStart(2, '0')}</span>
+          <div><strong>${esc(e.title)}</strong>${md(e.text)}</div>
+        </div>
+      `).join('');
+    }
+
+    // Nos actions (registre)
+    if (data.actions_eyebrow) document.getElementById('cms-actions-eyebrow').textContent = data.actions_eyebrow;
+    if (data.actions_title) document.getElementById('cms-actions-title').textContent = data.actions_title;
+    if (data.actions_subtitle) document.getElementById('cms-actions-subtitle').textContent = data.actions_subtitle;
+    if (Array.isArray(data.actions)) {
+      document.getElementById('cms-register-list').innerHTML = data.actions.map((a, i) => {
+        const external = /^https?:\/\//.test(a.href || '');
+        return `
+        <a class="register-row" href="${esc(a.href || '#')}" ${external ? 'target="_blank" rel="noopener"' : ''}>
+          <span class="register-id">N°${String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <div class="register-title">${esc(a.title)}</div>
+            <div class="register-desc">${md(a.text)}</div>
+          </div>
+          <span class="register-tag">${esc(a.tag)}</span>
+          <span class="register-arrow">→</span>
+        </a>`;
+      }).join('');
+    }
+
+    // Historique
+    if (data.history_eyebrow) document.getElementById('cms-history-eyebrow').textContent = data.history_eyebrow;
+    if (data.history_title) document.getElementById('cms-history-title').textContent = data.history_title;
+    if (data.history_subtitle) document.getElementById('cms-history-subtitle').textContent = data.history_subtitle;
+    if (Array.isArray(data.timeline)) {
+      document.getElementById('cms-timeline').innerHTML = data.timeline.map(t => `
+        <div class="tl-item">
+          <span class="tl-year">${esc(t.year)}</span>
+          <h4>${esc(t.title)}</h4>
+          <div>${md(t.text)}</div>
+        </div>
+      `).join('');
+    }
+
+    // Gouvernance
+    if (data.gov_eyebrow) document.getElementById('cms-gov-eyebrow').textContent = data.gov_eyebrow;
+    if (data.gov_title) document.getElementById('cms-gov-title').textContent = data.gov_title;
+    if (data.gov_subtitle) document.getElementById('cms-gov-subtitle').textContent = data.gov_subtitle;
+    if (Array.isArray(data.governance)) {
+      document.getElementById('cms-gov-grid').innerHTML = data.governance.map(g => `
+        <div class="gov-card"><strong>${esc(g.title)}</strong><div>${md(g.text)}</div></div>
+      `).join('');
+    }
+
+    // Bandeau de don
+    if (data.cta_title) document.getElementById('cms-cta-title').textContent = data.cta_title;
+    if (data.cta_text) document.getElementById('cms-cta-text').textContent = data.cta_text;
+
+    // Pied de page
+    if (data.footer_description) document.getElementById('cms-footer-description').textContent = data.footer_description;
+    if (data.recepisse) document.getElementById('cms-recepisse').textContent = data.recepisse;
+    if (data.contact_phone) document.getElementById('cms-contact-phone').textContent = 'Tél. : ' + data.contact_phone;
+    const socialLinks = [
+      data.lien_facebook ? `<li><a href="${esc(data.lien_facebook)}" target="_blank" rel="noopener">Facebook</a></li>` : '',
+      data.lien_linkedin ? `<li><a href="${esc(data.lien_linkedin)}" target="_blank" rel="noopener">LinkedIn</a></li>` : '',
+      data.lien_instagram ? `<li><a href="${esc(data.lien_instagram)}" target="_blank" rel="noopener">Instagram</a></li>` : ''
+    ].join('');
+    if (socialLinks) document.getElementById('cms-social-links').innerHTML = socialLinks;
   }).catch(() => {});
 
   // Charge les 3 dernières actualités

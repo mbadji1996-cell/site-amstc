@@ -1,11 +1,70 @@
 {
   "eyebrow": "Depuis 2014 — Association Médico-Sociale des Talibés Cheikh",
-  "contact_phone": "",
   "hero_title": "La santé des talibés, suivie, défendue, accompagnée.",
+  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.",
+
+  "intro_cards": [
+    { "num": "01 — Identité", "title": "Qui sommes-nous ?", "text": "Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».", "link_text": "En savoir plus →", "link_href": "#qui-sommes-nous" },
+    { "num": "02 — Terrain", "title": "Que faisons-nous ?", "text": "Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.", "link_text": "Voir nos actions →", "link_href": "#nos-actions" },
+    { "num": "03 — Engagement", "title": "Comment participer ?", "text": "Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.", "link_text": "Faire un don →", "link_href": "#don" }
+  ],
+
+  "mission_eyebrow": "Notre mission",
+  "mission_title": "Fédérer les acteurs de la santé autour d'une même cause",
   "mission_p1": "L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.",
   "mission_p2": "L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.",
+  "emblem_title": "Symbolique de l'emblème",
+  "emblem_items": [
+    { "title": "Le Coran ouvert", "text": "Symbolise la foi profonde en l'islam et l'attachement aux enseignements coraniques." },
+    { "title": "Le caducée", "text": "Le serpent d'Asclépios enroulé autour d'un bâton, prolongé d'un miroir : la médecine et la prudence du praticien." },
+    { "title": "Le dôme et le minaret", "text": "Reflètent la beauté, la symétrie et la proportion recherchées dans tous les aspects de la vie." },
+    { "title": "La couleur verte", "text": "Référence directe au Paradis coranique, décrit comme un jardin verdoyant." }
+  ],
+
+  "actions_eyebrow": "Nos actions",
+  "actions_title": "Le registre de nos interventions",
+  "actions_subtitle": "Les moyens d'action définis par nos statuts, consignés comme dans un carnet de suivi.",
+  "actions": [
+    { "title": "Campagnes de consultations médicales gratuites", "text": "Consultations et sensibilisation, avec suivi numérique via notre espace dédié.", "tag": "Médical", "href": "https://consultations-amstc.org" },
+    { "title": "Dons de sang, médicaments et denrées", "text": "Collectes régulières et actions humanitaires ponctuelles.", "tag": "Solidarité", "href": "#realisations" },
+    { "title": "Couvertures sanitaires d'événements", "text": "Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).", "tag": "Terrain", "href": "#realisations" },
+    { "title": "Enseignements post-universitaires (EPU)", "text": "Conférences médicales ouvertes, animées par des professeurs et praticiens invités.", "tag": "Formation", "href": "#realisations" },
+    { "title": "Renforcement de compétences et développement personnel", "text": "Ateliers et formations internes destinés aux membres de l'association.", "tag": "Formation", "href": "#contact" }
+  ],
+
+  "history_eyebrow": "Notre histoire",
+  "history_title": "Une décennie d'engagement",
+  "history_subtitle": "De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.",
+  "timeline": [
+    { "year": "2014", "title": "Naissance de l'association", "text": "Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social." },
+    { "year": "2015 – 2019", "title": "Montée en puissance des campagnes de terrain", "text": "Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé." },
+    { "year": "2020 – 2022", "title": "Reprise après la pandémie", "text": "Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022." },
+    { "year": "2023 – 2024", "title": "Constitution en association indépendante", "text": "Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif." }
+  ],
+
+  "gov_eyebrow": "Organisation",
+  "gov_title": "Le Bureau Exécutif et ses commissions",
+  "gov_subtitle": "Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.",
+  "governance": [
+    { "title": "Présidium", "text": "Président, Vice-président, Secrétaire général et adjoints" },
+    { "title": "Commission Finance", "text": "Gestion du patrimoine, cotisations, bilan annuel" },
+    { "title": "Commissaires aux comptes", "text": "Audit et régularité des comptes" },
+    { "title": "Commission Organisation", "text": "Mise en œuvre des activités et manifestations" },
+    { "title": "Commission Presse & Information", "text": "Communication interne et externe, réseaux sociaux" },
+    { "title": "Commission Sociale", "text": "Programme des actions caritatives et campagnes médicales" },
+    { "title": "Relations extérieures", "text": "Coopération et recherche de partenaires" },
+    { "title": "Commission Pédagogique", "text": "EPU, débats, conférences, enseignements religieux" },
+    { "title": "Commission Féminine", "text": "Cohésion et initiatives portées par les membres féminines" },
+    { "title": "Comité des Sages", "text": "Organe moral garant des principes de l'association" }
+  ],
+
+  "cta_title": "Suivez une consultation en temps réel sur notre espace dédié.",
+  "cta_text": "Notre plateforme de gestion des consultations est utilisée par nos équipes médicales sur le terrain.",
+
+  "footer_description": "Association Médico-Sociale des Talibés Cheikh — association sénégalaise apolitique, confessionnelle et sans but lucratif.",
+  "recepisse": "Récépissé n° 022909/MISP/DGAT/DLPL/DAPA",
+  "contact_phone": "",
+  "lien_facebook": "",
   "lien_linkedin": "",
-  "lien_instagram": "",
-  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal. La santé pour tous nous y croyons !",
-  "lien_facebook": ""
+  "lien_instagram": ""
 }
