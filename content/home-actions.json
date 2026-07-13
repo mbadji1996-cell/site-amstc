@@ -12,18 +12,18 @@
     {
       "title": "Dons de sang, médicaments et denrées",
       "text": "Collectes régulières et actions humanitaires ponctuelles.",
-      "tag": "Solidarité",
+      "tag": "Social",
       "href": "actualites.html"
     },
     {
       "title": "Couvertures sanitaires d'événements",
-      "text": "Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).",
-      "tag": "Terrain",
+      "text": "Présence médicale lors de grands rassemblements religieux (Ex : Gamou de Tivaouane).",
+      "tag": "Médical",
       "href": "actualites.html"
     },
     {
       "title": "Enseignements post-universitaires (EPU)",
-      "text": "Conférences médicales ouvertes, animées par des professeurs et praticiens invités.",
+      "text": "Conférences médicales ouvertes, animées par des professeurs et spécialistes.",
       "tag": "Formation",
       "href": "formations.html"
     },
