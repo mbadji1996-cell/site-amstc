@@ -1,0 +1,48 @@
+backend:
+  name: github
+  repo: mbadji1996-cell/site-amstc   # ex: mbadji1996-cell/amstc-site
+  branch: main
+  base_url: https://REMPLACER-PAR-VOTRE-PROXY.vercel.app  # URL du proxy OAuth (étape 2 du guide)
+  auth_endpoint: auth
+
+site_url: https://amstc.org
+display_url: https://amstc.org
+logo_url: /assets/logo-mark.png
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+publish_mode: simple
+
+locale: 'fr'
+
+collections:
+
+  - name: "accueil"
+    label: "Page d'accueil"
+    files:
+      - name: "contenu"
+        label: "Textes principaux"
+        file: "content/home.json"
+        fields:
+          - { label: "Accroche (eyebrow)", name: "eyebrow", widget: "string" }
+          - { label: "Titre principal", name: "hero_title", widget: "string" }
+          - { label: "Sous-titre", name: "hero_subtitle", widget: "text" }
+          - { label: "Mission — paragraphe 1", name: "mission_p1", widget: "text" }
+          - { label: "Mission — paragraphe 2", name: "mission_p2", widget: "text" }
+          - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
+          - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
+          - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
+          - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
+
+  - name: "actualites"
+    label: "Actualités"
+    folder: "content/actualites"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
+      - { label: "Image de couverture", name: "image", widget: "image", required: false }
+      - { label: "Contenu de l'article", name: "body", widget: "markdown" }

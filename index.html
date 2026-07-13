@@ -243,6 +243,7 @@
       <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
       <a href="#nos-actions">Nos actions</a>
       <a href="#realisations">Réalisations</a>
+      <a href="actualites.html">Actualités</a>
       <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -262,9 +263,9 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <p class="eyebrow">Depuis 2014 — Association Médico-Sociale des Talibés Cheikh</p>
-        <h1>La santé des talibés, <em>suivie</em>, <em>défendue</em>, <em>accompagnée</em>.</h1>
-        <p>L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p>
+        <p class="eyebrow" id="cms-eyebrow">Depuis 2014 — Association Médico-Sociale des Talibés Cheikh</p>
+        <h1 id="cms-hero-title">La santé des talibés, <em>suivie</em>, <em>défendue</em>, <em>accompagnée</em>.</h1>
+        <p id="cms-hero-subtitle">L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p>
         <div class="hero-ctas">
           <a href="#nos-actions" class="btn btn-gold">Découvrir nos actions</a>
           <a href="#don" class="btn btn-outline">Faire un don</a>
@@ -342,8 +343,8 @@
       <div class="mission-text">
         <p class="eyebrow">Notre mission</p>
         <h2>Fédérer les acteurs de la santé autour d'une même cause</h2>
-        <p>L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p>
-        <p>L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p>
+        <p id="cms-mission-p1">L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p>
+        <p id="cms-mission-p2">L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p>
         <a href="#nos-actions" class="btn btn-outline">Parcourir nos actions</a>
       </div>
       <div class="mission-figure">
@@ -482,6 +483,22 @@
     </div>
   </section>
 
+  <!-- ===== DERNIÈRES ACTUALITÉS ===== -->
+  <section class="section-alt" id="actus">
+    <div class="wrap">
+      <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+        <div>
+          <p class="eyebrow">Actualités</p>
+          <h2>Les dernières nouvelles de l'association</h2>
+        </div>
+        <a href="actualites.html" class="btn btn-outline">Toutes les actualités</a>
+      </div>
+      <div class="intro-grid" id="actus-grid">
+        <p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== CTA vers la PWA + DON ===== -->
   <section id="don">
     <div class="wrap">
@@ -556,6 +573,57 @@
     links.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
   }));
+
+  // Remplacez par votre compte / dépôt GitHub réels
+  const REPO = "mbadji1996-cell/site-amstc";
+
+  // Charge les textes éditables depuis content/home.json (mis à jour via /admin)
+  fetch("content/home.json").then(r => r.ok ? r.json() : null).then(data => {
+    if (!data) return;
+    if (data.eyebrow) document.getElementById('cms-eyebrow').textContent = data.eyebrow;
+    if (data.hero_title) document.getElementById('cms-hero-title').textContent = data.hero_title;
+    if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').textContent = data.hero_subtitle;
+    if (data.mission_p1) document.getElementById('cms-mission-p1').textContent = data.mission_p1;
+    if (data.mission_p2) document.getElementById('cms-mission-p2').textContent = data.mission_p2;
+  }).catch(() => {});
+
+  // Charge les 3 dernières actualités
+  function parseFrontMatter(raw) {
+    const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
+    if (!match) return {};
+    const data = {};
+    match[1].split("\n").forEach(line => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return;
+      data[line.slice(0, idx).trim()] = line.slice(idx + 1).trim().replace(/^"(.*)"$/, "$1");
+    });
+    return data;
+  }
+  async function loadLatestActus() {
+    const grid = document.getElementById("actus-grid");
+    try {
+      const listRes = await fetch(`https://api.github.com/repos/${REPO}/contents/content/actualites`);
+      if (!listRes.ok) throw new Error();
+      const files = (await listRes.json()).filter(f => f.name.endsWith(".md"));
+      const articles = await Promise.all(files.map(async f => {
+        const raw = await (await fetch(f.download_url)).text();
+        return { slug: f.name.replace(/\.md$/, ""), ...parseFrontMatter(raw) };
+      }));
+      articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const latest = articles.slice(0, 3);
+      if (latest.length === 0) { grid.innerHTML = '<p style="color:#465A4E;">Aucun article publié pour le moment.</p>'; return; }
+      grid.innerHTML = latest.map(a => `
+        <a class="intro-card" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
+          <span class="num">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+          <h3>${a.title || 'Sans titre'}</h3>
+          <p>${a.excerpt || ''}</p>
+        </a>
+      `).join("");
+    } catch (e) {
+      grid.innerHTML = '<p style="color:#465A4E;">Actualités indisponibles pour le moment.</p>';
+    }
+  }
+  loadLatestActus();
 </script>
 
 </body>
