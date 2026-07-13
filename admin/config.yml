@@ -113,6 +113,59 @@ collections:
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
           - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
 
+      - name: "sections_libres"
+        label: "6. Sections personnalisées"
+        file: "content/home.json"
+        fields:
+          - label: "Blocs (affichés entre 'Organisation' et 'Actualités')"
+            name: "sections"
+            widget: "list"
+            types:
+              - label: "Texte + image"
+                name: "texte_image"
+                widget: "object"
+                fields:
+                  - { label: "Accroche", name: "eyebrow", widget: "string", required: false }
+                  - { label: "Titre", name: "title", widget: "string", required: false }
+                  - { label: "Texte", name: "text", widget: "markdown" }
+                  - { label: "Image", name: "image", widget: "image", required: false }
+                  - { label: "Position de l'image", name: "image_position", widget: "select", options: ["droite", "gauche"], default: "droite" }
+
+              - label: "Bandeau / citation"
+                name: "bandeau"
+                widget: "object"
+                fields:
+                  - { label: "Titre", name: "title", widget: "string", required: false }
+                  - { label: "Texte", name: "text", widget: "markdown" }
+                  - { label: "Style", name: "style", widget: "select", options: ["vert", "or", "clair"], default: "vert" }
+                  - { label: "Texte du bouton", name: "button_text", widget: "string", required: false }
+                  - { label: "Lien du bouton", name: "button_href", widget: "string", required: false }
+
+              - label: "Grille de cartes"
+                name: "cartes"
+                widget: "object"
+                fields:
+                  - { label: "Titre de la section", name: "title", widget: "string", required: false }
+                  - label: "Cartes"
+                    name: "items"
+                    widget: "list"
+                    fields:
+                      - { label: "Image", name: "image", widget: "image", required: false }
+                      - { label: "Titre", name: "title", widget: "string" }
+                      - { label: "Texte", name: "text", widget: "markdown" }
+
+              - label: "Galerie photos"
+                name: "galerie"
+                widget: "object"
+                fields:
+                  - { label: "Titre de la section", name: "title", widget: "string", required: false }
+                  - label: "Images"
+                    name: "images"
+                    widget: "list"
+                    fields:
+                      - { label: "Image", name: "image", widget: "image" }
+                      - { label: "Légende", name: "caption", widget: "string", required: false }
+
   - name: "actualites"
     label: "Actualités"
     folder: "content/actualites"

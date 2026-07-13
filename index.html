@@ -239,6 +239,33 @@
   .footer-bottom a{color:rgba(246,247,241,0.55);}
 
   ::selection{background:var(--gold); color:var(--green-deep);}
+
+  /* ===== Blocs personnalisables (sections libres) ===== */
+  .custom-section{padding:60px 0;}
+  .custom-section.alt{background:var(--paper-alt);}
+
+  .tx-img-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .tx-img-grid.reverse .tx-img-media{order:-1;}
+  .tx-img-media img{width:100%; border-radius:16px; box-shadow:var(--shadow);}
+  .tx-img-text div p{color:#3C4E44; font-size:1.02rem; margin-bottom:14px;}
+  @media (max-width:880px){ .tx-img-grid{grid-template-columns:1fr;} .tx-img-grid.reverse .tx-img-media{order:0;} }
+
+  .banner-block{border-radius:22px; padding:52px 44px; text-align:center;}
+  .banner-block.style-vert{background:var(--green); color:var(--paper);}
+  .banner-block.style-vert h2{color:var(--white);}
+  .banner-block.style-or{background:var(--gold); color:var(--green-deep);}
+  .banner-block.style-or h2{color:var(--green-deep);}
+  .banner-block.style-clair{background:var(--white); color:var(--ink); border:1px solid var(--line);}
+  .banner-block div p{max-width:60ch; margin:0 auto 8px;}
+  .banner-block h2{margin-bottom:14px;}
+
+  .cards-block-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media (max-width:880px){ .cards-block-grid{grid-template-columns:1fr;} }
+
+  .gallery-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:720px){ .gallery-grid{grid-template-columns:1fr 1fr;} }
+  .gallery-grid img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; display:block;}
+  .gallery-caption{font-size:0.8rem; color:#5A6C60; margin-top:6px; text-align:center;}
 </style>
 </head>
 <body>
@@ -351,6 +378,9 @@
     </div>
   </section>
 
+  <!-- ===== SECTIONS PERSONNALISÉES (blocs libres) ===== -->
+  <div id="cms-custom-sections"></div>
+
   <!-- ===== DERNIÈRES ACTUALITÉS ===== -->
   <section class="section-alt" id="actus">
     <div class="wrap">
@@ -448,6 +478,84 @@
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
   function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ===== Rendu des blocs personnalisables =====
+  function renderTextImage(b){
+    const reverse = b.image_position === 'gauche';
+    return `
+    <section class="custom-section">
+      <div class="wrap">
+        <div class="tx-img-grid ${reverse ? 'reverse' : ''}">
+          <div class="tx-img-text">
+            ${b.eyebrow ? `<p class="eyebrow">${esc(b.eyebrow)}</p>` : ''}
+            ${b.title ? `<h2>${esc(b.title)}</h2>` : ''}
+            <div>${md(b.text)}</div>
+          </div>
+          ${b.image ? `<div class="tx-img-media"><img src="${esc(b.image)}" alt=""></div>` : '<div></div>'}
+        </div>
+      </div>
+    </section>`;
+  }
+  function renderBanner(b){
+    return `
+    <section class="custom-section">
+      <div class="wrap">
+        <div class="banner-block style-${esc(b.style || 'vert')}">
+          ${b.title ? `<h2>${esc(b.title)}</h2>` : ''}
+          <div>${md(b.text)}</div>
+          ${b.button_text && b.button_href ? `<a class="btn btn-gold" href="${esc(b.button_href)}" style="margin-top:16px;">${esc(b.button_text)}</a>` : ''}
+        </div>
+      </div>
+    </section>`;
+  }
+  function renderCardsBlock(b){
+    const items = Array.isArray(b.items) ? b.items : [];
+    return `
+    <section class="custom-section alt">
+      <div class="wrap">
+        ${b.title ? `<div class="section-head"><h2>${esc(b.title)}</h2></div>` : ''}
+        <div class="cards-block-grid">
+          ${items.map(it => `
+            <div class="intro-card">
+              ${it.image ? `<img src="${esc(it.image)}" alt="" style="width:100%; border-radius:10px; margin-bottom:14px;">` : ''}
+              <h3>${esc(it.title)}</h3>
+              <div>${md(it.text)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>`;
+  }
+  function renderGallery(b){
+    const images = Array.isArray(b.images) ? b.images : [];
+    return `
+    <section class="custom-section">
+      <div class="wrap">
+        ${b.title ? `<div class="section-head"><h2>${esc(b.title)}</h2></div>` : ''}
+        <div class="gallery-grid">
+          ${images.map(im => `
+            <div>
+              <img src="${esc(im.image)}" alt="${esc(im.caption || '')}">
+              ${im.caption ? `<div class="gallery-caption">${esc(im.caption)}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>`;
+  }
+  function renderCustomSections(sections){
+    const container = document.getElementById('cms-custom-sections');
+    if (!Array.isArray(sections) || sections.length === 0) { container.innerHTML = ''; return; }
+    container.innerHTML = sections.map(block => {
+      switch (block.type) {
+        case 'texte_image': return renderTextImage(block);
+        case 'bandeau': return renderBanner(block);
+        case 'cartes': return renderCardsBlock(block);
+        case 'galerie': return renderGallery(block);
+        default: return '';
+      }
+    }).join('');
+  }
 
   // Charge et construit toute la page d'accueil depuis content/home.json (édité via /admin)
   fetch("content/home.json").then(r => r.ok ? r.json() : null).then(data => {
@@ -557,6 +665,9 @@
       data.lien_instagram ? `<li><a href="${esc(data.lien_instagram)}" target="_blank" rel="noopener">Instagram</a></li>` : ''
     ].join('');
     if (socialLinks) document.getElementById('cms-social-links').innerHTML = socialLinks;
+
+    // Sections personnalisées (blocs libres)
+    renderCustomSections(data.sections);
   }).catch(() => {});
 
   // Charge les 3 dernières actualités
