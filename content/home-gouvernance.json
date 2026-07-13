@@ -1,11 +1,11 @@
 {
   "gov_eyebrow": "Organisation",
-  "gov_title": "Le Bureau Exécutif et ses commissions",
+  "gov_title": "Le Bureau Exécutif",
   "gov_subtitle": "Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.",
   "governance": [
     {
       "title": "Présidium",
-      "text": "Président, Vice-président, Secrétaire général et adjoints"
+      "text": "![](/assets/uploads/00.organigramme-amstc-2026_2.jpg)"
     },
     {
       "title": "Commission Finance",
