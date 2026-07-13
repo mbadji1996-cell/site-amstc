@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
   :root{
     --ink:#0B2E17;
@@ -96,7 +97,9 @@
   @media (max-width:920px){ .hero-grid{grid-template-columns:1fr;} }
   .hero h1{font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
   .hero h1 em{font-style:normal; color:var(--gold-deep);}
-  .hero p{font-size:1.08rem; color:#3C4E44; max-width:48ch; margin-bottom:32px;}
+  .hero p, .hero div#cms-hero-subtitle{font-size:1.08rem; color:#3C4E44; max-width:48ch; margin-bottom:32px;}
+  .hero div#cms-hero-subtitle p{margin-bottom:10px;}
+  .hero div#cms-hero-subtitle img{max-width:100%; border-radius:10px; margin:10px 0;}
   .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
 
   .ledger{
@@ -141,6 +144,7 @@
   .mission-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
   @media (max-width:880px){ .mission-grid{grid-template-columns:1fr;} }
   .mission-text p{color:#3C4E44; font-size:1.03rem; margin-bottom:16px;}
+  .mission-text img{max-width:100%; border-radius:10px; margin:14px 0;}
   .mission-figure{
     background:var(--green-deep); border-radius:var(--radius); padding:38px; color:var(--paper);
   }
@@ -265,7 +269,7 @@
       <div>
         <p class="eyebrow" id="cms-eyebrow">Depuis 2014 — Association Médico-Sociale des Talibés Cheikh</p>
         <h1 id="cms-hero-title">La santé des talibés, <em>suivie</em>, <em>défendue</em>, <em>accompagnée</em>.</h1>
-        <p id="cms-hero-subtitle">L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p>
+        <div id="cms-hero-subtitle"><p>L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p></div>
         <div class="hero-ctas">
           <a href="#nos-actions" class="btn btn-gold">Découvrir nos actions</a>
           <a href="#don" class="btn btn-outline">Faire un don</a>
@@ -343,8 +347,8 @@
       <div class="mission-text">
         <p class="eyebrow">Notre mission</p>
         <h2>Fédérer les acteurs de la santé autour d'une même cause</h2>
-        <p id="cms-mission-p1">L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p>
-        <p id="cms-mission-p2">L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p>
+        <div id="cms-mission-p1"><p>L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines — chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux — autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p></div>
+        <div id="cms-mission-p2"><p>L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p></div>
         <a href="#nos-actions" class="btn btn-outline">Parcourir nos actions</a>
       </div>
       <div class="mission-figure">
@@ -580,11 +584,11 @@
   // Charge les textes éditables depuis content/home.json (mis à jour via /admin)
   fetch("content/home.json").then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
-    if (data.eyebrow) document.getElementById('cms-eyebrow').textContent = data.eyebrow;
-    if (data.hero_title) document.getElementById('cms-hero-title').textContent = data.hero_title;
-    if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').textContent = data.hero_subtitle;
-    if (data.mission_p1) document.getElementById('cms-mission-p1').textContent = data.mission_p1;
-    if (data.mission_p2) document.getElementById('cms-mission-p2').textContent = data.mission_p2;
+    if (data.eyebrow) document.getElementById('cms-eyebrow').innerHTML = marked.parseInline(data.eyebrow);
+    if (data.hero_title) document.getElementById('cms-hero-title').innerHTML = marked.parseInline(data.hero_title);
+    if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').innerHTML = marked.parse(data.hero_subtitle);
+    if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = marked.parse(data.mission_p1);
+    if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = marked.parse(data.mission_p2);
   }).catch(() => {});
 
   // Charge les 3 dernières actualités

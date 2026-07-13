@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: mbadji1996-cell/site-amstc
+  repo: mbadji1996-cell/site-amstc   # ex: mbadji1996-cell/amstc-site
   branch: main
-  base_url: https://decap-proxy.mbadji1996.workers.dev
+  base_url: https://REMPLACER-PAR-VOTRE-PROXY.vercel.app  # URL du proxy OAuth (étape 2 du guide)
   auth_endpoint: auth
 
 site_url: https://amstc.org
@@ -25,11 +25,11 @@ collections:
         label: "Textes principaux"
         file: "content/home.json"
         fields:
-          - { label: "Accroche (eyebrow)", name: "eyebrow", widget: "string" }
-          - { label: "Titre principal", name: "hero_title", widget: "string" }
-          - { label: "Sous-titre", name: "hero_subtitle", widget: "text" }
-          - { label: "Mission — paragraphe 1", name: "mission_p1", widget: "text" }
-          - { label: "Mission — paragraphe 2", name: "mission_p2", widget: "text" }
+          - { label: "Accroche (eyebrow)", name: "eyebrow", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
+          - { label: "Titre principal", name: "hero_title", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
+          - { label: "Sous-titre", name: "hero_subtitle", widget: "markdown" }
+          - { label: "Mission — paragraphe 1", name: "mission_p1", widget: "markdown" }
+          - { label: "Mission — paragraphe 2", name: "mission_p2", widget: "markdown" }
           - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
           - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
