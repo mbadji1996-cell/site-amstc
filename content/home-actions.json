@@ -10,15 +10,15 @@
       "href": "actualites.html"
     },
     {
-      "title": "Dons de sang, médicaments et denrées",
-      "text": "Collectes régulières et actions humanitaires ponctuelles.",
-      "tag": "Social",
-      "href": "actualites.html"
-    },
-    {
       "title": "Couvertures sanitaires d'événements",
       "text": "Présence médicale lors de grands rassemblements religieux (Ex : Gamou de Tivaouane).",
       "tag": "Médical",
+      "href": "actualites.html"
+    },
+    {
+      "title": "Dons de sang, médicaments et denrées",
+      "text": "Collectes régulières et actions humanitaires ponctuelles.",
+      "tag": "Social",
       "href": "actualites.html"
     },
     {
