@@ -113,8 +113,31 @@ collections:
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
           - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
 
+      - name: "don"
+        label: "6. Faire un don"
+        file: "content/don.json"
+        fields:
+          - { label: "Accroche", name: "eyebrow", widget: "string" }
+          - { label: "Titre", name: "title", widget: "string" }
+          - { label: "Texte d'introduction", name: "intro", widget: "text" }
+          - { label: "Titre - Virement bancaire", name: "bank_title", widget: "string" }
+          - { label: "Coordonnées bancaires", name: "bank_details", widget: "markdown", hint: "Titulaire, banque, IBAN/RIB, SWIFT..." }
+          - { label: "Titre - Mobile Money", name: "mobile_title", widget: "string" }
+          - label: "Options Mobile Money"
+            name: "mobile_options"
+            widget: "list"
+            fields:
+              - { label: "Opérateur (ex: Orange Money, Wave...)", name: "operator", widget: "string" }
+              - { label: "Numéro", name: "number", widget: "string" }
+              - { label: "Nom du titulaire", name: "name", widget: "string" }
+          - { label: "Titre - Don en nature", name: "nature_title", widget: "string" }
+          - { label: "Texte - Don en nature", name: "nature_text", widget: "text" }
+          - { label: "Titre - Don institutionnel", name: "institution_title", widget: "string" }
+          - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text" }
+          - { label: "Note de confiance (récépissé)", name: "trust_note", widget: "string" }
+
       - name: "sections_libres"
-        label: "6. Sections personnalisées"
+        label: "7. Sections personnalisées"
         file: "content/home-sections-libres.json"
         fields:
           - label: "Blocs (affichés entre 'Organisation' et 'Réalisations')"

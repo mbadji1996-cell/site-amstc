@@ -1,0 +1,17 @@
+{
+  "eyebrow": "Nous soutenir",
+  "title": "Faire un don",
+  "intro": "Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation menée par nos équipes bénévoles.",
+  "bank_title": "Virement bancaire",
+  "bank_details": "**Compte bancaire :** Disponible bientôt",
+  "mobile_title": "Mobile Money",
+  "mobile_options": [
+    { "operator": "Orange Money", "number": "+221 78 867 96 23", "name": "" },
+    { "operator": "Wave", "number": "+221 78 828 32 16", "name": "" }
+  ],
+  "nature_title": "Don en nature",
+  "nature_text": "Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.",
+  "institution_title": "Don institutionnel ou partenariat",
+  "institution_text": "Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.",
+  "trust_note": "Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA. Un reçu peut être délivré sur demande pour tout don."
+}
