@@ -3,48 +3,243 @@
   "gov_title": "Le Bureau Exécutif",
   "gov_subtitle": "Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.",
   "members": [
-    { "name": "Serigne Babacar SECK", "role": "Président", "commission": "Présidium", "detail": "Doctorat 3, Médecine", "photo": "assets/team/01-serigne-babacar-seck.jpg" },
-    { "name": "Boubacar Athé NIANG", "role": "Vice-président", "commission": "Présidium", "detail": "Doctorat 2, Médecine", "photo": "assets/team/02-boubacar-athe-niang.jpg" },
-    { "name": "Pape Modou PADANE", "role": "Secrétaire général", "commission": "Présidium", "detail": "Doctorat 2, Médecine", "photo": "assets/team/03-pape-modou-padane.jpg" },
-    { "name": "Fama SAKHO", "role": "Adjointe SG", "commission": "Présidium", "detail": "Doctorat 2, Médecine", "photo": "assets/team/04-fama-sakho.jpg" },
-    { "name": "Ndeye Astou NDIAYE", "role": "Adjointe SG", "commission": "Présidium", "detail": "Licence 1, Médecine", "photo": "assets/team/05-ndeye-astou-ndiaye.jpg" },
-    { "name": "Mamadou NIANG", "role": "Adjoint SG", "commission": "Présidium", "detail": "Master 2, Pharmacie", "photo": "assets/team/06-mamadou-niang.jpg" },
-
-    { "name": "Ndeye Oumy SAKHO", "role": "Présidente", "commission": "Commission Sociale", "detail": "Doctorat 1, Médecine", "photo": "assets/team/07-ndeye-oumy-sakho.jpg" },
-    { "name": "Mamadou Aliou DIALLO", "role": "Adjoint", "commission": "Commission Sociale", "detail": "Biologie", "photo": "assets/team/08-mamadou-aliou-diallo.jpg" },
-    { "name": "Ousmane CISSE", "role": "Adjoint", "commission": "Commission Sociale", "detail": "Master 2, Médecine", "photo": "assets/team/09-ousmane-cisse.jpg" },
-
-    { "name": "Malick KANE", "role": "Présidente", "commission": "Commission Pédagogique", "detail": "Doctorat 3, Médecine", "photo": "assets/team/10-malick-kane.jpg" },
-    { "name": "Cheikh Tidiane DIOP", "role": "Adjointe", "commission": "Commission Pédagogique", "detail": "Master 1, Médecine", "photo": "assets/team/11-cheikh-tidiane-diop.jpg" },
-    { "name": "Mass NDIAYE", "role": "Adjoint", "commission": "Commission Pédagogique", "detail": "Master 2, Pharmacie", "photo": "assets/team/12-mass-ndiaye.jpg" },
-
-    { "name": "Marème FALL", "role": "Présidente", "commission": "Relations extérieures", "detail": "Doctorat 2, Pharmacie", "photo": "assets/team/13-mareme-fall.jpg" },
-    { "name": "Malick DIONGUE", "role": "Adjoint", "commission": "Relations extérieures", "detail": "Doctorat 1, Médecine", "photo": "assets/team/14-malick-diongue.jpg" },
-    { "name": "Marième SY", "role": "Adjointe", "commission": "Relations extérieures", "detail": "Doctorat 1, Médecine", "photo": "assets/team/15-marieme-sy.jpg" },
-    { "name": "Ndeye Arame GUEYE", "role": "Adjointe", "commission": "Relations extérieures", "detail": "Doctorat 1, Pharmacie", "photo": "assets/team/16-ndeye-arame-gueye.jpg" },
-    { "name": "Moussa Abdel Razack SECK", "role": "Adjoint", "commission": "Relations extérieures", "detail": "Kinésithérapeute", "photo": "assets/team/17-moussa-abdel-razack-seck.jpg" },
-
-    { "name": "Sokhna GUEYE", "role": "Présidente", "commission": "Commission Organisation", "detail": "Master 1, Chirurgie dentaire", "photo": "assets/team/18-sokhna-gueye.jpg" },
-    { "name": "Ibrahima NGUIRANE", "role": "Adjoint", "commission": "Commission Organisation", "detail": "Licence 3, Pharmacie", "photo": "assets/team/19-ibrahima-nguirane.jpg" },
-    { "name": "Adji Yacine NDIAYE", "role": "Adjointe", "commission": "Commission Organisation", "detail": "Master 2, Médecine", "photo": "assets/team/20-adji-yacine-ndiaye.jpg" },
-    { "name": "Moustapha BADJI", "role": "Adjoint", "commission": "Commission Organisation", "detail": "Doctorat 2, Médecine", "photo": "assets/team/21-moustapha-badji.jpg" },
-
-    { "name": "Moussa GNING", "role": "Président", "commission": "Presse & Information", "detail": "Licence 3, Pharmacie", "photo": "assets/team/22-moussa-gning.jpg" },
-    { "name": "Fatou DIONE", "role": "Adjointe", "commission": "Presse & Information", "detail": "Doctorat 2, Médecine", "photo": "assets/team/23-fatou-dione.jpg" },
-    { "name": "Khadidiatou NDOYE", "role": "Adjointe", "commission": "Presse & Information", "detail": "Doctorat 1, Médecine", "photo": "assets/team/24-khadidiatou-ndoye.jpg" },
-
-    { "name": "Ndeye Awa DIAHAM", "role": "Présidente", "commission": "Commission Finance", "detail": "Doctorat 2, Médecine", "photo": "assets/team/25-ndeye-awa-diaham.jpg" },
-    { "name": "Dr Codou NDIAYE", "role": "Adjointe", "commission": "Commission Finance", "detail": "Pharmacienne", "photo": "assets/team/26-dr-codou-ndiaye.jpg" },
-    { "name": "Talla KANDJI", "role": "Adjoint", "commission": "Commission Finance", "detail": "Master 2, Pharmacie", "photo": "assets/team/27-talla-kandji.jpg" },
-    { "name": "Mandiaye SYLLA", "role": "Adjointe", "commission": "Commission Finance", "detail": "Doctorat 3, Médecine", "photo": "assets/team/28-mandiaye-sylla.jpg" },
-
-    { "name": "Aichata NIANG", "role": "Présidente", "commission": "Commission Féminine", "detail": "Doctorat 2, Médecine", "photo": "assets/team/29-aichata-niang.jpg" },
-    { "name": "Ndeye Assiétou DIOP", "role": "Adjointe", "commission": "Commission Féminine", "detail": "Master 2, Médecine", "photo": "assets/team/30-ndeye-assietou-diop.jpg" },
-    { "name": "Aminata DIOUF", "role": "Adjointe", "commission": "Commission Féminine", "detail": "Doctorat 1, Médecine", "photo": "assets/team/31-aminata-diouf.jpg" },
-    { "name": "Mame Dié MBATHIE", "role": "Adjointe", "commission": "Commission Féminine", "detail": "Doctorat 1, Médecine", "photo": "assets/team/32-mame-die-mbathie.jpg" },
-
-    { "name": "Mame Youssoupha DIOP", "role": "Commissaire aux comptes", "commission": "Commissaires aux comptes", "detail": "Licence 3, Médecine", "photo": "assets/team/33-mame-youssoupha-diop.jpg" },
-
-    { "name": "Mouhamed BADJI", "role": "Coordinateur", "commission": "Comité des Sages", "detail": "Médecin - Graphiste médical", "photo": "assets/team/34-mouhamed-badji.jpg" }
+    {
+      "name": "Serigne Babacar SECK",
+      "role": "Président",
+      "commission": "Présidium",
+      "detail": "Interne des Hôpitaux en Anesthésie et Réanimation",
+      "photo": "assets/team/01-serigne-babacar-seck.jpg"
+    },
+    {
+      "name": "Boubacar Athé NIANG",
+      "role": "Vice-président",
+      "commission": "Présidium",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/02-boubacar-athe-niang.jpg"
+    },
+    {
+      "name": "Pape Modou PADANE",
+      "role": "Secrétaire général",
+      "commission": "Présidium",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/03-pape-modou-padane.jpg"
+    },
+    {
+      "name": "Fama SAKHO",
+      "role": "Adjointe SG",
+      "commission": "Présidium",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/04-fama-sakho.jpg"
+    },
+    {
+      "name": "Ndeye Astou NDIAYE",
+      "role": "Adjointe SG",
+      "commission": "Présidium",
+      "detail": "Licence 1, Médecine",
+      "photo": "assets/team/05-ndeye-astou-ndiaye.jpg"
+    },
+    {
+      "name": "Mamadou NIANG",
+      "role": "Adjoint SG",
+      "commission": "Présidium",
+      "detail": "Master 2, Pharmacie",
+      "photo": "assets/team/06-mamadou-niang.jpg"
+    },
+    {
+      "name": "Ndeye Oumy SAKHO",
+      "role": "Présidente",
+      "commission": "Commission Sociale",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/07-ndeye-oumy-sakho.jpg"
+    },
+    {
+      "name": "Mamadou Aliou DIALLO",
+      "role": "Adjoint",
+      "commission": "Commission Sociale",
+      "detail": "Biologie",
+      "photo": "assets/team/08-mamadou-aliou-diallo.jpg"
+    },
+    {
+      "name": "Ousmane CISSE",
+      "role": "Adjoint",
+      "commission": "Commission Sociale",
+      "detail": "Master 2, Médecine",
+      "photo": "assets/team/09-ousmane-cisse.jpg"
+    },
+    {
+      "name": "Malick KANE",
+      "role": "Présidente",
+      "commission": "Commission Pédagogique",
+      "detail": "Doctorat 3, Médecine",
+      "photo": "assets/team/10-malick-kane.jpg"
+    },
+    {
+      "name": "Cheikh Tidiane DIOP",
+      "role": "Adjointe",
+      "commission": "Commission Pédagogique",
+      "detail": "Master 1, Médecine",
+      "photo": "assets/team/11-cheikh-tidiane-diop.jpg"
+    },
+    {
+      "name": "Mass NDIAYE",
+      "role": "Adjoint",
+      "commission": "Commission Pédagogique",
+      "detail": "Master 2, Pharmacie",
+      "photo": "assets/team/12-mass-ndiaye.jpg"
+    },
+    {
+      "name": "Marème FALL",
+      "role": "Présidente",
+      "commission": "Relations extérieures",
+      "detail": "Doctorat 2, Pharmacie",
+      "photo": "assets/team/13-mareme-fall.jpg"
+    },
+    {
+      "name": "Malick DIONGUE",
+      "role": "Adjoint",
+      "commission": "Relations extérieures",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/14-malick-diongue.jpg"
+    },
+    {
+      "name": "Marième SY",
+      "role": "Adjointe",
+      "commission": "Relations extérieures",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/15-marieme-sy.jpg"
+    },
+    {
+      "name": "Ndeye Arame GUEYE",
+      "role": "Adjointe",
+      "commission": "Relations extérieures",
+      "detail": "Doctorat 1, Pharmacie",
+      "photo": "assets/team/16-ndeye-arame-gueye.jpg"
+    },
+    {
+      "name": "Moussa Abdel Razack SECK",
+      "role": "Adjoint",
+      "commission": "Relations extérieures",
+      "detail": "Kinésithérapeute",
+      "photo": "assets/team/17-moussa-abdel-razack-seck.jpg"
+    },
+    {
+      "name": "Sokhna GUEYE",
+      "role": "Présidente",
+      "commission": "Commission Organisation",
+      "detail": "Master 1, Chirurgie dentaire",
+      "photo": "assets/team/18-sokhna-gueye.jpg"
+    },
+    {
+      "name": "Ibrahima NGUIRANE",
+      "role": "Adjoint",
+      "commission": "Commission Organisation",
+      "detail": "Licence 3, Pharmacie",
+      "photo": "assets/team/19-ibrahima-nguirane.jpg"
+    },
+    {
+      "name": "Adji Yacine NDIAYE",
+      "role": "Adjointe",
+      "commission": "Commission Organisation",
+      "detail": "Master 2, Médecine",
+      "photo": "assets/team/20-adji-yacine-ndiaye.jpg"
+    },
+    {
+      "name": "Moustapha BADJI",
+      "role": "Adjoint",
+      "commission": "Commission Organisation",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/21-moustapha-badji.jpg"
+    },
+    {
+      "name": "Moussa GNING",
+      "role": "Président",
+      "commission": "Presse & Information",
+      "detail": "Licence 3, Pharmacie",
+      "photo": "assets/team/22-moussa-gning.jpg"
+    },
+    {
+      "name": "Fatou DIONE",
+      "role": "Adjointe",
+      "commission": "Presse & Information",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/23-fatou-dione.jpg"
+    },
+    {
+      "name": "Khadidiatou NDOYE",
+      "role": "Adjointe",
+      "commission": "Presse & Information",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/24-khadidiatou-ndoye.jpg"
+    },
+    {
+      "name": "Ndeye Awa DIAHAM",
+      "role": "Présidente",
+      "commission": "Commission Finance",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/25-ndeye-awa-diaham.jpg"
+    },
+    {
+      "name": "Dr Codou NDIAYE",
+      "role": "Adjointe",
+      "commission": "Commission Finance",
+      "detail": "Pharmacienne",
+      "photo": "assets/team/26-dr-codou-ndiaye.jpg"
+    },
+    {
+      "name": "Talla KANDJI",
+      "role": "Adjoint",
+      "commission": "Commission Finance",
+      "detail": "Master 2, Pharmacie",
+      "photo": "assets/team/27-talla-kandji.jpg"
+    },
+    {
+      "name": "Mandiaye SYLLA",
+      "role": "Adjointe",
+      "commission": "Commission Finance",
+      "detail": "Doctorat 3, Médecine",
+      "photo": "assets/team/28-mandiaye-sylla.jpg"
+    },
+    {
+      "name": "Aichata NIANG",
+      "role": "Présidente",
+      "commission": "Commission Féminine",
+      "detail": "Doctorat 2, Médecine",
+      "photo": "assets/team/29-aichata-niang.jpg"
+    },
+    {
+      "name": "Ndeye Assiétou DIOP",
+      "role": "Adjointe",
+      "commission": "Commission Féminine",
+      "detail": "Master 2, Médecine",
+      "photo": "assets/team/30-ndeye-assietou-diop.jpg"
+    },
+    {
+      "name": "Aminata DIOUF",
+      "role": "Adjointe",
+      "commission": "Commission Féminine",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/31-aminata-diouf.jpg"
+    },
+    {
+      "name": "Mame Dié MBATHIE",
+      "role": "Adjointe",
+      "commission": "Commission Féminine",
+      "detail": "Doctorat 1, Médecine",
+      "photo": "assets/team/32-mame-die-mbathie.jpg"
+    },
+    {
+      "name": "Mame Youssoupha DIOP",
+      "role": "Commissaire aux comptes",
+      "commission": "Commissaires aux comptes",
+      "detail": "Licence 3, Médecine",
+      "photo": "assets/team/33-mame-youssoupha-diop.jpg"
+    },
+    {
+      "name": "Mouhamed BADJI",
+      "role": "Coordinateur",
+      "commission": "Comité des Sages",
+      "detail": "Médecin - Graphiste",
+      "photo": "assets/team/34-mouhamed-badji.jpg"
+    }
   ]
 }
