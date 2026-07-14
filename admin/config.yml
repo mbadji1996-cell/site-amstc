@@ -99,12 +99,16 @@ collections:
           - { label: "Titre de la section", name: "gov_title", widget: "string" }
           - { label: "Sous-titre", name: "gov_subtitle", widget: "text" }
 
-          - label: "Bureau et commissions"
-            name: "governance"
+          - label: "Membres du Bureau Exécutif"
+            name: "members"
             widget: "list"
+            hint: "Un membre par fiche. L'ordre ici définit l'ordre d'affichage sur le site."
             fields:
-              - { label: "Titre", name: "title", widget: "string" }
-              - { label: "Description", name: "text", widget: "markdown" }
+              - { label: "Photo", name: "photo", widget: "image" }
+              - { label: "Nom", name: "name", widget: "string" }
+              - { label: "Rôle (Président, Adjoint...)", name: "role", widget: "string" }
+              - { label: "Commission / groupe", name: "commission", widget: "string" }
+              - { label: "Précision (formation, spécialité...)", name: "detail", widget: "string", required: false }
 
       - name: "cta_footer"
         label: "5. Bandeau de don + Pied de page"
