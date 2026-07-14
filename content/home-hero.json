@@ -38,15 +38,15 @@
   "mission_eyebrow": "Notre mission",
   "emblem_items": [
     {
-      "title": "🩺 Santé",
+      "title": "Santé",
       "text": "Promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal"
     },
     {
-      "title": "🎓 Formation ",
+      "title": "Formation ",
       "text": "Assurer de la bonne formation de nos membres dans le domaine de la santé, du social et en leadership"
     },
     {
-      "title": "🕌 Spiritualité",
+      "title": "Spiritualité",
       "text": "S’aider mutuellement dans la religion et dans la tarikha Tidjane"
     }
   ],
