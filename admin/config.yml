@@ -7,7 +7,7 @@ backend:
 
 site_url: https://amstc.org
 display_url: https://amstc.org
-logo_url: /assets/logo-mark.png
+logo_url: /assets/logo-horizontal.png
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
