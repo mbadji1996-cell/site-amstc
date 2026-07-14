@@ -106,18 +106,27 @@
   }
 
   /* ===== Hero ===== */
-  .hero{position:relative; overflow:hidden; padding:70px 0 66px;}
-  .hero-grid{display:grid; grid-template-columns:1.05fr 0.85fr; gap:56px; align-items:center;}
-  @media (max-width:920px){ .hero-grid{grid-template-columns:1fr;} }
-  .hero h1{font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
-  .hero h1 em{font-style:normal; color:var(--gold-deep);}
-  .hero p, .hero div#cms-hero-subtitle{font-size:1.08rem; color:#3C4E44; max-width:48ch; margin-bottom:32px;}
+  .hero{position:relative; overflow:hidden; padding:150px 0 120px; isolation:isolate;}
+  @media (max-width:720px){ .hero{padding:110px 0 80px;} }
+  .hero-bg{position:absolute; inset:0; z-index:-2; background:var(--green-deep);}
+  .hero-bg-slide{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    opacity:0; transition:opacity 1.8s ease;
+  }
+  .hero-bg-slide.is-active{opacity:1;}
+  .hero-overlay{
+    position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(180deg, rgba(6,68,28,0.80) 0%, rgba(6,68,28,0.60) 45%, rgba(6,68,28,0.88) 100%);
+  }
+  .hero-grid{max-width:700px;}
+  .hero .eyebrow{color:var(--gold);}
+  .hero .eyebrow::before{background:var(--gold);}
+  .hero h1{color:var(--white); font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
+  .hero h1 em{font-style:normal; color:var(--gold);}
+  .hero p, .hero div#cms-hero-subtitle{font-size:1.08rem; color:rgba(246,247,241,0.88); max-width:52ch; margin-bottom:32px;}
   .hero div#cms-hero-subtitle p{margin-bottom:10px;}
   .hero div#cms-hero-subtitle img{max-width:100%; border-radius:10px; margin:10px 0;}
   .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
-
-  .hero-photo{border-radius:20px; overflow:hidden; box-shadow:var(--shadow); aspect-ratio:3/2;}
-  .hero-photo img{width:100%; height:100%; object-fit:cover; display:block;}
 
   /* ===== Three-card intro ===== */
   .intro{padding:10px 0 90px;}
@@ -317,19 +326,15 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
+    <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
     <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow" id="cms-eyebrow">Depuis 2014 - Association Médico-Sociale des Talibés Cheikh</p>
-        <h1 id="cms-hero-title">La santé pour tous, <em>notre objectif !</em></h1>
-        <div id="cms-hero-subtitle"><p>L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p></div>
-        <div class="hero-ctas">
-          <a href="#nos-actions" class="btn btn-gold">Découvrir nos actions</a>
-          <a href="don.html" class="btn btn-outline">Faire un don</a>
-        </div>
-      </div>
-
-      <div class="hero-photo">
-        <img src="assets/hero-photo.jpg" alt="Membres de l'AMSTC réunis lors d'un de leurs événements" loading="eager">
+      <p class="eyebrow" id="cms-eyebrow">Depuis 2014 - Association Médico-Sociale des Talibés Cheikh</p>
+      <h1 id="cms-hero-title">La santé pour tous, <em>notre objectif !</em></h1>
+      <div id="cms-hero-subtitle"><p>L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p></div>
+      <div class="hero-ctas">
+        <a href="#nos-actions" class="btn btn-gold">Découvrir nos actions</a>
+        <a href="don.html" class="btn btn-ghost">Faire un don</a>
       </div>
     </div>
   </section>
@@ -556,6 +561,32 @@
     links.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
   }));
+
+  // ===== Diaporama de fond du hero =====
+  // Ajoutez ici le chemin de chaque nouvelle photo déposée dans assets/uploads
+  const HERO_IMAGES = [
+    "assets/hero-photo.jpg"
+  ];
+  function initHeroSlideshow(){
+    const bg = document.getElementById('heroBg');
+    if (!bg || HERO_IMAGES.length === 0) return;
+    HERO_IMAGES.forEach((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'hero-bg-slide' + (i === 0 ? ' is-active' : '');
+      slide.style.backgroundImage = `url('${src}')`;
+      bg.appendChild(slide);
+    });
+    const slides = bg.querySelectorAll('.hero-bg-slide');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (slides.length <= 1 || reduceMotion) return;
+    let idx = 0;
+    setInterval(() => {
+      slides[idx].classList.remove('is-active');
+      idx = (idx + 1) % slides.length;
+      slides[idx].classList.add('is-active');
+    }, 5000);
+  }
+  initHeroSlideshow();
 
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
