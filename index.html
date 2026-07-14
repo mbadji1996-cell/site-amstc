@@ -19,7 +19,7 @@
 <link rel="icon" href="assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0B2E17;
@@ -34,9 +34,9 @@
     --shadow: 0 12px 32px rgba(6,68,28,0.10);
     --radius: 14px;
     --maxw: 1320px;
-    --display: 'Fraunces', serif;
-    --body: 'Public Sans', -apple-system, sans-serif;
-    --mono: 'IBM Plex Mono', monospace;
+    --display:'Sora', sans-serif;
+    --body:'Inter', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -52,6 +52,8 @@
   img{max-width:100%; display:block;}
   main, footer{opacity:0; transition:opacity .25s ease;}
   main.is-ready, footer.is-ready{opacity:1;}
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.is-visible{opacity:1; transform:translateY(0);}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
   h1,h2,h3{font-family:var(--display); font-weight:600; color:var(--green-deep); line-height:1.12; letter-spacing:-0.01em;}
   .eyebrow{
@@ -282,7 +284,7 @@
   ]
 }
 </script>
-<noscript><style>main, footer{opacity:1 !important;}</style></noscript>
+<noscript><style>main, footer, .reveal{opacity:1 !important; transform:none !important;}</style></noscript>
 </head>
 <body>
 
@@ -335,19 +337,19 @@
   <!-- ===== THREE-CARD INTRO ===== -->
   <section class="intro">
     <div class="wrap intro-grid" id="cms-intro-cards">
-      <div class="intro-card">
+      <div class="intro-card reveal">
         <span class="num">01 - Identité</span>
         <h3>Qui sommes-nous ?</h3>
         <div><p>Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».</p></div>
         <a href="#qui-sommes-nous">En savoir plus →</a>
       </div>
-      <div class="intro-card">
+      <div class="intro-card reveal">
         <span class="num">02 - Actions</span>
         <h3>Que faisons-nous ?</h3>
         <div><p>Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.</p></div>
         <a href="#nos-actions">Voir nos actions →</a>
       </div>
-      <div class="intro-card">
+      <div class="intro-card reveal">
         <span class="num">03 - Engagement</span>
         <h3>Comment participer ?</h3>
         <div><p>Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.</p></div>
@@ -359,14 +361,14 @@
   <!-- ===== QUI SOMMES-NOUS / MISSION ===== -->
   <section class="section-alt" id="qui-sommes-nous">
     <div class="wrap mission-grid">
-      <div class="mission-text">
+      <div class="mission-text reveal">
         <p class="eyebrow" id="cms-mission-eyebrow">Notre mission</p>
         <h2 id="cms-mission-title">Fédérer les acteurs de la santé autour d'une même cause</h2>
         <div id="cms-mission-p1"><p>L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines - chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux - autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p></div>
         <div id="cms-mission-p2"><p>L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p></div>
         <a href="#nos-actions" class="btn btn-outline">Parcourir nos actions</a>
       </div>
-      <div class="mission-figure">
+      <div class="mission-figure reveal">
         <h4 id="cms-emblem-title">Symbolique de l'emblème</h4>
         <div id="cms-emblem-items">
           <div class="emblem-row"><span class="mark">01</span><div><strong>Le Coran ouvert</strong><p>Symbolise la foi profonde en l'islam et l'attachement aux enseignements coraniques.</p></div></div>
@@ -381,33 +383,33 @@
   <!-- ===== NOS ACTIONS ===== -->
   <section id="nos-actions">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <p class="eyebrow" id="cms-actions-eyebrow">Nos actions</p>
         <h2 id="cms-actions-title">Le registre de nos interventions</h2>
         <p id="cms-actions-subtitle">Les moyens d'action définis par nos statuts, consignés comme dans un carnet de suivi.</p>
       </div>
       <div class="register-list" id="cms-register-list">
-        <a class="register-row" href="actualites.html">
+        <a class="register-row reveal" href="actualites.html">
           <span class="register-id">N°01</span>
           <div><div class="register-title">Campagnes de consultations médicales gratuites</div><div class="register-desc">Consultations et sensibilisation, avec suivi numérique via notre espace dédié.</div></div>
           <span class="register-tag">Médical</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="actualites.html">
+        <a class="register-row reveal" href="actualites.html">
           <span class="register-id">N°02</span>
           <div><div class="register-title">Dons de sang, médicaments et denrées</div><div class="register-desc">Collectes régulières et actions humanitaires ponctuelles.</div></div>
           <span class="register-tag">Solidarité</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="actualites.html">
+        <a class="register-row reveal" href="actualites.html">
           <span class="register-id">N°03</span>
           <div><div class="register-title">Couvertures sanitaires d'événements</div><div class="register-desc">Présence médicale lors de grands rassemblements religieux (Gamou de Tivaouane).</div></div>
           <span class="register-tag">Terrain</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="formations.html">
+        <a class="register-row reveal" href="formations.html">
           <span class="register-id">N°04</span>
           <div><div class="register-title">Enseignements post-universitaires (EPU)</div><div class="register-desc">Conférences médicales ouvertes, animées par des professeurs et praticiens invités.</div></div>
           <span class="register-tag">Formation</span><span class="register-arrow">→</span>
         </a>
-        <a class="register-row" href="formations.html">
+        <a class="register-row reveal" href="formations.html">
           <span class="register-id">N°05</span>
           <div><div class="register-title">Renforcement de compétences et développement personnel</div><div class="register-desc">Ateliers et formations internes destinés aux membres de l'association.</div></div>
           <span class="register-tag">Formation</span><span class="register-arrow">→</span>
@@ -419,16 +421,16 @@
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
   <section class="section-alt" id="historique">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
         <h2 id="cms-history-title">Une décennie d'engagement</h2>
         <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
       </div>
       <div class="timeline" id="cms-timeline">
-        <div class="tl-item"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
-        <div class="tl-item"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
-        <div class="tl-item"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
-        <div class="tl-item"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
+        <div class="tl-item reveal"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
+        <div class="tl-item reveal"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
+        <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
+        <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
       </div>
     </div>
   </section>
@@ -436,22 +438,22 @@
   <!-- ===== GOUVERNANCE ===== -->
   <section>
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <p class="eyebrow" id="cms-gov-eyebrow">Organisation</p>
         <h2 id="cms-gov-title">Le Bureau Exécutif et ses commissions</h2>
         <p id="cms-gov-subtitle">Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.</p>
       </div>
       <div class="gov-grid" id="cms-gov-grid">
-        <div class="gov-card"><strong>Présidium</strong><div>Président, Vice-président, Secrétaire général et adjoints</div></div>
-        <div class="gov-card"><strong>Commission Finance</strong><div>Gestion du patrimoine, cotisations, bilan annuel</div></div>
-        <div class="gov-card"><strong>Commissaires aux comptes</strong><div>Audit et régularité des comptes</div></div>
-        <div class="gov-card"><strong>Commission Organisation</strong><div>Mise en œuvre des activités et manifestations</div></div>
-        <div class="gov-card"><strong>Commission Presse & Information</strong><div>Communication interne et externe, réseaux sociaux</div></div>
-        <div class="gov-card"><strong>Commission Sociale</strong><div>Programme des actions caritatives et campagnes médicales</div></div>
-        <div class="gov-card"><strong>Relations extérieures</strong><div>Coopération et recherche de partenaires</div></div>
-        <div class="gov-card"><strong>Commission Pédagogique</strong><div>EPU, débats, conférences, enseignements religieux</div></div>
-        <div class="gov-card"><strong>Commission Féminine</strong><div>Cohésion et initiatives portées par les membres féminines</div></div>
-        <div class="gov-card"><strong>Comité des Sages</strong><div>Organe moral garant des principes de l'association</div></div>
+        <div class="gov-card reveal"><strong>Présidium</strong><div>Président, Vice-président, Secrétaire général et adjoints</div></div>
+        <div class="gov-card reveal"><strong>Commission Finance</strong><div>Gestion du patrimoine, cotisations, bilan annuel</div></div>
+        <div class="gov-card reveal"><strong>Commissaires aux comptes</strong><div>Audit et régularité des comptes</div></div>
+        <div class="gov-card reveal"><strong>Commission Organisation</strong><div>Mise en œuvre des activités et manifestations</div></div>
+        <div class="gov-card reveal"><strong>Commission Presse & Information</strong><div>Communication interne et externe, réseaux sociaux</div></div>
+        <div class="gov-card reveal"><strong>Commission Sociale</strong><div>Programme des actions caritatives et campagnes médicales</div></div>
+        <div class="gov-card reveal"><strong>Relations extérieures</strong><div>Coopération et recherche de partenaires</div></div>
+        <div class="gov-card reveal"><strong>Commission Pédagogique</strong><div>EPU, débats, conférences, enseignements religieux</div></div>
+        <div class="gov-card reveal"><strong>Commission Féminine</strong><div>Cohésion et initiatives portées par les membres féminines</div></div>
+        <div class="gov-card reveal"><strong>Comité des Sages</strong><div>Organe moral garant des principes de l'association</div></div>
       </div>
     </div>
   </section>
@@ -462,7 +464,7 @@
   <!-- ===== DERNIÈRES ACTUALITÉS ===== -->
   <section class="section-alt" id="actus">
     <div class="wrap">
-      <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+      <div class="section-head reveal" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
         <div>
           <p class="eyebrow">Réalisations</p>
           <h2>Nos réalisations récentes</h2>
@@ -479,7 +481,7 @@
   <!-- ===== CTA vers la PWA + DON ===== -->
   <section id="espace-consultation">
     <div class="wrap">
-      <div class="cta-banner">
+      <div class="cta-banner reveal">
         <div>
           <h2 id="cms-cta-title">Suivez une consultation en temps réel sur notre espace dédié.</h2>
           <p id="cms-cta-text">Notre plateforme de gestion des consultations est utilisée par nos équipes médicales sur le terrain.</p>
@@ -563,7 +565,7 @@
   function renderTextImage(b){
     const reverse = b.image_position === 'gauche';
     return `
-    <section class="custom-section">
+    <section class="custom-section reveal">
       <div class="wrap">
         <div class="tx-img-grid ${reverse ? 'reverse' : ''}">
           <div class="tx-img-text">
@@ -578,7 +580,7 @@
   }
   function renderBanner(b){
     return `
-    <section class="custom-section">
+    <section class="custom-section reveal">
       <div class="wrap">
         <div class="banner-block style-${esc(b.style || 'vert')}">
           ${b.title ? `<h2>${esc(b.title)}</h2>` : ''}
@@ -591,12 +593,12 @@
   function renderCardsBlock(b){
     const items = Array.isArray(b.items) ? b.items : [];
     return `
-    <section class="custom-section alt">
+    <section class="custom-section alt reveal">
       <div class="wrap">
-        ${b.title ? `<div class="section-head"><h2>${esc(b.title)}</h2></div>` : ''}
+        ${b.title ? `<div class="section-head reveal"><h2>${esc(b.title)}</h2></div>` : ''}
         <div class="cards-block-grid">
           ${items.map(it => `
-            <div class="intro-card">
+            <div class="intro-card reveal">
               ${it.image ? `<img src="${esc(it.image)}" alt="" style="width:100%; border-radius:10px; margin-bottom:14px;">` : ''}
               <h3>${esc(it.title)}</h3>
               <div>${md(it.text)}</div>
@@ -609,9 +611,9 @@
   function renderGallery(b){
     const images = Array.isArray(b.images) ? b.images : [];
     return `
-    <section class="custom-section">
+    <section class="custom-section reveal">
       <div class="wrap">
-        ${b.title ? `<div class="section-head"><h2>${esc(b.title)}</h2></div>` : ''}
+        ${b.title ? `<div class="section-head reveal"><h2>${esc(b.title)}</h2></div>` : ''}
         <div class="gallery-grid">
           ${images.map(im => `
             <div>
@@ -644,6 +646,26 @@
   }
   setTimeout(revealPage, 2500);
 
+  // ===== Effets d'apparition au défilement =====
+  let scrollRevealObserver;
+  function initScrollReveal(){
+    const els = document.querySelectorAll('.reveal:not(.reveal-bound)');
+    if (!els.length) return;
+    els.forEach(el => el.classList.add('reveal-bound'));
+    if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('is-visible')); return; }
+    if (!scrollRevealObserver) {
+      scrollRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            scrollRevealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    }
+    els.forEach(el => scrollRevealObserver.observe(el));
+  }
+
   // Charge et fusionne les 6 fichiers de contenu (édités via /admin), puis construit la page
   const CONTENT_FILES = [
     "content/home-hero.json",
@@ -665,7 +687,7 @@
     // 3 cartes d'introduction
     if (Array.isArray(data.intro_cards)) {
       document.getElementById('cms-intro-cards').innerHTML = data.intro_cards.map(c => `
-        <div class="intro-card">
+        <div class="intro-card reveal">
           <span class="num">${esc(c.num)}</span>
           <h3>${esc(c.title)}</h3>
           <div>${md(c.text)}</div>
@@ -697,7 +719,7 @@
       document.getElementById('cms-register-list').innerHTML = data.actions.map((a, i) => {
         const external = /^https?:\/\//.test(a.href || '');
         return `
-        <a class="register-row" href="${esc(a.href || '#')}" ${external ? 'target="_blank" rel="noopener"' : ''}>
+        <a class="register-row reveal" href="${esc(a.href || '#')}" ${external ? 'target="_blank" rel="noopener"' : ''}>
           <span class="register-id">N°${String(i + 1).padStart(2, '0')}</span>
           <div>
             <div class="register-title">${esc(a.title)}</div>
@@ -715,7 +737,7 @@
     if (data.history_subtitle) document.getElementById('cms-history-subtitle').textContent = data.history_subtitle;
     if (Array.isArray(data.timeline)) {
       document.getElementById('cms-timeline').innerHTML = data.timeline.map(t => `
-        <div class="tl-item">
+        <div class="tl-item reveal">
           <span class="tl-year">${esc(t.year)}</span>
           <h4>${esc(t.title)}</h4>
           <div>${md(t.text)}</div>
@@ -729,7 +751,7 @@
     if (data.gov_subtitle) document.getElementById('cms-gov-subtitle').textContent = data.gov_subtitle;
     if (Array.isArray(data.governance)) {
       document.getElementById('cms-gov-grid').innerHTML = data.governance.map(g => `
-        <div class="gov-card"><strong>${esc(g.title)}</strong><div>${md(g.text)}</div></div>
+        <div class="gov-card reveal"><strong>${esc(g.title)}</strong><div>${md(g.text)}</div></div>
       `).join('');
     }
 
@@ -751,7 +773,8 @@
     // Sections personnalisées (blocs libres)
     renderCustomSections(data.sections);
     revealPage();
-  }).catch(() => { revealPage(); });
+    initScrollReveal();
+  }).catch(() => { revealPage(); initScrollReveal(); });
 
   // Charge les 3 dernières actualités
   async function loadLatestActus() {
@@ -763,12 +786,13 @@
       const latest = articles.slice(0, 3);
       if (latest.length === 0) { grid.innerHTML = '<p style="color:#465A4E;">Aucun article publié pour le moment.</p>'; return; }
       grid.innerHTML = latest.map(a => `
-        <a class="intro-card" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
+        <a class="intro-card reveal" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
           <span class="num">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
           <h3>${a.title || 'Sans titre'}</h3>
           <p>${a.excerpt || ''}</p>
         </a>
       `).join("");
+      initScrollReveal();
     } catch (e) {
       grid.innerHTML = '<p style="color:#465A4E;">Réalisations indisponibles pour le moment.</p>';
     }
