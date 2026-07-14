@@ -195,6 +195,24 @@ collections:
                       - { label: "Image", name: "image", widget: "image" }
                       - { label: "Légende", name: "caption", widget: "string", required: false }
 
+      - name: "mediatheque"
+        label: "8. Médiathèque"
+        file: "content/mediatheque.json"
+        fields:
+          - { label: "Accroche", name: "media_eyebrow", widget: "string" }
+          - { label: "Titre de la section", name: "media_title", widget: "string" }
+          - { label: "Sous-titre", name: "media_subtitle", widget: "text" }
+          - label: "Dossiers par année"
+            name: "media_years"
+            widget: "list"
+            hint: "Un dossier par année. L'ordre ici définit l'ordre des onglets affichés sur le site."
+            fields:
+              - { label: "Année", name: "year", widget: "string" }
+              - label: "Photos"
+                name: "photos"
+                widget: "list"
+                field: { label: "Photo", name: "image", widget: "image" }
+
   - name: "actualites"
     label: "Réalisations"
     folder: "content/actualites"

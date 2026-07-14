@@ -1,0 +1,32 @@
+{
+  "media_eyebrow": "Médiathèque",
+  "media_title": "Nos activités en images",
+  "media_subtitle": "Un aperçu de nos actions de terrain, année après année.",
+  "media_years": [
+    {
+      "year": "2026",
+      "photos": [
+        "assets/uploads/AKG08037.jpg",
+        "assets/uploads/0A2A1742.jpg",
+        "assets/uploads/0A2A2185.jpg",
+        "assets/uploads/777A8975.jpg",
+        "assets/uploads/777A8917.jpg",
+        "assets/uploads/777A8920.jpg",
+        "assets/uploads/777A8967.jpg",
+        "assets/uploads/photo_2_2026-05-18_12-55-20.jpg",
+        "assets/uploads/photo_39_2026-05-18_12-56-00.jpg",
+        "assets/uploads/photo_42_2026-05-18_12-56-00.jpg",
+        "assets/uploads/photo_52_2026-05-18_12-56-00.jpg",
+        "assets/uploads/photo_63_2026-05-18_12-55-21.jpg"
+      ]
+    },
+    {
+      "year": "2025",
+      "photos": [
+        "assets/uploads/photo_10_2025-04-16_00-16-44.jpg",
+        "assets/uploads/photo_54_2025-04-16_00-16-15.jpg",
+        "assets/uploads/photo_6_2025-04-16_00-16-44.jpg"
+      ]
+    }
+  ]
+}

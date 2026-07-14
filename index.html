@@ -274,6 +274,16 @@
   @media (max-width:720px){ .gallery-grid{grid-template-columns:1fr 1fr;} }
   .gallery-grid img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; display:block;}
   .gallery-caption{font-size:0.8rem; color:#5A6C60; margin-top:6px; text-align:center;}
+
+  /* ===== Médiathèque ===== */
+  .media-years{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;}
+  .media-year-btn{
+    font-family:var(--mono); font-size:0.85rem; font-weight:500; letter-spacing:0.04em;
+    padding:10px 22px; border-radius:999px; border:1.5px solid var(--line); background:var(--white);
+    color:var(--ink); cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .media-year-btn:hover{border-color:var(--green);}
+  .media-year-btn.is-active{background:var(--green); border-color:var(--green); color:var(--white);}
 </style>
 <script type="application/ld+json">
 {
@@ -498,6 +508,19 @@
     </div>
   </section>
 
+  <!-- ===== MÉDIATHÈQUE ===== -->
+  <section class="section-alt" id="mediatheque">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow" id="cms-media-eyebrow">Médiathèque</p>
+        <h2 id="cms-media-title">Nos activités en images</h2>
+        <p id="cms-media-subtitle">Un aperçu de nos actions de terrain, année après année.</p>
+      </div>
+      <div class="media-years reveal" id="cms-media-tabs"></div>
+      <div class="gallery-grid reveal" id="cms-media-grid"></div>
+    </div>
+  </section>
+
 </main>
 
 <!-- ===== FOOTER / CONTACT ===== -->
@@ -673,6 +696,32 @@
     }).join('');
   }
 
+  // ===== Médiathèque (dossiers photos par année) =====
+  function renderMediaYears(mediaYears){
+    const section = document.getElementById('mediatheque');
+    const tabsEl = document.getElementById('cms-media-tabs');
+    const gridEl = document.getElementById('cms-media-grid');
+    if (!section || !tabsEl || !gridEl) return;
+    if (!Array.isArray(mediaYears) || mediaYears.length === 0) { section.style.display = 'none'; return; }
+
+    function renderGrid(photos){
+      gridEl.innerHTML = (Array.isArray(photos) ? photos : []).map(src => `
+        <div><img src="${esc(src)}" alt="" loading="lazy"></div>
+      `).join('');
+    }
+    tabsEl.innerHTML = mediaYears.map((y, i) => `
+      <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}">${esc(y.year)}</button>
+    `).join('');
+    tabsEl.querySelectorAll('.media-year-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabsEl.querySelectorAll('.media-year-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        renderGrid(mediaYears[Number(btn.dataset.index)].photos);
+      });
+    });
+    renderGrid(mediaYears[0].photos);
+  }
+
   // Évite d'afficher brièvement le texte par défaut avant que le contenu du CMS soit chargé
   function revealPage(){
     document.querySelector('main').classList.add('is-ready');
@@ -708,7 +757,8 @@
     "content/home-historique.json",
     "content/home-gouvernance.json",
     "content/home-cta-footer.json",
-    "content/home-sections-libres.json"
+    "content/home-sections-libres.json",
+    "content/mediatheque.json"
   ];
   Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
     .then(parts => {
@@ -807,6 +857,13 @@
 
     // Sections personnalisées (blocs libres)
     renderCustomSections(data.sections);
+
+    // Médiathèque
+    if (data.media_eyebrow) document.getElementById('cms-media-eyebrow').textContent = data.media_eyebrow;
+    if (data.media_title) document.getElementById('cms-media-title').textContent = data.media_title;
+    if (data.media_subtitle) document.getElementById('cms-media-subtitle').textContent = data.media_subtitle;
+    renderMediaYears(data.media_years);
+
     initHeroSlideshow(data.hero_slideshow);
     revealPage();
     initScrollReveal();
