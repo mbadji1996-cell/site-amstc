@@ -118,7 +118,7 @@
     position:absolute; inset:0; z-index:-1;
     background:linear-gradient(180deg, rgba(6,68,28,0.80) 0%, rgba(6,68,28,0.60) 45%, rgba(6,68,28,0.88) 100%);
   }
-  .hero-grid{max-width:700px;}
+  .hero-grid{max-width:700px; margin:0 auto;}
   .hero .eyebrow{color:var(--gold);}
   .hero .eyebrow::before{background:var(--gold);}
   .hero h1{color:var(--white); font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
@@ -563,18 +563,19 @@
   }));
 
   // ===== Diaporama de fond du hero =====
-  // Ajoutez ici le chemin de chaque nouvelle photo déposée dans assets/uploads
-  const HERO_IMAGES = [
+  // Repli si aucune photo n'est choisie dans le CMS (Page d'accueil > 1. En-tête > Photos du diaporama)
+  const DEFAULT_HERO_IMAGES = [
     "assets/hero-photo.jpg",
     "assets/hero-photo-2.jpg",
     "assets/hero-photo-3.jpg",
     "assets/hero-photo-4.jpg",
     "assets/hero-photo-5.jpg"
   ];
-  function initHeroSlideshow(){
+  function initHeroSlideshow(images){
     const bg = document.getElementById('heroBg');
-    if (!bg || HERO_IMAGES.length === 0) return;
-    HERO_IMAGES.forEach((src, i) => {
+    const list = Array.isArray(images) && images.length > 0 ? images : DEFAULT_HERO_IMAGES;
+    if (!bg || bg.children.length > 0 || list.length === 0) return;
+    list.forEach((src, i) => {
       const slide = document.createElement('div');
       slide.className = 'hero-bg-slide' + (i === 0 ? ' is-active' : '');
       slide.style.backgroundImage = `url('${src}')`;
@@ -590,7 +591,6 @@
       slides[idx].classList.add('is-active');
     }, 5000);
   }
-  initHeroSlideshow();
 
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
@@ -680,6 +680,7 @@
     document.querySelector('footer').classList.add('is-ready');
   }
   setTimeout(revealPage, 2500);
+  setTimeout(() => initHeroSlideshow(), 2500);
 
   // ===== Effets d'apparition au défilement =====
   let scrollRevealObserver;
@@ -807,9 +808,10 @@
 
     // Sections personnalisées (blocs libres)
     renderCustomSections(data.sections);
+    initHeroSlideshow(data.hero_slideshow);
     revealPage();
     initScrollReveal();
-  }).catch(() => { revealPage(); initScrollReveal(); });
+  }).catch(() => { initHeroSlideshow(); revealPage(); initScrollReveal(); });
 
   // Charge les 3 dernières actualités
   async function loadLatestActus() {

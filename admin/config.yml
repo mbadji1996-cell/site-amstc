@@ -29,6 +29,12 @@ collections:
           - { label: "Titre principal", name: "hero_title", widget: "markdown", minimal: true, buttons: ["bold", "italic"] }
           - { label: "Sous-titre", name: "hero_subtitle", widget: "markdown" }
 
+          - label: "Photos du diaporama (fond du hero)"
+            name: "hero_slideshow"
+            widget: "list"
+            hint: "Photos affichées en fondu enchaîné en arrière-plan du hero. Format paysage recommandé."
+            field: { label: "Photo", name: "image", widget: "image" }
+
           - label: "Les 3 cartes d'introduction"
             name: "intro_cards"
             widget: "list"

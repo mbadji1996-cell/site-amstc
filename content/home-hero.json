@@ -47,5 +47,12 @@
       "text": "Référence directe au Paradis coranique, décrit comme un jardin verdoyant."
     }
   ],
-  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins aux populations et participer au développement socio-sanitaire du Sénégal."
+  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins aux populations et participer au développement socio-sanitaire du Sénégal.",
+  "hero_slideshow": [
+    "assets/hero-photo.jpg",
+    "assets/hero-photo-2.jpg",
+    "assets/hero-photo-3.jpg",
+    "assets/hero-photo-4.jpg",
+    "assets/hero-photo-5.jpg"
+  ]
 }
