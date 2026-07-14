@@ -574,9 +574,6 @@
     toggle.setAttribute('aria-expanded', 'false');
   }));
 
-  // Remplacez par votre compte / dépôt GitHub réels
-  const REPO = "mbadji1996-cell/site-amstc";
-
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
   function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -782,28 +779,12 @@
   }).catch(() => {});
 
   // Charge les 3 dernières actualités
-  function parseFrontMatter(raw) {
-    const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
-    if (!match) return {};
-    const data = {};
-    match[1].split("\n").forEach(line => {
-      const idx = line.indexOf(":");
-      if (idx === -1) return;
-      data[line.slice(0, idx).trim()] = line.slice(idx + 1).trim().replace(/^"(.*)"$/, "$1");
-    });
-    return data;
-  }
   async function loadLatestActus() {
     const grid = document.getElementById("actus-grid");
     try {
-      const listRes = await fetch(`https://api.github.com/repos/${REPO}/contents/content/actualites`);
-      if (!listRes.ok) throw new Error();
-      const files = (await listRes.json()).filter(f => f.name.endsWith(".md"));
-      const articles = await Promise.all(files.map(async f => {
-        const raw = await (await fetch(f.download_url)).text();
-        return { slug: f.name.replace(/\.md$/, ""), ...parseFrontMatter(raw) };
-      }));
-      articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const res = await fetch("content/actualites-index.json");
+      if (!res.ok) throw new Error();
+      const articles = await res.json();
       const latest = articles.slice(0, 3);
       if (latest.length === 0) { grid.innerHTML = '<p style="color:#465A4E;">Aucun article publié pour le moment.</p>'; return; }
       grid.innerHTML = latest.map(a => `

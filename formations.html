@@ -57,43 +57,17 @@
 </div>
 
 <script>
-  // Remplacez par votre compte / dépôt GitHub réels
-  const REPO = "mbadji1996-cell/site-amstc";
-  const FOLDER = "content/formations";
-
-  function parseFrontMatter(raw) {
-    const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
-    if (!match) return { data: {}, body: raw };
-    const data = {};
-    match[1].split("\n").forEach(line => {
-      const idx = line.indexOf(":");
-      if (idx === -1) return;
-      let key = line.slice(0, idx).trim();
-      let val = line.slice(idx + 1).trim().replace(/^"(.*)"$/, "$1");
-      data[key] = val;
-    });
-    return { data, body: match[2] };
-  }
-
   async function loadArticles() {
     const grid = document.getElementById("grid");
     try {
-      const listRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FOLDER}`);
-      if (!listRes.ok) throw new Error("liste indisponible");
-      const files = (await listRes.json()).filter(f => f.name.endsWith(".md"));
+      const res = await fetch("content/formations-index.json");
+      if (!res.ok) throw new Error("index indisponible");
+      const articles = await res.json();
 
-      if (files.length === 0) {
+      if (articles.length === 0) {
         grid.innerHTML = '<p class="empty">Aucun article publié pour le moment.</p>';
         return;
       }
-
-      const articles = await Promise.all(files.map(async f => {
-        const raw = await (await fetch(f.download_url)).text();
-        const { data } = parseFrontMatter(raw);
-        return { slug: f.name.replace(/\.md$/, ""), ...data };
-      }));
-
-      articles.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       grid.innerHTML = articles.map(a => `
         <a class="card" href="formation.html?slug=${encodeURIComponent(a.slug)}">
