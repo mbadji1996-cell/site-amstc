@@ -50,6 +50,8 @@
   }
   a{color:inherit; text-decoration:none;}
   img{max-width:100%; display:block;}
+  main, footer{opacity:0; transition:opacity .25s ease;}
+  main.is-ready, footer.is-ready{opacity:1;}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
   h1,h2,h3{font-family:var(--display); font-weight:600; color:var(--green-deep); line-height:1.12; letter-spacing:-0.01em;}
   .eyebrow{
@@ -280,6 +282,7 @@
   ]
 }
 </script>
+<noscript><style>main, footer{opacity:1 !important;}</style></noscript>
 </head>
 <body>
 
@@ -634,6 +637,13 @@
     }).join('');
   }
 
+  // Évite d'afficher brièvement le texte par défaut avant que le contenu du CMS soit chargé
+  function revealPage(){
+    document.querySelector('main').classList.add('is-ready');
+    document.querySelector('footer').classList.add('is-ready');
+  }
+  setTimeout(revealPage, 2500);
+
   // Charge et fusionne les 6 fichiers de contenu (édités via /admin), puis construit la page
   const CONTENT_FILES = [
     "content/home-hero.json",
@@ -740,7 +750,8 @@
 
     // Sections personnalisées (blocs libres)
     renderCustomSections(data.sections);
-  }).catch(() => {});
+    revealPage();
+  }).catch(() => { revealPage(); });
 
   // Charge les 3 dernières actualités
   async function loadLatestActus() {
