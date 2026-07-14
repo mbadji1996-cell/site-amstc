@@ -38,16 +38,16 @@
   "mission_eyebrow": "Notre mission",
   "emblem_items": [
     {
-      "title": "Objectif 1",
+      "title": "🩺 Santé",
       "text": "Promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal"
     },
     {
-      "title": "Objectif 2",
+      "title": "🎓 Formation ",
       "text": "Assurer de la bonne formation de nos membres dans le domaine de la santé, du social et en leadership"
     },
     {
-      "title": "Objectif 3",
-      "text": "S’aider mutuellementdans la religion et dans la tarikha Tidjane"
+      "title": "🕌 Spiritualité",
+      "text": "S’aider mutuellement dans la religion et dans la tarikha Tidjane"
     }
   ],
   "hero_subtitle": "L'Association Médico-Sociale des Talibés Cheikh (AMSTC) fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins aux populations et participer au développement socio-sanitaire du Sénégal."
