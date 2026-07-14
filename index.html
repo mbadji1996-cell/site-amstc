@@ -148,12 +148,12 @@
   .section-alt{background:var(--paper-alt);}
   .section-head{max-width:660px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(1.6rem,3vw,2.3rem);}
-  .section-head p{color:#465A4E; margin-top:14px; font-size:1.02rem;}
+  .section-head p:not(.eyebrow){color:#465A4E; margin-top:14px; font-size:1.02rem;}
 
   /* ===== Mission ===== */
   .mission-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
   @media (max-width:880px){ .mission-grid{grid-template-columns:1fr;} }
-  .mission-text p{color:#3C4E44; font-size:1.03rem; margin-bottom:16px;}
+  .mission-text p:not(.eyebrow){color:#3C4E44; font-size:1.03rem; margin-bottom:16px;}
   .mission-text img{max-width:100%; border-radius:10px; margin:14px 0;}
   .mission-figure{
     background:var(--green-deep); border-radius:var(--radius); padding:38px; color:var(--paper);
