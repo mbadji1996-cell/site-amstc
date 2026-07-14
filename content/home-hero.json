@@ -12,14 +12,14 @@
     {
       "num": "02 - Terrain",
       "title": "Que faisons-nous ?",
-      "text": "Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.",
+      "text": "Consultations gratuites, , couvertures sanitaires, dons de sang et de médicaments et enseignements post-universitaires.",
       "link_text": "Voir nos actions →",
       "link_href": "#nos-actions"
     },
     {
       "num": "03 - Engagement",
       "title": "Comment participer ?",
-      "text": "Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.",
+      "text": "Chaque don finance directement une campagne de consultation ou une campagne caritative.",
       "link_text": "Faire un don →",
       "link_href": "don.html"
     }
@@ -47,5 +47,5 @@
       "text": "Référence directe au Paradis coranique, décrit comme un jardin verdoyant."
     }
   ],
-  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal."
+  "hero_subtitle": "L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins aux populations et participer au développement socio-sanitaire du Sénégal."
 }
