@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projets - AMSTC</title>
+<link rel="canonical" href="https://amstc.org/projets.html">
+<meta name="description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AMSTC">
+<meta property="og:title" content="Projets - AMSTC">
+<meta property="og:description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<meta property="og:url" content="https://amstc.org/projets.html">
+<meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#fff; --line:rgba(6,68,28,0.14);
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .logo-img{height:42px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 8px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2.1rem; margin-bottom:40px;}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; padding-bottom:90px;}
+  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+  .card{background:var(--white); border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:transform .2s ease, box-shadow .2s ease; position:relative;}
+  .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
+  .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
+  .card-body{padding:20px 22px;}
+  .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
+  .card p{font-size:0.92rem; color:#465A4E;}
+  .status-badge{
+    position:absolute; top:14px; right:14px; font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.05em; padding:5px 11px; border-radius:999px; background:var(--white); color:var(--green-deep);
+    box-shadow:0 2px 8px rgba(6,68,28,0.15);
+  }
+  .status-badge.statut-en-cours{background:var(--gold); color:var(--green-deep);}
+  .status-badge.statut-termine{background:var(--green); color:var(--white);}
+  .status-badge.statut-a-venir{background:var(--white); color:var(--green-deep); border:1px solid var(--line);}
+  .empty, .error{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+<div class="wrap">
+  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <h1>Projets</h1>
+  <noscript><p class="error">L'affichage des projets nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="grid" class="grid">
+    <p class="empty">Chargement des projets…</p>
+  </div>
+</div>
+
+<script>
+  function slugifyStatut(s) {
+    return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+  async function loadArticles() {
+    const grid = document.getElementById("grid");
+    try {
+      const res = await fetch("content/projets-index.json");
+      if (!res.ok) throw new Error("index indisponible");
+      const articles = await res.json();
+
+      if (articles.length === 0) {
+        grid.innerHTML = '<p class="empty">Aucun projet publié pour le moment.</p>';
+        return;
+      }
+
+      grid.innerHTML = articles.map(a => `
+        <a class="card" href="projet.html?slug=${encodeURIComponent(a.slug)}">
+          ${a.statut ? `<span class="status-badge statut-${slugifyStatut(a.statut)}">${a.statut}</span>` : ""}
+          ${a.image ? `<img src="${a.image}" alt="">` : ""}
+          <div class="card-body">
+            <span class="card-date">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+            <h3>${a.title || 'Sans titre'}</h3>
+            <p>${a.excerpt || ''}</p>
+          </div>
+        </a>
+      `).join("");
+    } catch (e) {
+      grid.innerHTML = '<p class="error">Impossible de charger les projets pour le moment.</p>';
+    }
+  }
+  loadArticles();
+</script>
+</body>
+</html>

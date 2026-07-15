@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article - AMSTC</title>
-<meta name="description" content="Réalisations de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<title>Projet — AMSTC</title>
+<meta name="description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Réalisations - AMSTC" id="og-title">
-<meta property="og:description" content="Réalisations de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
+<meta property="og:title" content="Projet — AMSTC" id="og-title">
+<meta property="og:description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/logo-horizontal-sm.png">
@@ -30,6 +30,11 @@
   .logo-img{height:42px;}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 20px;}
   .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  .art-statut{
+    font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;
+    background:var(--paper-alt, #ECEFE3); color:var(--green-deep); padding:4px 11px; border-radius:999px;
+    display:inline-block; margin-left:10px; vertical-align:middle;
+  }
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2rem; margin:10px 0 28px;}
   #cover{width:100%; border-radius:14px; margin-bottom:28px; display:none;}
   #body p{color:#3C4E44; margin-bottom:18px; font-size:1.02rem;}
@@ -45,7 +50,7 @@
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="actualites.html">← Toutes nos réalisations</a>
+  <a class="back" href="projets.html">← Tous les projets</a>
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p>Chargement…</p>
@@ -55,7 +60,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
-  const FOLDER = "content/actualites";
+  const FOLDER = "content/projets";
 
   function parseFrontMatter(raw) {
     const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
@@ -80,15 +85,15 @@
   async function loadArticle() {
     const slug = new URLSearchParams(window.location.search).get("slug");
     const content = document.getElementById("content");
-    if (!slug) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
+    if (!slug) { content.innerHTML = "<p>Projet introuvable.</p>"; return; }
     try {
       const raw = await (await fetch(
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
       )).text();
       const { data, body } = parseFrontMatter(raw);
-      document.title = (data.title || "Article") + " - AMSTC";
+      document.title = (data.title || "Projet") + " — AMSTC";
       if (data.title) {
-        document.getElementById('og-title').setAttribute('content', data.title + ' - AMSTC');
+        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
       }
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);
@@ -96,13 +101,14 @@
       const ytId = youtubeEmbedId(data.video_youtube);
       content.innerHTML = `
         <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+        ${data.statut ? `<span class="art-statut">${data.statut}</span>` : ""}
         <h1>${data.title || ''}</h1>
         ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
         <div id="body">${marked.parse(body || '')}</div>
       `;
     } catch (e) {
-      content.innerHTML = "<p>Impossible de charger cet article.</p>";
+      content.innerHTML = "<p>Impossible de charger ce projet.</p>";
     }
   }
   loadArticle();
