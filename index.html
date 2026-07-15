@@ -98,15 +98,18 @@
     display:flex; align-items:center; gap:5px; background:none; border:none; padding:4px 0;
     font-family:var(--body); font-size:0.9rem; font-weight:500; color:var(--ink); cursor:pointer;
   }
-  .nav-dropdown-trigger .chevron{font-size:0.7em; transition:transform .18s ease;}
-  .nav-dropdown.open .nav-dropdown-trigger .chevron{transform:rotate(180deg);}
+  .nav-dropdown-trigger .chevron{
+    width:0; height:0; margin-top:2px; border-left:4px solid transparent; border-right:4px solid transparent;
+    border-top:5px solid var(--ink); transition:transform .18s ease;
+  }
+  .nav-dropdown.open .chevron{transform:rotate(180deg);}
   .nav-dropdown-menu{
-    position:absolute; top:calc(100% + 16px); left:50%; transform:translateX(-50%) translateY(6px);
+    position:absolute; top:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(6px);
     background:var(--white); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
     padding:8px; min-width:210px; display:flex; flex-direction:column; gap:2px;
     opacity:0; visibility:hidden; transition:opacity .18s ease, transform .18s ease;
   }
-  .nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.open .nav-dropdown-menu{
+  .nav-dropdown.open .nav-dropdown-menu{
     opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
   }
   .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap;}
@@ -386,7 +389,7 @@
     <nav class="nav-links" id="navLinks">
       <div class="nav-dropdown">
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
-          Découvrir l'AMSTC <span class="chevron" aria-hidden="true">&#9662;</span>
+          Découvrir l'AMSTC <span class="chevron" aria-hidden="true"></span>
         </button>
         <div class="nav-dropdown-menu">
           <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
@@ -396,7 +399,7 @@
       </div>
       <div class="nav-dropdown">
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
-          Nos activités <span class="chevron" aria-hidden="true">&#9662;</span>
+          Nos activités <span class="chevron" aria-hidden="true"></span>
         </button>
         <div class="nav-dropdown-menu">
           <a href="actualites.html">Réalisations</a>
@@ -686,10 +689,38 @@
     toggle.setAttribute('aria-expanded', 'false');
     closeAllDropdowns();
   }));
-  document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
+  const NAV_DESKTOP_BREAKPOINT = 1180;
+  function isNavDesktop(){ return window.innerWidth > NAV_DESKTOP_BREAKPOINT; }
+  let dropdownCloseTimer = null;
+  function openDropdown(dropdown){
+    clearTimeout(dropdownCloseTimer);
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+      if (d !== dropdown){
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'false');
+      }
+    });
+    dropdown.classList.add('open');
+    dropdown.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'true');
+  }
+  document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+    const trigger = dropdown.querySelector('.nav-dropdown-trigger');
+    dropdown.addEventListener('mouseenter', () => { if (isNavDesktop()) openDropdown(dropdown); });
+    dropdown.addEventListener('mouseleave', () => {
+      if (!isNavDesktop()) return;
+      clearTimeout(dropdownCloseTimer);
+      dropdownCloseTimer = setTimeout(() => {
+        dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }, 200);
+    });
+    trigger.addEventListener('focus', () => { if (isNavDesktop()) openDropdown(dropdown); });
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
-      const dropdown = trigger.closest('.nav-dropdown');
+      if (isNavDesktop()){
+        openDropdown(dropdown);
+        return;
+      }
       const isOpen = dropdown.classList.contains('open');
       closeAllDropdowns();
       dropdown.classList.toggle('open', !isOpen);
