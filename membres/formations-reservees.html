@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formations réservées - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/formations-reservees.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#fff; --line:rgba(6,68,28,0.14);
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
+  .logo-img{height:42px;}
+  .signout-btn{
+    font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gold-deep); background:none; border:1.5px solid var(--line); border-radius:999px;
+    padding:9px 18px; cursor:pointer; transition:border-color .18s ease;
+  }
+  .signout-btn:hover{border-color:var(--gold-deep);}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 8px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2.1rem; margin-bottom:40px;}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; padding-bottom:90px;}
+  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+  .card{background:var(--white); border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:transform .2s ease, box-shadow .2s ease;}
+  .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
+  .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
+  .card-body{padding:20px 22px;}
+  .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
+  .card p{font-size:0.92rem; color:#465A4E;}
+  .empty, .error, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  footer{padding:40px 0; text-align:center;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="index.html">← Espace membres</a>
+  <h1>Formations réservées</h1>
+  <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="grid" class="grid">
+    <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  async function loadArticles() {
+    const grid = document.getElementById("grid");
+    const { data, error } = await supabaseClient
+      .from("restricted_formations")
+      .select("id,title,excerpt,cover_image,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      grid.innerHTML = '<p class="error">Impossible de charger les articles pour le moment.</p>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      grid.innerHTML = '<p class="empty">Aucune formation réservée publiée pour le moment.</p>';
+      return;
+    }
+
+    grid.innerHTML = data.map(a => `
+      <a class="card" href="formation-reservee.html?id=${encodeURIComponent(a.id)}">
+        ${a.cover_image ? `<img src="${a.cover_image}" alt="">` : ""}
+        <div class="card-body">
+          <span class="card-date">${a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+          <h3>${a.title || 'Sans titre'}</h3>
+          <p>${a.excerpt || ''}</p>
+        </div>
+      </a>
+    `).join("");
+  }
+
+  (async () => {
+    const profile = await requireApprovedMember("connexion.html");
+    if (!profile) return;
+    document.getElementById("signoutBtn").style.display = "";
+    loadArticles();
+  })();
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "connexion.html";
+  });
+</script>
+
+</body>
+</html>

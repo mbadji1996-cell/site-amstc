@@ -86,6 +86,35 @@ where email = 'votre-email@exemple.com';
 - **Seul le Super Administrateur** voit la section "Droits d'administration"
   pour nommer ou révoquer des administrateurs
 
+## 4ter. Activer la Phase 3 (formations réservées aux membres)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase3-restricted-formations.sql` (fourni
+   dans ce dépôt), copiez tout son contenu, collez-le, cliquez **Run**
+
+Ça crée une table séparée pour le contenu réservé, volontairement **hors
+du dépôt Git public** (contrairement aux articles Formation habituels
+publiés via le CMS, qui restent lisibles par n'importe qui dans
+l'historique GitHub). C'est la seule façon d'avoir un contenu vraiment
+privé sur ce site.
+
+Ensuite :
+- `membres/formations-admin.html` (visible aux administrateurs depuis
+  `membres/index.html`) permet de publier/modifier/supprimer des
+  formations réservées : titre, résumé, contenu en Markdown, image de
+  couverture, vidéo YouTube
+- `membres/formations-reservees.html` liste ces formations pour tout
+  membre approuvé
+- Sur la page publique `formations.html`, ces articles apparaissent
+  avec un badge "🔒 Réservé aux membres" (titre et résumé visibles par
+  tous, mais le contenu complet n'est chargé qu'après connexion et
+  vérification côté serveur)
+
+**Limite à connaître** : il n'y a pas d'envoi de fichier configuré pour
+l'image de couverture - il faut coller l'URL d'une image déjà en ligne
+(par exemple une image déjà publiée via le CMS habituel, dont vous
+pouvez copier l'adresse).
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -108,7 +137,7 @@ Une fois l'URL et la clé intégrées :
 5. Reconnectez-vous : vous devez accéder à `membres/index.html`
 6. Testez "mot de passe oublié" de bout en bout
 
-## Ce qui est couvert pour l'instant (Phases 1 et 2)
+## Ce qui est couvert pour l'instant (Phases 1, 2 et 3)
 
 - Inscription publique, avec validation manuelle par un administrateur
   avant tout accès
@@ -123,6 +152,9 @@ Une fois l'URL et la clé intégrées :
   simple administrateur ne peut ni créer d'autres admins, ni modifier les
   droits d'administration - vérifié côté base de données, pas seulement
   côté affichage)
+- Formations réservées aux membres, stockées hors du dépôt Git public
+  (voir Phase 3 ci-dessus), avec aperçu public verrouillé sur la page
+  Formation
 
 ## Limite connue : création de comptes par un administrateur
 
@@ -144,5 +176,5 @@ puis un administrateur ou Super Administrateur l'approuve depuis
 
 ## Ce qui n'est pas encore fait
 
-- L'option Public / Réservé aux membres sur les articles de la rubrique
-  Formation (Phase 3)
+- Aucune fonctionnalité prévue en attente pour l'instant (Phases 1, 2 et
+  3 toutes en place)

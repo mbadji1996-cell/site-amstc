@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formation réservée - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/formation-reservee.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --line:rgba(6,68,28,0.14);
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.7;}
+  a{color:var(--green);}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .wrap{max-width:720px; margin:0 auto; padding:0 28px;}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
+  .logo-img{height:42px;}
+  .signout-btn{
+    font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gold-deep); background:none; border:1.5px solid var(--line); border-radius:999px;
+    padding:9px 18px; cursor:pointer; transition:border-color .18s ease;
+  }
+  .signout-btn:hover{border-color:var(--gold-deep);}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 20px;}
+  .badge{
+    font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em;
+    background:#FEF6E4; color:var(--gold-deep); padding:4px 10px; border-radius:999px;
+  }
+  .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2rem; margin:10px 0 28px;}
+  #cover{width:100%; border-radius:14px; margin-bottom:28px; display:none;}
+  #body p{color:#3C4E44; margin-bottom:18px; font-size:1.02rem;}
+  #body h2,#body h3{font-family:var(--display); color:var(--green-deep); margin:28px 0 12px;}
+  .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
+  .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .loading, .error{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  footer{padding:40px 0; text-align:center; max-width:1180px; margin:0 auto;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="formations-reservees.html">← Toutes les formations réservées</a>
+  <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="content">
+    <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  function youtubeEmbedId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  async function loadArticle() {
+    const id = new URLSearchParams(window.location.search).get("id");
+    const content = document.getElementById("content");
+    if (!id) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
+
+    const { data, error } = await supabaseClient
+      .from("restricted_formations")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error || !data) {
+      content.innerHTML = "<p class=\"error\">Impossible de charger cet article.</p>";
+      return;
+    }
+
+    const ytId = youtubeEmbedId(data.video_url);
+    document.title = (data.title || "Formation réservée") + " — AMSTC";
+    content.innerHTML = `
+      <span class="badge">Réservé aux membres</span>
+      <span class="art-date">${data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+      <h1>${data.title || ''}</h1>
+      ${data.cover_image ? `<img id="cover" src="${data.cover_image}" style="display:block">` : ""}
+      ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
+      <div id="body">${marked.parse(data.content || '')}</div>
+    `;
+  }
+
+  (async () => {
+    const profile = await requireApprovedMember("connexion.html");
+    if (!profile) return;
+    document.getElementById("signoutBtn").style.display = "";
+    loadArticle();
+  })();
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "connexion.html";
+  });
+</script>
+
+</body>
+</html>
