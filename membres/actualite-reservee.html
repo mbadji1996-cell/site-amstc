@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formation réservée - Espace Membres - AMSTC</title>
+<title>Réalisation réservée - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/formation-reservee.html">
+<link rel="canonical" href="https://amstc.org/membres/actualite-reservee.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,7 @@
 </header>
 
 <div class="wrap">
-  <a class="back" href="formations.html">← Toutes les formations</a>
+  <a class="back" href="actualites.html">← Toutes les réalisations</a>
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
@@ -86,7 +86,7 @@
       .from("restricted_articles")
       .select("*")
       .eq("id", id)
-      .eq("category", "formation")
+      .eq("category", "actualite")
       .single();
 
     if (error || !data) {
@@ -95,7 +95,7 @@
     }
 
     const ytId = youtubeEmbedId(data.video_url);
-    document.title = (data.title || "Formation réservée") + " — AMSTC";
+    document.title = (data.title || "Réalisation réservée") + " — AMSTC";
     content.innerHTML = `
       <span class="badge">Réservé aux membres</span>
       <span class="art-date">${data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>

@@ -86,29 +86,34 @@ where email = 'votre-email@exemple.com';
 - **Seul le Super Administrateur** voit la section "Droits d'administration"
   pour nommer ou révoquer des administrateurs
 
-## 4ter. Activer la Phase 3 (formations réservées aux membres)
+## 4ter. Activer la Phase 3 (contenu réservé aux membres : Formation + Réalisations)
 
 1. Dans Supabase → **SQL Editor** → **New query**
-2. Ouvrez le fichier `supabase/phase3-restricted-formations.sql` (fourni
-   dans ce dépôt), copiez tout son contenu, collez-le, cliquez **Run**
+2. Ouvrez le fichier `supabase/phase3-restricted-formations.sql`, copiez
+   tout son contenu, collez-le, cliquez **Run**
+3. Ouvrez ensuite `supabase/phase3b-generalize-restricted-content.sql`
+   (généralise le système à la fois à Formation et à Réalisations),
+   copiez-collez, cliquez **Run**
 
 Ça crée une table séparée pour le contenu réservé, volontairement **hors
-du dépôt Git public** (contrairement aux articles Formation habituels
-publiés via le CMS, qui restent lisibles par n'importe qui dans
-l'historique GitHub). C'est la seule façon d'avoir un contenu vraiment
-privé sur ce site.
+du dépôt Git public** (contrairement aux articles Formation/Réalisations
+habituels publiés via le CMS, qui restent lisibles par n'importe qui
+dans l'historique GitHub). C'est la seule façon d'avoir un contenu
+vraiment privé sur ce site.
 
 Ensuite :
-- `membres/formations-admin.html` (visible aux administrateurs depuis
-  `membres/index.html`) permet de publier/modifier/supprimer des
-  formations réservées : titre, résumé, contenu en Markdown, image de
-  couverture, vidéo YouTube
-- `membres/formations-reservees.html` liste ces formations pour tout
-  membre approuvé
-- Sur la page publique `formations.html`, ces articles apparaissent
-  avec un badge "🔒 Réservé aux membres" (titre et résumé visibles par
-  tous, mais le contenu complet n'est chargé qu'après connexion et
-  vérification côté serveur)
+- `membres/contenu-reserve-admin.html` (visible aux administrateurs
+  depuis `membres/index.html`) permet de publier/modifier/supprimer du
+  contenu réservé : type (Formation ou Réalisation), titre, résumé,
+  contenu en Markdown, image de couverture, vidéo YouTube
+- Pour tout membre approuvé, `membres/formations.html` et
+  `membres/actualites.html` listent **à la fois** les articles publics
+  habituels et les contenus réservés, en un seul endroit (avec un badge
+  "🔒 Réservé aux membres" sur ces derniers pour les distinguer)
+- Sur les pages publiques `formations.html` et `actualites.html`, ces
+  articles réservés apparaissent aussi, mais en aperçu verrouillé (titre
+  et résumé visibles par tous, contenu complet chargé uniquement après
+  connexion et vérification côté serveur)
 
 **Limite à connaître** : il n'y a pas d'envoi de fichier configuré pour
 l'image de couverture - il faut coller l'URL d'une image déjà en ligne

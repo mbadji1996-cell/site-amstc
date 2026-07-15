@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formations réservées - Espace Membres - AMSTC</title>
+<title>Réalisations - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/formations-reservees.html">
+<link rel="canonical" href="https://amstc.org/membres/actualites.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,12 @@
   .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
   .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
   .card-body{padding:20px 22px;}
+  .card-header-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
   .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
+  .lock-badge{
+    font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em;
+    background:#FEF6E4; color:var(--gold-deep); padding:3px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;
+  }
   .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
   .card p{font-size:0.92rem; color:#465A4E;}
   .empty, .error, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
@@ -56,7 +61,7 @@
 
 <div class="wrap">
   <a class="back" href="index.html">← Espace membres</a>
-  <h1>Formations réservées</h1>
+  <h1>Réalisations</h1>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="grid" class="grid">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
@@ -72,31 +77,51 @@
 <script>
   async function loadArticles() {
     const grid = document.getElementById("grid");
-    const { data, error } = await supabaseClient
-      .from("restricted_formations")
-      .select("id,title,excerpt,cover_image,created_at")
-      .order("created_at", { ascending: false });
+    let publicArticles = [];
+    let restricted = [];
 
-    if (error) {
-      grid.innerHTML = '<p class="error">Impossible de charger les articles pour le moment.</p>';
+    try {
+      const res = await fetch("../content/actualites-index.json");
+      if (res.ok) publicArticles = await res.json();
+    } catch (e) { /* liste publique indisponible, on continue quand même */ }
+
+    try {
+      const { data } = await supabaseClient
+        .from("restricted_articles")
+        .select("id,title,excerpt,cover_image,created_at")
+        .eq("category", "actualite")
+        .order("created_at", { ascending: false });
+      restricted = data || [];
+    } catch (e) { /* contenu réservé indisponible, on continue quand même */ }
+
+    const items = [
+      ...publicArticles.map(a => ({ ...a, _restricted: false, _date: a.date })),
+      ...restricted.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
+    ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
+
+    if (items.length === 0) {
+      grid.innerHTML = '<p class="empty">Aucun article publié pour le moment.</p>';
       return;
     }
 
-    if (!data || data.length === 0) {
-      grid.innerHTML = '<p class="empty">Aucune formation réservée publiée pour le moment.</p>';
-      return;
-    }
-
-    grid.innerHTML = data.map(a => `
-      <a class="card" href="formation-reservee.html?id=${encodeURIComponent(a.id)}">
-        ${a.cover_image ? `<img src="${a.cover_image}" alt="">` : ""}
-        <div class="card-body">
-          <span class="card-date">${a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
-          <h3>${a.title || 'Sans titre'}</h3>
-          <p>${a.excerpt || ''}</p>
-        </div>
-      </a>
-    `).join("");
+    grid.innerHTML = items.map(a => {
+      const href = a._restricted
+        ? `actualite-reservee.html?id=${encodeURIComponent(a.id)}`
+        : `../article.html?slug=${encodeURIComponent(a.slug)}`;
+      return `
+        <a class="card" href="${href}">
+          ${a.image ? `<img src="${a.image}" alt="">` : ""}
+          <div class="card-body">
+            <div class="card-header-row">
+              <span class="card-date">${a._date ? new Date(a._date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+              ${a._restricted ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
+            </div>
+            <h3>${a.title || 'Sans titre'}</h3>
+            <p>${a.excerpt || ''}</p>
+          </div>
+        </a>
+      `;
+    }).join("");
   }
 
   (async () => {

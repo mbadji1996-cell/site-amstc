@@ -3,17 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formation - AMSTC</title>
-<link rel="canonical" href="https://amstc.org/formations.html">
-<meta name="description" content="Enseignements post-universitaires (EPU) et supports de formation proposés par l'AMSTC.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Formation - AMSTC">
-<meta property="og:description" content="Enseignements post-universitaires (EPU) et supports de formation proposés par l'AMSTC.">
-<meta property="og:url" content="https://amstc.org/formations.html">
-<meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/logo-horizontal-sm.png">
+<title>Formations - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/formations.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -28,7 +21,14 @@
   a{color:inherit; text-decoration:none;}
   .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
   header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
   .logo-img{height:42px;}
+  .signout-btn{
+    font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gold-deep); background:none; border:1.5px solid var(--line); border-radius:999px;
+    padding:9px 18px; cursor:pointer; transition:border-color .18s ease;
+  }
+  .signout-btn:hover{border-color:var(--gold-deep);}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 8px;}
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2.1rem; margin-bottom:40px;}
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; padding-bottom:90px;}
@@ -37,57 +37,66 @@
   .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
   .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
   .card-body{padding:20px 22px;}
-  .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
-  .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
-  .card p{font-size:0.92rem; color:#465A4E;}
   .card-header-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
   .lock-badge{
     font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em;
     background:#FEF6E4; color:var(--gold-deep); padding:3px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;
   }
-  .empty, .error{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
+  .card p{font-size:0.92rem; color:#465A4E;}
+  .empty, .error, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  footer{padding:40px 0; text-align:center;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="wrap">
-    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
+
 <div class="wrap">
-  <a class="back" href="index.html">← Retour à l'accueil</a>
-  <h1>Formation</h1>
-  <noscript><p class="error">L'affichage des actualités nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
+  <a class="back" href="index.html">← Espace membres</a>
+  <h1>Formations</h1>
+  <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="grid" class="grid">
-    <p class="empty">Chargement des articles…</p>
+    <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
   </div>
 </div>
 
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
+<script src="../assets/js/supabase-client.js"></script>
 <script>
   async function loadArticles() {
     const grid = document.getElementById("grid");
     let publicArticles = [];
-    let restrictedTeasers = [];
+    let restricted = [];
 
     try {
-      const res = await fetch("content/formations-index.json");
+      const res = await fetch("../content/formations-index.json");
       if (res.ok) publicArticles = await res.json();
     } catch (e) { /* liste publique indisponible, on continue quand même */ }
 
     try {
       const { data } = await supabaseClient
-        .from("restricted_articles_teasers")
-        .select("*")
+        .from("restricted_articles")
+        .select("id,title,excerpt,cover_image,created_at")
         .eq("category", "formation")
         .order("created_at", { ascending: false });
-      restrictedTeasers = data || [];
-    } catch (e) { /* aperçus réservés indisponibles, on continue quand même */ }
+      restricted = data || [];
+    } catch (e) { /* contenu réservé indisponible, on continue quand même */ }
 
     const items = [
       ...publicArticles.map(a => ({ ...a, _restricted: false, _date: a.date })),
-      ...restrictedTeasers.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
+      ...restricted.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
     ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
 
     if (items.length === 0) {
@@ -97,8 +106,8 @@
 
     grid.innerHTML = items.map(a => {
       const href = a._restricted
-        ? `membres/formation-reservee.html?id=${encodeURIComponent(a.id)}`
-        : `formation.html?slug=${encodeURIComponent(a.slug)}`;
+        ? `formation-reservee.html?id=${encodeURIComponent(a.id)}`
+        : `../formation.html?slug=${encodeURIComponent(a.slug)}`;
       return `
         <a class="card" href="${href}">
           ${a.image ? `<img src="${a.image}" alt="">` : ""}
@@ -114,7 +123,20 @@
       `;
     }).join("");
   }
-  loadArticles();
+
+  (async () => {
+    const profile = await requireApprovedMember("connexion.html");
+    if (!profile) return;
+    document.getElementById("signoutBtn").style.display = "";
+    document.getElementById("loadingMsg").style.display = "none";
+    loadArticles();
+  })();
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "connexion.html";
+  });
 </script>
+
 </body>
 </html>

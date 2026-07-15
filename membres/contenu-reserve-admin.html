@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formations réservées - Gestion - Espace Membres - AMSTC</title>
+<title>Contenu réservé - Gestion - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/formations-admin.html">
+<link rel="canonical" href="https://amstc.org/membres/contenu-reserve-admin.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,12 +39,12 @@
   .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
   label{display:block; font-size:0.85rem; font-weight:600; color:var(--green-deep); margin-top:16px;}
   label:first-child{margin-top:0;}
-  input, textarea{
+  input, textarea, select{
     width:100%; padding:12px 14px; margin-top:6px; border:1.5px solid var(--line); border-radius:10px;
     font-family:var(--body); font-size:0.95rem; color:var(--ink); background:var(--paper);
   }
   textarea{min-height:160px; resize:vertical; font-family:var(--mono); font-size:0.88rem;}
-  input:focus, textarea:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
   .field-hint{font-size:0.78rem; color:#5A6C60; margin-top:4px;}
   .form-actions{display:flex; gap:12px; margin-top:24px;}
   .btn{
@@ -61,8 +61,9 @@
     background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px;
     display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px; flex-wrap:wrap;
   }
-  .item-title{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1rem;}
+  .item-title{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .item-date{font-family:var(--mono); font-size:0.75rem; color:#5A6C60; margin-top:4px;}
+  .category-tag{font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; background:var(--paper-alt); color:var(--green-deep); padding:3px 9px; border-radius:999px;}
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
@@ -85,12 +86,18 @@
 <div class="wrap" id="pageContent" style="display:none;">
   <a class="back" href="index.html">← Espace membres</a>
   <p class="eyebrow">Espace Membres — Administration</p>
-  <h1>Formations réservées</h1>
-  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés.</p>
+  <h1>Contenu réservé aux membres</h1>
+  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation ou une Réalisation.</p>
 
   <div class="card">
-    <form id="formationForm">
-      <input type="hidden" id="formationId" value="">
+    <form id="itemForm">
+      <input type="hidden" id="itemId" value="">
+
+      <label for="category">Type de contenu</label>
+      <select id="category" required>
+        <option value="formation">Formation</option>
+        <option value="actualite">Réalisation</option>
+      </select>
 
       <label for="title">Titre</label>
       <input type="text" id="title" required>
@@ -116,7 +123,7 @@
     </form>
   </div>
 
-  <h2>Formations déjà publiées</h2>
+  <h2>Contenus déjà publiés</h2>
   <div id="itemsList"><p class="loading">Chargement…</p></div>
 </div>
 
@@ -137,15 +144,16 @@
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   }
+  function categoryLabel(c){ return c === "actualite" ? "Réalisation" : "Formation"; }
 
-  const form = document.getElementById("formationForm");
+  const form = document.getElementById("itemForm");
   const messageEl = document.getElementById("formMessage");
   const cancelBtn = document.getElementById("cancelBtn");
   const submitBtn = document.getElementById("submitBtn");
 
   function resetForm() {
     form.reset();
-    document.getElementById("formationId").value = "";
+    document.getElementById("itemId").value = "";
     submitBtn.textContent = "Publier";
     cancelBtn.style.display = "none";
     messageEl.className = "form-message";
@@ -154,21 +162,21 @@
   async function loadItems() {
     const listEl = document.getElementById("itemsList");
     const { data, error } = await supabaseClient
-      .from("restricted_formations")
+      .from("restricted_articles")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
-      listEl.innerHTML = '<p class="empty">Impossible de charger les formations.</p>';
+      listEl.innerHTML = '<p class="empty">Impossible de charger les contenus.</p>';
       return;
     }
 
     listEl.innerHTML = data.length === 0
-      ? '<p class="empty">Aucune formation réservée pour le moment.</p>'
+      ? '<p class="empty">Aucun contenu réservé pour le moment.</p>'
       : data.map(item => `
         <div class="item-row">
           <div>
-            <div class="item-title">${esc(item.title)}</div>
+            <div class="item-title">${esc(item.title)} <span class="category-tag">${categoryLabel(item.category)}</span></div>
             <div class="item-date">${formatDate(item.created_at)}</div>
           </div>
           <div class="item-actions">
@@ -188,7 +196,8 @@
   }
 
   function startEdit(item) {
-    document.getElementById("formationId").value = item.id;
+    document.getElementById("itemId").value = item.id;
+    document.getElementById("category").value = item.category || "formation";
     document.getElementById("title").value = item.title || "";
     document.getElementById("excerpt").value = item.excerpt || "";
     document.getElementById("cover_image").value = item.cover_image || "";
@@ -200,8 +209,8 @@
   }
 
   async function handleDelete(id) {
-    if (!confirm("Supprimer définitivement cette formation réservée ?")) return;
-    const { error } = await supabaseClient.from("restricted_formations").delete().eq("id", id);
+    if (!confirm("Supprimer définitivement ce contenu réservé ?")) return;
+    const { error } = await supabaseClient.from("restricted_articles").delete().eq("id", id);
     if (error) { alert("Erreur : " + error.message); return; }
     loadItems();
   }
@@ -213,8 +222,9 @@
     submitBtn.disabled = true;
     messageEl.className = "form-message";
 
-    const id = document.getElementById("formationId").value;
+    const id = document.getElementById("itemId").value;
     const payload = {
+      category: document.getElementById("category").value,
       title: document.getElementById("title").value.trim(),
       excerpt: document.getElementById("excerpt").value.trim(),
       cover_image: document.getElementById("cover_image").value.trim() || null,
@@ -224,10 +234,10 @@
 
     let error;
     if (id) {
-      ({ error } = await supabaseClient.from("restricted_formations").update(payload).eq("id", id));
+      ({ error } = await supabaseClient.from("restricted_articles").update(payload).eq("id", id));
     } else {
       payload.created_by = currentUserId;
-      ({ error } = await supabaseClient.from("restricted_formations").insert(payload));
+      ({ error } = await supabaseClient.from("restricted_articles").insert(payload));
     }
 
     submitBtn.disabled = false;
@@ -237,7 +247,7 @@
       return;
     }
 
-    messageEl.textContent = id ? "Formation mise à jour." : "Formation publiée.";
+    messageEl.textContent = id ? "Contenu mis à jour." : "Contenu publié.";
     messageEl.className = "form-message success";
     resetForm();
     loadItems();

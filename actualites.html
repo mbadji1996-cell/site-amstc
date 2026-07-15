@@ -40,6 +40,11 @@
   .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
   .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
   .card p{font-size:0.92rem; color:#465A4E;}
+  .card-header-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .lock-badge{
+    font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em;
+    background:#FEF6E4; color:var(--gold-deep); padding:3px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;
+  }
   .empty, .error{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
 </style>
 </head>
@@ -58,32 +63,56 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
 <script>
   async function loadArticles() {
     const grid = document.getElementById("grid");
+    let publicArticles = [];
+    let restrictedTeasers = [];
+
     try {
       const res = await fetch("content/actualites-index.json");
-      if (!res.ok) throw new Error("index indisponible");
-      const articles = await res.json();
+      if (res.ok) publicArticles = await res.json();
+    } catch (e) { /* liste publique indisponible, on continue quand même */ }
 
-      if (articles.length === 0) {
-        grid.innerHTML = '<p class="empty">Aucun article publié pour le moment.</p>';
-        return;
-      }
+    try {
+      const { data } = await supabaseClient
+        .from("restricted_articles_teasers")
+        .select("*")
+        .eq("category", "actualite")
+        .order("created_at", { ascending: false });
+      restrictedTeasers = data || [];
+    } catch (e) { /* aperçus réservés indisponibles, on continue quand même */ }
 
-      grid.innerHTML = articles.map(a => `
-        <a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}">
+    const items = [
+      ...publicArticles.map(a => ({ ...a, _restricted: false, _date: a.date })),
+      ...restrictedTeasers.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
+    ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
+
+    if (items.length === 0) {
+      grid.innerHTML = '<p class="empty">Aucun article publié pour le moment.</p>';
+      return;
+    }
+
+    grid.innerHTML = items.map(a => {
+      const href = a._restricted
+        ? `membres/actualite-reservee.html?id=${encodeURIComponent(a.id)}`
+        : `article.html?slug=${encodeURIComponent(a.slug)}`;
+      return `
+        <a class="card" href="${href}">
           ${a.image ? `<img src="${a.image}" alt="">` : ""}
           <div class="card-body">
-            <span class="card-date">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+            <div class="card-header-row">
+              <span class="card-date">${a._date ? new Date(a._date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+              ${a._restricted ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
+            </div>
             <h3>${a.title || 'Sans titre'}</h3>
             <p>${a.excerpt || ''}</p>
           </div>
         </a>
-      `).join("");
-    } catch (e) {
-      grid.innerHTML = '<p class="error">Impossible de charger les articles pour le moment.</p>';
-    }
+      `;
+    }).join("");
   }
   loadArticles();
 </script>
