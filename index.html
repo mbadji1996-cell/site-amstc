@@ -93,6 +93,26 @@
   .menu-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px;}
   .menu-toggle span{display:block; width:24px; height:2px; background:var(--green-deep); margin:5px 0; transition:.2s;}
 
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-trigger{
+    display:flex; align-items:center; gap:5px; background:none; border:none; padding:4px 0;
+    font-family:var(--body); font-size:0.9rem; font-weight:500; color:var(--ink); cursor:pointer;
+  }
+  .nav-dropdown-trigger .chevron{font-size:0.7em; transition:transform .18s ease;}
+  .nav-dropdown.open .nav-dropdown-trigger .chevron{transform:rotate(180deg);}
+  .nav-dropdown-menu{
+    position:absolute; top:calc(100% + 16px); left:50%; transform:translateX(-50%) translateY(6px);
+    background:var(--white); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+    padding:8px; min-width:210px; display:flex; flex-direction:column; gap:2px;
+    opacity:0; visibility:hidden; transition:opacity .18s ease, transform .18s ease;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.open .nav-dropdown-menu{
+    opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
+  }
+  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap;}
+  .nav-dropdown-menu a::after{display:none;}
+  .nav-dropdown-menu a:hover{background:var(--paper-alt);}
+
   @media (max-width:1180px){
     .nav-links{
       position:absolute; top:100%; left:0; right:0; background:var(--paper);
@@ -103,6 +123,16 @@
     .nav-links a{width:100%; padding:14px 28px; border-top:1px solid var(--line); white-space:normal;}
     .menu-toggle{display:block;}
     .nav-actions .btn-outline{display:none;}
+
+    .nav-dropdown{width:100%;}
+    .nav-dropdown-trigger{width:100%; padding:14px 28px; border-top:1px solid var(--line); justify-content:space-between;}
+    .nav-dropdown-menu{
+      position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none;
+      border-radius:0; background:var(--paper-alt); padding:0; min-width:0;
+      max-height:0; overflow:hidden; transition:max-height .25s ease;
+    }
+    .nav-dropdown.open .nav-dropdown-menu{max-height:300px; overflow-y:auto;}
+    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%;}
   }
 
   /* ===== Hero ===== */
@@ -354,12 +384,26 @@
       <img src="assets/logo-mark-sm.png" alt="AMSTC - Association Médico-Sociale des Talibés Cheikh" class="logo-img">
     </a>
     <nav class="nav-links" id="navLinks">
-      <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
-      <a href="#nos-actions">Nos actions</a>
-      <a href="#historique">Historique</a>
-      <a href="actualites.html">Réalisations</a>
-      <a href="formations.html">Formation</a>
-      <a href="projets.html">Projets</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+          Découvrir l'AMSTC <span class="chevron" aria-hidden="true">&#9662;</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
+          <a href="#nos-actions">Nos actions</a>
+          <a href="#historique">Historique</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+          Nos activités <span class="chevron" aria-hidden="true">&#9662;</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="actualites.html">Réalisations</a>
+          <a href="formations.html">Formation</a>
+          <a href="projets.html">Projets</a>
+        </div>
+      </div>
       <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a>
       <a href="membres/connexion.html">Espace membres</a>
       <a href="#contact">Contact</a>
@@ -626,14 +670,34 @@
   document.getElementById('year').textContent = new Date().getFullYear();
   const toggle = document.getElementById('menuToggle');
   const links = document.getElementById('navLinks');
+  function closeAllDropdowns(){
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+      d.classList.remove('open');
+      d.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'false');
+    });
+  }
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', open);
+    closeAllDropdowns();
   });
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     links.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
+    closeAllDropdowns();
   }));
+  document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dropdown = trigger.closest('.nav-dropdown');
+      const isOpen = dropdown.classList.contains('open');
+      closeAllDropdowns();
+      dropdown.classList.toggle('open', !isOpen);
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+  document.addEventListener('click', closeAllDropdowns);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllDropdowns(); });
 
   // ===== Diaporama de fond du hero =====
   // Repli si aucune photo n'est choisie dans le CMS (Page d'accueil > 1. En-tête > Photos du diaporama)
