@@ -68,7 +68,31 @@
       "photo": "/assets/uploads/présidents-08.png"
     }
   ],
-  "pioneers": [],
-  "pioneers_subtitle": "Ces esprits visionnaires ontPar leur vision et leur dévouement des premiers jours, ils ont tracé la voie et bâti les fondations solides sur lesquelles s'appuient aujourd'hui nos réussites.",
+  "pioneers_layout": "cartes",
+  "pioneers": [
+    { "name": "Abdou Khadre Kane", "photo": "assets/pioneers/01-abdou-khadre-kane.jpg" },
+    { "name": "Ndeye Marame Wade", "photo": "assets/pioneers/02-ndeye-marame-wade.jpg" },
+    { "name": "Makhan", "photo": "assets/pioneers/03-makhan.jpg" },
+    { "name": "Mame Fatou Ballé Niang", "photo": "assets/pioneers/04-mame-fatou-balle-niang.jpg" },
+    { "name": "Racine Ly", "photo": "assets/pioneers/05-racine-ly.jpg" },
+    { "name": "Aida Ndour", "photo": "assets/pioneers/06-aida-ndour.jpg" },
+    { "name": "Mar Fall Dabakh", "photo": "assets/pioneers/07-mar-fall-dabakh.jpg" },
+    { "name": "Bineta Kane Dia", "photo": "assets/pioneers/08-bineta-kane-dia.jpg" },
+    { "name": "El Hadji Malick Gueye", "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg" },
+    { "name": "Amayel", "photo": "assets/pioneers/10-amayel.jpg" },
+    { "name": "Kaoussou", "photo": "assets/pioneers/11-kaoussou.jpg" },
+    { "name": "Fatou Faye Fall", "photo": "assets/pioneers/12-fatou-faye-fall.jpg" },
+    { "name": "Mbaye Sow", "photo": "assets/pioneers/13-mbaye-sow.jpg" },
+    { "name": "", "photo": "assets/pioneers/14-sans-nom.jpg" },
+    { "name": "Arone Ndiaye", "photo": "assets/pioneers/15-arone-ndiaye.jpg" },
+    { "name": "Seydatouna Haissatou Diop", "photo": "assets/pioneers/16-seydatouna-haissatou-diop.jpg" },
+    { "name": "Ismaila Diagne", "photo": "assets/pioneers/17-ismaila-diagne.jpg" },
+    { "name": "Ndeye Marietou Danfakha", "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg" },
+    { "name": "Mansour", "photo": "assets/pioneers/19-mansour.jpg" },
+    { "name": "Adele", "photo": "assets/pioneers/20-adele.jpg" },
+    { "name": "Xulio", "photo": "assets/pioneers/21-xulio.jpg" },
+    { "name": "Demba", "photo": "assets/pioneers/22-demba.jpg" }
+  ],
+  "pioneers_subtitle": "Ces esprits visionnaires ont, par leur vision et leur dévouement des premiers jours, tracé la voie et bâti les fondations solides sur lesquelles s'appuient aujourd'hui nos réussites.",
   "history_eyebrow": "Notre histoire"
 }

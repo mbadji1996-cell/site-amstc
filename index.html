@@ -485,10 +485,11 @@
       </div>
 
       <div class="historique-sub" id="pioneersBlock" style="display:none;">
-        <div class="founders-box reveal">
-          <h4 id="cms-pioneers-title">Les Pionniers</h4>
+        <h4 class="historique-sub-heading" id="cms-pioneers-title">Les Pionniers</h4>
+        <div class="founders-box reveal" id="pioneersListWrap">
           <div class="founders-list" id="cms-pioneers-list"></div>
         </div>
+        <div class="team-row reveal" id="cms-pioneers-row"></div>
       </div>
 
       <div class="historique-sub" id="presidentsBlock" style="display:none;">
@@ -760,19 +761,42 @@
   }
 
   // ===== Les Pionniers =====
-  function renderPioneers(list){
+  function memberInitials(name){
+    return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+  function renderPioneers(list, layout){
     const block = document.getElementById('pioneersBlock');
+    const listWrap = document.getElementById('pioneersListWrap');
     const listEl = document.getElementById('cms-pioneers-list');
-    if (!block || !listEl) return;
+    const row = document.getElementById('cms-pioneers-row');
+    if (!block || !listWrap || !listEl || !row) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
-    listEl.innerHTML = list.map(name => `<span>${esc(name)}</span>`).join('');
+
+    const useCards = layout !== 'liste';
+    listWrap.style.display = useCards ? 'none' : '';
+    row.style.display = useCards ? '' : 'none';
+
+    if (useCards) {
+      row.innerHTML = list.map(p => {
+        const name = typeof p === 'string' ? p : (p.name || '');
+        const photo = typeof p === 'string' ? '' : (p.photo || '');
+        return `
+          <div class="team-card reveal">
+            ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(memberInitials(name))}</div>`}
+            ${name ? `<div class="team-name">${esc(name)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    } else {
+      listEl.innerHTML = list.map(p => {
+        const name = typeof p === 'string' ? p : (p.name || '');
+        return name ? `<span>${esc(name)}</span>` : '';
+      }).join('');
+    }
   }
 
   // ===== Anciens présidents =====
-  function presidentInitials(name){
-    return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
-  }
   function renderPresidents(list){
     const block = document.getElementById('presidentsBlock');
     const row = document.getElementById('cms-presidents-row');
@@ -781,7 +805,7 @@
     block.style.display = '';
     row.innerHTML = list.map(p => `
       <div class="team-card reveal">
-        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(presidentInitials(p.name))}</div>`}
+        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(memberInitials(p.name))}</div>`}
         <div class="team-name">${esc(p.name)}</div>
         <div class="team-role">${esc(p.mandate || '')}</div>
       </div>
@@ -925,7 +949,7 @@
       `).join('');
     }
     if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
-    renderPioneers(data.pioneers);
+    renderPioneers(data.pioneers, data.pioneers_layout);
     if (data.presidents_title) document.getElementById('cms-presidents-title').textContent = data.presidents_title;
     renderPresidents(data.presidents);
 

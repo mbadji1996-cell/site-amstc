@@ -93,11 +93,20 @@ collections:
 
           - { label: "Titre - Les Pionniers", name: "pioneers_title", widget: "string", default: "Les Pionniers" }
           - { label: "Sous-titre - Les Pionniers", name: "pioneers_subtitle", widget: "string", required: false }
+          - label: "Disposition - Les Pionniers"
+            name: "pioneers_layout"
+            widget: "select"
+            default: "cartes"
+            options:
+              - { label: "Cartes avec photo", value: "cartes" }
+              - { label: "Liste de noms (sans photo)", value: "liste" }
           - label: "Les Pionniers (membres fondateurs)"
             name: "pioneers"
             widget: "list"
-            hint: "Un nom par ligne. Laissez la liste vide pour masquer ce bloc sur le site."
-            field: { label: "Nom", name: "name", widget: "string" }
+            hint: "L'ordre ici définit l'ordre d'affichage sur le site. Laissez la liste vide pour masquer ce bloc."
+            fields:
+              - { label: "Photo", name: "photo", widget: "image", required: false }
+              - { label: "Nom", name: "name", widget: "string", required: false }
 
           - { label: "Titre - Anciens présidents", name: "presidents_title", widget: "string", default: "Nos anciens présidents" }
           - { label: "Sous-titre - Anciens présidents", name: "presidents_subtitle", widget: "string", required: false }
