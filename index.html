@@ -205,6 +205,7 @@
   }
   .historique-sub{margin-top:56px;}
   .historique-sub-heading{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); margin-bottom:18px;}
+  .historique-sub-subtitle{color:#465A4E; font-size:0.98rem; max-width:60ch; margin:-8px 0 20px;}
   .team-avatar-fallback{
     width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
     background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
@@ -486,6 +487,7 @@
 
       <div class="historique-sub" id="pioneersBlock" style="display:none;">
         <h4 class="historique-sub-heading" id="cms-pioneers-title">Les Pionniers</h4>
+        <p class="historique-sub-subtitle" id="cms-pioneers-subtitle" style="display:none;"></p>
         <div class="founders-box reveal" id="pioneersListWrap">
           <div class="founders-list" id="cms-pioneers-list"></div>
         </div>
@@ -494,6 +496,7 @@
 
       <div class="historique-sub" id="presidentsBlock" style="display:none;">
         <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
+        <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
         <div class="team-row reveal" id="cms-presidents-row"></div>
       </div>
     </div>
@@ -760,6 +763,13 @@
     }).join('');
   }
 
+  function setOptionalSubtitle(id, text){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (text) { el.textContent = text; el.style.display = ''; }
+    else { el.style.display = 'none'; }
+  }
+
   // ===== Les Pionniers =====
   function memberInitials(name){
     return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
@@ -949,8 +959,10 @@
       `).join('');
     }
     if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
+    setOptionalSubtitle('cms-pioneers-subtitle', data.pioneers_subtitle);
     renderPioneers(data.pioneers, data.pioneers_layout);
     if (data.presidents_title) document.getElementById('cms-presidents-title').textContent = data.presidents_title;
+    setOptionalSubtitle('cms-presidents-subtitle', data.presidents_subtitle);
     renderPresidents(data.presidents);
 
     // Gouvernance
