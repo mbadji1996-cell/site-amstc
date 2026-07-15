@@ -162,8 +162,14 @@
       "name": "Dr Mouhamadou Habib DIOP",
       "photo": "/assets/uploads/habib.jpg"
     },
-    {},
-    {}
+    {
+      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
+      "name": "Dr Ndèye Codou FAYE"
+    },
+    {
+      "photo": "/assets/uploads/bouba.jpg",
+      "name": "Dr El Hadji Boubacar GUEYE (Buba)"
+    }
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
   "history_eyebrow": "Notre histoire"
