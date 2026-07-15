@@ -71,55 +71,59 @@
   ],
   "pioneers": [
     {
-      "name": "Abdou Khadre Kane",
+      "name": "Abdou Khadre KANE",
       "photo": "assets/pioneers/01-abdou-khadre-kane.jpg"
     },
     {
-      "name": "Ndeye Marame Wade",
+      "name": "Dr Ndeye Marame WADE",
       "photo": "assets/pioneers/02-ndeye-marame-wade.jpg"
     },
     {
-      "name": "Makhan",
+      "name": "Dr Makhan DANFAKHA",
       "photo": "assets/pioneers/03-makhan.jpg"
     },
     {
-      "name": "Mame Fatou Ballé Niang",
+      "name": "Dr Mame Fatou Ballé NIANG",
       "photo": "assets/pioneers/04-mame-fatou-balle-niang.jpg"
     },
     {
-      "name": "Racine Ly",
+      "name": "Dr Racine Ly",
       "photo": "assets/pioneers/05-racine-ly.jpg"
     },
     {
-      "name": "Aida Ndour",
+      "name": "Dr Aida NDOUR",
       "photo": "assets/pioneers/06-aida-ndour.jpg"
     },
     {
-      "name": "Mar Fall Dabakh",
+      "name": "Dr Demba Tahirou DIOP",
+      "photo": "assets/pioneers/22-demba.jpg"
+    },
+    {
+      "name": "Dr Mar FALL Dabakh",
       "photo": "assets/pioneers/07-mar-fall-dabakh.jpg"
     },
     {
-      "name": "Bineta Kane Dia",
+      "name": "Dr Bineta Kane DIA",
       "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
     },
     {
-      "name": "El Hadji Malick Gueye",
+      "name": "Dr El Hadji Malick GUEYE",
       "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg"
     },
     {
-      "name": "Amayel",
+      "name": "Dr Amayel KANE",
       "photo": "assets/pioneers/10-amayel.jpg"
     },
     {
-      "name": "Kaoussou",
+      "name": "Dr Kaoussou A. BODIAN",
       "photo": "assets/pioneers/11-kaoussou.jpg"
     },
     {
-      "name": "Fatou Faye Fall",
+      "name": "Dr Fatou Faye FALL",
       "photo": "assets/pioneers/12-fatou-faye-fall.jpg"
     },
     {
-      "name": "Mbaye Sow",
+      "name": "Dr Mbaye SOW",
       "photo": "assets/pioneers/13-mbaye-sow.jpg"
     },
     {
@@ -127,37 +131,39 @@
       "photo": "assets/pioneers/14-sans-nom.jpg"
     },
     {
-      "name": "Arone Ndiaye",
+      "name": "Dr Arona NDIAYE",
       "photo": "assets/pioneers/15-arone-ndiaye.jpg"
     },
     {
-      "name": "Seydatouna Haissatou Diop",
+      "name": "Dr Seydatouna Haissatou DIOP",
       "photo": "assets/pioneers/16-seydatouna-haissatou-diop.jpg"
     },
     {
-      "name": "Ismaila Diagne",
+      "name": "Ismaila DIAGNE",
       "photo": "assets/pioneers/17-ismaila-diagne.jpg"
     },
     {
-      "name": "Ndeye Marietou Danfakha",
+      "name": "Dr Ndèye Mariètou DANFAKHA",
       "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg"
     },
     {
-      "name": "Mansour",
+      "name": "Dr Mouhamadou Mansour BA",
       "photo": "assets/pioneers/19-mansour.jpg"
     },
     {
-      "name": "Adele",
+      "name": "Dr Ndeye Adele GUEYE",
       "photo": "assets/pioneers/20-adele.jpg"
     },
     {
-      "name": "Xulio",
+      "name": "Dr Souleymane DIATTA",
       "photo": "assets/pioneers/21-xulio.jpg"
     },
     {
-      "name": "Demba",
-      "photo": "assets/pioneers/22-demba.jpg"
-    }
+      "name": "Dr Mouhamadou Habib DIOP",
+      "photo": "/assets/uploads/habib.jpg"
+    },
+    {},
+    {}
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
   "history_eyebrow": "Notre histoire"
