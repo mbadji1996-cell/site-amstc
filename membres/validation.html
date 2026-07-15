@@ -80,6 +80,7 @@
   <p class="eyebrow">Espace Membres — Administration</p>
   <h1>Gestion des membres</h1>
   <p class="intro">Approuvez les inscriptions, gérez les comptes et (si vous êtes Super Administrateur) les droits d'administration.</p>
+  <p><button class="btn-sm btn-outline-sm" id="debugBtn">Diagnostic (temporaire)</button></p>
 
   <h2>Inscriptions en attente</h2>
   <div id="pendingList"><p class="loading">Chargement…</p></div>
@@ -276,6 +277,18 @@
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
     window.location.href = "connexion.html";
+  });
+
+  document.getElementById("debugBtn").addEventListener("click", async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: monProfil } = await supabaseClient.from("profiles").select("id,email,role").eq("id", session.user.id);
+    const { data: check, error: checkErr } = await supabaseClient.rpc("is_super_admin");
+    alert(
+      "Session ID: " + session.user.id + "\n\n" +
+      "Mon profil: " + JSON.stringify(monProfil) + "\n\n" +
+      "is_super_admin(): " + JSON.stringify(check) + "\n" +
+      "erreur: " + JSON.stringify(checkErr)
+    );
   });
 </script>
 
