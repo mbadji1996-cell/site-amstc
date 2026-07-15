@@ -68,14 +68,14 @@
     },
     {
       "name": "Malick KANE",
-      "role": "Présidente",
+      "role": "Président",
       "commission": "Commission Pédagogique",
       "detail": "Doctorat 3, Médecine",
       "photo": "assets/team/10-malick-kane.jpg"
     },
     {
       "name": "Cheikh Tidiane DIOP",
-      "role": "Adjointe",
+      "role": "Adjoint",
       "commission": "Commission Pédagogique",
       "detail": "Master 1, Médecine",
       "photo": "assets/team/11-cheikh-tidiane-diop.jpg"
@@ -194,7 +194,7 @@
     },
     {
       "name": "Mandiaye SYLLA",
-      "role": "Adjointe",
+      "role": "Adjoint",
       "commission": "Commission Finance",
       "detail": "Doctorat 3, Médecine",
       "photo": "assets/team/28-mandiaye-sylla.jpg"
@@ -230,7 +230,7 @@
     {
       "name": "Mame Youssoupha DIOP",
       "role": "Commissaire aux comptes",
-      "commission": "Commissaires aux comptes",
+      "commission": "  ",
       "detail": "Licence 3, Médecine",
       "photo": "assets/team/33-mame-youssoupha-diop.jpg"
     },
