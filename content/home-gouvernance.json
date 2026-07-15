@@ -6,42 +6,42 @@
     {
       "name": "Serigne Babacar SECK",
       "role": "Président",
-      "commission": "Présidium",
+      "commission": " ",
       "detail": "Interne des Hôpitaux en Anesthésie et Réanimation",
       "photo": "assets/team/01-serigne-babacar-seck.jpg"
     },
     {
       "name": "Boubacar Athé NIANG",
       "role": "Vice-président",
-      "commission": "Présidium",
+      "commission": " ",
       "detail": "Doctorat 2, Médecine",
       "photo": "assets/team/02-boubacar-athe-niang.jpg"
     },
     {
       "name": "Pape Modou PADANE",
       "role": "Secrétaire général",
-      "commission": "Présidium",
+      "commission": " ",
       "detail": "Doctorat 2, Médecine",
       "photo": "assets/team/03-pape-modou-padane.jpg"
     },
     {
       "name": "Fama SAKHO",
-      "role": "Adjointe SG",
-      "commission": "Présidium",
+      "role": "Adjointe",
+      "commission": "Secrétaire général",
       "detail": "Doctorat 2, Médecine",
       "photo": "assets/team/04-fama-sakho.jpg"
     },
     {
       "name": "Ndeye Astou NDIAYE",
-      "role": "Adjointe SG",
-      "commission": "Présidium",
+      "role": "Adjointe",
+      "commission": "Secrétaire général",
       "detail": "Licence 1, Médecine",
       "photo": "assets/team/05-ndeye-astou-ndiaye.jpg"
     },
     {
       "name": "Mamadou NIANG",
-      "role": "Adjoint SG",
-      "commission": "Présidium",
+      "role": "Adjoint",
+      "commission": "Secrétaire général",
       "detail": "Master 2, Pharmacie",
       "photo": "assets/team/06-mamadou-niang.jpg"
     },
