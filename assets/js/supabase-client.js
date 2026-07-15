@@ -4,8 +4,8 @@
 // La clé "anon" est conçue pour être visible côté client : la sécurité
 // vient des règles RLS Postgres (voir supabase/schema.sql), pas du secret
 // de cette clé.
-const SUPABASE_URL = "https://VOTRE-PROJET.supabase.co";
-const SUPABASE_ANON_KEY = "VOTRE_CLE_ANON";
+const SUPABASE_URL = "https://qcdhtynqhpydtqnptvmo.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjZGh0eW5xaHB5ZHRxbnB0dm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMTYyMjUsImV4cCI6MjA5OTY5MjIyNX0.9PSZT4KmvKueqBxAW2ojpiB97PpZFCO_s1bLROWpTj4";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
