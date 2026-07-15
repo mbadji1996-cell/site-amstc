@@ -120,6 +120,28 @@ l'image de couverture - il faut coller l'URL d'une image déjà en ligne
 (par exemple une image déjà publiée via le CMS habituel, dont vous
 pouvez copier l'adresse).
 
+## 4quater. Activer les documents officiels réservés (Statuts, Règlement intérieur, rapports...)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase3c-documents-officiels.sql`, copiez
+   tout son contenu, collez-le, cliquez **Run**
+
+Contrairement aux formations/réalisations réservées (texte + image),
+les documents officiels sont de vrais fichiers PDF. Ce script crée en
+plus un espace de stockage Supabase **privé** (`documents-reserves`) :
+personne ne peut deviner ou partager une URL directe vers un fichier -
+l'accès se fait uniquement via un lien signé, généré à la demande,
+après vérification que la personne connectée est bien un membre
+approuvé.
+
+Ensuite :
+- Dans `membres/contenu-reserve-admin.html`, choisissez le type
+  "Document officiel", donnez un titre/résumé, et envoyez le PDF
+  (Statuts, Règlement intérieur, rapport annuel, PV d'AG...)
+- `membres/documents.html` liste ces documents pour tout membre
+  approuvé, avec un bouton "Télécharger" qui génère un lien valable
+  une minute
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -157,9 +179,13 @@ Une fois l'URL et la clé intégrées :
   simple administrateur ne peut ni créer d'autres admins, ni modifier les
   droits d'administration - vérifié côté base de données, pas seulement
   côté affichage)
-- Formations réservées aux membres, stockées hors du dépôt Git public
-  (voir Phase 3 ci-dessus), avec aperçu public verrouillé sur la page
-  Formation
+- Formations et Réalisations réservées aux membres, stockées hors du
+  dépôt Git public (voir Phase 3 ci-dessus), avec aperçu public
+  verrouillé sur les pages publiques correspondantes
+- Documents officiels réservés (Statuts, Règlement intérieur, rapports,
+  PV d'AG...), sous forme de vrais fichiers PDF stockés dans un espace
+  privé, accessibles uniquement via un lien signé temporaire pour les
+  membres approuvés
 
 ## Limite connue : création de comptes par un administrateur
 
