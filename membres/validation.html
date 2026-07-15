@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validation des comptes - Espace Membres - AMSTC</title>
+<title>Gestion des membres - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://amstc.org/membres/validation.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
@@ -20,7 +20,7 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
   a{color:inherit; text-decoration:none;}
-  .wrap{max-width:820px; margin:0 auto; padding:0 28px;}
+  .wrap{max-width:860px; margin:0 auto; padding:0 28px;}
   header{padding:24px 0; border-bottom:1px solid var(--line);}
   .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
   .logo-img{height:42px;}
@@ -34,25 +34,34 @@
   .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
   .intro{color:#3C4E44; font-size:1.02rem; margin-bottom:32px;}
-  h2{font-family:var(--display); font-size:1.1rem; color:var(--green-deep); margin:36px 0 16px;}
+  h2{font-family:var(--display); font-size:1.1rem; color:var(--green-deep); margin:36px 0 4px;}
+  .section-note{color:#5A6C60; font-size:0.88rem; margin-bottom:16px;}
   .member-row{
     background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px;
     display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px; flex-wrap:wrap;
   }
-  .member-name{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1rem;}
+  .member-name{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .member-email{font-size:0.88rem; color:#5A6C60; margin-top:2px;}
   .member-date{font-family:var(--mono); font-size:0.75rem; color:#5A6C60; margin-top:4px;}
-  .member-actions{display:flex; gap:10px; flex-shrink:0;}
+  .member-actions{display:flex; gap:10px; flex-shrink:0; flex-wrap:wrap;}
   .btn-sm{
     font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;
     transition:opacity .15s ease;
   }
   .btn-sm:hover{opacity:0.85;}
+  .btn-sm:disabled{opacity:0.4; cursor:not-allowed;}
   .btn-approve{background:var(--green); color:var(--white);}
   .btn-reject{background:#FDEEEE; color:#B23B3B;}
-  .status-tag{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; padding:4px 10px; border-radius:999px;}
+  .btn-outline-sm{background:var(--white); color:var(--green-deep); border:1.5px solid var(--line);}
+  .btn-warning{background:#FEF6E4; color:var(--gold-deep);}
+  .btn-promote{background:var(--green-deep); color:var(--white);}
+  .status-tag, .role-tag{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; padding:3px 9px; border-radius:999px;}
   .status-tag.approved{background:var(--paper-alt); color:var(--green-deep);}
   .status-tag.rejected{background:#FDEEEE; color:#B23B3B;}
+  .status-tag.inactive{background:#FDEEEE; color:#B23B3B;}
+  .role-tag.admin{background:#EAF3FF; color:#1D4E89;}
+  .role-tag.super_admin{background:#FEF6E4; color:var(--gold-deep);}
+  .self-note{font-size:0.78rem; color:#5A6C60; font-style:italic;}
   .empty, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
@@ -69,14 +78,24 @@
 
 <div class="wrap" id="pageContent" style="display:none;">
   <p class="eyebrow">Espace Membres — Administration</p>
-  <h1>Validation des comptes</h1>
-  <p class="intro">Approuvez ou refusez les demandes d'inscription à l'espace membres.</p>
+  <h1>Gestion des membres</h1>
+  <p class="intro">Approuvez les inscriptions, gérez les comptes et (si vous êtes Super Administrateur) les droits d'administration.</p>
 
-  <h2>En attente</h2>
+  <h2>Inscriptions en attente</h2>
   <div id="pendingList"><p class="loading">Chargement…</p></div>
 
-  <h2>Traités récemment</h2>
-  <div id="processedList"></div>
+  <h2>Membres</h2>
+  <p class="section-note">Comptes approuvés : activation, désactivation et réinitialisation du mot de passe.</p>
+  <div id="membersList"></div>
+
+  <div id="superAdminSection" style="display:none;">
+    <h2>Droits d'administration</h2>
+    <p class="section-note">Réservé au Super Administrateur : nommer ou révoquer des administrateurs.</p>
+    <div id="rolesList"></div>
+  </div>
+
+  <h2>Refusés</h2>
+  <div id="rejectedList"></div>
 </div>
 
 <div class="wrap">
@@ -90,14 +109,24 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  let currentUserId = null;
+  let isSuperAdmin = false;
+
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   }
+  function roleLabel(role){
+    if (role === "super_admin") return "Super Administrateur";
+    if (role === "admin") return "Administrateur";
+    return "Utilisateur";
+  }
 
   async function loadLists() {
     const pendingEl = document.getElementById("pendingList");
-    const processedEl = document.getElementById("processedList");
+    const membersEl = document.getElementById("membersList");
+    const rolesEl = document.getElementById("rolesList");
+    const rejectedEl = document.getElementById("rejectedList");
 
     const { data, error } = await supabaseClient
       .from("profiles")
@@ -110,12 +139,14 @@
     }
 
     const pending = data.filter(p => p.status === "pending");
-    const processed = data.filter(p => p.status !== "pending").slice(0, 20);
+    const approved = data.filter(p => p.status === "approved");
+    const rejected = data.filter(p => p.status === "rejected").slice(0, 20);
 
+    // ===== Inscriptions en attente =====
     pendingEl.innerHTML = pending.length === 0
       ? '<p class="empty">Aucune demande en attente.</p>'
       : pending.map(p => `
-        <div class="member-row" data-id="${esc(p.id)}">
+        <div class="member-row">
           <div>
             <div class="member-name">${esc(p.full_name || "(nom non renseigné)")}</div>
             <div class="member-email">${esc(p.email)}</div>
@@ -128,29 +159,99 @@
         </div>
       `).join("");
 
-    processedEl.innerHTML = processed.length === 0
-      ? '<p class="empty">Aucun compte traité pour le moment.</p>'
-      : processed.map(p => `
+    // ===== Membres approuvés =====
+    membersEl.innerHTML = approved.length === 0
+      ? '<p class="empty">Aucun membre approuvé pour le moment.</p>'
+      : approved.map(p => `
+        <div class="member-row">
+          <div>
+            <div class="member-name">
+              ${esc(p.full_name || "(nom non renseigné)")}
+              <span class="role-tag ${esc(p.role)}">${roleLabel(p.role)}</span>
+              ${p.is_active === false ? '<span class="status-tag inactive">Désactivé</span>' : ''}
+            </div>
+            <div class="member-email">${esc(p.email)}</div>
+          </div>
+          <div class="member-actions">
+            <button class="btn-sm btn-outline-sm" data-action="reset-password" data-email="${esc(p.email)}">Réinitialiser le mot de passe</button>
+            ${p.is_active === false
+              ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
+              : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
+          </div>
+        </div>
+      `).join("");
+
+    // ===== Droits d'administration (Super Admin uniquement) =====
+    if (isSuperAdmin) {
+      rolesEl.innerHTML = approved.length === 0
+        ? '<p class="empty">Aucun membre approuvé pour le moment.</p>'
+        : approved.map(p => {
+            const isSelf = p.id === currentUserId;
+            let actionBtn = "";
+            if (isSelf) {
+              actionBtn = '<span class="self-note">C\'est votre compte</span>';
+            } else if (p.role === "super_admin") {
+              actionBtn = '<span class="self-note">Super Administrateur</span>';
+            } else if (p.role === "admin") {
+              actionBtn = `<button class="btn-sm btn-warning" data-action="revoke-admin" data-id="${esc(p.id)}">Révoquer les droits admin</button>`;
+            } else {
+              actionBtn = `<button class="btn-sm btn-promote" data-action="promote-admin" data-id="${esc(p.id)}">Nommer administrateur</button>`;
+            }
+            return `
+              <div class="member-row">
+                <div>
+                  <div class="member-name">
+                    ${esc(p.full_name || "(nom non renseigné)")}
+                    <span class="role-tag ${esc(p.role)}">${roleLabel(p.role)}</span>
+                  </div>
+                  <div class="member-email">${esc(p.email)}</div>
+                </div>
+                <div class="member-actions">${actionBtn}</div>
+              </div>
+            `;
+          }).join("");
+    }
+
+    // ===== Refusés =====
+    rejectedEl.innerHTML = rejected.length === 0
+      ? '<p class="empty">Aucun compte refusé.</p>'
+      : rejected.map(p => `
         <div class="member-row">
           <div>
             <div class="member-name">${esc(p.full_name || "(nom non renseigné)")}</div>
             <div class="member-email">${esc(p.email)}</div>
           </div>
-          <span class="status-tag ${esc(p.status)}">${p.status === "approved" ? "Approuvé" : "Refusé"}</span>
+          <span class="status-tag rejected">Refusé</span>
         </div>
       `).join("");
 
-    pendingEl.querySelectorAll("button[data-action]").forEach(btn => {
-      btn.addEventListener("click", () => handleAction(btn.dataset.id, btn.dataset.action));
+    document.querySelectorAll("button[data-action]").forEach(btn => {
+      btn.addEventListener("click", () => handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email));
     });
   }
 
-  async function handleAction(id, action) {
-    const newStatus = action === "approve" ? "approved" : "rejected";
-    const { error } = await supabaseClient
-      .from("profiles")
-      .update({ status: newStatus })
-      .eq("id", id);
+  async function handleAction(action, id, email) {
+    let error = null;
+
+    if (action === "approve" || action === "reject") {
+      ({ error } = await supabaseClient.rpc("approve_or_reject_user", {
+        target_user_id: id, new_status: action === "approve" ? "approved" : "rejected"
+      }));
+    } else if (action === "activate" || action === "deactivate") {
+      ({ error } = await supabaseClient.rpc("set_user_active", {
+        target_user_id: id, active: action === "activate"
+      }));
+    } else if (action === "promote-admin" || action === "revoke-admin") {
+      ({ error } = await supabaseClient.rpc("set_user_role", {
+        target_user_id: id, new_role: action === "promote-admin" ? "admin" : "user"
+      }));
+    } else if (action === "reset-password") {
+      ({ error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname.replace("validation.html", "reinitialiser.html")
+      }));
+      if (!error) alert("Un lien de réinitialisation a été envoyé à " + email + ".");
+    }
+
     if (error) {
       alert("Une erreur est survenue : " + error.message);
       return;
@@ -161,6 +262,10 @@
   (async () => {
     const profile = await requireAdmin("connexion.html");
     if (!profile) return;
+
+    currentUserId = profile.id;
+    isSuperAdmin = profile.role === "super_admin";
+    if (isSuperAdmin) document.getElementById("superAdminSection").style.display = "";
 
     document.getElementById("loadingMsg").style.display = "none";
     document.getElementById("pageContent").style.display = "";

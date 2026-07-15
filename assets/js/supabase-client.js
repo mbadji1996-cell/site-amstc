@@ -33,7 +33,7 @@ async function getCurrentProfile() {
  */
 async function requireApprovedMember(redirectTo = "connexion.html") {
   const profile = await getCurrentProfile();
-  if (!profile || profile.status !== "approved") {
+  if (!profile || profile.status !== "approved" || profile.is_active === false) {
     window.location.href = redirectTo;
     return null;
   }
@@ -46,7 +46,19 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
  */
 async function requireAdmin(redirectTo = "connexion.html") {
   const profile = await getCurrentProfile();
-  if (!profile || !["admin", "super_admin"].includes(profile.role)) {
+  if (!profile || !["admin", "super_admin"].includes(profile.role) || profile.is_active === false) {
+    window.location.href = redirectTo;
+    return null;
+  }
+  return profile;
+}
+
+/**
+ * Protège une page réservée au Super Administrateur uniquement.
+ */
+async function requireSuperAdmin(redirectTo = "connexion.html") {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "super_admin" || profile.is_active === false) {
     window.location.href = redirectTo;
     return null;
   }

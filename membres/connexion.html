@@ -142,6 +142,13 @@
       return;
     }
 
+    if (profile.is_active === false) {
+      showMessage("Votre compte a été désactivé. Contactez-nous à contact@amstc.org pour plus d'informations.", "error");
+      await signOut();
+      submitBtn.disabled = false;
+      return;
+    }
+
     window.location.href = "index.html";
   });
 </script>

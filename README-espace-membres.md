@@ -65,6 +65,27 @@ where email = 'son-email@exemple.com';
 Les inscriptions suivantes pourront être approuvées directement depuis
 `membres/validation.html`, sans repasser par le SQL Editor.
 
+## 4bis. Activer la Phase 2 (rôles Administrateur / Super Administrateur)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase2-roles.sql` (fourni dans ce dépôt),
+   copiez tout son contenu, collez-le, cliquez **Run**
+3. Promouvez votre compte admin existant en Super Administrateur (en
+   remplaçant l'e-mail) :
+
+```sql
+update public.profiles
+set role = 'super_admin'
+where email = 'votre-email@exemple.com';
+```
+
+À partir de là, sur `membres/validation.html` :
+- **Administrateur et Super Administrateur** peuvent approuver/refuser les
+  inscriptions, activer/désactiver un compte, et envoyer un lien de
+  réinitialisation de mot de passe
+- **Seul le Super Administrateur** voit la section "Droits d'administration"
+  pour nommer ou révoquer des administrateurs
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -87,21 +108,41 @@ Une fois l'URL et la clé intégrées :
 5. Reconnectez-vous : vous devez accéder à `membres/index.html`
 6. Testez "mot de passe oublié" de bout en bout
 
-## Ce qui est couvert pour l'instant (Phase 1)
+## Ce qui est couvert pour l'instant (Phases 1 et 2)
 
 - Inscription publique, avec validation manuelle par un administrateur
   avant tout accès
 - Connexion, déconnexion, mot de passe oublié / réinitialisation
 - Un espace membre minimal (page d'accueil réservée aux comptes
   approuvés)
-- Une page d'administration pour approuver ou refuser les inscriptions
+- Une page de gestion des membres (`membres/validation.html`) :
+  approbation/refus des inscriptions, activation/désactivation d'un
+  compte, envoi d'un lien de réinitialisation de mot de passe
+- Distinction **Administrateur** / **Super Administrateur** : seul le
+  Super Administrateur peut nommer ou révoquer des administrateurs (un
+  simple administrateur ne peut ni créer d'autres admins, ni modifier les
+  droits d'administration - vérifié côté base de données, pas seulement
+  côté affichage)
+
+## Limite connue : création de comptes par un administrateur
+
+Le cahier des charges initial prévoyait qu'un administrateur puisse
+"créer des comptes utilisateurs" directement. Ce n'est **pas
+implémenté**, et ne peut pas l'être de façon sûre avec l'architecture
+actuelle (site statique + clé publique Supabase) : créer un compte sans
+mot de passe fourni par la personne elle-même nécessite la clé
+"service_role" de Supabase, une clé à tous les droits qui ne doit
+**jamais** être placée dans du code accessible depuis un navigateur (elle
+permettrait à n'importe quel visiteur de prendre le contrôle de tous les
+comptes). Faire ça correctement demanderait un vrai serveur applicatif,
+ce qui sortirait du cadre d'un site 100% statique.
+
+En pratique, ça ne change pas grand-chose au fonctionnement : la personne
+s'inscrit elle-même via `membres/inscription.html` (comme aujourd'hui),
+puis un administrateur ou Super Administrateur l'approuve depuis
+`membres/validation.html`.
 
 ## Ce qui n'est pas encore fait
 
-- La distinction fine entre **Administrateur** et **Super Administrateur**
-  (droits de nomination/révocation des admins) - prévue pour une prochaine
-  étape
-- La création de comptes utilisateurs directement par un administrateur
-  (pour l'instant, seule l'inscription publique existe)
 - L'option Public / Réservé aux membres sur les articles de la rubrique
-  Formation
+  Formation (Phase 3)

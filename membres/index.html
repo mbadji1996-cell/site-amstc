@@ -58,6 +58,10 @@
   <div class="card">
     <p>Cet espace est en cours de construction : les contenus réservés aux membres y seront progressivement ajoutés.</p>
   </div>
+
+  <div class="card" id="adminCard" style="display:none;">
+    <p><a href="validation.html" style="color:var(--green); font-weight:600;">→ Gestion des membres</a></p>
+  </div>
 </div>
 
 <div class="wrap">
@@ -79,6 +83,9 @@
     document.getElementById("pageContent").style.display = "";
     document.getElementById("signoutBtn").style.display = "";
     document.getElementById("welcomeTitle").textContent = "Bienvenue, " + (profile.full_name || profile.email);
+    if (["admin", "super_admin"].includes(profile.role)) {
+      document.getElementById("adminCard").style.display = "";
+    }
   })();
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
