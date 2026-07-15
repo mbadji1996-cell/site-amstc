@@ -42,12 +42,21 @@
   .doc-title{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.05rem;}
   .doc-excerpt{color:#465A4E; font-size:0.92rem; margin-top:4px;}
   .doc-date{font-family:var(--mono); font-size:0.75rem; color:#5A6C60; margin-top:6px;}
-  .btn-download{
+  .doc-item{margin-bottom:14px;}
+  .btn-view{
     font-weight:600; font-size:0.85rem; padding:10px 20px; border-radius:999px; border:none; cursor:pointer;
     background:var(--gold); color:var(--green-deep); flex-shrink:0; transition:opacity .15s ease;
   }
-  .btn-download:hover{opacity:0.88;}
-  .btn-download:disabled{opacity:0.6; cursor:wait;}
+  .btn-view:hover{opacity:0.88;}
+  .btn-view:disabled{opacity:0.6; cursor:wait;}
+  .doc-viewer{
+    border:1px solid var(--line); border-top:none; border-radius:0 0 var(--radius) var(--radius);
+    margin-top:-14px; padding-top:14px; background:var(--white);
+  }
+  .doc-viewer iframe{width:100%; height:75vh; border:0; display:block;}
+  .doc-viewer-note{
+    font-family:var(--mono); font-size:0.72rem; color:#5A6C60; text-align:center; padding:8px 0;
+  }
   .empty, .error, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
@@ -105,36 +114,56 @@
     }
 
     listEl.innerHTML = data.map(doc => `
-      <div class="doc-row">
-        <div>
-          <div class="doc-title">${esc(doc.title)}</div>
-          ${doc.excerpt ? `<div class="doc-excerpt">${esc(doc.excerpt)}</div>` : ""}
-          <div class="doc-date">${formatDate(doc.created_at)}</div>
+      <div class="doc-item" data-id="${esc(doc.id)}">
+        <div class="doc-row">
+          <div>
+            <div class="doc-title">${esc(doc.title)}</div>
+            ${doc.excerpt ? `<div class="doc-excerpt">${esc(doc.excerpt)}</div>` : ""}
+            <div class="doc-date">${formatDate(doc.created_at)}</div>
+          </div>
+          <button class="btn-view" data-path="${esc(doc.file_path || "")}" data-id="${esc(doc.id)}">Consulter</button>
         </div>
-        <button class="btn-download" data-path="${esc(doc.file_path || "")}">Télécharger</button>
+        <div class="doc-viewer" id="viewer-${esc(doc.id)}" style="display:none;"></div>
       </div>
     `).join("");
 
-    listEl.querySelectorAll(".btn-download").forEach(btn => {
-      btn.addEventListener("click", () => handleDownload(btn));
+    listEl.querySelectorAll(".btn-view").forEach(btn => {
+      btn.addEventListener("click", () => toggleViewer(btn));
     });
   }
 
-  async function handleDownload(btn) {
+  async function toggleViewer(btn) {
     const path = btn.dataset.path;
+    const viewer = document.getElementById("viewer-" + btn.dataset.id);
     if (!path) { alert("Aucun fichier associé à ce document."); return; }
+
+    const isOpen = viewer.style.display !== "none";
+    if (isOpen) {
+      viewer.style.display = "none";
+      viewer.innerHTML = "";
+      btn.textContent = "Consulter";
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = "Préparation…";
     const { data, error } = await supabaseClient.storage
       .from(DOCUMENTS_BUCKET)
-      .createSignedUrl(path, 60);
+      .createSignedUrl(path, 120);
     btn.disabled = false;
-    btn.textContent = "Télécharger";
+
     if (error || !data) {
-      alert("Impossible de générer le lien de téléchargement.");
+      btn.textContent = "Consulter";
+      alert("Impossible d'afficher ce document.");
       return;
     }
-    window.open(data.signedUrl, "_blank");
+
+    viewer.innerHTML = `
+      <iframe src="${data.signedUrl}#toolbar=0&navpanes=0" title="Document"></iframe>
+      <p class="doc-viewer-note">Aperçu en lecture seule</p>
+    `;
+    viewer.style.display = "";
+    btn.textContent = "Fermer";
   }
 
   (async () => {
