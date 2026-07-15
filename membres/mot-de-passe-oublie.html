@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mot de passe oublié - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/mot-de-passe-oublie.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --shadow:0 12px 32px rgba(6,68,28,0.10); --radius:14px;
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:520px; margin:0 auto; padding:0 28px;}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .logo-img{height:42px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:40px 0 18px;}
+  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-deep); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
+  .intro{color:#3C4E44; font-size:1rem; margin-bottom:32px;}
+  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
+  label{display:block; font-size:0.85rem; font-weight:600; color:var(--green-deep);}
+  input{
+    width:100%; padding:12px 14px; margin-top:6px; border:1.5px solid var(--line); border-radius:10px;
+    font-family:var(--body); font-size:0.95rem; color:var(--ink); background:var(--paper);
+  }
+  input:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:600; font-size:0.95rem;
+    padding:13px 24px; border-radius:999px; border:none; cursor:pointer; width:100%; margin-top:24px;
+    background:var(--gold); color:var(--green-deep); transition:background .18s ease;
+  }
+  .btn:hover{background:var(--gold-deep); color:var(--white);}
+  .btn:disabled{opacity:0.6; cursor:not-allowed;}
+  .form-message{margin-top:18px; padding:12px 14px; border-radius:10px; font-size:0.9rem; display:none;}
+  .form-message.error{background:#FDEEEE; color:#B23B3B; display:block;}
+  .form-message.success{background:var(--paper-alt); color:var(--green-deep); display:block;}
+  .alt-link{text-align:center; font-size:0.9rem; color:#5A6C60; margin-top:8px;}
+  .alt-link a{color:var(--green); font-weight:600;}
+  footer{padding:40px 0; text-align:center;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="connexion.html">← Retour à la connexion</a>
+
+  <p class="eyebrow">Espace Membres</p>
+  <h1>Mot de passe oublié</h1>
+  <p class="intro">Indiquez votre e-mail : nous vous enverrons un lien pour choisir un nouveau mot de passe.</p>
+
+  <div class="card">
+    <form id="resetForm">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" required autocomplete="email">
+
+      <button type="submit" class="btn" id="submitBtn">Envoyer le lien</button>
+      <div class="form-message" id="formMessage"></div>
+    </form>
+  </div>
+
+  <p class="alt-link"><a href="connexion.html">Se connecter</a></p>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const form = document.getElementById("resetForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const messageEl = document.getElementById("formMessage");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    messageEl.className = "form-message";
+
+    const email = document.getElementById("email").value.trim();
+    const redirectTo = window.location.origin + window.location.pathname.replace("mot-de-passe-oublie.html", "reinitialiser.html");
+
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+
+    // Message identique que l'e-mail existe ou non, pour ne pas révéler
+    // quels e-mails sont enregistrés.
+    messageEl.textContent = "Si un compte existe avec cet e-mail, un lien de réinitialisation vient de lui être envoyé.";
+    messageEl.className = "form-message success";
+    form.reset();
+    if (error) console.error(error);
+  });
+</script>
+
+</body>
+</html>
