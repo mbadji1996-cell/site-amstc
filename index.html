@@ -203,6 +203,13 @@
   .founders-list span{
     font-size:0.85rem; background:var(--paper-alt); border-radius:999px; padding:7px 14px; color:var(--green-deep); font-weight:500;
   }
+  .historique-sub{margin-top:56px;}
+  .historique-sub-heading{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); margin-bottom:18px;}
+  .team-avatar-fallback{
+    width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
+    background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:600; font-size:1.6rem;
+  }
 
   /* ===== Governance ===== */
   .team-row{
@@ -476,6 +483,18 @@
         <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
         <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
       </div>
+
+      <div class="historique-sub" id="pioneersBlock" style="display:none;">
+        <div class="founders-box reveal">
+          <h4 id="cms-pioneers-title">Les Pionniers</h4>
+          <div class="founders-list" id="cms-pioneers-list"></div>
+        </div>
+      </div>
+
+      <div class="historique-sub" id="presidentsBlock" style="display:none;">
+        <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
+        <div class="team-row reveal" id="cms-presidents-row"></div>
+      </div>
     </div>
   </section>
 
@@ -740,6 +759,35 @@
     }).join('');
   }
 
+  // ===== Les Pionniers =====
+  function renderPioneers(list){
+    const block = document.getElementById('pioneersBlock');
+    const listEl = document.getElementById('cms-pioneers-list');
+    if (!block || !listEl) return;
+    if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
+    block.style.display = '';
+    listEl.innerHTML = list.map(name => `<span>${esc(name)}</span>`).join('');
+  }
+
+  // ===== Anciens présidents =====
+  function presidentInitials(name){
+    return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+  function renderPresidents(list){
+    const block = document.getElementById('presidentsBlock');
+    const row = document.getElementById('cms-presidents-row');
+    if (!block || !row) return;
+    if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
+    block.style.display = '';
+    row.innerHTML = list.map(p => `
+      <div class="team-card reveal">
+        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(presidentInitials(p.name))}</div>`}
+        <div class="team-name">${esc(p.name)}</div>
+        <div class="team-role">${esc(p.mandate || '')}</div>
+      </div>
+    `).join('');
+  }
+
   // ===== Médiathèque (dossiers photos par année) =====
   function renderMediaYears(mediaYears){
     const section = document.getElementById('mediatheque');
@@ -876,6 +924,10 @@
         </div>
       `).join('');
     }
+    if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
+    renderPioneers(data.pioneers);
+    if (data.presidents_title) document.getElementById('cms-presidents-title').textContent = data.presidents_title;
+    renderPresidents(data.presidents);
 
     // Gouvernance
     if (data.gov_eyebrow) document.getElementById('cms-gov-eyebrow').textContent = data.gov_eyebrow;

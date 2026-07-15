@@ -91,6 +91,25 @@ collections:
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Texte", name: "text", widget: "markdown" }
 
+          - { label: "Titre - Les Pionniers", name: "pioneers_title", widget: "string", default: "Les Pionniers" }
+          - { label: "Sous-titre - Les Pionniers", name: "pioneers_subtitle", widget: "string", required: false }
+          - label: "Les Pionniers (membres fondateurs)"
+            name: "pioneers"
+            widget: "list"
+            hint: "Un nom par ligne. Laissez la liste vide pour masquer ce bloc sur le site."
+            field: { label: "Nom", name: "name", widget: "string" }
+
+          - { label: "Titre - Anciens présidents", name: "presidents_title", widget: "string", default: "Nos anciens présidents" }
+          - { label: "Sous-titre - Anciens présidents", name: "presidents_subtitle", widget: "string", required: false }
+          - label: "Liste des anciens présidents"
+            name: "presidents"
+            widget: "list"
+            hint: "Laissez la liste vide pour masquer ce bloc sur le site."
+            fields:
+              - { label: "Photo", name: "photo", widget: "image", required: false }
+              - { label: "Nom", name: "name", widget: "string" }
+              - { label: "Mandat (ex: 3e Président, 2018-2019)", name: "mandate", widget: "string" }
+
       - name: "gouvernance"
         label: "4. Organisation"
         file: "content/home-gouvernance.json"
