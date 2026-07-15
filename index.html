@@ -132,10 +132,10 @@
     .nav-dropdown-menu{
       position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none;
       border-radius:0; background:var(--paper-alt); padding:0; min-width:0;
-      max-height:0; overflow:hidden; transition:max-height .25s ease;
+      display:none;
     }
-    .nav-dropdown.open .nav-dropdown-menu{max-height:300px; overflow-y:auto;}
-    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%;}
+    .nav-dropdown.open .nav-dropdown-menu{display:flex; flex-direction:column;}
+    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:var(--ink);}
   }
 
   /* ===== Hero ===== */
