@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Profil & Adhésion - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);padding:0;}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 60px;}
+  .page-header{padding:32px 0 24px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:clamp(1.5rem,4vw,1.9rem);font-weight:600;color:var(--green-deep);}
+
+  /* Carte membre */
+  .member-card{background:var(--green-deep);border-radius:18px;padding:24px 26px;margin-bottom:22px;color:var(--white);}
+  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+  .mc-org{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.45);margin-bottom:4px;}
+  .mc-name{font-family:var(--display);font-size:1.1rem;font-weight:600;color:var(--gold);}
+  .mc-specialty{font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:2px;}
+  .mc-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green-deep);flex-shrink:0;}
+  .mc-fields{display:flex;gap:24px;flex-wrap:wrap;}
+  .mc-field{}
+  .mc-field-label{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.4);margin-bottom:2px;}
+  .mc-field-val{font-size:0.85rem;color:var(--white);}
+  .mc-field-val.num{font-family:var(--mono);}
+  .mc-field-val.active{color:#5DCAA5;font-weight:600;}
+  .mc-field-val.warn{color:var(--gold);font-weight:600;}
+
+  /* Section cards */
+  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;}
+  .section-title{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+  .edit-btn{font-family:var(--body);font-size:0.82rem;font-weight:600;color:var(--green);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0;}
+  .edit-btn:hover{color:var(--green-deep);}
+
+  /* Info rows */
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
+  .info-row:last-child{border-bottom:none;}
+  .info-label{font-size:0.85rem;color:#5A6C60;}
+  .info-val{font-size:0.9rem;color:var(--ink);font-weight:500;text-align:right;}
+  .info-val.empty{color:#aaa;font-weight:400;font-style:italic;}
+
+  /* Edit form inline */
+  .edit-form{display:none;margin-top:14px;border-top:1px solid var(--paper-alt);padding-top:18px;}
+  .edit-form.open{display:block;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .form-group label{display:block;font-size:0.8rem;font-weight:600;color:var(--green-deep);margin-bottom:5px;}
+  .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);}
+  .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);}
+  .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
+  .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
+  .form-msg.success{background:#E1F5EE;color:#0F6E56;display:block;}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--green);color:var(--white);}
+  .btn-primary:hover{background:var(--green-deep);}
+  .btn-gold{background:var(--gold);color:var(--green-deep);}
+  .btn-gold:hover{background:var(--gold-deep);color:var(--white);}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--green);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-row{display:flex;gap:10px;margin-top:4px;}
+
+  /* Payment history */
+  .pay-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
+  .pay-row:last-child{border-bottom:none;}
+  .pay-year{font-family:var(--mono);font-size:0.9rem;font-weight:600;color:var(--green-deep);}
+  .pay-method{font-size:0.8rem;color:#5A6C60;}
+  .pay-status{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;}
+  .s-confirmed{background:#EAF3DE;color:#3B6D11;}
+  .s-pending{background:#FEF6E4;color:var(--gold-deep);}
+  .s-rejected{background:#FDEEEE;color:#B23B3B;}
+
+  /* Renewal form */
+  .renewal-alert{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:0.88rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
+  .renewal-alert i{font-size:18px;flex-shrink:0;margin-top:1px;}
+
+  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{gap:16px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Chargement de votre profil…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="page-header">
+      <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
+      <h1 class="page-title">Mon Profil & Adhésion</h1>
+    </div>
+
+    <!-- Carte membre virtuelle -->
+    <div class="member-card">
+      <div class="mc-top">
+        <div>
+          <p class="mc-org">AMSTC · Carte de membre</p>
+          <p class="mc-name" id="mcName">—</p>
+          <p class="mc-specialty" id="mcSpecialty"></p>
+        </div>
+        <div class="mc-avatar" id="mcAvatar">?</div>
+      </div>
+      <div class="mc-fields">
+        <div class="mc-field">
+          <p class="mc-field-label">N° Membre</p>
+          <p class="mc-field-val num" id="mcNumber">—</p>
+        </div>
+        <div class="mc-field">
+          <p class="mc-field-label">Membre depuis</p>
+          <p class="mc-field-val" id="mcSince">—</p>
+        </div>
+        <div class="mc-field">
+          <p class="mc-field-label">Adhésion <span id="mcYear"></span></p>
+          <p class="mc-field-val" id="mcStatus">Vérification…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="section-card">
+      <p class="section-title">
+        Informations personnelles
+        <button class="edit-btn" onclick="toggleEdit()"><i class="ti ti-edit"></i> Modifier</button>
+      </p>
+      <div id="infoView">
+        <div class="info-row"><span class="info-label">Nom complet</span><span class="info-val" id="infName">—</span></div>
+        <div class="info-row"><span class="info-label">E-mail</span><span class="info-val" id="infEmail">—</span></div>
+        <div class="info-row"><span class="info-label">Téléphone</span><span class="info-val" id="infPhone">—</span></div>
+        <div class="info-row"><span class="info-label">Spécialité</span><span class="info-val" id="infSpecialty">—</span></div>
+        <div class="info-row"><span class="info-label">Ville</span><span class="info-val" id="infCity">—</span></div>
+      </div>
+      <div class="edit-form" id="editForm">
+        <div class="form-grid">
+          <div class="form-group"><label>Nom complet</label><input id="eName" type="text"></div>
+          <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
+          <div class="form-group"><label>Spécialité</label>
+            <select id="eSpecialty">
+              <option value="">— Choisir —</option>
+              <option>Médecine générale</option><option>Pédiatrie</option><option>Chirurgie générale</option>
+              <option>Gynécologie-Obstétrique</option><option>Cardiologie</option><option>Neurologie</option>
+              <option>Dermatologie</option><option>Ophtalmologie</option><option>ORL</option>
+              <option>Psychiatrie</option><option>Radiologie</option><option>Anesthésie-Réanimation</option>
+              <option>Pharmacie</option><option>Odontologie</option><option>Autre</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Ville</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
+        </div>
+        <div class="form-msg" id="editMsg"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveProfile()"><i class="ti ti-check"></i> Enregistrer</button>
+          <button class="btn btn-ghost" onclick="toggleEdit()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adhésion & renouvellement -->
+    <div class="section-card">
+      <p class="section-title">Adhésion annuelle</p>
+
+      <div id="renewalAlert" style="display:none;">
+        <div class="renewal-alert">
+          <i class="ti ti-alert-triangle"></i>
+          <span id="renewalAlertText">Votre adhésion pour l'année en cours n'est pas encore enregistrée.</span>
+        </div>
+      </div>
+
+      <div id="renewalForm" style="display:none;">
+        <div class="form-grid" style="margin-bottom:14px;">
+          <div class="form-group">
+            <label>Méthode de paiement</label>
+            <select id="payMethod">
+              <option value="wave">Wave</option>
+              <option value="orange_money">Orange Money</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Référence / N° de transaction</label>
+            <input id="payRef" type="text" placeholder="Ex : WV-20240501-XXXX">
+          </div>
+        </div>
+        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;">
+          Montant : <strong style="color:var(--green-deep);">10 000 FCFA</strong>.
+          Envoyez la cotisation au compte AMSTC puis saisissez la référence de transaction.
+          Un administrateur confirmera votre paiement sous 48h.
+        </p>
+        <div class="form-msg" id="payMsg"></div>
+        <button class="btn btn-gold" id="payBtn" onclick="submitPayment()">
+          <i class="ti ti-send"></i> Soumettre le paiement
+        </button>
+      </div>
+
+      <!-- Historique -->
+      <div id="payHistory" style="margin-top:14px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let currentProfile = null;
+  const currentYear = new Date().getFullYear();
+
+  (async () => {
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+    currentProfile = profile;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    renderProfile(profile);
+    await loadPayments(profile.id);
+  })();
+
+  function renderProfile(p) {
+    const name = p.full_name || p.email || '—';
+    const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+
+    // Carte
+    document.getElementById('mcName').textContent = name;
+    document.getElementById('mcAvatar').textContent = initials;
+    document.getElementById('mcSpecialty').textContent = p.specialty || '';
+    document.getElementById('mcNumber').textContent = 'AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0, 4).toUpperCase();
+    document.getElementById('mcSince').textContent = p.member_since || currentYear;
+    document.getElementById('mcYear').textContent = currentYear;
+
+    // Info view
+    const empty = v => v ? v : '<span class="empty">Non renseigné</span>';
+    document.getElementById('infName').innerHTML = empty(p.full_name);
+    document.getElementById('infEmail').textContent = p.email || '—';
+    document.getElementById('infPhone').innerHTML = empty(p.phone);
+    document.getElementById('infSpecialty').innerHTML = empty(p.specialty);
+    document.getElementById('infCity').innerHTML = empty(p.city);
+
+    // Edit form
+    document.getElementById('eName').value = p.full_name || '';
+    document.getElementById('ePhone').value = p.phone || '';
+    document.getElementById('eSpecialty').value = p.specialty || '';
+    document.getElementById('eCity').value = p.city || '';
+  }
+
+  function toggleEdit() {
+    const form = document.getElementById('editForm');
+    form.classList.toggle('open');
+    document.getElementById('editMsg').className = 'form-msg';
+  }
+
+  async function saveProfile() {
+    const msg = document.getElementById('editMsg');
+    msg.className = 'form-msg';
+    const payload = {
+      full_name: document.getElementById('eName').value.trim() || null,
+      phone: document.getElementById('ePhone').value.trim() || null,
+      specialty: document.getElementById('eSpecialty').value || null,
+      city: document.getElementById('eCity').value.trim() || null,
+    };
+    const { error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id);
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
+    } else {
+      Object.assign(currentProfile, payload);
+      renderProfile(currentProfile);
+      toggleEdit();
+    }
+  }
+
+  async function loadPayments(userId) {
+    const { data } = await supabaseClient.from('membership_payments')
+      .select('*').eq('user_id', userId).order('year', { ascending: false });
+
+    const payments = data || [];
+    const thisYear = payments.find(p => p.year === currentYear);
+
+    // Badge statut carte
+    const statusEl = document.getElementById('mcStatus');
+    if (thisYear && thisYear.status === 'confirmed') {
+      statusEl.textContent = 'Active';
+      statusEl.className = 'mc-field-val active';
+    } else if (thisYear && thisYear.status === 'pending') {
+      statusEl.textContent = 'En attente';
+      statusEl.className = 'mc-field-val warn';
+    } else {
+      statusEl.textContent = 'Non réglée';
+      statusEl.className = 'mc-field-val warn';
+    }
+
+    // Alerte renouvellement
+    if (!thisYear || thisYear.status === 'rejected') {
+      document.getElementById('renewalAlert').style.display = '';
+      document.getElementById('renewalForm').style.display = '';
+      if (thisYear && thisYear.status === 'rejected') {
+        document.getElementById('renewalAlertText').textContent =
+          'Votre paiement de ' + currentYear + ' a été refusé. Veuillez soumettre à nouveau.';
+      }
+    } else if (thisYear.status === 'pending') {
+      document.getElementById('renewalAlert').style.display = '';
+      document.getElementById('renewalAlertText').textContent =
+        'Votre paiement est en attente de confirmation par un administrateur.';
+    }
+
+    // Historique
+    const hist = document.getElementById('payHistory');
+    if (payments.length === 0) {
+      hist.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement enregistré.</p>';
+      return;
+    }
+    const labels = { wave: 'Wave', orange_money: 'Orange Money', especes: 'Espèces' };
+    hist.innerHTML = '<p style="font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
+      payments.map(p => `
+        <div class="pay-row">
+          <div>
+            <p class="pay-year">Cotisation ${p.year}</p>
+            <p class="pay-method">${labels[p.payment_method] || '—'}${p.payment_reference ? ' · ' + p.payment_reference : ''}</p>
+          </div>
+          <span class="pay-status s-${p.status}">${p.status === 'confirmed' ? 'Confirmé' : p.status === 'pending' ? 'En attente' : 'Refusé'}</span>
+        </div>`).join('');
+  }
+
+  async function submitPayment() {
+    const btn = document.getElementById('payBtn');
+    const msg = document.getElementById('payMsg');
+    const method = document.getElementById('payMethod').value;
+    const ref = document.getElementById('payRef').value.trim();
+    if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
+
+    btn.disabled = true; msg.className = 'form-msg';
+    const { error } = await supabaseClient.from('membership_payments').upsert({
+      user_id: currentProfile.id,
+      year: currentYear,
+      amount_fcfa: 10000,
+      payment_method: method,
+      payment_reference: ref,
+      status: 'pending',
+    }, { onConflict: 'user_id,year' });
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; btn.disabled = false;
+    } else {
+      document.getElementById('renewalForm').style.display = 'none';
+      document.getElementById('renewalAlertText').textContent =
+        'Paiement soumis. Un administrateur le confirmera sous 48h.';
+      document.getElementById('renewalAlert').style.display = '';
+      await loadPayments(currentProfile.id);
+    }
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

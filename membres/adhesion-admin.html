@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validation Adhésions - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 60px;}
+  .page-header{padding:32px 0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+
+  /* Filters */
+  .filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .filter-btn{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
+  .filter-btn.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--white);}
+  .year-select{font-family:var(--mono);font-size:0.82rem;padding:7px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);cursor:pointer;}
+
+  /* Stats row */
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+  .stat-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .stat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;}
+  .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--green-deep);}
+
+  /* Table */
+  .table-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 16px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:13px 16px;font-size:0.87rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--paper);}
+  .badge{font-family:var(--mono);font-size:0.63rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;}
+  .s-confirmed{background:#EAF3DE;color:#3B6D11;}
+  .s-pending{background:#FEF6E4;color:var(--gold-deep);}
+  .s-rejected{background:#FDEEEE;color:#B23B3B;}
+  .td-actions{display:flex;gap:6px;}
+  .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-confirm{background:#EAF3DE;color:#3B6D11;}
+  .btn-confirm:hover{background:#C0DD97;}
+  .btn-reject{background:#FDEEEE;color:#B23B3B;}
+  .btn-reject:hover{background:#f5c0c0;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .member-name{font-weight:600;color:var(--green-deep);}
+  .member-email{font-size:0.78rem;color:#8A9E8F;}
+  .ref-code{font-family:var(--mono);font-size:0.8rem;color:#5A6C60;}
+  .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:32px;}
+  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="page-header">
+      <div>
+        <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
+        <h1 class="page-title">Validation des adhésions</h1>
+      </div>
+      <select class="year-select" id="yearSelect" onchange="reload()"></select>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="statPending">—</p></div>
+      <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="statConfirmed">—</p></div>
+      <div class="stat-card"><p class="stat-label">Total année</p><p class="stat-val" id="statTotal">—</p></div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" id="f-all" onclick="setFilter('all')">Tous</button>
+      <button class="filter-btn" id="f-pending" onclick="setFilter('pending')">En attente</button>
+      <button class="filter-btn" id="f-confirmed" onclick="setFilter('confirmed')">Confirmés</button>
+      <button class="filter-btn" id="f-rejected" onclick="setFilter('rejected')">Refusés</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Membre</th>
+            <th>Année</th>
+            <th>Méthode</th>
+            <th>Référence</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="paymentsTable">
+          <tr class="empty-row"><td colspan="7">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let allPayments = [];
+  let currentFilter = 'all';
+  const currentYear = new Date().getFullYear();
+  const methods = { wave: 'Wave', orange_money: 'Orange Money', especes: 'Espèces' };
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    // Populate year select (current year ± 2)
+    const sel = document.getElementById('yearSelect');
+    for (let y = currentYear + 1; y >= currentYear - 2; y--) {
+      const opt = document.createElement('option');
+      opt.value = y; opt.textContent = y;
+      if (y === currentYear) opt.selected = true;
+      sel.appendChild(opt);
+    }
+
+    await reload();
+  })();
+
+  async function reload() {
+    const year = parseInt(document.getElementById('yearSelect').value);
+    const { data } = await supabaseClient
+      .from('membership_payments')
+      .select('*, profiles:user_id(full_name, email)')
+      .eq('year', year)
+      .order('created_at', { ascending: false });
+
+    allPayments = data || [];
+    updateStats();
+    renderTable();
+  }
+
+  function updateStats() {
+    const pending = allPayments.filter(p => p.status === 'pending').length;
+    const confirmed = allPayments.filter(p => p.status === 'confirmed').length;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statConfirmed').textContent = confirmed;
+    document.getElementById('statTotal').textContent = allPayments.length;
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    ['all','pending','confirmed','rejected'].forEach(k => {
+      document.getElementById('f-' + k).classList.toggle('active', k === f);
+    });
+    renderTable();
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('paymentsTable');
+    const filtered = currentFilter === 'all' ? allPayments : allPayments.filter(p => p.status === currentFilter);
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun paiement trouvé.</td></tr>';
+      return;
+    }
+
+    const statusLabel = { confirmed: 'Confirmé', pending: 'En attente', rejected: 'Refusé' };
+
+    tbody.innerHTML = filtered.map(p => {
+      const profile = p.profiles || {};
+      const name = profile.full_name || '—';
+      const email = profile.email || '';
+      const date = p.paid_at || p.created_at;
+      const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '—';
+      const isPending = p.status === 'pending';
+
+      return `<tr>
+        <td>
+          <p class="member-name">${escHtml(name)}</p>
+          <p class="member-email">${escHtml(email)}</p>
+        </td>
+        <td><span style="font-family:var(--mono);font-weight:600;">${p.year}</span></td>
+        <td>${methods[p.payment_method] || '—'}</td>
+        <td><span class="ref-code">${escHtml(p.payment_reference || '—')}</span></td>
+        <td style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
+        <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="setStatus('${p.id}','confirmed')">
+              <i class="ti ti-check"></i> Confirmer
+            </button>
+            <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setStatus('${p.id}','rejected')">
+              <i class="ti ti-x"></i> Refuser
+            </button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function setStatus(id, status) {
+    const update = { status };
+    if (status === 'confirmed') {
+      update.paid_at = new Date().toISOString();
+    }
+    const { error } = await supabaseClient.from('membership_payments').update(update).eq('id', id);
+    if (!error) await reload();
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
