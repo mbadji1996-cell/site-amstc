@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
 <style>
+  .toastui-editor-defaultUI{border-radius:8px;border-color:var(--line);}
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
     --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
@@ -204,8 +206,8 @@
         <input type="text" id="l-cover" placeholder="https://…">
       </div>
       <div class="form-group full">
-        <label>Contenu (Markdown — [arabic]…[/arabic] supporté)</label>
-        <textarea id="l-content" rows="12" placeholder="## Titre de section&#10;&#10;Paragraphe…&#10;&#10;- liste 1&#10;- liste 2&#10;&#10;[arabic]بسم الله[/arabic]"></textarea>
+        <label>Contenu — basculez "Markdown" pour le texte arabe : [arabic]…[/arabic]</label>
+        <div id="l-content"></div>
       </div>
       <div class="form-group full">
         <label class="form-check">
@@ -281,6 +283,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
+<script src="../assets/js/rich-editor.js"></script>
 <script>
   let allLessons = [], allQuizzes = [];
   let lessonCat = 'medecine', quizCat = 'medecine';
@@ -345,9 +350,16 @@
       </div>`).join('');
   }
 
+  let lessonContentEditor = null;
+  function getLessonContentEditor() {
+    if (!lessonContentEditor) lessonContentEditor = createRichEditor('l-content', { placeholder: 'Contenu de la leçon…' });
+    return lessonContentEditor;
+  }
+
   async function openLessonModal(id) {
     editingLessonId = id;
     document.getElementById('lessonFormMsg').textContent = '';
+    let content = '';
     if (id) {
       const l = allLessons.find(x => x.id === id);
       document.getElementById('lessonModalTitle').textContent = 'Modifier la leçon';
@@ -357,16 +369,17 @@
       document.getElementById('l-desc').value = l.description || '';
       document.getElementById('l-duration').value = l.duration_min || '';
       document.getElementById('l-cover').value = l.cover_image || '';
-      document.getElementById('l-content').value = l.content || '';
       document.getElementById('l-published').checked = !!l.is_published;
+      content = l.content || '';
     } else {
       document.getElementById('lessonModalTitle').textContent = 'Nouvelle leçon';
       document.getElementById('l-category').value = lessonCat;
       document.getElementById('l-order').value = 0;
-      ['l-title','l-desc','l-duration','l-cover','l-content'].forEach(f => document.getElementById(f).value = '');
+      ['l-title','l-desc','l-duration','l-cover'].forEach(f => document.getElementById(f).value = '');
       document.getElementById('l-published').checked = false;
     }
     document.getElementById('lessonModal').classList.remove('hidden');
+    getLessonContentEditor().setMarkdown(content);
   }
 
   async function saveLesson() {
@@ -383,7 +396,7 @@
       description: document.getElementById('l-desc').value.trim() || null,
       duration_min: parseInt(document.getElementById('l-duration').value) || null,
       cover_image: document.getElementById('l-cover').value.trim() || null,
-      content: document.getElementById('l-content').value.trim() || null,
+      content: getLessonContentEditor().getMarkdown().trim() || null,
       is_published: document.getElementById('l-published').checked
     };
 

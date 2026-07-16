@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
 <style>
+  .toastui-editor-defaultUI{border-radius:8px;border-color:var(--line);}
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
     --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
@@ -183,8 +185,8 @@
 
     <div class="form-group">
       <label for="fContent">Contenu du cours (Markdown)</label>
-      <textarea id="fContent" placeholder="## Introduction&#10;&#10;Texte du cours en Markdown…&#10;&#10;Pour du texte arabe : [arabic]بسم الله[/arabic]"></textarea>
-      <p class="hint">Supports : ## Titre, **gras**, *italique*, - liste, > citation, [arabic]…[/arabic]</p>
+      <div id="fContent"></div>
+      <p class="hint">Basculez "Markdown" pour le texte arabe : [arabic]بسم الله[/arabic]</p>
     </div>
 
     <div class="form-group">
@@ -210,6 +212,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
+<script src="../assets/js/rich-editor.js"></script>
 <script>
   let editingId = null;
 
@@ -253,6 +258,12 @@
       </tr>`).join('');
   }
 
+  let contentEditor = null;
+  function getContentEditor() {
+    if (!contentEditor) contentEditor = createRichEditor('fContent', { placeholder: 'Texte du cours…' });
+    return contentEditor;
+  }
+
   function openForm(course) {
     editingId = course ? course.id : null;
     document.getElementById('formTitle').textContent = course ? 'Modifier le cours' : 'Nouveau cours';
@@ -262,10 +273,10 @@
     document.getElementById('fDesc').value = course ? (course.description || '') : '';
     document.getElementById('fDuration').value = course ? (course.duration_min || 30) : 30;
     document.getElementById('fCover').value = course ? (course.cover_image || '') : '';
-    document.getElementById('fContent').value = course ? (course.content || '') : '';
     document.getElementById('fPublished').checked = course ? course.is_published : false;
     document.getElementById('formMsg').className = 'form-msg';
     document.getElementById('formModal').classList.add('open');
+    getContentEditor().setMarkdown(course ? (course.content || '') : '');
   }
 
   function closeForm() {
@@ -294,7 +305,7 @@
       description: document.getElementById('fDesc').value.trim() || null,
       duration_min: parseInt(document.getElementById('fDuration').value) || 0,
       cover_image: document.getElementById('fCover').value.trim() || null,
-      content: document.getElementById('fContent').value.trim() || null,
+      content: getContentEditor().getMarkdown().trim() || null,
       is_published: document.getElementById('fPublished').checked,
     };
 

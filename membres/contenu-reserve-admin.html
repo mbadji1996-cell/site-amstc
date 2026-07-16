@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
 <style>
+  .toastui-editor-defaultUI{border-radius:8px;border-color:var(--line);}
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
     --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
@@ -123,7 +125,7 @@
       </div>
 
       <label for="content" id="contentLabel">Contenu complet (Markdown, visible des membres uniquement)</label>
-      <textarea id="content"></textarea>
+      <div id="content"></div>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" id="submitBtn">Publier</button>
@@ -147,8 +149,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
+<script src="../assets/js/rich-editor.js"></script>
 <script>
   let currentUserId = null;
+  let contentEditor = null;
 
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
@@ -189,6 +195,7 @@
     submitBtn.textContent = "Publier";
     cancelBtn.style.display = "none";
     messageEl.className = "form-message";
+    contentEditor.setMarkdown("");
     updateFieldsForCategory();
   }
 
@@ -236,7 +243,7 @@
     document.getElementById("excerpt").value = item.excerpt || "";
     document.getElementById("cover_image").value = item.cover_image || "";
     document.getElementById("video_url").value = item.video_url || "";
-    document.getElementById("content").value = item.content || "";
+    contentEditor.setMarkdown(item.content || "");
     document.getElementById("document_file").value = "";
     currentFileHint.textContent = item.file_path
       ? "Fichier déjà envoyé. Choisissez un nouveau fichier uniquement pour le remplacer."
@@ -283,7 +290,7 @@
       excerpt: document.getElementById("excerpt").value.trim(),
       cover_image: document.getElementById("cover_image").value.trim() || null,
       video_url: document.getElementById("video_url").value.trim() || null,
-      content: document.getElementById("content").value,
+      content: contentEditor.getMarkdown(),
     };
 
     if (category === "document") {
@@ -338,6 +345,7 @@
     document.getElementById("loadingMsg").style.display = "none";
     document.getElementById("pageContent").style.display = "";
     document.getElementById("signoutBtn").style.display = "";
+    contentEditor = createRichEditor("content", { placeholder: "Contenu complet…" });
     loadItems();
   })();
 
