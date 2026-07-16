@@ -74,11 +74,19 @@
   .mc-status-pill.pending{background:rgba(248,183,24,0.2);color:var(--gold);border:1px solid rgba(248,183,24,0.25);}
   .mc-status-pill.warn{background:rgba(178,59,59,0.2);color:#F58080;border:1px solid rgba(178,59,59,0.25);}
 
-  /* Section cards */
-  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px;}
-  .section-title{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-  .edit-btn{font-family:var(--body);font-size:0.82rem;font-weight:600;color:var(--green);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;padding:5px 10px;border-radius:8px;transition:background .15s;}
-  .edit-btn:hover{background:var(--paper-alt);color:var(--green-deep);}
+  /* ===== ACCORDIONS ===== */
+  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:14px;overflow:hidden;}
+  .accordion-header{width:100%;background:none;border:none;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left;transition:background .15s;}
+  .accordion-header:hover{background:var(--paper-alt);}
+  .accordion-left{display:flex;align-items:center;gap:12px;min-width:0;}
+  .accordion-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold-deep);flex-shrink:0;}
+  .accordion-text{min-width:0;}
+  .accordion-title{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);}
+  .accordion-subtitle{font-size:0.87rem;color:#5A6C60;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .accordion-chevron{font-size:18px;color:#8A9E8F;transition:transform .2s;flex-shrink:0;}
+  .accordion-chevron.open{transform:rotate(180deg);}
+  .accordion-body{display:none;padding:0 22px 22px;}
+  .accordion-body.open{display:block;border-top:1px solid var(--paper-alt);padding-top:18px;margin-top:2px;}
 
   /* Info rows */
   .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
@@ -86,7 +94,6 @@
   .info-label{font-size:0.84rem;color:#5A6C60;display:flex;align-items:center;gap:6px;}
   .info-label i{font-size:14px;color:#B0BFB5;}
   .info-val{font-size:0.9rem;color:var(--ink);font-weight:500;text-align:right;}
-  .info-val.empty{color:#c0c8c2;font-weight:400;font-style:italic;font-size:0.82rem;}
 
   /* Photo upload */
   .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
@@ -95,9 +102,7 @@
   .photo-actions input[type=file]{font-size:0.8rem;}
   .photo-hint{font-size:0.74rem;color:#8A9E8F;}
 
-  /* Edit form */
-  .edit-form{display:none;margin-top:16px;border-top:1px solid var(--paper-alt);padding-top:18px;}
-  .edit-form.open{display:block;}
+  /* Form */
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
   .form-group.full{grid-column:1/-1;}
   .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;margin-bottom:5px;}
@@ -106,7 +111,10 @@
   .form-group input:disabled{background:var(--paper-alt);color:#8A9E8F;}
   .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
   .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
-  .form-msg.success{background:#E1F5EE;color:#0F6E56;display:block;}
+
+  /* Success flash */
+  .success-flash{display:none;align-items:center;gap:8px;background:#EAF3DE;color:#3B6D11;border-radius:8px;padding:12px 16px;font-size:0.9rem;font-weight:600;margin-bottom:12px;}
+  .success-flash.show{display:flex;}
 
   /* Buttons */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
@@ -141,6 +149,8 @@
   .cotis-badge.paid{background:#EAF3DE;color:#3B6D11;}
   .cotis-badge i{font-size:14px;}
   .cotis-badge .cotis-status{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.03em;}
+
+  .locked-msg{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
 
   .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
@@ -236,34 +246,17 @@
 
     <!-- Informations personnelles -->
     <div class="section-card">
-      <p class="section-title">
-        <span><i class="ti ti-user" style="margin-right:5px;"></i>Informations personnelles</span>
-        <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()"><i class="ti ti-edit"></i> Modifier</button>
-      </p>
-      <div id="infoView">
-        <div class="info-row">
-          <span class="info-label"><i class="ti ti-user"></i>Nom complet</span>
-          <span class="info-val" id="infName">—</span>
+      <button class="accordion-header" onclick="toggleAccordion('info')">
+        <div class="accordion-left">
+          <div class="accordion-icon"><i class="ti ti-user"></i></div>
+          <div class="accordion-text">
+            <p class="accordion-title">Informations personnelles</p>
+            <p class="accordion-subtitle" id="infoSummary">—</p>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="info-label"><i class="ti ti-mail"></i>E-mail</span>
-          <span class="info-val" id="infEmail">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label"><i class="ti ti-phone"></i>Téléphone</span>
-          <span class="info-val" id="infPhone">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label"><i class="ti ti-stethoscope"></i>Domaine</span>
-          <span class="info-val" id="infDomain">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label"><i class="ti ti-map-pin"></i>Localité</span>
-          <span class="info-val" id="infCity">—</span>
-        </div>
-      </div>
-
-      <div class="edit-form" id="editForm">
+        <i class="ti ti-chevron-down accordion-chevron" id="chev-info"></i>
+      </button>
+      <div class="accordion-body" id="body-info">
         <div class="photo-upload-row">
           <img class="photo-preview" id="photoPreview" style="display:none;" alt="">
           <div class="photo-actions">
@@ -298,23 +291,28 @@
           <div class="form-group"><label>Année d'adhésion</label><select id="eMemberSince"></select></div>
           <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
+        <div class="success-flash" id="infoSuccessFlash"><i class="ti ti-circle-check"></i> Enregistré</div>
         <div class="form-msg" id="editMsg"></div>
         <div class="btn-row">
-          <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()" disabled><i class="ti ti-check"></i> Enregistrer</button>
-          <button class="btn btn-ghost" id="cancelProfileBtn" onclick="toggleEdit()" disabled>Annuler</button>
+          <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()"><i class="ti ti-check"></i> Enregistrer</button>
+          <button class="btn btn-ghost" onclick="toggleAccordion('info')">Annuler</button>
         </div>
       </div>
     </div>
 
     <!-- Validité de la carte -->
     <div class="section-card">
-      <p class="section-title"><i class="ti ti-id-badge" style="margin-right:5px;"></i>Validité de la carte</p>
-      <div class="info-row">
-        <span class="info-label"><i class="ti ti-calendar-event"></i>Valide jusqu'en</span>
-        <span class="info-val" id="validityUntil">—</span>
-      </div>
-
-      <div style="margin-top:16px;">
+      <button class="accordion-header" onclick="toggleAccordion('validity')">
+        <div class="accordion-left">
+          <div class="accordion-icon"><i class="ti ti-id-badge"></i></div>
+          <div class="accordion-text">
+            <p class="accordion-title">Validité de la carte</p>
+            <p class="accordion-subtitle" id="validitySummary">—</p>
+          </div>
+        </div>
+        <i class="ti ti-chevron-down accordion-chevron" id="chev-validity"></i>
+      </button>
+      <div class="accordion-body" id="body-validity">
         <div class="form-grid">
           <div class="form-group">
             <label>Nombre d'années</label>
@@ -340,28 +338,37 @@
           <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
           Tarif : <strong style="color:var(--green-deep);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
         </p>
+        <div class="success-flash" id="validitySuccessFlash"><i class="ti ti-circle-check"></i> Payé</div>
         <div class="form-msg" id="validityMsg"></div>
         <button class="btn btn-gold" id="validityBtn" onclick="submitValidityPayment()">
           <i class="ti ti-send"></i> Payer la validité
         </button>
-      </div>
 
-      <div id="validityHistory" style="margin-top:14px;"></div>
+        <div id="validityHistory" style="margin-top:14px;"></div>
+      </div>
     </div>
 
     <!-- Cotisations mensuelles -->
     <div class="section-card">
-      <p class="section-title"><i class="ti ti-calendar-check" style="margin-right:5px;"></i>Cotisations mensuelles <span id="cotisYearLabel"></span></p>
+      <button class="accordion-header" onclick="toggleAccordion('cotis')">
+        <div class="accordion-left">
+          <div class="accordion-icon"><i class="ti ti-calendar-check"></i></div>
+          <div class="accordion-text">
+            <p class="accordion-title">Cotisations mensuelles</p>
+            <p class="accordion-subtitle" id="cotisSummary">—</p>
+          </div>
+        </div>
+        <i class="ti ti-chevron-down accordion-chevron" id="chev-cotis"></i>
+      </button>
+      <div class="accordion-body" id="body-cotis">
+        <div class="locked-msg" id="cotisLockedMsg" style="display:none;">
+          <i class="ti ti-lock" style="font-size:18px;flex-shrink:0;margin-top:1px;"></i>
+          <span>Votre adhésion (validité de la carte) doit d'abord être validée avant de pouvoir régler vos cotisations mensuelles.</span>
+        </div>
 
-      <div id="cotisLockedMsg" style="display:none;background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--gold-deep);align-items:flex-start;gap:10px;">
-        <i class="ti ti-lock" style="font-size:18px;flex-shrink:0;margin-top:1px;"></i>
-        <span>Votre adhésion (validité de la carte) doit d'abord être validée avant de pouvoir régler vos cotisations mensuelles. Réglez votre validité de carte ci-dessus.</span>
-      </div>
+        <div id="cotisUnlocked">
+          <div class="cotis-grid" id="cotisGrid"></div>
 
-      <div id="cotisUnlocked">
-        <div class="cotis-grid" id="cotisGrid"></div>
-
-        <div>
           <div class="form-grid">
             <div class="form-group">
               <label>Nombre de mois à régler</label>
@@ -387,14 +394,15 @@
             <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
             Tarif : <strong style="color:var(--green-deep);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
           </p>
+          <div class="success-flash" id="cotisSuccessFlash"><i class="ti ti-circle-check"></i> Payé</div>
           <div class="form-msg" id="cotisMsg"></div>
           <button class="btn btn-gold" id="cotisBtn" onclick="submitCotisationPayment()">
             <i class="ti ti-send"></i> Payer les cotisations
           </button>
+
+          <div id="cotisHistory" style="margin-top:14px;"></div>
         </div>
       </div>
-
-      <div id="cotisHistory" style="margin-top:14px;"></div>
     </div>
 
   </div>
@@ -417,7 +425,6 @@
     medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
   };
-  const EDIT_FIELD_IDS = ['eTitle','ePhone','eFirstName','eLastName','eDomain','eDomainAutre','eMemberSince','eCity','ePhotoFile'];
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
@@ -433,20 +440,31 @@
     await loadValidity(profile.id);
     await loadCotisations(profile.id);
 
-    EDIT_FIELD_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      el.addEventListener('input', markFormDirty);
-      el.addEventListener('change', markFormDirty);
-    });
-
     updateValidityTotal();
     updateCotisTotal();
-    document.getElementById('cotisYearLabel').textContent = '(' + currentYear + ')';
   })();
 
-  function markFormDirty() {
-    document.getElementById('saveProfileBtn').disabled = false;
-    document.getElementById('cancelProfileBtn').disabled = false;
+  /* ===== Accordions ===== */
+
+  function toggleAccordion(name) {
+    const body = document.getElementById('body-' + name);
+    const chev = document.getElementById('chev-' + name);
+    const isOpen = body.classList.toggle('open');
+    chev.classList.toggle('open', isOpen);
+  }
+
+  function closeAccordion(name) {
+    document.getElementById('body-' + name).classList.remove('open');
+    document.getElementById('chev-' + name).classList.remove('open');
+  }
+
+  function showSuccessThenCollapse(name, flashId) {
+    const el = document.getElementById(flashId);
+    el.classList.add('show');
+    setTimeout(() => {
+      el.classList.remove('show');
+      closeAccordion(name);
+    }, 1300);
   }
 
   function populateMemberSinceOptions() {
@@ -467,6 +485,14 @@
   function fullDisplayName(p) {
     const parts = [p.title, p.first_name, p.last_name].filter(Boolean);
     return parts.length ? parts.join(' ') : (p.full_name || p.email || '—');
+  }
+
+  function updateInfoSummary(p) {
+    const parts = [fullDisplayName(p)];
+    const dom = domainLabel(p);
+    if (dom) parts.push(dom);
+    if (p.city) parts.push(p.city);
+    document.getElementById('infoSummary').textContent = parts.join(' · ');
   }
 
   function renderProfile(p) {
@@ -495,13 +521,7 @@
 
     renderCardValidityStatus(p);
     renderQr(p);
-
-    const empty = v => v ? escHtml(v) : '<span class="empty">Non renseigné</span>';
-    document.getElementById('infName').innerHTML = empty(p.full_name);
-    document.getElementById('infEmail').textContent = p.email || '—';
-    document.getElementById('infPhone').innerHTML = empty(p.phone);
-    document.getElementById('infDomain').innerHTML = empty(domainLabel(p));
-    document.getElementById('infCity').innerHTML = empty(p.city);
+    updateInfoSummary(p);
 
     document.getElementById('eTitle').value = p.title || '';
     document.getElementById('ePhone').value = p.phone || '';
@@ -588,19 +608,10 @@
     return data.publicUrl + '?t=' + Date.now();
   }
 
-  function toggleEdit() {
-    const form = document.getElementById('editForm');
-    const btn = document.getElementById('editToggleBtn');
-    const isOpen = form.classList.toggle('open');
-    btn.innerHTML = isOpen ? '<i class="ti ti-x"></i> Annuler' : '<i class="ti ti-edit"></i> Modifier';
-    document.getElementById('editMsg').className = 'form-msg';
-  }
-
   async function saveProfile() {
     const saveBtn = document.getElementById('saveProfileBtn');
-    const cancelBtn = document.getElementById('cancelProfileBtn');
     const msg = document.getElementById('editMsg');
-    saveBtn.disabled = true; cancelBtn.disabled = true;
+    saveBtn.disabled = true;
     msg.className = 'form-msg';
 
     let photoUrl;
@@ -609,7 +620,7 @@
     } catch (e) {
       msg.textContent = "Erreur lors de l'envoi de la photo : " + e.message;
       msg.className = 'form-msg error';
-      saveBtn.disabled = false; cancelBtn.disabled = false;
+      saveBtn.disabled = false;
       return;
     }
 
@@ -631,14 +642,14 @@
     if (photoUrl) payload.photo_url = photoUrl;
 
     const { error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id);
+    saveBtn.disabled = false;
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
-      saveBtn.disabled = false; cancelBtn.disabled = false;
     } else {
       Object.assign(currentProfile, payload);
       pendingPhotoBlob = null;
       renderProfile(currentProfile);
-      toggleEdit();
+      showSuccessThenCollapse('info', 'infoSuccessFlash');
     }
   }
 
@@ -662,9 +673,16 @@
     document.getElementById('validityTotal').value = (years * 1000).toLocaleString('fr-FR') + ' FCFA';
   }
 
+  function updateValiditySummary(p) {
+    const cvu = p.card_valid_until;
+    const el = document.getElementById('validitySummary');
+    if (cvu && cvu >= currentYear) el.textContent = "Valide jusqu'en " + cvu;
+    else if (cvu) el.textContent = 'Expirée depuis ' + cvu;
+    else el.textContent = 'Non définie';
+  }
+
   async function loadValidity(userId) {
-    const cvu = currentProfile.card_valid_until;
-    document.getElementById('validityUntil').textContent = cvu || 'Non définie';
+    updateValiditySummary(currentProfile);
 
     const { data } = await supabaseClient
       .from('card_validity_payments')
@@ -710,9 +728,9 @@
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
     } else {
-      msg.textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.'; msg.className = 'form-msg success';
       document.getElementById('validityRef').value = '';
       await loadValidity(currentProfile.id);
+      showSuccessThenCollapse('validity', 'validitySuccessFlash');
     }
   }
 
@@ -727,15 +745,23 @@
     return !!(currentProfile.card_valid_until && currentProfile.card_valid_until >= currentYear);
   }
 
+  function updateCotisSummary(paidMonths, locked) {
+    const el = document.getElementById('cotisSummary');
+    if (locked) el.textContent = 'Verrouillé — validez votre adhésion';
+    else el.textContent = `${paidMonths.length}/12 mois payés (${currentYear})`;
+  }
+
   async function loadCotisations(userId) {
     const adhesionValid = isAdhesionValid();
     document.getElementById('cotisLockedMsg').style.display = adhesionValid ? 'none' : 'flex';
     document.getElementById('cotisUnlocked').style.display = adhesionValid ? '' : 'none';
-    if (!adhesionValid) return;
+    if (!adhesionValid) { updateCotisSummary([], true); return; }
 
     const { data } = await supabaseClient
       .from('cotisations').select('months_paid').eq('user_id', userId).eq('year', currentYear).maybeSingle();
-    renderCotisGrid((data && data.months_paid) || []);
+    const paidMonths = (data && data.months_paid) || [];
+    renderCotisGrid(paidMonths);
+    updateCotisSummary(paidMonths, false);
 
     const { data: paymentsData } = await supabaseClient
       .from('cotisation_payments').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -793,9 +819,9 @@
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
     } else {
-      msg.textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.'; msg.className = 'form-msg success';
       document.getElementById('cotisRef').value = '';
       await loadCotisations(currentProfile.id);
+      showSuccessThenCollapse('cotis', 'cotisSuccessFlash');
     }
   }
 
