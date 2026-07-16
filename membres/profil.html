@@ -734,10 +734,13 @@
     };
     if (photoUrl) payload.photo_url = photoUrl;
 
-    const { error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id);
+    const { data, error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id).select();
     saveBtn.disabled = false;
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
+    } else if (!data || data.length === 0) {
+      msg.textContent = "Erreur : la mise à jour n'a pas été appliquée (droits insuffisants). Contactez un administrateur.";
+      msg.className = 'form-msg error';
     } else {
       Object.assign(currentProfile, payload);
       pendingPhotoBlob = null;
