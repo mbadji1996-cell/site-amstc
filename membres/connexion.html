@@ -51,6 +51,10 @@
   .form-message.pending{background:#FEF6E4; color:var(--gold-deep); display:block;}
   .alt-link{text-align:center; font-size:0.9rem; color:#5A6C60; margin-top:8px;}
   .alt-link a{color:var(--green); font-weight:600;}
+  .or-divider{display:flex; align-items:center; gap:14px; margin:22px 0; color:#8A9E8F; font-size:0.85rem;}
+  .or-divider::before,.or-divider::after{content:""; flex:1; height:1px; background:var(--line);}
+  .btn-google{background:var(--white); color:var(--ink); border:1.5px solid var(--line); margin-top:0; gap:10px;}
+  .btn-google:hover{background:var(--paper-alt); color:var(--ink);}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
@@ -83,7 +87,24 @@
     </form>
   </div>
 
-  <p class="alt-link"><a href="mot-de-passe-oublie.html">Mot de passe oublié ?</a></p>
+  <div class="or-divider"><span>ou</span></div>
+
+  <!-- Bouton Google — nécessite d'activer le provider Google dans Supabase Dashboard
+       → Authentication → Providers → Google, et d'ajouter
+       https://amstc.org/membres/connexion.html dans URL Configuration → Redirect URLs -->
+  <button class="btn btn-google" id="googleBtn" type="button">
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.658 14.017 17.64 11.71 17.64 9.2z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+      <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+    </svg>
+    Se connecter avec Google
+  </button>
+
+  <div class="form-message" id="googleMessage"></div>
+
+  <p class="alt-link" style="margin-top:24px;"><a href="mot-de-passe-oublie.html">Mot de passe oublié ?</a></p>
   <p class="alt-link">Pas encore de compte ? <a href="inscription.html">S'inscrire</a></p>
 </div>
 
@@ -96,12 +117,51 @@
 <script>
   const form = document.getElementById("loginForm");
   const submitBtn = document.getElementById("submitBtn");
+  const googleBtn = document.getElementById("googleBtn");
   const messageEl = document.getElementById("formMessage");
+  const googleMessageEl = document.getElementById("googleMessage");
 
-  function showMessage(text, type) {
-    messageEl.textContent = text;
-    messageEl.className = "form-message " + type;
+  function showMessage(text, type, el) {
+    const target = el || messageEl;
+    target.textContent = text;
+    target.className = "form-message " + type;
   }
+
+  // Vérifie le profil et redirige ou affiche le message d'erreur approprié.
+  // Retourne true si redirigé, false si bloqué.
+  async function handleProfile(profile, msgEl) {
+    if (!profile) {
+      showMessage("Impossible de récupérer votre profil. Réessayez ou contactez-nous.", "error", msgEl);
+      await signOut();
+      return false;
+    }
+    if (profile.status === "pending") {
+      showMessage("Votre compte est en attente de validation par un administrateur. Vous recevrez un accès dès approbation.", "pending", msgEl);
+      await signOut();
+      return false;
+    }
+    if (profile.status === "rejected") {
+      showMessage("Votre demande d'inscription n'a pas été approuvée. Contactez-nous à contact@amstc.org pour plus d'informations.", "error", msgEl);
+      await signOut();
+      return false;
+    }
+    if (profile.is_active === false) {
+      showMessage("Votre compte a été désactivé. Contactez-nous à contact@amstc.org pour plus d'informations.", "error", msgEl);
+      await signOut();
+      return false;
+    }
+    window.location.href = "index.html";
+    return true;
+  }
+
+  // Après un redirect OAuth, Supabase remet la session dans l'URL.
+  // On vérifie dès le chargement de la page.
+  (async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const profile = await getCurrentProfile();
+    await handleProfile(profile, googleMessageEl);
+  })();
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -120,36 +180,22 @@
     }
 
     const profile = await getCurrentProfile();
+    const ok = await handleProfile(profile, messageEl);
+    if (!ok) submitBtn.disabled = false;
+  });
 
-    if (!profile) {
-      showMessage("Impossible de récupérer votre profil. Réessayez ou contactez-nous.", "error");
-      await signOut();
-      submitBtn.disabled = false;
-      return;
+  googleBtn.addEventListener("click", async () => {
+    googleBtn.disabled = true;
+    googleMessageEl.className = "form-message";
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/membres/connexion.html" }
+    });
+    if (error) {
+      showMessage("Erreur lors de la connexion Google. Réessayez.", "error", googleMessageEl);
+      googleBtn.disabled = false;
     }
-
-    if (profile.status === "pending") {
-      showMessage("Votre compte est en attente de validation par un administrateur. Vous recevrez un accès dès approbation.", "pending");
-      await signOut();
-      submitBtn.disabled = false;
-      return;
-    }
-
-    if (profile.status === "rejected") {
-      showMessage("Votre demande d'inscription n'a pas été approuvée. Contactez-nous à contact@amstc.org pour plus d'informations.", "error");
-      await signOut();
-      submitBtn.disabled = false;
-      return;
-    }
-
-    if (profile.is_active === false) {
-      showMessage("Votre compte a été désactivé. Contactez-nous à contact@amstc.org pour plus d'informations.", "error");
-      await signOut();
-      submitBtn.disabled = false;
-      return;
-    }
-
-    window.location.href = "index.html";
+    // Si pas d'erreur, Supabase redirige vers Google — pas besoin de ré-activer le bouton.
   });
 </script>
 
