@@ -353,38 +353,45 @@
     <div class="section-card">
       <p class="section-title"><i class="ti ti-calendar-check" style="margin-right:5px;"></i>Cotisations mensuelles <span id="cotisYearLabel"></span></p>
 
-      <div class="cotis-grid" id="cotisGrid"></div>
+      <div id="cotisLockedMsg" style="display:none;background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--gold-deep);align-items:flex-start;gap:10px;">
+        <i class="ti ti-lock" style="font-size:18px;flex-shrink:0;margin-top:1px;"></i>
+        <span>Votre adhésion (validité de la carte) doit d'abord être validée avant de pouvoir régler vos cotisations mensuelles. Réglez votre validité de carte ci-dessus.</span>
+      </div>
 
-      <div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Nombre de mois à régler</label>
-            <input type="number" id="cotisMonths" min="1" max="12" value="1" oninput="updateCotisTotal()">
+      <div id="cotisUnlocked">
+        <div class="cotis-grid" id="cotisGrid"></div>
+
+        <div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nombre de mois à régler</label>
+              <input type="number" id="cotisMonths" min="1" max="12" value="1" oninput="updateCotisTotal()">
+            </div>
+            <div class="form-group">
+              <label>Montant total</label>
+              <input type="text" id="cotisTotal" disabled>
+            </div>
+            <div class="form-group">
+              <label>Méthode de paiement</label>
+              <select id="cotisMethod">
+                <option value="wave">Wave</option>
+                <option value="orange_money">Orange Money</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Référence / N° de transaction</label>
+              <input id="cotisRef" type="text" placeholder="Ex : WV-20240501-XXXX">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Montant total</label>
-            <input type="text" id="cotisTotal" disabled>
-          </div>
-          <div class="form-group">
-            <label>Méthode de paiement</label>
-            <select id="cotisMethod">
-              <option value="wave">Wave</option>
-              <option value="orange_money">Orange Money</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Référence / N° de transaction</label>
-            <input id="cotisRef" type="text" placeholder="Ex : WV-20240501-XXXX">
-          </div>
+          <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
+            <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
+            Tarif : <strong style="color:var(--green-deep);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
+          </p>
+          <div class="form-msg" id="cotisMsg"></div>
+          <button class="btn btn-gold" id="cotisBtn" onclick="submitCotisationPayment()">
+            <i class="ti ti-send"></i> Payer les cotisations
+          </button>
         </div>
-        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
-          <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
-          Tarif : <strong style="color:var(--green-deep);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
-        </p>
-        <div class="form-msg" id="cotisMsg"></div>
-        <button class="btn btn-gold" id="cotisBtn" onclick="submitCotisationPayment()">
-          <i class="ti ti-send"></i> Payer les cotisations
-        </button>
       </div>
 
       <div id="cotisHistory" style="margin-top:14px;"></div>
@@ -716,7 +723,16 @@
     document.getElementById('cotisTotal').value = (months * 1000).toLocaleString('fr-FR') + ' FCFA';
   }
 
+  function isAdhesionValid() {
+    return !!(currentProfile.card_valid_until && currentProfile.card_valid_until >= currentYear);
+  }
+
   async function loadCotisations(userId) {
+    const adhesionValid = isAdhesionValid();
+    document.getElementById('cotisLockedMsg').style.display = adhesionValid ? 'none' : 'flex';
+    document.getElementById('cotisUnlocked').style.display = adhesionValid ? '' : 'none';
+    if (!adhesionValid) return;
+
     const { data } = await supabaseClient
       .from('cotisations').select('months_paid').eq('user_id', userId).eq('year', currentYear).maybeSingle();
     renderCotisGrid((data && data.months_paid) || []);
