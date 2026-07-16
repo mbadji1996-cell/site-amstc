@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Réalisations - Espace Membres - AMSTC</title>
+<title>Autres formations - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/actualites.html">
+<link rel="canonical" href="https://amstc.org/membres/formations-cms.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,8 +69,8 @@
 <nav class="member-tabs">
   <div class="member-tabs-inner">
     <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="formations.html">Formations</a>
-    <a class="member-tab active" href="actualites.html">Réalisations</a>
+    <a class="member-tab active" href="formations.html">Formations</a>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
     <a class="member-tab" href="documents.html">Documents officiels</a>
     <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
     <a class="member-tab" href="profil.html">Mon Profil & Adhésion</a>
@@ -78,8 +78,8 @@
 </nav>
 
 <div class="wrap">
-  <a class="back" href="index.html">← Espace membres</a>
-  <h1>Réalisations</h1>
+  <a class="back" href="formations.html">← Formations</a>
+  <h1>Autres formations</h1>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="grid" class="grid">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
@@ -99,7 +99,7 @@
     let restricted = [];
 
     try {
-      const res = await fetch("../content/actualites-index.json");
+      const res = await fetch("../content/formations-index.json");
       if (res.ok) publicArticles = await res.json();
     } catch (e) { /* liste publique indisponible, on continue quand même */ }
 
@@ -107,7 +107,7 @@
       const { data } = await supabaseClient
         .from("restricted_articles")
         .select("id,title,excerpt,cover_image,created_at")
-        .eq("category", "actualite")
+        .eq("category", "formation")
         .order("created_at", { ascending: false });
       restricted = data || [];
     } catch (e) { /* contenu réservé indisponible, on continue quand même */ }
@@ -124,8 +124,8 @@
 
     grid.innerHTML = items.map(a => {
       const href = a._restricted
-        ? `actualite-reservee.html?id=${encodeURIComponent(a.id)}`
-        : `../article.html?slug=${encodeURIComponent(a.slug)}`;
+        ? `formation-reservee.html?id=${encodeURIComponent(a.id)}`
+        : `../formation.html?slug=${encodeURIComponent(a.slug)}`;
       return `
         <a class="card" href="${href}">
           ${a.image ? `<img src="${a.image}" alt="">` : ""}
@@ -146,6 +146,7 @@
     const profile = await requireApprovedMember("connexion.html");
     if (!profile) return;
     document.getElementById("signoutBtn").style.display = "";
+    document.getElementById("loadingMsg").style.display = "none";
     loadArticles();
   })();
 

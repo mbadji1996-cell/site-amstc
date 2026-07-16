@@ -33,6 +33,12 @@
   .cart-count{background:var(--gold);color:var(--amber-deeper);font-family:var(--mono);font-size:0.65rem;font-weight:700;border-radius:999px;padding:1px 6px;display:none;}
   .cart-count.show{display:inline;}
 
+  .member-tabs{background:var(--green-deep);border-top:1px solid rgba(255,255,255,0.08);}
+  .member-tabs-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:2px;overflow-x:auto;}
+  .member-tab{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.45);padding:14px 18px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s;flex-shrink:0;}
+  .member-tab:hover{color:rgba(255,255,255,0.8);}
+  .member-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
   .hero{background:var(--green-deep);padding:32px 0 40px;}
   .hero-inner{max-width:960px;margin:0 auto;padding:0 24px;}
   .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;}
@@ -155,6 +161,17 @@
     </div>
   </div>
 </header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab" href="index.html">Tableau de bord</a>
+    <a class="member-tab" href="formations.html">Formations</a>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
+    <a class="member-tab" href="documents.html">Documents officiels</a>
+    <a class="member-tab active" href="boutique.html">Boutique AMSTC</a>
+    <a class="member-tab" href="profil.html">Mon Profil & Adhésion</a>
+  </div>
+</nav>
 
 <div class="hero">
   <div class="hero-inner">
