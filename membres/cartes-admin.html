@@ -78,7 +78,21 @@
 
   .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
-  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}}
+  /* Excel import preview */
+  .file-drop{border:1.5px dashed var(--line);border-radius:10px;padding:20px;text-align:center;margin-bottom:14px;}
+  .file-drop input[type=file]{font-size:0.85rem;}
+  .preview-summary{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+  .preview-stat{background:var(--paper-alt);border-radius:8px;padding:8px 14px;font-size:0.82rem;color:#5A6C60;}
+  .preview-stat strong{color:var(--green-deep);font-family:var(--mono);}
+  .preview-table-wrap{max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;}
+  .preview-table-wrap table{font-size:0.78rem;}
+  .preview-table-wrap th{position:sticky;top:0;}
+  .row-skip{opacity:0.5;}
+  .row-flag{background:#FEF6E4;}
+  .skip-tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:#B23B3B;background:#FDEEEE;padding:2px 6px;border-radius:999px;}
+  .flag-tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:var(--gold-deep);background:#FEF6E4;padding:2px 6px;border-radius:999px;}
+
+  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}.preview-table-wrap{overflow-x:auto;}}
 </style>
 </head>
 <body>
@@ -118,7 +132,33 @@
       </table>
     </div>
 
-    <p class="section-label"><i class="ti ti-upload"></i> Importer des cartes</p>
+    <p class="section-label"><i class="ti ti-file-spreadsheet"></i> Importer depuis un fichier Excel</p>
+    <div class="import-card">
+      <p class="import-hint">
+        Colonnes attendues (l'ordre des colonnes n'importe pas, seuls les intitulés comptent) :<br>
+        <code>Prénom · Nom · Filière · Téléphone · Localité · Validité</code><br>
+        "Validité" au format <code>AAAA - AAAA</code> (année d'adhésion - année de fin de validité).
+        Le titre "Dr"/"Pr" est détecté automatiquement s'il est écrit au début du prénom.
+      </p>
+      <div class="file-drop">
+        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleExcelFile(event)">
+      </div>
+      <div id="excelPreviewWrap" style="display:none;">
+        <div class="preview-summary" id="excelSummary"></div>
+        <div class="preview-table-wrap">
+          <table>
+            <thead><tr><th>Nom</th><th>Téléphone</th><th>Domaine</th><th>Validité</th><th>Ville</th><th></th></tr></thead>
+            <tbody id="excelPreviewTable"></tbody>
+          </table>
+        </div>
+        <div class="import-actions">
+          <button class="btn-primary" id="excelImportBtn" onclick="confirmExcelImport()"><i class="ti ti-upload"></i> Importer les lignes valides</button>
+          <p class="import-msg" id="excelImportMsg"></p>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label"><i class="ti ti-upload"></i> Import rapide (texte)</p>
     <div class="import-card">
       <p class="import-hint">
         Une ligne par membre, séparée par des points-virgules :<br>
@@ -136,8 +176,187 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   const currentYear = new Date().getFullYear();
+
+  // Correspondance Filière (fichier Excel) -> domaine / spécialité de l'app.
+  // Clés en minuscules, accents normalisés (voir normalizeKey()).
+  const FILIERE_MAP = {
+    'medecine': { domain: 'medecine' },
+    'medecin': { domain: 'medecine' },
+    'pharmacie': { domain: 'pharmacie' },
+    'biologie': { domain: 'pharmacie', specialty: 'Biologie' },
+    'chirurgie dentaire': { domain: 'odontologie' },
+    'dentaire': { domain: 'odontologie' },
+    'infirmiere': { domain: 'soins_infirmiers' },
+    'infirmier': { domain: 'soins_infirmiers' },
+    'infirmiere de bloc': { domain: 'soins_infirmiers', specialty: 'Infirmière de bloc' },
+    'sage femme': { domain: 'soins_obstetricaux' },
+    'psychiatrie': { domain: 'medecine', specialty: 'Psychiatrie' },
+    'pediatrie': { domain: 'medecine', specialty: 'Pédiatrie' },
+    'chirurgie generale': { domain: 'medecine', specialty: 'Chirurgie générale' },
+    'oncologie chirugicale': { domain: 'medecine', specialty: 'Oncologie chirurgicale' },
+    'oncologie chirurgicale': { domain: 'medecine', specialty: 'Oncologie chirurgicale' },
+  };
+
+  function stripDiacritics(s) {
+    let out = '';
+    for (const ch of String(s).normalize('NFD')) {
+      const code = ch.codePointAt(0);
+      if (code < 0x0300 || code > 0x036f) out += ch; // retire les marques diacritiques combinantes
+    }
+    return out;
+  }
+
+  function normalizeKey(s) {
+    return stripDiacritics(String(s || ''))
+      .replace(/ﬁ/g, 'fi').replace(/ﬂ/g, 'fl') // ligatures fi/fl
+      .trim().toLowerCase();
+  }
+
+  function mapFiliere(raw) {
+    const key = normalizeKey(raw);
+    if (FILIERE_MAP[key]) return FILIERE_MAP[key];
+    return { domain: 'autre', domain_autre: String(raw || '').trim() };
+  }
+
+  function extractTitle(prenomRaw) {
+    const s = String(prenomRaw || '').trim();
+    const m = s.match(/^(Dr|Pr)\.?\s+(.+)$/i);
+    if (m) return { title: m[1][0].toUpperCase() + m[1].slice(1).toLowerCase(), prenom: m[2].trim() };
+    return { title: null, prenom: s };
+  }
+
+  function parseValidite(raw) {
+    const m = String(raw || '').match(/(\d{4})\s*-\s*(\d{4})/);
+    if (!m) return { memberSince: null, expiryHint: null };
+    return { memberSince: parseInt(m[1]), expiryHint: parseInt(m[2]) };
+  }
+
+  let excelRows = [];
+
+  function handleExcelFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+      parseExcelRows(raw);
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function parseExcelRows(raw) {
+    if (raw.length < 2) { excelRows = []; renderExcelPreview(); return; }
+
+    const headerRow = raw[0].map(h => normalizeKey(h));
+    const findCol = (...names) => {
+      for (const n of names) {
+        const i = headerRow.indexOf(n);
+        if (i !== -1) return i;
+      }
+      return -1;
+    };
+    const cols = {
+      prenom: findCol('prenom'),
+      nom: findCol('nom'),
+      filiere: findCol('filiere'),
+      telephone: findCol('telephone'),
+      localite: findCol('localite'),
+      validite: findCol('validite'),
+    };
+
+    excelRows = raw.slice(1)
+      .filter(r => r.some(c => String(c || '').trim() !== ''))
+      .map(r => {
+        const prenomRaw = cols.prenom !== -1 ? r[cols.prenom] : '';
+        const nom = cols.nom !== -1 ? String(r[cols.nom] || '').trim() : '';
+        const filiereRaw = cols.filiere !== -1 ? r[cols.filiere] : '';
+        const phone = cols.telephone !== -1 ? String(r[cols.telephone] || '').trim() : '';
+        const city = cols.localite !== -1 ? String(r[cols.localite] || '').trim() : '';
+        const validite = cols.validite !== -1 ? r[cols.validite] : '';
+
+        const { title, prenom } = extractTitle(prenomRaw);
+        const filiere = mapFiliere(filiereRaw);
+        const { memberSince, expiryHint } = parseValidite(validite);
+        const full_name = [title, prenom, nom].filter(Boolean).join(' ');
+
+        const skip = !phone || !nom;
+        return {
+          full_name, phone: phone || null, city: city || null,
+          title, domain: filiere.domain, domain_autre: filiere.domain_autre || null,
+          specialty: filiere.specialty || null,
+          member_since: memberSince, expiry_hint: expiryHint,
+          filiere_raw: filiereRaw,
+          skip, flagged: filiere.domain === 'autre',
+        };
+      });
+
+    renderExcelPreview();
+  }
+
+  function renderExcelPreview() {
+    const wrap = document.getElementById('excelPreviewWrap');
+    if (excelRows.length === 0) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+
+    const valid = excelRows.filter(r => !r.skip);
+    const skipped = excelRows.filter(r => r.skip);
+    const flagged = excelRows.filter(r => r.flagged && !r.skip);
+
+    document.getElementById('excelSummary').innerHTML = `
+      <span class="preview-stat"><strong>${excelRows.length}</strong> lignes détectées</span>
+      <span class="preview-stat"><strong>${valid.length}</strong> importables</span>
+      <span class="preview-stat"><strong>${skipped.length}</strong> ignorées (nom ou téléphone manquant)</span>
+      <span class="preview-stat"><strong>${flagged.length}</strong> domaine non reconnu (à vérifier)</span>
+    `;
+
+    document.getElementById('excelPreviewTable').innerHTML = excelRows.map(r => {
+      const domainText = r.domain === 'autre' ? (r.domain_autre || 'Autre') : (r.domain + (r.specialty ? ' · ' + r.specialty : ''));
+      const validText = [r.member_since, r.expiry_hint].filter(Boolean).join(' → ');
+      const rowClass = r.skip ? 'row-skip' : (r.flagged ? 'row-flag' : '');
+      const tag = r.skip ? '<span class="skip-tag">Ignoré</span>' : (r.flagged ? '<span class="flag-tag">À vérifier</span>' : '');
+      return `<tr class="${rowClass}">
+        <td>${escHtml(r.full_name || '—')}</td>
+        <td>${escHtml(r.phone || '—')}</td>
+        <td>${escHtml(domainText)}</td>
+        <td>${escHtml(validText || '—')}</td>
+        <td>${escHtml(r.city || '—')}</td>
+        <td>${tag}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function confirmExcelImport() {
+    const btn = document.getElementById('excelImportBtn');
+    const msg = document.getElementById('excelImportMsg');
+    const rows = excelRows.filter(r => !r.skip).map(r => ({
+      full_name: r.full_name, phone: r.phone, city: r.city,
+      title: r.title, domain: r.domain, domain_autre: r.domain_autre, specialty: r.specialty,
+      member_since: r.member_since, expiry_hint: r.expiry_hint,
+    }));
+    if (rows.length === 0) { msg.textContent = 'Aucune ligne importable.'; msg.className = 'import-msg error'; return; }
+
+    btn.disabled = true;
+    const { error } = await supabaseClient.from('member_cards').insert(rows);
+    btn.disabled = false;
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'import-msg error';
+      return;
+    }
+
+    msg.textContent = `${rows.length} carte(s) importée(s) avec succès.`;
+    msg.className = 'import-msg ok';
+    excelRows = [];
+    document.getElementById('excelFile').value = '';
+    document.getElementById('excelPreviewWrap').style.display = 'none';
+    await loadStats();
+  }
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
@@ -164,7 +383,7 @@
   async function loadPending() {
     const { data } = await supabaseClient
       .from('member_cards')
-      .select('id, full_name, member_since, card_number, city, claimed_by, profiles:claimed_by(full_name, email)')
+      .select('id, full_name, member_since, card_number, city, expiry_hint, claimed_by, profiles:claimed_by(full_name, email)')
       .eq('claim_status', 'pending')
       .order('claimed_at');
 
@@ -190,7 +409,7 @@
         <td>
           <div class="td-actions">
             <span class="expiry-label">Valide jusqu'en</span>
-            <input type="number" class="expiry-input" id="expiry-${r.id}" value="${currentYear}">
+            <input type="number" class="expiry-input" id="expiry-${r.id}" value="${r.expiry_hint || currentYear}">
             <button class="btn btn-confirm" onclick="confirmClaim('${r.id}')"><i class="ti ti-check"></i> Confirmer</button>
             <button class="btn btn-reject" onclick="rejectClaim('${r.id}')"><i class="ti ti-x"></i> Refuser</button>
           </div>
