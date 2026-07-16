@@ -92,6 +92,10 @@
   .skip-tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:#B23B3B;background:#FDEEEE;padding:2px 6px;border-radius:999px;}
   .flag-tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:var(--gold-deep);background:#FEF6E4;padding:2px 6px;border-radius:999px;}
 
+  .import-success{background:#EAF3DE;border:1.5px solid #B2D98A;border-radius:10px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;color:#3B6D11;font-weight:600;}
+  .import-success i{font-size:20px;flex-shrink:0;}
+  .import-success .details{font-weight:400;font-size:0.82rem;color:#5A7A3A;margin-top:2px;}
+
   @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}.preview-table-wrap{overflow-x:auto;}}
 </style>
 </head>
@@ -140,6 +144,7 @@
         "Validité" au format <code>AAAA - AAAA</code> (année d'adhésion - année de fin de validité).
         Le titre "Dr"/"Pr" est détecté automatiquement s'il est écrit au début du prénom.
       </p>
+      <div class="import-success" id="excelSuccessBanner" style="display:none;"></div>
       <div class="file-drop">
         <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleExcelFile(event)">
       </div>
@@ -333,6 +338,9 @@
   async function confirmExcelImport() {
     const btn = document.getElementById('excelImportBtn');
     const msg = document.getElementById('excelImportMsg');
+    const banner = document.getElementById('excelSuccessBanner');
+    banner.style.display = 'none';
+
     const rows = excelRows.filter(r => !r.skip).map(r => ({
       full_name: r.full_name, phone: r.phone, city: r.city,
       title: r.title, domain: r.domain, domain_autre: r.domain_autre, specialty: r.specialty,
@@ -341,6 +349,7 @@
     if (rows.length === 0) { msg.textContent = 'Aucune ligne importable.'; msg.className = 'import-msg error'; return; }
 
     btn.disabled = true;
+    const totalBefore = await countMemberCards();
     const { error } = await supabaseClient.from('member_cards').insert(rows);
     btn.disabled = false;
 
@@ -350,12 +359,26 @@
       return;
     }
 
-    msg.textContent = `${rows.length} carte(s) importée(s) avec succès.`;
-    msg.className = 'import-msg ok';
+    const totalAfter = await countMemberCards();
+    const now = new Date().toLocaleString('fr-FR');
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <i class="ti ti-circle-check"></i>
+      <div>
+        <div>${rows.length} carte(s) importée(s) avec succès (${now}).</div>
+        <div class="details">Total de cartes en base : ${totalBefore} → ${totalAfter}.</div>
+      </div>
+    `;
+
     excelRows = [];
     document.getElementById('excelFile').value = '';
     document.getElementById('excelPreviewWrap').style.display = 'none';
-    await loadStats();
+    await loadAll();
+  }
+
+  async function countMemberCards() {
+    const { count } = await supabaseClient.from('member_cards').select('id', { count: 'exact', head: true });
+    return count ?? 0;
   }
 
   (async () => {
@@ -460,6 +483,7 @@
     }
 
     btn.disabled = true;
+    const totalBefore = await countMemberCards();
     const { error } = await supabaseClient.from('member_cards').insert(rows);
     btn.disabled = false;
 
@@ -469,10 +493,12 @@
       return;
     }
 
-    msg.textContent = `${rows.length} carte(s) importée(s) avec succès.`;
+    const totalAfter = await countMemberCards();
+    const now = new Date().toLocaleString('fr-FR');
+    msg.textContent = `${rows.length} carte(s) importée(s) avec succès (${now}). Total en base : ${totalBefore} → ${totalAfter}.`;
     msg.className = 'import-msg ok';
     document.getElementById('importText').value = '';
-    await loadStats();
+    await loadAll();
   }
 
   function escHtml(s) {
