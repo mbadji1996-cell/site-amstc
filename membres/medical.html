@@ -89,7 +89,7 @@
     <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
     <div class="hero-icon"><i class="ti ti-stethoscope"></i></div>
     <h1>Enseignements Médicaux</h1>
-    <p class="hero-sub">Leçons & Quiz — Médecine · Pharmacie · Odontologie</p>
+    <p class="hero-sub">Leçons & Quiz — Médecine · Pharmacie · Odontologie · Soins infirmiers et obstétricales</p>
   </div>
 </div>
 
@@ -101,6 +101,7 @@
       <button class="cat-tab active" id="tab-medecine" onclick="setCategory('medecine')"><i class="ti ti-heart-rate-monitor"></i> Médecine</button>
       <button class="cat-tab" id="tab-pharmacie" onclick="setCategory('pharmacie')"><i class="ti ti-pill"></i> Pharmacie</button>
       <button class="cat-tab" id="tab-odonto" onclick="setCategory('odonto')"><i class="ti ti-tooth"></i> Odontologie</button>
+      <button class="cat-tab" id="tab-soins_infirmiers" onclick="setCategory('soins_infirmiers')"><i class="ti ti-nurse"></i> Soins infirmiers et obstétricales</button>
     </div>
 
     <div id="quizSection" class="quiz-section" style="display:none;">
@@ -153,7 +154,7 @@
 
   function setCategory(cat) {
     currentCat = cat;
-    ['medecine','pharmacie','odonto'].forEach(c => {
+    ['medecine','pharmacie','odonto','soins_infirmiers'].forEach(c => {
       document.getElementById('tab-' + c).classList.toggle('active', c === cat);
     });
     render();

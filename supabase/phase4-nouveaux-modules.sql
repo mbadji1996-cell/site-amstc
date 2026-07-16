@@ -105,7 +105,7 @@ create table if not exists public.medical_lessons (
   id            uuid primary key default gen_random_uuid(),
   title         text not null,
   description   text,
-  category      text not null check (category in ('medecine', 'pharmacie', 'odonto')),
+  category      text not null check (category in ('medecine', 'pharmacie', 'odonto', 'soins_infirmiers')),
   content       text,
   cover_image   text,
   order_index   int default 0,
@@ -118,7 +118,7 @@ create table if not exists public.quizzes (
   title         text not null,
   description   text,
   lesson_id     uuid references public.medical_lessons(id) on delete set null,
-  category      text check (category in ('medecine', 'pharmacie', 'odonto')),
+  category      text check (category in ('medecine', 'pharmacie', 'odonto', 'soins_infirmiers')),
   duration_min  int default 15,
   is_published  boolean default false,
   created_at    timestamptz default now()

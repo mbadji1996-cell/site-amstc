@@ -135,7 +135,7 @@
     document.title = lesson.title + ' - AMSTC';
     document.getElementById('lessonTitle').textContent = lesson.title;
 
-    const catLabels = { medecine: 'Médecine', pharmacie: 'Pharmacie', odonto: 'Odontologie' };
+    const catLabels = { medecine: 'Médecine', pharmacie: 'Pharmacie', odonto: 'Odontologie', soins_infirmiers: 'Soins infirmiers et obstétricales' };
     document.getElementById('catLabel').textContent = catLabels[lesson.category] || lesson.category;
 
     if (lesson.duration_min) {
