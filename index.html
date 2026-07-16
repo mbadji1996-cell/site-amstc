@@ -678,15 +678,30 @@
       d.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'false');
     });
   }
+  let savedScrollY = 0;
+  function lockBodyScroll(){
+    savedScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.width = '100%';
+  }
+  function unlockBodyScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, savedScrollY);
+  }
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', open);
     closeAllDropdowns();
+    if (open) lockBodyScroll(); else unlockBodyScroll();
   });
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     links.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
     closeAllDropdowns();
+    unlockBodyScroll();
   }));
   const NAV_DESKTOP_BREAKPOINT = 1180;
   function isNavDesktop(){ return window.innerWidth > NAV_DESKTOP_BREAKPOINT; }
