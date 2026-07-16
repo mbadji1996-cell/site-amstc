@@ -289,6 +289,12 @@
             </select>
           </div>
           <div class="form-group" id="domainAutreGroup" style="display:none;"><label>Précisez</label><input id="eDomainAutre" type="text"></div>
+          <div class="form-group full" id="specialtyGroup" style="display:none;">
+            <label>Spécialité</label>
+            <select id="eSpecialtySelect" style="display:none;" onchange="onSpecialtySelectChange()"></select>
+            <input id="eSpecialtyText" type="text" style="display:none;" placeholder="Précisez votre spécialité">
+          </div>
+          <div class="form-group full" id="specialtyAutreGroup" style="display:none;"><label>Précisez la spécialité</label><input id="eSpecialtyAutre" type="text"></div>
           <div class="form-group"><label>Année d'adhésion</label><select id="eMemberSince"></select></div>
           <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
@@ -427,6 +433,13 @@
     medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
   };
+  const MEDECINE_SPECIALTIES = [
+    'Médecine générale','Pédiatrie','Chirurgie générale','Gynécologie-Obstétrique','Cardiologie',
+    'Neurologie','Dermatologie','Ophtalmologie','ORL','Psychiatrie','Radiologie',
+    'Anesthésie-Réanimation','Endocrinologie','Gastro-entérologie','Néphrologie','Pneumologie',
+    'Rhumatologie','Urologie','Oncologie','Médecine interne','Santé publique',
+  ];
+  const PHARMACIE_SPECIALTIES = ['Officine', 'Biologie', 'Industrie'];
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
@@ -484,6 +497,47 @@
     return DOMAIN_LABELS[p.domain] || '';
   }
 
+  function domainAndSpecialtyLabel(p) {
+    const dom = domainLabel(p);
+    return p.specialty ? [dom, p.specialty].filter(Boolean).join(' · ') : dom;
+  }
+
+  function specialtyMode(domain) {
+    if (domain === 'medecine') return 'medecine';
+    if (domain === 'pharmacie') return 'pharmacie';
+    if (domain === 'odontologie' || domain === 'soins_obstetricaux' || domain === 'soins_infirmiers') return 'freetext';
+    return 'none';
+  }
+
+  function refreshSpecialtyUI(mode) {
+    const group = document.getElementById('specialtyGroup');
+    const select = document.getElementById('eSpecialtySelect');
+    const text = document.getElementById('eSpecialtyText');
+    const autreGroup = document.getElementById('specialtyAutreGroup');
+
+    autreGroup.style.display = 'none';
+
+    if (mode === 'none') { group.style.display = 'none'; return; }
+    group.style.display = '';
+
+    if (mode === 'freetext') {
+      select.style.display = 'none';
+      text.style.display = '';
+    } else {
+      text.style.display = 'none';
+      select.style.display = '';
+      const list = mode === 'medecine' ? MEDECINE_SPECIALTIES : PHARMACIE_SPECIALTIES;
+      select.innerHTML = '<option value="">— Choisir —</option>' +
+        list.map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('') +
+        '<option value="autre">Autre à préciser</option>';
+    }
+  }
+
+  function onSpecialtySelectChange() {
+    document.getElementById('specialtyAutreGroup').style.display =
+      document.getElementById('eSpecialtySelect').value === 'autre' ? '' : 'none';
+  }
+
   function fullDisplayName(p) {
     const parts = [p.title, p.first_name, p.last_name].filter(Boolean);
     return parts.length ? parts.join(' ') : (p.full_name || p.email || '—');
@@ -491,7 +545,7 @@
 
   function updateInfoSummary(p) {
     const parts = [fullDisplayName(p)];
-    const dom = domainLabel(p);
+    const dom = domainAndSpecialtyLabel(p);
     if (dom) parts.push(dom);
     if (p.city) parts.push(p.city);
     document.getElementById('infoSummary').textContent = parts.join(' · ');
@@ -502,7 +556,7 @@
     const initials = (p.full_name || displayName).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 
     document.getElementById('mcName').textContent = displayName;
-    document.getElementById('mcDomain').textContent = domainLabel(p);
+    document.getElementById('mcDomain').textContent = domainAndSpecialtyLabel(p);
 
     const photoEl = document.getElementById('mcPhoto');
     const avatarEl = document.getElementById('mcAvatar');
@@ -534,6 +588,21 @@
     document.getElementById('eMemberSince').value = p.member_since || currentYear;
     document.getElementById('eCity').value = p.city || '';
     document.getElementById('domainAutreGroup').style.display = p.domain === 'autre' ? '' : 'none';
+
+    const specMode = specialtyMode(p.domain);
+    refreshSpecialtyUI(specMode);
+    if (specMode === 'medecine' || specMode === 'pharmacie') {
+      const list = specMode === 'medecine' ? MEDECINE_SPECIALTIES : PHARMACIE_SPECIALTIES;
+      if (p.specialty && list.includes(p.specialty)) {
+        document.getElementById('eSpecialtySelect').value = p.specialty;
+      } else if (p.specialty) {
+        document.getElementById('eSpecialtySelect').value = 'autre';
+        document.getElementById('specialtyAutreGroup').style.display = '';
+        document.getElementById('eSpecialtyAutre').value = p.specialty;
+      }
+    } else if (specMode === 'freetext') {
+      document.getElementById('eSpecialtyText').value = p.specialty || '';
+    }
     if (p.photo_url) {
       const preview = document.getElementById('photoPreview');
       preview.src = p.photo_url; preview.style.display = '';
@@ -573,8 +642,12 @@
   }
 
   function onDomainChange() {
-    document.getElementById('domainAutreGroup').style.display =
-      document.getElementById('eDomain').value === 'autre' ? '' : 'none';
+    const domain = document.getElementById('eDomain').value;
+    document.getElementById('domainAutreGroup').style.display = domain === 'autre' ? '' : 'none';
+    refreshSpecialtyUI(specialtyMode(domain));
+    document.getElementById('eSpecialtySelect').value = '';
+    document.getElementById('eSpecialtyText').value = '';
+    document.getElementById('eSpecialtyAutre').value = '';
   }
 
   async function onPhotoSelected(e) {
@@ -638,6 +711,15 @@
     const lastName = document.getElementById('eLastName').value.trim();
     const domain = document.getElementById('eDomain').value;
 
+    const specMode = specialtyMode(domain);
+    let specialty = null;
+    if (specMode === 'freetext') {
+      specialty = document.getElementById('eSpecialtyText').value.trim() || null;
+    } else if (specMode === 'medecine' || specMode === 'pharmacie') {
+      const sel = document.getElementById('eSpecialtySelect').value;
+      specialty = sel === 'autre' ? (document.getElementById('eSpecialtyAutre').value.trim() || null) : (sel || null);
+    }
+
     const payload = {
       title: document.getElementById('eTitle').value || null,
       first_name: firstName || null,
@@ -646,6 +728,7 @@
       phone: document.getElementById('ePhone').value.trim() || null,
       domain: domain || null,
       domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
+      specialty,
       member_since: parseInt(document.getElementById('eMemberSince').value) || currentYear,
       city: document.getElementById('eCity').value.trim() || null,
     };
@@ -920,7 +1003,7 @@
       doc.setFont(undefined, 'normal');
       doc.setFontSize(6);
       doc.setTextColor(210, 210, 210);
-      doc.text(domainLabel(p) || '', nameX, 21);
+      doc.text(domainAndSpecialtyLabel(p) || '', nameX, 21);
 
       const validityText = p.card_valid_until
         ? (p.card_valid_until >= currentYear ? "Valide jusqu'en " + p.card_valid_until : 'Expirée (' + p.card_valid_until + ')')
