@@ -151,7 +151,8 @@
     <div class="form-row">
       <div class="form-group">
         <label for="fCategory">Catégorie</label>
-        <select id="fCategory">
+        <select id="fCategory" required>
+          <option value="" disabled selected>Choisir...</option>
           <option value="islam">Islam</option>
           <option value="tarikha">Tarikha</option>
         </select>
@@ -246,7 +247,7 @@
     tbody.innerHTML = courses.map(c => `
       <tr>
         <td><strong>${escHtml(c.title)}</strong></td>
-        <td>${c.duration_min ? c.duration_min + ' min' : '—'}</td>
+        <td>${c.duration_min ? c.duration_min + ' min' : '-'}</td>
         <td>${c.order_index}</td>
         <td><span class="badge-cat ${c.is_published ? 'badge-pub' : 'badge-draft'}">${c.is_published ? 'Publié' : 'Brouillon'}</span></td>
         <td>
@@ -267,7 +268,7 @@
   function openForm(course) {
     editingId = course ? course.id : null;
     document.getElementById('formTitle').textContent = course ? 'Modifier le cours' : 'Nouveau cours';
-    document.getElementById('fCategory').value = course ? course.category : 'islam';
+    document.getElementById('fCategory').value = course ? course.category : '';
     document.getElementById('fOrder').value = course ? course.order_index : 0;
     document.getElementById('fTitle').value = course ? course.title : '';
     document.getElementById('fDesc').value = course ? (course.description || '') : '';
@@ -294,6 +295,7 @@
     const msg = document.getElementById('formMsg');
     const title = document.getElementById('fTitle').value.trim();
     if (!title) { showMsg('Le titre est obligatoire.', 'error'); return; }
+    if (!document.getElementById('fCategory').value) { showMsg('Choisissez une catégorie.', 'error'); return; }
 
     btn.disabled = true;
     msg.className = 'form-msg';

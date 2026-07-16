@@ -132,7 +132,7 @@
   <div id="pageContent" style="display:none;">
     <div class="page-header">
       <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
-      <h1 class="page-title">Enseignements Médicaux — Administration</h1>
+      <h1 class="page-title">Enseignements Médicaux - Administration</h1>
     </div>
 
     <!-- Main tabs: Leçons / Quiz -->
@@ -181,7 +181,8 @@
     <div class="form-grid">
       <div class="form-group">
         <label>Catégorie *</label>
-        <select id="l-category">
+        <select id="l-category" required>
+          <option value="" disabled selected>Choisir...</option>
           <option value="medecine">Médecine</option>
           <option value="pharmacie">Pharmacie</option>
           <option value="odonto">Odontologie</option>
@@ -209,7 +210,7 @@
         <input type="text" id="l-cover" placeholder="https://…">
       </div>
       <div class="form-group full">
-        <label>Contenu — basculez "Markdown" pour le texte arabe : [arabic]…[/arabic]</label>
+        <label>Contenu - basculez "Markdown" pour le texte arabe : [arabic]…[/arabic]</label>
         <div id="l-content"></div>
       </div>
       <div class="form-group full">
@@ -235,7 +236,8 @@
     <div class="form-grid">
       <div class="form-group">
         <label>Catégorie *</label>
-        <select id="q-category">
+        <select id="q-category" required>
+          <option value="" disabled selected>Choisir...</option>
           <option value="medecine">Médecine</option>
           <option value="pharmacie">Pharmacie</option>
           <option value="odonto">Odontologie</option>
@@ -244,11 +246,11 @@
       </div>
       <div class="form-group">
         <label>Leçon associée (optionnel)</label>
-        <select id="q-lesson"><option value="">— aucune —</option></select>
+        <select id="q-lesson"><option value="">- aucune -</option></select>
       </div>
       <div class="form-group full">
         <label>Titre du quiz *</label>
-        <input type="text" id="q-title" placeholder="Ex : Quiz — Anatomie du cœur">
+        <input type="text" id="q-title" placeholder="Ex : Quiz - Anatomie du cœur">
       </div>
       <div class="form-group full">
         <label>Description</label>
@@ -256,7 +258,7 @@
       </div>
       <div class="form-group">
         <label>Durée limite (min, optionnel)</label>
-        <input type="number" id="q-duration" min="1" placeholder="—">
+        <input type="number" id="q-duration" min="1" placeholder="-">
       </div>
       <div class="form-group">
         <label class="form-check" style="margin-top:22px;">
@@ -377,7 +379,7 @@
       content = l.content || '';
     } else {
       document.getElementById('lessonModalTitle').textContent = 'Nouvelle leçon';
-      document.getElementById('l-category').value = lessonCat;
+      document.getElementById('l-category').value = '';
       document.getElementById('l-order').value = 0;
       ['l-title','l-desc','l-duration','l-cover'].forEach(f => document.getElementById(f).value = '');
       document.getElementById('l-published').checked = false;
@@ -391,6 +393,7 @@
     const msg = document.getElementById('lessonFormMsg');
     const title = document.getElementById('l-title').value.trim();
     if (!title) { msg.textContent = 'Le titre est obligatoire.'; msg.className = 'form-msg error'; return; }
+    if (!document.getElementById('l-category').value) { msg.textContent = 'Choisissez une catégorie.'; msg.className = 'form-msg error'; return; }
     btn.disabled = true;
 
     const payload = {
@@ -465,7 +468,7 @@
 
     // Populate lesson select
     const sel = document.getElementById('q-lesson');
-    sel.innerHTML = '<option value="">— aucune —</option>';
+    sel.innerHTML = '<option value="">- aucune -</option>';
     allLessons.forEach(l => {
       const opt = document.createElement('option');
       opt.value = l.id;
@@ -491,7 +494,7 @@
       });
     } else {
       document.getElementById('quizModalTitle').textContent = 'Nouveau quiz';
-      document.getElementById('q-category').value = quizCat;
+      document.getElementById('q-category').value = '';
       ['q-title','q-desc','q-duration'].forEach(f => document.getElementById(f).value = '');
       document.getElementById('q-published').checked = false;
       sel.value = '';
@@ -541,6 +544,7 @@
     const msg = document.getElementById('quizFormMsg');
     const title = document.getElementById('q-title').value.trim();
     if (!title) { msg.textContent = 'Le titre est obligatoire.'; msg.className = 'form-msg error'; return; }
+    if (!document.getElementById('q-category').value) { msg.textContent = 'Choisissez une catégorie.'; msg.className = 'form-msg error'; return; }
 
     // Validate questions
     for (let i = 0; i < questionRows.length; i++) {

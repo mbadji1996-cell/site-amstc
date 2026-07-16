@@ -106,19 +106,19 @@
         </div>
         <div class="hero-stats">
           <div class="hstat">
-            <p class="hstat-val" id="statPendingMembers">—</p>
+            <p class="hstat-val" id="statPendingMembers">-</p>
             <p class="hstat-lbl">Comptes en attente</p>
           </div>
           <div class="hstat">
-            <p class="hstat-val" id="statPendingPayments">—</p>
+            <p class="hstat-val" id="statPendingPayments">-</p>
             <p class="hstat-lbl">Paiements en attente</p>
           </div>
           <div class="hstat">
-            <p class="hstat-val" id="statPendingOrders">—</p>
+            <p class="hstat-val" id="statPendingOrders">-</p>
             <p class="hstat-lbl">Commandes en attente</p>
           </div>
           <div class="hstat">
-            <p class="hstat-val" id="statActiveMembers">—</p>
+            <p class="hstat-val" id="statActiveMembers">-</p>
             <p class="hstat-lbl">Membres actifs</p>
           </div>
         </div>
@@ -230,14 +230,14 @@
         .from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pending');
       setStat('statPendingMembers', count ?? 0, true);
       setBadge('badgeMembers', count ?? 0);
-    } catch(e) { document.getElementById('statPendingMembers').textContent = '—'; }
+    } catch(e) { document.getElementById('statPendingMembers').textContent = '-'; }
 
     // Membres actifs
     try {
       const { count } = await supabaseClient
         .from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'approved');
       document.getElementById('statActiveMembers').textContent = count ?? 0;
-    } catch(e) { document.getElementById('statActiveMembers').textContent = '—'; }
+    } catch(e) { document.getElementById('statActiveMembers').textContent = '-'; }
 
     // Paiements en attente (validité de carte + cotisations)
     try {
@@ -248,7 +248,7 @@
       const count = (validityRes.count ?? 0) + (cotisRes.count ?? 0);
       setStat('statPendingPayments', count, true);
       setBadge('badgePayments', count);
-    } catch(e) { document.getElementById('statPendingPayments').textContent = '—'; }
+    } catch(e) { document.getElementById('statPendingPayments').textContent = '-'; }
 
     // Commandes en attente
     try {
@@ -256,7 +256,7 @@
         .from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending');
       setStat('statPendingOrders', count ?? 0, true);
       setBadge('badgeOrders', count ?? 0);
-    } catch(e) { document.getElementById('statPendingOrders').textContent = '—'; }
+    } catch(e) { document.getElementById('statPendingOrders').textContent = '-'; }
 
     // Réclamations de cartes en attente
     try {

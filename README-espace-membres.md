@@ -142,6 +142,34 @@ Ensuite :
   approuvé, avec un bouton "Télécharger" qui génère un lien valable
   une minute
 
+## 4quinquies. Activer la restriction d'accès pour cartes expirées (2 mois de grâce)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase10-restriction-cartes-expirees.sql`,
+   copiez tout son contenu, collez-le, cliquez **Run**
+   (nécessite d'avoir déjà exécuté `phase3`, `phase3b`, `phase3c` et
+   `phase7-validite-cotisations.sql`)
+
+La validité de la carte d'un membre (`profiles.card_valid_until`, une
+année) suit la convention : une carte valable jusqu'en année N expire le
+1er janvier N+1. Un membre dispose alors d'un délai de grâce de 2 mois
+(jusqu'au 1er mars N+1) pendant lequel un bandeau de rappel s'affiche sur
+le tableau de bord et sur les pages de contenu réservé, mais l'accès reste
+ouvert. Passé le 1er mars N+1, l'accès aux Formations, Réalisations et
+Documents officiels réservés (le système "contenu réservé" - pas l'Espace
+Daara, ni les Enseignements Médicaux/Quiz, ni la Boutique) est coupé
+côté base de données (RLS), pas seulement côté affichage.
+
+**Interrupteur global** : cette coupure ne s'applique que si l'admin l'a
+explicitement activée. Dans `membres/cartes-admin.html`, un bouton
+"Activer/Désactiver la restriction" contrôle la ligne unique de la table
+`app_settings` (`restriction_cartes_active`). Tant qu'elle est désactivée
+(valeur par défaut après l'exécution du script), tous les membres gardent
+l'accès aux contenus réservés quelle que soit l'ancienneté de leur carte
+expirée - seul le bandeau de rappel s'affiche. Ça permet de mener une
+campagne de renouvellement des cartes en amont, puis d'activer la coupure
+une fois la campagne terminée.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -186,6 +214,10 @@ Une fois l'URL et la clé intégrées :
   PV d'AG...), sous forme de vrais fichiers PDF stockés dans un espace
   privé, accessibles uniquement via un lien signé temporaire pour les
   membres approuvés
+- Restriction d'accès aux contenus réservés (Formations, Réalisations,
+  Documents officiels) pour les membres dont la carte est expirée depuis
+  plus de 2 mois, avec un délai de grâce et un bandeau de rappel de
+  renouvellement (voir Phase 4quinquies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

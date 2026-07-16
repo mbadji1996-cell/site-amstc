@@ -96,6 +96,21 @@
   .import-success i{font-size:20px;flex-shrink:0;}
   .import-success .details{font-weight:400;font-size:0.82rem;color:#5A7A3A;margin-top:2px;}
 
+  /* Interrupteur de restriction d'accès */
+  .restriction-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .restriction-card.active{border-color:#C0392B;background:#FFF7F5;}
+  .restriction-info{flex:1;min-width:260px;}
+  .restriction-title{font-family:var(--display);font-weight:600;color:var(--green-deep);font-size:1.02rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .restriction-status{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.06em;padding:3px 9px;border-radius:999px;background:#EAF3DE;color:#3B6D11;}
+  .restriction-status.active{background:#FDEEEE;color:#B23B3B;}
+  .restriction-desc{font-size:0.85rem;color:#5A6C60;margin-top:6px;}
+  .restriction-meta{font-family:var(--mono);font-size:0.68rem;color:#8A9E8F;margin-top:8px;}
+  .btn-toggle-restriction{flex-shrink:0;font-family:var(--mono);font-size:0.78rem;font-weight:600;padding:10px 20px;border-radius:999px;border:none;cursor:pointer;background:var(--green);color:var(--white);}
+  .btn-toggle-restriction:hover{background:var(--green-deep);}
+  .btn-toggle-restriction.is-active{background:#C0392B;}
+  .btn-toggle-restriction.is-active:hover{background:#A33025;}
+  .btn-toggle-restriction:disabled{opacity:0.6;cursor:wait;}
+
   @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}.preview-table-wrap{overflow-x:auto;}}
 </style>
 </head>
@@ -118,10 +133,28 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="statTotal">—</p></div>
-      <div class="stat-card"><p class="stat-label">Non réclamées</p><p class="stat-val" id="statUnclaimed">—</p></div>
-      <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="statPending">—</p></div>
-      <div class="stat-card"><p class="stat-label">Confirmées</p><p class="stat-val" id="statConfirmed">—</p></div>
+      <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="statTotal">-</p></div>
+      <div class="stat-card"><p class="stat-label">Non réclamées</p><p class="stat-val" id="statUnclaimed">-</p></div>
+      <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="statPending">-</p></div>
+      <div class="stat-card"><p class="stat-label">Confirmées</p><p class="stat-val" id="statConfirmed">-</p></div>
+    </div>
+
+    <div class="restriction-card" id="restrictionCard">
+      <div class="restriction-info">
+        <p class="restriction-title">
+          <i class="ti ti-lock"></i> Restriction d'accès aux contenus réservés
+          <span class="restriction-status" id="restrictionStatus">-</span>
+        </p>
+        <p class="restriction-desc">
+          Quand elle est activée, les membres dont la carte est expirée depuis plus de
+          2 mois perdent l'accès aux Formations, Réalisations et Documents officiels
+          réservés (le rappel de renouvellement, lui, s'affiche dans tous les cas dès
+          l'expiration). Laissez-la désactivée pendant une campagne de renouvellement
+          des cartes, puis activez-la une fois la campagne terminée.
+        </p>
+        <p class="restriction-meta" id="restrictionMeta"></p>
+      </div>
+      <button class="btn-toggle-restriction" id="btnToggleRestriction">…</button>
     </div>
 
     <p class="section-label"><i class="ti ti-clock-hour-4"></i> Réclamations en attente</p>
@@ -325,11 +358,11 @@
       const rowClass = r.skip ? 'row-skip' : (r.flagged ? 'row-flag' : '');
       const tag = r.skip ? '<span class="skip-tag">Ignoré</span>' : (r.flagged ? '<span class="flag-tag">À vérifier</span>' : '');
       return `<tr class="${rowClass}">
-        <td>${escHtml(r.full_name || '—')}</td>
-        <td>${escHtml(r.phone || '—')}</td>
+        <td>${escHtml(r.full_name || '-')}</td>
+        <td>${escHtml(r.phone || '-')}</td>
         <td>${escHtml(domainText)}</td>
-        <td>${escHtml(validText || '—')}</td>
-        <td>${escHtml(r.city || '—')}</td>
+        <td>${escHtml(validText || '-')}</td>
+        <td>${escHtml(r.city || '-')}</td>
         <td>${tag}</td>
       </tr>`;
     }).join('');
@@ -391,8 +424,63 @@
   })();
 
   async function loadAll() {
-    await Promise.all([loadStats(), loadPending()]);
+    await Promise.all([loadStats(), loadPending(), loadRestrictionSetting()]);
   }
+
+  let restrictionActive = false;
+
+  async function loadRestrictionSetting() {
+    const { data, error } = await supabaseClient
+      .from('app_settings')
+      .select('restriction_cartes_active, updated_at')
+      .limit(1)
+      .maybeSingle();
+
+    const card = document.getElementById('restrictionCard');
+    const statusEl = document.getElementById('restrictionStatus');
+    const metaEl = document.getElementById('restrictionMeta');
+    const btn = document.getElementById('btnToggleRestriction');
+
+    if (error || !data) {
+      metaEl.textContent = "Impossible de charger l'état de la restriction.";
+      btn.disabled = true;
+      return;
+    }
+
+    restrictionActive = !!data.restriction_cartes_active;
+    card.classList.toggle('active', restrictionActive);
+    statusEl.classList.toggle('active', restrictionActive);
+    statusEl.textContent = restrictionActive ? 'Activée' : 'Désactivée';
+    btn.classList.toggle('is-active', restrictionActive);
+    btn.textContent = restrictionActive ? 'Désactiver la restriction' : 'Activer la restriction';
+    metaEl.textContent = data.updated_at
+      ? 'Dernière modification : ' + new Date(data.updated_at).toLocaleString('fr-FR')
+      : '';
+  }
+
+  async function toggleRestriction() {
+    const next = !restrictionActive;
+    const confirmMsg = next
+      ? "Activer la restriction va immédiatement couper l'accès aux contenus réservés pour tout membre dont la carte est expirée depuis plus de 2 mois. Continuer ?"
+      : "Désactiver la restriction va immédiatement rouvrir l'accès aux contenus réservés pour tous les membres, même carte expirée. Continuer ?";
+    if (!confirm(confirmMsg)) return;
+
+    const btn = document.getElementById('btnToggleRestriction');
+    btn.disabled = true;
+    const { error } = await supabaseClient
+      .from('app_settings')
+      .update({ restriction_cartes_active: next, updated_at: new Date().toISOString() })
+      .eq('id', true);
+    btn.disabled = false;
+
+    if (error) {
+      alert("Erreur : " + error.message);
+      return;
+    }
+    await loadRestrictionSetting();
+  }
+
+  document.getElementById('btnToggleRestriction').addEventListener('click', toggleRestriction);
 
   async function loadStats() {
     const { data } = await supabaseClient.from('member_cards').select('claim_status');
@@ -423,10 +511,10 @@
       return `<tr>
         <td>
           <p class="card-name">${escHtml(r.full_name)}</p>
-          <p class="card-meta">${escHtml(meta || '—')}</p>
+          <p class="card-meta">${escHtml(meta || '-')}</p>
         </td>
         <td>
-          <p class="claimant">${escHtml(claimant.full_name || '—')}</p>
+          <p class="claimant">${escHtml(claimant.full_name || '-')}</p>
           <p class="claimant-email">${escHtml(claimant.email || '')}</p>
         </td>
         <td>

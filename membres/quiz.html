@@ -163,13 +163,13 @@
       <h1 id="quizTitle">Quiz</h1>
       <p class="quiz-intro-desc" id="quizDesc"></p>
       <div class="quiz-meta-pills">
-        <span class="pill" id="pillQuestions"><i class="ti ti-help"></i> — questions</span>
-        <span class="pill" id="pillDuration" style="display:none;"><i class="ti ti-clock"></i> — min</span>
+        <span class="pill" id="pillQuestions"><i class="ti ti-help"></i> - questions</span>
+        <span class="pill" id="pillDuration" style="display:none;"><i class="ti ti-clock"></i> - min</span>
         <span class="pill"><i class="ti ti-infinity"></i> Tentatives illimitées</span>
       </div>
       <div class="best-score-banner" id="bestScoreBanner" style="display:none;">
         <i class="ti ti-trophy"></i>
-        <span id="bestScoreText">Votre meilleur score : —</span>
+        <span id="bestScoreText">Votre meilleur score : -</span>
       </div>
       <button class="btn btn-primary" id="startBtn"><i class="ti ti-player-play"></i> Commencer le quiz</button>
     </div>
@@ -344,7 +344,7 @@
         <span>${escHtml(opt)}</span>
       </button>`).join('');
 
-    // Show last answer if navigating back (disabled — quiz is forward-only)
+    // Show last answer if navigating back (disabled - quiz is forward-only)
     document.getElementById('nextBtnLabel').textContent =
       currentQ === total - 1 ? 'Voir les résultats' : 'Question suivante';
   }

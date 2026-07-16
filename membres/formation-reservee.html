@@ -42,6 +42,11 @@
   .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
   .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
   .loading, .error{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  .card-status-banner{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   footer{padding:40px 0; text-align:center; max-width:1180px; margin:0 auto;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
@@ -77,10 +82,22 @@
     return m ? m[1] : null;
   }
 
-  async function loadArticle() {
+  function cardStatusBannerHtml(state) {
+    if (state === "grace") {
+      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+    }
+    return "";
+  }
+
+  async function loadArticle(blocked, state) {
     const id = new URLSearchParams(window.location.search).get("id");
     const content = document.getElementById("content");
     if (!id) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
+
+    if (blocked) {
+      content.innerHTML = '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce contenu réservé n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+      return;
+    }
 
     const { data, error } = await supabaseClient
       .from("restricted_articles")
@@ -95,8 +112,9 @@
     }
 
     const ytId = youtubeEmbedId(data.video_url);
-    document.title = (data.title || "Formation réservée") + " — AMSTC";
+    document.title = (data.title || "Formation réservée") + " - AMSTC";
     content.innerHTML = `
+      ${cardStatusBannerHtml(state)}
       <span class="badge">Réservé aux membres</span>
       <span class="art-date">${data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
       <h1>${data.title || ''}</h1>
@@ -107,10 +125,10 @@
   }
 
   (async () => {
-    const profile = await requireApprovedMember("connexion.html");
-    if (!profile) return;
+    const result = await requireActiveMember("connexion.html");
+    if (!result) return;
     document.getElementById("signoutBtn").style.display = "";
-    loadArticle();
+    loadArticle(result.state === "blocked", result.state);
   })();
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {

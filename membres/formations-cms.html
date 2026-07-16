@@ -53,6 +53,11 @@
   .card h3{font-family:var(--display); font-size:1.15rem; color:var(--green-deep); margin:8px 0 8px;}
   .card p{font-size:0.92rem; color:#465A4E;}
   .empty, .error, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
@@ -81,6 +86,7 @@
   <a class="back" href="formations.html">← Formations</a>
   <h1>Autres formations</h1>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <div id="grid" class="grid">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
   </div>
@@ -93,7 +99,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
-  async function loadArticles() {
+  function renderCardStatusBanner(state) {
+    const el = document.getElementById("cardStatusBanner");
+    if (state === "grace") {
+      el.className = "card-status-banner";
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = "";
+    } else if (state === "blocked") {
+      el.className = "card-status-banner blocked";
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux contenus réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = "";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
+  async function loadArticles(blocked) {
     const grid = document.getElementById("grid");
     let publicArticles = [];
     let restricted = [];
@@ -103,14 +124,16 @@
       if (res.ok) publicArticles = await res.json();
     } catch (e) { /* liste publique indisponible, on continue quand même */ }
 
-    try {
-      const { data } = await supabaseClient
-        .from("restricted_articles")
-        .select("id,title,excerpt,cover_image,created_at")
-        .eq("category", "formation")
-        .order("created_at", { ascending: false });
-      restricted = data || [];
-    } catch (e) { /* contenu réservé indisponible, on continue quand même */ }
+    if (!blocked) {
+      try {
+        const { data } = await supabaseClient
+          .from("restricted_articles")
+          .select("id,title,excerpt,cover_image,created_at")
+          .eq("category", "formation")
+          .order("created_at", { ascending: false });
+        restricted = data || [];
+      } catch (e) { /* contenu réservé indisponible, on continue quand même */ }
+    }
 
     const items = [
       ...publicArticles.map(a => ({ ...a, _restricted: false, _date: a.date })),
@@ -143,11 +166,12 @@
   }
 
   (async () => {
-    const profile = await requireApprovedMember("connexion.html");
-    if (!profile) return;
+    const result = await requireActiveMember("connexion.html");
+    if (!result) return;
     document.getElementById("signoutBtn").style.display = "";
     document.getElementById("loadingMsg").style.display = "none";
-    loadArticles();
+    renderCardStatusBanner(result.state);
+    loadArticles(result.state === "blocked");
   })();
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {

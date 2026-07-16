@@ -202,7 +202,7 @@
         <img class="mc-photo" id="mcPhoto" style="display:none;" alt="">
         <div class="mc-avatar" id="mcAvatar">?</div>
         <div>
-          <p class="mc-name" id="mcName">—</p>
+          <p class="mc-name" id="mcName">-</p>
           <p class="mc-domain" id="mcDomain"></p>
         </div>
       </div>
@@ -211,23 +211,23 @@
         <span class="mc-status-pill" id="mcStatusPill">…</span>
         <div class="mc-field">
           <p class="mc-field-label">N° Membre</p>
-          <p class="mc-field-val num" id="mcNumber">—</p>
+          <p class="mc-field-val num" id="mcNumber">-</p>
         </div>
         <div class="mc-field">
           <p class="mc-field-label">Membre depuis</p>
-          <p class="mc-field-val" id="mcSince">—</p>
+          <p class="mc-field-val" id="mcSince">-</p>
         </div>
         <div class="mc-field">
           <p class="mc-field-label">Téléphone</p>
-          <p class="mc-field-val" id="mcPhone">—</p>
+          <p class="mc-field-val" id="mcPhone">-</p>
         </div>
         <div class="mc-field">
           <p class="mc-field-label">E-mail</p>
-          <p class="mc-field-val" id="mcEmail">—</p>
+          <p class="mc-field-val" id="mcEmail">-</p>
         </div>
         <div class="mc-field">
           <p class="mc-field-label">Localité</p>
-          <p class="mc-field-val" id="mcCity">—</p>
+          <p class="mc-field-val" id="mcCity">-</p>
         </div>
         <div class="mc-field">
           <p class="mc-field-label">Validité de la carte</p>
@@ -252,7 +252,7 @@
           <div class="accordion-icon"><i class="ti ti-user"></i></div>
           <div class="accordion-text">
             <p class="accordion-title">Informations personnelles</p>
-            <p class="accordion-subtitle" id="infoSummary">—</p>
+            <p class="accordion-subtitle" id="infoSummary">-</p>
           </div>
         </div>
         <i class="ti ti-chevron-down accordion-chevron" id="chev-info"></i>
@@ -268,7 +268,7 @@
         <div class="form-grid">
           <div class="form-group"><label>Titre</label>
             <select id="eTitle">
-              <option value="">—</option>
+              <option value="">-</option>
               <option value="Dr">Dr</option>
               <option value="Pr">Pr</option>
             </select>
@@ -279,7 +279,7 @@
           <div class="form-group">
             <label>Domaine</label>
             <select id="eDomain" onchange="onDomainChange()">
-              <option value="">— Choisir —</option>
+              <option value="">- Choisir -</option>
               <option value="medecine">Médecine</option>
               <option value="pharmacie">Pharmacie</option>
               <option value="odontologie">Odontologie</option>
@@ -314,7 +314,7 @@
           <div class="accordion-icon"><i class="ti ti-id-badge"></i></div>
           <div class="accordion-text">
             <p class="accordion-title">Validité de la carte</p>
-            <p class="accordion-subtitle" id="validitySummary">—</p>
+            <p class="accordion-subtitle" id="validitySummary">-</p>
           </div>
         </div>
         <i class="ti ti-chevron-down accordion-chevron" id="chev-validity"></i>
@@ -331,7 +331,8 @@
           </div>
           <div class="form-group">
             <label>Méthode de paiement</label>
-            <select id="validityMethod">
+            <select id="validityMethod" required>
+              <option value="" disabled selected>Choisir...</option>
               <option value="wave">Wave</option>
               <option value="orange_money">Orange Money</option>
             </select>
@@ -362,7 +363,7 @@
           <div class="accordion-icon"><i class="ti ti-calendar-check"></i></div>
           <div class="accordion-text">
             <p class="accordion-title">Cotisations mensuelles</p>
-            <p class="accordion-subtitle" id="cotisSummary">—</p>
+            <p class="accordion-subtitle" id="cotisSummary">-</p>
           </div>
         </div>
         <i class="ti ti-chevron-down accordion-chevron" id="chev-cotis"></i>
@@ -387,7 +388,8 @@
             </div>
             <div class="form-group">
               <label>Méthode de paiement</label>
-              <select id="cotisMethod">
+              <select id="cotisMethod" required>
+                <option value="" disabled selected>Choisir...</option>
                 <option value="wave">Wave</option>
                 <option value="orange_money">Orange Money</option>
               </select>
@@ -457,6 +459,12 @@
 
     updateValidityTotal();
     updateCotisTotal();
+
+    const openSection = new URLSearchParams(window.location.search).get('open');
+    if (openSection && document.getElementById('body-' + openSection)) {
+      toggleAccordion(openSection);
+      document.getElementById('body-' + openSection).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   })();
 
   /* ===== Accordions ===== */
@@ -527,7 +535,7 @@
       text.style.display = 'none';
       select.style.display = '';
       const list = mode === 'medecine' ? MEDECINE_SPECIALTIES : PHARMACIE_SPECIALTIES;
-      select.innerHTML = '<option value="">— Choisir —</option>' +
+      select.innerHTML = '<option value="">- Choisir -</option>' +
         list.map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('') +
         '<option value="autre">Autre à préciser</option>';
     }
@@ -540,7 +548,7 @@
 
   function fullDisplayName(p) {
     const parts = [p.title, p.first_name, p.last_name].filter(Boolean);
-    return parts.length ? parts.join(' ') : (p.full_name || p.email || '—');
+    return parts.length ? parts.join(' ') : (p.full_name || p.email || '-');
   }
 
   function updateInfoSummary(p) {
@@ -571,9 +579,9 @@
     document.getElementById('mcNumber').textContent = p.legacy_card_number
       || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
     document.getElementById('mcSince').textContent = p.member_since || currentYear;
-    document.getElementById('mcPhone').textContent = p.phone || '—';
-    document.getElementById('mcEmail').textContent = p.email || '—';
-    document.getElementById('mcCity').textContent = p.city || '—';
+    document.getElementById('mcPhone').textContent = p.phone || '-';
+    document.getElementById('mcEmail').textContent = p.email || '-';
+    document.getElementById('mcCity').textContent = p.city || '-';
 
     renderCardValidityStatus(p);
     renderQr(p);
@@ -797,8 +805,8 @@
       rows.map(p => `
         <div class="pay-row">
           <div>
-            <p class="pay-year">${p.years_requested} an${p.years_requested > 1 ? 's' : ''} — ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
-            <p class="pay-method">${PAY_METHODS[p.payment_method] || '—'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
+            <p class="pay-year">${p.years_requested} an${p.years_requested > 1 ? 's' : ''} - ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
+            <p class="pay-method">${PAY_METHODS[p.payment_method] || '-'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
           </div>
           <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
         </div>`).join('');
@@ -810,6 +818,7 @@
     const method = document.getElementById('validityMethod').value;
     const msg = document.getElementById('validityMsg');
     if (!years || years < 1) { msg.textContent = "Indiquez un nombre d'années valide."; msg.className = 'form-msg error'; return; }
+    if (!method) { msg.textContent = 'Choisissez un moyen de paiement.'; msg.className = 'form-msg error'; return; }
     if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
 
     const btn = document.getElementById('validityBtn');
@@ -843,7 +852,7 @@
 
   function updateCotisSummary(paidMonths, locked) {
     const el = document.getElementById('cotisSummary');
-    if (locked) el.textContent = 'Verrouillé — validez votre adhésion';
+    if (locked) el.textContent = 'Verrouillé - validez votre adhésion';
     else el.textContent = `${paidMonths.length}/12 mois payés (${currentYear})`;
   }
 
@@ -888,8 +897,8 @@
       rows.map(p => `
         <div class="pay-row">
           <div>
-            <p class="pay-year">${p.months_requested} mois (${p.year}) — ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
-            <p class="pay-method">${PAY_METHODS[p.payment_method] || '—'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
+            <p class="pay-year">${p.months_requested} mois (${p.year}) - ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
+            <p class="pay-method">${PAY_METHODS[p.payment_method] || '-'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
           </div>
           <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
         </div>`).join('');
@@ -901,6 +910,7 @@
     const method = document.getElementById('cotisMethod').value;
     const msg = document.getElementById('cotisMsg');
     if (!months || months < 1 || months > 12) { msg.textContent = 'Indiquez un nombre de mois entre 1 et 12.'; msg.className = 'form-msg error'; return; }
+    if (!method) { msg.textContent = 'Choisissez un moyen de paiement.'; msg.className = 'form-msg error'; return; }
     if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
 
     const btn = document.getElementById('cotisBtn');
@@ -931,7 +941,7 @@
   }
 
   // Recolore le logo (vert/or/noir) en blanc, comme le filtre CSS
-  // brightness(0)+invert(1) déjà utilisé sur les en-têtes du site — mais
+  // brightness(0)+invert(1) déjà utilisé sur les en-têtes du site - mais
   // jsPDF ne peut pas appliquer de filtre CSS à une image intégrée.
   async function whiteLogoDataUrl(src) {
     const img = await loadImage(src);
@@ -1015,9 +1025,9 @@
       const fields = [
         ['N° MEMBRE', cardNumberFor(p)],
         ['MEMBRE DEPUIS', String(p.member_since || currentYear)],
-        ['TÉLÉPHONE', p.phone || '—'],
-        ['E-MAIL', p.email || '—'],
-        ['LOCALITÉ', p.city || '—'],
+        ['TÉLÉPHONE', p.phone || '-'],
+        ['E-MAIL', p.email || '-'],
+        ['LOCALITÉ', p.city || '-'],
         ['VALIDITÉ', validityText],
       ];
 

@@ -51,6 +51,12 @@
 
   .empty-note{color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:50px 0;text-align:center;}
 
+  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
+
   /* Admin */
   .admin-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);transition:all .18s;}
   .admin-card:hover{border-color:var(--gold);background:var(--paper-alt);}
@@ -107,6 +113,8 @@
 
   <div class="page-body">
 
+    <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
+
     <div id="adminSection" style="display:none;margin-bottom:32px;">
       <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
       <a class="admin-card" href="admin.html" style="max-width:360px;">
@@ -131,9 +139,25 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  function renderCardStatusBanner(state) {
+    const el = document.getElementById("cardStatusBanner");
+    if (state === "grace") {
+      el.className = "card-status-banner";
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = "";
+    } else if (state === "blocked") {
+      el.className = "card-status-banner blocked";
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux formations et documents réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = "";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
   (async () => {
-    const profile = await requireApprovedMember("connexion.html");
-    if (!profile) return;
+    const result = await requireActiveMember("connexion.html");
+    if (!result) return;
+    const profile = result.profile;
 
     document.getElementById("loadingMsg").style.display = "none";
     document.getElementById("pageContent").style.display = "";
@@ -145,6 +169,8 @@
     document.getElementById("welcomeSub").textContent = "Bienvenue dans votre espace membre AMSTC.";
     document.getElementById("avatarEl").textContent =
       name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
+
+    renderCardStatusBanner(result.state);
 
     if (["admin","super_admin"].includes(profile.role)) {
       document.getElementById("adminSection").style.display = "";

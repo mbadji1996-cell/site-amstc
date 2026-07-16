@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formation — AMSTC</title>
+<title>Formation - AMSTC</title>
 <meta name="description" content="Formations et enseignements post-universitaires de l'AMSTC.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Formation — AMSTC" id="og-title">
+<meta property="og:title" content="Formation - AMSTC" id="og-title">
 <meta property="og:description" content="Formations et enseignements post-universitaires de l'AMSTC." id="og-desc">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -86,9 +86,9 @@
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
       )).text();
       const { data, body } = parseFrontMatter(raw);
-      document.title = (data.title || "Formation") + " — AMSTC";
+      document.title = (data.title || "Formation") + " - AMSTC";
       if (data.title) {
-        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
+        document.getElementById('og-title').setAttribute('content', data.title + ' - AMSTC');
       }
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);

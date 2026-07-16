@@ -138,7 +138,7 @@
   <div id="pageContent" style="display:none;">
     <div class="page-header">
       <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
-      <h1 class="page-title">Boutique — Administration</h1>
+      <h1 class="page-title">Boutique - Administration</h1>
     </div>
 
     <div class="main-tabs">
@@ -208,7 +208,7 @@
       </div>
       <div class="form-group">
         <label>Stock (laisser vide = illimité)</label>
-        <input type="number" id="p-stock" min="0" placeholder="—">
+        <input type="number" id="p-stock" min="0" placeholder="-">
       </div>
       <div class="form-group full">
         <label>Description</label>
@@ -395,16 +395,16 @@
       const profile = o.profiles || {};
       const itemsArr = Array.isArray(o.items) ? o.items : (o.items ? JSON.parse(o.items) : []);
       const itemsSummary = itemsArr.map(i => `${i.qty}× ${escHtml(i.name)}`).join(', ');
-      const date = o.created_at ? new Date(o.created_at).toLocaleDateString('fr-FR') : '—';
+      const date = o.created_at ? new Date(o.created_at).toLocaleDateString('fr-FR') : '-';
       return `<tr>
         <td>
-          <p class="member-name">${escHtml(profile.full_name || '—')}</p>
+          <p class="member-name">${escHtml(profile.full_name || '-')}</p>
           <p class="member-email">${escHtml(profile.email || '')}</p>
         </td>
-        <td><p class="order-items">${itemsSummary || '—'}</p></td>
+        <td><p class="order-items">${itemsSummary || '-'}</p></td>
         <td><span class="order-total">${formatPrice(o.total)}</span></td>
-        <td style="font-size:0.8rem;">${methods[o.payment_method] || '—'}</td>
-        <td><span class="ref-code">${escHtml(o.payment_reference || '—')}</span></td>
+        <td style="font-size:0.8rem;">${methods[o.payment_method] || '-'}</td>
+        <td><span class="ref-code">${escHtml(o.payment_reference || '-')}</span></td>
         <td style="color:#8A9E8F;font-size:0.78rem;">${date}</td>
         <td>
           <select class="status-select" onchange="updateOrderStatus('${o.id}',this.value)">
@@ -430,12 +430,12 @@
     if (!o) return;
     const profile = o.profiles || {};
     const itemsArr = Array.isArray(o.items) ? o.items : (o.items ? JSON.parse(o.items) : []);
-    const date = o.created_at ? new Date(o.created_at).toLocaleString('fr-FR') : '—';
+    const date = o.created_at ? new Date(o.created_at).toLocaleString('fr-FR') : '-';
 
     document.getElementById('orderDetailContent').innerHTML = `
       <div style="margin-bottom:14px;">
         <p style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;">Membre</p>
-        <p style="font-weight:600;color:var(--green-deep);">${escHtml(profile.full_name || '—')}</p>
+        <p style="font-weight:600;color:var(--green-deep);">${escHtml(profile.full_name || '-')}</p>
         <p style="font-size:0.82rem;color:#8A9E8F;">${escHtml(profile.email || '')}</p>
       </div>
       <table class="order-detail-table">
@@ -443,8 +443,8 @@
         <tr><td style="font-weight:600;">Total</td><td>${formatPrice(o.total)}</td></tr>
       </table>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.85rem;color:#5A6C60;margin-top:10px;">
-        <div><strong style="color:var(--ink);">Méthode</strong><br>${methods[o.payment_method] || '—'}</div>
-        <div><strong style="color:var(--ink);">Référence</strong><br><span style="font-family:var(--mono);">${escHtml(o.payment_reference || '—')}</span></div>
+        <div><strong style="color:var(--ink);">Méthode</strong><br>${methods[o.payment_method] || '-'}</div>
+        <div><strong style="color:var(--ink);">Référence</strong><br><span style="font-family:var(--mono);">${escHtml(o.payment_reference || '-')}</span></div>
         <div><strong style="color:var(--ink);">Date</strong><br>${date}</div>
         <div><strong style="color:var(--ink);">Statut</strong><br><span class="badge s-${o.status}">${statusLabels[o.status]}</span></div>
         ${o.delivery_address ? `<div style="grid-column:1/-1;"><strong style="color:var(--ink);">Livraison</strong><br>${escHtml(o.delivery_address)}</div>` : ''}

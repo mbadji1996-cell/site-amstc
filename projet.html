@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projet — AMSTC</title>
+<title>Projet - AMSTC</title>
 <meta name="description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Projet — AMSTC" id="og-title">
+<meta property="og:title" content="Projet - AMSTC" id="og-title">
 <meta property="og:description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -91,9 +91,9 @@
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
       )).text();
       const { data, body } = parseFrontMatter(raw);
-      document.title = (data.title || "Projet") + " — AMSTC";
+      document.title = (data.title || "Projet") + " - AMSTC";
       if (data.title) {
-        document.getElementById('og-title').setAttribute('content', data.title + ' — AMSTC');
+        document.getElementById('og-title').setAttribute('content', data.title + ' - AMSTC');
       }
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);

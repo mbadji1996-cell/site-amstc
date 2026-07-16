@@ -103,9 +103,9 @@
     <!-- VALIDITÉ panel -->
     <div id="panel-validity">
       <div class="stats-row">
-        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="vStatPending">—</p></div>
-        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="vStatConfirmed">—</p></div>
-        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="vStatTotal">—</p></div>
+        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="vStatPending">-</p></div>
+        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="vStatConfirmed">-</p></div>
+        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="vStatTotal">-</p></div>
       </div>
       <div class="filter-bar">
         <button class="filter-btn active" id="vf-all" onclick="setValidityFilter('all')">Tous</button>
@@ -124,9 +124,9 @@
     <!-- COTISATIONS panel -->
     <div id="panel-cotis" style="display:none;">
       <div class="stats-row">
-        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="cStatPending">—</p></div>
-        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="cStatConfirmed">—</p></div>
-        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="cStatTotal">—</p></div>
+        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="cStatPending">-</p></div>
+        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="cStatConfirmed">-</p></div>
+        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="cStatTotal">-</p></div>
       </div>
       <div class="filter-bar">
         <button class="filter-btn active" id="cf-all" onclick="setCotisFilter('all')">Tous</button>
@@ -205,13 +205,13 @@
       const profile = p.profiles || {};
       const isPending = p.status === 'pending';
       const date = p.confirmed_at || p.created_at;
-      const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '—';
+      const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '-';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '—')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td><p class="member-name">${escHtml(profile.full_name || '-')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
         <td>${p.years_requested} an${p.years_requested > 1 ? 's' : ''}</td>
         <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
-        <td>${methods[p.payment_method] || '—'}</td>
-        <td><span class="ref-code">${escHtml(p.payment_reference || '—')}</span></td>
+        <td>${methods[p.payment_method] || '-'}</td>
+        <td><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
         <td style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
         <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
         <td>
@@ -268,12 +268,12 @@
       const profile = p.profiles || {};
       const isPending = p.status === 'pending';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '—')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td><p class="member-name">${escHtml(profile.full_name || '-')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
         <td>${p.months_requested} mois</td>
         <td>${p.year}</td>
         <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
-        <td>${methods[p.payment_method] || '—'}</td>
-        <td><span class="ref-code">${escHtml(p.payment_reference || '—')}</span></td>
+        <td>${methods[p.payment_method] || '-'}</td>
+        <td><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
         <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
         <td>
           <div class="td-actions">

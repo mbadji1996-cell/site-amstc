@@ -1,5 +1,5 @@
 /**
- * Toast UI Editor wrapper — bascule "Texte enrichi" / "Markdown" comme dans Decap CMS.
+ * Toast UI Editor wrapper - bascule "Texte enrichi" / "Markdown" comme dans Decap CMS.
  * Toolbar volontairement limitée aux styles gérés par le rendu Markdown maison du site
  * (##, **gras**, *italique*, > citation, listes, [arabic]…[/arabic]) : pas de lien/image/
  * tableau/code, qui ne seraient pas rendus côté public/membres.

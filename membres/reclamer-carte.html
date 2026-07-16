@@ -198,7 +198,7 @@
           <div class="card-avatar">${initials}</div>
           <div class="card-body">
             <p class="card-name">${escHtml(c.full_name)}</p>
-            <p class="card-meta">${escHtml(meta || '—')}</p>
+            <p class="card-meta">${escHtml(meta || '-')}</p>
           </div>
           <button class="btn-claim" onclick="toggleClaimForm('${c.id}')"><i class="ti ti-hand-click"></i> C'est ma carte</button>
           <div class="claim-form" id="form-${c.id}">
