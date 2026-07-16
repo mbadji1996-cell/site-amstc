@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réclamer ma carte de membre - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:900px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .hero{background:var(--green-deep);padding:32px 0 40px;}
+  .hero-inner{max-width:900px;margin:0 auto;padding:0 24px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;}
+  .back:hover{color:var(--gold);}
+  .hero-icon{width:52px;height:52px;border-radius:12px;background:rgba(248,183,24,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--gold);margin-bottom:14px;}
+  .hero h1{font-family:var(--display);font-size:clamp(1.5rem,4vw,1.9rem);font-weight:600;color:var(--white);margin-bottom:6px;}
+  .hero-sub{color:rgba(255,255,255,0.6);font-size:0.9rem;max-width:560px;}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+
+  /* States */
+  .state-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;margin:28px 0 60px;text-align:center;}
+  .state-icon{font-size:34px;margin-bottom:14px;}
+  .state-icon.ok{color:#3B6D11;}
+  .state-icon.pending{color:var(--gold-deep);}
+  .state-title{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--green-deep);margin-bottom:8px;}
+  .state-text{color:#5A6C60;font-size:0.92rem;max-width:480px;margin:0 auto;}
+  .state-number{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--green-deep);background:var(--paper-alt);padding:8px 16px;border-radius:999px;display:inline-block;margin-top:14px;}
+
+  /* Search + list */
+  .search-wrap{padding:24px 0 16px;position:relative;}
+  .search-input{width:100%;padding:12px 44px 12px 16px;border:1.5px solid var(--line);border-radius:999px;font-family:var(--body);font-size:0.95rem;background:var(--white);color:var(--ink);}
+  .search-input:focus{outline:none;border-color:var(--gold);}
+  .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:17px;color:#B0BFB5;}
+
+  .cards-list{display:flex;flex-direction:column;gap:10px;padding-bottom:60px;}
+  .card-row{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .card-avatar{width:42px;height:42px;border-radius:50%;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;color:var(--gold-deep);flex-shrink:0;}
+  .card-body{flex:1;min-width:180px;}
+  .card-name{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--green-deep);}
+  .card-meta{font-size:0.8rem;color:#8A9E8F;}
+  .btn-claim{background:var(--gold);color:var(--green-deep);border:none;padding:9px 18px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;flex-shrink:0;transition:background .18s;}
+  .btn-claim:hover{background:var(--gold-deep);color:var(--white);}
+
+  /* Claim form (inline expand) */
+  .claim-form{display:none;width:100%;border-top:1px solid var(--paper-alt);margin-top:14px;padding-top:14px;}
+  .claim-form.open{display:block;}
+  .claim-form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .claim-form input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.9rem;background:var(--paper);color:var(--ink);}
+  .claim-form input:focus{outline:none;border-color:var(--gold);}
+  .btn-confirm{background:var(--green);color:var(--white);border:none;padding:10px 18px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;}
+  .btn-confirm:hover{background:var(--green-deep);}
+  .btn-cancel{background:none;border:1.5px solid var(--line);color:#5A6C60;padding:10px 16px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;}
+  .claim-msg{font-size:0.85rem;margin-top:10px;}
+  .claim-msg.error{color:#B23B3B;}
+  .claim-msg.ok{color:#3B6D11;}
+
+  .empty, .loading{color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <a class="back" href="profil.html"><i class="ti ti-arrow-left"></i> Mon Profil & Adhésion</a>
+    <div class="hero-icon"><i class="ti ti-id-badge-2"></i></div>
+    <h1>Réclamer ma carte de membre</h1>
+    <p class="hero-sub">Vous étiez déjà membre de l'AMSTC avant la mise en ligne de cet espace ? Retrouvez votre nom dans la liste ci-dessous pour associer votre carte historique à votre compte.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="loading" id="loadingMsg">Chargement…</p>
+
+  <div id="pageContent" style="display:none;"></div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let allCards = [], currentProfile = null;
+
+  (async () => {
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+    currentProfile = profile;
+    document.getElementById('signoutBtn').style.display = '';
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    await render();
+  })();
+
+  async function render() {
+    const content = document.getElementById('pageContent');
+
+    // Déjà confirmé ?
+    if (currentProfile.legacy_card_number) {
+      content.innerHTML = `
+        <div class="state-card">
+          <div class="state-icon ok"><i class="ti ti-circle-check"></i></div>
+          <p class="state-title">Votre carte est déjà associée</p>
+          <p class="state-text">Votre compte est relié à votre carte de membre historique.</p>
+          <p class="state-number">${escHtml(currentProfile.legacy_card_number)}</p>
+        </div>`;
+      return;
+    }
+
+    // Une réclamation est-elle déjà en attente ?
+    const { data: pending } = await supabaseClient
+      .from('member_cards')
+      .select('id, full_name, member_since')
+      .eq('claimed_by', currentProfile.id)
+      .eq('claim_status', 'pending')
+      .maybeSingle();
+
+    if (pending) {
+      content.innerHTML = `
+        <div class="state-card">
+          <div class="state-icon pending"><i class="ti ti-clock-hour-4"></i></div>
+          <p class="state-title">Réclamation en attente</p>
+          <p class="state-text">Votre demande pour la carte de <strong>${escHtml(pending.full_name)}</strong> a été envoyée à un administrateur. Vous serez notifié une fois confirmée.</p>
+        </div>`;
+      return;
+    }
+
+    // Sinon : liste des cartes non réclamées
+    const { data, error } = await supabaseClient
+      .from('member_cards_unclaimed')
+      .select('*')
+      .order('full_name');
+
+    allCards = data || [];
+
+    content.innerHTML = `
+      <div class="search-wrap">
+        <input class="search-input" id="searchInput" type="text" placeholder="Rechercher votre nom…" oninput="renderList()">
+        <i class="ti ti-search search-icon"></i>
+      </div>
+      <div class="cards-list" id="cardsList"></div>
+    `;
+    renderList();
+  }
+
+  function renderList() {
+    const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+    const list = document.getElementById('cardsList');
+    const items = q ? allCards.filter(c => c.full_name.toLowerCase().includes(q)) : allCards;
+
+    if (allCards.length === 0) {
+      list.innerHTML = '<p class="empty">Aucune carte disponible à réclamer pour le moment.</p>';
+      return;
+    }
+    if (items.length === 0) {
+      list.innerHTML = '<p class="empty">Aucun résultat pour cette recherche.</p>';
+      return;
+    }
+
+    list.innerHTML = items.map(c => {
+      const initials = c.full_name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      const meta = [c.member_since ? 'Membre depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
+      return `
+        <div class="card-row" id="row-${c.id}">
+          <div class="card-avatar">${initials}</div>
+          <div class="card-body">
+            <p class="card-name">${escHtml(c.full_name)}</p>
+            <p class="card-meta">${escHtml(meta || '—')}</p>
+          </div>
+          <button class="btn-claim" onclick="toggleClaimForm('${c.id}')"><i class="ti ti-hand-click"></i> C'est ma carte</button>
+          <div class="claim-form" id="form-${c.id}">
+            <p style="font-size:0.85rem;color:#5A6C60;margin-bottom:10px;">Pour confirmer, saisissez le numéro de téléphone associé à cette carte :</p>
+            <div class="claim-form-row">
+              <input type="tel" id="phone-${c.id}" placeholder="Ex : 77 123 45 67">
+              <button class="btn-confirm" onclick="submitClaim('${c.id}')">Envoyer</button>
+              <button class="btn-cancel" onclick="toggleClaimForm('${c.id}')">Annuler</button>
+            </div>
+            <p class="claim-msg" id="msg-${c.id}"></p>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleClaimForm(id) {
+    document.querySelectorAll('.claim-form.open').forEach(f => { if (f.id !== 'form-' + id) f.classList.remove('open'); });
+    document.getElementById('form-' + id).classList.toggle('open');
+  }
+
+  async function submitClaim(id) {
+    const phone = document.getElementById('phone-' + id).value.trim();
+    const msg = document.getElementById('msg-' + id);
+    if (!phone) { msg.textContent = 'Saisissez un numéro de téléphone.'; msg.className = 'claim-msg error'; return; }
+
+    const { error } = await supabaseClient.rpc('claim_member_card', { card_id: id, phone_guess: phone });
+    if (error) {
+      msg.textContent = error.message.replace(/^.*?:\s*/, '');
+      msg.className = 'claim-msg error';
+      return;
+    }
+
+    await render();
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

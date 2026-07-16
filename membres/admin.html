@@ -168,6 +168,14 @@
         </div>
         <span class="admin-card-badge" id="badgePayments" style="display:none;"></span>
       </a>
+      <a class="admin-card" href="cartes-admin.html">
+        <div class="admin-card-icon"><i class="ti ti-id-badge-2"></i></div>
+        <div>
+          <p class="admin-card-label">Cartes de Membres</p>
+          <p class="admin-card-sub">Import & réclamations</p>
+        </div>
+        <span class="admin-card-badge" id="badgeCartes" style="display:none;"></span>
+      </a>
       <a class="admin-card" href="contenu-reserve-admin.html">
         <div class="admin-card-icon"><i class="ti ti-lock"></i></div>
         <div>
@@ -247,6 +255,13 @@
       setStat('statPendingOrders', count ?? 0, true);
       setBadge('badgeOrders', count ?? 0);
     } catch(e) { document.getElementById('statPendingOrders').textContent = '—'; }
+
+    // Réclamations de cartes en attente
+    try {
+      const { count } = await supabaseClient
+        .from('member_cards').select('id', { count: 'exact', head: true }).eq('claim_status', 'pending');
+      setBadge('badgeCartes', count ?? 0);
+    } catch(e) {}
   }
 
   function setStat(id, value, highlightIfPositive) {

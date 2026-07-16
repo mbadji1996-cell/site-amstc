@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartes de Membres - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1000px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+  .stat-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .stat-label{font-family:var(--mono);font-size:0.63rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;}
+  .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--green-deep);}
+
+  .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+
+  /* Pending claims table */
+  .table-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:36px;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:12px 14px;font-size:0.86rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--paper);}
+  .card-name{font-weight:600;color:var(--green-deep);}
+  .card-meta{font-size:0.78rem;color:#8A9E8F;}
+  .claimant{font-size:0.85rem;}
+  .claimant-email{font-size:0.76rem;color:#8A9E8F;}
+  .td-actions{display:flex;gap:6px;}
+  .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-confirm{background:#EAF3DE;color:#3B6D11;}
+  .btn-confirm:hover{background:#C0DD97;}
+  .btn-reject{background:#FDEEEE;color:#B23B3B;}
+  .btn-reject:hover{background:#f5c0c0;}
+  .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:28px;}
+
+  /* Import panel */
+  .import-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:40px;}
+  .import-hint{font-size:0.85rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:12px 16px;border-radius:8px;}
+  .import-hint code{font-family:var(--mono);font-size:0.8rem;color:var(--green-deep);}
+  textarea{width:100%;min-height:180px;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:0.85rem;color:var(--ink);background:var(--paper);resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--green);}
+  .import-actions{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;}
+  .btn-primary{background:var(--green);color:var(--white);border:none;padding:11px 22px;border-radius:999px;font-size:0.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+  .btn-primary:hover{background:var(--green-deep);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .import-msg{font-size:0.85rem;}
+  .import-msg.error{color:#B23B3B;}
+  .import-msg.ok{color:#3B6D11;}
+
+  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="page-header">
+      <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+      <h1 class="page-title">Cartes de Membres</h1>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="statTotal">—</p></div>
+      <div class="stat-card"><p class="stat-label">Non réclamées</p><p class="stat-val" id="statUnclaimed">—</p></div>
+      <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="statPending">—</p></div>
+      <div class="stat-card"><p class="stat-label">Confirmées</p><p class="stat-val" id="statConfirmed">—</p></div>
+    </div>
+
+    <p class="section-label"><i class="ti ti-clock-hour-4"></i> Réclamations en attente</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Carte réclamée</th><th>Réclamée par</th><th></th></tr>
+        </thead>
+        <tbody id="pendingTable">
+          <tr class="empty-row"><td colspan="3">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="section-label"><i class="ti ti-upload"></i> Importer des cartes</p>
+    <div class="import-card">
+      <p class="import-hint">
+        Une ligne par membre, séparée par des points-virgules :<br>
+        <code>Nom complet; Téléphone; Année d'adhésion; Numéro de carte; Ville</code><br>
+        Les 3 derniers champs sont facultatifs (laissez vide entre les points-virgules).
+      </p>
+      <textarea id="importText" placeholder="Mouhamed Badji; 77 123 45 67; 2018; AMSTC-2018-014; Dakar&#10;Fatou Diop; 78 987 65 43; 2020;;"></textarea>
+      <div class="import-actions">
+        <button class="btn-primary" id="importBtn" onclick="runImport()"><i class="ti ti-upload"></i> Importer</button>
+        <p class="import-msg" id="importMsg"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    await loadAll();
+  })();
+
+  async function loadAll() {
+    await Promise.all([loadStats(), loadPending()]);
+  }
+
+  async function loadStats() {
+    const { data } = await supabaseClient.from('member_cards').select('claim_status');
+    const rows = data || [];
+    document.getElementById('statTotal').textContent = rows.length;
+    document.getElementById('statUnclaimed').textContent = rows.filter(r => r.claim_status === 'unclaimed').length;
+    document.getElementById('statPending').textContent = rows.filter(r => r.claim_status === 'pending').length;
+    document.getElementById('statConfirmed').textContent = rows.filter(r => r.claim_status === 'confirmed').length;
+  }
+
+  async function loadPending() {
+    const { data } = await supabaseClient
+      .from('member_cards')
+      .select('id, full_name, member_since, card_number, city, claimed_by, profiles:claimed_by(full_name, email)')
+      .eq('claim_status', 'pending')
+      .order('claimed_at');
+
+    const tbody = document.getElementById('pendingTable');
+    const rows = data || [];
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Aucune réclamation en attente.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(r => {
+      const meta = [r.member_since ? 'Depuis ' + r.member_since : null, r.card_number, r.city].filter(Boolean).join(' · ');
+      const claimant = r.profiles || {};
+      return `<tr>
+        <td>
+          <p class="card-name">${escHtml(r.full_name)}</p>
+          <p class="card-meta">${escHtml(meta || '—')}</p>
+        </td>
+        <td>
+          <p class="claimant">${escHtml(claimant.full_name || '—')}</p>
+          <p class="claimant-email">${escHtml(claimant.email || '')}</p>
+        </td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-confirm" onclick="confirmClaim('${r.id}')"><i class="ti ti-check"></i> Confirmer</button>
+            <button class="btn btn-reject" onclick="rejectClaim('${r.id}')"><i class="ti ti-x"></i> Refuser</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function confirmClaim(id) {
+    const { error } = await supabaseClient.rpc('confirm_member_card_claim', { card_id: id });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadAll();
+  }
+
+  async function rejectClaim(id) {
+    if (!confirm('Refuser cette réclamation et remettre la carte dans le pool ?')) return;
+    const { error } = await supabaseClient.rpc('reject_member_card_claim', { card_id: id });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadAll();
+  }
+
+  async function runImport() {
+    const raw = document.getElementById('importText').value.trim();
+    const msg = document.getElementById('importMsg');
+    const btn = document.getElementById('importBtn');
+    if (!raw) { msg.textContent = 'Collez au moins une ligne.'; msg.className = 'import-msg error'; return; }
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    const rows = [];
+    for (const line of lines) {
+      const parts = line.split(';').map(p => p.trim());
+      const [full_name, phone, member_since, card_number, city] = parts;
+      if (!full_name || !phone) {
+        msg.textContent = `Ligne invalide (nom et téléphone obligatoires) : "${line}"`;
+        msg.className = 'import-msg error';
+        return;
+      }
+      rows.push({
+        full_name,
+        phone,
+        member_since: member_since ? parseInt(member_since) || null : null,
+        card_number: card_number || null,
+        city: city || null,
+      });
+    }
+
+    btn.disabled = true;
+    const { error } = await supabaseClient.from('member_cards').insert(rows);
+    btn.disabled = false;
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'import-msg error';
+      return;
+    }
+
+    msg.textContent = `${rows.length} carte(s) importée(s) avec succès.`;
+    msg.className = 'import-msg ok';
+    document.getElementById('importText').value = '';
+    await loadStats();
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

@@ -113,6 +113,12 @@
   .renewal-alert{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
   .renewal-alert i{font-size:18px;flex-shrink:0;margin-top:1px;}
 
+  .claim-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .claim-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .claim-banner-text strong{color:var(--green-deep);}
+  .claim-banner a.btn-claim-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
+  .claim-banner a.btn-claim-link:hover{background:var(--gold-deep);color:var(--white);}
+
   /* Payment history */
   .pay-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .pay-row:last-child{border-bottom:none;}
@@ -190,6 +196,11 @@
           <p class="mc-field-val" id="mcStatus">…</p>
         </div>
       </div>
+    </div>
+
+    <div class="claim-banner" id="claimBanner" style="display:none;">
+      <p class="claim-banner-text"><strong>Membre de longue date ?</strong> Retrouvez votre carte historique et associez-la à votre compte.</p>
+      <a class="btn-claim-link" href="reclamer-carte.html">Réclamer ma carte →</a>
     </div>
 
     <!-- Informations personnelles -->
@@ -317,7 +328,9 @@
     document.getElementById('mcName').textContent = name;
     document.getElementById('mcAvatar').textContent = initials;
     document.getElementById('mcSpecialty').textContent = p.specialty || '';
-    document.getElementById('mcNumber').textContent = 'AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase();
+    document.getElementById('mcNumber').textContent = p.legacy_card_number
+      || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
+    document.getElementById('claimBanner').style.display = p.legacy_card_number ? 'none' : '';
     document.getElementById('mcSince').textContent = p.member_since || currentYear;
     document.getElementById('mcYear').textContent = currentYear;
 
