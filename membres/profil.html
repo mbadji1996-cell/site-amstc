@@ -758,7 +758,10 @@
   }
 
   async function loadClaimStatus(userId) {
-    if (currentProfile.legacy_card_number) {
+    // Un numéro de carte historique ou une validité déjà fixée par un admin
+    // (confirmation de réclamation ou paiement de validité) prouve que ce
+    // compte a déjà été validé : plus besoin de proposer "Réclamer ma carte".
+    if (currentProfile.legacy_card_number || currentProfile.card_valid_until) {
       document.getElementById('claimBanner').style.display = 'none';
       return;
     }
@@ -766,8 +769,8 @@
       .from('member_cards')
       .select('claim_status')
       .eq('claimed_by', userId)
-      .maybeSingle();
-    document.getElementById('claimBanner').style.display = data ? 'none' : '';
+      .limit(1);
+    document.getElementById('claimBanner').style.display = (data && data.length > 0) ? 'none' : '';
   }
 
   /* ===== Validité de la carte ===== */
