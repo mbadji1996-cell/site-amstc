@@ -178,6 +178,21 @@ expirée - seul le bandeau de rappel s'affiche. Ça permet de mener une
 campagne de renouvellement des cartes en amont, puis d'activer la coupure
 une fois la campagne terminée.
 
+## 4sexies. Activer le Forum (discussion entre membres)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase12-forum.sql`, copiez tout son
+   contenu, collez-le, cliquez **Run**
+
+Le Forum est un espace d'échange général (questions, discussions) accessible
+à tout membre approuvé, comme la Boutique : gouverné par `is_approved_member()`,
+sans lien avec la validité de la carte. Liste unique de sujets sans
+catégorie, triée par activité récente (un sujet remonte en tête de liste
+dès qu'il reçoit une réponse, via un trigger sur `forum_replies`). Un
+membre peut modifier/supprimer ses propres sujets et réponses ; un admin
+peut supprimer n'importe quoi (modération), directement depuis
+`membres/forum.html` et `membres/forum-sujet.html`.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -226,6 +241,8 @@ Une fois l'URL et la clé intégrées :
   Documents officiels) pour les membres dont la carte est expirée depuis
   plus de 2 mois, avec un délai de grâce et un bandeau de rappel de
   renouvellement (voir Phase 4quinquies ci-dessus)
+- Forum de discussion entre membres (sujets + réponses), sans lien avec
+  la validité de la carte (voir Phase 4sexies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sujet - Forum AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/forum-sujet.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --violet-light:#EFE8FB; --violet:#7C5CBF; --violet-dark:#5A3F94; --violet-deeper:#3D2A67;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.7;}
+  a{color:var(--green);}
+
+  header{padding:24px 0;border-bottom:1px solid var(--line);}
+  .header-wrap{max-width:1180px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:42px;}
+  .signout-btn{
+    font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;
+    color:var(--gold-deep);background:none;border:1.5px solid var(--line);border-radius:999px;
+    padding:9px 18px;cursor:pointer;transition:border-color .18s ease;
+  }
+  .signout-btn:hover{border-color:var(--gold-deep);}
+
+  .wrap{max-width:720px;margin:0 auto;padding:0 28px;}
+  .back{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-block;margin:36px 0 20px;text-decoration:none;}
+
+  .loading,.error{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:20px 0;}
+
+  .topic-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;margin-bottom:22px;}
+  .topic-title{font-family:var(--display);font-weight:600;color:var(--green-deep);font-size:1.5rem;margin-bottom:10px;}
+  .post-meta{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:0.75rem;color:#8A9E8F;margin-bottom:16px;flex-wrap:wrap;}
+  .post-meta strong{color:var(--violet-dark);}
+  .post-body{color:#3C4E44;white-space:pre-wrap;word-break:break-word;}
+  .post-actions{display:flex;gap:14px;margin-top:16px;}
+  .link-btn{background:none;border:none;font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:#8A9E8F;cursor:pointer;padding:0;text-decoration:none;}
+  .link-btn:hover{color:var(--violet-dark);}
+  .link-btn.danger:hover{color:#B23B3B;}
+
+  .replies-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin:28px 0 14px;}
+  .reply-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:12px;}
+
+  textarea,input[type=text]{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);resize:vertical;}
+  textarea:focus,input[type=text]:focus{outline:none;border-color:var(--violet);}
+  textarea{min-height:90px;}
+
+  .reply-form-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:22px 0 60px;}
+  .reply-form-card label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:block;margin-bottom:8px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--violet-dark);color:var(--white);}
+  .btn-primary:hover{background:var(--violet-deeper);}
+  .btn-outline{background:transparent;color:#5A6C60;border:1.5px solid var(--line);}
+  .btn-outline:hover{border-color:var(--violet);color:var(--violet-dark);}
+  .btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .form-actions{display:flex;gap:10px;align-items:center;margin-top:14px;}
+  .form-msg{font-size:0.85rem;}
+  .form-msg.error{color:#B23B3B;}
+
+  .edit-box{margin-top:10px;}
+
+  footer{padding:40px 0;text-align:center;max-width:1180px;margin:0 auto;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="forum.html">← Forum</a>
+  <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="content">
+    <p class="loading" id="loadingMsg">Chargement du sujet…</p>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const topicId = new URLSearchParams(location.search).get('id');
+  let currentProfile = null, isAdmin = false, currentTopic = null;
+
+  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function timeAgo(dateStr) {
+    const diffSec = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
+    if (diffSec < 60) return "à l'instant";
+    const diffMin = Math.round(diffSec / 60);
+    if (diffMin < 60) return `il y a ${diffMin} min`;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return `il y a ${diffH} h`;
+    const diffJ = Math.round(diffH / 24);
+    if (diffJ < 30) return `il y a ${diffJ} j`;
+    return new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function canModerate(authorId) {
+    return isAdmin || (currentProfile && currentProfile.id === authorId);
+  }
+
+  async function loadTopicAndReplies() {
+    const content = document.getElementById('content');
+    if (!topicId) { content.innerHTML = '<p class="error">Sujet introuvable.</p>'; return; }
+
+    const [topicRes, repliesRes] = await Promise.all([
+      supabaseClient.from('forum_topics').select('*,profiles:author_id(full_name)').eq('id', topicId).single(),
+      supabaseClient.from('forum_replies').select('*,profiles:author_id(full_name)').eq('topic_id', topicId).order('created_at', { ascending: true }),
+    ]);
+
+    if (!topicRes.data) { content.innerHTML = '<p class="error">Impossible de charger ce sujet.</p>'; return; }
+
+    currentTopic = topicRes.data;
+    const replies = repliesRes.data || [];
+    document.title = currentTopic.title + ' - Forum AMSTC';
+
+    content.innerHTML = `
+      <div class="topic-card" id="topicCard">
+        <h1 class="topic-title">${esc(currentTopic.title)}</h1>
+        <div class="post-meta">
+          <strong>${esc(currentTopic.profiles ? currentTopic.profiles.full_name : 'Membre')}</strong>
+          <span>${timeAgo(currentTopic.created_at)}</span>
+        </div>
+        <div class="post-body" id="topicBody">${esc(currentTopic.body)}</div>
+        ${canModerate(currentTopic.author_id) ? `
+          <div class="post-actions">
+            <button class="link-btn" onclick="startEditTopic()"><i class="ti ti-pencil"></i> Modifier</button>
+            <button class="link-btn danger" onclick="deleteTopic()"><i class="ti ti-trash"></i> Supprimer</button>
+          </div>
+        ` : ''}
+      </div>
+
+      <p class="replies-label"><i class="ti ti-messages"></i> ${replies.length} réponse${replies.length > 1 ? 's' : ''}</p>
+      <div id="repliesList">
+        ${replies.map(r => `
+          <div class="reply-card" id="reply-${r.id}">
+            <div class="post-meta">
+              <strong>${esc(r.profiles ? r.profiles.full_name : 'Membre')}</strong>
+              <span>${timeAgo(r.created_at)}</span>
+            </div>
+            <div class="post-body" id="replyBody-${r.id}">${esc(r.body)}</div>
+            ${canModerate(r.author_id) ? `
+              <div class="post-actions">
+                <button class="link-btn" onclick="startEditReply('${r.id}')"><i class="ti ti-pencil"></i> Modifier</button>
+                <button class="link-btn danger" onclick="deleteReply('${r.id}')"><i class="ti ti-trash"></i> Supprimer</button>
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="reply-form-card">
+        <label for="replyBodyInput">Votre réponse</label>
+        <textarea id="replyBodyInput" placeholder="Écrivez votre réponse…"></textarea>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="replySubmitBtn"><i class="ti ti-send"></i> Répondre</button>
+          <p class="form-msg" id="replyMsg"></p>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('replySubmitBtn').addEventListener('click', submitReply);
+  }
+
+  function startEditTopic() {
+    const bodyEl = document.getElementById('topicBody');
+    bodyEl.innerHTML = `
+      <div class="edit-box">
+        <textarea id="editTopicBody">${esc(currentTopic.body)}</textarea>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveTopicEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+          <button class="btn btn-outline" onclick="loadTopicAndReplies()">Annuler</button>
+          <p class="form-msg" id="editTopicMsg"></p>
+        </div>
+      </div>
+    `;
+  }
+
+  async function saveTopicEdit() {
+    const body = document.getElementById('editTopicBody').value.trim();
+    const msg = document.getElementById('editTopicMsg');
+    if (!body) { msg.textContent = 'Le message ne peut pas être vide.'; msg.className = 'form-msg error'; return; }
+    const { error } = await supabaseClient.from('forum_topics').update({ body, updated_at: new Date().toISOString() }).eq('id', topicId);
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
+    await loadTopicAndReplies();
+  }
+
+  async function deleteTopic() {
+    if (!confirm('Supprimer définitivement ce sujet et toutes ses réponses ?')) return;
+    const { error } = await supabaseClient.from('forum_topics').delete().eq('id', topicId);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    window.location.href = 'forum.html';
+  }
+
+  function startEditReply(replyId) {
+    const bodyEl = document.getElementById('replyBody-' + replyId);
+    const current = bodyEl.textContent;
+    bodyEl.innerHTML = `
+      <div class="edit-box">
+        <textarea id="editReplyBody-${replyId}">${esc(current)}</textarea>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveReplyEdit('${replyId}')"><i class="ti ti-check"></i> Enregistrer</button>
+          <button class="btn btn-outline" onclick="loadTopicAndReplies()">Annuler</button>
+          <p class="form-msg" id="editReplyMsg-${replyId}"></p>
+        </div>
+      </div>
+    `;
+  }
+
+  async function saveReplyEdit(replyId) {
+    const body = document.getElementById('editReplyBody-' + replyId).value.trim();
+    const msg = document.getElementById('editReplyMsg-' + replyId);
+    if (!body) { msg.textContent = 'La réponse ne peut pas être vide.'; msg.className = 'form-msg error'; return; }
+    const { error } = await supabaseClient.from('forum_replies').update({ body, updated_at: new Date().toISOString() }).eq('id', replyId);
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
+    await loadTopicAndReplies();
+  }
+
+  async function deleteReply(replyId) {
+    if (!confirm('Supprimer définitivement cette réponse ?')) return;
+    const { error } = await supabaseClient.from('forum_replies').delete().eq('id', replyId);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadTopicAndReplies();
+  }
+
+  async function submitReply() {
+    const body = document.getElementById('replyBodyInput').value.trim();
+    const msg = document.getElementById('replyMsg');
+    if (!body) { msg.textContent = 'Écrivez une réponse avant de publier.'; msg.className = 'form-msg error'; return; }
+
+    const btn = document.getElementById('replySubmitBtn');
+    btn.disabled = true;
+    const { error } = await supabaseClient.from('forum_replies').insert({
+      topic_id: topicId,
+      author_id: currentProfile.id,
+      body,
+    });
+    btn.disabled = false;
+
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
+    await loadTopicAndReplies();
+  }
+
+  (async () => {
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+    currentProfile = profile;
+    isAdmin = ['admin', 'super_admin'].includes(profile.role);
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    await loadTopicAndReplies();
+  })();
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
