@@ -103,6 +103,7 @@
   .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;margin-bottom:5px;}
   .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);transition:border-color .15s;}
   .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);}
+  .form-group input:disabled{background:var(--paper-alt);color:#8A9E8F;}
   .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
   .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
   .form-msg.success{background:#E1F5EE;color:#0F6E56;display:block;}
@@ -110,17 +111,13 @@
   /* Buttons */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
   .btn-primary{background:var(--green);color:var(--white);}
-  .btn-primary:hover{background:var(--green-deep);}
+  .btn-primary:hover:not(:disabled){background:var(--green-deep);}
   .btn-gold{background:var(--gold);color:var(--green-deep);}
-  .btn-gold:hover{background:var(--gold-deep);color:var(--white);}
+  .btn-gold:hover:not(:disabled){background:var(--gold-deep);color:var(--white);}
   .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
-  .btn-ghost:hover{border-color:var(--green);}
-  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost:hover:not(:disabled){border-color:var(--green);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
   .btn-row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;}
-
-  /* Renewal */
-  .renewal-alert{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
-  .renewal-alert i{font-size:18px;flex-shrink:0;margin-top:1px;}
 
   .claim-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .claim-banner-text{font-size:0.87rem;color:#5A6C60;}
@@ -138,11 +135,18 @@
   .s-pending{background:#FEF6E4;color:var(--gold-deep);}
   .s-rejected{background:#FDEEEE;color:#B23B3B;}
 
+  /* Cotisations grid */
+  .cotis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+  .cotis-badge{text-align:center;font-family:var(--mono);font-size:0.72rem;font-weight:600;padding:10px 6px;border-radius:8px;background:var(--paper-alt);color:#8A9E8F;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .cotis-badge.paid{background:#EAF3DE;color:#3B6D11;}
+  .cotis-badge i{font-size:14px;}
+  .cotis-badge .cotis-status{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.03em;}
+
   .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
-  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{grid-template-columns:1fr;gap:10px;}}
+  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{grid-template-columns:1fr;gap:10px;}.cotis-grid{grid-template-columns:repeat(3,1fr);}}
 </style>
 </head>
 <body>
@@ -219,7 +223,7 @@
           <p class="mc-field-val" id="mcCity">—</p>
         </div>
         <div class="mc-field">
-          <p class="mc-field-label">Validité <span id="mcYear"></span></p>
+          <p class="mc-field-label">Validité de la carte</p>
           <p class="mc-field-val" id="mcStatus">…</p>
         </div>
       </div>
@@ -291,54 +295,99 @@
             </select>
           </div>
           <div class="form-group" id="domainAutreGroup" style="display:none;"><label>Précisez</label><input id="eDomainAutre" type="text"></div>
-          <div class="form-group full"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
+          <div class="form-group"><label>Année d'adhésion</label><select id="eMemberSince"></select></div>
+          <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
         <div class="form-msg" id="editMsg"></div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="saveProfile()"><i class="ti ti-check"></i> Enregistrer</button>
-          <button class="btn btn-ghost" onclick="toggleEdit()">Annuler</button>
+          <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()" disabled><i class="ti ti-check"></i> Enregistrer</button>
+          <button class="btn btn-ghost" id="cancelProfileBtn" onclick="toggleEdit()" disabled>Annuler</button>
         </div>
       </div>
     </div>
 
-    <!-- Adhésion & renouvellement -->
+    <!-- Validité de la carte -->
     <div class="section-card">
-      <p class="section-title"><i class="ti ti-credit-card" style="margin-right:5px;"></i>Adhésion annuelle</p>
-
-      <div id="renewalAlert" style="display:none;">
-        <div class="renewal-alert">
-          <i class="ti ti-alert-triangle"></i>
-          <span id="renewalAlertText">Votre adhésion pour l'année en cours n'est pas encore enregistrée.</span>
-        </div>
+      <p class="section-title"><i class="ti ti-id-badge" style="margin-right:5px;"></i>Validité de la carte</p>
+      <div class="info-row">
+        <span class="info-label"><i class="ti ti-calendar-event"></i>Valide jusqu'en</span>
+        <span class="info-val" id="validityUntil">—</span>
       </div>
 
-      <div id="renewalForm" style="display:none;">
-        <div class="form-grid" style="margin-bottom:14px;">
+      <div style="margin-top:16px;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre d'années</label>
+            <input type="number" id="validityYears" min="1" value="2" oninput="updateValidityTotal()">
+          </div>
+          <div class="form-group">
+            <label>Montant total</label>
+            <input type="text" id="validityTotal" disabled>
+          </div>
           <div class="form-group">
             <label>Méthode de paiement</label>
-            <select id="payMethod">
+            <select id="validityMethod">
               <option value="wave">Wave</option>
               <option value="orange_money">Orange Money</option>
             </select>
           </div>
           <div class="form-group">
             <label>Référence / N° de transaction</label>
-            <input id="payRef" type="text" placeholder="Ex : WV-20240501-XXXX">
+            <input id="validityRef" type="text" placeholder="Ex : WV-20240501-XXXX">
           </div>
         </div>
         <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
           <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
-          Montant : <strong style="color:var(--green-deep);">10 000 FCFA</strong>.
-          Envoyez la cotisation au compte AMSTC puis saisissez la référence de transaction.
-          Un administrateur confirmera votre paiement sous 48h.
+          Tarif : <strong style="color:var(--green-deep);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
         </p>
-        <div class="form-msg" id="payMsg"></div>
-        <button class="btn btn-gold" id="payBtn" onclick="submitPayment()">
-          <i class="ti ti-send"></i> Soumettre le paiement
+        <div class="form-msg" id="validityMsg"></div>
+        <button class="btn btn-gold" id="validityBtn" onclick="submitValidityPayment()">
+          <i class="ti ti-send"></i> Payer la validité
         </button>
       </div>
 
-      <div id="payHistory" style="margin-top:14px;"></div>
+      <div id="validityHistory" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- Cotisations mensuelles -->
+    <div class="section-card">
+      <p class="section-title"><i class="ti ti-calendar-check" style="margin-right:5px;"></i>Cotisations mensuelles <span id="cotisYearLabel"></span></p>
+
+      <div class="cotis-grid" id="cotisGrid"></div>
+
+      <div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre de mois à régler</label>
+            <input type="number" id="cotisMonths" min="1" max="12" value="1" oninput="updateCotisTotal()">
+          </div>
+          <div class="form-group">
+            <label>Montant total</label>
+            <input type="text" id="cotisTotal" disabled>
+          </div>
+          <div class="form-group">
+            <label>Méthode de paiement</label>
+            <select id="cotisMethod">
+              <option value="wave">Wave</option>
+              <option value="orange_money">Orange Money</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Référence / N° de transaction</label>
+            <input id="cotisRef" type="text" placeholder="Ex : WV-20240501-XXXX">
+          </div>
+        </div>
+        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
+          <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
+          Tarif : <strong style="color:var(--green-deep);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
+        </p>
+        <div class="form-msg" id="cotisMsg"></div>
+        <button class="btn btn-gold" id="cotisBtn" onclick="submitCotisationPayment()">
+          <i class="ti ti-send"></i> Payer les cotisations
+        </button>
+      </div>
+
+      <div id="cotisHistory" style="margin-top:14px;"></div>
     </div>
 
   </div>
@@ -355,10 +404,13 @@
   let currentProfile = null;
   let pendingPhotoBlob = null;
   const currentYear = new Date().getFullYear();
+  const MONTH_NAMES = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  const PAY_METHODS = { wave: 'Wave', orange_money: 'Orange Money' };
   const DOMAIN_LABELS = {
     medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
   };
+  const EDIT_FIELD_IDS = ['eTitle','ePhone','eFirstName','eLastName','eDomain','eDomainAutre','eMemberSince','eCity','ePhotoFile'];
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
@@ -367,10 +419,38 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+
+    populateMemberSinceOptions();
     renderProfile(profile);
-    await loadPayments(profile.id);
     await loadClaimStatus(profile.id);
+    await loadValidity(profile.id);
+    await loadCotisations(profile.id);
+
+    EDIT_FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', markFormDirty);
+      el.addEventListener('change', markFormDirty);
+    });
+
+    updateValidityTotal();
+    updateCotisTotal();
+    document.getElementById('cotisYearLabel').textContent = '(' + currentYear + ')';
   })();
+
+  function markFormDirty() {
+    document.getElementById('saveProfileBtn').disabled = false;
+    document.getElementById('cancelProfileBtn').disabled = false;
+  }
+
+  function populateMemberSinceOptions() {
+    const sel = document.getElementById('eMemberSince');
+    sel.innerHTML = '';
+    for (let y = 2014; y <= currentYear; y++) {
+      const opt = document.createElement('option');
+      opt.value = y; opt.textContent = y;
+      sel.appendChild(opt);
+    }
+  }
 
   function domainLabel(p) {
     if (p.domain === 'autre') return p.domain_autre || 'Autre';
@@ -405,8 +485,8 @@
     document.getElementById('mcPhone').textContent = p.phone || '—';
     document.getElementById('mcEmail').textContent = p.email || '—';
     document.getElementById('mcCity').textContent = p.city || '—';
-    document.getElementById('mcYear').textContent = currentYear;
 
+    renderCardValidityStatus(p);
     renderQr(p);
 
     const empty = v => v ? escHtml(v) : '<span class="empty">Non renseigné</span>';
@@ -422,11 +502,28 @@
     document.getElementById('eLastName').value = p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '');
     document.getElementById('eDomain').value = p.domain || '';
     document.getElementById('eDomainAutre').value = p.domain_autre || '';
+    document.getElementById('eMemberSince').value = p.member_since || currentYear;
     document.getElementById('eCity').value = p.city || '';
     document.getElementById('domainAutreGroup').style.display = p.domain === 'autre' ? '' : 'none';
     if (p.photo_url) {
       const preview = document.getElementById('photoPreview');
       preview.src = p.photo_url; preview.style.display = '';
+    }
+  }
+
+  function renderCardValidityStatus(p) {
+    const statusEl = document.getElementById('mcStatus');
+    const pill = document.getElementById('mcStatusPill');
+    const cvu = p.card_valid_until;
+    if (cvu && cvu >= currentYear) {
+      statusEl.textContent = 'Valide jusqu\'en ' + cvu; statusEl.className = 'mc-field-val active';
+      pill.textContent = '● Valide'; pill.className = 'mc-status-pill active';
+    } else if (cvu) {
+      statusEl.textContent = 'Expirée (' + cvu + ')'; statusEl.className = 'mc-field-val warn';
+      pill.textContent = '○ Expirée'; pill.className = 'mc-status-pill warn';
+    } else {
+      statusEl.textContent = 'Non définie'; statusEl.className = 'mc-field-val warn';
+      pill.textContent = '○ Non définie'; pill.className = 'mc-status-pill warn';
     }
   }
 
@@ -484,21 +581,6 @@
     return data.publicUrl + '?t=' + Date.now();
   }
 
-  function updateCardStatus(status) {
-    const statusEl = document.getElementById('mcStatus');
-    const pill = document.getElementById('mcStatusPill');
-    if (status === 'active') {
-      statusEl.textContent = 'Valide'; statusEl.className = 'mc-field-val active';
-      pill.textContent = '● Active'; pill.className = 'mc-status-pill active';
-    } else if (status === 'pending') {
-      statusEl.textContent = 'En attente'; statusEl.className = 'mc-field-val warn';
-      pill.textContent = '◐ En attente'; pill.className = 'mc-status-pill pending';
-    } else {
-      statusEl.textContent = 'Non valide'; statusEl.className = 'mc-field-val warn';
-      pill.textContent = '○ Non réglée'; pill.className = 'mc-status-pill warn';
-    }
-  }
-
   function toggleEdit() {
     const form = document.getElementById('editForm');
     const btn = document.getElementById('editToggleBtn');
@@ -508,7 +590,10 @@
   }
 
   async function saveProfile() {
+    const saveBtn = document.getElementById('saveProfileBtn');
+    const cancelBtn = document.getElementById('cancelProfileBtn');
     const msg = document.getElementById('editMsg');
+    saveBtn.disabled = true; cancelBtn.disabled = true;
     msg.className = 'form-msg';
 
     let photoUrl;
@@ -517,6 +602,7 @@
     } catch (e) {
       msg.textContent = "Erreur lors de l'envoi de la photo : " + e.message;
       msg.className = 'form-msg error';
+      saveBtn.disabled = false; cancelBtn.disabled = false;
       return;
     }
 
@@ -532,6 +618,7 @@
       phone: document.getElementById('ePhone').value.trim() || null,
       domain: domain || null,
       domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
+      member_since: parseInt(document.getElementById('eMemberSince').value) || currentYear,
       city: document.getElementById('eCity').value.trim() || null,
     };
     if (photoUrl) payload.photo_url = photoUrl;
@@ -539,6 +626,7 @@
     const { error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id);
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
+      saveBtn.disabled = false; cancelBtn.disabled = false;
     } else {
       Object.assign(currentProfile, payload);
       pendingPhotoBlob = null;
@@ -560,67 +648,138 @@
     document.getElementById('claimBanner').style.display = data ? 'none' : '';
   }
 
-  async function loadPayments(userId) {
-    const { data } = await supabaseClient.from('membership_payments')
-      .select('*').eq('user_id', userId).order('year', { ascending: false });
-    const payments = data || [];
-    const thisYear = payments.find(p => p.year === currentYear);
+  /* ===== Validité de la carte ===== */
 
-    if (thisYear?.status === 'confirmed') updateCardStatus('active');
-    else if (thisYear?.status === 'pending') updateCardStatus('pending');
-    else updateCardStatus('none');
+  function updateValidityTotal() {
+    const years = parseInt(document.getElementById('validityYears').value) || 0;
+    document.getElementById('validityTotal').value = (years * 1000).toLocaleString('fr-FR') + ' FCFA';
+  }
 
-    if (!thisYear || thisYear.status === 'rejected') {
-      document.getElementById('renewalAlert').style.display = '';
-      document.getElementById('renewalForm').style.display = '';
-      if (thisYear?.status === 'rejected') {
-        document.getElementById('renewalAlertText').textContent =
-          'Votre paiement de ' + currentYear + ' a été refusé. Veuillez soumettre à nouveau.';
-      }
-    } else if (thisYear.status === 'pending') {
-      document.getElementById('renewalAlert').style.display = '';
-      document.getElementById('renewalAlertText').textContent =
-        'Votre paiement est en attente de confirmation par un administrateur.';
-    }
+  async function loadValidity(userId) {
+    const cvu = currentProfile.card_valid_until;
+    document.getElementById('validityUntil').textContent = cvu || 'Non définie';
 
-    const hist = document.getElementById('payHistory');
-    if (payments.length === 0) {
-      hist.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);padding-top:8px;">Aucun paiement enregistré.</p>';
+    const { data } = await supabaseClient
+      .from('card_validity_payments')
+      .select('*').eq('user_id', userId).order('created_at', { ascending: false });
+    renderValidityHistory(data || []);
+  }
+
+  function renderValidityHistory(rows) {
+    const el = document.getElementById('validityHistory');
+    if (rows.length === 0) {
+      el.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement de validité enregistré.</p>';
       return;
     }
-    const labels = { wave:'Wave', orange_money:'Orange Money', especes:'Espèces' };
-    hist.innerHTML = '<p style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
-      payments.map(p => `
+    const statusLabel = { confirmed: 'Confirmé', pending: 'En attente', rejected: 'Refusé' };
+    el.innerHTML = '<p style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
+      rows.map(p => `
         <div class="pay-row">
           <div>
-            <p class="pay-year">Cotisation ${p.year}</p>
-            <p class="pay-method">${labels[p.payment_method] || '—'}${p.payment_reference ? ' · <span style="font-family:var(--mono);font-size:0.75rem;">' + escHtml(p.payment_reference) + '</span>' : ''}</p>
+            <p class="pay-year">${p.years_requested} an${p.years_requested > 1 ? 's' : ''} — ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
+            <p class="pay-method">${PAY_METHODS[p.payment_method] || '—'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
           </div>
-          <span class="pay-status s-${p.status}">${p.status==='confirmed'?'Confirmé':p.status==='pending'?'En attente':'Refusé'}</span>
+          <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
         </div>`).join('');
   }
 
-  async function submitPayment() {
-    const btn = document.getElementById('payBtn');
-    const msg = document.getElementById('payMsg');
-    const method = document.getElementById('payMethod').value;
-    const ref = document.getElementById('payRef').value.trim();
+  async function submitValidityPayment() {
+    const years = parseInt(document.getElementById('validityYears').value);
+    const ref = document.getElementById('validityRef').value.trim();
+    const method = document.getElementById('validityMethod').value;
+    const msg = document.getElementById('validityMsg');
+    if (!years || years < 1) { msg.textContent = "Indiquez un nombre d'années valide."; msg.className = 'form-msg error'; return; }
     if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
+
+    const btn = document.getElementById('validityBtn');
     btn.disabled = true; msg.className = 'form-msg';
 
-    const { error } = await supabaseClient.from('membership_payments').upsert({
-      user_id: currentProfile.id, year: currentYear, amount_fcfa: 10000,
+    const { error } = await supabaseClient.from('card_validity_payments').insert({
+      user_id: currentProfile.id, years_requested: years, amount_fcfa: years * 1000,
       payment_method: method, payment_reference: ref, status: 'pending',
-    }, { onConflict: 'user_id,year' });
+    });
 
+    btn.disabled = false;
     if (error) {
-      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; btn.disabled = false;
+      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
     } else {
-      document.getElementById('renewalForm').style.display = 'none';
-      document.getElementById('renewalAlertText').textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.';
-      document.getElementById('renewalAlert').style.display = '';
-      updateCardStatus('pending');
-      await loadPayments(currentProfile.id);
+      msg.textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.'; msg.className = 'form-msg success';
+      document.getElementById('validityRef').value = '';
+      await loadValidity(currentProfile.id);
+    }
+  }
+
+  /* ===== Cotisations mensuelles ===== */
+
+  function updateCotisTotal() {
+    const months = parseInt(document.getElementById('cotisMonths').value) || 0;
+    document.getElementById('cotisTotal').value = (months * 1000).toLocaleString('fr-FR') + ' FCFA';
+  }
+
+  async function loadCotisations(userId) {
+    const { data } = await supabaseClient
+      .from('cotisations').select('months_paid').eq('user_id', userId).eq('year', currentYear).maybeSingle();
+    renderCotisGrid((data && data.months_paid) || []);
+
+    const { data: paymentsData } = await supabaseClient
+      .from('cotisation_payments').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+    renderCotisHistory(paymentsData || []);
+  }
+
+  function renderCotisGrid(paidMonths) {
+    const grid = document.getElementById('cotisGrid');
+    grid.innerHTML = MONTH_NAMES.map((name, i) => {
+      const m = i + 1;
+      const paid = paidMonths.includes(m);
+      return `<div class="cotis-badge ${paid ? 'paid' : ''}">
+        <span>${name}</span>
+        <i class="ti ti-${paid ? 'check' : 'minus'}"></i>
+        <span class="cotis-status">${paid ? 'Payé' : 'Non payé'}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCotisHistory(rows) {
+    const el = document.getElementById('cotisHistory');
+    if (rows.length === 0) {
+      el.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement de cotisation enregistré.</p>';
+      return;
+    }
+    const statusLabel = { confirmed: 'Confirmé', pending: 'En attente', rejected: 'Refusé' };
+    el.innerHTML = '<p style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
+      rows.map(p => `
+        <div class="pay-row">
+          <div>
+            <p class="pay-year">${p.months_requested} mois (${p.year}) — ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
+            <p class="pay-method">${PAY_METHODS[p.payment_method] || '—'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
+          </div>
+          <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
+        </div>`).join('');
+  }
+
+  async function submitCotisationPayment() {
+    const months = parseInt(document.getElementById('cotisMonths').value);
+    const ref = document.getElementById('cotisRef').value.trim();
+    const method = document.getElementById('cotisMethod').value;
+    const msg = document.getElementById('cotisMsg');
+    if (!months || months < 1 || months > 12) { msg.textContent = 'Indiquez un nombre de mois entre 1 et 12.'; msg.className = 'form-msg error'; return; }
+    if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
+
+    const btn = document.getElementById('cotisBtn');
+    btn.disabled = true; msg.className = 'form-msg';
+
+    const { error } = await supabaseClient.from('cotisation_payments').insert({
+      user_id: currentProfile.id, year: currentYear, months_requested: months, amount_fcfa: months * 1000,
+      payment_method: method, payment_reference: ref, status: 'pending',
+    });
+
+    btn.disabled = false;
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
+    } else {
+      msg.textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.'; msg.className = 'form-msg success';
+      document.getElementById('cotisRef').value = '';
+      await loadCotisations(currentProfile.id);
     }
   }
 

@@ -21,27 +21,32 @@
   body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
   a{color:inherit;text-decoration:none;}
   header{background:var(--green-deep);}
-  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .header-inner{max-width:1000px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
   .logo-img{height:38px;filter:brightness(0) invert(1);}
   .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
-  .wrap{max-width:960px;margin:0 auto;padding:0 24px 60px;}
-  .page-header{padding:32px 0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px 60px;}
+  .page-header{padding:32px 0 20px;}
   .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
   .back:hover{opacity:0.75;}
   .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
 
-  /* Filters */
-  .filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-  .filter-btn{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
-  .filter-btn.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--white);}
-  .year-select{font-family:var(--mono);font-size:0.82rem;padding:7px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);cursor:pointer;}
+  /* Main tabs */
+  .main-tabs{display:flex;gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:24px;}
+  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--white);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
+  .main-tab:last-child{border-right:none;}
+  .main-tab.active{background:var(--green-deep);color:var(--white);}
 
   /* Stats row */
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
   .stat-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
   .stat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;}
   .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--green-deep);}
+
+  /* Filters */
+  .filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .filter-btn{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
+  .filter-btn.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--white);}
 
   /* Table */
   .table-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
@@ -86,43 +91,55 @@
 
   <div id="pageContent" style="display:none;">
     <div class="page-header">
-      <div>
-        <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
-        <h1 class="page-title">Validation des adhésions</h1>
+      <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+      <h1 class="page-title">Validation des paiements</h1>
+    </div>
+
+    <div class="main-tabs">
+      <button class="main-tab active" id="tab-validity" onclick="switchMain('validity')"><i class="ti ti-id-badge"></i> Validité de carte</button>
+      <button class="main-tab" id="tab-cotis" onclick="switchMain('cotis')"><i class="ti ti-calendar-check"></i> Cotisations</button>
+    </div>
+
+    <!-- VALIDITÉ panel -->
+    <div id="panel-validity">
+      <div class="stats-row">
+        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="vStatPending">—</p></div>
+        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="vStatConfirmed">—</p></div>
+        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="vStatTotal">—</p></div>
       </div>
-      <select class="year-select" id="yearSelect" onchange="reload()"></select>
+      <div class="filter-bar">
+        <button class="filter-btn active" id="vf-all" onclick="setValidityFilter('all')">Tous</button>
+        <button class="filter-btn" id="vf-pending" onclick="setValidityFilter('pending')">En attente</button>
+        <button class="filter-btn" id="vf-confirmed" onclick="setValidityFilter('confirmed')">Confirmés</button>
+        <button class="filter-btn" id="vf-rejected" onclick="setValidityFilter('rejected')">Refusés</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Membre</th><th>Années</th><th>Montant</th><th>Méthode</th><th>Référence</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="validityTable"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="statPending">—</p></div>
-      <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="statConfirmed">—</p></div>
-      <div class="stat-card"><p class="stat-label">Total année</p><p class="stat-val" id="statTotal">—</p></div>
-    </div>
-
-    <div class="filter-bar">
-      <button class="filter-btn active" id="f-all" onclick="setFilter('all')">Tous</button>
-      <button class="filter-btn" id="f-pending" onclick="setFilter('pending')">En attente</button>
-      <button class="filter-btn" id="f-confirmed" onclick="setFilter('confirmed')">Confirmés</button>
-      <button class="filter-btn" id="f-rejected" onclick="setFilter('rejected')">Refusés</button>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Membre</th>
-            <th>Année</th>
-            <th>Méthode</th>
-            <th>Référence</th>
-            <th>Date</th>
-            <th>Statut</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="paymentsTable">
-          <tr class="empty-row"><td colspan="7">Chargement…</td></tr>
-        </tbody>
-      </table>
+    <!-- COTISATIONS panel -->
+    <div id="panel-cotis" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><p class="stat-label">En attente</p><p class="stat-val" id="cStatPending">—</p></div>
+        <div class="stat-card"><p class="stat-label">Confirmés</p><p class="stat-val" id="cStatConfirmed">—</p></div>
+        <div class="stat-card"><p class="stat-label">Total</p><p class="stat-val" id="cStatTotal">—</p></div>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" id="cf-all" onclick="setCotisFilter('all')">Tous</button>
+        <button class="filter-btn" id="cf-pending" onclick="setCotisFilter('pending')">En attente</button>
+        <button class="filter-btn" id="cf-confirmed" onclick="setCotisFilter('confirmed')">Confirmés</button>
+        <button class="filter-btn" id="cf-rejected" onclick="setCotisFilter('rejected')">Refusés</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Membre</th><th>Mois</th><th>Année</th><th>Montant</th><th>Méthode</th><th>Référence</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="cotisTable"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -134,10 +151,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
-  let allPayments = [];
-  let currentFilter = 'all';
-  const currentYear = new Date().getFullYear();
-  const methods = { wave: 'Wave', orange_money: 'Orange Money', especes: 'Espèces' };
+  let allValidityPayments = [], allCotisPayments = [];
+  let validityFilter = 'all', cotisFilter = 'all';
+  const methods = { wave: 'Wave', orange_money: 'Orange Money' };
+  const statusLabel = { confirmed: 'Confirmé', pending: 'En attente', rejected: 'Refusé' };
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
@@ -145,98 +162,138 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
-
-    // Populate year select (current year ± 2)
-    const sel = document.getElementById('yearSelect');
-    for (let y = currentYear + 1; y >= currentYear - 2; y--) {
-      const opt = document.createElement('option');
-      opt.value = y; opt.textContent = y;
-      if (y === currentYear) opt.selected = true;
-      sel.appendChild(opt);
-    }
-
-    await reload();
+    await Promise.all([reloadValidity(), reloadCotis()]);
   })();
 
-  async function reload() {
-    const year = parseInt(document.getElementById('yearSelect').value);
-    const { data } = await supabaseClient
-      .from('membership_payments')
-      .select('*, profiles:user_id(full_name, email)')
-      .eq('year', year)
-      .order('created_at', { ascending: false });
-
-    allPayments = data || [];
-    updateStats();
-    renderTable();
-  }
-
-  function updateStats() {
-    const pending = allPayments.filter(p => p.status === 'pending').length;
-    const confirmed = allPayments.filter(p => p.status === 'confirmed').length;
-    document.getElementById('statPending').textContent = pending;
-    document.getElementById('statConfirmed').textContent = confirmed;
-    document.getElementById('statTotal').textContent = allPayments.length;
-  }
-
-  function setFilter(f) {
-    currentFilter = f;
-    ['all','pending','confirmed','rejected'].forEach(k => {
-      document.getElementById('f-' + k).classList.toggle('active', k === f);
+  function switchMain(tab) {
+    ['validity','cotis'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('panel-' + t).style.display = t === tab ? '' : 'none';
     });
-    renderTable();
   }
 
-  function renderTable() {
-    const tbody = document.getElementById('paymentsTable');
-    const filtered = currentFilter === 'all' ? allPayments : allPayments.filter(p => p.status === currentFilter);
+  /* ===== Validité de carte ===== */
 
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun paiement trouvé.</td></tr>';
-      return;
-    }
+  async function reloadValidity() {
+    const { data } = await supabaseClient
+      .from('card_validity_payments')
+      .select('*, profiles:user_id(full_name, email)')
+      .order('created_at', { ascending: false });
+    allValidityPayments = data || [];
+    updateValidityStats();
+    renderValidityTable();
+  }
 
-    const statusLabel = { confirmed: 'Confirmé', pending: 'En attente', rejected: 'Refusé' };
+  function updateValidityStats() {
+    document.getElementById('vStatPending').textContent = allValidityPayments.filter(p => p.status === 'pending').length;
+    document.getElementById('vStatConfirmed').textContent = allValidityPayments.filter(p => p.status === 'confirmed').length;
+    document.getElementById('vStatTotal').textContent = allValidityPayments.length;
+  }
 
-    tbody.innerHTML = filtered.map(p => {
+  function setValidityFilter(f) {
+    validityFilter = f;
+    ['all','pending','confirmed','rejected'].forEach(k => document.getElementById('vf-' + k).classList.toggle('active', k === f));
+    renderValidityTable();
+  }
+
+  function renderValidityTable() {
+    const tbody = document.getElementById('validityTable');
+    const rows = validityFilter === 'all' ? allValidityPayments : allValidityPayments.filter(p => p.status === validityFilter);
+    if (rows.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Aucun paiement trouvé.</td></tr>'; return; }
+
+    tbody.innerHTML = rows.map(p => {
       const profile = p.profiles || {};
-      const name = profile.full_name || '—';
-      const email = profile.email || '';
-      const date = p.paid_at || p.created_at;
-      const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '—';
       const isPending = p.status === 'pending';
-
+      const date = p.confirmed_at || p.created_at;
+      const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '—';
       return `<tr>
-        <td>
-          <p class="member-name">${escHtml(name)}</p>
-          <p class="member-email">${escHtml(email)}</p>
-        </td>
-        <td><span style="font-family:var(--mono);font-weight:600;">${p.year}</span></td>
+        <td><p class="member-name">${escHtml(profile.full_name || '—')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td>${p.years_requested} an${p.years_requested > 1 ? 's' : ''}</td>
+        <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
         <td>${methods[p.payment_method] || '—'}</td>
         <td><span class="ref-code">${escHtml(p.payment_reference || '—')}</span></td>
         <td style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
         <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
         <td>
           <div class="td-actions">
-            <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="setStatus('${p.id}','confirmed')">
-              <i class="ti ti-check"></i> Confirmer
-            </button>
-            <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setStatus('${p.id}','rejected')">
-              <i class="ti ti-x"></i> Refuser
-            </button>
+            <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="confirmValidity('${p.id}')"><i class="ti ti-check"></i> Confirmer</button>
+            <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setValidityStatus('${p.id}','rejected')"><i class="ti ti-x"></i> Refuser</button>
           </div>
         </td>
       </tr>`;
     }).join('');
   }
 
-  async function setStatus(id, status) {
-    const update = { status };
-    if (status === 'confirmed') {
-      update.paid_at = new Date().toISOString();
-    }
-    const { error } = await supabaseClient.from('membership_payments').update(update).eq('id', id);
-    if (!error) await reload();
+  async function confirmValidity(id) {
+    const { error } = await supabaseClient.rpc('confirm_card_validity_payment', { payment_id: id });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await reloadValidity();
+  }
+
+  async function setValidityStatus(id, status) {
+    const { error } = await supabaseClient.from('card_validity_payments').update({ status }).eq('id', id);
+    if (!error) await reloadValidity();
+  }
+
+  /* ===== Cotisations ===== */
+
+  async function reloadCotis() {
+    const { data } = await supabaseClient
+      .from('cotisation_payments')
+      .select('*, profiles:user_id(full_name, email)')
+      .order('created_at', { ascending: false });
+    allCotisPayments = data || [];
+    updateCotisStats();
+    renderCotisTable();
+  }
+
+  function updateCotisStats() {
+    document.getElementById('cStatPending').textContent = allCotisPayments.filter(p => p.status === 'pending').length;
+    document.getElementById('cStatConfirmed').textContent = allCotisPayments.filter(p => p.status === 'confirmed').length;
+    document.getElementById('cStatTotal').textContent = allCotisPayments.length;
+  }
+
+  function setCotisFilter(f) {
+    cotisFilter = f;
+    ['all','pending','confirmed','rejected'].forEach(k => document.getElementById('cf-' + k).classList.toggle('active', k === f));
+    renderCotisTable();
+  }
+
+  function renderCotisTable() {
+    const tbody = document.getElementById('cotisTable');
+    const rows = cotisFilter === 'all' ? allCotisPayments : allCotisPayments.filter(p => p.status === cotisFilter);
+    if (rows.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Aucun paiement trouvé.</td></tr>'; return; }
+
+    tbody.innerHTML = rows.map(p => {
+      const profile = p.profiles || {};
+      const isPending = p.status === 'pending';
+      return `<tr>
+        <td><p class="member-name">${escHtml(profile.full_name || '—')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td>${p.months_requested} mois</td>
+        <td>${p.year}</td>
+        <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
+        <td>${methods[p.payment_method] || '—'}</td>
+        <td><span class="ref-code">${escHtml(p.payment_reference || '—')}</span></td>
+        <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="confirmCotis('${p.id}')"><i class="ti ti-check"></i> Confirmer</button>
+            <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setCotisStatus('${p.id}','rejected')"><i class="ti ti-x"></i> Refuser</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function confirmCotis(id) {
+    const { error } = await supabaseClient.rpc('confirm_cotisation_payment', { payment_id: id });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await reloadCotis();
+  }
+
+  async function setCotisStatus(id, status) {
+    const { error } = await supabaseClient.from('cotisation_payments').update({ status }).eq('id', id);
+    if (!error) await reloadCotis();
   }
 
   function escHtml(s) {

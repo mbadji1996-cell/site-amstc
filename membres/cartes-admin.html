@@ -51,13 +51,16 @@
   .card-meta{font-size:0.78rem;color:#8A9E8F;}
   .claimant{font-size:0.85rem;}
   .claimant-email{font-size:0.76rem;color:#8A9E8F;}
-  .td-actions{display:flex;gap:6px;}
+  .td-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
   .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
   .btn-confirm{background:#EAF3DE;color:#3B6D11;}
   .btn-confirm:hover{background:#C0DD97;}
   .btn-reject{background:#FDEEEE;color:#B23B3B;}
   .btn-reject:hover{background:#f5c0c0;}
   .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:28px;}
+  .expiry-input{width:66px;font-family:var(--mono);font-size:0.78rem;padding:6px 8px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);}
+  .expiry-input:focus{outline:none;border-color:var(--green);}
+  .expiry-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:#8A9E8F;white-space:nowrap;}
 
   /* Import panel */
   .import-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:40px;}
@@ -134,6 +137,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  const currentYear = new Date().getFullYear();
+
   (async () => {
     const profile = await requireAdmin('connexion.html');
     if (!profile) return;
@@ -184,6 +189,8 @@
         </td>
         <td>
           <div class="td-actions">
+            <span class="expiry-label">Valide jusqu'en</span>
+            <input type="number" class="expiry-input" id="expiry-${r.id}" value="${currentYear}">
             <button class="btn btn-confirm" onclick="confirmClaim('${r.id}')"><i class="ti ti-check"></i> Confirmer</button>
             <button class="btn btn-reject" onclick="rejectClaim('${r.id}')"><i class="ti ti-x"></i> Refuser</button>
           </div>
@@ -193,7 +200,10 @@
   }
 
   async function confirmClaim(id) {
-    const { error } = await supabaseClient.rpc('confirm_member_card_claim', { card_id: id });
+    const expiryInput = document.getElementById('expiry-' + id);
+    const expiryYear = parseInt(expiryInput.value);
+    if (!expiryYear) { alert("Indiquez l'année de fin de validité avant de confirmer."); return; }
+    const { error } = await supabaseClient.rpc('confirm_member_card_claim', { card_id: id, expiry_year: expiryYear });
     if (error) { alert('Erreur : ' + error.message); return; }
     await loadAll();
   }

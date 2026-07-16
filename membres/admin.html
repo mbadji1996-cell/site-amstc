@@ -239,13 +239,15 @@
       document.getElementById('statActiveMembers').textContent = count ?? 0;
     } catch(e) { document.getElementById('statActiveMembers').textContent = '—'; }
 
-    // Paiements en attente (année en cours)
+    // Paiements en attente (validité de carte + cotisations)
     try {
-      const { count } = await supabaseClient
-        .from('membership_payments').select('id', { count: 'exact', head: true })
-        .eq('status', 'pending').eq('year', year);
-      setStat('statPendingPayments', count ?? 0, true);
-      setBadge('badgePayments', count ?? 0);
+      const [validityRes, cotisRes] = await Promise.all([
+        supabaseClient.from('card_validity_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabaseClient.from('cotisation_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      ]);
+      const count = (validityRes.count ?? 0) + (cotisRes.count ?? 0);
+      setStat('statPendingPayments', count, true);
+      setBadge('badgePayments', count);
     } catch(e) { document.getElementById('statPendingPayments').textContent = '—'; }
 
     // Commandes en attente
