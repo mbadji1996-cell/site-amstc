@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leçon - Enseignements Médicaux AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --blue-light:#E6F1FB; --blue:#378ADD; --blue-dark:#185FA5; --blue-deeper:#0C447C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.7;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  /* Reading progress bar */
+  .top-progress{position:sticky;top:0;z-index:100;height:3px;background:var(--paper-alt);}
+  .top-progress-fill{height:100%;background:var(--blue-dark);width:0%;transition:width .1s linear;}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+
+  .lesson-header{padding:32px 0 24px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:18px;}
+  .back:hover{opacity:0.75;}
+  .cat-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;background:var(--blue-light);color:var(--blue-dark);padding:4px 12px;border-radius:999px;margin-bottom:12px;}
+  .lesson-header h1{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;color:var(--green-deep);margin-bottom:10px;}
+  .lesson-meta{display:flex;align-items:center;gap:16px;color:#5A6C60;font-size:0.85rem;flex-wrap:wrap;}
+  .lesson-meta i{font-size:15px;}
+
+  /* Content area */
+  .lesson-content{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:32px 36px;margin-bottom:28px;}
+  .lesson-content h2{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--green-deep);margin:28px 0 10px;}
+  .lesson-content h2:first-child{margin-top:0;}
+  .lesson-content h3{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--blue-dark);margin:20px 0 8px;}
+  .lesson-content p{color:#3C4E44;margin-bottom:14px;}
+  .lesson-content ul,.lesson-content ol{color:#3C4E44;padding-left:22px;margin-bottom:14px;}
+  .lesson-content li{margin-bottom:6px;}
+  .lesson-content strong{color:var(--green-deep);}
+  .lesson-content em{color:#5A6C60;}
+  .lesson-content blockquote{border-left:3px solid var(--blue-dark);padding:12px 18px;background:var(--blue-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--blue-deeper);}
+  .lesson-content .arabic{font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--green-deep);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
+  .lesson-content hr{border:none;border-top:1px solid var(--paper-alt);margin:24px 0;}
+
+  /* Nav bottom */
+  .lesson-nav{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.88rem;padding:10px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-outline{background:transparent;color:var(--blue-dark);border:1.5px solid var(--blue);}
+  .btn-outline:hover{background:var(--blue-light);}
+  .btn-primary{background:var(--blue-dark);color:var(--white);}
+  .btn-primary:hover{background:var(--blue-deeper);}
+  .btn-quiz{background:#EAF3DE;color:#3B6D11;border:1.5px solid #B2D98A;}
+  .btn-quiz:hover{background:#D0EDC0;}
+
+  .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+
+  @media(max-width:600px){.lesson-content{padding:22px 18px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar"></div></div>
+
+<div class="wrap">
+  <p class="loading-full" id="loadingMsg">Chargement de la leçon…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="lesson-header">
+      <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
+      <div class="cat-pill" id="catPill"><i class="ti ti-stethoscope"></i> <span id="catLabel">Médecine</span></div>
+      <h1 id="lessonTitle">Titre de la leçon</h1>
+      <div class="lesson-meta">
+        <span id="durationMeta" style="display:none;"><i class="ti ti-clock"></i> <span id="durationVal"></span></span>
+      </div>
+    </div>
+
+    <div class="lesson-content" id="lessonContent"></div>
+
+    <div class="lesson-nav">
+      <a class="btn btn-outline" href="medical.html"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;" id="quizLink"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const lessonId = params.get('id');
+
+  (async () => {
+    if (!lessonId) { location.href = 'medical.html'; return; }
+
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+
+    const [lessonRes, quizRes] = await Promise.all([
+      supabaseClient.from('medical_lessons').select('*').eq('id', lessonId).eq('is_published', true).single(),
+      supabaseClient.from('quizzes').select('id, title').eq('lesson_id', lessonId).eq('is_published', true).limit(1)
+    ]);
+
+    if (!lessonRes.data) { location.href = 'medical.html'; return; }
+    const lesson = lessonRes.data;
+
+    document.title = lesson.title + ' - AMSTC';
+    document.getElementById('lessonTitle').textContent = lesson.title;
+
+    const catLabels = { medecine: 'Médecine', pharmacie: 'Pharmacie', odonto: 'Odontologie' };
+    document.getElementById('catLabel').textContent = catLabels[lesson.category] || lesson.category;
+
+    if (lesson.duration_min) {
+      document.getElementById('durationMeta').style.display = '';
+      document.getElementById('durationVal').textContent = lesson.duration_min + ' min de lecture';
+    }
+
+    document.getElementById('lessonContent').innerHTML = renderContent(lesson.content || '');
+
+    // Link to quiz if one exists
+    const quizList = quizRes.data || [];
+    if (quizList.length > 0) {
+      document.getElementById('quizLink').innerHTML = `
+        <a class="btn btn-quiz" href="quiz.html?id=${encodeURIComponent(quizList[0].id)}">
+          <i class="ti ti-rosette"></i> Faire le quiz
+        </a>`;
+    }
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    // Reading progress
+    updateProgress();
+    window.addEventListener('scroll', updateProgress);
+  })();
+
+  function updateProgress() {
+    const el = document.getElementById('lessonContent');
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const total = el.offsetHeight;
+    const scrolled = Math.max(0, -rect.top + window.innerHeight * 0.5);
+    const pct = Math.min(100, Math.round(scrolled / total * 100));
+    document.getElementById('topBar').style.width = pct + '%';
+  }
+
+  function renderContent(text) {
+    return text
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+      .replace(/^---$/gm, '<hr>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, s => '<ul>' + s + '</ul>')
+      .replace(/\[arabic\]([\s\S]*?)\[\/arabic\]/g, '<div class="arabic">$1</div>')
+      .split('\n\n')
+      .map(p => p.startsWith('<') ? p : '<p>' + p + '</p>')
+      .join('\n');
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --blue-light:#E6F1FB; --blue:#378ADD; --blue-dark:#185FA5; --blue-deeper:#0C447C;
+    --ok:#3B6D11; --ok-bg:#EAF3DE; --ok-border:#B2D98A;
+    --bad:#B23B3B; --bad-bg:#FDEEEE; --bad-border:#F5C0C0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  /* Quiz progress bar */
+  .quiz-bar-wrap{height:4px;background:var(--paper-alt);}
+  .quiz-bar-fill{height:100%;background:var(--blue-dark);transition:width .3s ease;}
+
+  .wrap{max-width:680px;margin:0 auto;padding:0 24px;}
+
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-top:28px;margin-bottom:0;}
+  .back:hover{opacity:0.75;}
+
+  /* Loading */
+  .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+
+  /* ======================== INTRO SCREEN ======================== */
+  #introScreen{padding:32px 0 60px;}
+  .quiz-intro-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:32px;}
+  .quiz-icon{width:56px;height:56px;border-radius:14px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue-dark);margin-bottom:18px;}
+  .quiz-intro-card h1{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--green-deep);margin-bottom:8px;}
+  .quiz-intro-desc{color:#5A6C60;margin-bottom:20px;font-size:0.95rem;}
+  .quiz-meta-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+  .pill{font-family:var(--mono);font-size:0.7rem;display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:var(--paper-alt);color:#5A6C60;}
+  .best-score-banner{background:var(--blue-light);border:1px solid #B5D4F4;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:0.9rem;color:var(--blue-deeper);}
+  .best-score-banner i{font-size:20px;color:var(--gold-deep);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;padding:12px 24px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--blue-dark);color:var(--white);}
+  .btn-primary:hover{background:var(--blue-deeper);}
+  .btn-outline{background:transparent;color:var(--blue-dark);border:1.5px solid var(--blue);}
+  .btn-outline:hover{background:var(--blue-light);}
+  .btn-green{background:var(--green);color:var(--white);}
+  .btn-green:hover{background:var(--green-deep);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* ======================== QUIZ SCREEN ======================== */
+  #quizScreen{padding:24px 0 60px;display:none;}
+  .q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .q-counter{font-family:var(--mono);font-size:0.8rem;color:#5A6C60;}
+  .q-timer{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--blue-dark);background:var(--blue-light);padding:5px 12px;border-radius:999px;}
+  .q-timer.urgent{color:var(--bad);background:var(--bad-bg);}
+
+  .question-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:28px 28px 24px;margin-bottom:16px;}
+  .question-num{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue-dark);margin-bottom:10px;}
+  .question-text{font-family:var(--display);font-size:1.1rem;font-weight:500;color:var(--green-deep);line-height:1.5;}
+
+  .options-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+  .opt-btn{background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:14px 18px;text-align:left;cursor:pointer;font-size:0.92rem;color:var(--ink);display:flex;align-items:center;gap:12px;transition:all .15s;}
+  .opt-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light);}
+  .opt-btn .opt-letter{font-family:var(--mono);font-size:0.7rem;font-weight:600;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+  .opt-btn:hover:not(:disabled) .opt-letter{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);}
+  .opt-btn.selected{border-color:var(--blue);background:var(--blue-light);}
+  .opt-btn.selected .opt-letter{background:var(--blue-dark);border-color:var(--blue-dark);color:var(--white);}
+  .opt-btn.correct{border-color:var(--ok-border);background:var(--ok-bg) !important;}
+  .opt-btn.correct .opt-letter{background:var(--ok);border-color:var(--ok);color:var(--white);}
+  .opt-btn.wrong{border-color:var(--bad-border);background:var(--bad-bg) !important;}
+  .opt-btn.wrong .opt-letter{background:var(--bad);border-color:var(--bad);color:var(--white);}
+  .opt-btn:disabled{cursor:default;}
+
+  .explanation-box{background:var(--blue-light);border:1px solid #B5D4F4;border-radius:10px;padding:14px 18px;font-size:0.88rem;color:var(--blue-deeper);margin-bottom:16px;display:none;}
+  .explanation-box i{margin-right:4px;}
+
+  .q-actions{display:flex;justify-content:flex-end;}
+
+  /* ======================== RESULTS SCREEN ======================== */
+  #resultScreen{padding:32px 0 60px;display:none;}
+  .result-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:32px;text-align:center;margin-bottom:24px;}
+  .score-ring{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;font-family:var(--display);}
+  .score-ring.great{background:var(--ok-bg);border:3px solid var(--ok-border);}
+  .score-ring.good{background:var(--blue-light);border:3px solid #B5D4F4;}
+  .score-ring.low{background:var(--bad-bg);border:3px solid var(--bad-border);}
+  .score-pct{font-size:1.8rem;font-weight:700;}
+  .score-pct.great{color:var(--ok);}
+  .score-pct.good{color:var(--blue-dark);}
+  .score-pct.low{color:var(--bad);}
+  .score-label{font-size:0.7rem;font-family:var(--mono);color:#8A9E8F;}
+  .result-title{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--green-deep);margin-bottom:8px;}
+  .result-sub{color:#5A6C60;font-size:0.9rem;margin-bottom:20px;}
+  .result-stats{display:flex;justify-content:center;gap:24px;padding:16px 0;border-top:1px solid var(--paper-alt);border-bottom:1px solid var(--paper-alt);margin-bottom:20px;}
+  .rstat{text-align:center;}
+  .rstat-val{font-family:var(--display);font-size:1.3rem;font-weight:600;}
+  .rstat-val.ok{color:var(--ok);}
+  .rstat-val.bad{color:var(--bad);}
+  .rstat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.06em;color:#8A9E8F;}
+  .result-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+  /* Correction */
+  .correction-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:14px;}
+  .corr-item{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:10px;}
+  .corr-q{font-family:var(--display);font-size:0.95rem;font-weight:500;color:var(--green-deep);margin-bottom:12px;}
+  .corr-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+  .corr-opt{font-size:0.85rem;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;}
+  .corr-opt.is-correct{background:var(--ok-bg);color:var(--ok);}
+  .corr-opt.is-wrong{background:var(--bad-bg);color:var(--bad);}
+  .corr-opt.neutral{background:var(--paper);color:#5A6C60;}
+  .corr-exp{font-size:0.83rem;color:var(--blue-deeper);background:var(--blue-light);border-radius:8px;padding:10px 14px;}
+
+  .history-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:60px;}
+  .history-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#8A9E8F;margin-bottom:12px;}
+  .hist-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--paper-alt);font-size:0.85rem;}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-score{font-family:var(--mono);font-weight:600;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+  @media(max-width:500px){.result-stats{gap:16px;}.result-btns{flex-direction:column;align-items:center;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="quiz-bar-wrap"><div class="quiz-bar-fill" id="quizBar" style="width:0%"></div></div>
+
+<div class="wrap">
+  <p class="loading-full" id="loadingMsg">Chargement du quiz…</p>
+
+  <!-- INTRO -->
+  <div id="introScreen" style="display:none;">
+    <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
+    <div style="height:20px;"></div>
+    <div class="quiz-intro-card">
+      <div class="quiz-icon"><i class="ti ti-rosette"></i></div>
+      <h1 id="quizTitle">Quiz</h1>
+      <p class="quiz-intro-desc" id="quizDesc"></p>
+      <div class="quiz-meta-pills">
+        <span class="pill" id="pillQuestions"><i class="ti ti-help"></i> — questions</span>
+        <span class="pill" id="pillDuration" style="display:none;"><i class="ti ti-clock"></i> — min</span>
+        <span class="pill"><i class="ti ti-infinity"></i> Tentatives illimitées</span>
+      </div>
+      <div class="best-score-banner" id="bestScoreBanner" style="display:none;">
+        <i class="ti ti-trophy"></i>
+        <span id="bestScoreText">Votre meilleur score : —</span>
+      </div>
+      <button class="btn btn-primary" id="startBtn"><i class="ti ti-player-play"></i> Commencer le quiz</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizScreen">
+    <div class="q-header">
+      <span class="q-counter" id="qCounter">Question 1 / ?</span>
+      <span class="q-timer" id="qTimer" style="display:none;"></span>
+    </div>
+    <div class="question-card">
+      <p class="question-num" id="questionNum">Question 1</p>
+      <p class="question-text" id="questionText"></p>
+    </div>
+    <div class="options-list" id="optionsList"></div>
+    <div class="explanation-box" id="explanationBox"><i class="ti ti-info-circle"></i> <span id="explanationText"></span></div>
+    <div class="q-actions">
+      <button class="btn btn-primary" id="nextBtn" style="display:none;" onclick="nextQuestion()">
+        <span id="nextBtnLabel">Question suivante</span> <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultScreen">
+    <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
+    <div style="height:20px;"></div>
+
+    <div class="result-card">
+      <div class="score-ring" id="scoreRing">
+        <span class="score-pct" id="scorePct">0%</span>
+        <span class="score-label">score</span>
+      </div>
+      <h2 class="result-title" id="resultTitle">Résultat</h2>
+      <p class="result-sub" id="resultSub"></p>
+      <div class="result-stats">
+        <div class="rstat"><p class="rstat-val ok" id="rCorrect">0</p><p class="rstat-label">Correctes</p></div>
+        <div class="rstat"><p class="rstat-val bad" id="rWrong">0</p><p class="rstat-label">Incorrectes</p></div>
+        <div class="rstat"><p class="rstat-val" id="rTotal" style="color:var(--ink);">0</p><p class="rstat-label">Total</p></div>
+      </div>
+      <div class="result-btns">
+        <button class="btn btn-primary" id="replayBtn"><i class="ti ti-refresh"></i> Rejouer</button>
+        <a class="btn btn-outline" href="medical.html"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
+      </div>
+    </div>
+
+    <p class="correction-label"><i class="ti ti-list-check"></i> Correction détaillée</p>
+    <div id="correctionList"></div>
+
+    <div class="history-wrap" id="historyWrap" style="display:none;">
+      <p class="history-label"><i class="ti ti-history"></i> Historique de mes tentatives</p>
+      <div id="historyList"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const quizId = params.get('id');
+  let quiz = null, questions = [], userId = null;
+  let currentQ = 0, userAnswers = [], timerInterval = null, timeLeft = 0;
+  const LETTERS = ['A','B','C','D'];
+
+  (async () => {
+    if (!quizId) { location.href = 'medical.html'; return; }
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+    userId = profile.id;
+    document.getElementById('signoutBtn').style.display = '';
+
+    const [quizRes, qRes, attRes] = await Promise.all([
+      supabaseClient.from('quizzes').select('*').eq('id', quizId).eq('is_published', true).single(),
+      supabaseClient.from('quiz_questions').select('*').eq('quiz_id', quizId).order('order_index'),
+      supabaseClient.from('quiz_attempts').select('score, total, created_at').eq('quiz_id', quizId).eq('user_id', userId).order('created_at', { ascending: false }).limit(20)
+    ]);
+
+    if (!quizRes.data) { location.href = 'medical.html'; return; }
+    quiz = quizRes.data;
+    questions = qRes.data || [];
+
+    document.title = quiz.title + ' - AMSTC';
+    document.getElementById('quizTitle').textContent = quiz.title;
+    document.getElementById('quizDesc').textContent = quiz.description || '';
+    document.getElementById('pillQuestions').innerHTML = `<i class="ti ti-help"></i> ${questions.length} question${questions.length > 1 ? 's' : ''}`;
+    if (quiz.duration_min) {
+      const p = document.getElementById('pillDuration');
+      p.style.display = '';
+      p.innerHTML = `<i class="ti ti-clock"></i> ${quiz.duration_min} min`;
+    }
+
+    const attempts = attRes.data || [];
+    if (attempts.length > 0) {
+      const bestPct = Math.max(...attempts.map(a => Math.round(a.score / a.total * 100)));
+      const banner = document.getElementById('bestScoreBanner');
+      banner.style.display = '';
+      document.getElementById('bestScoreText').textContent = `Votre meilleur score : ${bestPct}%`;
+    }
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('introScreen').style.display = '';
+    document.getElementById('quizBar').style.width = '0%';
+
+    document.getElementById('startBtn').addEventListener('click', startQuiz);
+    document.getElementById('replayBtn').addEventListener('click', startQuiz);
+  })();
+
+  function startQuiz() {
+    userAnswers = new Array(questions.length).fill(null);
+    currentQ = 0;
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = '';
+    if (quiz.duration_min) startTimer(quiz.duration_min * 60);
+    renderQuestion();
+  }
+
+  function startTimer(seconds) {
+    clearInterval(timerInterval);
+    timeLeft = seconds;
+    const el = document.getElementById('qTimer');
+    el.style.display = '';
+    updateTimer();
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) { clearInterval(timerInterval); finishQuiz(); }
+    }, 1000);
+  }
+
+  function updateTimer() {
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    const el = document.getElementById('qTimer');
+    el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    el.classList.toggle('urgent', timeLeft <= 30);
+  }
+
+  function renderQuestion() {
+    const q = questions[currentQ];
+    const total = questions.length;
+    const pct = Math.round(currentQ / total * 100);
+    document.getElementById('quizBar').style.width = pct + '%';
+    document.getElementById('qCounter').textContent = `Question ${currentQ + 1} / ${total}`;
+    document.getElementById('questionNum').textContent = `Question ${currentQ + 1}`;
+    document.getElementById('questionText').textContent = q.question_text;
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('explanationBox').style.display = 'none';
+
+    const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
+    const list = document.getElementById('optionsList');
+    list.innerHTML = opts.map((opt, i) => `
+      <button class="opt-btn" id="opt-${i}" onclick="selectAnswer(${i})">
+        <span class="opt-letter">${LETTERS[i]}</span>
+        <span>${escHtml(opt)}</span>
+      </button>`).join('');
+
+    // Show last answer if navigating back (disabled — quiz is forward-only)
+    document.getElementById('nextBtnLabel').textContent =
+      currentQ === total - 1 ? 'Voir les résultats' : 'Question suivante';
+  }
+
+  function selectAnswer(idx) {
+    if (userAnswers[currentQ] !== null) return; // already answered
+    const q = questions[currentQ];
+    userAnswers[currentQ] = idx;
+
+    const correct = q.correct_index;
+    const opts = document.querySelectorAll('.opt-btn');
+    opts.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correct) btn.classList.add('correct');
+      else if (i === idx && idx !== correct) btn.classList.add('wrong');
+    });
+
+    if (q.explanation) {
+      const box = document.getElementById('explanationBox');
+      document.getElementById('explanationText').textContent = q.explanation;
+      box.style.display = '';
+    }
+    document.getElementById('nextBtn').style.display = '';
+  }
+
+  function nextQuestion() {
+    if (currentQ < questions.length - 1) {
+      currentQ++;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  async function finishQuiz() {
+    clearInterval(timerInterval);
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('quizBar').style.width = '100%';
+
+    const correct = userAnswers.filter((a, i) => a === questions[i].correct_index).length;
+    const total = questions.length;
+    const pct = Math.round(correct / total * 100);
+
+    // Save attempt
+    await supabaseClient.from('quiz_attempts').insert({
+      quiz_id: quizId, user_id: userId,
+      score: correct, total,
+      answers: userAnswers
+    });
+
+    // Score ring
+    const ringClass = pct >= 80 ? 'great' : pct >= 50 ? 'good' : 'low';
+    const ring = document.getElementById('scoreRing');
+    const pctEl = document.getElementById('scorePct');
+    ring.className = 'score-ring ' + ringClass;
+    pctEl.className = 'score-pct ' + ringClass;
+    pctEl.textContent = pct + '%';
+
+    document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rWrong').textContent = total - correct;
+    document.getElementById('rTotal').textContent = total;
+
+    const titles = {great:'Excellent !', good:'Bon travail !', low:'À réviser !'};
+    const subs = {
+      great:`Vous avez répondu correctement à ${correct} question${correct > 1 ? 's' : ''} sur ${total}. Bravo !`,
+      good:`Vous avez répondu correctement à ${correct} question${correct > 1 ? 's' : ''} sur ${total}. Continuez ainsi !`,
+      low:`Vous avez répondu correctement à ${correct} question${correct > 1 ? 's' : ''} sur ${total}. Révisez la leçon et réessayez.`
+    };
+    document.getElementById('resultTitle').textContent = titles[ringClass];
+    document.getElementById('resultSub').textContent = subs[ringClass];
+
+    renderCorrection();
+    await renderHistory();
+
+    document.getElementById('resultScreen').style.display = '';
+  }
+
+  function renderCorrection() {
+    const list = document.getElementById('correctionList');
+    list.innerHTML = questions.map((q, qi) => {
+      const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
+      const userAns = userAnswers[qi];
+      const corr = q.correct_index;
+      const optHtml = opts.map((opt, i) => {
+        let cls = 'neutral';
+        let icon = '';
+        if (i === corr) { cls = 'is-correct'; icon = '<i class="ti ti-check"></i> '; }
+        else if (i === userAns && userAns !== corr) { cls = 'is-wrong'; icon = '<i class="ti ti-x"></i> '; }
+        return `<div class="corr-opt ${cls}">${icon}${LETTERS[i]}. ${escHtml(opt)}</div>`;
+      }).join('');
+      const expHtml = q.explanation ? `<p class="corr-exp"><i class="ti ti-info-circle"></i> ${escHtml(q.explanation)}</p>` : '';
+      return `<div class="corr-item">
+        <p class="corr-q">${qi+1}. ${escHtml(q.question_text)}</p>
+        <div class="corr-opts">${optHtml}</div>
+        ${expHtml}
+      </div>`;
+    }).join('');
+  }
+
+  async function renderHistory() {
+    const { data } = await supabaseClient
+      .from('quiz_attempts')
+      .select('score, total, created_at')
+      .eq('quiz_id', quizId)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const attempts = data || [];
+    if (attempts.length === 0) return;
+
+    const wrap = document.getElementById('historyWrap');
+    wrap.style.display = '';
+    document.getElementById('historyList').innerHTML = attempts.map((a, i) => {
+      const pct = Math.round(a.score / a.total * 100);
+      const date = new Date(a.created_at).toLocaleDateString('fr-FR');
+      const color = pct >= 80 ? 'var(--ok)' : pct >= 50 ? 'var(--blue-dark)' : 'var(--bad)';
+      return `<div class="hist-row">
+        <span style="color:#5A6C60;font-size:0.82rem;">${i === 0 ? 'Cette tentative' : date}</span>
+        <span class="hist-score" style="color:${color};">${a.score}/${a.total} (${pct}%)</span>
+      </div>`;
+    }).join('');
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

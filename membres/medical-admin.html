@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion Enseignements Médicaux - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --blue-light:#E6F1FB; --blue:#378ADD; --blue-dark:#185FA5; --blue-deeper:#0C447C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+
+  /* Tabs */
+  .main-tabs{display:flex;gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:24px;}
+  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--white);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
+  .main-tab:last-child{border-right:none;}
+  .main-tab.active{background:var(--blue-dark);color:var(--white);}
+
+  /* Cat sub-tabs */
+  .cat-tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .cat-tab{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
+  .cat-tab.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue-dark);}
+
+  /* Toolbar */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:0.88rem;padding:9px 18px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--blue-dark);color:var(--white);}
+  .btn-primary:hover{background:var(--blue-deeper);}
+  .btn-danger{background:#FDEEEE;color:#B23B3B;}
+  .btn-danger:hover{background:#f5c0c0;}
+  .btn-sm{padding:6px 12px;font-size:0.78rem;}
+  .btn-edit{background:var(--blue-light);color:var(--blue-dark);}
+  .btn-edit:hover{background:#cfe2f7;}
+  .btn-pub{background:var(--paper-alt);color:#5A6C60;}
+  .btn-pub:hover{background:#DDE5D0;}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* Cards grid */
+  .items-grid{display:flex;flex-direction:column;gap:10px;}
+  .item-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:flex-start;gap:14px;}
+  .item-icon{width:42px;height:42px;border-radius:9px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--blue-dark);flex-shrink:0;}
+  .item-body{flex:1;min-width:0;}
+  .item-title{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--green-deep);}
+  .item-desc{font-size:0.82rem;color:#5A6C60;margin-top:2px;}
+  .item-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
+  .badge-draft{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.04em;padding:2px 8px;border-radius:999px;background:#FEF6E4;color:var(--gold-deep);margin-left:6px;}
+  .badge-pub{background:#EAF3DE;color:#3B6D11;}
+  .empty-msg{color:#5A6C60;font-family:var(--mono);font-size:0.82rem;padding:32px 0;text-align:center;}
+
+  /* ===== MODAL ===== */
+  .modal-bg{position:fixed;inset:0;background:rgba(6,28,14,0.55);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
+  .modal-bg.hidden{display:none;}
+  .modal{background:var(--white);border-radius:var(--radius);padding:28px 28px 24px;width:100%;max-width:680px;position:relative;}
+  .modal-title{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--green-deep);margin-bottom:20px;}
+  .modal-close{position:absolute;top:16px;right:16px;background:var(--paper);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#5A6C60;}
+  .modal-close:hover{background:var(--paper-alt);}
+
+  /* Form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.full{grid-column:1/-1;}
+  label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;}
+  input,select,textarea{font-family:var(--body);font-size:0.9rem;border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--ink);background:var(--paper);width:100%;transition:border-color .15s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);}
+  textarea{resize:vertical;min-height:100px;}
+  .form-check{display:flex;align-items:center;gap:8px;font-size:0.9rem;cursor:pointer;}
+  .form-check input[type=checkbox]{width:auto;}
+  .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--paper-alt);}
+  .form-msg{font-size:0.85rem;margin-top:8px;}
+  .form-msg.error{color:#B23B3B;}
+  .form-msg.ok{color:#3B6D11;}
+
+  /* Quiz question editor */
+  .qs-section{margin-top:20px;border-top:2px dashed var(--line);padding-top:18px;}
+  .qs-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:12px;}
+  .q-item{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;position:relative;}
+  .q-item-num{font-family:var(--mono);font-size:0.65rem;color:#8A9E8F;margin-bottom:8px;}
+  .q-row{display:flex;gap:8px;align-items:flex-start;}
+  .q-row input{flex:1;}
+  .btn-remove-q{background:var(--bad-bg,#FDEEEE);border:none;border-radius:6px;padding:6px 8px;cursor:pointer;color:#B23B3B;font-size:14px;flex-shrink:0;}
+  .btn-remove-q:hover{background:#f5c0c0;}
+  .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 8px;}
+  .opt-row{display:flex;align-items:center;gap:6px;}
+  .opt-row input[type=text]{flex:1;font-size:0.85rem;padding:7px 10px;}
+  .opt-row input[type=radio]{width:auto;cursor:pointer;}
+  .opt-row label{font-family:var(--body);font-size:0.82rem;color:#3A5040;text-transform:none;letter-spacing:0;cursor:pointer;}
+  .correct-hint{font-family:var(--mono);font-size:0.65rem;color:#5A6C60;margin-bottom:6px;}
+  .btn-add-q{margin-top:4px;}
+
+  .loading-msg{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+  @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.opts-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="page-header">
+      <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
+      <h1 class="page-title">Enseignements Médicaux — Administration</h1>
+    </div>
+
+    <!-- Main tabs: Leçons / Quiz -->
+    <div class="main-tabs">
+      <button class="main-tab active" id="tab-lessons" onclick="switchMain('lessons')"><i class="ti ti-book"></i> Leçons</button>
+      <button class="main-tab" id="tab-quizzes" onclick="switchMain('quizzes')"><i class="ti ti-rosette"></i> Quiz</button>
+    </div>
+
+    <!-- LEÇONS panel -->
+    <div id="panel-lessons">
+      <div class="cat-tabs">
+        <button class="cat-tab active" id="lcat-medecine" onclick="setLessonCat('medecine')"><i class="ti ti-heart-rate-monitor"></i> Médecine</button>
+        <button class="cat-tab" id="lcat-pharmacie" onclick="setLessonCat('pharmacie')"><i class="ti ti-pill"></i> Pharmacie</button>
+        <button class="cat-tab" id="lcat-odonto" onclick="setLessonCat('odonto')"><i class="ti ti-tooth"></i> Odontologie</button>
+      </div>
+      <div class="toolbar">
+        <span style="font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;" id="lessonCount">0 leçon(s)</span>
+        <button class="btn btn-primary" onclick="openLessonModal(null)"><i class="ti ti-plus"></i> Nouvelle leçon</button>
+      </div>
+      <div class="items-grid" id="lessonsList"></div>
+    </div>
+
+    <!-- QUIZ panel -->
+    <div id="panel-quizzes" style="display:none;">
+      <div class="cat-tabs">
+        <button class="cat-tab active" id="qcat-medecine" onclick="setQuizCat('medecine')"><i class="ti ti-heart-rate-monitor"></i> Médecine</button>
+        <button class="cat-tab" id="qcat-pharmacie" onclick="setQuizCat('pharmacie')"><i class="ti ti-pill"></i> Pharmacie</button>
+        <button class="cat-tab" id="qcat-odonto" onclick="setQuizCat('odonto')"><i class="ti ti-tooth"></i> Odontologie</button>
+      </div>
+      <div class="toolbar">
+        <span style="font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;" id="quizCount">0 quiz</span>
+        <button class="btn btn-primary" onclick="openQuizModal(null)"><i class="ti ti-plus"></i> Nouveau quiz</button>
+      </div>
+      <div class="items-grid" id="quizzesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LESSON MODAL ====== -->
+<div class="modal-bg hidden" id="lessonModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('lessonModal')"><i class="ti ti-x"></i></button>
+    <h2 class="modal-title" id="lessonModalTitle">Nouvelle leçon</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Catégorie *</label>
+        <select id="l-category">
+          <option value="medecine">Médecine</option>
+          <option value="pharmacie">Pharmacie</option>
+          <option value="odonto">Odontologie</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ordre d'affichage</label>
+        <input type="number" id="l-order" value="0" min="0">
+      </div>
+      <div class="form-group full">
+        <label>Titre *</label>
+        <input type="text" id="l-title" placeholder="Ex : Anatomie du cœur">
+      </div>
+      <div class="form-group full">
+        <label>Description courte</label>
+        <input type="text" id="l-desc" placeholder="Une phrase de résumé…">
+      </div>
+      <div class="form-group">
+        <label>Durée de lecture (min)</label>
+        <input type="number" id="l-duration" min="1" placeholder="10">
+      </div>
+      <div class="form-group">
+        <label>Image de couverture (URL)</label>
+        <input type="text" id="l-cover" placeholder="https://…">
+      </div>
+      <div class="form-group full">
+        <label>Contenu (Markdown — [arabic]…[/arabic] supporté)</label>
+        <textarea id="l-content" rows="12" placeholder="## Titre de section&#10;&#10;Paragraphe…&#10;&#10;- liste 1&#10;- liste 2&#10;&#10;[arabic]بسم الله[/arabic]"></textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-check">
+          <input type="checkbox" id="l-published">
+          Publier immédiatement
+        </label>
+      </div>
+    </div>
+    <p class="form-msg" id="lessonFormMsg"></p>
+    <div class="form-actions">
+      <button class="btn btn-pub" onclick="closeModal('lessonModal')">Annuler</button>
+      <button class="btn btn-primary" id="lessonSaveBtn" onclick="saveLesson()"><i class="ti ti-device-floppy"></i> Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== QUIZ MODAL ====== -->
+<div class="modal-bg hidden" id="quizModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('quizModal')"><i class="ti ti-x"></i></button>
+    <h2 class="modal-title" id="quizModalTitle">Nouveau quiz</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Catégorie *</label>
+        <select id="q-category">
+          <option value="medecine">Médecine</option>
+          <option value="pharmacie">Pharmacie</option>
+          <option value="odonto">Odontologie</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Leçon associée (optionnel)</label>
+        <select id="q-lesson"><option value="">— aucune —</option></select>
+      </div>
+      <div class="form-group full">
+        <label>Titre du quiz *</label>
+        <input type="text" id="q-title" placeholder="Ex : Quiz — Anatomie du cœur">
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <input type="text" id="q-desc" placeholder="Testez vos connaissances…">
+      </div>
+      <div class="form-group">
+        <label>Durée limite (min, optionnel)</label>
+        <input type="number" id="q-duration" min="1" placeholder="—">
+      </div>
+      <div class="form-group">
+        <label class="form-check" style="margin-top:22px;">
+          <input type="checkbox" id="q-published">
+          Publier immédiatement
+        </label>
+      </div>
+    </div>
+
+    <!-- Questions editor -->
+    <div class="qs-section">
+      <p class="qs-label"><i class="ti ti-help"></i> Questions QCM</p>
+      <div id="questionsList"></div>
+      <button class="btn btn-edit btn-sm btn-add-q" onclick="addQuestion()"><i class="ti ti-plus"></i> Ajouter une question</button>
+    </div>
+
+    <p class="form-msg" id="quizFormMsg"></p>
+    <div class="form-actions">
+      <button class="btn btn-pub" onclick="closeModal('quizModal')">Annuler</button>
+      <button class="btn btn-primary" id="quizSaveBtn" onclick="saveQuiz()"><i class="ti ti-device-floppy"></i> Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<footer style="padding:40px 0;text-align:center;">
+  <a href="../index.html" style="color:var(--green);font-family:var(--mono);font-size:0.82rem;">AMSTC</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let allLessons = [], allQuizzes = [];
+  let lessonCat = 'medecine', quizCat = 'medecine';
+  let editingLessonId = null, editingQuizId = null;
+  let questionRows = []; // [{text, opts:[str,str,str,str], correct:0-3, expl:str}]
+
+  // ---- INIT ----
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    await loadData();
+    renderLessons();
+  })();
+
+  async function loadData() {
+    const [lRes, qRes] = await Promise.all([
+      supabaseClient.from('medical_lessons').select('*').order('category').order('order_index'),
+      supabaseClient.from('quizzes').select('*').order('category').order('created_at')
+    ]);
+    allLessons = lRes.data || [];
+    allQuizzes = qRes.data || [];
+  }
+
+  // ---- MAIN TABS ----
+  function switchMain(tab) {
+    ['lessons','quizzes'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('panel-' + t).style.display = t === tab ? '' : 'none';
+    });
+    if (tab === 'lessons') renderLessons();
+    else renderQuizzes();
+  }
+
+  // ---- LESSONS ----
+  function setLessonCat(cat) {
+    lessonCat = cat;
+    ['medecine','pharmacie','odonto'].forEach(c =>
+      document.getElementById('lcat-' + c).classList.toggle('active', c === cat));
+    renderLessons();
+  }
+
+  function renderLessons() {
+    const items = allLessons.filter(l => l.category === lessonCat);
+    document.getElementById('lessonCount').textContent = items.length + ' leçon(s)';
+    const list = document.getElementById('lessonsList');
+    if (items.length === 0) { list.innerHTML = '<p class="empty-msg">Aucune leçon pour cette catégorie.</p>'; return; }
+    list.innerHTML = items.map(l => `
+      <div class="item-card">
+        <div class="item-icon"><i class="ti ti-file-text"></i></div>
+        <div class="item-body">
+          <p class="item-title">${escHtml(l.title)}<span class="badge-draft ${l.is_published ? 'badge-pub' : ''}">${l.is_published ? 'Publié' : 'Brouillon'}</span></p>
+          <p class="item-desc">${escHtml(l.description || '')}</p>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-sm btn-edit" onclick="openLessonModal('${l.id}')"><i class="ti ti-pencil"></i> Modifier</button>
+          <button class="btn btn-sm btn-pub" onclick="togglePublishLesson('${l.id}',${l.is_published})">${l.is_published ? '<i class="ti ti-eye-off"></i> Dépublier' : '<i class="ti ti-eye"></i> Publier'}</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteLesson('${l.id}','${escHtml(l.title)}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  async function openLessonModal(id) {
+    editingLessonId = id;
+    document.getElementById('lessonFormMsg').textContent = '';
+    if (id) {
+      const l = allLessons.find(x => x.id === id);
+      document.getElementById('lessonModalTitle').textContent = 'Modifier la leçon';
+      document.getElementById('l-category').value = l.category;
+      document.getElementById('l-order').value = l.order_index || 0;
+      document.getElementById('l-title').value = l.title;
+      document.getElementById('l-desc').value = l.description || '';
+      document.getElementById('l-duration').value = l.duration_min || '';
+      document.getElementById('l-cover').value = l.cover_image || '';
+      document.getElementById('l-content').value = l.content || '';
+      document.getElementById('l-published').checked = !!l.is_published;
+    } else {
+      document.getElementById('lessonModalTitle').textContent = 'Nouvelle leçon';
+      document.getElementById('l-category').value = lessonCat;
+      document.getElementById('l-order').value = 0;
+      ['l-title','l-desc','l-duration','l-cover','l-content'].forEach(f => document.getElementById(f).value = '');
+      document.getElementById('l-published').checked = false;
+    }
+    document.getElementById('lessonModal').classList.remove('hidden');
+  }
+
+  async function saveLesson() {
+    const btn = document.getElementById('lessonSaveBtn');
+    const msg = document.getElementById('lessonFormMsg');
+    const title = document.getElementById('l-title').value.trim();
+    if (!title) { msg.textContent = 'Le titre est obligatoire.'; msg.className = 'form-msg error'; return; }
+    btn.disabled = true;
+
+    const payload = {
+      category: document.getElementById('l-category').value,
+      order_index: parseInt(document.getElementById('l-order').value) || 0,
+      title,
+      description: document.getElementById('l-desc').value.trim() || null,
+      duration_min: parseInt(document.getElementById('l-duration').value) || null,
+      cover_image: document.getElementById('l-cover').value.trim() || null,
+      content: document.getElementById('l-content').value.trim() || null,
+      is_published: document.getElementById('l-published').checked
+    };
+
+    let error;
+    if (editingLessonId) {
+      ({ error } = await supabaseClient.from('medical_lessons').update(payload).eq('id', editingLessonId));
+    } else {
+      ({ error } = await supabaseClient.from('medical_lessons').insert(payload));
+    }
+
+    btn.disabled = false;
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
+    msg.textContent = 'Enregistré !'; msg.className = 'form-msg ok';
+    await loadData();
+    renderLessons();
+    setTimeout(() => closeModal('lessonModal'), 800);
+  }
+
+  async function togglePublishLesson(id, current) {
+    await supabaseClient.from('medical_lessons').update({ is_published: !current }).eq('id', id);
+    await loadData(); renderLessons();
+  }
+
+  async function deleteLesson(id, title) {
+    if (!confirm(`Supprimer la leçon "${title}" ?`)) return;
+    await supabaseClient.from('medical_lessons').delete().eq('id', id);
+    await loadData(); renderLessons();
+  }
+
+  // ---- QUIZZES ----
+  function setQuizCat(cat) {
+    quizCat = cat;
+    ['medecine','pharmacie','odonto'].forEach(c =>
+      document.getElementById('qcat-' + c).classList.toggle('active', c === cat));
+    renderQuizzes();
+  }
+
+  function renderQuizzes() {
+    const items = allQuizzes.filter(q => q.category === quizCat);
+    document.getElementById('quizCount').textContent = items.length + ' quiz';
+    const list = document.getElementById('quizzesList');
+    if (items.length === 0) { list.innerHTML = '<p class="empty-msg">Aucun quiz pour cette catégorie.</p>'; return; }
+    list.innerHTML = items.map(q => `
+      <div class="item-card">
+        <div class="item-icon"><i class="ti ti-rosette"></i></div>
+        <div class="item-body">
+          <p class="item-title">${escHtml(q.title)}<span class="badge-draft ${q.is_published ? 'badge-pub' : ''}">${q.is_published ? 'Publié' : 'Brouillon'}</span></p>
+          <p class="item-desc">${escHtml(q.description || '')}</p>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-sm btn-edit" onclick="openQuizModal('${q.id}')"><i class="ti ti-pencil"></i> Modifier</button>
+          <button class="btn btn-sm btn-pub" onclick="togglePublishQuiz('${q.id}',${q.is_published})">${q.is_published ? '<i class="ti ti-eye-off"></i> Dépublier' : '<i class="ti ti-eye"></i> Publier'}</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteQuiz('${q.id}','${escHtml(q.title)}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  async function openQuizModal(id) {
+    editingQuizId = id;
+    questionRows = [];
+    document.getElementById('quizFormMsg').textContent = '';
+
+    // Populate lesson select
+    const sel = document.getElementById('q-lesson');
+    sel.innerHTML = '<option value="">— aucune —</option>';
+    allLessons.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l.id;
+      opt.textContent = `[${l.category}] ${l.title}`;
+      sel.appendChild(opt);
+    });
+
+    if (id) {
+      const q = allQuizzes.find(x => x.id === id);
+      document.getElementById('quizModalTitle').textContent = 'Modifier le quiz';
+      document.getElementById('q-category').value = q.category;
+      document.getElementById('q-title').value = q.title;
+      document.getElementById('q-desc').value = q.description || '';
+      document.getElementById('q-duration').value = q.duration_min || '';
+      document.getElementById('q-published').checked = !!q.is_published;
+      sel.value = q.lesson_id || '';
+
+      // Load questions
+      const { data: qs } = await supabaseClient.from('quiz_questions').select('*').eq('quiz_id', id).order('order_index');
+      (qs || []).forEach(q => {
+        const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '["","","",""]');
+        questionRows.push({ id: q.id, text: q.question_text, opts, correct: q.correct_index, expl: q.explanation || '' });
+      });
+    } else {
+      document.getElementById('quizModalTitle').textContent = 'Nouveau quiz';
+      document.getElementById('q-category').value = quizCat;
+      ['q-title','q-desc','q-duration'].forEach(f => document.getElementById(f).value = '');
+      document.getElementById('q-published').checked = false;
+      sel.value = '';
+    }
+
+    renderQuestionRows();
+    document.getElementById('quizModal').classList.remove('hidden');
+  }
+
+  function renderQuestionRows() {
+    const container = document.getElementById('questionsList');
+    if (questionRows.length === 0) { container.innerHTML = ''; return; }
+    container.innerHTML = questionRows.map((q, qi) => `
+      <div class="q-item" id="qrow-${qi}">
+        <p class="q-item-num">Question ${qi + 1}</p>
+        <div class="q-row">
+          <input type="text" placeholder="Énoncé de la question…" value="${escAttr(q.text)}" oninput="questionRows[${qi}].text=this.value">
+          <button class="btn-remove-q" onclick="removeQuestion(${qi})"><i class="ti ti-trash"></i></button>
+        </div>
+        <p class="correct-hint" style="margin-top:8px;">Options (cochez la bonne réponse) :</p>
+        <div class="opts-grid">
+          ${q.opts.map((opt, oi) => `
+            <div class="opt-row">
+              <input type="radio" name="correct-${qi}" id="r-${qi}-${oi}" ${q.correct === oi ? 'checked' : ''} onchange="questionRows[${qi}].correct=${oi}">
+              <input type="text" placeholder="${['A','B','C','D'][oi]}" value="${escAttr(opt)}" oninput="questionRows[${qi}].opts[${oi}]=this.value">
+            </div>`).join('')}
+        </div>
+        <input type="text" placeholder="Explication (optionnelle)…" value="${escAttr(q.expl)}" oninput="questionRows[${qi}].expl=this.value" style="font-size:0.85rem;margin-top:4px;">
+      </div>`).join('');
+  }
+
+  function addQuestion() {
+    questionRows.push({ text: '', opts: ['','','',''], correct: 0, expl: '' });
+    renderQuestionRows();
+    // scroll to last
+    const items = document.querySelectorAll('.q-item');
+    if (items.length) items[items.length-1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function removeQuestion(idx) {
+    questionRows.splice(idx, 1);
+    renderQuestionRows();
+  }
+
+  async function saveQuiz() {
+    const btn = document.getElementById('quizSaveBtn');
+    const msg = document.getElementById('quizFormMsg');
+    const title = document.getElementById('q-title').value.trim();
+    if (!title) { msg.textContent = 'Le titre est obligatoire.'; msg.className = 'form-msg error'; return; }
+
+    // Validate questions
+    for (let i = 0; i < questionRows.length; i++) {
+      const q = questionRows[i];
+      if (!q.text.trim()) { msg.textContent = `Question ${i+1} : l'énoncé est vide.`; msg.className = 'form-msg error'; return; }
+      if (q.opts.some(o => !o.trim())) { msg.textContent = `Question ${i+1} : toutes les options doivent être remplies.`; msg.className = 'form-msg error'; return; }
+    }
+
+    btn.disabled = true;
+    const quizPayload = {
+      category: document.getElementById('q-category').value,
+      title,
+      description: document.getElementById('q-desc').value.trim() || null,
+      duration_min: parseInt(document.getElementById('q-duration').value) || null,
+      is_published: document.getElementById('q-published').checked,
+      lesson_id: document.getElementById('q-lesson').value || null
+    };
+
+    let quizId = editingQuizId;
+    if (editingQuizId) {
+      const { error } = await supabaseClient.from('quizzes').update(quizPayload).eq('id', editingQuizId);
+      if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; btn.disabled = false; return; }
+    } else {
+      const { data, error } = await supabaseClient.from('quizzes').insert(quizPayload).select('id').single();
+      if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; btn.disabled = false; return; }
+      quizId = data.id;
+    }
+
+    // Save questions: delete existing then re-insert
+    if (editingQuizId) {
+      await supabaseClient.from('quiz_questions').delete().eq('quiz_id', quizId);
+    }
+    if (questionRows.length > 0) {
+      const qPayloads = questionRows.map((q, i) => ({
+        quiz_id: quizId,
+        order_index: i,
+        question_text: q.text.trim(),
+        options: q.opts,
+        correct_index: q.correct,
+        explanation: q.expl.trim() || null
+      }));
+      const { error: qErr } = await supabaseClient.from('quiz_questions').insert(qPayloads);
+      if (qErr) { msg.textContent = 'Erreur questions : ' + qErr.message; msg.className = 'form-msg error'; btn.disabled = false; return; }
+    }
+
+    msg.textContent = 'Enregistré !'; msg.className = 'form-msg ok';
+    await loadData(); renderQuizzes();
+    btn.disabled = false;
+    setTimeout(() => closeModal('quizModal'), 800);
+  }
+
+  async function togglePublishQuiz(id, current) {
+    await supabaseClient.from('quizzes').update({ is_published: !current }).eq('id', id);
+    await loadData(); renderQuizzes();
+  }
+
+  async function deleteQuiz(id, title) {
+    if (!confirm(`Supprimer le quiz "${title}" et toutes ses questions ?`)) return;
+    await supabaseClient.from('quiz_questions').delete().eq('quiz_id', id);
+    await supabaseClient.from('quizzes').delete().eq('id', id);
+    await loadData(); renderQuizzes();
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+
+  // Close modal on backdrop click
+  ['lessonModal','quizModal'].forEach(id => {
+    document.getElementById(id).addEventListener('click', e => {
+      if (e.target === document.getElementById(id)) closeModal(id);
+    });
+  });
+</script>
+
+</body>
+</html>
