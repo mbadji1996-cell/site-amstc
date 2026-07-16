@@ -49,10 +49,9 @@
   .mc-deco-1{width:220px;height:220px;background:var(--gold);top:-80px;right:-60px;}
   .mc-deco-2{width:120px;height:120px;background:var(--white);bottom:-40px;left:-30px;}
 
-  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;position:relative;gap:14px;}
-  .mc-brand{display:flex;flex-direction:column;gap:2px;}
-  .mc-org{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.35);}
-  .mc-title-label{font-family:var(--display);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.02em;}
+  .mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative;gap:14px;}
+  .mc-logo{height:22px;width:auto;filter:brightness(0) invert(1);flex-shrink:0;}
+  .mc-title-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--display);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.65);letter-spacing:0.02em;white-space:nowrap;}
   .mc-qr-wrap{background:var(--white);border-radius:8px;padding:4px;width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
   #mcQr{width:100%;height:100%;}
 
@@ -194,10 +193,8 @@
       <div class="mc-deco mc-deco-2"></div>
 
       <div class="mc-top">
-        <div class="mc-brand">
-          <p class="mc-org">AMSTC</p>
-          <p class="mc-title-label">Carte de membre</p>
-        </div>
+        <img class="mc-logo" src="../assets/logo-mark-sm.png" alt="AMSTC">
+        <p class="mc-title-label">Carte de membre</p>
         <div class="mc-qr-wrap"><img id="mcQr" alt="QR code" style="width:100%;height:100%;object-fit:contain;"></div>
       </div>
 
