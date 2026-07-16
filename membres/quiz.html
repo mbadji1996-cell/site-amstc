@@ -41,6 +41,11 @@
 
   /* Loading */
   .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
   /* ======================== INTRO SCREEN ======================== */
   #introScreen{padding:32px 0 60px;}
@@ -158,6 +163,7 @@
   <div id="introScreen" style="display:none;">
     <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
     <div style="height:20px;"></div>
+    <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
     <div class="quiz-intro-card">
       <div class="quiz-icon"><i class="ti ti-rosette"></i></div>
       <h1 id="quizTitle">Quiz</h1>
@@ -244,12 +250,40 @@
   let currentQ = 0, userAnswers = [], timerInterval = null, timeLeft = 0;
   const LETTERS = ['A','B','C','D'];
 
+  function renderCardStatusBanner(state) {
+    const el = document.getElementById('cardStatusBanner');
+    if (state === 'grace') {
+      el.className = 'card-status-banner';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = '';
+    } else if (state === 'blocked') {
+      el.className = 'card-status-banner blocked';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce quiz n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
   (async () => {
     if (!quizId) { location.href = 'medical.html'; return; }
-    const profile = await requireApprovedMember('connexion.html');
-    if (!profile) return;
-    userId = profile.id;
+    const result = await requireActiveMember('connexion.html');
+    if (!result) return;
+    userId = result.profile.id;
     document.getElementById('signoutBtn').style.display = '';
+
+    if (result.state === 'blocked') {
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('introScreen').style.display = '';
+      renderCardStatusBanner('blocked');
+      document.getElementById('quizTitle').textContent = 'Quiz verrouillé';
+      document.getElementById('quizDesc').textContent = '';
+      document.getElementById('pillQuestions').style.display = 'none';
+      document.getElementById('pillDuration').style.display = 'none';
+      document.getElementById('startBtn').style.display = 'none';
+      return;
+    }
+    renderCardStatusBanner(result.state);
 
     const [quizRes, qRes, attRes] = await Promise.all([
       supabaseClient.from('quizzes').select('*').eq('id', quizId).eq('is_published', true).single(),

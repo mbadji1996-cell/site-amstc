@@ -75,6 +75,11 @@
 
   /* Empty / loading */
   .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
@@ -145,14 +150,32 @@
   let currentUserId = null;
   let currentProgress = 0;
 
+  function cardStatusBannerHtml(state) {
+    if (state === 'grace') {
+      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+    }
+    return '';
+  }
+
   (async () => {
     if (!courseId) { location.href = 'daara.html'; return; }
 
-    const profile = await requireApprovedMember('connexion.html');
-    if (!profile) return;
+    const result = await requireActiveMember('connexion.html');
+    if (!result) return;
+    const profile = result.profile;
 
     currentUserId = profile.id;
     document.getElementById('signoutBtn').style.display = '';
+
+    if (result.state === 'blocked') {
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('pageContent').style.display = '';
+      document.getElementById('courseContent').innerHTML = '';
+      document.getElementById('courseTitle').textContent = 'Cours verrouillé';
+      document.querySelector('.progress-card').style.display = 'none';
+      document.getElementById('courseContent').insertAdjacentHTML('beforebegin', '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce cours n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>');
+      return;
+    }
 
     const [courseRes, progressRes] = await Promise.all([
       supabaseClient.from('daara_courses').select('*').eq('id', courseId).eq('is_published', true).single(),
@@ -166,6 +189,7 @@
 
     renderCourse(course);
     setProgress(currentProgress, false);
+    document.getElementById('courseContent').insertAdjacentHTML('beforebegin', cardStatusBannerHtml(result.state));
 
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';

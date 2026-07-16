@@ -156,9 +156,17 @@ année) suit la convention : une carte valable jusqu'en année N expire le
 (jusqu'au 1er mars N+1) pendant lequel un bandeau de rappel s'affiche sur
 le tableau de bord et sur les pages de contenu réservé, mais l'accès reste
 ouvert. Passé le 1er mars N+1, l'accès aux Formations, Réalisations et
-Documents officiels réservés (le système "contenu réservé" - pas l'Espace
-Daara, ni les Enseignements Médicaux/Quiz, ni la Boutique) est coupé
-côté base de données (RLS), pas seulement côté affichage.
+Documents officiels réservés est coupé côté base de données (RLS), pas
+seulement côté affichage.
+
+La page "Formations" regroupe trois modules : Espace Daara, Enseignements
+Médicaux (+ Quiz), et les formations/réalisations "Autres" (le système
+"contenu réservé" générique). La restriction couvre les trois - voir aussi
+`supabase/phase11-restriction-daara-medical.sql` (à exécuter après ce
+script), qui étend `is_active_member()` aux tables `daara_courses`,
+`daara_progress`, `medical_lessons`, `quizzes`, `quiz_questions` et
+`quiz_attempts`. La Boutique et les paiements (adhésion/cotisations)
+restent inchangés, gérés par `is_approved_member()`.
 
 **Interrupteur global** : cette coupure ne s'applique que si l'admin l'a
 explicitement activée. Dans `membres/cartes-admin.html`, un bouton

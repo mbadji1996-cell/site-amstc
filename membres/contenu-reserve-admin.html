@@ -167,6 +167,31 @@
     return "Formation";
   }
 
+  function stripDiacritics(s) {
+    let out = '';
+    for (const ch of String(s).normalize('NFD')) {
+      const code = ch.codePointAt(0);
+      if (code < 0x0300 || code > 0x036f) out += ch; // retire les marques diacritiques combinantes
+    }
+    return out;
+  }
+
+  // Supabase Storage refuse les clés contenant espaces/accents/caractères
+  // spéciaux ("Invalid key"). On ne garde que [a-zA-Z0-9._-], en
+  // remplaçant le reste par des tirets, tout en gardant l'extension.
+  function sanitizeFileName(name) {
+    const dot = name.lastIndexOf('.');
+    const base = dot > 0 ? name.slice(0, dot) : name;
+    const ext = dot > 0 ? name.slice(dot + 1) : '';
+    let clean = '';
+    for (const ch of stripDiacritics(base)) {
+      clean += /[a-zA-Z0-9._-]/.test(ch) ? ch : '-';
+    }
+    clean = clean.replace(/-+/g, '-').replace(/^-+|-+$/g, '') || 'fichier';
+    const cleanExt = stripDiacritics(ext).replace(/[^a-zA-Z0-9]/g, '');
+    return cleanExt ? `${clean}.${cleanExt}` : clean;
+  }
+
   const DOCUMENTS_BUCKET = "documents-reserves";
   const form = document.getElementById("itemForm");
   const messageEl = document.getElementById("formMessage");
@@ -296,7 +321,7 @@
 
     if (category === "document") {
       if (newFile) {
-        const path = `${Date.now()}-${newFile.name}`;
+        const path = `${Date.now()}-${sanitizeFileName(newFile.name)}`;
         const { error: uploadError } = await supabaseClient.storage
           .from(DOCUMENTS_BUCKET)
           .upload(path, newFile);

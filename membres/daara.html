@@ -89,6 +89,11 @@
   .course-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
 
   .empty{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
+  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:20px 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text strong{color:var(--green-deep);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
@@ -131,6 +136,7 @@
 </div>
 
 <div class="wrap">
+  <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <p class="empty" id="loadingMsg">Chargement des cours…</p>
 
   <div id="pageContent" style="display:none;">
@@ -157,11 +163,34 @@
 <script>
   let allCourses = [], progressMap = {}, currentUserId = null, currentCategory = 'islam';
 
+  function renderCardStatusBanner(state) {
+    const el = document.getElementById('cardStatusBanner');
+    if (state === 'grace') {
+      el.className = 'card-status-banner';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = '';
+    } else if (state === 'blocked') {
+      el.className = 'card-status-banner blocked';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
   (async () => {
-    const profile = await requireApprovedMember('connexion.html');
-    if (!profile) return;
-    currentUserId = profile.id;
+    const result = await requireActiveMember('connexion.html');
+    if (!result) return;
+    currentUserId = result.profile.id;
     document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    renderCardStatusBanner(result.state);
+
+    if (result.state === 'blocked') {
+      document.getElementById('loadingMsg').style.display = '';
+      document.getElementById('loadingMsg').textContent = "L'Espace Daara est verrouillé le temps de renouveler votre carte.";
+      return;
+    }
 
     const [coursesRes, progressRes] = await Promise.all([
       supabaseClient.from('daara_courses').select('*').eq('is_published', true).order('category').order('order_index'),
@@ -172,7 +201,6 @@
 
     updateHeroChips();
 
-    document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
     renderPage();
   })();
