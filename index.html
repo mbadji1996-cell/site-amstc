@@ -112,7 +112,7 @@
   .nav-dropdown.open .nav-dropdown-menu{
     opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
   }
-  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap;}
+  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap; color:#0B2E17;}
   .nav-dropdown-menu a::after{display:none;}
   .nav-dropdown-menu a:hover{background:var(--paper-alt);}
 
@@ -135,7 +135,7 @@
       display:none;
     }
     .nav-dropdown.open .nav-dropdown-menu{display:flex; flex-direction:column;}
-    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:var(--ink);}
+    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:#0B2E17;}
   }
 
   /* ===== Hero ===== */
@@ -691,6 +691,13 @@
   const NAV_DESKTOP_BREAKPOINT = 1180;
   function isNavDesktop(){ return window.innerWidth > NAV_DESKTOP_BREAKPOINT; }
   let dropdownCloseTimer = null;
+  function refreshDropdownText(dropdown){
+    // Certains navigateurs mobiles (compression de données, WebView anciens)
+    // laissent le texte invisible après un simple bascule d'affichage :
+    // réassigner textContent force un nouveau rendu du texte.
+    dropdown.querySelectorAll('.nav-dropdown-menu a').forEach(a => { a.textContent = a.textContent; });
+    void dropdown.offsetHeight;
+  }
   function openDropdown(dropdown){
     clearTimeout(dropdownCloseTimer);
     document.querySelectorAll('.nav-dropdown.open').forEach(d => {
@@ -701,6 +708,7 @@
     });
     dropdown.classList.add('open');
     dropdown.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'true');
+    refreshDropdownText(dropdown);
   }
   document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
     const trigger = dropdown.querySelector('.nav-dropdown-trigger');
@@ -724,6 +732,7 @@
       closeAllDropdowns();
       dropdown.classList.toggle('open', !isOpen);
       trigger.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) refreshDropdownText(dropdown);
     });
   });
   document.addEventListener('click', closeAllDropdowns);
