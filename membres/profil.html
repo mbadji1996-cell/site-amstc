@@ -21,52 +21,72 @@
   body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
   a{color:inherit;text-decoration:none;}
 
-  header{background:var(--green-deep);padding:0;}
+  header{background:var(--green-deep);}
   .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
   .logo-img{height:38px;}
   .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
 
-  .wrap{max-width:760px;margin:0 auto;padding:0 24px 60px;}
-  .page-header{padding:32px 0 24px;}
+  .wrap{max-width:700px;margin:0 auto;padding:0 24px 60px;}
+  .page-header{padding:28px 0 20px;}
   .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;}
   .back:hover{opacity:0.75;}
-  .page-title{font-family:var(--display);font-size:clamp(1.5rem,4vw,1.9rem);font-weight:600;color:var(--green-deep);}
+  .page-title{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:600;color:var(--green-deep);}
 
-  /* Carte membre */
-  .member-card{background:var(--green-deep);border-radius:18px;padding:24px 26px;margin-bottom:22px;color:var(--white);}
-  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
-  .mc-org{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.45);margin-bottom:4px;}
-  .mc-name{font-family:var(--display);font-size:1.1rem;font-weight:600;color:var(--gold);}
-  .mc-specialty{font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:2px;}
-  .mc-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green-deep);flex-shrink:0;}
-  .mc-fields{display:flex;gap:24px;flex-wrap:wrap;}
+  /* ===== CARTE MEMBRE ===== */
+  .member-card{
+    position:relative;overflow:hidden;border-radius:20px;padding:26px 28px 24px;margin-bottom:20px;
+    background:linear-gradient(135deg, #063318 0%, #06441C 45%, #0A6130 100%);
+    box-shadow:0 12px 40px rgba(6,68,28,0.35);
+  }
+  /* Decorative circles */
+  .mc-deco{position:absolute;border-radius:50%;opacity:0.07;}
+  .mc-deco-1{width:220px;height:220px;background:var(--gold);top:-80px;right:-60px;}
+  .mc-deco-2{width:120px;height:120px;background:var(--white);bottom:-40px;left:-30px;}
+
+  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;position:relative;}
+  .mc-brand{display:flex;flex-direction:column;gap:2px;}
+  .mc-org{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.35);}
+  .mc-title{font-family:var(--display);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.02em;}
+  .mc-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--green-deep);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+
+  .mc-name{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--gold);letter-spacing:0.01em;margin-bottom:3px;position:relative;}
+  .mc-specialty{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:20px;position:relative;}
+
+  .mc-fields{display:flex;gap:20px;flex-wrap:wrap;position:relative;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
   .mc-field{}
-  .mc-field-label{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.4);margin-bottom:2px;}
-  .mc-field-val{font-size:0.85rem;color:var(--white);}
-  .mc-field-val.num{font-family:var(--mono);}
-  .mc-field-val.active{color:#5DCAA5;font-weight:600;}
+  .mc-field-label{font-family:var(--mono);font-size:0.56rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.35);margin-bottom:3px;}
+  .mc-field-val{font-size:0.85rem;color:rgba(255,255,255,0.85);font-weight:500;}
+  .mc-field-val.num{font-family:var(--mono);font-size:0.78rem;letter-spacing:0.04em;}
+  .mc-field-val.active{color:#5DCAA5;font-weight:700;}
   .mc-field-val.warn{color:var(--gold);font-weight:600;}
 
+  /* Status pill on card */
+  .mc-status-pill{position:absolute;top:0;right:0;font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:999px;}
+  .mc-status-pill.active{background:rgba(29,158,117,0.25);color:#5DCAA5;border:1px solid rgba(29,158,117,0.3);}
+  .mc-status-pill.pending{background:rgba(248,183,24,0.2);color:var(--gold);border:1px solid rgba(248,183,24,0.25);}
+  .mc-status-pill.warn{background:rgba(178,59,59,0.2);color:#F58080;border:1px solid rgba(178,59,59,0.25);}
+
   /* Section cards */
-  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;}
-  .section-title{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
-  .edit-btn{font-family:var(--body);font-size:0.82rem;font-weight:600;color:var(--green);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0;}
-  .edit-btn:hover{color:var(--green-deep);}
+  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px;}
+  .section-title{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+  .edit-btn{font-family:var(--body);font-size:0.82rem;font-weight:600;color:var(--green);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;padding:5px 10px;border-radius:8px;transition:background .15s;}
+  .edit-btn:hover{background:var(--paper-alt);color:var(--green-deep);}
 
   /* Info rows */
   .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .info-row:last-child{border-bottom:none;}
-  .info-label{font-size:0.85rem;color:#5A6C60;}
+  .info-label{font-size:0.84rem;color:#5A6C60;display:flex;align-items:center;gap:6px;}
+  .info-label i{font-size:14px;color:#B0BFB5;}
   .info-val{font-size:0.9rem;color:var(--ink);font-weight:500;text-align:right;}
-  .info-val.empty{color:#aaa;font-weight:400;font-style:italic;}
+  .info-val.empty{color:#c0c8c2;font-weight:400;font-style:italic;font-size:0.82rem;}
 
-  /* Edit form inline */
-  .edit-form{display:none;margin-top:14px;border-top:1px solid var(--paper-alt);padding-top:18px;}
+  /* Edit form */
+  .edit-form{display:none;margin-top:16px;border-top:1px solid var(--paper-alt);padding-top:18px;}
   .edit-form.open{display:block;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-  .form-group label{display:block;font-size:0.8rem;font-weight:600;color:var(--green-deep);margin-bottom:5px;}
-  .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);}
+  .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;margin-bottom:5px;}
+  .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);transition:border-color .15s;}
   .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);}
   .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
   .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
@@ -81,27 +101,27 @@
   .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
   .btn-ghost:hover{border-color:var(--green);}
   .btn:disabled{opacity:0.5;cursor:not-allowed;}
-  .btn-row{display:flex;gap:10px;margin-top:4px;}
+  .btn-row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;}
+
+  /* Renewal */
+  .renewal-alert{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
+  .renewal-alert i{font-size:18px;flex-shrink:0;margin-top:1px;}
 
   /* Payment history */
   .pay-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .pay-row:last-child{border-bottom:none;}
   .pay-year{font-family:var(--mono);font-size:0.9rem;font-weight:600;color:var(--green-deep);}
-  .pay-method{font-size:0.8rem;color:#5A6C60;}
-  .pay-status{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;}
+  .pay-method{font-size:0.78rem;color:#5A6C60;margin-top:1px;}
+  .pay-status{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;}
   .s-confirmed{background:#EAF3DE;color:#3B6D11;}
   .s-pending{background:#FEF6E4;color:var(--gold-deep);}
   .s-rejected{background:#FDEEEE;color:#B23B3B;}
-
-  /* Renewal form */
-  .renewal-alert{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:0.88rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
-  .renewal-alert i{font-size:18px;flex-shrink:0;margin-top:1px;}
 
   .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
-  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{gap:16px;}}
+  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{gap:14px;}}
 </style>
 </head>
 <body>
@@ -124,15 +144,22 @@
 
     <!-- Carte membre virtuelle -->
     <div class="member-card">
+      <div class="mc-deco mc-deco-1"></div>
+      <div class="mc-deco mc-deco-2"></div>
+
       <div class="mc-top">
-        <div>
-          <p class="mc-org">AMSTC · Carte de membre</p>
-          <p class="mc-name" id="mcName">—</p>
-          <p class="mc-specialty" id="mcSpecialty"></p>
+        <div class="mc-brand">
+          <p class="mc-org">AMSTC</p>
+          <p class="mc-title">Carte de membre</p>
         </div>
         <div class="mc-avatar" id="mcAvatar">?</div>
       </div>
-      <div class="mc-fields">
+
+      <p class="mc-name" id="mcName">—</p>
+      <p class="mc-specialty" id="mcSpecialty"></p>
+
+      <div class="mc-fields" style="position:relative;">
+        <span class="mc-status-pill" id="mcStatusPill">…</span>
         <div class="mc-field">
           <p class="mc-field-label">N° Membre</p>
           <p class="mc-field-val num" id="mcNumber">—</p>
@@ -143,7 +170,7 @@
         </div>
         <div class="mc-field">
           <p class="mc-field-label">Adhésion <span id="mcYear"></span></p>
-          <p class="mc-field-val" id="mcStatus">Vérification…</p>
+          <p class="mc-field-val" id="mcStatus">…</p>
         </div>
       </div>
     </div>
@@ -151,21 +178,38 @@
     <!-- Informations personnelles -->
     <div class="section-card">
       <p class="section-title">
-        Informations personnelles
-        <button class="edit-btn" onclick="toggleEdit()"><i class="ti ti-edit"></i> Modifier</button>
+        <span><i class="ti ti-user" style="margin-right:5px;"></i>Informations personnelles</span>
+        <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()"><i class="ti ti-edit"></i> Modifier</button>
       </p>
       <div id="infoView">
-        <div class="info-row"><span class="info-label">Nom complet</span><span class="info-val" id="infName">—</span></div>
-        <div class="info-row"><span class="info-label">E-mail</span><span class="info-val" id="infEmail">—</span></div>
-        <div class="info-row"><span class="info-label">Téléphone</span><span class="info-val" id="infPhone">—</span></div>
-        <div class="info-row"><span class="info-label">Spécialité</span><span class="info-val" id="infSpecialty">—</span></div>
-        <div class="info-row"><span class="info-label">Ville</span><span class="info-val" id="infCity">—</span></div>
+        <div class="info-row">
+          <span class="info-label"><i class="ti ti-user"></i>Nom complet</span>
+          <span class="info-val" id="infName">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label"><i class="ti ti-mail"></i>E-mail</span>
+          <span class="info-val" id="infEmail">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label"><i class="ti ti-phone"></i>Téléphone</span>
+          <span class="info-val" id="infPhone">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label"><i class="ti ti-stethoscope"></i>Spécialité</span>
+          <span class="info-val" id="infSpecialty">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label"><i class="ti ti-map-pin"></i>Ville</span>
+          <span class="info-val" id="infCity">—</span>
+        </div>
       </div>
+
       <div class="edit-form" id="editForm">
         <div class="form-grid">
           <div class="form-group"><label>Nom complet</label><input id="eName" type="text"></div>
           <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
-          <div class="form-group"><label>Spécialité</label>
+          <div class="form-group">
+            <label>Spécialité</label>
             <select id="eSpecialty">
               <option value="">— Choisir —</option>
               <option>Médecine générale</option><option>Pédiatrie</option><option>Chirurgie générale</option>
@@ -187,7 +231,7 @@
 
     <!-- Adhésion & renouvellement -->
     <div class="section-card">
-      <p class="section-title">Adhésion annuelle</p>
+      <p class="section-title"><i class="ti ti-credit-card" style="margin-right:5px;"></i>Adhésion annuelle</p>
 
       <div id="renewalAlert" style="display:none;">
         <div class="renewal-alert">
@@ -210,7 +254,8 @@
             <input id="payRef" type="text" placeholder="Ex : WV-20240501-XXXX">
           </div>
         </div>
-        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;">
+        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
+          <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
           Montant : <strong style="color:var(--green-deep);">10 000 FCFA</strong>.
           Envoyez la cotisation au compte AMSTC puis saisissez la référence de transaction.
           Un administrateur confirmera votre paiement sous 48h.
@@ -221,7 +266,6 @@
         </button>
       </div>
 
-      <!-- Historique -->
       <div id="payHistory" style="margin-top:14px;"></div>
     </div>
 
@@ -245,7 +289,6 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
-
     renderProfile(profile);
     await loadPayments(profile.id);
   })();
@@ -254,32 +297,46 @@
     const name = p.full_name || p.email || '—';
     const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 
-    // Carte
     document.getElementById('mcName').textContent = name;
     document.getElementById('mcAvatar').textContent = initials;
     document.getElementById('mcSpecialty').textContent = p.specialty || '';
-    document.getElementById('mcNumber').textContent = 'AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0, 4).toUpperCase();
+    document.getElementById('mcNumber').textContent = 'AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase();
     document.getElementById('mcSince').textContent = p.member_since || currentYear;
     document.getElementById('mcYear').textContent = currentYear;
 
-    // Info view
-    const empty = v => v ? v : '<span class="empty">Non renseigné</span>';
+    const empty = v => v ? escHtml(v) : '<span class="empty">Non renseigné</span>';
     document.getElementById('infName').innerHTML = empty(p.full_name);
     document.getElementById('infEmail').textContent = p.email || '—';
     document.getElementById('infPhone').innerHTML = empty(p.phone);
     document.getElementById('infSpecialty').innerHTML = empty(p.specialty);
     document.getElementById('infCity').innerHTML = empty(p.city);
 
-    // Edit form
     document.getElementById('eName').value = p.full_name || '';
     document.getElementById('ePhone').value = p.phone || '';
     document.getElementById('eSpecialty').value = p.specialty || '';
     document.getElementById('eCity').value = p.city || '';
   }
 
+  function updateCardStatus(status) {
+    const statusEl = document.getElementById('mcStatus');
+    const pill = document.getElementById('mcStatusPill');
+    if (status === 'active') {
+      statusEl.textContent = 'Active'; statusEl.className = 'mc-field-val active';
+      pill.textContent = '● Active'; pill.className = 'mc-status-pill active';
+    } else if (status === 'pending') {
+      statusEl.textContent = 'En attente'; statusEl.className = 'mc-field-val warn';
+      pill.textContent = '◐ En attente'; pill.className = 'mc-status-pill pending';
+    } else {
+      statusEl.textContent = 'Non réglée'; statusEl.className = 'mc-field-val warn';
+      pill.textContent = '○ Non réglée'; pill.className = 'mc-status-pill warn';
+    }
+  }
+
   function toggleEdit() {
     const form = document.getElementById('editForm');
-    form.classList.toggle('open');
+    const btn = document.getElementById('editToggleBtn');
+    const isOpen = form.classList.toggle('open');
+    btn.innerHTML = isOpen ? '<i class="ti ti-x"></i> Annuler' : '<i class="ti ti-edit"></i> Modifier';
     document.getElementById('editMsg').className = 'form-msg';
   }
 
@@ -305,28 +362,17 @@
   async function loadPayments(userId) {
     const { data } = await supabaseClient.from('membership_payments')
       .select('*').eq('user_id', userId).order('year', { ascending: false });
-
     const payments = data || [];
     const thisYear = payments.find(p => p.year === currentYear);
 
-    // Badge statut carte
-    const statusEl = document.getElementById('mcStatus');
-    if (thisYear && thisYear.status === 'confirmed') {
-      statusEl.textContent = 'Active';
-      statusEl.className = 'mc-field-val active';
-    } else if (thisYear && thisYear.status === 'pending') {
-      statusEl.textContent = 'En attente';
-      statusEl.className = 'mc-field-val warn';
-    } else {
-      statusEl.textContent = 'Non réglée';
-      statusEl.className = 'mc-field-val warn';
-    }
+    if (thisYear?.status === 'confirmed') updateCardStatus('active');
+    else if (thisYear?.status === 'pending') updateCardStatus('pending');
+    else updateCardStatus('none');
 
-    // Alerte renouvellement
     if (!thisYear || thisYear.status === 'rejected') {
       document.getElementById('renewalAlert').style.display = '';
       document.getElementById('renewalForm').style.display = '';
-      if (thisYear && thisYear.status === 'rejected') {
+      if (thisYear?.status === 'rejected') {
         document.getElementById('renewalAlertText').textContent =
           'Votre paiement de ' + currentYear + ' a été refusé. Veuillez soumettre à nouveau.';
       }
@@ -336,21 +382,20 @@
         'Votre paiement est en attente de confirmation par un administrateur.';
     }
 
-    // Historique
     const hist = document.getElementById('payHistory');
     if (payments.length === 0) {
-      hist.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement enregistré.</p>';
+      hist.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);padding-top:8px;">Aucun paiement enregistré.</p>';
       return;
     }
-    const labels = { wave: 'Wave', orange_money: 'Orange Money', especes: 'Espèces' };
-    hist.innerHTML = '<p style="font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
+    const labels = { wave:'Wave', orange_money:'Orange Money', especes:'Espèces' };
+    hist.innerHTML = '<p style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:10px;">Historique</p>' +
       payments.map(p => `
         <div class="pay-row">
           <div>
             <p class="pay-year">Cotisation ${p.year}</p>
-            <p class="pay-method">${labels[p.payment_method] || '—'}${p.payment_reference ? ' · ' + p.payment_reference : ''}</p>
+            <p class="pay-method">${labels[p.payment_method] || '—'}${p.payment_reference ? ' · <span style="font-family:var(--mono);font-size:0.75rem;">' + escHtml(p.payment_reference) + '</span>' : ''}</p>
           </div>
-          <span class="pay-status s-${p.status}">${p.status === 'confirmed' ? 'Confirmé' : p.status === 'pending' ? 'En attente' : 'Refusé'}</span>
+          <span class="pay-status s-${p.status}">${p.status==='confirmed'?'Confirmé':p.status==='pending'?'En attente':'Refusé'}</span>
         </div>`).join('');
   }
 
@@ -360,27 +405,25 @@
     const method = document.getElementById('payMethod').value;
     const ref = document.getElementById('payRef').value.trim();
     if (!ref) { msg.textContent = 'Saisissez la référence de transaction.'; msg.className = 'form-msg error'; return; }
-
     btn.disabled = true; msg.className = 'form-msg';
+
     const { error } = await supabaseClient.from('membership_payments').upsert({
-      user_id: currentProfile.id,
-      year: currentYear,
-      amount_fcfa: 10000,
-      payment_method: method,
-      payment_reference: ref,
-      status: 'pending',
+      user_id: currentProfile.id, year: currentYear, amount_fcfa: 10000,
+      payment_method: method, payment_reference: ref, status: 'pending',
     }, { onConflict: 'user_id,year' });
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; btn.disabled = false;
     } else {
       document.getElementById('renewalForm').style.display = 'none';
-      document.getElementById('renewalAlertText').textContent =
-        'Paiement soumis. Un administrateur le confirmera sous 48h.';
+      document.getElementById('renewalAlertText').textContent = 'Paiement soumis. Un administrateur le confirmera sous 48h.';
       document.getElementById('renewalAlert').style.display = '';
+      updateCardStatus('pending');
       await loadPayments(currentProfile.id);
     }
   }
+
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut(); window.location.href = 'connexion.html';

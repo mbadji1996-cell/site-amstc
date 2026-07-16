@@ -43,8 +43,16 @@
 
   .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
 
+  /* Search */
+  .search-wrap{padding:20px 0 4px;position:relative;}
+  .search-input{width:100%;padding:11px 42px 11px 16px;border:1.5px solid var(--line);border-radius:999px;font-family:var(--body);font-size:0.9rem;background:var(--white);color:var(--ink);transition:border-color .18s;}
+  .search-input:focus{outline:none;border-color:var(--amber);}
+  .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:#B0A090;pointer-events:none;}
+  .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;color:#8A9E8F;background:none;border:none;cursor:pointer;display:none;padding:2px 4px;}
+  .search-clear.show{display:block;}
+
   /* Filters */
-  .filter-row{display:flex;gap:8px;padding:24px 0 20px;flex-wrap:wrap;}
+  .filter-row{display:flex;gap:8px;padding:8px 0 20px;flex-wrap:wrap;}
   .filter-btn{font-size:0.85rem;font-weight:600;padding:8px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;transition:all .18s;}
   .filter-btn.active{background:var(--amber-light);border-color:var(--amber);color:var(--amber-dark);}
   .filter-btn:hover:not(.active){border-color:var(--amber);color:var(--amber-dark);}
@@ -161,6 +169,11 @@
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
+    <div class="search-wrap">
+      <input class="search-input" id="searchInput" type="text" placeholder="Rechercher un article…" oninput="onSearch()">
+      <i class="ti ti-search search-icon" id="searchIcon"></i>
+      <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="ti ti-x"></i></button>
+    </div>
     <div class="filter-row" id="filterRow">
       <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">Tout voir</button>
     </div>
@@ -241,7 +254,7 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   let allProducts = [], cart = {}, userId = null, payMethod = 'wave';
-  let currentFilter = 'all', allCategories = [];
+  let currentFilter = 'all', allCategories = [], searchQuery = '';
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
@@ -284,11 +297,38 @@
     renderProducts();
   }
 
+  function onSearch() {
+    searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+    const icon = document.getElementById('searchIcon');
+    const clear = document.getElementById('searchClear');
+    icon.style.display = searchQuery ? 'none' : '';
+    clear.classList.toggle('show', !!searchQuery);
+    renderProducts();
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    searchQuery = '';
+    document.getElementById('searchIcon').style.display = '';
+    document.getElementById('searchClear').classList.remove('show');
+    renderProducts();
+  }
+
   function renderProducts() {
-    const items = currentFilter === 'all' ? allProducts : allProducts.filter(p => p.category === currentFilter);
+    let items = currentFilter === 'all' ? allProducts : allProducts.filter(p => p.category === currentFilter);
+    if (searchQuery) {
+      items = items.filter(p =>
+        p.name.toLowerCase().includes(searchQuery) ||
+        (p.description || '').toLowerCase().includes(searchQuery) ||
+        (p.category || '').toLowerCase().includes(searchQuery)
+      );
+    }
     const grid = document.getElementById('productsGrid');
     if (items.length === 0) {
-      grid.innerHTML = '<p class="empty" style="grid-column:1/-1;">Aucun article disponible.</p>';
+      const msg = searchQuery
+        ? `Aucun résultat pour "<strong>${escHtml(searchQuery)}</strong>".`
+        : 'Aucun article disponible.';
+      grid.innerHTML = `<p class="empty" style="grid-column:1/-1;">${msg}</p>`;
       return;
     }
     grid.innerHTML = items.map(p => {

@@ -23,57 +23,76 @@
   body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
   a{color:inherit;text-decoration:none;}
 
-  header{background:var(--green-deep);padding:0;}
+  header{background:var(--green-deep);}
   .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
   .logo-img{height:38px;}
   .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;transition:border-color .18s;}
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
 
   /* Hero */
-  .hero{background:var(--green-deep);padding:32px 0 40px;}
+  .hero{background:var(--green-deep);padding:32px 0 0;}
   .hero-inner{max-width:900px;margin:0 auto;padding:0 24px;}
   .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;}
   .back:hover{color:var(--gold);}
-  .hero-icon{width:52px;height:52px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--teal-dark);margin-bottom:14px;}
-  .hero h1{font-family:var(--display);font-size:clamp(1.6rem,4vw,2rem);font-weight:600;color:var(--white);margin-bottom:6px;}
-  .hero-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;}
+
+  .hero-content{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+  .hero-left{}
+  .hero-icon{width:48px;height:48px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--teal-dark);margin-bottom:12px;}
+  .hero h1{font-family:var(--display);font-size:clamp(1.5rem,4vw,1.9rem);font-weight:600;color:var(--white);margin-bottom:4px;}
+  .hero-sub{color:rgba(255,255,255,0.55);font-size:0.9rem;}
+
+  /* Progress chips in hero */
+  .hero-chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .hchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:7px 14px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.7rem;color:rgba(255,255,255,0.7);}
+  .hchip strong{color:var(--white);}
+  .hchip.done{border-color:rgba(29,158,117,0.4);color:#7EDED3;}
+  .hchip.done strong{color:#5DCAA5;}
+
+  /* Hero tab bar */
+  .cat-tabs{display:flex;gap:0;border-top:1px solid rgba(255,255,255,0.08);margin-top:0;}
+  .cat-tab{font-family:var(--mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;padding:14px 22px;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;color:rgba(255,255,255,0.45);cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:6px;}
+  .cat-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+  .cat-tab:hover:not(.active){color:rgba(255,255,255,0.75);}
 
   /* Main */
   .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
 
-  /* Category tabs */
-  .cat-tabs{display:flex;gap:10px;padding:24px 0 20px;}
-  .cat-tab{font-family:var(--body);font-size:0.9rem;font-weight:600;padding:9px 22px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;transition:all .18s;}
-  .cat-tab.active{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dark);}
-  .cat-tab:hover:not(.active){border-color:var(--teal);color:var(--teal-dark);}
+  /* Continue section */
+  .continue-section{padding:24px 0 8px;}
+  .section-lbl{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
 
-  /* Course list */
-  .courses-grid{display:flex;flex-direction:column;gap:12px;padding-bottom:60px;}
-  .course-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:box-shadow .18s,transform .18s;}
-  .course-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.09);transform:translateY(-2px);}
-  .course-thumb{width:52px;height:52px;border-radius:10px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--teal-dark);flex-shrink:0;}
-  .course-body{flex:1;min-width:0;}
-  .course-title{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--green-deep);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .course-desc{font-size:0.85rem;color:#5A6C60;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .course-meta{display:flex;align-items:center;gap:14px;}
-  .course-duration{font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;display:flex;align-items:center;gap:4px;}
-  .prog-row{display:flex;align-items:center;gap:8px;flex:1;}
+  .continue-card{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:8px;transition:box-shadow .18s;}
+  .continue-card:hover{box-shadow:0 4px 16px rgba(6,68,28,0.09);}
+  .continue-thumb{width:44px;height:44px;border-radius:9px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal-dark);flex-shrink:0;}
+  .continue-body{flex:1;min-width:0;}
+  .continue-title{font-family:var(--display);font-size:0.92rem;font-weight:600;color:var(--green-deep);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .continue-prog{display:flex;align-items:center;gap:8px;}
   .prog-bar{flex:1;height:4px;background:var(--paper-alt);border-radius:2px;}
   .prog-fill{height:100%;border-radius:2px;background:var(--teal);transition:width .4s ease;}
-  .prog-label{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;min-width:30px;}
-  .completed-badge{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.04em;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:999px;}
-  .course-arrow{font-size:20px;color:#c0ccc5;flex-shrink:0;}
+  .prog-lbl{font-family:var(--mono);font-size:0.7rem;color:var(--teal-dark);font-weight:600;min-width:28px;}
+  .btn-continue{background:var(--teal);color:var(--white);border:none;padding:8px 16px;border-radius:999px;font-size:0.8rem;font-weight:600;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:5px;transition:background .18s;}
+  .btn-continue:hover{background:var(--teal-dark);}
 
-  /* Empty / loading */
+  /* Course list */
+  .courses-section{padding:20px 0 60px;}
+  .courses-grid{display:flex;flex-direction:column;gap:10px;}
+  .course-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .18s,transform .18s;}
+  .course-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.09);transform:translateY(-2px);}
+  .course-thumb{width:48px;height:48px;border-radius:10px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--teal-dark);flex-shrink:0;overflow:hidden;}
+  .course-thumb img{width:100%;height:100%;object-fit:cover;}
+  .course-body{flex:1;min-width:0;}
+  .course-title{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--green-deep);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .course-desc{font-size:0.8rem;color:#5A6C60;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;}
+  .course-meta{display:flex;align-items:center;gap:12px;}
+  .course-duration{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;display:flex;align-items:center;gap:3px;}
+  .completed-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:4px;}
+  .course-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
+
   .empty{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
-
-  @media(max-width:500px){
-    .course-card{flex-wrap:wrap;}
-    .course-thumb{width:40px;height:40px;font-size:18px;}
-  }
+  @media(max-width:500px){.cat-tab{padding:12px 14px;font-size:0.68rem;}}
 </style>
 </head>
 <body>
@@ -88,9 +107,26 @@
 <div class="hero">
   <div class="hero-inner">
     <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-book"></i></div>
-    <h1>Espace Daara</h1>
-    <p class="hero-sub">Cours en ligne — Islam & Tarikha</p>
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-icon"><i class="ti ti-book"></i></div>
+        <h1>Espace Daara</h1>
+        <p class="hero-sub">Cours en ligne — Islam & Tarikha</p>
+      </div>
+      <div class="hero-chips" id="heroChips" style="display:none;">
+        <div class="hchip done"><i class="ti ti-check"></i> <strong id="chipDone">0</strong> terminé(s)</div>
+        <div class="hchip"><i class="ti ti-player-play"></i> <strong id="chipInProgress">0</strong> en cours</div>
+        <div class="hchip"><i class="ti ti-book"></i> <strong id="chipTotal">0</strong> au total</div>
+      </div>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" id="tab-islam" onclick="setCategory('islam')">
+        <i class="ti ti-moon-stars"></i> Islam
+      </button>
+      <button class="cat-tab" id="tab-tarikha" onclick="setCategory('tarikha')">
+        <i class="ti ti-star"></i> Tarikha
+      </button>
+    </div>
   </div>
 </div>
 
@@ -98,16 +134,17 @@
   <p class="empty" id="loadingMsg">Chargement des cours…</p>
 
   <div id="pageContent" style="display:none;">
-    <div class="cat-tabs">
-      <button class="cat-tab active" id="tab-islam" onclick="setCategory('islam')">
-        <i class="ti ti-moon"></i> Islam
-      </button>
-      <button class="cat-tab" id="tab-tarikha" onclick="setCategory('tarikha')">
-        <i class="ti ti-star"></i> Tarikha
-      </button>
+    <!-- Section "Reprendre" -->
+    <div class="continue-section" id="continueSection" style="display:none;">
+      <p class="section-lbl"><i class="ti ti-player-play"></i> Reprendre où vous en étiez</p>
+      <div id="continueList"></div>
     </div>
 
-    <div class="courses-grid" id="coursesList"></div>
+    <!-- All courses -->
+    <div class="courses-section">
+      <p class="section-lbl" id="coursesLabel"><i class="ti ti-list"></i> Tous les cours</p>
+      <div class="courses-grid" id="coursesList"></div>
+    </div>
   </div>
 </div>
 
@@ -118,87 +155,136 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
-  let allCourses = [];
-  let progressMap = {};
-  let currentUserId = null;
-  let currentCategory = 'islam';
+  let allCourses = [], progressMap = {}, currentUserId = null, currentCategory = 'islam';
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
     if (!profile) return;
-
     currentUserId = profile.id;
     document.getElementById('signoutBtn').style.display = '';
 
-    await loadData();
-    document.getElementById('loadingMsg').style.display = 'none';
-    document.getElementById('pageContent').style.display = '';
-    renderCourses();
-  })();
-
-  async function loadData() {
     const [coursesRes, progressRes] = await Promise.all([
       supabaseClient.from('daara_courses').select('*').eq('is_published', true).order('category').order('order_index'),
       supabaseClient.from('daara_progress').select('*').eq('user_id', currentUserId)
     ]);
     allCourses = coursesRes.data || [];
     (progressRes.data || []).forEach(p => { progressMap[p.course_id] = p; });
+
+    updateHeroChips();
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    renderPage();
+  })();
+
+  function updateHeroChips() {
+    const catCourses = allCourses.filter(c => c.category === currentCategory);
+    const done = catCourses.filter(c => (progressMap[c.id]?.progress_pct ?? 0) === 100).length;
+    const inProgress = catCourses.filter(c => {
+      const pct = progressMap[c.id]?.progress_pct ?? 0;
+      return pct > 0 && pct < 100;
+    }).length;
+    document.getElementById('chipDone').textContent = done;
+    document.getElementById('chipInProgress').textContent = inProgress;
+    document.getElementById('chipTotal').textContent = catCourses.length;
+    document.getElementById('heroChips').style.display = catCourses.length > 0 ? '' : 'none';
   }
 
   function setCategory(cat) {
     currentCategory = cat;
-    ['islam', 'tarikha'].forEach(c => {
-      document.getElementById('tab-' + c).classList.toggle('active', c === cat);
-    });
+    ['islam','tarikha'].forEach(c => document.getElementById('tab-' + c).classList.toggle('active', c === cat));
+    updateHeroChips();
+    renderPage();
+  }
+
+  function renderPage() {
+    renderContinue();
     renderCourses();
+  }
+
+  function renderContinue() {
+    const inProgress = allCourses
+      .filter(c => c.category === currentCategory)
+      .filter(c => { const pct = progressMap[c.id]?.progress_pct ?? 0; return pct > 0 && pct < 100; })
+      .sort((a,b) => {
+        const da = progressMap[a.id]?.updated_at || '';
+        const db = progressMap[b.id]?.updated_at || '';
+        return db.localeCompare(da);
+      })
+      .slice(0, 2);
+
+    const section = document.getElementById('continueSection');
+    const list = document.getElementById('continueList');
+    if (inProgress.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = '';
+    list.innerHTML = inProgress.map(c => {
+      const pct = progressMap[c.id]?.progress_pct ?? 0;
+      return `<a class="continue-card" href="cours.html?id=${encodeURIComponent(c.id)}">
+        <div class="continue-thumb">
+          ${c.cover_image ? `<img src="${escHtml(c.cover_image)}" alt="">` : `<i class="ti ti-book"></i>`}
+        </div>
+        <div class="continue-body">
+          <p class="continue-title">${escHtml(c.title)}</p>
+          <div class="continue-prog">
+            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+            <span class="prog-lbl">${pct}%</span>
+          </div>
+        </div>
+        <button class="btn-continue" onclick="event.preventDefault();location.href='cours.html?id=${encodeURIComponent(c.id)}'">
+          <i class="ti ti-player-play"></i> Reprendre
+        </button>
+      </a>`;
+    }).join('');
   }
 
   function renderCourses() {
     const list = document.getElementById('coursesList');
     const filtered = allCourses.filter(c => c.category === currentCategory);
+    const lbl = document.getElementById('coursesLabel');
 
     if (filtered.length === 0) {
       list.innerHTML = '<p class="empty">Aucun cours disponible pour le moment.</p>';
+      lbl.style.display = 'none';
       return;
     }
+    lbl.style.display = '';
 
     list.innerHTML = filtered.map(course => {
       const prog = progressMap[course.id];
       const pct = prog ? prog.progress_pct : 0;
       const done = pct === 100;
-      const durationLabel = course.duration_min ? course.duration_min + ' min' : '';
 
-      return `
-        <a class="course-card" href="cours.html?id=${encodeURIComponent(course.id)}">
-          <div class="course-thumb">
-            <i class="ti ti-book"></i>
-          </div>
-          <div class="course-body">
-            <p class="course-title">${escHtml(course.title)}</p>
-            <p class="course-desc">${escHtml(course.description || '')}</p>
-            <div class="course-meta">
-              ${durationLabel ? `<span class="course-duration"><i class="ti ti-clock"></i>${durationLabel}</span>` : ''}
-              ${done
-                ? '<span class="completed-badge"><i class="ti ti-check"></i> Terminé</span>'
-                : `<div class="prog-row">
+      return `<a class="course-card" href="cours.html?id=${encodeURIComponent(course.id)}">
+        <div class="course-thumb">
+          ${course.cover_image ? `<img src="${escHtml(course.cover_image)}" alt="">` : `<i class="ti ti-book"></i>`}
+        </div>
+        <div class="course-body">
+          <p class="course-title">${escHtml(course.title)}</p>
+          <p class="course-desc">${escHtml(course.description || '')}</p>
+          <div class="course-meta">
+            ${course.duration_min ? `<span class="course-duration"><i class="ti ti-clock"></i>${course.duration_min} min</span>` : ''}
+            ${done
+              ? '<span class="completed-badge"><i class="ti ti-check"></i> Terminé</span>'
+              : pct > 0
+                ? `<div class="continue-prog" style="flex:1;max-width:180px;">
                     <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-                    <span class="prog-label">${pct}%</span>
+                    <span class="prog-lbl">${pct}%</span>
                   </div>`
-              }
-            </div>
+                : '<span style="font-family:var(--mono);font-size:0.68rem;color:#c0ccc5;text-transform:uppercase;letter-spacing:0.04em;">Non démarré</span>'
+            }
           </div>
-          <i class="ti ti-chevron-right course-arrow"></i>
-        </a>`;
+        </div>
+        <i class="ti ti-chevron-right course-arrow"></i>
+      </a>`;
     }).join('');
   }
 
   function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
-    await signOut();
-    window.location.href = 'connexion.html';
+    await signOut(); window.location.href = 'connexion.html';
   });
 </script>
 
