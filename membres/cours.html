@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cours - Daara AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --teal-light:#E1F5EE; --teal:#1D9E75; --teal-dark:#0F6E56;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.7;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);padding:0;}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  /* Progress bar fixed top */
+  .top-progress{position:sticky;top:0;z-index:100;height:4px;background:var(--paper-alt);}
+  .top-progress-fill{height:100%;background:var(--teal);transition:width .5s ease;}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+
+  /* Course header */
+  .course-header{padding:32px 0 28px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:18px;}
+  .back:hover{color:var(--gold-deep);opacity:0.75;}
+  .cat-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;background:var(--teal-light);color:var(--teal-dark);padding:4px 12px;border-radius:999px;margin-bottom:12px;}
+  .course-header h1{font-family:var(--display);font-size:clamp(1.5rem,4vw,2rem);font-weight:600;color:var(--green-deep);margin-bottom:8px;}
+  .course-meta-row{display:flex;align-items:center;gap:16px;color:#5A6C60;font-size:0.85rem;flex-wrap:wrap;}
+  .course-meta-row i{font-size:15px;}
+  .prog-inline{display:flex;align-items:center;gap:8px;}
+  .prog-bar-sm{width:80px;height:4px;background:var(--paper-alt);border-radius:2px;}
+  .prog-fill-sm{height:100%;border-radius:2px;background:var(--teal);}
+
+  /* Content */
+  .course-content{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:32px 36px;margin-bottom:28px;}
+  .course-content h2{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--green-deep);margin:24px 0 10px;}
+  .course-content h2:first-child{margin-top:0;}
+  .course-content h3{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--green-deep);margin:18px 0 8px;}
+  .course-content p{color:#3C4E44;margin-bottom:14px;}
+  .course-content ul,.course-content ol{color:#3C4E44;padding-left:22px;margin-bottom:14px;}
+  .course-content li{margin-bottom:6px;}
+  .course-content strong{color:var(--green-deep);}
+  .course-content blockquote{border-left:3px solid var(--teal);padding:12px 18px;background:var(--teal-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--teal-dark);}
+  .course-content .arabic{font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--green-deep);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
+
+  /* Progress actions */
+  .progress-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:40px;}
+  .progress-card-title{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:14px;}
+  .progress-slider-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .progress-slider-row input[type=range]{flex:1;accent-color:var(--teal);}
+  .progress-slider-val{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--teal-dark);min-width:36px;text-align:right;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:0.9rem;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--teal);color:var(--white);}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-done{background:var(--green);color:var(--white);}
+  .btn-done:hover{background:var(--green-deep);}
+  .btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .save-msg{font-size:0.85rem;color:var(--teal-dark);margin-top:10px;display:none;}
+  .save-msg.show{display:block;}
+
+  /* Empty / loading */
+  .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+
+  @media(max-width:600px){
+    .course-content{padding:22px 18px;}
+    .progress-card{padding:18px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar" style="width:0%"></div></div>
+
+<div class="wrap">
+  <p class="loading-full" id="loadingMsg">Chargement du cours…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="course-header">
+      <a class="back" href="daara.html"><i class="ti ti-arrow-left"></i> Retour au Daara</a>
+      <div class="cat-pill" id="catPill"><i class="ti ti-book"></i> <span id="catLabel">Islam</span></div>
+      <h1 id="courseTitle">Titre du cours</h1>
+      <div class="course-meta-row">
+        <span id="durationMeta" style="display:none;"><i class="ti ti-clock"></i> <span id="durationVal"></span></span>
+        <div class="prog-inline">
+          <i class="ti ti-chart-line" style="color:var(--teal);"></i>
+          <div class="prog-bar-sm"><div class="prog-fill-sm" id="progBarTop" style="width:0%"></div></div>
+          <span style="font-family:var(--mono);font-size:0.75rem;color:#5A6C60;" id="progLabelTop">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-content" id="courseContent">
+      <!-- contenu chargé dynamiquement -->
+    </div>
+
+    <div class="progress-card">
+      <p class="progress-card-title">Ma progression</p>
+      <div class="progress-slider-row">
+        <input type="range" id="progressSlider" min="0" max="100" step="5" value="0">
+        <span class="progress-slider-val" id="sliderVal">0%</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="saveBtn"><i class="ti ti-device-floppy"></i> Sauvegarder</button>
+        <button class="btn btn-done" id="doneBtn"><i class="ti ti-check"></i> Marquer comme terminé</button>
+      </div>
+      <p class="save-msg" id="saveMsg"></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const courseId = params.get('id');
+  let currentUserId = null;
+  let currentProgress = 0;
+
+  (async () => {
+    if (!courseId) { location.href = 'daara.html'; return; }
+
+    const profile = await requireApprovedMember('connexion.html');
+    if (!profile) return;
+
+    currentUserId = profile.id;
+    document.getElementById('signoutBtn').style.display = '';
+
+    const [courseRes, progressRes] = await Promise.all([
+      supabaseClient.from('daara_courses').select('*').eq('id', courseId).eq('is_published', true).single(),
+      supabaseClient.from('daara_progress').select('*').eq('user_id', currentUserId).eq('course_id', courseId).single()
+    ]);
+
+    if (!courseRes.data) { location.href = 'daara.html'; return; }
+
+    const course = courseRes.data;
+    currentProgress = progressRes.data ? progressRes.data.progress_pct : 0;
+
+    renderCourse(course);
+    setProgress(currentProgress, false);
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+  })();
+
+  function renderCourse(course) {
+    document.title = course.title + ' - Daara AMSTC';
+    document.getElementById('courseTitle').textContent = course.title;
+    document.getElementById('catLabel').textContent = course.category === 'islam' ? 'Islam' : 'Tarikha';
+
+    if (course.duration_min) {
+      document.getElementById('durationMeta').style.display = '';
+      document.getElementById('durationVal').textContent = course.duration_min + ' min';
+    }
+
+    // Rendu du contenu (markdown simple ou HTML)
+    const content = course.content || '<p><em>Contenu à venir.</em></p>';
+    document.getElementById('courseContent').innerHTML = renderContent(content);
+  }
+
+  function renderContent(text) {
+    // Rendu Markdown basique (titres, gras, italique, listes, citations)
+    return text
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, s => '<ul>' + s + '</ul>')
+      .replace(/\[arabic\]([\s\S]*?)\[\/arabic\]/g, '<div class="arabic">$1</div>')
+      .split('\n\n')
+      .map(p => p.startsWith('<') ? p : '<p>' + p + '</p>')
+      .join('\n');
+  }
+
+  function setProgress(pct, updateSlider = true) {
+    currentProgress = pct;
+    if (updateSlider) {
+      document.getElementById('progressSlider').value = pct;
+      document.getElementById('sliderVal').textContent = pct + '%';
+    }
+    document.getElementById('topBar').style.width = pct + '%';
+    document.getElementById('progBarTop').style.width = pct + '%';
+    document.getElementById('progLabelTop').textContent = pct + '%';
+  }
+
+  document.getElementById('progressSlider').addEventListener('input', function() {
+    document.getElementById('sliderVal').textContent = this.value + '%';
+    document.getElementById('topBar').style.width = this.value + '%';
+    document.getElementById('progBarTop').style.width = this.value + '%';
+    document.getElementById('progLabelTop').textContent = this.value + '%';
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => saveProgress(
+    parseInt(document.getElementById('progressSlider').value)
+  ));
+
+  document.getElementById('doneBtn').addEventListener('click', () => saveProgress(100));
+
+  async function saveProgress(pct) {
+    const saveBtn = document.getElementById('saveBtn');
+    const doneBtn = document.getElementById('doneBtn');
+    const msg = document.getElementById('saveMsg');
+    saveBtn.disabled = true;
+    doneBtn.disabled = true;
+    msg.className = 'save-msg';
+
+    const { error } = await supabaseClient.from('daara_progress').upsert({
+      user_id: currentUserId,
+      course_id: courseId,
+      progress_pct: pct,
+      completed_at: pct === 100 ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,course_id' });
+
+    if (error) {
+      msg.textContent = 'Erreur lors de la sauvegarde. Réessayez.';
+      msg.style.color = '#B23B3B';
+    } else {
+      setProgress(pct);
+      msg.textContent = pct === 100 ? 'Cours marqué comme terminé !' : 'Progression sauvegardée.';
+      msg.style.color = 'var(--teal-dark)';
+    }
+    msg.className = 'save-msg show';
+    saveBtn.disabled = false;
+    doneBtn.disabled = false;
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

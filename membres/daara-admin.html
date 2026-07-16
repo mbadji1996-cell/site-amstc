@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion Daara - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --teal-light:#E1F5EE; --teal:#1D9E75; --teal-dark:#0F6E56;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);padding:0;}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+  .page-header{padding:32px 0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .page-title-group{}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:0.9rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--gold);color:var(--green-deep);}
+  .btn-primary:hover{background:var(--gold-deep);color:var(--white);}
+  .btn-danger{background:#FDEEEE;color:#B23B3B;border:1px solid #f5c0c0;}
+  .btn-danger:hover{background:#f5c0c0;}
+  .btn-sm{padding:7px 14px;font-size:0.8rem;}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--green);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* Form modal overlay */
+  .modal-overlay{position:fixed;inset:0;background:rgba(6,28,14,0.55);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--white);border-radius:var(--radius);padding:30px 32px;width:100%;max-width:680px;position:relative;}
+  .modal-title{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--green-deep);margin-bottom:22px;}
+  .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#8A9E8F;display:flex;align-items:center;padding:4px;}
+  .modal-close:hover{color:var(--ink);}
+
+  /* Form */
+  .form-group{margin-bottom:18px;}
+  label{display:block;font-size:0.82rem;font-weight:600;color:var(--green-deep);margin-bottom:6px;}
+  .hint{font-size:0.78rem;color:#8A9E8F;margin-top:3px;}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;
+    font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);
+    transition:border-color .18s;
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);}
+  textarea{resize:vertical;min-height:180px;font-family:var(--mono);font-size:0.82rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .toggle-row{display:flex;align-items:center;gap:10px;}
+  .toggle-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer;}
+  .toggle-label{font-size:0.9rem;color:var(--ink);}
+  .form-msg{margin-top:14px;padding:10px 14px;border-radius:8px;font-size:0.88rem;display:none;}
+  .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
+  .form-msg.success{background:var(--teal-light);color:var(--teal-dark);display:block;}
+  .form-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
+
+  /* Courses table */
+  .courses-section{margin-bottom:60px;}
+  .section-label{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:12px;}
+  .table-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:13px 16px;font-size:0.88rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--paper);}
+  .badge-cat{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 8px;border-radius:999px;}
+  .badge-islam{background:var(--teal-light);color:var(--teal-dark);}
+  .badge-tarikha{background:#EEEDFE;color:#534AB7;}
+  .badge-pub{background:#EAF3DE;color:#3B6D11;}
+  .badge-draft{background:var(--paper-alt);color:#5A6C60;}
+  .td-actions{display:flex;gap:6px;justify-content:flex-end;}
+  .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:30px;}
+  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+  @media(max-width:640px){.form-row{grid-template-columns:1fr;}.table-wrap{overflow-x:auto;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+    <div class="page-header">
+      <div class="page-title-group">
+        <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
+        <h1 class="page-title">Gestion du Daara</h1>
+      </div>
+      <button class="btn btn-primary" onclick="openForm()">
+        <i class="ti ti-plus"></i> Nouveau cours
+      </button>
+    </div>
+
+    <div class="courses-section">
+      <p class="section-label">Islam</p>
+      <div class="table-wrap" style="margin-bottom:24px;">
+        <table>
+          <thead><tr><th>Titre</th><th>Durée</th><th>Ordre</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="tableIslam"><tr class="empty-row"><td colspan="5">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+
+      <p class="section-label">Tarikha</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Titre</th><th>Durée</th><th>Ordre</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="tableTarikha"><tr class="empty-row"><td colspan="5">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal formulaire -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeForm()"><i class="ti ti-x"></i></button>
+    <h2 class="modal-title" id="formTitle">Nouveau cours</h2>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fCategory">Catégorie</label>
+        <select id="fCategory">
+          <option value="islam">Islam</option>
+          <option value="tarikha">Tarikha</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="fOrder">Ordre d'affichage</label>
+        <input type="number" id="fOrder" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="fTitle">Titre du cours *</label>
+      <input type="text" id="fTitle" placeholder="Ex : Fondements de l'Aqida">
+    </div>
+
+    <div class="form-group">
+      <label for="fDesc">Description courte</label>
+      <input type="text" id="fDesc" placeholder="Résumé en une phrase">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fDuration">Durée estimée (minutes)</label>
+        <input type="number" id="fDuration" value="30" min="0">
+      </div>
+      <div class="form-group">
+        <label for="fCover">URL de l'image de couverture</label>
+        <input type="text" id="fCover" placeholder="https://…">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="fContent">Contenu du cours (Markdown)</label>
+      <textarea id="fContent" placeholder="## Introduction&#10;&#10;Texte du cours en Markdown…&#10;&#10;Pour du texte arabe : [arabic]بسم الله[/arabic]"></textarea>
+      <p class="hint">Supports : ## Titre, **gras**, *italique*, - liste, > citation, [arabic]…[/arabic]</p>
+    </div>
+
+    <div class="form-group">
+      <div class="toggle-row">
+        <input type="checkbox" id="fPublished">
+        <label class="toggle-label" for="fPublished">Publier immédiatement</label>
+      </div>
+    </div>
+
+    <div class="form-msg" id="formMsg"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeForm()">Annuler</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="saveCourse()">
+        <i class="ti ti-device-floppy"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let editingId = null;
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    await loadCourses();
+  })();
+
+  async function loadCourses() {
+    const { data, error } = await supabaseClient
+      .from('daara_courses').select('*').order('category').order('order_index');
+
+    const islam = (data || []).filter(c => c.category === 'islam');
+    const tarikha = (data || []).filter(c => c.category === 'tarikha');
+    renderTable('tableIslam', islam);
+    renderTable('tableTarikha', tarikha);
+  }
+
+  function renderTable(tbodyId, courses) {
+    const tbody = document.getElementById(tbodyId);
+    if (courses.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucun cours.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = courses.map(c => `
+      <tr>
+        <td><strong>${escHtml(c.title)}</strong></td>
+        <td>${c.duration_min ? c.duration_min + ' min' : '—'}</td>
+        <td>${c.order_index}</td>
+        <td><span class="badge-cat ${c.is_published ? 'badge-pub' : 'badge-draft'}">${c.is_published ? 'Publié' : 'Brouillon'}</span></td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-sm btn-ghost" onclick="editCourse('${c.id}')"><i class="ti ti-edit"></i> Modifier</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCourse('${c.id}', '${escHtml(c.title)}')"><i class="ti ti-trash"></i></button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function openForm(course) {
+    editingId = course ? course.id : null;
+    document.getElementById('formTitle').textContent = course ? 'Modifier le cours' : 'Nouveau cours';
+    document.getElementById('fCategory').value = course ? course.category : 'islam';
+    document.getElementById('fOrder').value = course ? course.order_index : 0;
+    document.getElementById('fTitle').value = course ? course.title : '';
+    document.getElementById('fDesc').value = course ? (course.description || '') : '';
+    document.getElementById('fDuration').value = course ? (course.duration_min || 30) : 30;
+    document.getElementById('fCover').value = course ? (course.cover_image || '') : '';
+    document.getElementById('fContent').value = course ? (course.content || '') : '';
+    document.getElementById('fPublished').checked = course ? course.is_published : false;
+    document.getElementById('formMsg').className = 'form-msg';
+    document.getElementById('formModal').classList.add('open');
+  }
+
+  function closeForm() {
+    document.getElementById('formModal').classList.remove('open');
+    editingId = null;
+  }
+
+  async function editCourse(id) {
+    const { data } = await supabaseClient.from('daara_courses').select('*').eq('id', id).single();
+    if (data) openForm(data);
+  }
+
+  async function saveCourse() {
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('formMsg');
+    const title = document.getElementById('fTitle').value.trim();
+    if (!title) { showMsg('Le titre est obligatoire.', 'error'); return; }
+
+    btn.disabled = true;
+    msg.className = 'form-msg';
+
+    const payload = {
+      category: document.getElementById('fCategory').value,
+      order_index: parseInt(document.getElementById('fOrder').value) || 0,
+      title,
+      description: document.getElementById('fDesc').value.trim() || null,
+      duration_min: parseInt(document.getElementById('fDuration').value) || 0,
+      cover_image: document.getElementById('fCover').value.trim() || null,
+      content: document.getElementById('fContent').value.trim() || null,
+      is_published: document.getElementById('fPublished').checked,
+    };
+
+    let error;
+    if (editingId) {
+      ({ error } = await supabaseClient.from('daara_courses').update(payload).eq('id', editingId));
+    } else {
+      ({ error } = await supabaseClient.from('daara_courses').insert(payload));
+    }
+
+    if (error) {
+      showMsg('Erreur : ' + error.message, 'error');
+    } else {
+      closeForm();
+      await loadCourses();
+    }
+    btn.disabled = false;
+  }
+
+  async function deleteCourse(id, title) {
+    if (!confirm('Supprimer le cours "' + title + '" ? Cette action est irréversible.')) return;
+    const { error } = await supabaseClient.from('daara_courses').delete().eq('id', id);
+    if (!error) await loadCourses();
+  }
+
+  function showMsg(text, type) {
+    const el = document.getElementById('formMsg');
+    el.textContent = text;
+    el.className = 'form-msg ' + type;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('formModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeForm();
+  });
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
