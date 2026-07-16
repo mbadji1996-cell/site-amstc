@@ -392,21 +392,13 @@
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
           Découvrir l'AMSTC <span class="chevron" aria-hidden="true"></span>
         </button>
-        <div class="nav-dropdown-menu">
-          <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
-          <a href="#nos-actions">Nos actions</a>
-          <a href="#historique">Historique</a>
-        </div>
+        <div class="nav-dropdown-menu" data-links='[["#qui-sommes-nous","Qui sommes-nous ?"],["#nos-actions","Nos actions"],["#historique","Historique"]]'></div>
       </div>
       <div class="nav-dropdown">
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
           Nos activités <span class="chevron" aria-hidden="true"></span>
         </button>
-        <div class="nav-dropdown-menu">
-          <a href="actualites.html">Réalisations</a>
-          <a href="formations.html">Formation</a>
-          <a href="projets.html">Projets</a>
-        </div>
+        <div class="nav-dropdown-menu" data-links='[["actualites.html","Réalisations"],["formations.html","Formation"],["projets.html","Projets"]]'></div>
       </div>
       <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a>
       <a href="membres/connexion.html">Espace membres</a>
@@ -674,6 +666,14 @@
   document.getElementById('year').textContent = new Date().getFullYear();
   const toggle = document.getElementById('menuToggle');
   const links = document.getElementById('navLinks');
+  // Les liens des sous-menus sont générés ici plutôt qu'écrits en HTML statique :
+  // certains réseaux mobiles passent les pages par un proxy de compression qui
+  // simplifie le contenu non visible au premier chargement, ce qui vidait le
+  // texte de ces sous-menus (initialement masqués) chez certains visiteurs.
+  document.querySelectorAll('.nav-dropdown-menu[data-links]').forEach(menu => {
+    const items = JSON.parse(menu.dataset.links);
+    menu.innerHTML = items.map(([href, label]) => `<a href="${href}">${label}</a>`).join('');
+  });
   function closeAllDropdowns(){
     document.querySelectorAll('.nav-dropdown.open').forEach(d => {
       d.classList.remove('open');
