@@ -114,7 +114,7 @@
   .nav-dropdown.open .nav-dropdown-menu{
     opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
   }
-  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap; color:#0B2E17;}
+  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap; color:#0B2E17; transform:translateZ(0); will-change:opacity;}
   .nav-dropdown-menu a::after{display:none;}
   .nav-dropdown-menu a:hover{background:var(--paper-alt);}
 
@@ -137,7 +137,7 @@
       display:none;
     }
     .nav-dropdown.open .nav-dropdown-menu{display:flex; flex-direction:column;}
-    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:#0B2E17;}
+    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:#0B2E17; transform:translateZ(0); will-change:opacity;}
   }
 
   /* ===== Hero ===== */
@@ -709,11 +709,19 @@
   function isNavDesktop(){ return window.innerWidth > NAV_DESKTOP_BREAKPOINT; }
   let dropdownCloseTimer = null;
   function refreshDropdownText(dropdown){
-    // Certains navigateurs mobiles (compression de données, WebView anciens)
-    // laissent le texte invisible après un simple bascule d'affichage :
-    // réassigner textContent force un nouveau rendu du texte.
+    // Bug de rendu Android où le texte reste peint en blanc/absent après un
+    // changement d'affichage dynamique (confirmé : le texte est bien présent
+    // dans la page, "Rechercher dans la page" le trouve, seul l'affichage
+    // à l'écran est en cause). On force une recomposition visuelle du calque.
+    const menu = dropdown.querySelector('.nav-dropdown-menu');
     dropdown.querySelectorAll('.nav-dropdown-menu a').forEach(a => { a.textContent = a.textContent; });
     void dropdown.offsetHeight;
+    if (menu){
+      menu.style.opacity = '0.99';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => { menu.style.opacity = ''; });
+      });
+    }
   }
   function openDropdown(dropdown){
     clearTimeout(dropdownCloseTimer);
