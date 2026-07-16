@@ -45,30 +45,31 @@
     background:linear-gradient(135deg, #063318 0%, #06441C 45%, #0A6130 100%);
     box-shadow:0 12px 40px rgba(6,68,28,0.35);
   }
-  /* Decorative circles */
   .mc-deco{position:absolute;border-radius:50%;opacity:0.07;}
   .mc-deco-1{width:220px;height:220px;background:var(--gold);top:-80px;right:-60px;}
   .mc-deco-2{width:120px;height:120px;background:var(--white);bottom:-40px;left:-30px;}
 
-  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;position:relative;}
+  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;position:relative;gap:14px;}
   .mc-brand{display:flex;flex-direction:column;gap:2px;}
   .mc-org{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.35);}
-  .mc-title{font-family:var(--display);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.02em;}
-  .mc-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--green-deep);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+  .mc-title-label{font-family:var(--display);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.02em;}
+  .mc-qr-wrap{background:var(--white);border-radius:8px;padding:4px;width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  #mcQr{width:100%;height:100%;}
 
-  .mc-name{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--gold);letter-spacing:0.01em;margin-bottom:3px;position:relative;}
-  .mc-specialty{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:20px;position:relative;}
+  .mc-identity{display:flex;align-items:center;gap:14px;margin-bottom:20px;position:relative;}
+  .mc-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(248,183,24,0.4);}
+  .mc-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--green-deep);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+  .mc-name{font-family:var(--display);font-size:1.2rem;font-weight:700;color:var(--gold);letter-spacing:0.01em;line-height:1.25;}
+  .mc-domain{font-size:0.8rem;color:rgba(255,255,255,0.55);margin-top:2px;}
 
-  .mc-fields{display:flex;gap:20px;flex-wrap:wrap;position:relative;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
-  .mc-field{}
+  .mc-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;position:relative;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
   .mc-field-label{font-family:var(--mono);font-size:0.56rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.35);margin-bottom:3px;}
-  .mc-field-val{font-size:0.85rem;color:rgba(255,255,255,0.85);font-weight:500;}
-  .mc-field-val.num{font-family:var(--mono);font-size:0.78rem;letter-spacing:0.04em;}
+  .mc-field-val{font-size:0.83rem;color:rgba(255,255,255,0.85);font-weight:500;word-break:break-word;}
+  .mc-field-val.num{font-family:var(--mono);font-size:0.76rem;letter-spacing:0.04em;}
   .mc-field-val.active{color:#5DCAA5;font-weight:700;}
   .mc-field-val.warn{color:var(--gold);font-weight:600;}
 
-  /* Status pill on card */
-  .mc-status-pill{position:absolute;top:0;right:0;font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:999px;}
+  .mc-status-pill{position:absolute;top:-38px;right:0;font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:999px;}
   .mc-status-pill.active{background:rgba(29,158,117,0.25);color:#5DCAA5;border:1px solid rgba(29,158,117,0.3);}
   .mc-status-pill.pending{background:rgba(248,183,24,0.2);color:var(--gold);border:1px solid rgba(248,183,24,0.25);}
   .mc-status-pill.warn{background:rgba(178,59,59,0.2);color:#F58080;border:1px solid rgba(178,59,59,0.25);}
@@ -87,10 +88,18 @@
   .info-val{font-size:0.9rem;color:var(--ink);font-weight:500;text-align:right;}
   .info-val.empty{color:#c0c8c2;font-weight:400;font-style:italic;font-size:0.82rem;}
 
+  /* Photo upload */
+  .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+  .photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--paper-alt);flex-shrink:0;}
+  .photo-actions{display:flex;flex-direction:column;gap:6px;}
+  .photo-actions input[type=file]{font-size:0.8rem;}
+  .photo-hint{font-size:0.74rem;color:#8A9E8F;}
+
   /* Edit form */
   .edit-form{display:none;margin-top:16px;border-top:1px solid var(--paper-alt);padding-top:18px;}
   .edit-form.open{display:block;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .form-group.full{grid-column:1/-1;}
   .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;margin-bottom:5px;}
   .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);transition:border-color .15s;}
   .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);}
@@ -133,7 +142,7 @@
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
-  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{gap:14px;}}
+  @media(max-width:500px){.form-grid{grid-template-columns:1fr;}.mc-fields{grid-template-columns:1fr;gap:10px;}}
 </style>
 </head>
 <body>
@@ -173,13 +182,19 @@
       <div class="mc-top">
         <div class="mc-brand">
           <p class="mc-org">AMSTC</p>
-          <p class="mc-title">Carte de membre</p>
+          <p class="mc-title-label">Carte de membre</p>
         </div>
-        <div class="mc-avatar" id="mcAvatar">?</div>
+        <div class="mc-qr-wrap"><div id="mcQr"></div></div>
       </div>
 
-      <p class="mc-name" id="mcName">—</p>
-      <p class="mc-specialty" id="mcSpecialty"></p>
+      <div class="mc-identity">
+        <img class="mc-photo" id="mcPhoto" style="display:none;" alt="">
+        <div class="mc-avatar" id="mcAvatar">?</div>
+        <div>
+          <p class="mc-name" id="mcName">—</p>
+          <p class="mc-domain" id="mcDomain"></p>
+        </div>
+      </div>
 
       <div class="mc-fields" style="position:relative;">
         <span class="mc-status-pill" id="mcStatusPill">…</span>
@@ -192,7 +207,19 @@
           <p class="mc-field-val" id="mcSince">—</p>
         </div>
         <div class="mc-field">
-          <p class="mc-field-label">Adhésion <span id="mcYear"></span></p>
+          <p class="mc-field-label">Téléphone</p>
+          <p class="mc-field-val" id="mcPhone">—</p>
+        </div>
+        <div class="mc-field">
+          <p class="mc-field-label">E-mail</p>
+          <p class="mc-field-val" id="mcEmail">—</p>
+        </div>
+        <div class="mc-field">
+          <p class="mc-field-label">Localité</p>
+          <p class="mc-field-val" id="mcCity">—</p>
+        </div>
+        <div class="mc-field">
+          <p class="mc-field-label">Validité <span id="mcYear"></span></p>
           <p class="mc-field-val" id="mcStatus">…</p>
         </div>
       </div>
@@ -223,31 +250,48 @@
           <span class="info-val" id="infPhone">—</span>
         </div>
         <div class="info-row">
-          <span class="info-label"><i class="ti ti-stethoscope"></i>Spécialité</span>
-          <span class="info-val" id="infSpecialty">—</span>
+          <span class="info-label"><i class="ti ti-stethoscope"></i>Domaine</span>
+          <span class="info-val" id="infDomain">—</span>
         </div>
         <div class="info-row">
-          <span class="info-label"><i class="ti ti-map-pin"></i>Ville</span>
+          <span class="info-label"><i class="ti ti-map-pin"></i>Localité</span>
           <span class="info-val" id="infCity">—</span>
         </div>
       </div>
 
       <div class="edit-form" id="editForm">
+        <div class="photo-upload-row">
+          <img class="photo-preview" id="photoPreview" style="display:none;" alt="">
+          <div class="photo-actions">
+            <input type="file" id="ePhotoFile" accept="image/*" onchange="onPhotoSelected(event)">
+            <span class="photo-hint">Photo de profil (affichée sur la carte)</span>
+          </div>
+        </div>
         <div class="form-grid">
-          <div class="form-group"><label>Nom complet</label><input id="eName" type="text"></div>
-          <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
-          <div class="form-group">
-            <label>Spécialité</label>
-            <select id="eSpecialty">
-              <option value="">— Choisir —</option>
-              <option>Médecine générale</option><option>Pédiatrie</option><option>Chirurgie générale</option>
-              <option>Gynécologie-Obstétrique</option><option>Cardiologie</option><option>Neurologie</option>
-              <option>Dermatologie</option><option>Ophtalmologie</option><option>ORL</option>
-              <option>Psychiatrie</option><option>Radiologie</option><option>Anesthésie-Réanimation</option>
-              <option>Pharmacie</option><option>Odontologie</option><option>Autre</option>
+          <div class="form-group"><label>Titre</label>
+            <select id="eTitle">
+              <option value="">—</option>
+              <option value="Dr">Dr</option>
+              <option value="Pr">Pr</option>
             </select>
           </div>
-          <div class="form-group"><label>Ville</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
+          <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
+          <div class="form-group"><label>Prénom</label><input id="eFirstName" type="text"></div>
+          <div class="form-group"><label>Nom</label><input id="eLastName" type="text"></div>
+          <div class="form-group">
+            <label>Domaine</label>
+            <select id="eDomain" onchange="onDomainChange()">
+              <option value="">— Choisir —</option>
+              <option value="medecine">Médecine</option>
+              <option value="pharmacie">Pharmacie</option>
+              <option value="odontologie">Odontologie</option>
+              <option value="soins_infirmiers">Soins infirmiers</option>
+              <option value="soins_obstetricaux">Soins obstétricaux</option>
+              <option value="autre">Autres à préciser</option>
+            </select>
+          </div>
+          <div class="form-group" id="domainAutreGroup" style="display:none;"><label>Précisez</label><input id="eDomainAutre" type="text"></div>
+          <div class="form-group full"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
         <div class="form-msg" id="editMsg"></div>
         <div class="btn-row">
@@ -306,9 +350,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
   let currentProfile = null;
+  let pendingPhotoBlob = null;
   const currentYear = new Date().getFullYear();
+  const DOMAIN_LABELS = {
+    medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
+    soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
+  };
 
   (async () => {
     const profile = await requireApprovedMember('connexion.html');
@@ -319,45 +369,132 @@
     document.getElementById('pageContent').style.display = '';
     renderProfile(profile);
     await loadPayments(profile.id);
+    await loadClaimStatus(profile.id);
   })();
 
-  function renderProfile(p) {
-    const name = p.full_name || p.email || '—';
-    const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  function domainLabel(p) {
+    if (p.domain === 'autre') return p.domain_autre || 'Autre';
+    return DOMAIN_LABELS[p.domain] || '';
+  }
 
-    document.getElementById('mcName').textContent = name;
-    document.getElementById('mcAvatar').textContent = initials;
-    document.getElementById('mcSpecialty').textContent = p.specialty || '';
+  function fullDisplayName(p) {
+    const parts = [p.title, p.first_name, p.last_name].filter(Boolean);
+    return parts.length ? parts.join(' ') : (p.full_name || p.email || '—');
+  }
+
+  function renderProfile(p) {
+    const displayName = fullDisplayName(p);
+    const initials = (p.full_name || displayName).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+
+    document.getElementById('mcName').textContent = displayName;
+    document.getElementById('mcDomain').textContent = domainLabel(p);
+
+    const photoEl = document.getElementById('mcPhoto');
+    const avatarEl = document.getElementById('mcAvatar');
+    if (p.photo_url) {
+      photoEl.src = p.photo_url; photoEl.style.display = '';
+      avatarEl.style.display = 'none';
+    } else {
+      photoEl.style.display = 'none';
+      avatarEl.style.display = ''; avatarEl.textContent = initials;
+    }
+
     document.getElementById('mcNumber').textContent = p.legacy_card_number
       || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
-    document.getElementById('claimBanner').style.display = p.legacy_card_number ? 'none' : '';
     document.getElementById('mcSince').textContent = p.member_since || currentYear;
+    document.getElementById('mcPhone').textContent = p.phone || '—';
+    document.getElementById('mcEmail').textContent = p.email || '—';
+    document.getElementById('mcCity').textContent = p.city || '—';
     document.getElementById('mcYear').textContent = currentYear;
+
+    renderQr(p);
 
     const empty = v => v ? escHtml(v) : '<span class="empty">Non renseigné</span>';
     document.getElementById('infName').innerHTML = empty(p.full_name);
     document.getElementById('infEmail').textContent = p.email || '—';
     document.getElementById('infPhone').innerHTML = empty(p.phone);
-    document.getElementById('infSpecialty').innerHTML = empty(p.specialty);
+    document.getElementById('infDomain').innerHTML = empty(domainLabel(p));
     document.getElementById('infCity').innerHTML = empty(p.city);
 
-    document.getElementById('eName').value = p.full_name || '';
+    document.getElementById('eTitle').value = p.title || '';
     document.getElementById('ePhone').value = p.phone || '';
-    document.getElementById('eSpecialty').value = p.specialty || '';
+    document.getElementById('eFirstName').value = p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '');
+    document.getElementById('eLastName').value = p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '');
+    document.getElementById('eDomain').value = p.domain || '';
+    document.getElementById('eDomainAutre').value = p.domain_autre || '';
     document.getElementById('eCity').value = p.city || '';
+    document.getElementById('domainAutreGroup').style.display = p.domain === 'autre' ? '' : 'none';
+    if (p.photo_url) {
+      const preview = document.getElementById('photoPreview');
+      preview.src = p.photo_url; preview.style.display = '';
+    }
+  }
+
+  function renderQr(p) {
+    const el = document.getElementById('mcQr');
+    el.innerHTML = '';
+    const number = p.legacy_card_number || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
+    const text = `AMSTC\n${fullDisplayName(p)}\nN° ${number}`;
+    new QRCode(el, { text, width: 48, height: 48, colorDark: '#06441C', colorLight: '#ffffff' });
+  }
+
+  function onDomainChange() {
+    document.getElementById('domainAutreGroup').style.display =
+      document.getElementById('eDomain').value === 'autre' ? '' : 'none';
+  }
+
+  async function onPhotoSelected(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    pendingPhotoBlob = await resizeImageFile(file);
+    const preview = document.getElementById('photoPreview');
+    preview.src = URL.createObjectURL(pendingPhotoBlob);
+    preview.style.display = '';
+  }
+
+  function resizeImageFile(file, maxSize = 480, quality = 0.85) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > height) { if (width > maxSize) { height = height * maxSize / width; width = maxSize; } }
+          else { if (height > maxSize) { width = width * maxSize / height; height = maxSize; } }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadPendingPhoto() {
+    if (!pendingPhotoBlob) return null;
+    const path = `${currentProfile.id}/photo.jpg`;
+    const { error } = await supabaseClient.storage.from('member-photos')
+      .upload(path, pendingPhotoBlob, { upsert: true, contentType: 'image/jpeg' });
+    if (error) throw error;
+    const { data } = supabaseClient.storage.from('member-photos').getPublicUrl(path);
+    return data.publicUrl + '?t=' + Date.now();
   }
 
   function updateCardStatus(status) {
     const statusEl = document.getElementById('mcStatus');
     const pill = document.getElementById('mcStatusPill');
     if (status === 'active') {
-      statusEl.textContent = 'Active'; statusEl.className = 'mc-field-val active';
+      statusEl.textContent = 'Valide'; statusEl.className = 'mc-field-val active';
       pill.textContent = '● Active'; pill.className = 'mc-status-pill active';
     } else if (status === 'pending') {
       statusEl.textContent = 'En attente'; statusEl.className = 'mc-field-val warn';
       pill.textContent = '◐ En attente'; pill.className = 'mc-status-pill pending';
     } else {
-      statusEl.textContent = 'Non réglée'; statusEl.className = 'mc-field-val warn';
+      statusEl.textContent = 'Non valide'; statusEl.className = 'mc-field-val warn';
       pill.textContent = '○ Non réglée'; pill.className = 'mc-status-pill warn';
     }
   }
@@ -373,20 +510,54 @@
   async function saveProfile() {
     const msg = document.getElementById('editMsg');
     msg.className = 'form-msg';
+
+    let photoUrl;
+    try {
+      photoUrl = await uploadPendingPhoto();
+    } catch (e) {
+      msg.textContent = "Erreur lors de l'envoi de la photo : " + e.message;
+      msg.className = 'form-msg error';
+      return;
+    }
+
+    const firstName = document.getElementById('eFirstName').value.trim();
+    const lastName = document.getElementById('eLastName').value.trim();
+    const domain = document.getElementById('eDomain').value;
+
     const payload = {
-      full_name: document.getElementById('eName').value.trim() || null,
+      title: document.getElementById('eTitle').value || null,
+      first_name: firstName || null,
+      last_name: lastName || null,
+      full_name: [firstName, lastName].filter(Boolean).join(' ') || currentProfile.full_name,
       phone: document.getElementById('ePhone').value.trim() || null,
-      specialty: document.getElementById('eSpecialty').value || null,
+      domain: domain || null,
+      domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
       city: document.getElementById('eCity').value.trim() || null,
     };
+    if (photoUrl) payload.photo_url = photoUrl;
+
     const { error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id);
     if (error) {
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
     } else {
       Object.assign(currentProfile, payload);
+      pendingPhotoBlob = null;
       renderProfile(currentProfile);
       toggleEdit();
     }
+  }
+
+  async function loadClaimStatus(userId) {
+    if (currentProfile.legacy_card_number) {
+      document.getElementById('claimBanner').style.display = 'none';
+      return;
+    }
+    const { data } = await supabaseClient
+      .from('member_cards')
+      .select('claim_status')
+      .eq('claimed_by', userId)
+      .maybeSingle();
+    document.getElementById('claimBanner').style.display = data ? 'none' : '';
   }
 
   async function loadPayments(userId) {
