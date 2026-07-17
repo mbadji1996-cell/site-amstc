@@ -262,6 +262,7 @@
 <script>
   let allProducts = [], allOrders = [];
   let editingProductId = null, orderFilter = 'all';
+  let ordersLoadError = null;
   let currentProductPhotos = [], pendingPhotoFiles = [];
   const PRODUCT_PHOTOS_BUCKET = 'boutique-photos';
   const methods = { wave: 'Wave', orange_money: 'Orange Money' };
@@ -306,6 +307,7 @@
     ]);
     allProducts = pRes.data || [];
     allOrders = oRes.data || [];
+    ordersLoadError = oRes.error || null;
 
     const { data: photoRows } = await supabaseClient
       .from('product_photos')
@@ -514,8 +516,12 @@
   }
 
   function renderOrders() {
-    const items = orderFilter === 'all' ? allOrders : allOrders.filter(o => o.status === orderFilter);
     const tbody = document.getElementById('ordersTable');
+    if (ordersLoadError) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Impossible de charger les commandes : ${escHtml(ordersLoadError.message)}</td></tr>`;
+      return;
+    }
+    const items = orderFilter === 'all' ? allOrders : allOrders.filter(o => o.status === orderFilter);
     if (items.length === 0) {
       tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Aucune commande.</td></tr>';
       return;
