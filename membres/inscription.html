@@ -168,7 +168,14 @@
     googleMessageEl.className = "form-message";
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/membres/inscription.html" }
+      options: {
+        redirectTo: window.location.origin + "/membres/inscription.html",
+        // Google garde sa propre session dans le navigateur, indépendante de
+        // Supabase : sans ce paramètre, se déconnecter puis recliquer ici
+        // ré-authentifie silencieusement le même compte Google au lieu de
+        // laisser choisir un autre compte.
+        queryParams: { prompt: "select_account" }
+      }
     });
     if (error) {
       showMessage("Erreur lors de la création du compte Google. Réessayez.", "error", googleMessageEl);
