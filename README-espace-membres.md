@@ -250,13 +250,16 @@ RLS n'est nécessaire (la policy existante s'applique déjà à toute valeur de
 `is_active_member()` : accès coupé si la carte est expirée depuis plus de
 2 mois.
 
-Dans `membres/contenu-reserve-admin.html`, choisissez le type "Bibliothèque"
-pour publier un livre ou un document PDF (image de couverture facultative,
-fichier PDF obligatoire). Les membres consultent la liste sur
-`membres/bibliotheque.html`, accessible depuis une carte dédiée sur
-`membres/formations.html` : le PDF s'affiche dans un lecteur en ligne
-(URL signée à courte durée de vie, barre d'outils masquée) sans possibilité
-de téléchargement, comme pour les Documents officiels.
+La Bibliothèque a son propre panneau d'administration, isolé du panneau
+générique "Contenu réservé" : `membres/bibliotheque-admin.html` (accessible
+depuis la carte "Bibliothèque" du Centre d'administration), pour publier un
+livre ou un document PDF (image de couverture facultative, fichier PDF
+obligatoire). Les membres consultent la liste sur `membres/bibliotheque.html`,
+accessible depuis une carte dédiée sur `membres/formations.html` : le PDF
+s'affiche dans un lecteur en ligne (URL signée à courte durée de vie, barre
+d'outils masquée) sans possibilité de téléchargement, comme pour les
+Documents officiels. `membres/contenu-reserve-admin.html` ne gère plus que
+Formation/Réalisation/Document officiel.
 
 Le tableau de bord (`membres/index.html`) affiche aussi désormais un fil
 "Activité récente" (derniers sujets du Forum, derniers albums Médiathèque
@@ -267,7 +270,7 @@ Les contenus de la Bibliothèque sont classés par section thématique
 (colonne `bib_section`, cf. `supabase/phase17-bibliotheque-sections.sql`) :
 Islam, Médecine, Pharmacie, Odontologie, Soins infirmiers et obstétricaux,
 Entrepreneuriat, Développement personnel, Autres. Choisissez la section au
-moment de publier un livre/document dans `contenu-reserve-admin.html` ;
+moment de publier un livre/document dans `bibliotheque-admin.html` ;
 `membres/bibliotheque.html` regroupe l'affichage sous ces sections (une
 section n'apparaît que si elle contient au moins un contenu publié).
 

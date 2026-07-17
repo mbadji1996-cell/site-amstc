@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contenu réservé - Gestion - Espace Membres - AMSTC</title>
+<title>Bibliothèque - Gestion - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/contenu-reserve-admin.html">
+<link rel="canonical" href="https://amstc.org/membres/bibliotheque-admin.html">
 <link rel="icon" href="../assets/logo-horizontal-sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,21 +88,13 @@
 <div class="wrap" id="pageContent" style="display:none;">
   <a class="back" href="admin.html">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
-  <h1>Contenu réservé aux membres</h1>
-  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation, une Réalisation, ou un document officiel.</p>
+  <h1>Bibliothèque</h1>
+  <p class="intro">Livres et documents PDF réservés aux membres, consultables en ligne mais non téléchargeables. Chaque contenu est classé dans une section thématique.</p>
 
   <div class="card">
     <form id="itemForm">
       <input type="hidden" id="itemId" value="">
       <input type="hidden" id="existingFilePath" value="">
-
-      <label for="category">Type de contenu</label>
-      <select id="category" required>
-        <option value="" disabled selected>Choisir...</option>
-        <option value="formation">Formation</option>
-        <option value="actualite">Réalisation</option>
-        <option value="document">Document officiel (Statuts, Règlement intérieur, rapports...)</option>
-      </select>
 
       <label for="title">Titre</label>
       <input type="text" id="title" required>
@@ -110,24 +102,28 @@
       <label for="excerpt">Résumé court (visible de tous, sert d'accroche)</label>
       <input type="text" id="excerpt" maxlength="200">
 
-      <div id="coverField">
-        <label for="cover_image">Image de couverture (URL, facultatif)</label>
-        <input type="url" id="cover_image" placeholder="https://...">
-        <p class="field-hint">Pas d'envoi de fichier ici : collez l'URL d'une image déjà en ligne (ex. une image publiée via le CMS, ou hébergée ailleurs).</p>
-      </div>
+      <label for="bib_section">Section</label>
+      <select id="bib_section" required>
+        <option value="" disabled selected>Choisir...</option>
+        <option value="islam">Islam</option>
+        <option value="medecine">Médecine</option>
+        <option value="pharmacie">Pharmacie</option>
+        <option value="odontologie">Odontologie</option>
+        <option value="soins-infirmiers-obstetricaux">Soins infirmiers et obstétricaux</option>
+        <option value="entrepreneuriat">Entrepreneuriat</option>
+        <option value="developpement-personnel">Développement personnel</option>
+        <option value="autres">Autres</option>
+      </select>
 
-      <div id="videoField">
-        <label for="video_url">Vidéo YouTube (URL, facultatif)</label>
-        <input type="url" id="video_url" placeholder="https://www.youtube.com/watch?v=...">
-      </div>
+      <label for="cover_image">Image de couverture (URL, facultatif)</label>
+      <input type="url" id="cover_image" placeholder="https://...">
+      <p class="field-hint">Pas d'envoi de fichier ici : collez l'URL d'une image déjà en ligne (ex. une couverture de livre hébergée ailleurs).</p>
 
-      <div id="documentField" style="display:none;">
-        <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
-        <input type="file" id="document_file" accept="application/pdf">
-        <p class="field-hint" id="currentFileHint"></p>
-      </div>
+      <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
+      <input type="file" id="document_file" accept="application/pdf">
+      <p class="field-hint" id="currentFileHint"></p>
 
-      <label for="content" id="contentLabel">Contenu complet (Markdown, visible des membres uniquement)</label>
+      <label for="content">Description (facultative, visible des membres uniquement)</label>
       <div id="content"></div>
 
       <div class="form-actions">
@@ -163,11 +159,18 @@
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   }
-  function categoryLabel(c){
-    if (c === "actualite") return "Réalisation";
-    if (c === "document") return "Document";
-    return "Formation";
-  }
+
+  const BIB_SECTION_LABELS = {
+    islam: "Islam",
+    medecine: "Médecine",
+    pharmacie: "Pharmacie",
+    odontologie: "Odontologie",
+    "soins-infirmiers-obstetricaux": "Soins infirmiers et obstétricaux",
+    entrepreneuriat: "Entrepreneuriat",
+    "developpement-personnel": "Développement personnel",
+    autres: "Autres",
+  };
+  function bibSectionLabel(s){ return BIB_SECTION_LABELS[s] || ""; }
 
   function stripDiacritics(s) {
     let out = '';
@@ -199,24 +202,7 @@
   const messageEl = document.getElementById("formMessage");
   const cancelBtn = document.getElementById("cancelBtn");
   const submitBtn = document.getElementById("submitBtn");
-  const categorySelect = document.getElementById("category");
-  const coverField = document.getElementById("coverField");
-  const videoField = document.getElementById("videoField");
-  const documentField = document.getElementById("documentField");
-  const contentLabel = document.getElementById("contentLabel");
   const currentFileHint = document.getElementById("currentFileHint");
-
-  function updateFieldsForCategory() {
-    const cat = categorySelect.value;
-    const isDocument = cat === "document";
-    coverField.style.display = isDocument ? "none" : "";
-    videoField.style.display = (cat === "formation" || cat === "actualite") ? "" : "none";
-    documentField.style.display = isDocument ? "" : "none";
-    contentLabel.textContent = isDocument
-      ? "Description (facultative, visible des membres uniquement)"
-      : "Contenu complet (Markdown, visible des membres uniquement)";
-  }
-  categorySelect.addEventListener("change", updateFieldsForCategory);
 
   function resetForm() {
     form.reset();
@@ -227,7 +213,6 @@
     cancelBtn.style.display = "none";
     messageEl.className = "form-message";
     contentEditor.setMarkdown("");
-    updateFieldsForCategory();
   }
 
   async function loadItems() {
@@ -235,7 +220,7 @@
     const { data, error } = await supabaseClient
       .from("restricted_articles")
       .select("*")
-      .in("category", ["formation", "actualite", "document"])
+      .eq("category", "bibliotheque")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -244,11 +229,11 @@
     }
 
     listEl.innerHTML = data.length === 0
-      ? '<p class="empty">Aucun contenu réservé pour le moment.</p>'
+      ? '<p class="empty">Aucun livre ou document publié pour le moment.</p>'
       : data.map(item => `
         <div class="item-row">
           <div>
-            <div class="item-title">${esc(item.title)} <span class="category-tag">${categoryLabel(item.category)}</span>${item.file_path ? ' 📎' : ''}</div>
+            <div class="item-title">${esc(item.title)}${item.bib_section ? ` <span class="category-tag">${esc(bibSectionLabel(item.bib_section))}</span>` : ''}${item.file_path ? ' 📎' : ''}</div>
             <div class="item-date">${formatDate(item.created_at)}</div>
           </div>
           <div class="item-actions">
@@ -270,24 +255,22 @@
   function startEdit(item) {
     document.getElementById("itemId").value = item.id;
     document.getElementById("existingFilePath").value = item.file_path || "";
-    document.getElementById("category").value = item.category || "formation";
     document.getElementById("title").value = item.title || "";
     document.getElementById("excerpt").value = item.excerpt || "";
+    document.getElementById("bib_section").value = item.bib_section || "";
     document.getElementById("cover_image").value = item.cover_image || "";
-    document.getElementById("video_url").value = item.video_url || "";
     contentEditor.setMarkdown(item.content || "");
     document.getElementById("document_file").value = "";
     currentFileHint.textContent = item.file_path
       ? "Fichier déjà envoyé. Choisissez un nouveau fichier uniquement pour le remplacer."
       : "";
-    updateFieldsForCategory();
     submitBtn.textContent = "Enregistrer les modifications";
     cancelBtn.style.display = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function handleDelete(id, item) {
-    if (!confirm("Supprimer définitivement ce contenu réservé ?")) return;
+    if (!confirm("Supprimer définitivement ce contenu de la Bibliothèque ?")) return;
     const { error } = await supabaseClient.from("restricted_articles").delete().eq("id", id);
     if (error) { alert("Erreur : " + error.message); return; }
     if (item && item.file_path) {
@@ -304,48 +287,44 @@
     messageEl.className = "form-message";
 
     const id = document.getElementById("itemId").value;
-    const category = document.getElementById("category").value;
     const existingFilePath = document.getElementById("existingFilePath").value;
     const fileInput = document.getElementById("document_file");
     const newFile = fileInput.files[0];
 
-    if (category === "document" && !newFile && !existingFilePath) {
-      messageEl.textContent = "Veuillez choisir un fichier PDF pour un document officiel.";
+    if (!newFile && !existingFilePath) {
+      messageEl.textContent = "Veuillez choisir un fichier PDF.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;
       return;
     }
 
     const payload = {
-      category,
+      category: "bibliotheque",
       title: document.getElementById("title").value.trim(),
       excerpt: document.getElementById("excerpt").value.trim(),
+      bib_section: document.getElementById("bib_section").value,
       cover_image: document.getElementById("cover_image").value.trim() || null,
-      video_url: document.getElementById("video_url").value.trim() || null,
+      video_url: null,
       content: contentEditor.getMarkdown(),
     };
 
-    if (category === "document") {
-      if (newFile) {
-        const path = `${Date.now()}-${sanitizeFileName(newFile.name)}`;
-        const { error: uploadError } = await supabaseClient.storage
-          .from(DOCUMENTS_BUCKET)
-          .upload(path, newFile);
-        if (uploadError) {
-          messageEl.textContent = "Erreur d'envoi du fichier : " + uploadError.message;
-          messageEl.className = "form-message error";
-          submitBtn.disabled = false;
-          return;
-        }
-        if (existingFilePath) {
-          await supabaseClient.storage.from(DOCUMENTS_BUCKET).remove([existingFilePath]);
-        }
-        payload.file_path = path;
-      } else {
-        payload.file_path = existingFilePath;
+    if (newFile) {
+      const path = `${Date.now()}-${sanitizeFileName(newFile.name)}`;
+      const { error: uploadError } = await supabaseClient.storage
+        .from(DOCUMENTS_BUCKET)
+        .upload(path, newFile);
+      if (uploadError) {
+        messageEl.textContent = "Erreur d'envoi du fichier : " + uploadError.message;
+        messageEl.className = "form-message error";
+        submitBtn.disabled = false;
+        return;
       }
+      if (existingFilePath) {
+        await supabaseClient.storage.from(DOCUMENTS_BUCKET).remove([existingFilePath]);
+      }
+      payload.file_path = path;
     } else {
-      payload.file_path = null;
+      payload.file_path = existingFilePath;
     }
 
     let error;
@@ -377,7 +356,7 @@
     document.getElementById("loadingMsg").style.display = "none";
     document.getElementById("pageContent").style.display = "";
     document.getElementById("signoutBtn").style.display = "";
-    contentEditor = createRichEditor("content", { placeholder: "Contenu complet…" });
+    contentEditor = createRichEditor("content", { placeholder: "Description…" });
     loadItems();
   })();
 
