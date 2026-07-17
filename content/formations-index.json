@@ -1,9 +1,41 @@
 [
   {
+    "slug": "2026-07-17-cours-de-lakhdari",
+    "title": "Cours de Lakhdari",
+    "date": "2026-07-17T20:00:00.000Z",
+    "excerpt": "Cours hebdomadaire sur le Mukhtasar Cheikh Sidiya Al-Akhdar (fiqh malikite), chaque samedi à 20h, animé par la Commission Pédagogique dans le groupe WhatsApp.",
+    "image": "",
+    "statut": ""
+  },
+  {
     "slug": "2026-07-17-comment-naviguer-sur-le-site-amstc",
     "title": "Comment naviguer sur le site AMSTC",
     "date": "2026-07-17T11:00:00.000Z",
     "excerpt": "Un guide pas à pas pour se repérer sur amstc.org : le site public, la création de compte, et tout ce que propose l'espace membres.",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2025-08-09-webinaire-entreprendre-en-sante",
+    "title": "Webinaire : Entreprendre en santé",
+    "date": "2025-08-09T21:30:00.000Z",
+    "excerpt": "Innovations des jeunes médecins et perspectives. Webinaire avec le Dr Adja Marietou Diop, cardiologue, médecin du sport.",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2025-06-15-syndromes-pneumologiques",
+    "title": "Syndromes pneumologiques",
+    "date": "2025-06-15T10:00:00.000Z",
+    "excerpt": "Contenu à venir.",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2025-04-24-webinaire-prise-en-charge-dune-crise-dasthme",
+    "title": "Webinaire : Prise en charge d'une crise d'asthme",
+    "date": "2025-04-24T20:30:00.000Z",
+    "excerpt": "Webinaire sur Google Meet avec le Dr El Hadji Omar Ndiaye, pneumologue, ancien interne des hôpitaux.",
     "image": "",
     "statut": ""
   },
@@ -13,6 +45,38 @@
     "date": "2025-04-13T20:30:00.000+00:00",
     "excerpt": "|-",
     "image": "/assets/uploads/screenshot-2026-07-15-214457.png",
+    "statut": ""
+  },
+  {
+    "slug": "2025-03-08-webinaire-femme-exercant-dans-le-domaine-medical-et-vie-conjugale",
+    "title": "Webinaire : Femme exerçant dans le domaine médical et vie conjugale",
+    "date": "2025-03-08T21:00:00.000Z",
+    "excerpt": "Comment concilier carrière et vie de famille ? Webinaire de la Cellule féminine de l'AMSTC, à l'occasion du 8 mars.",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2024-10-01-octobre-rose-sensibilisation-au-cancer-du-sein",
+    "title": "Octobre Rose - Sensibilisation au cancer du sein",
+    "date": "2024-10-01T10:00:00.000Z",
+    "excerpt": "Définition, facteurs de risque, symptômes et prévention du cancer du sein, à l'occasion d'Octobre Rose.",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2024-04-17-masterclass-la-maladie-hemorroidaire",
+    "title": "Masterclass : La maladie hémorroïdaire",
+    "date": "2024-04-17T20:45:00.000Z",
+    "excerpt": "Masterclass sur Google Meet avec le Pr Alpha Oumar Touré, Chirurgien général (FMPO, UCAD).",
+    "image": "",
+    "statut": ""
+  },
+  {
+    "slug": "2024-01-31-webinaire-prise-en-charge-des-angines",
+    "title": "Webinaire : Prise en charge des angines",
+    "date": "2024-01-31T20:30:00.000Z",
+    "excerpt": "Webinaire sur Google Meet avec le Pr Loum, Professeur en ORL Pédiatrie.",
+    "image": "",
     "statut": ""
   }
 ]
