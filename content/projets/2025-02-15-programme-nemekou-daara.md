@@ -1,5 +1,5 @@
 ---
-title: 'Programme "Nemekou Daara"'
+title: "Programme « Nemekou Daara »"
 date: 2025-02-15T10:00:00.000Z
 statut: "En cours"
 excerpt: "Programme d'aide et d'appui aux daara : consultations médicales gratuites et dons de denrées alimentaires, étape par étape, dans plusieurs daara du Sénégal."
