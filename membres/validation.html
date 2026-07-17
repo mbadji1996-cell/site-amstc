@@ -71,6 +71,15 @@
   .assign-msg{font-size:0.85rem; margin-top:8px;}
   .assign-msg.error{color:#B23B3B;}
   .assign-msg.ok{color:#3B6D11;}
+  .member-details{width:100%; background:var(--paper); border-radius:10px; padding:16px 18px; margin-top:12px;}
+  .member-details-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px 20px; margin-bottom:16px;}
+  .detail-label{display:block; font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:#8A9E8F;}
+  .detail-value{display:block; font-size:0.9rem; color:var(--ink); margin-top:2px;}
+  .years-edit{border-top:1px solid var(--line); padding-top:14px;}
+  .years-edit-row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;}
+  .years-edit-row .form-group{display:flex; flex-direction:column; gap:4px;}
+  .years-edit-row label{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:#5A6C60;}
+  .years-edit-row input{width:120px; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--mono); font-size:0.86rem; background:var(--white); color:var(--ink);}
   .empty, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
@@ -133,6 +142,16 @@
     return "Utilisateur";
   }
 
+  const DOMAIN_LABELS = {
+    medecine: "Médecine", pharmacie: "Pharmacie", odontologie: "Odontologie",
+    soins_infirmiers: "Soins infirmiers", soins_obstetricaux: "Soins obstétricaux",
+  };
+  function domainLabel(p){
+    if (!p.domain) return "";
+    if (p.domain === "autre") return p.domain_autre || "Autre";
+    return DOMAIN_LABELS[p.domain] || p.domain;
+  }
+
   async function loadLists() {
     const pendingEl = document.getElementById("pendingList");
     const membersEl = document.getElementById("membersList");
@@ -186,6 +205,7 @@
             <div class="member-email">${esc(p.email)}</div>
           </div>
           <div class="member-actions">
+            <button class="btn-sm btn-outline-sm" id="detailsBtn-${esc(p.id)}" onclick="toggleMemberDetails('${esc(p.id)}')">Détails</button>
             <button class="btn-sm btn-outline-sm" data-action="reset-password" data-email="${esc(p.email)}">Réinitialiser le mot de passe</button>
             ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>`}
             ${p.is_active === false
@@ -193,6 +213,29 @@
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
           </div>
           <div class="assign-inline" id="assign-${esc(p.id)}" style="display:none;"></div>
+          <div class="member-details" id="details-${esc(p.id)}" style="display:none;">
+            <div class="member-details-grid">
+              <div><span class="detail-label">Prénom</span><span class="detail-value">${esc(p.first_name) || '-'}</span></div>
+              <div><span class="detail-label">Nom</span><span class="detail-value">${esc(p.last_name) || '-'}</span></div>
+              <div><span class="detail-label">Domaine</span><span class="detail-value">${esc(domainLabel(p)) || '-'}</span></div>
+              ${p.specialty ? `<div><span class="detail-label">Spécialité</span><span class="detail-value">${esc(p.specialty)}</span></div>` : ''}
+              <div><span class="detail-label">Localité</span><span class="detail-value">${esc(p.city) || '-'}</span></div>
+            </div>
+            <div class="years-edit">
+              <div class="years-edit-row">
+                <div class="form-group">
+                  <label>Année d'adhésion</label>
+                  <input type="number" id="memberSince-${esc(p.id)}" value="${p.member_since || ''}">
+                </div>
+                <div class="form-group">
+                  <label>Année de fin de validité de la carte</label>
+                  <input type="number" id="cardValidUntil-${esc(p.id)}" value="${p.card_valid_until || ''}">
+                </div>
+                <button class="btn-sm btn-approve" onclick="saveMemberYears('${esc(p.id)}')">Enregistrer</button>
+              </div>
+              <p class="assign-msg" id="yearsMsg-${esc(p.id)}"></p>
+            </div>
+          </div>
         </div>
       `).join("");
 
@@ -243,6 +286,33 @@
     document.querySelectorAll("button[data-action]").forEach(btn => {
       btn.addEventListener("click", () => handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email));
     });
+  }
+
+  function toggleMemberDetails(memberId) {
+    const box = document.getElementById('details-' + memberId);
+    const btn = document.getElementById('detailsBtn-' + memberId);
+    const willOpen = box.style.display !== 'block';
+    box.style.display = willOpen ? 'block' : 'none';
+    btn.textContent = willOpen ? 'Masquer' : 'Détails';
+  }
+
+  async function saveMemberYears(memberId) {
+    const msg = document.getElementById('yearsMsg-' + memberId);
+    const memberSinceVal = document.getElementById('memberSince-' + memberId).value.trim();
+    const cardValidUntilVal = document.getElementById('cardValidUntil-' + memberId).value.trim();
+
+    const { error } = await supabaseClient.from('profiles').update({
+      member_since: memberSinceVal ? parseInt(memberSinceVal, 10) : null,
+      card_valid_until: cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null,
+    }).eq('id', memberId);
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+    msg.textContent = 'Enregistré.';
+    msg.className = 'assign-msg ok';
   }
 
   function toggleAssignCard(memberId) {
