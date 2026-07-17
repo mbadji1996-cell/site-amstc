@@ -263,6 +263,14 @@ Le tableau de bord (`membres/index.html`) affiche aussi désormais un fil
 publiés, dernières Formations/Documents ajoutés), en 3-4 cartes cliquables
 triées par date.
 
+Les contenus de la Bibliothèque sont classés par section thématique
+(colonne `bib_section`, cf. `supabase/phase17-bibliotheque-sections.sql`) :
+Islam, Médecine, Pharmacie, Odontologie, Soins infirmiers et obstétricaux,
+Entrepreneuriat, Développement personnel, Autres. Choisissez la section au
+moment de publier un livre/document dans `contenu-reserve-admin.html` ;
+`membres/bibliotheque.html` regroupe l'affichage sous ces sections (une
+section n'apparaît que si elle contient au moins un contenu publié).
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

@@ -36,6 +36,10 @@
   .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
   .intro{color:#3C4E44; font-size:1.02rem; margin-bottom:32px;}
+  .bib-section{padding:28px 0 8px;}
+  .bib-section:first-child{padding-top:0;}
+  .bib-section-title{font-family:var(--display);font-size:1.15rem;font-weight:700;color:var(--green-deep);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .bib-section-title::after{content:"";flex:1;height:1px;background:var(--line);}
   .book-item{margin-bottom:14px;}
   .book-row{
     background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px 24px;
@@ -103,6 +107,16 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const DOCUMENTS_BUCKET = "documents-reserves";
+  const BIB_SECTIONS = [
+    { slug: "islam", label: "Islam" },
+    { slug: "medecine", label: "Médecine" },
+    { slug: "pharmacie", label: "Pharmacie" },
+    { slug: "odontologie", label: "Odontologie" },
+    { slug: "soins-infirmiers-obstetricaux", label: "Soins infirmiers et obstétricaux" },
+    { slug: "entrepreneuriat", label: "Entrepreneuriat" },
+    { slug: "developpement-personnel", label: "Développement personnel" },
+    { slug: "autres", label: "Autres" },
+  ];
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -131,7 +145,7 @@
     }
     const { data, error } = await supabaseClient
       .from("restricted_articles")
-      .select("id,title,excerpt,cover_image,file_path,created_at")
+      .select("id,title,excerpt,cover_image,file_path,bib_section,created_at")
       .eq("category", "bibliotheque")
       .order("created_at", { ascending: false });
 
@@ -145,24 +159,37 @@
       return;
     }
 
-    listEl.innerHTML = data.map(book => `
-      <div class="book-item" data-id="${esc(book.id)}">
-        <div class="book-row">
-          <div class="book-main">
-            ${book.cover_image
-              ? `<img class="book-cover" src="${esc(book.cover_image)}" alt="" loading="lazy">`
-              : `<div class="book-cover-placeholder"><i class="ti ti-book-2"></i></div>`}
-            <div>
-              <div class="book-title">${esc(book.title)}</div>
-              ${book.excerpt ? `<div class="book-excerpt">${esc(book.excerpt)}</div>` : ""}
-              <div class="book-date">${formatDate(book.created_at)}</div>
+    const bySection = {};
+    data.forEach(book => {
+      const slug = BIB_SECTIONS.some(s => s.slug === book.bib_section) ? book.bib_section : "autres";
+      (bySection[slug] = bySection[slug] || []).push(book);
+    });
+
+    listEl.innerHTML = BIB_SECTIONS
+      .filter(s => bySection[s.slug] && bySection[s.slug].length > 0)
+      .map(s => `
+        <div class="bib-section">
+          <p class="bib-section-title">${esc(s.label)}</p>
+          ${bySection[s.slug].map(book => `
+            <div class="book-item" data-id="${esc(book.id)}">
+              <div class="book-row">
+                <div class="book-main">
+                  ${book.cover_image
+                    ? `<img class="book-cover" src="${esc(book.cover_image)}" alt="" loading="lazy">`
+                    : `<div class="book-cover-placeholder"><i class="ti ti-book-2"></i></div>`}
+                  <div>
+                    <div class="book-title">${esc(book.title)}</div>
+                    ${book.excerpt ? `<div class="book-excerpt">${esc(book.excerpt)}</div>` : ""}
+                    <div class="book-date">${formatDate(book.created_at)}</div>
+                  </div>
+                </div>
+                <button class="btn-view" data-path="${esc(book.file_path || "")}" data-id="${esc(book.id)}">Consulter</button>
+              </div>
+              <div class="book-viewer" id="viewer-${esc(book.id)}" style="display:none;"></div>
             </div>
-          </div>
-          <button class="btn-view" data-path="${esc(book.file_path || "")}" data-id="${esc(book.id)}">Consulter</button>
+          `).join("")}
         </div>
-        <div class="book-viewer" id="viewer-${esc(book.id)}" style="display:none;"></div>
-      </div>
-    `).join("");
+      `).join("");
 
     listEl.querySelectorAll(".btn-view").forEach(btn => {
       btn.addEventListener("click", () => toggleViewer(btn));
