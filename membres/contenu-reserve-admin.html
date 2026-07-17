@@ -39,6 +39,11 @@
   .intro{color:#3C4E44; font-size:1.02rem; margin-bottom:32px;}
   h2{font-family:var(--display); font-size:1.1rem; color:var(--green-deep); margin:36px 0 16px;}
   .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
+  .card > summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--green-deep);}
+  .card > summary::-webkit-details-marker{display:none;}
+  .card-summary-icon{width:24px; height:24px; border-radius:50%; background:var(--paper-alt); color:var(--gold-deep); display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; flex-shrink:0; transition:transform .18s ease;}
+  .card[open] > summary{margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--paper-alt);}
+  .card[open] .card-summary-icon{transform:rotate(45deg);}
   label{display:block; font-size:0.85rem; font-weight:600; color:var(--green-deep); margin-top:16px;}
   label:first-child{margin-top:0;}
   input, textarea, select{
@@ -92,7 +97,8 @@
   <h1>Contenu réservé aux membres</h1>
   <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation, une Réalisation, ou un document officiel.</p>
 
-  <div class="card">
+  <details class="card" id="formCard">
+    <summary><span class="card-summary-icon">+</span> <span id="formSummaryLabel">Nouveau contenu</span></summary>
     <form id="itemForm">
       <input type="hidden" id="itemId" value="">
       <input type="hidden" id="existingFilePath" value="">
@@ -138,7 +144,7 @@
       </div>
       <div class="form-message" id="formMessage"></div>
     </form>
-  </div>
+  </details>
 
   <h2>Contenus déjà publiés</h2>
   <div id="itemsList"><p class="loading">Chargement…</p></div>
@@ -209,6 +215,8 @@
   const contentLabel = document.getElementById("contentLabel");
   const currentFileHint = document.getElementById("currentFileHint");
   const fileSizeWarning = document.getElementById("fileSizeWarning");
+  const formCard = document.getElementById("formCard");
+  const formSummaryLabel = document.getElementById("formSummaryLabel");
 
   document.getElementById("document_file").addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -243,6 +251,8 @@
     messageEl.className = "form-message";
     contentEditor.setMarkdown("");
     updateFieldsForCategory();
+    formSummaryLabel.textContent = "Nouveau contenu";
+    formCard.open = false;
   }
 
   async function loadItems() {
@@ -298,6 +308,8 @@
     updateFieldsForCategory();
     submitBtn.textContent = "Enregistrer les modifications";
     cancelBtn.style.display = "";
+    formSummaryLabel.textContent = "Modifier : " + (item.title || "");
+    formCard.open = true;
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 

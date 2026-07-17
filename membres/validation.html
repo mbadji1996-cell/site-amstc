@@ -187,7 +187,7 @@
           </div>
           <div class="member-actions">
             <button class="btn-sm btn-outline-sm" data-action="reset-password" data-email="${esc(p.email)}">Réinitialiser le mot de passe</button>
-            <button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>
+            ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>`}
             ${p.is_active === false
               ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
