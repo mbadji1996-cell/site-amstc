@@ -62,23 +62,26 @@
   .expiry-input:focus{outline:none;border-color:var(--green);}
   .expiry-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:#8A9E8F;white-space:nowrap;}
 
-  /* Attribution directe */
-  .assign-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:36px;}
-  .assign-step{margin-bottom:20px;}
-  .assign-step:last-of-type{margin-bottom:0;}
-  .assign-step-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:8px;display:block;}
-  .assign-search{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
-  .assign-search:focus{outline:none;border-color:var(--green);}
-  .assign-results{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-top:8px;display:none;}
-  .assign-results.open{display:block;}
-  .assign-result-row{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--paper-alt);}
-  .assign-result-row:last-child{border-bottom:none;}
-  .assign-result-row:hover{background:var(--paper-alt);}
-  .assign-selected{background:var(--paper-alt);border:1.5px solid var(--green);border-radius:8px;padding:10px 14px;margin-top:8px;display:none;align-items:center;justify-content:space-between;gap:10px;}
-  .assign-selected.show{display:flex;}
-  .assign-selected-clear{background:none;border:none;color:#8A9E8F;cursor:pointer;font-size:16px;padding:2px;}
-  .assign-selected-clear:hover{color:#B23B3B;}
-  .assign-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px;}
+  /* Toutes les cartes (liste + ajout + attribution + suppression) */
+  .cards-manage-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:36px;}
+  .cards-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .cards-filter{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
+  .cards-filter:focus{outline:none;border-color:var(--green);}
+  .add-card-form{display:none;border:1.5px solid var(--line);border-radius:10px;padding:16px 18px;margin-top:14px;background:var(--paper);}
+  .add-card-form.open{display:block;}
+  .add-card-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .add-card-row input{flex:1;min-width:130px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--white);color:var(--ink);}
+  .add-card-row input:focus{outline:none;border-color:var(--green);}
+  .status-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .status-badge.unclaimed{background:var(--paper-alt);color:#5A6C60;}
+  .status-badge.pending{background:#FEF6E4;color:var(--gold-deep);}
+  .status-badge.confirmed{background:#EAF3DE;color:#3B6D11;}
+  .assign-inline{background:var(--paper);border-radius:8px;padding:14px 16px;}
+  .assign-inline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .assign-inline select{flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--white);color:var(--ink);}
+  .assign-inline input{width:90px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:0.86rem;background:var(--white);color:var(--ink);}
+  .btn-delete{background:#FDEEEE;color:#B23B3B;}
+  .btn-delete:hover{background:#f5c0c0;}
   .assign-msg{font-size:0.85rem;}
   .assign-msg.error{color:#B23B3B;}
   .assign-msg.ok{color:#3B6D11;}
@@ -190,41 +193,34 @@
       </table>
     </div>
 
-    <p class="section-label"><i class="ti ti-id-badge-2"></i> Attribuer une carte directement</p>
-    <div class="assign-card">
-      <p style="font-size:0.85rem;color:#5A6C60;margin-bottom:18px;">
-        Attribuez une carte non réclamée à un membre sans attendre qu'il la réclame lui-même
-        (utile si le membre n'a pas encore utilisé "Réclamer ma carte", ou pour corriger une erreur).
-      </p>
+    <p class="section-label"><i class="ti ti-cards"></i> Toutes les cartes</p>
+    <div class="cards-manage-card">
+      <div class="cards-toolbar">
+        <input type="text" class="cards-filter" id="cardsFilter" placeholder="Filtrer par nom…" oninput="renderCardsTable()">
+        <button class="btn-primary" id="addCardBtn" onclick="toggleAddCardForm()"><i class="ti ti-plus"></i> Ajouter une carte</button>
+      </div>
 
-      <div class="assign-step">
-        <label class="assign-step-label">1. Carte non réclamée</label>
-        <input type="text" class="assign-search" id="assignCardSearch" placeholder="Rechercher par nom…" oninput="renderAssignCardResults()" onfocus="renderAssignCardResults()">
-        <div class="assign-results" id="assignCardResults"></div>
-        <div class="assign-selected" id="assignCardSelected">
-          <span id="assignCardSelectedText"></span>
-          <button class="assign-selected-clear" onclick="clearAssignCard()"><i class="ti ti-x"></i></button>
+      <div class="add-card-form" id="addCardForm">
+        <div class="add-card-row">
+          <input type="text" id="newCardName" placeholder="Nom complet">
+          <input type="text" id="newCardPhone" placeholder="Téléphone">
+          <input type="number" id="newCardSince" placeholder="Année d'adhésion">
+          <input type="text" id="newCardCity" placeholder="Ville">
+          <button class="btn btn-confirm" onclick="submitAddCard()"><i class="ti ti-check"></i> Créer</button>
+          <button class="btn btn-reject" onclick="toggleAddCardForm()">Annuler</button>
         </div>
+        <p class="assign-msg" id="addCardMsg"></p>
       </div>
 
-      <div class="assign-step">
-        <label class="assign-step-label">2. Membre destinataire</label>
-        <input type="text" class="assign-search" id="assignMemberSearch" placeholder="Rechercher par nom ou e-mail…" oninput="renderAssignMemberResults()" onfocus="renderAssignMemberResults()">
-        <div class="assign-results" id="assignMemberResults"></div>
-        <div class="assign-selected" id="assignMemberSelected">
-          <span id="assignMemberSelectedText"></span>
-          <button class="assign-selected-clear" onclick="clearAssignMember()"><i class="ti ti-x"></i></button>
-        </div>
-      </div>
-
-      <div class="assign-step">
-        <label class="assign-step-label">3. Année de fin de validité</label>
-        <input type="number" class="assign-search" style="max-width:140px;" id="assignExpiryYear" value="">
-      </div>
-
-      <div class="assign-actions">
-        <button class="btn-primary" id="assignBtn" onclick="submitAssignCard()"><i class="ti ti-id-badge-2"></i> Attribuer la carte</button>
-        <p class="assign-msg" id="assignMsg"></p>
+      <div class="table-wrap" style="margin-top:16px;margin-bottom:0;">
+        <table>
+          <thead>
+            <tr><th>Nom</th><th>N° carte</th><th>Statut</th><th>Membre attribué</th><th></th></tr>
+          </thead>
+          <tbody id="allCardsTable">
+            <tr class="empty-row"><td colspan="5">Chargement…</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -542,105 +538,106 @@
 
   document.getElementById('btnToggleRestriction').addEventListener('click', toggleRestriction);
 
-  /* ===== Attribution directe d'une carte ===== */
+  /* ===== Toutes les cartes : liste, ajout, attribution, suppression ===== */
 
-  let assignCards = [], assignMembers = [];
-  let selectedAssignCard = null, selectedAssignMember = null;
+  let allCards = [], assignMembers = [];
+  let expandedAssignId = null;
 
   async function loadAssignData() {
     const [cardsRes, membersRes] = await Promise.all([
-      supabaseClient.from('member_cards_unclaimed').select('*').order('full_name'),
+      supabaseClient
+        .from('member_cards')
+        .select('id, full_name, phone, city, member_since, card_number, claim_status, claimed_by, profiles:claimed_by(full_name, email)')
+        .order('full_name'),
       supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
     ]);
-    assignCards = cardsRes.data || [];
+    allCards = cardsRes.data || [];
     assignMembers = membersRes.data || [];
-    document.getElementById('assignExpiryYear').value = currentYear;
+    renderCardsTable();
   }
 
-  function renderAssignCardResults() {
-    const q = document.getElementById('assignCardSearch').value.trim().toLowerCase();
-    const box = document.getElementById('assignCardResults');
-    if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
-    const matches = assignCards.filter(c => c.full_name.toLowerCase().includes(q)).slice(0, 8);
-    if (matches.length === 0) {
-      box.innerHTML = '<div class="assign-result-row" style="color:#8A9E8F;">Aucune carte non réclamée pour cette recherche.</div>';
-    } else {
-      box.innerHTML = matches.map(c => {
-        const meta = [c.member_since ? 'Depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
-        return `<div class="assign-result-row" onclick="selectAssignCard('${c.id}')"><strong>${escHtml(c.full_name)}</strong>${meta ? ' - ' + escHtml(meta) : ''}</div>`;
-      }).join('');
+  function statusBadge(status) {
+    if (status === 'unclaimed') return '<span class="status-badge unclaimed">Non réclamée</span>';
+    if (status === 'pending') return '<span class="status-badge pending">En attente</span>';
+    return '<span class="status-badge confirmed">Confirmée</span>';
+  }
+
+  function renderCardsTable() {
+    const q = document.getElementById('cardsFilter').value.trim().toLowerCase();
+    const tbody = document.getElementById('allCardsTable');
+    const rows = q ? allCards.filter(c => c.full_name.toLowerCase().includes(q)) : allCards;
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucune carte pour cette recherche.</td></tr>';
+      return;
     }
-    box.classList.add('open');
+
+    tbody.innerHTML = rows.map(c => {
+      const meta = [c.phone, c.member_since ? 'Depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
+      const claimant = c.profiles || null;
+      const memberCell = claimant
+        ? `<p class="claimant">${escHtml(claimant.full_name || '-')}</p><p class="claimant-email">${escHtml(claimant.email || '')}</p>`
+        : '-';
+
+      let actions = `<button class="btn btn-delete" onclick="deleteCard('${c.id}')"><i class="ti ti-trash"></i> Supprimer</button>`;
+      if (c.claim_status === 'unclaimed') {
+        actions = `<button class="btn btn-confirm" onclick="toggleAssignRow('${c.id}')"><i class="ti ti-id-badge-2"></i> Attribuer</button>` + actions;
+      }
+
+      let expandRow = '';
+      if (c.claim_status === 'unclaimed' && expandedAssignId === c.id) {
+        const options = assignMembers.map(m => `<option value="${m.id}">${escHtml(m.full_name || 'Sans nom')} (${escHtml(m.email)})</option>`).join('');
+        expandRow = `
+          <tr>
+            <td colspan="5">
+              <div class="assign-inline">
+                <div class="assign-inline-row">
+                  <select id="assignMemberSelect-${c.id}">
+                    <option value="" disabled selected>Choisir un membre...</option>
+                    ${options}
+                  </select>
+                  <input type="number" id="assignYear-${c.id}" value="${c.member_since || currentYear}" title="Année de fin de validité">
+                  <button class="btn btn-confirm" onclick="confirmAssignRow('${c.id}')"><i class="ti ti-check"></i> Confirmer</button>
+                  <button class="btn btn-reject" onclick="toggleAssignRow('${c.id}')">Annuler</button>
+                </div>
+                <p class="assign-msg" id="assignRowMsg-${c.id}"></p>
+              </div>
+            </td>
+          </tr>`;
+      }
+
+      return `<tr>
+        <td>
+          <p class="card-name">${escHtml(c.full_name)}</p>
+          <p class="card-meta">${escHtml(meta || '-')}</p>
+        </td>
+        <td>${escHtml(c.card_number || '-')}</td>
+        <td>${statusBadge(c.claim_status)}</td>
+        <td>${memberCell}</td>
+        <td><div class="td-actions">${actions}</div></td>
+      </tr>${expandRow}`;
+    }).join('');
   }
 
-  function selectAssignCard(id) {
-    selectedAssignCard = assignCards.find(c => c.id === id) || null;
-    document.getElementById('assignCardSearch').value = '';
-    document.getElementById('assignCardResults').classList.remove('open');
-    const sel = document.getElementById('assignCardSelected');
-    if (selectedAssignCard) {
-      document.getElementById('assignCardSelectedText').textContent = selectedAssignCard.full_name;
-      sel.classList.add('show');
-      if (selectedAssignCard.member_since) document.getElementById('assignExpiryYear').value = selectedAssignCard.member_since;
-    }
+  function toggleAssignRow(id) {
+    expandedAssignId = expandedAssignId === id ? null : id;
+    renderCardsTable();
   }
 
-  function clearAssignCard() {
-    selectedAssignCard = null;
-    document.getElementById('assignCardSelected').classList.remove('show');
-  }
+  async function confirmAssignRow(id) {
+    const select = document.getElementById('assignMemberSelect-' + id);
+    const expiryYear = parseInt(document.getElementById('assignYear-' + id).value);
+    const msg = document.getElementById('assignRowMsg-' + id);
+    const memberId = select.value;
 
-  function renderAssignMemberResults() {
-    const q = document.getElementById('assignMemberSearch').value.trim().toLowerCase();
-    const box = document.getElementById('assignMemberResults');
-    if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
-    const matches = assignMembers.filter(m =>
-      (m.full_name || '').toLowerCase().includes(q) || (m.email || '').toLowerCase().includes(q)
-    ).slice(0, 8);
-    if (matches.length === 0) {
-      box.innerHTML = '<div class="assign-result-row" style="color:#8A9E8F;">Aucun membre approuvé pour cette recherche.</div>';
-    } else {
-      box.innerHTML = matches.map(m =>
-        `<div class="assign-result-row" onclick="selectAssignMember('${m.id}')"><strong>${escHtml(m.full_name || 'Sans nom')}</strong> - ${escHtml(m.email)}</div>`
-      ).join('');
-    }
-    box.classList.add('open');
-  }
-
-  function selectAssignMember(id) {
-    selectedAssignMember = assignMembers.find(m => m.id === id) || null;
-    document.getElementById('assignMemberSearch').value = '';
-    document.getElementById('assignMemberResults').classList.remove('open');
-    const sel = document.getElementById('assignMemberSelected');
-    if (selectedAssignMember) {
-      document.getElementById('assignMemberSelectedText').textContent = `${selectedAssignMember.full_name || 'Sans nom'} (${selectedAssignMember.email})`;
-      sel.classList.add('show');
-    }
-  }
-
-  function clearAssignMember() {
-    selectedAssignMember = null;
-    document.getElementById('assignMemberSelected').classList.remove('show');
-  }
-
-  async function submitAssignCard() {
-    const msg = document.getElementById('assignMsg');
-    const expiryYear = parseInt(document.getElementById('assignExpiryYear').value);
-
-    if (!selectedAssignCard) { msg.textContent = 'Choisissez une carte non réclamée.'; msg.className = 'assign-msg error'; return; }
-    if (!selectedAssignMember) { msg.textContent = 'Choisissez le membre destinataire.'; msg.className = 'assign-msg error'; return; }
+    if (!memberId) { msg.textContent = 'Choisissez un membre.'; msg.className = 'assign-msg error'; return; }
     if (!expiryYear) { msg.textContent = "Indiquez l'année de fin de validité."; msg.className = 'assign-msg error'; return; }
 
-    if (!confirm(`Attribuer la carte de "${selectedAssignCard.full_name}" au compte de ${selectedAssignMember.full_name || selectedAssignMember.email} ?`)) return;
-
-    const btn = document.getElementById('assignBtn');
-    btn.disabled = true;
     const { error } = await supabaseClient.rpc('assign_member_card', {
-      card_id: selectedAssignCard.id,
-      member_id: selectedAssignMember.id,
+      card_id: id,
+      member_id: memberId,
       expiry_year: expiryYear,
     });
-    btn.disabled = false;
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;
@@ -648,11 +645,55 @@
       return;
     }
 
-    msg.textContent = `Carte attribuée avec succès à ${selectedAssignMember.full_name || selectedAssignMember.email}.`;
-    msg.className = 'assign-msg ok';
-    clearAssignCard();
-    clearAssignMember();
-    document.getElementById('assignExpiryYear').value = currentYear;
+    expandedAssignId = null;
+    await loadAll();
+  }
+
+  async function deleteCard(id) {
+    if (!confirm('Supprimer définitivement cette carte de la liste ? Cette action ne modifie pas le compte du membre si elle était déjà attribuée.')) return;
+    const { error } = await supabaseClient.from('member_cards').delete().eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadAll();
+  }
+
+  function toggleAddCardForm() {
+    const form = document.getElementById('addCardForm');
+    form.classList.toggle('open');
+    if (!form.classList.contains('open')) {
+      ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('addCardMsg').textContent = '';
+      document.getElementById('addCardMsg').className = 'assign-msg';
+    }
+  }
+
+  async function submitAddCard() {
+    const full_name = document.getElementById('newCardName').value.trim();
+    const phone = document.getElementById('newCardPhone').value.trim();
+    const memberSinceRaw = document.getElementById('newCardSince').value;
+    const city = document.getElementById('newCardCity').value.trim();
+    const msg = document.getElementById('addCardMsg');
+
+    if (!full_name || !phone) {
+      msg.textContent = 'Le nom et le téléphone sont obligatoires.';
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    const member_since = memberSinceRaw ? parseInt(memberSinceRaw) || null : null;
+    const year = member_since || currentYear;
+    const card_number = `AMSTC-${year}-${String(await nextCardSeq(year)).padStart(3, '0')}`;
+
+    const { error } = await supabaseClient.from('member_cards').insert({
+      full_name, phone, member_since, city: city || null, card_number,
+    });
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    toggleAddCardForm();
     await loadAll();
   }
 
