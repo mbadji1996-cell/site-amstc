@@ -48,6 +48,7 @@
   textarea{min-height:160px; resize:vertical; font-family:var(--mono); font-size:0.88rem;}
   input:focus, textarea:focus, select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
   .field-hint{font-size:0.78rem; color:#5A6C60; margin-top:4px;}
+  .field-hint.warning{color:var(--gold-deep); font-weight:600;}
   .form-actions{display:flex; gap:12px; margin-top:24px;}
   .btn{
     font-weight:600; font-size:0.95rem; padding:12px 22px; border-radius:999px; border:none; cursor:pointer;
@@ -125,6 +126,7 @@
         <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
         <input type="file" id="document_file" accept="application/pdf">
         <p class="field-hint" id="currentFileHint"></p>
+        <p class="field-hint warning" id="fileSizeWarning" style="display:none;"></p>
       </div>
 
       <label for="content" id="contentLabel">Contenu complet (Markdown, visible des membres uniquement)</label>
@@ -195,6 +197,7 @@
   }
 
   const DOCUMENTS_BUCKET = "documents-reserves";
+  const FILE_SIZE_WARNING_BYTES = 15 * 1024 * 1024; // 15 Mo
   const form = document.getElementById("itemForm");
   const messageEl = document.getElementById("formMessage");
   const cancelBtn = document.getElementById("cancelBtn");
@@ -205,6 +208,17 @@
   const documentField = document.getElementById("documentField");
   const contentLabel = document.getElementById("contentLabel");
   const currentFileHint = document.getElementById("currentFileHint");
+  const fileSizeWarning = document.getElementById("fileSizeWarning");
+
+  document.getElementById("document_file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > FILE_SIZE_WARNING_BYTES) {
+      fileSizeWarning.textContent = `⚠ Ce fichier fait ${(file.size / (1024 * 1024)).toFixed(1)} Mo. Pensez à le compresser (ex. ilovepdf.com) avant de publier : l'espace de stockage gratuit est limité.`;
+      fileSizeWarning.style.display = "";
+    } else {
+      fileSizeWarning.style.display = "none";
+    }
+  });
 
   function updateFieldsForCategory() {
     const cat = categorySelect.value;
@@ -223,6 +237,7 @@
     document.getElementById("itemId").value = "";
     document.getElementById("existingFilePath").value = "";
     currentFileHint.textContent = "";
+    fileSizeWarning.style.display = "none";
     submitBtn.textContent = "Publier";
     cancelBtn.style.display = "none";
     messageEl.className = "form-message";
