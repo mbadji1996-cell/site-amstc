@@ -296,6 +296,7 @@ collections:
     fields:
       - { label: "Projet associé", name: "projet", widget: "relation", collection: "projets", search_fields: ["title"], display_fields: ["title"], value_field: "{{slug}}", hint: "Le projet auquel cette étape appartient." }
       - { label: "Titre de l'étape", name: "title", widget: "string" }
+      - { label: "Ordre d'affichage", name: "ordre", widget: "number", default: 1, hint: "Détermine la position de l'étape dans la frise (1 = première), indépendamment de la date." }
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }

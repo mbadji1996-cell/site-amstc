@@ -1,6 +1,7 @@
 ---
 projet: "2025-02-15-programme-nemekou-daara"
 title: "Étape 3 - Daara El Hadji A. Cissé (Rufisque)"
+ordre: 3
 date: 2025-11-23T10:00:00.000Z
 excerpt: "Journée de consultation médicale gratuite + don de denrées alimentaires, dimanche 23 novembre 2025. Objectif de collecte : 300 000 F."
 image: ""

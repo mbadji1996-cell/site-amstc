@@ -32,7 +32,8 @@ function buildIndex(folderName) {
       excerpt: data.excerpt || '',
       image: data.image || '',
       statut: data.statut || '',
-      projet: data.projet || ''
+      projet: data.projet || '',
+      ordre: data.ordre !== undefined ? Number(data.ordre) : ''
     };
   });
 

@@ -6,7 +6,8 @@
     "excerpt": "Cours hebdomadaire sur le Mukhtasar Cheikh Sidiya Al-Akhdar (fiqh malikite), chaque samedi à 20h, animé par la Commission Pédagogique dans le groupe WhatsApp.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2026-07-17-comment-naviguer-sur-le-site-amstc",
@@ -15,7 +16,8 @@
     "excerpt": "Un guide pas à pas pour se repérer sur amstc.org : le site public, la création de compte, et tout ce que propose l'espace membres.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-10-01-octobre-rose-2025",
@@ -24,7 +26,8 @@
     "excerpt": "Contenu à venir.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-08-09-webinaire-entreprendre-en-sante",
@@ -33,7 +36,8 @@
     "excerpt": "Innovations des jeunes médecins et perspectives. Webinaire avec le Dr Adja Marietou Diop, cardiologue, médecin du sport.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-06-15-syndromes-pneumologiques",
@@ -42,7 +46,8 @@
     "excerpt": "Contenu à venir.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-04-24-webinaire-prise-en-charge-dune-crise-dasthme",
@@ -51,7 +56,8 @@
     "excerpt": "Webinaire sur Google Meet avec le Dr El Hadji Omar Ndiaye, pneumologue, ancien interne des hôpitaux.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2026-07-13-epu-test",
@@ -60,7 +66,8 @@
     "excerpt": "|-",
     "image": "/assets/uploads/screenshot-2026-07-15-214457.png",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-03-08-webinaire-femme-exercant-dans-le-domaine-medical-et-vie-conjugale",
@@ -69,7 +76,8 @@
     "excerpt": "Comment concilier carrière et vie de famille ? Webinaire de la Cellule féminine de l'AMSTC, à l'occasion du 8 mars.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2025-01-18-webinaire-le-mariage",
@@ -78,7 +86,8 @@
     "excerpt": "« Parlons-en ! » Échange sur le groupe WhatsApp autour des obligations et traditions prophétiques du mariage.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2024-10-01-octobre-rose-sensibilisation-au-cancer-du-sein",
@@ -87,7 +96,8 @@
     "excerpt": "Définition, facteurs de risque, symptômes et prévention du cancer du sein, à l'occasion d'Octobre Rose.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2024-04-17-masterclass-la-maladie-hemorroidaire",
@@ -96,7 +106,8 @@
     "excerpt": "Masterclass sur Google Meet avec le Pr Alpha Oumar Touré, Chirurgien général (FMPO, UCAD).",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   },
   {
     "slug": "2024-01-31-webinaire-prise-en-charge-des-angines",
@@ -105,6 +116,7 @@
     "excerpt": "Webinaire sur Google Meet avec le Pr Loum, Professeur en ORL Pédiatrie.",
     "image": "",
     "statut": "",
-    "projet": ""
+    "projet": "",
+    "ordre": ""
   }
 ]

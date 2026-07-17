@@ -149,7 +149,14 @@
       const all = await res.json();
       const etapes = all
         .filter(e => e.projet === projetSlug)
-        .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+        .sort((a, b) => {
+          const oa = a.ordre === '' ? null : a.ordre;
+          const ob = b.ordre === '' ? null : b.ordre;
+          if (oa !== null && ob !== null && oa !== ob) return oa - ob;
+          if (oa !== null && ob === null) return -1;
+          if (oa === null && ob !== null) return 1;
+          return new Date(a.date || 0) - new Date(b.date || 0);
+        });
       if (etapes.length === 0) return;
 
       document.getElementById("etapes-timeline").innerHTML = etapes.map((e, i) => `

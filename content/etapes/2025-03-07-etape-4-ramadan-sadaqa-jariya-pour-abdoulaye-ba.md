@@ -1,6 +1,7 @@
 ---
 projet: "2025-02-15-programme-nemekou-daara"
 title: "Étape 4 - Ramadan : Sadaqa Jariya pour Abdoulaye Ba"
+ordre: 4
 date: 2025-03-07T10:00:00.000Z
 excerpt: "Don de denrées alimentaires en guise de Sadaqa Jariya pour notre défunt frère Abdoulaye Ba (rahimahoullah), samedi 07 mars 2025."
 image: ""

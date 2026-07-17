@@ -1,6 +1,7 @@
 ---
 projet: "2025-02-15-programme-nemekou-daara"
 title: "Étape 6 - Tivaouane"
+ordre: 6
 date: 2026-05-09T10:00:00.000Z
 excerpt: "Consultations médicales gratuites + don de denrées alimentaires, samedi 09 mai 2026."
 image: ""

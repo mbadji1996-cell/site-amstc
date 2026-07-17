@@ -6,7 +6,8 @@
     "excerpt": "Consultations médicales gratuites + don de denrées alimentaires, samedi 09 mai 2026.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 6
   },
   {
     "slug": "2025-11-23-etape-3-daara-el-hadji-a-cisse-rufisque",
@@ -15,7 +16,8 @@
     "excerpt": "Journée de consultation médicale gratuite + don de denrées alimentaires, dimanche 23 novembre 2025. Objectif de collecte : 300 000 F.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 3
   },
   {
     "slug": "2025-05-18-etape-2-daara-serigne-babacar-sy-tivaouane-peulh",
@@ -24,7 +26,8 @@
     "excerpt": "Journée de consultation médicale gratuite + don de denrées, dimanche 18 mai 2025.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 2
   },
   {
     "slug": "2025-03-07-etape-4-ramadan-sadaqa-jariya-pour-abdoulaye-ba",
@@ -33,7 +36,8 @@
     "excerpt": "Don de denrées alimentaires en guise de Sadaqa Jariya pour notre défunt frère Abdoulaye Ba (rahimahoullah), samedi 07 mars 2025.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 4
   },
   {
     "slug": "2025-02-15-etape-1-internat-darou-salam-keur-massar",
@@ -42,7 +46,8 @@
     "excerpt": "Journée de consultation médicale gratuite, samedi 15 février 2025.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 1
   },
   {
     "slug": "2025-01-24-etape-5-louga-48h-de-consultations-medicales-gratuites",
@@ -51,6 +56,7 @@
     "excerpt": "24-25 janvier, dans le cadre des 48H de consultations médicales gratuites à Louga, en partenariat avec Louga Assistance Médicale et DEESS Djamil.",
     "image": "",
     "statut": "",
-    "projet": "2025-02-15-programme-nemekou-daara"
+    "projet": "2025-02-15-programme-nemekou-daara",
+    "ordre": 5
   }
 ]

@@ -1,6 +1,7 @@
 ---
 projet: "2025-02-15-programme-nemekou-daara"
 title: "Étape 2 - Daara Serigne Babacar SY (Tivaouane Peulh)"
+ordre: 2
 date: 2025-05-18T10:00:00.000Z
 excerpt: "Journée de consultation médicale gratuite + don de denrées, dimanche 18 mai 2025."
 image: ""
