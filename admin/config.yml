@@ -150,6 +150,9 @@ collections:
           - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
           - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
+          - { label: "Lien YouTube", name: "lien_youtube", widget: "string", required: false }
+          - { label: "Lien TikTok", name: "lien_tiktok", widget: "string", required: false }
+          - { label: "Lien Telegram", name: "lien_telegram", widget: "string", required: false }
 
       - name: "don"
         label: "6. Faire un don"

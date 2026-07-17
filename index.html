@@ -308,6 +308,14 @@
     flex-wrap:wrap; gap:12px; font-size:0.82rem; color:rgba(246,247,241,0.55);
   }
   .footer-bottom a{color:rgba(246,247,241,0.55);}
+  .social-icons{display:flex; flex-wrap:wrap; gap:10px;}
+  .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid rgba(246,247,241,0.25);
+    display:flex; align-items:center; justify-content:center; color:rgba(246,247,241,0.85);
+    transition:border-color .18s ease, color .18s ease, background .18s ease;
+  }
+  .social-icon:hover{border-color:var(--gold); color:var(--gold); background:rgba(248,183,24,0.08);}
+  .social-icon svg{width:17px; height:17px; fill:currentColor; display:block;}
 
   ::selection{background:var(--gold); color:var(--green-deep);}
 
@@ -648,11 +656,7 @@
       </div>
       <div>
         <h5>Réseaux</h5>
-        <ul id="cms-social-links">
-          <li><a href="#">[Lien Facebook]</a></li>
-          <li><a href="#">[Lien LinkedIn]</a></li>
-          <li><a href="#">[Lien Instagram]</a></li>
-        </ul>
+        <div class="social-icons" id="cms-social-links"></div>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1099,11 +1103,26 @@
     if (data.footer_description) document.getElementById('cms-footer-description').textContent = data.footer_description;
     if (data.recepisse) document.getElementById('cms-recepisse').textContent = data.recepisse;
     if (data.contact_phone) document.getElementById('cms-contact-phone').textContent = 'Tél. : ' + data.contact_phone;
-    const socialLinks = [
-      data.lien_facebook ? `<li><a href="${esc(data.lien_facebook)}" target="_blank" rel="noopener">Facebook</a></li>` : '',
-      data.lien_linkedin ? `<li><a href="${esc(data.lien_linkedin)}" target="_blank" rel="noopener">LinkedIn</a></li>` : '',
-      data.lien_instagram ? `<li><a href="${esc(data.lien_instagram)}" target="_blank" rel="noopener">Instagram</a></li>` : ''
-    ].join('');
+    const SOCIAL_ICONS = {
+      facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>',
+      instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.07.05 1.79.22 2.43.46.66.25 1.21.6 1.76 1.15.55.55.9 1.1 1.15 1.76.24.64.41 1.36.46 2.43.05 1.06.06 1.42.06 4.14s-.01 3.08-.06 4.14c-.05 1.07-.22 1.79-.46 2.43a4.9 4.9 0 0 1-1.15 1.76 4.9 4.9 0 0 1-1.76 1.15c-.64.24-1.36.41-2.43.46-1.06.05-1.42.06-4.14.06s-3.08-.01-4.14-.06c-1.07-.05-1.79-.22-2.43-.46a4.9 4.9 0 0 1-1.76-1.15 4.9 4.9 0 0 1-1.15-1.76c-.24-.64-.41-1.36-.46-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.12c.05-1.07.22-1.79.46-2.43.25-.66.6-1.21 1.15-1.76A4.9 4.9 0 0 1 5.43 2.54c.64-.24 1.36-.41 2.43-.46C8.92 2.01 9.28 2 12 2Zm0 1.8c-2.67 0-2.99.01-4.04.06-.86.04-1.33.18-1.64.3-.41.16-.71.35-1.02.66-.31.31-.5.6-.66 1.02-.12.31-.26.78-.3 1.64-.05 1.05-.06 1.37-.06 4.04s.01 2.99.06 4.04c.04.86.18 1.33.3 1.64.16.41.35.71.66 1.02.31.31.6.5 1.02.66.31.12.78.26 1.64.3 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.86-.04 1.33-.18 1.64-.3.41-.16.71-.35 1.02-.66.31-.31.5-.6.66-1.02.12-.31.26-.78.3-1.64.05-1.05.06-1.37.06-4.04s-.01-2.99-.06-4.04c-.04-.86-.18-1.33-.3-1.64a1.73 1.73 0 0 0-.66-1.02 1.73 1.73 0 0 0-1.02-.66c-.31-.12-.78-.26-1.64-.3C14.99 3.81 14.67 3.8 12 3.8Zm0 3.06a5.14 5.14 0 1 1 0 10.28 5.14 5.14 0 0 1 0-10.28Zm0 1.8a3.34 3.34 0 1 0 0 6.68 3.34 3.34 0 0 0 0-6.68Zm5.34-1.99a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/></svg>',
+      linkedin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>',
+      youtube: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z"/></svg>',
+      telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.9 4.3 18.8 19.4c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2L6.8 13 2.2 11.6c-1-.3-1-1 .2-1.5L20.6 3c.8-.3 1.6.2 1.3 1.3Z"/></svg>',
+      tiktok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 2h-3.1v12.4c0 1.5-1.2 2.7-2.7 2.7s-2.7-1.2-2.7-2.7 1.2-2.7 2.7-2.7c.3 0 .5 0 .8.1V8.6c-.3 0-.5-.1-.8-.1-3.2 0-5.8 2.6-5.8 5.8S7.6 20.1 10.8 20.1s5.8-2.6 5.8-5.8V8.3c1.2.9 2.7 1.4 4.3 1.4V6.6c-1.8 0-3.4-1-4.3-2.4V2Z"/></svg>'
+    };
+    const socialEntries = [
+      ['facebook', data.lien_facebook],
+      ['instagram', data.lien_instagram],
+      ['linkedin', data.lien_linkedin],
+      ['youtube', data.lien_youtube],
+      ['telegram', data.lien_telegram],
+      ['tiktok', data.lien_tiktok]
+    ];
+    const socialLinks = socialEntries
+      .filter(([, url]) => url)
+      .map(([key, url]) => `<a class="social-icon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${key}">${SOCIAL_ICONS[key]}</a>`)
+      .join('');
     if (socialLinks) document.getElementById('cms-social-links').innerHTML = socialLinks;
 
     // Sections personnalisées (blocs libres)
