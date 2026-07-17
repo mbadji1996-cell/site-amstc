@@ -308,7 +308,7 @@
 
   async function openFolderView(id) {
     document.getElementById('listView').style.display = 'none';
-    document.getElementById('folderView').style.display = '';
+    document.getElementById('folderView').style.display = 'block';
 
     const { data } = await supabaseClient.from('media_folders').select('*').eq('id', id).single();
     currentFolder = data;
