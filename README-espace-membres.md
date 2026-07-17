@@ -334,6 +334,20 @@ base. Cause : `orders.user_id` référençait `auth.users(id)` au lieu de
 du site), donc PostgREST ne pouvait pas résoudre l'affichage du nom/e-mail
 du membre. La migration corrige la clé étrangère sans toucher aux données.
 
+## 4duodecies. Corriger la durée de lecture des leçons Médical
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase21-medical-lessons-duration.sql`, copiez
+   tout son contenu, collez-le, cliquez **Run**
+
+Le formulaire "Nouvelle leçon" de `medical-admin.html` affichait l'erreur
+"Could not find the 'duration_min' column of 'medical_lessons' in the
+schema cache" à l'enregistrement. Cause : `medical_lessons` n'a jamais eu
+cette colonne, contrairement à ses tables soeurs `daara_courses` et
+`quizzes` qui l'ont depuis leur création (phase4-nouveaux-modules.sql) — un
+oubli lors de la création de la table. La migration ajoute la colonne
+manquante.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
