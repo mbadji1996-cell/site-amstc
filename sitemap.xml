@@ -19,6 +19,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amstc.org/projets.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amstc.org/don.html</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
