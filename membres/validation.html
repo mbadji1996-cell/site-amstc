@@ -62,6 +62,13 @@
   .role-tag.admin{background:#EAF3FF; color:#1D4E89;}
   .role-tag.super_admin{background:#FEF6E4; color:var(--gold-deep);}
   .self-note{font-size:0.78rem; color:#5A6C60; font-style:italic;}
+  .assign-inline{width:100%; background:var(--paper); border-radius:10px; padding:14px 16px; margin-top:12px;}
+  .assign-inline-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .assign-inline select{flex:1; min-width:220px; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--body); font-size:0.86rem; background:var(--white); color:var(--ink);}
+  .assign-inline input{width:90px; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--mono); font-size:0.86rem; background:var(--white); color:var(--ink);}
+  .assign-msg{font-size:0.85rem; margin-top:8px;}
+  .assign-msg.error{color:#B23B3B;}
+  .assign-msg.ok{color:#3B6D11;}
   .empty, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
@@ -111,6 +118,7 @@
 <script>
   let currentUserId = null;
   let isSuperAdmin = false;
+  let unclaimedCards = [];
 
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
@@ -128,10 +136,11 @@
     const rolesEl = document.getElementById("rolesList");
     const rejectedEl = document.getElementById("rejectedList");
 
-    const { data, error } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const [{ data, error }, unclaimedRes] = await Promise.all([
+      supabaseClient.from("profiles").select("*").order("created_at", { ascending: false }),
+      supabaseClient.from("member_cards_unclaimed").select("*").order("full_name"),
+    ]);
+    unclaimedCards = unclaimedRes.data || [];
 
     if (error) {
       pendingEl.innerHTML = '<p class="empty">Impossible de charger les comptes.</p>';
@@ -169,15 +178,18 @@
               ${esc(p.full_name || "(nom non renseigné)")}
               <span class="role-tag ${esc(p.role)}">${roleLabel(p.role)}</span>
               ${p.is_active === false ? '<span class="status-tag inactive">Désactivé</span>' : ''}
+              ${p.legacy_card_number ? `<span class="status-tag approved">Carte ${esc(p.legacy_card_number)}</span>` : ''}
             </div>
             <div class="member-email">${esc(p.email)}</div>
           </div>
           <div class="member-actions">
             <button class="btn-sm btn-outline-sm" data-action="reset-password" data-email="${esc(p.email)}">Réinitialiser le mot de passe</button>
+            <button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>
             ${p.is_active === false
               ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
           </div>
+          <div class="assign-inline" id="assign-${esc(p.id)}" style="display:none;"></div>
         </div>
       `).join("");
 
@@ -228,6 +240,54 @@
     document.querySelectorAll("button[data-action]").forEach(btn => {
       btn.addEventListener("click", () => handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email));
     });
+  }
+
+  function toggleAssignCard(memberId) {
+    const box = document.getElementById('assign-' + memberId);
+    const wasOpen = box.style.display === 'block';
+    document.querySelectorAll('.assign-inline').forEach(el => el.style.display = 'none');
+    if (wasOpen) return;
+
+    const options = unclaimedCards.map(c => {
+      const meta = [c.member_since ? 'Depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
+      return `<option value="${esc(c.id)}">${esc(c.full_name)}${meta ? ' - ' + esc(meta) : ''}</option>`;
+    }).join('');
+
+    box.innerHTML = `
+      <div class="assign-inline-row">
+        <select id="assignCardSelect-${memberId}">
+          <option value="" disabled selected>Choisir une carte non réclamée...</option>
+          ${options}
+        </select>
+        <input type="number" id="assignCardYear-${memberId}" value="${new Date().getFullYear()}" title="Année de fin de validité">
+        <button class="btn-sm btn-approve" onclick="confirmAssignCard('${memberId}')">Confirmer</button>
+        <button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${memberId}')">Annuler</button>
+      </div>
+      <p class="assign-msg" id="assignCardMsg-${memberId}"></p>
+    `;
+    box.style.display = 'block';
+  }
+
+  async function confirmAssignCard(memberId) {
+    const select = document.getElementById('assignCardSelect-' + memberId);
+    const expiryYear = parseInt(document.getElementById('assignCardYear-' + memberId).value);
+    const msg = document.getElementById('assignCardMsg-' + memberId);
+    const cardId = select.value;
+
+    if (!cardId) { msg.textContent = 'Choisissez une carte.'; msg.className = 'assign-msg error'; return; }
+    if (!expiryYear) { msg.textContent = "Indiquez l'année de fin de validité."; msg.className = 'assign-msg error'; return; }
+
+    const { error } = await supabaseClient.rpc('assign_member_card', {
+      card_id: cardId, member_id: memberId, expiry_year: expiryYear,
+    });
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    await loadLists();
   }
 
   async function handleAction(action, id, email) {
