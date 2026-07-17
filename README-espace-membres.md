@@ -223,6 +223,18 @@ Pour créer des sous-dossiers à l'intérieur d'un album (par ex. "Jour 1",
 sous-dossier" - profondeur illimitée, année héritée automatiquement du
 parent, publication indépendante par (sous-)dossier.
 
+**Import de plusieurs dossiers en une fois** (glisser-déposer uniquement -
+la boîte de dialogue "Choisir un dossier" du navigateur ne permet de
+choisir qu'un seul dossier à la fois) :
+- Sur la liste des albums : déposez un dossier "Année" (ex `2026`)
+  contenant vos dossiers d'activité - chacun devient un album pour cette
+  année, structure et sous-dossiers imbriqués recréés automatiquement.
+  Déposer directement un ou plusieurs dossiers d'activité (sans les
+  regrouper dans un dossier "Année") fonctionne aussi - l'année est
+  demandée une seule fois pour tout le lot.
+- Dans un album déjà ouvert : déposez plusieurs dossiers d'activité pour
+  qu'ils deviennent chacun un sous-dossier, importé récursivement.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

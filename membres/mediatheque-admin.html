@@ -136,6 +136,12 @@
         <p class="assign-msg" id="newFolderMsg" style="margin-top:10px;font-size:0.85rem;"></p>
       </div>
 
+      <div class="dropzone" id="rootDropzone">
+        <div class="dropzone-icon"><i class="ti ti-folder-symlink"></i></div>
+        <p class="dropzone-text">Glissez ici un dossier "Année" (contenant vos dossiers d'activité), ou directement plusieurs dossiers d'activité, pour tout créer et importer d'un coup</p>
+      </div>
+      <p class="upload-progress" id="rootImportProgress"></p>
+
       <div class="folders-list" id="foldersList">
         <p class="empty">Chargement…</p>
       </div>
@@ -516,6 +522,170 @@
     await loadCurrentFolderPhotos();
   }
 
+  /* ===== Import récursif de dossiers déposés (glisser-déposer uniquement -
+     la boîte de dialogue native "Choisir un dossier" ne permet de choisir
+     qu'un seul dossier à la fois, limitation du navigateur/système, donc le
+     dépôt de plusieurs dossiers en une fois passe forcément par ici). ===== */
+
+  function getDroppedEntries(dataTransfer) {
+    if (!dataTransfer.items) return null;
+    const entries = [];
+    for (const item of dataTransfer.items) {
+      if (typeof item.webkitGetAsEntry !== 'function') return null;
+      const entry = item.webkitGetAsEntry();
+      if (entry) entries.push(entry);
+    }
+    return entries;
+  }
+
+  function readAllReaderEntries(reader) {
+    return new Promise((resolve, reject) => {
+      let all = [];
+      function readBatch() {
+        reader.readEntries(batch => {
+          if (batch.length === 0) { resolve(all); return; }
+          all = all.concat(batch);
+          readBatch();
+        }, reject);
+      }
+      readBatch();
+    });
+  }
+
+  // Lit récursivement un FileSystemDirectoryEntry : { files: File[], subfolders: {nom: même structure} }
+  async function readDirectoryTree(dirEntry) {
+    const files = [];
+    const subfolders = {};
+    const entries = await readAllReaderEntries(dirEntry.createReader());
+    for (const entry of entries) {
+      if (entry.isFile) {
+        const file = await new Promise((res, rej) => entry.file(res, rej));
+        if (file.type.startsWith('image/')) files.push(file);
+      } else if (entry.isDirectory) {
+        subfolders[entry.name] = await readDirectoryTree(entry);
+      }
+    }
+    return { files, subfolders };
+  }
+
+  function updateImportProgress(state) {
+    const el = document.getElementById(state.progressElId);
+    if (el) el.textContent = `Import en cours… ${state.done} photo(s), ${state.foldersCreated} dossier(s) créé(s)`;
+  }
+
+  async function importFileIntoFolder(file, folderId, coverRef, state) {
+    state.done++;
+    updateImportProgress(state);
+    try {
+      const blob = await resizeGalleryImage(file);
+      const path = `${folderId}/${crypto.randomUUID()}.jpg`;
+      const { error: uploadError } = await supabaseClient.storage.from(MEDIA_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
+      if (uploadError) throw uploadError;
+      const { error: insertError } = await supabaseClient.from('media_photos').insert({ folder_id: folderId, storage_path: path, order_index: state.done });
+      if (insertError) throw insertError;
+      if (!coverRef.value) {
+        await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', folderId);
+        coverRef.value = path;
+      }
+    } catch (err) {
+      console.error('Échec import photo', file.name, err);
+    }
+  }
+
+  // Crée récursivement les sous-dossiers d'un arbre importé et y envoie les photos.
+  async function importTreeIntoFolder(tree, folderId, year, coverRef, state) {
+    for (const file of tree.files) {
+      await importFileIntoFolder(file, folderId, coverRef, state);
+    }
+    for (const [name, subtree] of Object.entries(tree.subfolders)) {
+      state.foldersCreated++;
+      updateImportProgress(state);
+      const { data: newFolder, error } = await supabaseClient.from('media_folders').insert({ parent_id: folderId, year, title: name }).select().single();
+      if (error) { console.error('Erreur création sous-dossier', name, error); continue; }
+      await importTreeIntoFolder(subtree, newFolder.id, year, { value: null }, state);
+    }
+  }
+
+  // Dépôt dans la vue d'un album ouvert : fichiers isolés -> directement dans
+  // l'album ; dossiers déposés -> sous-dossiers créés et importés récursivement.
+  async function handleFolderViewDrop(entries) {
+    const progress = document.getElementById('uploadProgress');
+    progress.classList.add('show');
+    const state = { done: 0, foldersCreated: 0, progressElId: 'uploadProgress' };
+    const coverRef = { value: currentFolder.cover_path };
+
+    for (const entry of entries) {
+      if (entry.isFile) {
+        const file = await new Promise((res, rej) => entry.file(res, rej));
+        if (file.type.startsWith('image/')) await importFileIntoFolder(file, currentFolder.id, coverRef, state);
+      } else if (entry.isDirectory) {
+        state.foldersCreated++;
+        updateImportProgress(state);
+        const tree = await readDirectoryTree(entry);
+        const { data: newFolder, error } = await supabaseClient.from('media_folders').insert({
+          parent_id: currentFolder.id, year: currentFolder.year, title: entry.name,
+        }).select().single();
+        if (error) { console.error('Erreur création sous-dossier', entry.name, error); continue; }
+        await importTreeIntoFolder(tree, newFolder.id, currentFolder.year, { value: null }, state);
+      }
+    }
+
+    currentFolder.cover_path = coverRef.value;
+    progress.textContent = `Import terminé : ${state.foldersCreated} dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
+    setTimeout(() => progress.classList.remove('show'), 4000);
+    await loadCurrentFolderPhotos();
+    await loadSubfolders();
+  }
+
+  // Dépôt sur la liste racine : un dossier nommé comme une année (ex "2026")
+  // -> ses sous-dossiers deviennent des albums pour cette année ; un dossier
+  // au nom quelconque -> demande l'année une fois, puis devient lui-même un album.
+  async function handleRootDrop(entries) {
+    const progress = document.getElementById('rootImportProgress');
+    progress.classList.add('show');
+    const state = { done: 0, foldersCreated: 0, progressElId: 'rootImportProgress' };
+    let promptedYear = null;
+
+    for (const entry of entries) {
+      if (entry.isFile) {
+        console.warn('Photo isolée ignorée à la racine (pas d\'album pour la contenir) :', entry.name);
+        continue;
+      }
+      if (!entry.isDirectory) continue;
+
+      const isYearFolder = /^\d{4}$/.test(entry.name);
+      if (isYearFolder) {
+        const year = parseInt(entry.name, 10);
+        const tree = await readDirectoryTree(entry);
+        if (tree.files.length > 0) {
+          console.warn(`${tree.files.length} fichier(s) ignoré(s) à la racine de "${entry.name}" (placez vos photos dans un dossier d'activité).`);
+        }
+        for (const [name, subtree] of Object.entries(tree.subfolders)) {
+          state.foldersCreated++;
+          updateImportProgress(state);
+          const { data: newFolder, error } = await supabaseClient.from('media_folders').insert({ year, title: name }).select().single();
+          if (error) { console.error('Erreur création album', name, error); continue; }
+          await importTreeIntoFolder(subtree, newFolder.id, year, { value: null }, state);
+        }
+      } else {
+        if (promptedYear === null) {
+          const input = prompt('Pour quelle année importer ce(s) dossier(s) ?', String(currentYear));
+          promptedYear = parseInt(input, 10) || currentYear;
+        }
+        const tree = await readDirectoryTree(entry);
+        state.foldersCreated++;
+        updateImportProgress(state);
+        const { data: newFolder, error } = await supabaseClient.from('media_folders').insert({ year: promptedYear, title: entry.name }).select().single();
+        if (error) { console.error('Erreur création album', entry.name, error); continue; }
+        await importTreeIntoFolder(tree, newFolder.id, promptedYear, { value: null }, state);
+      }
+    }
+
+    progress.textContent = `Import terminé : ${state.foldersCreated} album(s)/dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
+    setTimeout(() => progress.classList.remove('show'), 4000);
+    await loadFolders();
+  }
+
   async function uploadFiles(fileList) {
     const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
     if (files.length === 0) return;
@@ -560,13 +730,34 @@
     dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
   });
   dropzone.addEventListener('drop', (e) => {
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+    const entries = getDroppedEntries(e.dataTransfer);
+    if (entries && entries.length > 0) {
+      handleFolderViewDrop(entries);
+    } else if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      uploadFiles(e.dataTransfer.files);
+    }
   });
 
   document.getElementById('pickFolderBtn').addEventListener('click', () => document.getElementById('folderInput').click());
   document.getElementById('pickPhotosBtn').addEventListener('click', () => document.getElementById('photosInput').click());
   document.getElementById('folderInput').addEventListener('change', (e) => { uploadFiles(e.target.files); e.target.value = ''; });
   document.getElementById('photosInput').addEventListener('change', (e) => { uploadFiles(e.target.files); e.target.value = ''; });
+
+  const rootDropzone = document.getElementById('rootDropzone');
+  ['dragenter', 'dragover'].forEach(evt => {
+    rootDropzone.addEventListener(evt, (e) => { e.preventDefault(); rootDropzone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    rootDropzone.addEventListener(evt, (e) => { e.preventDefault(); rootDropzone.classList.remove('dragover'); });
+  });
+  rootDropzone.addEventListener('drop', (e) => {
+    const entries = getDroppedEntries(e.dataTransfer);
+    if (entries && entries.length > 0) {
+      handleRootDrop(entries);
+    } else {
+      alert("Ce dépôt ne contient pas de dossier reconnu. Glissez un ou plusieurs dossiers depuis l'explorateur de fichiers (pas des photos isolées).");
+    }
+  });
 
   document.getElementById('newFolderBtn').addEventListener('click', toggleNewFolderForm);
   document.getElementById('newSubfolderBtn').addEventListener('click', toggleNewSubfolderForm);
