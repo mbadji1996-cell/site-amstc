@@ -235,6 +235,34 @@ choisir qu'un seul dossier à la fois) :
 - Dans un album déjà ouvert : déposez plusieurs dossiers d'activité pour
   qu'ils deviennent chacun un sous-dossier, importé récursivement.
 
+## 4octies. Activer la Bibliothèque (livres et documents consultables en ligne)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase16-bibliotheque.sql`, copiez tout son
+   contenu, collez-le, cliquez **Run**
+
+La Bibliothèque réutilise le système généraliste "contenu réservé"
+(`restricted_articles` + bucket `documents-reserves`, cf. section 4quater)
+avec une nouvelle catégorie `bibliotheque` : la migration ne fait qu'élargir
+la contrainte `restricted_articles_category_check`, aucune nouvelle policy
+RLS n'est nécessaire (la policy existante s'applique déjà à toute valeur de
+`category`). Comme les Documents officiels, elle est donc gouvernée par
+`is_active_member()` : accès coupé si la carte est expirée depuis plus de
+2 mois.
+
+Dans `membres/contenu-reserve-admin.html`, choisissez le type "Bibliothèque"
+pour publier un livre ou un document PDF (image de couverture facultative,
+fichier PDF obligatoire). Les membres consultent la liste sur
+`membres/bibliotheque.html`, accessible depuis une carte dédiée sur
+`membres/formations.html` : le PDF s'affiche dans un lecteur en ligne
+(URL signée à courte durée de vie, barre d'outils masquée) sans possibilité
+de téléchargement, comme pour les Documents officiels.
+
+Le tableau de bord (`membres/index.html`) affiche aussi désormais un fil
+"Activité récente" (derniers sujets du Forum, derniers albums Médiathèque
+publiés, dernières Formations/Documents ajoutés), en 3-4 cartes cliquables
+triées par date.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

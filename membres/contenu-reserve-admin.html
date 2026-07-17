@@ -89,7 +89,7 @@
   <a class="back" href="admin.html">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
   <h1>Contenu réservé aux membres</h1>
-  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation, une Réalisation, ou un document officiel.</p>
+  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation, une Réalisation, un document officiel, ou un livre/document de la Bibliothèque (consultable en ligne, non téléchargeable).</p>
 
   <div class="card">
     <form id="itemForm">
@@ -102,6 +102,7 @@
         <option value="formation">Formation</option>
         <option value="actualite">Réalisation</option>
         <option value="document">Document officiel (Statuts, Règlement intérieur, rapports...)</option>
+        <option value="bibliotheque">Bibliothèque (livre / document PDF, consultable en ligne uniquement)</option>
       </select>
 
       <label for="title">Titre</label>
@@ -110,11 +111,13 @@
       <label for="excerpt">Résumé court (visible de tous, sert d'accroche)</label>
       <input type="text" id="excerpt" maxlength="200">
 
-      <div id="mediaFields">
+      <div id="coverField">
         <label for="cover_image">Image de couverture (URL, facultatif)</label>
         <input type="url" id="cover_image" placeholder="https://...">
         <p class="field-hint">Pas d'envoi de fichier ici : collez l'URL d'une image déjà en ligne (ex. une image publiée via le CMS, ou hébergée ailleurs).</p>
+      </div>
 
+      <div id="videoField">
         <label for="video_url">Vidéo YouTube (URL, facultatif)</label>
         <input type="url" id="video_url" placeholder="https://www.youtube.com/watch?v=...">
       </div>
@@ -164,6 +167,7 @@
   function categoryLabel(c){
     if (c === "actualite") return "Réalisation";
     if (c === "document") return "Document";
+    if (c === "bibliotheque") return "Bibliothèque";
     return "Formation";
   }
 
@@ -198,16 +202,19 @@
   const cancelBtn = document.getElementById("cancelBtn");
   const submitBtn = document.getElementById("submitBtn");
   const categorySelect = document.getElementById("category");
-  const mediaFields = document.getElementById("mediaFields");
+  const coverField = document.getElementById("coverField");
+  const videoField = document.getElementById("videoField");
   const documentField = document.getElementById("documentField");
   const contentLabel = document.getElementById("contentLabel");
   const currentFileHint = document.getElementById("currentFileHint");
 
   function updateFieldsForCategory() {
-    const isDocument = categorySelect.value === "document";
-    mediaFields.style.display = isDocument ? "none" : "";
-    documentField.style.display = isDocument ? "" : "none";
-    contentLabel.textContent = isDocument
+    const cat = categorySelect.value;
+    const isFileCategory = cat === "document" || cat === "bibliotheque";
+    coverField.style.display = cat === "document" ? "none" : "";
+    videoField.style.display = (cat === "formation" || cat === "actualite") ? "" : "none";
+    documentField.style.display = isFileCategory ? "" : "none";
+    contentLabel.textContent = isFileCategory
       ? "Description (facultative, visible des membres uniquement)"
       : "Contenu complet (Markdown, visible des membres uniquement)";
   }
@@ -303,8 +310,8 @@
     const fileInput = document.getElementById("document_file");
     const newFile = fileInput.files[0];
 
-    if (category === "document" && !newFile && !existingFilePath) {
-      messageEl.textContent = "Veuillez choisir un fichier PDF pour un document officiel.";
+    if ((category === "document" || category === "bibliotheque") && !newFile && !existingFilePath) {
+      messageEl.textContent = "Veuillez choisir un fichier PDF.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;
       return;
@@ -319,7 +326,7 @@
       content: contentEditor.getMarkdown(),
     };
 
-    if (category === "document") {
+    if (category === "document" || category === "bibliotheque") {
       if (newFile) {
         const path = `${Date.now()}-${sanitizeFileName(newFile.name)}`;
         const { error: uploadError } = await supabaseClient.storage

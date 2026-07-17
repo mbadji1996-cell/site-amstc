@@ -57,6 +57,16 @@
   .card-status-banner-text strong{color:var(--green-deep);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
+  /* Activité récente */
+  .activity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:36px;}
+  .activity-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .18s;}
+  .activity-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(6,68,28,0.08);transform:translateY(-2px);}
+  .activity-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold-deep);flex-shrink:0;}
+  .activity-body{min-width:0;}
+  .activity-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:3px;}
+  .activity-title{font-size:0.86rem;font-weight:600;color:var(--green-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .activity-date{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;margin-top:3px;}
+
   /* Admin */
   .admin-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);transition:all .18s;}
   .admin-card:hover{border-color:var(--gold);background:var(--paper-alt);}
@@ -129,7 +139,11 @@
       </a>
     </div>
 
-    <p class="empty-note">Contenu à venir.</p>
+    <div id="activitySection" style="display:none;">
+      <p class="section-label"><i class="ti ti-clock"></i> Activité récente</p>
+      <div class="activity-grid" id="activityGrid"></div>
+    </div>
+    <p class="empty-note" id="emptyNote" style="display:none;">Aucune activité récente pour le moment.</p>
 
   </div><!-- /page-body -->
 </div>
@@ -141,6 +155,74 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function timeAgo(dateStr) {
+    const diffSec = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
+    if (diffSec < 60) return "à l'instant";
+    const diffMin = Math.round(diffSec / 60);
+    if (diffMin < 60) return `il y a ${diffMin} min`;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return `il y a ${diffH} h`;
+    const diffJ = Math.round(diffH / 24);
+    if (diffJ < 30) return `il y a ${diffJ} j`;
+    return new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  async function loadRecentActivity(blocked) {
+    const section = document.getElementById("activitySection");
+    const grid = document.getElementById("activityGrid");
+    const emptyNote = document.getElementById("emptyNote");
+
+    const queries = [
+      supabaseClient.from("forum_topics").select("id,title,last_activity_at").order("last_activity_at", { ascending: false }).limit(4),
+      supabaseClient.from("media_folders").select("id,title,created_at").eq("is_published", true).is("parent_id", null).order("created_at", { ascending: false }).limit(4),
+    ];
+    if (!blocked) {
+      queries.push(
+        supabaseClient.from("restricted_articles").select("id,title,category,created_at").in("category", ["formation", "document"]).order("created_at", { ascending: false }).limit(4)
+      );
+    }
+
+    const [topicsRes, foldersRes, articlesRes] = await Promise.all(queries);
+
+    const items = [];
+    (topicsRes.data || []).forEach(t => items.push({
+      icon: "ti-messages", label: "Forum", title: t.title, date: t.last_activity_at,
+      url: `forum-sujet.html?id=${encodeURIComponent(t.id)}`,
+    }));
+    (foldersRes.data || []).forEach(f => items.push({
+      icon: "ti-photo", label: "Médiathèque", title: f.title, date: f.created_at,
+      url: `mediatheque-dossier.html?id=${encodeURIComponent(f.id)}`,
+    }));
+    (articlesRes && articlesRes.data || []).forEach(a => items.push({
+      icon: a.category === "document" ? "ti-file-text" : "ti-certificate",
+      label: a.category === "document" ? "Document" : "Formation",
+      title: a.title, date: a.created_at,
+      url: a.category === "document" ? "documents.html" : `formation-reservee.html?id=${encodeURIComponent(a.id)}`,
+    }));
+
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const top = items.slice(0, 4);
+
+    if (top.length === 0) {
+      emptyNote.style.display = "";
+      return;
+    }
+
+    grid.innerHTML = top.map(it => `
+      <a class="activity-card" href="${it.url}">
+        <div class="activity-icon"><i class="ti ${it.icon}"></i></div>
+        <div class="activity-body">
+          <p class="activity-label">${esc(it.label)}</p>
+          <p class="activity-title">${esc(it.title)}</p>
+          <p class="activity-date">${timeAgo(it.date)}</p>
+        </div>
+      </a>
+    `).join("");
+    section.style.display = "";
+  }
+
   function renderCardStatusBanner(state) {
     const el = document.getElementById("cardStatusBanner");
     if (state === "grace") {
@@ -173,6 +255,7 @@
       name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
 
     renderCardStatusBanner(result.state);
+    loadRecentActivity(result.state === "blocked");
 
     if (["admin","super_admin"].includes(profile.role)) {
       document.getElementById("adminSection").style.display = "";
