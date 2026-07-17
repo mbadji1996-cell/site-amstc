@@ -302,6 +302,24 @@ individuellement). Côté membre, `membres/boutique.html` affiche désormais
 un carousel (flèches + puces) au clic sur la photo d'un produit, pour
 parcourir toutes ses vues comme sur un site marchand.
 
+## 4decies. Corriger "The object exceeded the maximum allowed size"
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase19-storage-file-size-limits.sql`, copiez
+   tout son contenu, collez-le, cliquez **Run**
+
+Aucun des buckets créés jusqu'ici (`documents-reserves`, `mediatheque-photos`,
+`boutique-photos`, `member-photos`) ne définissait `file_size_limit` :
+Supabase retombait sur la limite par défaut du projet, trop basse pour un
+PDF de livre/document un peu volumineux (erreur visible dans
+`contenu-reserve-admin.html` / `bibliotheque-admin.html` à l'envoi du
+fichier). La migration fixe une limite explicite par bucket (50 Mo pour les
+documents/PDF, 10 Mo pour les photos, 5 Mo pour la photo de profil). Si
+l'erreur persiste après cette migration pour un fichier plus gros que ces
+limites, il faut aussi relever la limite globale du projet dans le Dashboard
+Supabase (**Project Settings → Storage → Global file size limit**), qui
+plafonne toute limite définie au niveau d'un bucket.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
