@@ -344,9 +344,23 @@ Le formulaire "Nouvelle leçon" de `medical-admin.html` affichait l'erreur
 "Could not find the 'duration_min' column of 'medical_lessons' in the
 schema cache" à l'enregistrement. Cause : `medical_lessons` n'a jamais eu
 cette colonne, contrairement à ses tables soeurs `daara_courses` et
-`quizzes` qui l'ont depuis leur création (phase4-nouveaux-modules.sql) — un
+`quizzes` qui l'ont depuis leur création (phase4-nouveaux-modules.sql) - un
 oubli lors de la création de la table. La migration ajoute la colonne
 manquante.
+
+## 4terdecies. Ajouter le téléphone (WhatsApp) à l'inscription
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase22-inscription-telephone.sql`, copiez
+   tout son contenu, collez-le, cliquez **Run**
+
+Le formulaire `membres/inscription.html` demande désormais un numéro de
+téléphone (WhatsApp), obligatoire. Le trigger `handle_new_user()`
+(schema.sql, Phase 1) ne recopiait que le nom complet depuis les métadonnées
+d'inscription vers `profiles` : la migration le met à jour pour recopier
+aussi le téléphone (la colonne `profiles.phone` existe déjà depuis Phase 4,
+éditable ensuite via `profil.html`). Les mots de passe de `connexion.html`
+et `inscription.html` ont aussi un bouton œil pour les afficher/masquer.
 
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
