@@ -274,6 +274,34 @@ moment de publier un livre/document dans `bibliotheque-admin.html` ;
 `membres/bibliotheque.html` regroupe l'affichage sous ces sections (une
 section n'apparaît que si elle contient au moins un contenu publié).
 
+## 4novies. Corriger la Boutique et activer les photos multiples (carousel)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase18-boutique-photos.sql`, copiez tout son
+   contenu, collez-le, cliquez **Run**
+
+Le formulaire admin de la Boutique utilisait des noms de colonnes qui
+n'ont jamais existé (`price`, `is_active`, `total`, `delivery_address`,
+`note`) au lieu des vraies colonnes créées en Phase 4D
+(`price_fcfa`, `is_published`, `total_fcfa`, `shipping_address`, `notes`) :
+tout enregistrement échouait avec une erreur "column not found". Corrigé
+dans `membres/boutique-admin.html` et `membres/boutique.html`, sans
+changement de schéma pour cette partie. La migration corrige en plus deux
+points liés : la contrainte figée sur `products.category` (qui rejetait
+toute catégorie hors d'une liste de 4 valeurs, alors que le champ admin est
+un texte libre) est supprimée, et `products.stock` devient nullable (le
+champ "laisser vide = illimité" plantait sinon, `stock` étant NOT NULL).
+
+La migration ajoute aussi une table `product_photos` (plusieurs photos par
+produit, comme `media_photos` pour la Médiathèque) et un bucket Storage
+`boutique-photos` (privé, accès par URL signée, même schéma que
+`mediatheque-photos`). L'ancien champ "URL de l'image" est remplacé dans
+`boutique-admin.html` par un envoi de fichiers (plusieurs photos par
+produit, redimensionnées côté client avant envoi, supprimables
+individuellement). Côté membre, `membres/boutique.html` affiche désormais
+un carousel (flèches + puces) au clic sur la photo d'un produit, pour
+parcourir toutes ses vues comme sur un site marchand.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

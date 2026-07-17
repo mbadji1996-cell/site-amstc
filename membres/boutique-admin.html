@@ -113,6 +113,15 @@
   .form-msg{font-size:0.85rem;margin-top:8px;}
   .form-msg.error{color:#B23B3B;}
   .form-msg.ok{color:#3B6D11;}
+  .field-hint{font-size:0.78rem;color:#5A6C60;margin-top:4px;}
+
+  /* Product photos */
+  .photos-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+  .photo-thumb{position:relative;width:76px;height:76px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:var(--amber-light);}
+  .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-thumb .photo-remove{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(6,28,14,0.65);color:var(--white);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .photo-thumb .photo-remove:hover{background:#B23B3B;}
+  .photo-thumb.uploading{display:flex;align-items:center;justify-content:center;color:var(--amber-dark);font-size:18px;}
 
   /* Order detail modal */
   .order-detail-table{width:100%;border-collapse:collapse;margin:14px 0;}
@@ -215,8 +224,10 @@
         <textarea id="p-desc" rows="3" placeholder="Description courte du produit…"></textarea>
       </div>
       <div class="form-group full">
-        <label>URL de l'image</label>
-        <input type="text" id="p-img" placeholder="https://…">
+        <label>Photos du produit</label>
+        <div class="photos-grid" id="photosGrid"></div>
+        <input type="file" id="p-photos" accept="image/*" multiple>
+        <p class="field-hint" id="photosHint"></p>
       </div>
       <div class="form-group full">
         <label class="form-check">
@@ -251,8 +262,32 @@
 <script>
   let allProducts = [], allOrders = [];
   let editingProductId = null, orderFilter = 'all';
+  let currentProductPhotos = [], pendingPhotoFiles = [];
+  const PRODUCT_PHOTOS_BUCKET = 'boutique-photos';
   const methods = { wave: 'Wave', orange_money: 'Orange Money' };
   const statusLabels = { pending: 'En attente', paid: 'Payée', processing: 'En traitement', shipped: 'Expédiée', cancelled: 'Annulée' };
+
+  function resizeImageFile(file, maxSize = 1000, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > height) { if (width > maxSize) { height = height * maxSize / width; width = maxSize; } }
+          else { if (height > maxSize) { width = width * maxSize / height; height = maxSize; } }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
@@ -271,6 +306,23 @@
     ]);
     allProducts = pRes.data || [];
     allOrders = oRes.data || [];
+
+    const { data: photoRows } = await supabaseClient
+      .from('product_photos')
+      .select('id,product_id,storage_path,order_index')
+      .order('order_index');
+    const paths = (photoRows || []).map(r => r.storage_path);
+    let signedByPath = {};
+    if (paths.length > 0) {
+      const { data: signed } = await supabaseClient.storage.from(PRODUCT_PHOTOS_BUCKET).createSignedUrls(paths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+    }
+    const photosByProduct = {};
+    (photoRows || []).forEach(r => {
+      (photosByProduct[r.product_id] = photosByProduct[r.product_id] || [])
+        .push({ id: r.id, storage_path: r.storage_path, url: signedByPath[r.storage_path] || '' });
+    });
+    allProducts.forEach(p => { p.photos = photosByProduct[p.id] || []; });
   }
 
   function switchMain(tab) {
@@ -291,19 +343,20 @@
       return;
     }
     list.innerHTML = allProducts.map(p => {
-      const imgHtml = p.image_url
-        ? `<img src="${escHtml(p.image_url)}" alt="">`
+      const cover = p.photos && p.photos[0] && p.photos[0].url;
+      const imgHtml = cover
+        ? `<img src="${escHtml(cover)}" alt="">`
         : `<i class="ti ti-package"></i>`;
       return `<div class="product-row">
         <div class="prod-thumb">${imgHtml}</div>
         <div class="prod-body">
-          <p class="prod-name">${escHtml(p.name)}<span class="badge-active ${p.is_active ? '' : 'badge-inactive'}">${p.is_active ? 'Actif' : 'Inactif'}</span></p>
+          <p class="prod-name">${escHtml(p.name)}<span class="badge-active ${p.is_published ? '' : 'badge-inactive'}">${p.is_published ? 'Actif' : 'Inactif'}</span></p>
           <p class="prod-meta">${p.category ? escHtml(p.category) + ' · ' : ''}${p.stock !== null ? p.stock + ' en stock' : 'Stock illimité'}</p>
         </div>
-        <span class="prod-price">${formatPrice(p.price)}</span>
+        <span class="prod-price">${formatPrice(p.price_fcfa)}</span>
         <div class="prod-actions">
           <button class="btn btn-sm btn-edit" onclick="openProductModal('${p.id}')"><i class="ti ti-pencil"></i> Modifier</button>
-          <button class="btn btn-sm btn-pub" onclick="toggleProductActive('${p.id}',${p.is_active})">${p.is_active ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>'}</button>
+          <button class="btn btn-sm btn-pub" onclick="toggleProductActive('${p.id}',${p.is_published})">${p.is_published ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>'}</button>
           <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}','${escHtml(p.name)}')"><i class="ti ti-trash"></i></button>
         </div>
       </div>`;
@@ -312,30 +365,75 @@
 
   function openProductModal(id) {
     editingProductId = id;
+    pendingPhotoFiles = [];
+    document.getElementById('p-photos').value = '';
     document.getElementById('productFormMsg').textContent = '';
     if (id) {
       const p = allProducts.find(x => x.id === id);
       document.getElementById('productModalTitle').textContent = 'Modifier le produit';
       document.getElementById('p-name').value = p.name;
       document.getElementById('p-cat').value = p.category || '';
-      document.getElementById('p-price').value = p.price;
+      document.getElementById('p-price').value = p.price_fcfa;
       document.getElementById('p-stock').value = p.stock !== null ? p.stock : '';
       document.getElementById('p-desc').value = p.description || '';
-      document.getElementById('p-img').value = p.image_url || '';
-      document.getElementById('p-active').checked = !!p.is_active;
+      document.getElementById('p-active').checked = !!p.is_published;
+      currentProductPhotos = (p.photos || []).slice();
     } else {
       document.getElementById('productModalTitle').textContent = 'Nouveau produit';
-      ['p-name','p-cat','p-price','p-stock','p-desc','p-img'].forEach(f => document.getElementById(f).value = '');
+      ['p-name','p-cat','p-price','p-stock','p-desc'].forEach(f => document.getElementById(f).value = '');
       document.getElementById('p-active').checked = true;
+      currentProductPhotos = [];
     }
+    renderPhotosGrid();
     document.getElementById('productModal').classList.add('open');
+  }
+
+  function renderPhotosGrid() {
+    const grid = document.getElementById('photosGrid');
+    const existingHtml = currentProductPhotos.map(ph => `
+      <div class="photo-thumb">
+        <img src="${escHtml(ph.url)}" alt="">
+        <button type="button" class="photo-remove" onclick="removeExistingPhoto('${ph.id}','${escHtml(ph.storage_path)}')"><i class="ti ti-x"></i></button>
+      </div>`).join('');
+    const pendingHtml = pendingPhotoFiles.map((f, i) => `
+      <div class="photo-thumb">
+        <img src="${f.previewUrl}" alt="">
+        <button type="button" class="photo-remove" onclick="removePendingPhoto(${i})"><i class="ti ti-x"></i></button>
+      </div>`).join('');
+    grid.innerHTML = existingHtml + pendingHtml;
+    document.getElementById('photosHint').textContent =
+      (currentProductPhotos.length + pendingPhotoFiles.length) === 0
+        ? 'Aucune photo. Ajoutez-en depuis votre appareil (plusieurs vues possibles).'
+        : '';
+  }
+
+  document.getElementById('p-photos').addEventListener('change', e => {
+    Array.from(e.target.files).forEach(file => {
+      file.previewUrl = URL.createObjectURL(file);
+      pendingPhotoFiles.push(file);
+    });
+    e.target.value = '';
+    renderPhotosGrid();
+  });
+
+  function removePendingPhoto(i) {
+    pendingPhotoFiles.splice(i, 1);
+    renderPhotosGrid();
+  }
+
+  async function removeExistingPhoto(photoId, storagePath) {
+    if (!confirm('Supprimer cette photo ?')) return;
+    await supabaseClient.from('product_photos').delete().eq('id', photoId);
+    await supabaseClient.storage.from(PRODUCT_PHOTOS_BUCKET).remove([storagePath]);
+    currentProductPhotos = currentProductPhotos.filter(p => p.id !== photoId);
+    renderPhotosGrid();
   }
 
   async function saveProduct() {
     const btn = document.getElementById('productSaveBtn');
     const msg = document.getElementById('productFormMsg');
     const name = document.getElementById('p-name').value.trim();
-    const price = parseFloat(document.getElementById('p-price').value);
+    const price = parseInt(document.getElementById('p-price').value, 10);
     if (!name) { msg.textContent = 'Le nom est obligatoire.'; msg.className = 'form-msg error'; return; }
     if (isNaN(price) || price < 0) { msg.textContent = 'Le prix doit être un nombre valide.'; msg.className = 'form-msg error'; return; }
     btn.disabled = true;
@@ -344,35 +442,66 @@
     const payload = {
       name,
       category: document.getElementById('p-cat').value.trim() || null,
-      price,
-      stock: stockVal !== '' ? parseInt(stockVal) : null,
+      price_fcfa: price,
+      stock: stockVal !== '' ? parseInt(stockVal, 10) : null,
       description: document.getElementById('p-desc').value.trim() || null,
-      image_url: document.getElementById('p-img').value.trim() || null,
-      is_active: document.getElementById('p-active').checked
+      is_published: document.getElementById('p-active').checked
     };
 
+    let productId = editingProductId;
     let error;
     if (editingProductId) {
       ({ error } = await supabaseClient.from('products').update(payload).eq('id', editingProductId));
     } else {
-      ({ error } = await supabaseClient.from('products').insert(payload));
+      const { data, error: insertError } = await supabaseClient.from('products').insert(payload).select().single();
+      error = insertError;
+      if (data) productId = data.id;
+    }
+
+    if (error) {
+      btn.disabled = false;
+      msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
+      return;
+    }
+
+    if (productId && pendingPhotoFiles.length > 0) {
+      let nextIndex = currentProductPhotos.length;
+      for (const file of pendingPhotoFiles) {
+        const blob = await resizeImageFile(file);
+        const path = `${productId}/${crypto.randomUUID()}.jpg`;
+        const { error: uploadError } = await supabaseClient.storage
+          .from(PRODUCT_PHOTOS_BUCKET)
+          .upload(path, blob, { contentType: 'image/jpeg' });
+        if (uploadError) {
+          btn.disabled = false;
+          msg.textContent = "Erreur d'envoi photo : " + uploadError.message; msg.className = 'form-msg error';
+          return;
+        }
+        await supabaseClient.from('product_photos').insert({ product_id: productId, storage_path: path, order_index: nextIndex });
+        nextIndex++;
+      }
+      pendingPhotoFiles = [];
     }
 
     btn.disabled = false;
-    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
     msg.textContent = 'Enregistré !'; msg.className = 'form-msg ok';
     await loadData(); renderProducts();
     setTimeout(() => closeModal('productModal'), 700);
   }
 
   async function toggleProductActive(id, current) {
-    await supabaseClient.from('products').update({ is_active: !current }).eq('id', id);
+    await supabaseClient.from('products').update({ is_published: !current }).eq('id', id);
     await loadData(); renderProducts();
   }
 
   async function deleteProduct(id, name) {
     if (!confirm(`Supprimer le produit "${name}" ?`)) return;
+    const p = allProducts.find(x => x.id === id);
+    const paths = (p && p.photos || []).map(ph => ph.storage_path);
     await supabaseClient.from('products').delete().eq('id', id);
+    if (paths.length > 0) {
+      await supabaseClient.storage.from(PRODUCT_PHOTOS_BUCKET).remove(paths);
+    }
     await loadData(); renderProducts();
   }
 
@@ -402,7 +531,7 @@
           <p class="member-email">${escHtml(profile.email || '')}</p>
         </td>
         <td><p class="order-items">${itemsSummary || '-'}</p></td>
-        <td><span class="order-total">${formatPrice(o.total)}</span></td>
+        <td><span class="order-total">${formatPrice(o.total_fcfa)}</span></td>
         <td style="font-size:0.8rem;">${methods[o.payment_method] || '-'}</td>
         <td><span class="ref-code">${escHtml(o.payment_reference || '-')}</span></td>
         <td style="color:#8A9E8F;font-size:0.78rem;">${date}</td>
@@ -440,15 +569,15 @@
       </div>
       <table class="order-detail-table">
         ${itemsArr.map(i => `<tr><td>${escHtml(i.name)} × ${i.qty}</td><td>${formatPrice(i.price * i.qty)}</td></tr>`).join('')}
-        <tr><td style="font-weight:600;">Total</td><td>${formatPrice(o.total)}</td></tr>
+        <tr><td style="font-weight:600;">Total</td><td>${formatPrice(o.total_fcfa)}</td></tr>
       </table>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.85rem;color:#5A6C60;margin-top:10px;">
         <div><strong style="color:var(--ink);">Méthode</strong><br>${methods[o.payment_method] || '-'}</div>
         <div><strong style="color:var(--ink);">Référence</strong><br><span style="font-family:var(--mono);">${escHtml(o.payment_reference || '-')}</span></div>
         <div><strong style="color:var(--ink);">Date</strong><br>${date}</div>
         <div><strong style="color:var(--ink);">Statut</strong><br><span class="badge s-${o.status}">${statusLabels[o.status]}</span></div>
-        ${o.delivery_address ? `<div style="grid-column:1/-1;"><strong style="color:var(--ink);">Livraison</strong><br>${escHtml(o.delivery_address)}</div>` : ''}
-        ${o.note ? `<div style="grid-column:1/-1;"><strong style="color:var(--ink);">Note</strong><br>${escHtml(o.note)}</div>` : ''}
+        ${o.shipping_address ? `<div style="grid-column:1/-1;"><strong style="color:var(--ink);">Livraison</strong><br>${escHtml(o.shipping_address)}</div>` : ''}
+        ${o.notes ? `<div style="grid-column:1/-1;"><strong style="color:var(--ink);">Note</strong><br>${escHtml(o.notes)}</div>` : ''}
       </div>`;
     document.getElementById('orderModal').classList.add('open');
   }
