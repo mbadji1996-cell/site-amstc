@@ -5,7 +5,8 @@
     "date": "2026-07-17T20:00:00.000Z",
     "excerpt": "Cours hebdomadaire sur le Mukhtasar Cheikh Sidiya Al-Akhdar (fiqh malikite), chaque samedi à 20h, animé par la Commission Pédagogique dans le groupe WhatsApp.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2026-07-17-comment-naviguer-sur-le-site-amstc",
@@ -13,7 +14,8 @@
     "date": "2026-07-17T11:00:00.000Z",
     "excerpt": "Un guide pas à pas pour se repérer sur amstc.org : le site public, la création de compte, et tout ce que propose l'espace membres.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-10-01-octobre-rose-2025",
@@ -21,7 +23,8 @@
     "date": "2025-10-01T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-08-09-webinaire-entreprendre-en-sante",
@@ -29,7 +32,8 @@
     "date": "2025-08-09T21:30:00.000Z",
     "excerpt": "Innovations des jeunes médecins et perspectives. Webinaire avec le Dr Adja Marietou Diop, cardiologue, médecin du sport.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-06-15-syndromes-pneumologiques",
@@ -37,7 +41,8 @@
     "date": "2025-06-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-04-24-webinaire-prise-en-charge-dune-crise-dasthme",
@@ -45,7 +50,8 @@
     "date": "2025-04-24T20:30:00.000Z",
     "excerpt": "Webinaire sur Google Meet avec le Dr El Hadji Omar Ndiaye, pneumologue, ancien interne des hôpitaux.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2026-07-13-epu-test",
@@ -53,7 +59,8 @@
     "date": "2025-04-13T20:30:00.000+00:00",
     "excerpt": "|-",
     "image": "/assets/uploads/screenshot-2026-07-15-214457.png",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-03-08-webinaire-femme-exercant-dans-le-domaine-medical-et-vie-conjugale",
@@ -61,7 +68,8 @@
     "date": "2025-03-08T21:00:00.000Z",
     "excerpt": "Comment concilier carrière et vie de famille ? Webinaire de la Cellule féminine de l'AMSTC, à l'occasion du 8 mars.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2025-01-18-webinaire-le-mariage",
@@ -69,7 +77,8 @@
     "date": "2025-01-18T21:00:00.000Z",
     "excerpt": "« Parlons-en ! » Échange sur le groupe WhatsApp autour des obligations et traditions prophétiques du mariage.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2024-10-01-octobre-rose-sensibilisation-au-cancer-du-sein",
@@ -77,7 +86,8 @@
     "date": "2024-10-01T10:00:00.000Z",
     "excerpt": "Définition, facteurs de risque, symptômes et prévention du cancer du sein, à l'occasion d'Octobre Rose.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2024-04-17-masterclass-la-maladie-hemorroidaire",
@@ -85,7 +95,8 @@
     "date": "2024-04-17T20:45:00.000Z",
     "excerpt": "Masterclass sur Google Meet avec le Pr Alpha Oumar Touré, Chirurgien général (FMPO, UCAD).",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   },
   {
     "slug": "2024-01-31-webinaire-prise-en-charge-des-angines",
@@ -93,6 +104,7 @@
     "date": "2024-01-31T20:30:00.000Z",
     "excerpt": "Webinaire sur Google Meet avec le Pr Loum, Professeur en ORL Pédiatrie.",
     "image": "",
-    "statut": ""
+    "statut": "",
+    "projet": ""
   }
 ]

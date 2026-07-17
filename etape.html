@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projet - AMSTC</title>
-<meta name="description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<title>Étape - AMSTC</title>
+<meta name="description" content="Étapes de projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
-<meta property="og:title" content="Projet - AMSTC" id="og-title">
-<meta property="og:description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
+<meta property="og:title" content="Étape - AMSTC" id="og-title">
+<meta property="og:description" content="Étapes de projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/logo-horizontal-sm.png">
@@ -30,9 +30,9 @@
   .logo-img{height:42px;}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 20px;}
   .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep); text-transform:uppercase; letter-spacing:0.06em;}
-  .art-statut{
+  .etape-badge{
     font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;
-    background:var(--paper-alt, #ECEFE3); color:var(--green-deep); padding:4px 11px; border-radius:999px;
+    background:#ECEFE3; color:var(--green-deep); padding:4px 11px; border-radius:999px;
     display:inline-block; margin-left:10px; vertical-align:middle;
   }
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:2rem; margin:10px 0 28px;}
@@ -41,31 +41,6 @@
   #body h2,#body h3{font-family:var(--display); color:var(--green-deep); margin:28px 0 12px;}
   .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
   .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
-
-  /* ===== Frise des étapes ===== */
-  #etapes-section{margin-top:40px;}
-  #etapes-section h2{font-family:var(--display); font-size:1.3rem; color:var(--green-deep); margin-bottom:24px;}
-  .etapes-timeline{position:relative;}
-  .etape-item{position:relative; padding-left:44px; padding-bottom:28px;}
-  .etape-item:last-child{padding-bottom:0;}
-  .etape-item::before{
-    content:""; position:absolute; left:11px; top:26px; bottom:0; width:2px; background:var(--line);
-  }
-  .etape-item:last-child::before{display:none;}
-  .etape-dot{
-    position:absolute; left:0; top:2px; width:24px; height:24px; border-radius:50%;
-    background:var(--white); border:2px solid var(--gold); color:var(--gold-deep);
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:0.7rem; font-weight:700;
-  }
-  .etape-card{
-    display:block; background:var(--white); border:1px solid var(--line); border-radius:12px;
-    padding:16px 20px; transition:box-shadow .18s ease, transform .18s ease;
-  }
-  .etape-card:hover{box-shadow:0 8px 20px rgba(6,68,28,0.10); transform:translateY(-2px);}
-  .etape-date{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold-deep);}
-  .etape-card h3{font-family:var(--display); font-size:1.05rem; color:var(--green-deep); margin:4px 0 6px;}
-  .etape-card p{color:#465A4E; font-size:0.92rem; margin:0;}
 </style>
 </head>
 <body>
@@ -75,21 +50,17 @@
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="projets.html">← Tous les projets</a>
-  <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <a class="back" id="back-link" href="projets.html">← Retour au projet</a>
+  <noscript><p>L'affichage de cette page nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p>Chargement…</p>
-  </div>
-  <div id="etapes-section" style="display:none;">
-    <h2>Étapes du projet</h2>
-    <div class="etapes-timeline" id="etapes-timeline"></div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
-  const FOLDER = "content/projets";
+  const FOLDER = "content/etapes";
 
   function parseFrontMatter(raw) {
     const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
@@ -111,62 +82,39 @@
     return m ? m[1] : null;
   }
 
-  async function loadArticle() {
+  async function loadEtape() {
     const slug = new URLSearchParams(window.location.search).get("slug");
     const content = document.getElementById("content");
-    if (!slug) { content.innerHTML = "<p>Projet introuvable.</p>"; return; }
+    if (!slug) { content.innerHTML = "<p>Étape introuvable.</p>"; return; }
     try {
       const raw = await (await fetch(
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
       )).text();
       const { data, body } = parseFrontMatter(raw);
-      document.title = (data.title || "Projet") + " - AMSTC";
+      document.title = (data.title || "Étape") + " - AMSTC";
       if (data.title) {
         document.getElementById('og-title').setAttribute('content', data.title + ' - AMSTC');
       }
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);
       }
+      if (data.projet) {
+        document.getElementById('back-link').href = `projet.html?slug=${encodeURIComponent(data.projet)}`;
+      }
       const ytId = youtubeEmbedId(data.video_youtube);
       content.innerHTML = `
         <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
-        ${data.statut ? `<span class="art-statut">${data.statut}</span>` : ""}
+        <span class="etape-badge">Étape de projet</span>
         <h1>${data.title || ''}</h1>
         ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
         <div id="body">${marked.parse(body || '')}</div>
       `;
-      loadEtapes(slug);
     } catch (e) {
-      content.innerHTML = "<p>Impossible de charger ce projet.</p>";
+      content.innerHTML = "<p>Impossible de charger cette étape.</p>";
     }
   }
-
-  async function loadEtapes(projetSlug) {
-    try {
-      const res = await fetch("content/etapes-index.json");
-      if (!res.ok) return;
-      const all = await res.json();
-      const etapes = all
-        .filter(e => e.projet === projetSlug)
-        .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
-      if (etapes.length === 0) return;
-
-      document.getElementById("etapes-timeline").innerHTML = etapes.map((e, i) => `
-        <div class="etape-item">
-          <div class="etape-dot">${i + 1}</div>
-          <a class="etape-card" href="etape.html?slug=${encodeURIComponent(e.slug)}">
-            <span class="etape-date">${e.date ? new Date(e.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
-            <h3>${e.title || 'Sans titre'}</h3>
-            <p>${e.excerpt || ''}</p>
-          </a>
-        </div>
-      `).join('');
-      document.getElementById("etapes-section").style.display = "";
-    } catch (e) { /* pas d'étapes disponibles, on continue sans */ }
-  }
-
-  loadArticle();
+  loadEtape();
 </script>
 </body>
 </html>

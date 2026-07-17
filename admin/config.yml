@@ -287,3 +287,17 @@ collections:
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Contenu", name: "body", widget: "markdown" }
+
+  - name: "etapes"
+    label: "Étapes de projet"
+    folder: "content/etapes"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Projet associé", name: "projet", widget: "relation", collection: "projets", search_fields: ["title"], display_fields: ["title"], value_field: "{{slug}}", hint: "Le projet auquel cette étape appartient." }
+      - { label: "Titre de l'étape", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text" }
+      - { label: "Image de couverture", name: "image", widget: "image", required: false }
+      - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
+      - { label: "Contenu de l'étape", name: "body", widget: "markdown" }

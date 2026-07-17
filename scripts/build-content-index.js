@@ -31,7 +31,8 @@ function buildIndex(folderName) {
       date: data.date || '',
       excerpt: data.excerpt || '',
       image: data.image || '',
-      statut: data.statut || ''
+      statut: data.statut || '',
+      projet: data.projet || ''
     };
   });
 
@@ -43,3 +44,4 @@ function buildIndex(folderName) {
 buildIndex('actualites');
 buildIndex('formations');
 buildIndex('projets');
+buildIndex('etapes');
