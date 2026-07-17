@@ -193,6 +193,29 @@ membre peut modifier/supprimer ses propres sujets et réponses ; un admin
 peut supprimer n'importe quoi (modération), directement depuis
 `membres/forum.html` et `membres/forum-sujet.html`.
 
+## 4septies. Activer la Médiathèque (galerie photo par année / activité)
+
+1. Dans Supabase → **SQL Editor** → **New query**
+2. Ouvrez le fichier `supabase/phase14-mediatheque.sql`, copiez tout son
+   contenu, collez-le, cliquez **Run**
+
+La Médiathèque est organisée en Année → Dossier d'activité → Photos, avec
+une photo de couverture par dossier. Accès comme la Boutique/le Forum :
+tout membre approuvé (`is_approved_member()`), sans lien avec la validité
+de la carte. Les photos sont stockées dans le bucket privé
+`mediatheque-photos` (comme `documents-reserves`) : l'accès réel aux
+fichiers est gardé par la lecture RLS de `media_folders`/`media_photos` -
+le chemin d'une photo d'un dossier non publié n'est jamais renvoyé à un
+membre.
+
+Ensuite :
+- Dans `membres/mediatheque-admin.html`, créez un album (année + titre),
+  importez des photos par glisser-déposer ou en choisissant un dossier
+  entier du disque, définissez une couverture, puis publiez l'album.
+- `membres/mediatheque.html` liste les albums publiés groupés par année ;
+  `membres/mediatheque-dossier.html` affiche la galerie d'un album avec
+  un lightbox (clic pour agrandir, flèches du clavier pour naviguer).
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -243,6 +266,9 @@ Une fois l'URL et la clé intégrées :
   renouvellement (voir Phase 4quinquies ci-dessus)
 - Forum de discussion entre membres (sujets + réponses), sans lien avec
   la validité de la carte (voir Phase 4sexies ci-dessus)
+- Médiathèque : galerie photo Année > Dossier d'activité > Photos, avec
+  import par glisser-déposer ou dossier entier côté admin (voir Phase
+  4septies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

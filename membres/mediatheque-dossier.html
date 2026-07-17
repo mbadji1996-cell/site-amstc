@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album - Médiathèque AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amstc.org/membres/mediatheque-dossier.html">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --line:rgba(6,68,28,0.14);
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
+  a{color:var(--green);}
+  header{padding:24px 0; border-bottom:1px solid var(--line);}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
+  .logo-img{height:42px;}
+  .signout-btn{
+    font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gold-deep); background:none; border:1.5px solid var(--line); border-radius:999px;
+    padding:9px 18px; cursor:pointer; transition:border-color .18s ease;
+  }
+  .signout-btn:hover{border-color:var(--gold-deep);}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 8px; text-decoration:none;}
+  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.9rem; margin-bottom:6px;}
+  .folder-meta{color:#5A6C60; font-family:var(--mono); font-size:0.82rem; margin-bottom:28px;}
+
+  .photos-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; padding-bottom:80px;}
+  .photo-thumb{width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; cursor:pointer; background:var(--paper); display:block; border:1px solid var(--line); transition:transform .15s ease;}
+  .photo-thumb:hover{transform:scale(1.02);}
+
+  .empty, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+
+  /* Lightbox */
+  .lightbox{position:fixed; inset:0; background:rgba(6,20,12,0.92); z-index:400; display:none; align-items:center; justify-content:center;}
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:92vw; max-height:88vh; object-fit:contain; border-radius:6px;}
+  .lightbox-close{position:absolute; top:20px; right:24px; background:none; border:none; color:var(--white,#fff); font-size:30px; cursor:pointer; line-height:1;}
+  .lightbox-nav{position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.12); border:none; color:#fff; width:48px; height:48px; border-radius:50%; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .lightbox-nav:hover{background:rgba(255,255,255,0.22);}
+  .lightbox-prev{left:20px;}
+  .lightbox-next{right:20px;}
+  .lightbox-counter{position:absolute; bottom:20px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.7); font-family:var(--mono); font-size:0.8rem;}
+
+  footer{padding:40px 0; text-align:center; max-width:1180px; margin:0 auto;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="mediatheque.html">← Médiathèque</a>
+  <noscript><p class="loading">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div id="content">
+    <p class="loading" id="loadingMsg">Chargement de l'album…</p>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose"><i class="ti ti-x"></i></button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev"><i class="ti ti-chevron-left"></i></button>
+  <img id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav lightbox-next" id="lightboxNext"><i class="ti ti-chevron-right"></i></button>
+  <p class="lightbox-counter" id="lightboxCounter"></p>
+</div>
+
+<footer>
+  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const MEDIA_BUCKET = "mediatheque-photos";
+  const folderId = new URLSearchParams(location.search).get("id");
+  let photoUrls = [];
+  let lightboxIndex = 0;
+
+  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  async function loadFolder() {
+    const content = document.getElementById("content");
+    if (!folderId) { content.innerHTML = '<p class="empty">Album introuvable.</p>'; return; }
+
+    const [folderRes, photosRes] = await Promise.all([
+      supabaseClient.from("media_folders").select("*").eq("id", folderId).single(),
+      supabaseClient.from("media_photos").select("*").eq("folder_id", folderId).order("order_index"),
+    ]);
+
+    if (!folderRes.data) { content.innerHTML = '<p class="empty">Impossible de charger cet album.</p>'; return; }
+    const folder = folderRes.data;
+    const photos = photosRes.data || [];
+
+    document.title = folder.title + " - Médiathèque AMSTC";
+
+    if (photos.length === 0) {
+      content.innerHTML = `
+        <h1>${esc(folder.title)}</h1>
+        <p class="folder-meta">${folder.year}</p>
+        <p class="empty">Aucune photo dans cet album pour le moment.</p>`;
+      return;
+    }
+
+    const paths = photos.map(p => p.storage_path);
+    const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
+    const signedByPath = {};
+    (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+    photoUrls = photos.map(p => signedByPath[p.storage_path]).filter(Boolean);
+
+    content.innerHTML = `
+      <h1>${esc(folder.title)}</h1>
+      <p class="folder-meta">${folder.year} - ${photos.length} photo${photos.length > 1 ? 's' : ''}</p>
+      <div class="photos-grid" id="photosGrid">
+        ${photoUrls.map((url, i) => `<img class="photo-thumb" src="${url}" alt="" loading="lazy" onclick="openLightbox(${i})">`).join('')}
+      </div>`;
+
+    document.getElementById("loadingMsg").style.display = "none";
+  }
+
+  function openLightbox(index) {
+    lightboxIndex = index;
+    renderLightbox();
+    document.getElementById("lightbox").classList.add("open");
+  }
+
+  function closeLightbox() {
+    document.getElementById("lightbox").classList.remove("open");
+  }
+
+  function renderLightbox() {
+    document.getElementById("lightboxImg").src = photoUrls[lightboxIndex];
+    document.getElementById("lightboxCounter").textContent = `${lightboxIndex + 1} / ${photoUrls.length}`;
+  }
+
+  function lightboxPrev() {
+    lightboxIndex = (lightboxIndex - 1 + photoUrls.length) % photoUrls.length;
+    renderLightbox();
+  }
+
+  function lightboxNext() {
+    lightboxIndex = (lightboxIndex + 1) % photoUrls.length;
+    renderLightbox();
+  }
+
+  document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
+  document.getElementById("lightboxPrev").addEventListener("click", lightboxPrev);
+  document.getElementById("lightboxNext").addEventListener("click", lightboxNext);
+  document.getElementById("lightbox").addEventListener("click", (e) => {
+    if (e.target.id === "lightbox") closeLightbox();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("lightbox").classList.contains("open")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") lightboxPrev();
+    if (e.key === "ArrowRight") lightboxNext();
+  });
+
+  (async () => {
+    const profile = await requireApprovedMember("connexion.html");
+    if (!profile) return;
+    document.getElementById("signoutBtn").style.display = "";
+    await loadFolder();
+  })();
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "connexion.html";
+  });
+</script>
+
+</body>
+</html>

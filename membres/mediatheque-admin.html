@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Médiathèque - Administration AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --rose-light:#FCE8EF; --rose:#D6538A; --rose-dark:#A83A67; --rose-deeper:#7A2A4A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1100px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .page-title-group{}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:0.85rem;padding:10px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
+  .btn-primary{background:var(--rose-dark);color:var(--white);}
+  .btn-primary:hover{background:var(--rose-deeper);}
+  .btn-outline{background:var(--white);color:var(--green-deep);border:1.5px solid var(--line);}
+  .btn-outline:hover{border-color:var(--rose);color:var(--rose-dark);}
+  .btn-sm{font-size:0.78rem;padding:7px 14px;}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-danger{background:#FDEEEE;color:#B23B3B;}
+  .btn-danger:hover{background:#f5c0c0;}
+
+  /* New folder form */
+  .new-folder-form{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px;display:none;}
+  .new-folder-form.open{display:block;}
+  .new-folder-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .new-folder-row input{padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
+  .new-folder-row input#nfYear{width:100px;font-family:var(--mono);}
+  .new-folder-row input#nfTitle{flex:1;min-width:220px;}
+
+  /* Folder list */
+  .folders-list{display:flex;flex-direction:column;gap:10px;}
+  .folder-row{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .folder-row-cover{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--rose-light);flex-shrink:0;}
+  .folder-row-cover-placeholder{width:52px;height:52px;border-radius:8px;background:var(--rose-light);display:flex;align-items:center;justify-content:center;color:var(--rose-dark);font-size:18px;flex-shrink:0;}
+  .folder-row-body{flex:1;min-width:180px;}
+  .folder-row-title{font-family:var(--display);font-weight:600;color:var(--green-deep);font-size:0.95rem;}
+  .folder-row-meta{font-size:0.78rem;color:#8A9E8F;font-family:var(--mono);}
+  .status-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;margin-left:8px;}
+  .status-badge.draft{background:var(--paper-alt);color:#5A6C60;}
+  .status-badge.published{background:#EAF3DE;color:#3B6D11;}
+  .folder-row-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  .empty{color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
+
+  /* Folder (upload) view */
+  #folderView{display:none;}
+  .folder-view-header{margin-bottom:20px;}
+  .folder-view-title{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--green-deep);}
+  .folder-view-meta{font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;margin-top:4px;}
+
+  .dropzone{border:2px dashed var(--line);border-radius:var(--radius);padding:36px 20px;text-align:center;background:var(--white);margin-bottom:20px;transition:border-color .18s,background .18s;}
+  .dropzone.dragover{border-color:var(--rose);background:var(--rose-light);}
+  .dropzone-icon{font-size:32px;color:var(--rose-dark);margin-bottom:10px;}
+  .dropzone-text{color:#5A6C60;font-size:0.9rem;margin-bottom:16px;}
+  .dropzone-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+  .upload-progress{font-family:var(--mono);font-size:0.82rem;color:var(--rose-dark);margin-bottom:16px;display:none;}
+  .upload-progress.show{display:block;}
+
+  .photos-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .photo-admin-item{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--paper);}
+  .photo-admin-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+  .photo-admin-cover-tag{position:absolute;top:6px;left:6px;background:var(--gold);color:var(--green-deep);font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;padding:2px 8px;border-radius:999px;font-weight:700;}
+  .photo-admin-actions{position:absolute;inset:auto 0 0 0;background:rgba(6,20,12,0.72);padding:6px;display:flex;gap:5px;justify-content:center;opacity:0;transition:opacity .15s;}
+  .photo-admin-item:hover .photo-admin-actions{opacity:1;}
+  .photo-admin-actions button{background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:13px;padding:5px 8px;border-radius:6px;cursor:pointer;}
+  .photo-admin-actions button:hover{background:rgba(255,255,255,0.3);}
+
+  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+
+    <div id="listView">
+      <div class="page-header">
+        <div class="page-title-group">
+          <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+          <h1 class="page-title">Médiathèque - Administration</h1>
+        </div>
+        <button class="btn btn-primary" id="newFolderBtn"><i class="ti ti-folder-plus"></i> Nouvel album</button>
+      </div>
+
+      <div class="new-folder-form" id="newFolderForm">
+        <div class="new-folder-row">
+          <input type="number" id="nfYear" placeholder="Année">
+          <input type="text" id="nfTitle" placeholder="Titre de l'activité (ex : Caravane médicale Dakar)">
+          <button class="btn btn-primary" onclick="submitNewFolder()"><i class="ti ti-check"></i> Créer</button>
+          <button class="btn btn-outline" onclick="toggleNewFolderForm()">Annuler</button>
+        </div>
+        <p class="assign-msg" id="newFolderMsg" style="margin-top:10px;font-size:0.85rem;"></p>
+      </div>
+
+      <div class="folders-list" id="foldersList">
+        <p class="empty">Chargement…</p>
+      </div>
+    </div>
+
+    <div id="folderView">
+      <div class="page-header">
+        <div class="page-title-group">
+          <a class="back" href="#" onclick="showListView();return false;"><i class="ti ti-arrow-left"></i> Tous les albums</a>
+          <p class="folder-view-title" id="fvTitle"></p>
+          <p class="folder-view-meta" id="fvMeta"></p>
+        </div>
+        <button class="btn" id="fvPublishBtn"></button>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-icon"><i class="ti ti-cloud-upload"></i></div>
+        <p class="dropzone-text">Glissez-déposez des photos ici</p>
+        <div class="dropzone-actions">
+          <button class="btn btn-outline btn-sm" id="pickFolderBtn"><i class="ti ti-folder"></i> Choisir un dossier</button>
+          <button class="btn btn-outline btn-sm" id="pickPhotosBtn"><i class="ti ti-photo-plus"></i> Choisir des photos</button>
+        </div>
+        <input type="file" id="folderInput" webkitdirectory multiple accept="image/*" style="display:none;">
+        <input type="file" id="photosInput" multiple accept="image/*" style="display:none;">
+      </div>
+
+      <p class="upload-progress" id="uploadProgress"></p>
+
+      <div class="photos-admin-grid" id="photosAdminGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer style="text-align:center;padding:20px;">
+  <a href="../index.html" style="color:var(--green);font-family:var(--mono);font-size:0.82rem;">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const MEDIA_BUCKET = "mediatheque-photos";
+  const currentYear = new Date().getFullYear();
+  let allFolders = [];
+  let currentFolder = null;
+  let currentPhotos = [];
+
+  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  /* ===== Redimensionnement côté client avant envoi (même principe que
+     resizeImageFile() de membres/profil.html, adapté à une photo de
+     galerie : dimensions plus grandes, qualité légèrement supérieure). ===== */
+  function resizeGalleryImage(file, maxSize = 1920, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > height) { if (width > maxSize) { height = height * maxSize / width; width = maxSize; } }
+          else { if (height > maxSize) { width = width * maxSize / height; height = maxSize; } }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* ===== Vue Liste ===== */
+
+  function showListView() {
+    document.getElementById('listView').style.display = '';
+    document.getElementById('folderView').style.display = 'none';
+    currentFolder = null;
+    loadFolders();
+  }
+
+  function toggleNewFolderForm() {
+    const form = document.getElementById('newFolderForm');
+    form.classList.toggle('open');
+    if (form.classList.contains('open')) {
+      document.getElementById('nfYear').value = currentYear;
+      document.getElementById('nfTitle').value = '';
+      document.getElementById('newFolderMsg').textContent = '';
+    }
+  }
+
+  async function submitNewFolder() {
+    const year = parseInt(document.getElementById('nfYear').value);
+    const title = document.getElementById('nfTitle').value.trim();
+    const msg = document.getElementById('newFolderMsg');
+
+    if (!year) { msg.textContent = "Indiquez l'année."; msg.style.color = '#B23B3B'; return; }
+    if (!title) { msg.textContent = 'Indiquez un titre.'; msg.style.color = '#B23B3B'; return; }
+
+    const { data, error } = await supabaseClient
+      .from('media_folders')
+      .insert({ year, title })
+      .select()
+      .single();
+
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.style.color = '#B23B3B'; return; }
+
+    toggleNewFolderForm();
+    await openFolderView(data.id);
+  }
+
+  async function loadFolders() {
+    const list = document.getElementById('foldersList');
+    const { data, error } = await supabaseClient
+      .from('media_folders')
+      .select('*')
+      .order('year', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    allFolders = data || [];
+
+    if (error || allFolders.length === 0) {
+      list.innerHTML = '<p class="empty">Aucun album pour le moment. Créez-en un pour commencer.</p>';
+      return;
+    }
+
+    const { data: counts } = await supabaseClient.from('media_photos').select('folder_id');
+    const countByFolder = {};
+    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
+
+    const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
+    let signedByPath = {};
+    if (coverPaths.length > 0) {
+      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+    }
+
+    list.innerHTML = allFolders.map(f => {
+      const cover = f.cover_path && signedByPath[f.cover_path];
+      const count = countByFolder[f.id] || 0;
+      return `
+        <div class="folder-row">
+          ${cover ? `<img class="folder-row-cover" src="${cover}" alt="">` : `<div class="folder-row-cover-placeholder"><i class="ti ti-photo"></i></div>`}
+          <div class="folder-row-body">
+            <div class="folder-row-title">${esc(f.title)}
+              <span class="status-badge ${f.is_published ? 'published' : 'draft'}">${f.is_published ? 'Publié' : 'Brouillon'}</span>
+            </div>
+            <div class="folder-row-meta">${f.year} · ${count} photo${count > 1 ? 's' : ''}</div>
+          </div>
+          <div class="folder-row-actions">
+            <button class="btn btn-outline btn-sm" onclick="openFolderView('${f.id}')"><i class="ti ti-photo-edit"></i> Gérer les photos</button>
+            <button class="btn btn-outline btn-sm" onclick="toggleFolderPublish('${f.id}', ${!f.is_published})">${f.is_published ? 'Dépublier' : 'Publier'}</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteFolder('${f.id}')"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function toggleFolderPublish(id, publish) {
+    const { error } = await supabaseClient.from('media_folders').update({ is_published: publish }).eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadFolders();
+  }
+
+  async function deleteFolder(id) {
+    if (!confirm('Supprimer définitivement cet album et toutes ses photos ?')) return;
+    const { data: photos } = await supabaseClient.from('media_photos').select('storage_path').eq('folder_id', id);
+    const paths = (photos || []).map(p => p.storage_path);
+    if (paths.length > 0) await supabaseClient.storage.from(MEDIA_BUCKET).remove(paths);
+    const { error } = await supabaseClient.from('media_folders').delete().eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadFolders();
+  }
+
+  /* ===== Vue Dossier (upload) ===== */
+
+  async function openFolderView(id) {
+    document.getElementById('listView').style.display = 'none';
+    document.getElementById('folderView').style.display = '';
+
+    const { data } = await supabaseClient.from('media_folders').select('*').eq('id', id).single();
+    currentFolder = data;
+
+    document.getElementById('fvTitle').textContent = currentFolder.title;
+    document.getElementById('fvMeta').textContent = currentFolder.year;
+    updatePublishButton();
+
+    await loadCurrentFolderPhotos();
+  }
+
+  function updatePublishButton() {
+    const btn = document.getElementById('fvPublishBtn');
+    btn.className = 'btn ' + (currentFolder.is_published ? 'btn-outline' : 'btn-primary');
+    btn.textContent = currentFolder.is_published ? 'Dépublier' : 'Publier cet album';
+    btn.onclick = async () => {
+      const { error } = await supabaseClient.from('media_folders').update({ is_published: !currentFolder.is_published }).eq('id', currentFolder.id);
+      if (error) { alert('Erreur : ' + error.message); return; }
+      currentFolder.is_published = !currentFolder.is_published;
+      updatePublishButton();
+    };
+  }
+
+  async function loadCurrentFolderPhotos() {
+    const grid = document.getElementById('photosAdminGrid');
+    const { data } = await supabaseClient.from('media_photos').select('*').eq('folder_id', currentFolder.id).order('order_index');
+    currentPhotos = data || [];
+
+    if (currentPhotos.length === 0) {
+      grid.innerHTML = '';
+      return;
+    }
+
+    const paths = currentPhotos.map(p => p.storage_path);
+    const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
+    const signedByPath = {};
+    (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+
+    grid.innerHTML = currentPhotos.map(p => {
+      const isCover = currentFolder.cover_path === p.storage_path;
+      const url = signedByPath[p.storage_path];
+      if (!url) return '';
+      return `
+        <div class="photo-admin-item">
+          ${isCover ? '<span class="photo-admin-cover-tag">Couverture</span>' : ''}
+          <img src="${url}" alt="" loading="lazy">
+          <div class="photo-admin-actions">
+            <button onclick="setCover('${esc(p.storage_path)}')" title="Définir comme couverture"><i class="ti ti-star"></i></button>
+            <button onclick="deletePhoto('${p.id}', '${esc(p.storage_path)}')" title="Supprimer"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function setCover(storagePath) {
+    const { error } = await supabaseClient.from('media_folders').update({ cover_path: storagePath }).eq('id', currentFolder.id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    currentFolder.cover_path = storagePath;
+    await loadCurrentFolderPhotos();
+  }
+
+  async function deletePhoto(photoId, storagePath) {
+    if (!confirm('Supprimer cette photo ?')) return;
+    await supabaseClient.storage.from(MEDIA_BUCKET).remove([storagePath]);
+    const { error } = await supabaseClient.from('media_photos').delete().eq('id', photoId);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    if (currentFolder.cover_path === storagePath) {
+      await supabaseClient.from('media_folders').update({ cover_path: null }).eq('id', currentFolder.id);
+      currentFolder.cover_path = null;
+    }
+    await loadCurrentFolderPhotos();
+  }
+
+  async function uploadFiles(fileList) {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    const progress = document.getElementById('uploadProgress');
+    progress.classList.add('show');
+    let done = 0;
+
+    for (const file of files) {
+      progress.textContent = `Envoi en cours… (${done + 1}/${files.length})`;
+      try {
+        const blob = await resizeGalleryImage(file);
+        const path = `${currentFolder.id}/${crypto.randomUUID()}.jpg`;
+        const { error: uploadError } = await supabaseClient.storage.from(MEDIA_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
+        if (uploadError) throw uploadError;
+
+        const { error: insertError } = await supabaseClient.from('media_photos').insert({
+          folder_id: currentFolder.id, storage_path: path, order_index: currentPhotos.length + done,
+        });
+        if (insertError) throw insertError;
+
+        if (!currentFolder.cover_path) {
+          await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', currentFolder.id);
+          currentFolder.cover_path = path;
+        }
+      } catch (err) {
+        console.error('Échec envoi photo', file.name, err);
+      }
+      done++;
+    }
+
+    progress.textContent = `${done} photo(s) envoyée(s).`;
+    setTimeout(() => progress.classList.remove('show'), 3000);
+    await loadCurrentFolderPhotos();
+  }
+
+  const dropzone = document.getElementById('dropzone');
+  ['dragenter', 'dragover'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+  });
+
+  document.getElementById('pickFolderBtn').addEventListener('click', () => document.getElementById('folderInput').click());
+  document.getElementById('pickPhotosBtn').addEventListener('click', () => document.getElementById('photosInput').click());
+  document.getElementById('folderInput').addEventListener('change', (e) => { uploadFiles(e.target.files); e.target.value = ''; });
+  document.getElementById('photosInput').addEventListener('change', (e) => { uploadFiles(e.target.files); e.target.value = ''; });
+
+  document.getElementById('newFolderBtn').addEventListener('click', toggleNewFolderForm);
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    await loadFolders();
+  })();
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
