@@ -62,6 +62,27 @@
   .expiry-input:focus{outline:none;border-color:var(--green);}
   .expiry-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;color:#8A9E8F;white-space:nowrap;}
 
+  /* Attribution directe */
+  .assign-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:36px;}
+  .assign-step{margin-bottom:20px;}
+  .assign-step:last-of-type{margin-bottom:0;}
+  .assign-step-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:8px;display:block;}
+  .assign-search{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
+  .assign-search:focus{outline:none;border-color:var(--green);}
+  .assign-results{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-top:8px;display:none;}
+  .assign-results.open{display:block;}
+  .assign-result-row{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--paper-alt);}
+  .assign-result-row:last-child{border-bottom:none;}
+  .assign-result-row:hover{background:var(--paper-alt);}
+  .assign-selected{background:var(--paper-alt);border:1.5px solid var(--green);border-radius:8px;padding:10px 14px;margin-top:8px;display:none;align-items:center;justify-content:space-between;gap:10px;}
+  .assign-selected.show{display:flex;}
+  .assign-selected-clear{background:none;border:none;color:#8A9E8F;cursor:pointer;font-size:16px;padding:2px;}
+  .assign-selected-clear:hover{color:#B23B3B;}
+  .assign-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px;}
+  .assign-msg{font-size:0.85rem;}
+  .assign-msg.error{color:#B23B3B;}
+  .assign-msg.ok{color:#3B6D11;}
+
   /* Import panel */
   .import-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:40px;}
   .import-hint{font-size:0.85rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:12px 16px;border-radius:8px;}
@@ -167,6 +188,44 @@
           <tr class="empty-row"><td colspan="3">Chargement…</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <p class="section-label"><i class="ti ti-id-badge-2"></i> Attribuer une carte directement</p>
+    <div class="assign-card">
+      <p style="font-size:0.85rem;color:#5A6C60;margin-bottom:18px;">
+        Attribuez une carte non réclamée à un membre sans attendre qu'il la réclame lui-même
+        (utile si le membre n'a pas encore utilisé "Réclamer ma carte", ou pour corriger une erreur).
+      </p>
+
+      <div class="assign-step">
+        <label class="assign-step-label">1. Carte non réclamée</label>
+        <input type="text" class="assign-search" id="assignCardSearch" placeholder="Rechercher par nom…" oninput="renderAssignCardResults()" onfocus="renderAssignCardResults()">
+        <div class="assign-results" id="assignCardResults"></div>
+        <div class="assign-selected" id="assignCardSelected">
+          <span id="assignCardSelectedText"></span>
+          <button class="assign-selected-clear" onclick="clearAssignCard()"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+
+      <div class="assign-step">
+        <label class="assign-step-label">2. Membre destinataire</label>
+        <input type="text" class="assign-search" id="assignMemberSearch" placeholder="Rechercher par nom ou e-mail…" oninput="renderAssignMemberResults()" onfocus="renderAssignMemberResults()">
+        <div class="assign-results" id="assignMemberResults"></div>
+        <div class="assign-selected" id="assignMemberSelected">
+          <span id="assignMemberSelectedText"></span>
+          <button class="assign-selected-clear" onclick="clearAssignMember()"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+
+      <div class="assign-step">
+        <label class="assign-step-label">3. Année de fin de validité</label>
+        <input type="number" class="assign-search" style="max-width:140px;" id="assignExpiryYear" value="">
+      </div>
+
+      <div class="assign-actions">
+        <button class="btn-primary" id="assignBtn" onclick="submitAssignCard()"><i class="ti ti-id-badge-2"></i> Attribuer la carte</button>
+        <p class="assign-msg" id="assignMsg"></p>
+      </div>
     </div>
 
     <p class="section-label"><i class="ti ti-file-spreadsheet"></i> Importer depuis un fichier Excel</p>
@@ -425,7 +484,7 @@
   })();
 
   async function loadAll() {
-    await Promise.all([loadStats(), loadPending(), loadRestrictionSetting()]);
+    await Promise.all([loadStats(), loadPending(), loadRestrictionSetting(), loadAssignData()]);
   }
 
   let restrictionActive = false;
@@ -482,6 +541,120 @@
   }
 
   document.getElementById('btnToggleRestriction').addEventListener('click', toggleRestriction);
+
+  /* ===== Attribution directe d'une carte ===== */
+
+  let assignCards = [], assignMembers = [];
+  let selectedAssignCard = null, selectedAssignMember = null;
+
+  async function loadAssignData() {
+    const [cardsRes, membersRes] = await Promise.all([
+      supabaseClient.from('member_cards_unclaimed').select('*').order('full_name'),
+      supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
+    ]);
+    assignCards = cardsRes.data || [];
+    assignMembers = membersRes.data || [];
+    document.getElementById('assignExpiryYear').value = currentYear;
+  }
+
+  function renderAssignCardResults() {
+    const q = document.getElementById('assignCardSearch').value.trim().toLowerCase();
+    const box = document.getElementById('assignCardResults');
+    if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
+    const matches = assignCards.filter(c => c.full_name.toLowerCase().includes(q)).slice(0, 8);
+    if (matches.length === 0) {
+      box.innerHTML = '<div class="assign-result-row" style="color:#8A9E8F;">Aucune carte non réclamée pour cette recherche.</div>';
+    } else {
+      box.innerHTML = matches.map(c => {
+        const meta = [c.member_since ? 'Depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
+        return `<div class="assign-result-row" onclick="selectAssignCard('${c.id}')"><strong>${escHtml(c.full_name)}</strong>${meta ? ' - ' + escHtml(meta) : ''}</div>`;
+      }).join('');
+    }
+    box.classList.add('open');
+  }
+
+  function selectAssignCard(id) {
+    selectedAssignCard = assignCards.find(c => c.id === id) || null;
+    document.getElementById('assignCardSearch').value = '';
+    document.getElementById('assignCardResults').classList.remove('open');
+    const sel = document.getElementById('assignCardSelected');
+    if (selectedAssignCard) {
+      document.getElementById('assignCardSelectedText').textContent = selectedAssignCard.full_name;
+      sel.classList.add('show');
+      if (selectedAssignCard.member_since) document.getElementById('assignExpiryYear').value = selectedAssignCard.member_since;
+    }
+  }
+
+  function clearAssignCard() {
+    selectedAssignCard = null;
+    document.getElementById('assignCardSelected').classList.remove('show');
+  }
+
+  function renderAssignMemberResults() {
+    const q = document.getElementById('assignMemberSearch').value.trim().toLowerCase();
+    const box = document.getElementById('assignMemberResults');
+    if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
+    const matches = assignMembers.filter(m =>
+      (m.full_name || '').toLowerCase().includes(q) || (m.email || '').toLowerCase().includes(q)
+    ).slice(0, 8);
+    if (matches.length === 0) {
+      box.innerHTML = '<div class="assign-result-row" style="color:#8A9E8F;">Aucun membre approuvé pour cette recherche.</div>';
+    } else {
+      box.innerHTML = matches.map(m =>
+        `<div class="assign-result-row" onclick="selectAssignMember('${m.id}')"><strong>${escHtml(m.full_name || 'Sans nom')}</strong> - ${escHtml(m.email)}</div>`
+      ).join('');
+    }
+    box.classList.add('open');
+  }
+
+  function selectAssignMember(id) {
+    selectedAssignMember = assignMembers.find(m => m.id === id) || null;
+    document.getElementById('assignMemberSearch').value = '';
+    document.getElementById('assignMemberResults').classList.remove('open');
+    const sel = document.getElementById('assignMemberSelected');
+    if (selectedAssignMember) {
+      document.getElementById('assignMemberSelectedText').textContent = `${selectedAssignMember.full_name || 'Sans nom'} (${selectedAssignMember.email})`;
+      sel.classList.add('show');
+    }
+  }
+
+  function clearAssignMember() {
+    selectedAssignMember = null;
+    document.getElementById('assignMemberSelected').classList.remove('show');
+  }
+
+  async function submitAssignCard() {
+    const msg = document.getElementById('assignMsg');
+    const expiryYear = parseInt(document.getElementById('assignExpiryYear').value);
+
+    if (!selectedAssignCard) { msg.textContent = 'Choisissez une carte non réclamée.'; msg.className = 'assign-msg error'; return; }
+    if (!selectedAssignMember) { msg.textContent = 'Choisissez le membre destinataire.'; msg.className = 'assign-msg error'; return; }
+    if (!expiryYear) { msg.textContent = "Indiquez l'année de fin de validité."; msg.className = 'assign-msg error'; return; }
+
+    if (!confirm(`Attribuer la carte de "${selectedAssignCard.full_name}" au compte de ${selectedAssignMember.full_name || selectedAssignMember.email} ?`)) return;
+
+    const btn = document.getElementById('assignBtn');
+    btn.disabled = true;
+    const { error } = await supabaseClient.rpc('assign_member_card', {
+      card_id: selectedAssignCard.id,
+      member_id: selectedAssignMember.id,
+      expiry_year: expiryYear,
+    });
+    btn.disabled = false;
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    msg.textContent = `Carte attribuée avec succès à ${selectedAssignMember.full_name || selectedAssignMember.email}.`;
+    msg.className = 'assign-msg ok';
+    clearAssignCard();
+    clearAssignMember();
+    document.getElementById('assignExpiryYear').value = currentYear;
+    await loadAll();
+  }
 
   async function loadStats() {
     const { data } = await supabaseClient.from('member_cards').select('claim_status');
