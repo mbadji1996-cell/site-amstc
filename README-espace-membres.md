@@ -216,6 +216,13 @@ Ensuite :
   `membres/mediatheque-dossier.html` affiche la galerie d'un album avec
   un lightbox (clic pour agrandir, flèches du clavier pour naviguer).
 
+Pour créer des sous-dossiers à l'intérieur d'un album (par ex. "Jour 1",
+"Jour 2" dans une activité), exécutez aussi
+`supabase/phase15-mediatheque-sous-dossiers.sql`. Depuis
+`mediatheque-admin.html`, ouvrez un album ("Gérer les photos") puis "Nouveau
+sous-dossier" - profondeur illimitée, année héritée automatiquement du
+parent, publication indépendante par (sous-)dossier.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

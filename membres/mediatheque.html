@@ -117,6 +117,7 @@
       .from("media_folders")
       .select("id, year, title, cover_path")
       .eq("is_published", true)
+      .is("parent_id", null)
       .order("year", { ascending: false })
       .order("created_at", { ascending: false });
 

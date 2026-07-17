@@ -31,8 +31,22 @@
   .signout-btn:hover{border-color:var(--gold-deep);}
   .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:36px 0 8px; text-decoration:none;}
+  .breadcrumb{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold-deep); margin:36px 0 8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .breadcrumb a{color:var(--gold-deep);}
+  .breadcrumb a:hover{opacity:0.75;}
+  .breadcrumb span.sep{color:#B0BFB5;}
+  .breadcrumb span.current{color:#5A6C60;}
   h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.9rem; margin-bottom:6px;}
   .folder-meta{color:#5A6C60; font-family:var(--mono); font-size:0.82rem; margin-bottom:28px;}
+
+  .subfolders-label{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold-deep); margin-bottom:14px;}
+  .subfolders-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:32px;}
+  .subfolder-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:box-shadow .18s,transform .18s;}
+  .subfolder-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1); transform:translateY(-3px);}
+  .subfolder-cover{width:100%; aspect-ratio:4/3; object-fit:cover; background:var(--paper); display:block;}
+  .subfolder-cover-placeholder{width:100%; aspect-ratio:4/3; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--gold-deep);}
+  .subfolder-body{padding:12px 14px;}
+  .subfolder-title{font-family:var(--display); font-size:0.92rem; font-weight:600; color:var(--green-deep);}
 
   .photos-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; padding-bottom:80px;}
   .photo-thumb{width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; cursor:pointer; background:var(--paper); display:block; border:1px solid var(--line); transition:transform .15s ease;}
@@ -65,7 +79,7 @@
 </header>
 
 <div class="wrap">
-  <a class="back" href="mediatheque.html">← Médiathèque</a>
+  <p class="breadcrumb" id="breadcrumb"><a href="mediatheque.html">← Médiathèque</a></p>
   <noscript><p class="loading">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p class="loading" id="loadingMsg">Chargement de l'album…</p>
@@ -94,26 +108,67 @@
 
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+  async function buildBreadcrumb(folder) {
+    const crumbs = [];
+    let current = folder;
+    while (current && current.parent_id) {
+      const { data: parent } = await supabaseClient.from("media_folders").select("id,title,parent_id").eq("id", current.parent_id).single();
+      if (!parent) break;
+      crumbs.unshift(parent);
+      current = parent;
+    }
+    const el = document.getElementById("breadcrumb");
+    const links = crumbs.map(c => `<a href="mediatheque-dossier.html?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`);
+    el.innerHTML = ['<a href="mediatheque.html">Médiathèque</a>', ...links, `<span class="current">${esc(folder.title)}</span>`]
+      .map((html, i) => i === 0 ? html : `<span class="sep">/</span>${html}`)
+      .join(' ');
+  }
+
   async function loadFolder() {
     const content = document.getElementById("content");
     if (!folderId) { content.innerHTML = '<p class="empty">Album introuvable.</p>'; return; }
 
-    const [folderRes, photosRes] = await Promise.all([
+    const [folderRes, photosRes, subfoldersRes] = await Promise.all([
       supabaseClient.from("media_folders").select("*").eq("id", folderId).single(),
       supabaseClient.from("media_photos").select("*").eq("folder_id", folderId).order("order_index"),
+      supabaseClient.from("media_folders").select("id,title,cover_path").eq("parent_id", folderId).eq("is_published", true).order("created_at"),
     ]);
 
     if (!folderRes.data) { content.innerHTML = '<p class="empty">Impossible de charger cet album.</p>'; return; }
     const folder = folderRes.data;
     const photos = photosRes.data || [];
+    const subfolders = subfoldersRes.data || [];
 
     document.title = folder.title + " - Médiathèque AMSTC";
+    await buildBreadcrumb(folder);
+
+    const subfolderCoverPaths = subfolders.filter(f => f.cover_path).map(f => f.cover_path);
+    let subCoverByPath = {};
+    if (subfolderCoverPaths.length > 0) {
+      const { data: signedCovers } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(subfolderCoverPaths, 3600);
+      (signedCovers || []).forEach(s => { if (s.signedUrl) subCoverByPath[s.path] = s.signedUrl; });
+    }
+
+    const subfoldersHtml = subfolders.length === 0 ? '' : `
+      <p class="subfolders-label"><i class="ti ti-folder"></i> Sous-dossiers</p>
+      <div class="subfolders-grid">
+        ${subfolders.map(f => {
+          const cover = f.cover_path && subCoverByPath[f.cover_path];
+          return `
+            <a class="subfolder-card" href="mediatheque-dossier.html?id=${encodeURIComponent(f.id)}">
+              ${cover ? `<img class="subfolder-cover" src="${cover}" alt="" loading="lazy">` : `<div class="subfolder-cover-placeholder"><i class="ti ti-photo"></i></div>`}
+              <div class="subfolder-body"><p class="subfolder-title">${esc(f.title)}</p></div>
+            </a>`;
+        }).join('')}
+      </div>`;
 
     if (photos.length === 0) {
       content.innerHTML = `
         <h1>${esc(folder.title)}</h1>
         <p class="folder-meta">${folder.year}</p>
-        <p class="empty">Aucune photo dans cet album pour le moment.</p>`;
+        ${subfoldersHtml}
+        ${subfolders.length === 0 ? '<p class="empty">Aucune photo dans cet album pour le moment.</p>' : ''}`;
+      document.getElementById("loadingMsg").style.display = "none";
       return;
     }
 
@@ -126,6 +181,7 @@
     content.innerHTML = `
       <h1>${esc(folder.title)}</h1>
       <p class="folder-meta">${folder.year} - ${photos.length} photo${photos.length > 1 ? 's' : ''}</p>
+      ${subfoldersHtml}
       <div class="photos-grid" id="photosGrid">
         ${photoUrls.map((url, i) => `<img class="photo-thumb" src="${url}" alt="" loading="lazy" onclick="openLightbox(${i})">`).join('')}
       </div>`;

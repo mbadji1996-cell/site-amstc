@@ -73,6 +73,14 @@
   .folder-view-header{margin-bottom:20px;}
   .folder-view-title{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--green-deep);}
   .folder-view-meta{font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;margin-top:4px;}
+  .breadcrumb{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-deep);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+  .breadcrumb a{color:var(--gold-deep);cursor:pointer;}
+  .breadcrumb a:hover{opacity:0.75;}
+  .breadcrumb span.sep{color:#B0BFB5;}
+
+  .subfolders-section{margin-bottom:28px;}
+  .subfolders-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
+  .subfolders-section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);}
 
   .dropzone{border:2px dashed var(--line);border-radius:var(--radius);padding:36px 20px;text-align:center;background:var(--white);margin-bottom:20px;transition:border-color .18s,background .18s;}
   .dropzone.dragover{border-color:var(--rose);background:var(--rose-light);}
@@ -136,11 +144,27 @@
     <div id="folderView">
       <div class="page-header">
         <div class="page-title-group">
-          <a class="back" href="#" onclick="showListView();return false;"><i class="ti ti-arrow-left"></i> Tous les albums</a>
+          <p class="breadcrumb" id="fvBreadcrumb"></p>
           <p class="folder-view-title" id="fvTitle"></p>
           <p class="folder-view-meta" id="fvMeta"></p>
         </div>
         <button class="btn" id="fvPublishBtn"></button>
+      </div>
+
+      <div class="subfolders-section">
+        <div class="subfolders-section-header">
+          <p class="subfolders-section-label">Sous-dossiers</p>
+          <button class="btn btn-outline btn-sm" id="newSubfolderBtn"><i class="ti ti-folder-plus"></i> Nouveau sous-dossier</button>
+        </div>
+        <div class="new-folder-form" id="newSubfolderForm">
+          <div class="new-folder-row">
+            <input type="text" id="nsfTitle" placeholder="Titre du sous-dossier">
+            <button class="btn btn-primary" onclick="submitNewSubfolder()"><i class="ti ti-check"></i> Créer</button>
+            <button class="btn btn-outline" onclick="toggleNewSubfolderForm()">Annuler</button>
+          </div>
+          <p class="assign-msg" id="newSubfolderMsg" style="margin-top:10px;font-size:0.85rem;"></p>
+        </div>
+        <div class="folders-list" id="subfoldersList"></div>
       </div>
 
       <div class="dropzone" id="dropzone">
@@ -246,6 +270,7 @@
     const { data, error } = await supabaseClient
       .from('media_folders')
       .select('*')
+      .is('parent_id', null)
       .order('year', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -294,14 +319,30 @@
     await loadFolders();
   }
 
+  // Parcourt parent_id niveau par niveau pour récupérer un dossier et
+  // tous ses descendants (sous-dossiers, sous-sous-dossiers, ...).
+  async function collectDescendantFolderIds(rootId) {
+    let all = [rootId];
+    let frontier = [rootId];
+    while (frontier.length > 0) {
+      const { data } = await supabaseClient.from('media_folders').select('id').in('parent_id', frontier);
+      const children = (data || []).map(f => f.id);
+      if (children.length === 0) break;
+      all = all.concat(children);
+      frontier = children;
+    }
+    return all;
+  }
+
   async function deleteFolder(id) {
-    if (!confirm('Supprimer définitivement cet album et toutes ses photos ?')) return;
-    const { data: photos } = await supabaseClient.from('media_photos').select('storage_path').eq('folder_id', id);
+    if (!confirm('Supprimer définitivement cet album (et ses sous-dossiers éventuels) et toutes ses photos ?')) return;
+    const allIds = await collectDescendantFolderIds(id);
+    const { data: photos } = await supabaseClient.from('media_photos').select('storage_path').in('folder_id', allIds);
     const paths = (photos || []).map(p => p.storage_path);
     if (paths.length > 0) await supabaseClient.storage.from(MEDIA_BUCKET).remove(paths);
     const { error } = await supabaseClient.from('media_folders').delete().eq('id', id);
     if (error) { alert('Erreur : ' + error.message); return; }
-    await loadFolders();
+    if (currentFolder) { await loadSubfolders(); } else { await loadFolders(); }
   }
 
   /* ===== Vue Dossier (upload) ===== */
@@ -316,8 +357,101 @@
     document.getElementById('fvTitle').textContent = currentFolder.title;
     document.getElementById('fvMeta').textContent = currentFolder.year;
     updatePublishButton();
+    await buildFolderViewBreadcrumb(currentFolder);
+    await loadSubfolders();
 
     await loadCurrentFolderPhotos();
+  }
+
+  async function buildFolderViewBreadcrumb(folder) {
+    const crumbs = [];
+    let current = folder;
+    while (current && current.parent_id) {
+      const { data: parent } = await supabaseClient.from('media_folders').select('id,title,parent_id').eq('id', current.parent_id).single();
+      if (!parent) break;
+      crumbs.unshift(parent);
+      current = parent;
+    }
+    const el = document.getElementById('fvBreadcrumb');
+    const links = crumbs.map(c => `<a onclick="openFolderView('${c.id}')">${esc(c.title)}</a>`);
+    el.innerHTML = ['<a onclick="showListView()">Tous les albums</a>', ...links]
+      .map((html, i) => i === 0 ? html : `<span class="sep">/</span>${html}`)
+      .join(' ');
+  }
+
+  async function loadSubfolders() {
+    const list = document.getElementById('subfoldersList');
+    const { data } = await supabaseClient
+      .from('media_folders')
+      .select('*')
+      .eq('parent_id', currentFolder.id)
+      .order('created_at', { ascending: false });
+    const subfolders = data || [];
+
+    if (subfolders.length === 0) {
+      list.innerHTML = '<p class="empty" style="padding:16px 0;">Aucun sous-dossier.</p>';
+      return;
+    }
+
+    const { data: counts } = await supabaseClient.from('media_photos').select('folder_id').in('folder_id', subfolders.map(f => f.id));
+    const countByFolder = {};
+    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
+
+    const coverPaths = subfolders.filter(f => f.cover_path).map(f => f.cover_path);
+    let signedByPath = {};
+    if (coverPaths.length > 0) {
+      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+    }
+
+    list.innerHTML = subfolders.map(f => {
+      const cover = f.cover_path && signedByPath[f.cover_path];
+      const count = countByFolder[f.id] || 0;
+      return `
+        <div class="folder-row">
+          ${cover ? `<img class="folder-row-cover" src="${cover}" alt="">` : `<div class="folder-row-cover-placeholder"><i class="ti ti-photo"></i></div>`}
+          <div class="folder-row-body">
+            <div class="folder-row-title">${esc(f.title)}
+              <span class="status-badge ${f.is_published ? 'published' : 'draft'}">${f.is_published ? 'Publié' : 'Brouillon'}</span>
+            </div>
+            <div class="folder-row-meta">${count} photo${count > 1 ? 's' : ''}</div>
+          </div>
+          <div class="folder-row-actions">
+            <button class="btn btn-outline btn-sm" onclick="openFolderView('${f.id}')"><i class="ti ti-photo-edit"></i> Gérer</button>
+            <button class="btn btn-outline btn-sm" onclick="toggleSubfolderPublish('${f.id}', ${!f.is_published})">${f.is_published ? 'Dépublier' : 'Publier'}</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteFolder('${f.id}')"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function toggleSubfolderPublish(id, publish) {
+    const { error } = await supabaseClient.from('media_folders').update({ is_published: publish }).eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadSubfolders();
+  }
+
+  function toggleNewSubfolderForm() {
+    const form = document.getElementById('newSubfolderForm');
+    form.classList.toggle('open');
+    if (form.classList.contains('open')) {
+      document.getElementById('nsfTitle').value = '';
+      document.getElementById('newSubfolderMsg').textContent = '';
+    }
+  }
+
+  async function submitNewSubfolder() {
+    const title = document.getElementById('nsfTitle').value.trim();
+    const msg = document.getElementById('newSubfolderMsg');
+    if (!title) { msg.textContent = 'Indiquez un titre.'; msg.style.color = '#B23B3B'; return; }
+
+    const { error } = await supabaseClient.from('media_folders').insert({
+      parent_id: currentFolder.id, year: currentFolder.year, title,
+    });
+    if (error) { msg.textContent = 'Erreur : ' + error.message; msg.style.color = '#B23B3B'; return; }
+
+    toggleNewSubfolderForm();
+    await loadSubfolders();
   }
 
   function updatePublishButton() {
@@ -435,6 +569,7 @@
   document.getElementById('photosInput').addEventListener('change', (e) => { uploadFiles(e.target.files); e.target.value = ''; });
 
   document.getElementById('newFolderBtn').addEventListener('click', toggleNewFolderForm);
+  document.getElementById('newSubfolderBtn').addEventListener('click', toggleNewSubfolderForm);
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
