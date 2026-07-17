@@ -23,7 +23,7 @@ Le bouton **Espace membres** en haut du menu mène à la page de connexion. Si v
 
 1. Cliquez sur **S'inscrire** depuis la page de connexion.
 2. Renseignez votre nom, e-mail, numéro de téléphone (WhatsApp) et un mot de passe.
-3. Un e-mail de confirmation vous est envoyé. Votre compte est ensuite examiné par un administrateur avant activation - vous recevrez l'accès dès validation.
+3. Votre compte est examiné par un administrateur avant activation - vous recevrez l'accès dès validation.
 
 Une fois votre compte approuvé, connectez-vous avec votre e-mail et votre mot de passe (l'icône en forme d'œil permet d'afficher ce que vous saisissez).
 
