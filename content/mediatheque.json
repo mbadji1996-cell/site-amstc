@@ -6,26 +6,148 @@
     {
       "year": "2026",
       "photos": [
-        "assets/uploads/AKG08037.jpg",
-        "assets/uploads/0A2A1742.jpg",
-        "assets/uploads/0A2A2185.jpg",
-        "assets/uploads/777A8975.jpg",
-        "assets/uploads/777A8917.jpg",
-        "assets/uploads/777A8920.jpg",
-        "assets/uploads/777A8967.jpg",
-        "assets/uploads/photo_2_2026-05-18_12-55-20.jpg",
-        "assets/uploads/photo_39_2026-05-18_12-56-00.jpg",
-        "assets/uploads/photo_42_2026-05-18_12-56-00.jpg",
-        "assets/uploads/photo_52_2026-05-18_12-56-00.jpg",
-        "assets/uploads/photo_63_2026-05-18_12-55-21.jpg"
+        "assets/uploads/2026-gamou-louga-01.jpg",
+        "assets/uploads/2026-gamou-louga-02.jpg",
+        "assets/uploads/2026-gamou-louga-03.jpg",
+        "assets/uploads/2026-jssci-01.jpg",
+        "assets/uploads/2026-jssci-02.jpg",
+        "assets/uploads/2026-jssci-03.jpg",
+        "assets/uploads/2026-jssci-04.jpg",
+        "assets/uploads/2026-nemekou-daara-6-tivaouane-01.jpg",
+        "assets/uploads/2026-nemekou-daara-6-tivaouane-02.jpg",
+        "assets/uploads/2026-nemekou-daara-6-tivaouane-03.jpg"
       ]
     },
     {
       "year": "2025",
       "photos": [
-        "assets/uploads/photo_10_2025-04-16_00-16-44.jpg",
-        "assets/uploads/photo_54_2025-04-16_00-16-15.jpg",
-        "assets/uploads/photo_6_2025-04-16_00-16-44.jpg"
+        "assets/uploads/2025-accueil-nouveaux-01.jpg",
+        "assets/uploads/2025-accueil-nouveaux-02.jpg",
+        "assets/uploads/2025-gamou-01.jpg",
+        "assets/uploads/2025-gamou-02.jpg",
+        "assets/uploads/2025-jssci-01.jpg",
+        "assets/uploads/2025-jssci-02.jpg",
+        "assets/uploads/2025-masterclass-sur-la-gale-01.jpg",
+        "assets/uploads/2025-masterclass-sur-la-gale-02.jpg",
+        "assets/uploads/2025-ndogou-social-01.jpg",
+        "assets/uploads/2025-ndogou-social-02.jpg"
+      ]
+    },
+    {
+      "year": "2024",
+      "photos": [
+        "assets/uploads/2024-ag-ordinaire-06-mars-01.jpg",
+        "assets/uploads/2024-campagne-medicale-gaya-01.jpg",
+        "assets/uploads/2024-gamou-01.jpg",
+        "assets/uploads/2024-gamou-daya-diop-01.jpg",
+        "assets/uploads/2024-gamou-louga-01.jpg",
+        "assets/uploads/2024-jssci-01.jpg",
+        "assets/uploads/2024-jssci-02.jpg",
+        "assets/uploads/2024-ndogou-sociale-01.jpg",
+        "assets/uploads/2024-ndogou-sociale-02.jpg",
+        "assets/uploads/2024-shooting-blouses-01.jpg"
+      ]
+    },
+    {
+      "year": "2023",
+      "photos": [
+        "assets/uploads/2023-gamou-ndar-01.jpg",
+        "assets/uploads/2023-gamou-ndar-02.jpg",
+        "assets/uploads/2023-jssci-don-de-sang-01.jpg",
+        "assets/uploads/2023-jssci-don-de-sang-02.jpg",
+        "assets/uploads/2023-jssci-match-de-foot-01.jpg",
+        "assets/uploads/2023-jssci-match-de-foot-02.jpg",
+        "assets/uploads/2023-jssci-symposium-01.jpg",
+        "assets/uploads/2023-jssci-symposium-02.jpg",
+        "assets/uploads/2023-jssci-yendu-01.jpg",
+        "assets/uploads/2023-jssci-yendu-02.jpg"
+      ]
+    },
+    {
+      "year": "2022",
+      "photos": [
+        "assets/uploads/2022-gamou-01.jpg",
+        "assets/uploads/2022-gamou-02.jpg",
+        "assets/uploads/2022-gamou-03.jpg",
+        "assets/uploads/2022-gamou-04.jpg",
+        "assets/uploads/2022-gamou-05.jpg",
+        "assets/uploads/2022-ndogou-social-01.jpg",
+        "assets/uploads/2022-ndogou-social-02.jpg",
+        "assets/uploads/2022-ndogou-social-03.jpg",
+        "assets/uploads/2022-ndogou-social-04.jpg",
+        "assets/uploads/2022-ndogou-social-05.jpg"
+      ]
+    },
+    {
+      "year": "2021",
+      "photos": [
+        "assets/uploads/2021-ndogou-social-01.jpg",
+        "assets/uploads/2021-ndogou-social-02.jpg",
+        "assets/uploads/2021-ndogou-social-03.jpg",
+        "assets/uploads/2021-ndogou-social-04.jpg",
+        "assets/uploads/2021-ndogou-social-05.jpg",
+        "assets/uploads/2021-ndogou-social-06.jpg",
+        "assets/uploads/2021-ndogou-social-07.jpg",
+        "assets/uploads/2021-ndogou-social-08.jpg",
+        "assets/uploads/2021-ndogou-social-09.jpg",
+        "assets/uploads/2021-ndogou-social-10.jpg"
+      ]
+    },
+    {
+      "year": "2020",
+      "photos": [
+        "assets/uploads/2020-1ere-rencontre-semestrielle-01.jpg",
+        "assets/uploads/2020-1ere-rencontre-semestrielle-02.jpg",
+        "assets/uploads/2020-1ere-rencontre-semestrielle-03.jpg",
+        "assets/uploads/2020-1ere-rencontre-semestrielle-04.jpg",
+        "assets/uploads/2020-1ere-rencontre-semestrielle-05.jpg",
+        "assets/uploads/2020-atelier-de-secourisme-01.jpg",
+        "assets/uploads/2020-atelier-de-secourisme-02.jpg"
+      ]
+    },
+    {
+      "year": "2019",
+      "photos": [
+        "assets/uploads/2019-accueil-nouveaux-bacheliers-01.jpg",
+        "assets/uploads/2019-consultation-daara-serigne-mor-diop-01.jpg",
+        "assets/uploads/2019-don-de-sang-01.jpg",
+        "assets/uploads/2019-epu-sur-hta-01.jpg",
+        "assets/uploads/2019-epu-sur-la-deontologie-medicale-01.jpg",
+        "assets/uploads/2019-gamou-01.jpg",
+        "assets/uploads/2019-gamou-mame-seyni-gueye-ouakam-01.jpg",
+        "assets/uploads/2019-mariage-bineta-kane-dia-pionniere-de-l-amstc-01.jpg",
+        "assets/uploads/2019-ndogou-social-01.jpg",
+        "assets/uploads/2019-these-el-hadji-babacar-fall-pionnier-de-l-amstc-01.jpg"
+      ]
+    },
+    {
+      "year": "2018",
+      "photos": [
+        "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-01.jpg",
+        "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-02.jpg",
+        "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-03.jpg",
+        "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-04.jpg",
+        "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-05.jpg",
+        "assets/uploads/2018-ndogou-social-01.jpg",
+        "assets/uploads/2018-ndogou-social-02.jpg",
+        "assets/uploads/2018-ndogou-social-03.jpg",
+        "assets/uploads/2018-ndogou-social-04.jpg",
+        "assets/uploads/2018-ndogou-social-05.jpg"
+      ]
+    },
+    {
+      "year": "2017",
+      "photos": [
+        "assets/uploads/2017-ndogou-social-01.jpg",
+        "assets/uploads/2017-ndogou-social-02.jpg",
+        "assets/uploads/2017-ndogou-social-03.jpg",
+        "assets/uploads/2017-ndogou-social-04.jpg",
+        "assets/uploads/2017-ndogou-social-05.jpg",
+        "assets/uploads/2017-ndogou-social-06.jpg",
+        "assets/uploads/2017-ndogou-social-07.jpg",
+        "assets/uploads/2017-ndogou-social-08.jpg",
+        "assets/uploads/2017-ndogou-social-09.jpg",
+        "assets/uploads/2017-ndogou-social-10.jpg"
       ]
     }
   ]
