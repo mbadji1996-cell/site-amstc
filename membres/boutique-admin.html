@@ -129,7 +129,32 @@
   .order-detail-table td:last-child{text-align:right;font-family:var(--mono);color:var(--amber-dark);}
   .order-detail-table tr:last-child td{border:none;font-weight:700;}
 
-  @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.table-wrap{overflow-x:auto;}}
+  @media(max-width:600px){
+    .form-grid{grid-template-columns:1fr;}
+
+    /* Fiche produit : le prix + les actions passent sous le nom/la
+       description au lieu de s'écraser dans une colonne trop étroite. */
+    .product-row{flex-wrap:wrap;}
+    .prod-body{flex-basis:calc(100% - 66px);}
+    .prod-price{margin-left:66px;text-align:left;}
+    .prod-actions{margin-left:auto;}
+
+    /* Tableau des commandes : lignes en fiches empilées, tout visible
+       (membre, articles, total, paiement, référence, date, statut,
+       action) sans défilement latéral. */
+    .stack-mobile table, .stack-mobile tbody, .stack-mobile tr, .stack-mobile td{display:block;width:100%;}
+    .stack-mobile thead{display:none;}
+    .stack-mobile tbody tr{border-bottom:1px solid var(--line);padding:6px 0 10px;}
+    .stack-mobile tbody tr:last-child{border-bottom:none;}
+    .stack-mobile td{border-bottom:none;padding:4px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .stack-mobile td::before{content:attr(data-label);font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;flex-shrink:0;}
+    .stack-mobile td.td-member{display:block;padding-top:12px;}
+    .stack-mobile td.td-member::before{display:none;}
+    .stack-mobile td.td-act-cell{display:block;padding-top:8px;text-align:right;}
+    .stack-mobile td.td-act-cell::before{display:none;}
+    .stack-mobile .empty-row td{display:block;text-align:center;}
+    .stack-mobile .empty-row td::before{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -174,7 +199,7 @@
         <button class="filter-btn" id="of-shipped" onclick="setOrderFilter('shipped')">Expédiées</button>
         <button class="filter-btn" id="of-cancelled" onclick="setOrderFilter('cancelled')">Annulées</button>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap stack-mobile">
         <table>
           <thead>
             <tr>
@@ -532,23 +557,23 @@
       const itemsSummary = itemsArr.map(i => `${i.qty}× ${escHtml(i.name)}`).join(', ');
       const date = o.created_at ? new Date(o.created_at).toLocaleDateString('fr-FR') : '-';
       return `<tr>
-        <td>
+        <td class="td-member">
           <p class="member-name">${escHtml(profile.full_name || '-')}</p>
           <p class="member-email">${escHtml(profile.email || '')}</p>
         </td>
-        <td><p class="order-items">${itemsSummary || '-'}</p></td>
-        <td><span class="order-total">${formatPrice(o.total_fcfa)}</span></td>
-        <td style="font-size:0.8rem;">${methods[o.payment_method] || '-'}</td>
-        <td><span class="ref-code">${escHtml(o.payment_reference || '-')}</span></td>
-        <td style="color:#8A9E8F;font-size:0.78rem;">${date}</td>
-        <td>
+        <td data-label="Articles"><p class="order-items">${itemsSummary || '-'}</p></td>
+        <td data-label="Total"><span class="order-total">${formatPrice(o.total_fcfa)}</span></td>
+        <td data-label="Paiement" style="font-size:0.8rem;">${methods[o.payment_method] || '-'}</td>
+        <td data-label="Référence"><span class="ref-code">${escHtml(o.payment_reference || '-')}</span></td>
+        <td data-label="Date" style="color:#8A9E8F;font-size:0.78rem;">${date}</td>
+        <td data-label="Statut">
           <select class="status-select" onchange="updateOrderStatus('${o.id}',this.value)">
             ${['pending','paid','processing','shipped','cancelled'].map(s =>
               `<option value="${s}" ${o.status===s?'selected':''}>${statusLabels[s]}</option>`
             ).join('')}
           </select>
         </td>
-        <td>
+        <td class="td-act-cell">
           <button class="btn btn-sm btn-edit" onclick="showOrderDetail('${o.id}')"><i class="ti ti-eye"></i></button>
         </td>
       </tr>`;
