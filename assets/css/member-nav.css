@@ -1,0 +1,36 @@
+/* Menu hamburger des onglets de l'espace membres (mobile).
+   Partagé par toutes les pages membres qui portent <nav class="member-tabs">.
+   Amélioration progressive : sans JavaScript, la rangée d'onglets à
+   défilement horizontal d'origine reste en place (member-nav.js ajoute la
+   classe has-mobile-nav qui déclenche la bascule ci-dessous). */
+
+.member-nav-toggle{display:none;}
+.member-nav-panel{display:none;}
+
+@media(max-width:880px){
+  .member-tabs.has-mobile-nav .member-tabs-inner{display:none;}
+
+  .member-tabs.has-mobile-nav .member-nav-toggle{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    width:100%; padding:13px 24px;
+    background:none; border:none; cursor:pointer; text-align:left;
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:0.08em; color:#F8B718;
+  }
+  .member-nav-toggle .mn-burger{
+    font-size:17px; line-height:1; color:rgba(255,255,255,0.85); flex-shrink:0;
+  }
+
+  .member-tabs.has-mobile-nav .member-nav-panel.open{
+    display:block; background:#06441C;
+    border-top:1px solid rgba(255,255,255,0.08); padding:6px 12px 14px;
+  }
+  .member-nav-panel a{
+    display:block; padding:11px 14px; border-radius:8px;
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:0.06em;
+    color:rgba(255,255,255,0.6); text-decoration:none;
+  }
+  .member-nav-panel a.active{color:#F8B718; background:rgba(248,183,24,0.1);}
+  .member-nav-panel a:hover, .member-nav-panel a:focus{color:#FFFFFF; background:rgba(255,255,255,0.06);}
+}

@@ -75,7 +75,24 @@
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
-  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}.table-wrap{overflow-x:auto;}}
+  /* Mobile : les lignes des tableaux deviennent des fiches empilées, tout est
+     visible (infos + Confirmer/Refuser) sans défilement latéral. */
+  @media(max-width:700px){
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .stack-mobile table, .stack-mobile tbody, .stack-mobile tr, .stack-mobile td{display:block;width:100%;}
+    .stack-mobile thead{display:none;}
+    .stack-mobile tbody tr{border-bottom:1px solid var(--line);padding:6px 0 10px;}
+    .stack-mobile tbody tr:last-child{border-bottom:none;}
+    .stack-mobile td{border-bottom:none;padding:4px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .stack-mobile td::before{content:attr(data-label);font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;flex-shrink:0;}
+    .stack-mobile td.td-member{display:block;padding-top:12px;}
+    .stack-mobile td.td-member::before{display:none;}
+    .stack-mobile td.td-act-cell{display:block;padding-top:8px;}
+    .stack-mobile td.td-act-cell::before{display:none;}
+    .stack-mobile td.td-act-cell .td-actions{justify-content:flex-end;}
+    .stack-mobile .empty-row td{display:block;text-align:center;}
+    .stack-mobile .empty-row td::before{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -114,7 +131,7 @@
         <button class="filter-btn" id="vf-confirmed" onclick="setValidityFilter('confirmed')">Confirmés</button>
         <button class="filter-btn" id="vf-rejected" onclick="setValidityFilter('rejected')">Refusés</button>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap stack-mobile">
         <table>
           <thead><tr><th>Membre</th><th>Années</th><th>Montant</th><th>Méthode</th><th>Référence</th><th>Date</th><th>Statut</th><th></th></tr></thead>
           <tbody id="validityTable"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
@@ -135,7 +152,7 @@
         <button class="filter-btn" id="cf-confirmed" onclick="setCotisFilter('confirmed')">Confirmés</button>
         <button class="filter-btn" id="cf-rejected" onclick="setCotisFilter('rejected')">Refusés</button>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap stack-mobile">
         <table>
           <thead><tr><th>Membre</th><th>Mois</th><th>Année</th><th>Montant</th><th>Méthode</th><th>Référence</th><th>Statut</th><th></th></tr></thead>
           <tbody id="cotisTable"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
@@ -208,14 +225,14 @@
       const date = p.confirmed_at || p.created_at;
       const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '-';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
-        <td>${p.years_requested} an${p.years_requested > 1 ? 's' : ''}</td>
-        <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
-        <td>${methods[p.payment_method] || '-'}</td>
-        <td><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
-        <td style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
-        <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
-        <td>
+        <td class="td-member"><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td data-label="Années">${p.years_requested} an${p.years_requested > 1 ? 's' : ''}</td>
+        <td data-label="Montant" style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
+        <td data-label="Méthode">${methods[p.payment_method] || '-'}</td>
+        <td data-label="Référence"><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
+        <td data-label="Date" style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
+        <td data-label="Statut"><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
+        <td class="td-act-cell">
           <div class="td-actions">
             <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="confirmValidity('${p.id}')"><i class="ti ti-check"></i> Confirmer</button>
             <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setValidityStatus('${p.id}','rejected')"><i class="ti ti-x"></i> Refuser</button>
@@ -269,14 +286,14 @@
       const profile = p.profiles || {};
       const isPending = p.status === 'pending';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
-        <td>${p.months_requested} mois</td>
-        <td>${p.year}</td>
-        <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
-        <td>${methods[p.payment_method] || '-'}</td>
-        <td><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
-        <td><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
-        <td>
+        <td class="td-member"><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td data-label="Mois">${p.months_requested} mois</td>
+        <td data-label="Année">${p.year}</td>
+        <td data-label="Montant" style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
+        <td data-label="Méthode">${methods[p.payment_method] || '-'}</td>
+        <td data-label="Référence"><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
+        <td data-label="Statut"><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
+        <td class="td-act-cell">
           <div class="td-actions">
             <button class="btn btn-confirm" ${isPending ? '' : 'disabled'} onclick="confirmCotis('${p.id}')"><i class="ti ti-check"></i> Confirmer</button>
             <button class="btn btn-reject" ${isPending ? '' : 'disabled'} onclick="setCotisStatus('${p.id}','rejected')"><i class="ti ti-x"></i> Refuser</button>
