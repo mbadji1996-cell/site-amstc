@@ -41,6 +41,17 @@
   .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   .field-row > div{min-width:0;}
   @media(max-width:480px){.field-row{grid-template-columns:1fr;}}
+  .choice-option{
+    display:block; width:100%; text-align:left; background:var(--paper); border:1.5px solid var(--line);
+    border-radius:12px; padding:18px 20px; cursor:pointer; transition:border-color .15s ease, background .15s ease;
+    font-family:var(--body);
+  }
+  .choice-option + .choice-option{ margin-top:12px; }
+  .choice-option:hover{ border-color:var(--green); background:var(--white); }
+  .choice-title{ display:block; font-family:var(--display); font-weight:600; font-size:1.02rem; color:var(--green-deep); margin-bottom:4px; }
+  .choice-sub{ display:block; font-size:0.85rem; color:#5A6C60; }
+  .change-choice{ display:inline-block; font-family:var(--mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold-deep); margin-bottom:18px; }
+  .change-choice:hover{ opacity:0.75; }
   .password-field{position:relative; margin-top:6px;}
   .password-field input{padding-right:44px; margin-top:0;}
   .toggle-password{position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#8A9E8F; padding:6px; display:flex; align-items:center;}
@@ -81,7 +92,20 @@
   <h1>Créer un compte</h1>
   <p class="intro">Votre compte sera examiné par un administrateur avant activation. Vous recevrez un accès dès validation.</p>
 
-  <div class="card">
+  <div class="card" id="choiceCard">
+    <button type="button" class="choice-option" data-type="membre_existant">
+      <span class="choice-title">Je suis déjà membre</span>
+      <span class="choice-sub">J'ai déjà adhéré à l'AMSTC et je veux accéder à mon espace membre.</span>
+    </button>
+    <button type="button" class="choice-option" data-type="nouvel_adherent">
+      <span class="choice-title">Je souhaite adhérer</span>
+      <span class="choice-sub">Je découvre l'AMSTC et je souhaite devenir membre pour la première fois.</span>
+    </button>
+  </div>
+
+  <div class="card" id="signupCard" style="display:none;">
+    <a href="#" class="change-choice" id="changeChoiceLink">← Changer mon choix</a>
+
     <!-- Bouton Google - nécessite d'activer le provider Google dans Supabase Dashboard
          → Authentication → Providers → Google, et d'ajouter
          https://amstc.org/membres/inscription.html dans URL Configuration → Redirect URLs -->
@@ -184,6 +208,25 @@
   const messageEl = document.getElementById("formMessage");
   const googleMessageEl = document.getElementById("googleMessage");
 
+  // ===== Écran de choix : déjà membre / nouvel adhérent =====
+  let applicantType = null;
+  const choiceCard = document.getElementById("choiceCard");
+  const signupCard = document.getElementById("signupCard");
+
+  document.querySelectorAll(".choice-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      applicantType = btn.dataset.type;
+      choiceCard.style.display = "none";
+      signupCard.style.display = "";
+    });
+  });
+
+  document.getElementById("changeChoiceLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    signupCard.style.display = "none";
+    choiceCard.style.display = "";
+  });
+
   // ===== Domaine / spécialité (même logique que membres/profil.html) =====
   const MEDECINE_SPECIALTIES = [
     'Médecine générale','Pédiatrie','Chirurgie générale','Gynécologie-Obstétrique','Cardiologie',
@@ -285,6 +328,10 @@
   (async () => {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) return;
+    // Retour d'un redirect OAuth Google : on saute l'écran de choix pour que
+    // le message de statut (googleMessageEl, dans signupCard) soit visible.
+    choiceCard.style.display = "none";
+    signupCard.style.display = "";
     const profile = await getCurrentProfile();
     await handleProfile(profile, googleMessageEl);
   })();
@@ -341,7 +388,8 @@
       password,
       options: { data: {
         full_name: fullName, phone, title, first_name: firstName || null, last_name: lastName || null,
-        domain, domain_autre: domainAutre, specialty, city
+        domain, domain_autre: domainAutre, specialty, city,
+        applicant_type: applicantType || "membre_existant"
       } }
     });
 

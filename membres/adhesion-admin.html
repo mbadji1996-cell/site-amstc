@@ -59,6 +59,7 @@
   .s-confirmed{background:#EAF3DE;color:#3B6D11;}
   .s-pending{background:#FEF6E4;color:var(--gold-deep);}
   .s-rejected{background:#FDEEEE;color:#B23B3B;}
+  .badge.new-applicant{background:#FEF6E4;color:var(--gold-deep);margin-left:6px;}
   .td-actions{display:flex;gap:6px;}
   .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
   .btn-confirm{background:#EAF3DE;color:#3B6D11;}
@@ -177,7 +178,7 @@
   async function reloadValidity() {
     const { data } = await supabaseClient
       .from('card_validity_payments')
-      .select('*, profiles:user_id(full_name, email)')
+      .select('*, profiles:user_id(full_name, email, applicant_type)')
       .order('created_at', { ascending: false });
     allValidityPayments = data || [];
     updateValidityStats();
@@ -207,7 +208,7 @@
       const date = p.confirmed_at || p.created_at;
       const dateStr = date ? new Date(date).toLocaleDateString('fr-FR') : '-';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '-')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
         <td>${p.years_requested} an${p.years_requested > 1 ? 's' : ''}</td>
         <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
         <td>${methods[p.payment_method] || '-'}</td>
@@ -240,7 +241,7 @@
   async function reloadCotis() {
     const { data } = await supabaseClient
       .from('cotisation_payments')
-      .select('*, profiles:user_id(full_name, email)')
+      .select('*, profiles:user_id(full_name, email, applicant_type)')
       .order('created_at', { ascending: false });
     allCotisPayments = data || [];
     updateCotisStats();
@@ -268,7 +269,7 @@
       const profile = p.profiles || {};
       const isPending = p.status === 'pending';
       return `<tr>
-        <td><p class="member-name">${escHtml(profile.full_name || '-')}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
+        <td><p class="member-name">${escHtml(profile.full_name || '-')}${profile.applicant_type === 'nouvel_adherent' ? '<span class="badge new-applicant">Nouvel adhérent</span>' : ''}</p><p class="member-email">${escHtml(profile.email || '')}</p></td>
         <td>${p.months_requested} mois</td>
         <td>${p.year}</td>
         <td style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
