@@ -73,6 +73,12 @@
   }
   @media (max-width:900px){ .toc{position:static; height:auto; overflow-y:visible; padding:22px 20px 26px;} }
 
+  .toc-back{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); text-decoration:none; margin-bottom:20px;
+  }
+  .toc-back:hover{opacity:0.75;}
+
   .toc-brand{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
   .toc-mark{
     width:34px; height:34px; border-radius:9px; background:rgba(248,183,24,0.16);
@@ -209,6 +215,8 @@
 <div class="shell">
 
   <aside class="toc">
+    <a href="index.html" class="toc-back">← Retour au site</a>
+
     <div class="toc-brand">
       <span class="toc-mark">✺</span>
       <div>
