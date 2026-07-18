@@ -362,6 +362,58 @@ aussi le téléphone (la colonne `profiles.phone` existe déjà depuis Phase 4,
 éditable ensuite via `profil.html`). Les mots de passe de `connexion.html`
 et `inscription.html` ont aussi un bouton œil pour les afficher/masquer.
 
+## 4quaterdecies. Notifier l'admin par e-mail (inscription, réclamation de carte, achat boutique, nouveau sujet forum)
+
+Contrairement aux phases précédentes, cette étape ne se limite pas à coller
+un fichier SQL : elle introduit une **fonction Edge Supabase** (jamais
+utilisée jusqu'ici sur ce projet) et nécessite un compte chez un service
+d'envoi d'e-mails. Suivez les étapes dans l'ordre.
+
+1. **Créer un compte sur [resend.com](https://resend.com)**, puis
+   Dashboard → **API Keys** → **Create API Key**. Copiez la clé (elle n'est
+   affichée qu'une seule fois).
+2. Tant que le domaine `amstc.org` n'est pas vérifié dans Resend
+   (Domains → Add Domain → ajout d'enregistrements DNS SPF/DKIM chez votre
+   registrar), les e-mails ne peuvent partir que depuis l'adresse de test
+   `onboarding@resend.dev`, et **uniquement vers l'adresse e-mail de votre
+   propre compte Resend** - pas vers `contact@amstc.org` ni aucune autre
+   adresse. Pour tester avant la vérification du domaine, utilisez donc
+   temporairement votre propre adresse comme destinataire (étape 6).
+3. (Recommandé) Générez un jeton aléatoire pour servir de secret partagé -
+   n'importe quel générateur de mot de passe long fera l'affaire. Notez-le,
+   il sert à la fois à l'étape 6 et à l'étape 7.
+4. **Déployer la fonction Edge** : Dashboard Supabase → **Edge Functions** →
+   "Deploy a new function" → "Via Editor" → nommez-la exactement
+   `notify-admin` → collez le contenu de
+   `supabase/functions/notify-admin/index.ts` → **Deploy**.
+5. Sur la page de la fonction `notify-admin`, onglet **Details** :
+   désactivez le bouton **"Verify JWT"** - indispensable, sinon les appels
+   du trigger SQL (via `pg_net`, qui ne fournit pas de session utilisateur)
+   sont rejetés avant même d'atteindre le code.
+6. Allez dans **Project Settings → Edge Functions → Secrets** (les secrets
+   sont partagés par toutes les fonctions du projet) et ajoutez :
+   - `RESEND_API_KEY` - la clé de l'étape 1
+   - `ADMIN_NOTIFY_EMAIL` - l'adresse qui recevra les notifications (voir
+     la limite de l'étape 2 tant que le domaine n'est pas vérifié)
+   - `NOTIFY_ADMIN_SECRET` - le jeton de l'étape 3 (si vous l'utilisez)
+   - `NOTIFY_FROM_EMAIL` - optionnel, adresse d'expédition (laissez vide
+     pour garder `onboarding@resend.dev`)
+7. Ouvrez `supabase/phase25-notifications-admin.sql`, remplacez
+   `REMPLACEZ_PAR_VOTRE_JETON` par la même valeur que `NOTIFY_ADMIN_SECRET`
+   (ou laissez tel quel si vous n'utilisez pas ce contrôle).
+8. Dans Supabase → **SQL Editor** → **New query**, collez tout le contenu
+   du fichier, cliquez **Run**.
+9. **Testez** les 4 parcours (inscription, réclamation d'une carte, achat
+   en boutique, nouveau sujet de forum) et vérifiez la réception de
+   l'e-mail. En cas d'échec : Edge Functions → `notify-admin` → **Logs**
+   (erreurs du code) et Resend → **Emails** (statut de livraison).
+
+Un échec d'envoi (Resend indisponible, secret manquant...) ne bloque
+jamais l'action du membre : l'inscription, la réclamation, l'achat ou le
+sujet de forum sont enregistrés normalement même si la notification échoue
+- seul l'e-mail à l'admin ne part pas, et l'erreur reste visible dans les
+logs de la fonction Edge.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -415,6 +467,9 @@ Une fois l'URL et la clé intégrées :
 - Médiathèque : galerie photo Année > Dossier d'activité > Photos, avec
   import par glisser-déposer ou dossier entier côté admin (voir Phase
   4septies ci-dessus)
+- Notification par e-mail de l'admin à chaque inscription, réclamation de
+  carte, achat en boutique ou nouveau sujet de forum, via une fonction
+  Edge Supabase + Resend (voir Phase 4quaterdecies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 
