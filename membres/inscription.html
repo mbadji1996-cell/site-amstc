@@ -33,11 +33,14 @@
   .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
   label{display:block; font-size:0.85rem; font-weight:600; color:var(--green-deep); margin-top:16px;}
   label:first-child{margin-top:0;}
-  input{
+  input,select{
     width:100%; padding:12px 14px; margin-top:6px; border:1.5px solid var(--line); border-radius:10px;
     font-family:var(--body); font-size:0.95rem; color:var(--ink); background:var(--paper);
   }
-  input:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
+  input:focus,select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .field-row > div{min-width:0;}
+  @media(max-width:480px){.field-row{grid-template-columns:1fr;}}
   .password-field{position:relative; margin-top:6px;}
   .password-field input{padding-right:44px; margin-top:0;}
   .toggle-password{position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#8A9E8F; padding:6px; display:flex; align-items:center;}
@@ -97,14 +100,59 @@
     <div class="or-divider"><span>ou</span></div>
 
     <form id="signupForm">
-      <label for="fullName">Nom complet</label>
-      <input type="text" id="fullName" name="fullName" required autocomplete="name">
+      <div class="field-row">
+        <div>
+          <label for="title">Titre</label>
+          <select id="title" name="title">
+            <option value="">-</option>
+            <option value="Dr">Dr</option>
+            <option value="Pr">Pr</option>
+          </select>
+        </div>
+        <div>
+          <label for="firstName">Prénom</label>
+          <input type="text" id="firstName" name="firstName" required autocomplete="given-name">
+        </div>
+      </div>
+
+      <label for="lastName">Nom</label>
+      <input type="text" id="lastName" name="lastName" required autocomplete="family-name">
 
       <label for="email">E-mail</label>
       <input type="email" id="email" name="email" required autocomplete="email">
 
       <label for="phone">Téléphone (WhatsApp)</label>
       <input type="tel" id="phone" name="phone" required placeholder="+221 77 000 0000" autocomplete="tel">
+
+      <label for="domain">Domaine</label>
+      <select id="domain" name="domain" onchange="onDomainChange()">
+        <option value="">- Choisir -</option>
+        <option value="medecine">Médecine</option>
+        <option value="pharmacie">Pharmacie</option>
+        <option value="odontologie">Odontologie</option>
+        <option value="soins_infirmiers">Soins infirmiers</option>
+        <option value="soins_obstetricaux">Soins obstétricaux</option>
+        <option value="autre">Autres à préciser</option>
+      </select>
+
+      <div id="domainAutreGroup" style="display:none;">
+        <label for="domainAutre">Précisez</label>
+        <input type="text" id="domainAutre" name="domainAutre">
+      </div>
+
+      <div id="specialtyGroup" style="display:none;">
+        <label for="specialtySelect">Spécialité</label>
+        <select id="specialtySelect" style="display:none;" onchange="onSpecialtySelectChange()"></select>
+        <input id="specialtyText" type="text" style="display:none;" placeholder="Précisez votre spécialité">
+      </div>
+
+      <div id="specialtyAutreGroup" style="display:none;">
+        <label for="specialtyAutre">Précisez la spécialité</label>
+        <input type="text" id="specialtyAutre" name="specialtyAutre">
+      </div>
+
+      <label for="city">Localité</label>
+      <input type="text" id="city" name="city" placeholder="Dakar, Thiès…" autocomplete="address-level2">
 
       <label for="password">Mot de passe</label>
       <div class="password-field">
@@ -135,6 +183,60 @@
   const googleBtn = document.getElementById("googleBtn");
   const messageEl = document.getElementById("formMessage");
   const googleMessageEl = document.getElementById("googleMessage");
+
+  // ===== Domaine / spécialité (même logique que membres/profil.html) =====
+  const MEDECINE_SPECIALTIES = [
+    'Médecine générale','Pédiatrie','Chirurgie générale','Gynécologie-Obstétrique','Cardiologie',
+    'Neurologie','Dermatologie','Ophtalmologie','ORL','Psychiatrie','Radiologie',
+    'Anesthésie-Réanimation','Endocrinologie','Gastro-entérologie','Néphrologie','Pneumologie',
+    'Rhumatologie','Urologie','Oncologie','Médecine interne','Santé publique',
+  ];
+  const PHARMACIE_SPECIALTIES = ['Officine', 'Biologie', 'Industrie'];
+
+  function specialtyMode(domain) {
+    if (domain === 'medecine') return 'medecine';
+    if (domain === 'pharmacie') return 'pharmacie';
+    if (domain === 'odontologie' || domain === 'soins_obstetricaux' || domain === 'soins_infirmiers') return 'freetext';
+    return 'none';
+  }
+
+  function refreshSpecialtyUI(mode) {
+    const group = document.getElementById('specialtyGroup');
+    const select = document.getElementById('specialtySelect');
+    const text = document.getElementById('specialtyText');
+    const autreGroup = document.getElementById('specialtyAutreGroup');
+
+    autreGroup.style.display = 'none';
+
+    if (mode === 'none') { group.style.display = 'none'; return; }
+    group.style.display = '';
+
+    if (mode === 'freetext') {
+      select.style.display = 'none';
+      text.style.display = '';
+    } else {
+      text.style.display = 'none';
+      select.style.display = '';
+      const list = mode === 'medecine' ? MEDECINE_SPECIALTIES : PHARMACIE_SPECIALTIES;
+      select.innerHTML = '<option value="">- Choisir -</option>' +
+        list.map(s => `<option value="${s}">${s}</option>`).join('') +
+        '<option value="autre">Autre à préciser</option>';
+    }
+  }
+
+  function onDomainChange() {
+    const domain = document.getElementById('domain').value;
+    document.getElementById('domainAutreGroup').style.display = domain === 'autre' ? '' : 'none';
+    refreshSpecialtyUI(specialtyMode(domain));
+    document.getElementById('specialtySelect').value = '';
+    document.getElementById('specialtyText').value = '';
+    document.getElementById('specialtyAutre').value = '';
+  }
+
+  function onSpecialtySelectChange() {
+    document.getElementById('specialtyAutreGroup').style.display =
+      document.getElementById('specialtySelect').value === 'autre' ? '' : 'none';
+  }
 
   document.querySelectorAll(".toggle-password").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -213,15 +315,34 @@
     submitBtn.disabled = true;
     messageEl.className = "form-message";
 
-    const fullName = document.getElementById("fullName").value.trim();
+    const title = document.getElementById("title").value || null;
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const fullName = [firstName, lastName].filter(Boolean).join(" ");
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
+    const domain = document.getElementById("domain").value || null;
+    const domainAutre = domain === "autre" ? (document.getElementById("domainAutre").value.trim() || null) : null;
+
+    const specMode = specialtyMode(domain);
+    let specialty = null;
+    if (specMode === "freetext") {
+      specialty = document.getElementById("specialtyText").value.trim() || null;
+    } else if (specMode === "medecine" || specMode === "pharmacie") {
+      const sel = document.getElementById("specialtySelect").value;
+      specialty = sel === "autre" ? (document.getElementById("specialtyAutre").value.trim() || null) : (sel || null);
+    }
+
+    const city = document.getElementById("city").value.trim() || null;
     const password = document.getElementById("password").value;
 
     const { error } = await supabaseClient.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, phone } }
+      options: { data: {
+        full_name: fullName, phone, title, first_name: firstName || null, last_name: lastName || null,
+        domain, domain_autre: domainAutre, specialty, city
+      } }
     });
 
     if (error) {
