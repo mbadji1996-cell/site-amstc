@@ -404,13 +404,13 @@
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
           Découvrir l'AMSTC <span class="chevron" aria-hidden="true"></span>
         </button>
-        <div class="nav-dropdown-menu" data-links='[["#qui-sommes-nous","Qui sommes-nous ?"],["#nos-actions","Nos actions"],["#historique","Historique"]]'></div>
+        <div class="nav-dropdown-menu" id="nav-menu-decouvrir" data-links='[["#qui-sommes-nous","Qui sommes-nous ?"],["#nos-actions","Nos actions"],["#historique","Historique"]]'></div>
       </div>
       <div class="nav-dropdown">
         <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false">
           Nos activités <span class="chevron" aria-hidden="true"></span>
         </button>
-        <div class="nav-dropdown-menu" data-links='[["actualites.html","Réalisations"],["formations.html","Formation"],["projets.html","Projets"]]'></div>
+        <div class="nav-dropdown-menu" id="nav-menu-activites" data-links='[["actualites.html","Réalisations"],["formations.html","Formation"],["projets.html","Projets"]]'></div>
       </div>
       <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Espace consultation</a>
       <a href="membres/connexion.html">Espace membres</a>
@@ -578,8 +578,8 @@
     <div class="wrap">
       <div class="section-head reveal" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
         <div>
-          <p class="eyebrow">Réalisations</p>
-          <h2>Nos réalisations récentes</h2>
+          <p class="eyebrow" id="cms-actus-eyebrow">Réalisations</p>
+          <h2 id="cms-actus-title">Nos réalisations récentes</h2>
         </div>
         <a href="actualites.html" class="btn btn-outline">Toutes nos réalisations</a>
       </div>
@@ -594,14 +594,14 @@
   <section id="espace-consultation">
     <div class="wrap">
       <div class="cta-banner reveal">
-        <div class="cta-banner-bg" style="background-image:url('assets/uploads/photo_39_2026-05-18_12-56-00.jpg')" aria-hidden="true"></div>
+        <div class="cta-banner-bg" id="cta-banner-bg" style="background-image:url('assets/uploads/photo_39_2026-05-18_12-56-00.jpg')" aria-hidden="true"></div>
         <div class="cta-banner-overlay" aria-hidden="true"></div>
         <div>
           <h2 id="cms-cta-title">Suivez une consultation en temps réel sur notre espace dédié.</h2>
           <p id="cms-cta-text">Notre plateforme de gestion des consultations est utilisée par nos équipes médicales sur le terrain.</p>
         </div>
         <div style="display:flex; gap:14px; flex-wrap:wrap; position:relative; z-index:1;">
-          <a href="https://consultations-amstc.org" target="_blank" rel="noopener" class="btn btn-gold">Accéder à l'espace consultation</a>
+          <a href="https://consultations-amstc.org" target="_blank" rel="noopener" class="btn btn-gold" id="cms-cta-button">Accéder à l'espace consultation</a>
         </div>
       </div>
     </div>
@@ -635,7 +635,7 @@
       </div>
       <div>
         <h5>Pages</h5>
-        <ul>
+        <ul id="footer-pages-list">
           <li><a href="#qui-sommes-nous">Qui sommes-nous ?</a></li>
           <li><a href="#nos-actions">Nos actions</a></li>
           <li><a href="#historique">Historique</a></li>
@@ -651,7 +651,7 @@
         <h5>Contact</h5>
         <ul>
           <li id="cms-contact-phone">Tél. : [à compléter]</li>
-          <li><a href="mailto:contact@amstc.org">contact@amstc.org</a></li>
+          <li><a href="mailto:contact@amstc.org" id="cms-contact-email">contact@amstc.org</a></li>
         </ul>
       </div>
       <div>
@@ -1003,7 +1003,7 @@
     els.forEach(el => scrollRevealObserver.observe(el));
   }
 
-  // Charge et fusionne les 6 fichiers de contenu (édités via /admin), puis construit la page
+  // Charge et fusionne les fichiers de contenu (édités via /admin), puis construit la page
   const CONTENT_FILES = [
     "content/home-hero.json",
     "content/home-actions.json",
@@ -1011,6 +1011,8 @@
     "content/home-gouvernance.json",
     "content/home-cta-footer.json",
     "content/home-sections-libres.json",
+    "content/home-actualites.json",
+    "content/navigation.json",
     "content/mediatheque.json"
   ];
   Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
@@ -1095,9 +1097,16 @@
     if (data.gov_subtitle) document.getElementById('cms-gov-subtitle').textContent = data.gov_subtitle;
     renderTeam(data.members);
 
+    // Réalisations
+    if (data.actus_eyebrow) document.getElementById('cms-actus-eyebrow').textContent = data.actus_eyebrow;
+    if (data.actus_title) document.getElementById('cms-actus-title').textContent = data.actus_title;
+
     // Bandeau de don
     if (data.cta_title) document.getElementById('cms-cta-title').textContent = data.cta_title;
     if (data.cta_text) document.getElementById('cms-cta-text').textContent = data.cta_text;
+    if (data.cta_button_text) document.getElementById('cms-cta-button').textContent = data.cta_button_text;
+    if (data.cta_button_href) document.getElementById('cms-cta-button').setAttribute('href', data.cta_button_href);
+    if (data.cta_bg_image) document.getElementById('cta-banner-bg').style.backgroundImage = `url('${data.cta_bg_image}')`;
 
     // Pied de page
     if (data.footer_description) document.getElementById('cms-footer-description').textContent = data.footer_description;
@@ -1124,6 +1133,27 @@
       .map(([key, url]) => `<a class="social-icon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${key}">${SOCIAL_ICONS[key]}</a>`)
       .join('');
     if (socialLinks) document.getElementById('cms-social-links').innerHTML = socialLinks;
+
+    // Navigation & pied de page (liens) - remplace le repli statique si le CMS fournit des données.
+    function renderNavLinks(id, items){
+      if (!Array.isArray(items) || items.length === 0) return;
+      const menu = document.getElementById(id);
+      if (menu) menu.innerHTML = items.map(i => `<a href="${esc(i.href)}">${esc(i.label)}</a>`).join('');
+    }
+    renderNavLinks('nav-menu-decouvrir', data.nav_decouvrir);
+    renderNavLinks('nav-menu-activites', data.nav_activites);
+    if (Array.isArray(data.footer_pages) && data.footer_pages.length > 0) {
+      const list = document.getElementById('footer-pages-list');
+      if (list) list.innerHTML = data.footer_pages.map(i => {
+        const external = /^https?:\/\//.test(i.href || '');
+        return `<li><a href="${esc(i.href)}"${external ? ' target="_blank" rel="noopener"' : ''}>${esc(i.label)}</a></li>`;
+      }).join('');
+    }
+    if (data.contact_email) {
+      const emailLink = document.getElementById('cms-contact-email');
+      emailLink.textContent = data.contact_email;
+      emailLink.setAttribute('href', 'mailto:' + data.contact_email);
+    }
 
     // Sections personnalisées (blocs libres)
     renderCustomSections(data.sections);

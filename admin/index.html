@@ -5,8 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administration - AMSTC</title>
   <link rel="icon" href="../assets/logo-horizontal-sm.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{ font-family:'Inter', sans-serif; }
+    #nc-root:empty::before{
+      content:"Chargement de l'administration…";
+      display:block;
+      padding:40px;
+      font-family:'Inter', sans-serif;
+      color:#465A4E;
+    }
+  </style>
+  <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    CMS.registerPreviewStyle('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+    CMS.registerPreviewStyle('/admin/preview.css');
+    CMS.init();
+  </script>
 </body>
 </html>

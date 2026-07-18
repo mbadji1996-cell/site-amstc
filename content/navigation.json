@@ -1,0 +1,24 @@
+{
+  "nav_decouvrir": [
+    { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
+    { "label": "Nos actions", "href": "#nos-actions" },
+    { "label": "Historique", "href": "#historique" }
+  ],
+  "nav_activites": [
+    { "label": "Réalisations", "href": "actualites.html" },
+    { "label": "Formation", "href": "formations.html" },
+    { "label": "Projets", "href": "projets.html" }
+  ],
+  "footer_pages": [
+    { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
+    { "label": "Nos actions", "href": "#nos-actions" },
+    { "label": "Historique", "href": "#historique" },
+    { "label": "Réalisations", "href": "actualites.html" },
+    { "label": "Formation", "href": "formations.html" },
+    { "label": "Projets", "href": "projets.html" },
+    { "label": "Faire un don", "href": "don.html" },
+    { "label": "Espace consultation", "href": "https://consultations-amstc.org" },
+    { "label": "Espace membres", "href": "membres/connexion.html" }
+  ],
+  "contact_email": "contact@amstc.org"
+}

@@ -1,0 +1,69 @@
+/* Styles injectés dans le panneau d'aperçu de Decap CMS (via CMS.registerPreviewStyle),
+   pour que les brouillons ressemblent au rendu réel du site amstc.org. */
+
+:root{
+  --ink:#0B2E17;
+  --green:#17763B;
+  --green-deep:#06441C;
+  --gold:#F8B718;
+  --gold-deep:#AA7B11;
+  --paper:#F6F7F1;
+}
+
+body{
+  font-family:'Inter', sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.6;
+  padding:24px;
+}
+
+h1, h2, h3, h4, h5{
+  font-family:'Sora', sans-serif;
+  color:var(--green-deep);
+  line-height:1.25;
+  margin:1.2em 0 0.5em;
+}
+
+h1{ font-size:2rem; }
+h2{ font-size:1.6rem; }
+h3{ font-size:1.3rem; }
+
+a{ color:var(--green); }
+
+p{ margin:0 0 1em; }
+
+blockquote{
+  margin:1.2em 0;
+  padding:0.8em 1.2em;
+  border-left:4px solid var(--gold);
+  background:#fff;
+  color:var(--ink);
+  font-style:italic;
+}
+
+img{
+  max-width:100%;
+  height:auto;
+  border-radius:10px;
+  display:block;
+  margin:1em 0;
+}
+
+strong{ color:var(--green-deep); }
+
+.btn, button{
+  display:inline-block;
+  padding:0.7em 1.4em;
+  border-radius:999px;
+  background:var(--gold);
+  color:var(--ink);
+  font-weight:600;
+  text-decoration:none;
+}
+
+hr{
+  border:none;
+  border-top:1px solid #D8DED9;
+  margin:2em 0;
+}

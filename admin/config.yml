@@ -32,14 +32,14 @@ collections:
           - label: "Photos du diaporama (fond du hero)"
             name: "hero_slideshow"
             widget: "list"
-            hint: "Photos affichées en fondu enchaîné en arrière-plan du hero. Format paysage recommandé."
+            hint: "Photos affichées en fondu enchaîné en arrière-plan du hero. Format paysage recommandé. Laissez vide pour utiliser les photos par défaut."
             field: { label: "Photo", name: "image", widget: "image" }
 
           - label: "Les 3 cartes d'introduction"
             name: "intro_cards"
             widget: "list"
             fields:
-              - { label: "Numéro / catégorie", name: "num", widget: "string" }
+              - { label: "Numéro / catégorie", name: "num", widget: "string", hint: "Ex: 01, 02, 03…" }
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Texte", name: "text", widget: "markdown" }
               - { label: "Texte du lien", name: "link_text", widget: "string" }
@@ -55,8 +55,8 @@ collections:
             name: "emblem_items"
             widget: "list"
             fields:
-              - { label: "Titre", name: "title", widget: "string" }
-              - { label: "Texte", name: "text", widget: "markdown" }
+              - { label: "Titre du point", name: "title", widget: "string" }
+              - { label: "Texte explicatif", name: "text", widget: "markdown" }
 
       - name: "actions"
         label: "2. Nos actions"
@@ -69,6 +69,7 @@ collections:
           - label: "Liste des actions (registre)"
             name: "actions"
             widget: "list"
+            hint: "L'ordre ici définit l'ordre d'affichage sur le site."
             fields:
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Description", name: "text", widget: "markdown" }
@@ -86,6 +87,7 @@ collections:
           - label: "Frise chronologique"
             name: "timeline"
             widget: "list"
+            hint: "L'ordre ici définit l'ordre d'affichage sur la frise."
             fields:
               - { label: "Année(s)", name: "year", widget: "string" }
               - { label: "Titre", name: "title", widget: "string" }
@@ -97,6 +99,7 @@ collections:
             name: "pioneers_layout"
             widget: "select"
             default: "cartes"
+            hint: "Détermine si les pionniers s'affichent en cartes avec photo ou en simple liste de noms."
             options:
               - { label: "Cartes avec photo", value: "cartes" }
               - { label: "Liste de noms (sans photo)", value: "liste" }
@@ -135,55 +138,17 @@ collections:
               - { label: "Photo", name: "photo", widget: "image" }
               - { label: "Nom", name: "name", widget: "string" }
               - { label: "Rôle (Président, Adjoint...)", name: "role", widget: "string" }
-              - { label: "Commission / groupe", name: "commission", widget: "string" }
+              - { label: "Commission / groupe", name: "commission", widget: "string", hint: "Ex: Commission Médicale, Commission Communication… (une des commissions statutaires de l'association)." }
               - { label: "Précision (formation, spécialité...)", name: "detail", widget: "string", required: false }
 
-      - name: "cta_footer"
-        label: "5. Bandeau de don + Pied de page"
-        file: "content/home-cta-footer.json"
-        fields:
-          - { label: "Titre du bandeau de don", name: "cta_title", widget: "string" }
-          - { label: "Texte du bandeau de don", name: "cta_text", widget: "text" }
-          - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
-          - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
-          - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
-          - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
-          - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
-          - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
-          - { label: "Lien YouTube", name: "lien_youtube", widget: "string", required: false }
-          - { label: "Lien TikTok", name: "lien_tiktok", widget: "string", required: false }
-          - { label: "Lien Telegram", name: "lien_telegram", widget: "string", required: false }
-
-      - name: "don"
-        label: "6. Faire un don"
-        file: "content/don.json"
-        fields:
-          - { label: "Accroche", name: "eyebrow", widget: "string" }
-          - { label: "Titre", name: "title", widget: "string" }
-          - { label: "Texte d'introduction", name: "intro", widget: "text" }
-          - { label: "Titre - Virement bancaire", name: "bank_title", widget: "string" }
-          - { label: "Coordonnées bancaires", name: "bank_details", widget: "markdown", hint: "Titulaire, banque, IBAN/RIB, SWIFT..." }
-          - { label: "Titre - Mobile Money", name: "mobile_title", widget: "string" }
-          - label: "Options Mobile Money"
-            name: "mobile_options"
-            widget: "list"
-            fields:
-              - { label: "Opérateur (ex: Orange Money, Wave...)", name: "operator", widget: "string" }
-              - { label: "Numéro", name: "number", widget: "string" }
-              - { label: "Nom du titulaire", name: "name", widget: "string" }
-          - { label: "Titre - Don en nature", name: "nature_title", widget: "string" }
-          - { label: "Texte - Don en nature", name: "nature_text", widget: "text" }
-          - { label: "Titre - Don institutionnel", name: "institution_title", widget: "string" }
-          - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text" }
-          - { label: "Note de confiance (récépissé)", name: "trust_note", widget: "string" }
-
       - name: "sections_libres"
-        label: "7. Sections personnalisées"
+        label: "5. Sections personnalisées"
         file: "content/home-sections-libres.json"
         fields:
           - label: "Blocs (affichés entre 'Organisation' et 'Réalisations')"
             name: "sections"
             widget: "list"
+            hint: "Ajoutez un bloc et choisissez son type (texte+image, bandeau, grille de cartes, galerie). L'ordre ici définit l'ordre d'affichage."
             types:
               - label: "Texte + image"
                 name: "texte_image"
@@ -230,8 +195,64 @@ collections:
                       - { label: "Image", name: "image", widget: "image" }
                       - { label: "Légende", name: "caption", widget: "string", required: false }
 
+      - name: "actualites_section"
+        label: "6. Nos réalisations récentes"
+        file: "content/home-actualites.json"
+        fields:
+          - { label: "Accroche", name: "actus_eyebrow", widget: "string", default: "Réalisations" }
+          - { label: "Titre de la section", name: "actus_title", widget: "string", default: "Nos réalisations récentes" }
+
+      - name: "cta_footer"
+        label: "7. Bandeau de don + Pied de page"
+        file: "content/home-cta-footer.json"
+        fields:
+          - { label: "Titre du bandeau de don", name: "cta_title", widget: "string" }
+          - { label: "Texte du bandeau de don", name: "cta_text", widget: "text" }
+          - { label: "Texte du bouton du bandeau", name: "cta_button_text", widget: "string", required: false, default: "Accéder à l'espace consultation" }
+          - { label: "Lien du bouton du bandeau", name: "cta_button_href", widget: "string", required: false, hint: "URL complète (externe) ou #ancre interne à la page d'accueil.", default: "https://consultations-amstc.org" }
+          - { label: "Image de fond du bandeau", name: "cta_bg_image", widget: "image", required: false, hint: "Photo affichée en arrière-plan du bandeau. Conserver un format paysage." }
+          - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
+          - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
+          - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
+          - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
+          - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
+          - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
+          - { label: "Lien YouTube", name: "lien_youtube", widget: "string", required: false }
+          - { label: "Lien TikTok", name: "lien_tiktok", widget: "string", required: false }
+          - { label: "Lien Telegram", name: "lien_telegram", widget: "string", required: false }
+
+      - name: "navigation"
+        label: "8. Navigation & pied de page (liens)"
+        file: "content/navigation.json"
+        fields:
+          - label: "Sous-menu 'Découvrir l'AMSTC'"
+            name: "nav_decouvrir"
+            widget: "list"
+            hint: "Liens du sous-menu 'Découvrir l'AMSTC', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
+            fields:
+              - { label: "Texte affiché", name: "label", widget: "string" }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+
+          - label: "Sous-menu 'Nos activités'"
+            name: "nav_activites"
+            widget: "list"
+            hint: "Liens du sous-menu 'Nos activités', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
+            fields:
+              - { label: "Texte affiché", name: "label", widget: "string" }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+
+          - label: "Liens du pied de page (colonne 'Pages')"
+            name: "footer_pages"
+            widget: "list"
+            hint: "L'ordre ici définit l'ordre d'affichage dans le pied de page du site."
+            fields:
+              - { label: "Texte affiché", name: "label", widget: "string" }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+
+          - { label: "E-mail de contact (pied de page)", name: "contact_email", widget: "string", pattern: ['^[^\s@]+@[^\s@]+\.[^\s@]+$', "Adresse e-mail invalide."] }
+
       - name: "mediatheque"
-        label: "8. Médiathèque"
+        label: "9. Médiathèque"
         file: "content/mediatheque.json"
         fields:
           - { label: "Accroche", name: "media_eyebrow", widget: "string" }
@@ -248,11 +269,35 @@ collections:
                 widget: "list"
                 field: { label: "Photo", name: "image", widget: "image" }
 
+      - name: "don"
+        label: "Faire un don (page dédiée don.html)"
+        file: "content/don.json"
+        fields:
+          - { label: "Accroche", name: "eyebrow", widget: "string" }
+          - { label: "Titre", name: "title", widget: "string" }
+          - { label: "Texte d'introduction", name: "intro", widget: "text" }
+          - { label: "Titre - Virement bancaire", name: "bank_title", widget: "string" }
+          - { label: "Coordonnées bancaires", name: "bank_details", widget: "markdown", hint: "Titulaire, banque, IBAN/RIB, SWIFT..." }
+          - { label: "Titre - Mobile Money", name: "mobile_title", widget: "string" }
+          - label: "Options Mobile Money"
+            name: "mobile_options"
+            widget: "list"
+            fields:
+              - { label: "Opérateur", name: "operator", widget: "string", hint: "Ex: Orange Money, Wave, Free Money…" }
+              - { label: "Numéro", name: "number", widget: "string" }
+              - { label: "Nom du titulaire", name: "name", widget: "string" }
+          - { label: "Titre - Don en nature", name: "nature_title", widget: "string" }
+          - { label: "Texte - Don en nature", name: "nature_text", widget: "text" }
+          - { label: "Titre - Don institutionnel", name: "institution_title", widget: "string" }
+          - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text" }
+          - { label: "Note de confiance (récépissé)", name: "trust_note", widget: "string" }
+
   - name: "actualites"
     label: "Réalisations"
     folder: "content/actualites"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "article.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
@@ -266,6 +311,7 @@ collections:
     folder: "content/formations"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "formation.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
@@ -279,6 +325,7 @@ collections:
     folder: "content/projets"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "projet.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
@@ -293,6 +340,7 @@ collections:
     folder: "content/etapes"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "etape.html?slug={{slug}}"
     fields:
       - { label: "Projet associé", name: "projet", widget: "relation", collection: "projets", search_fields: ["title"], display_fields: ["title"], value_field: "{{slug}}", hint: "Le projet auquel cette étape appartient." }
       - { label: "Titre de l'étape", name: "title", widget: "string" }
