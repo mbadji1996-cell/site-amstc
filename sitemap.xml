@@ -31,6 +31,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://amstc.org/guide.html</loc>
+    <lastmod>2026-07-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://amstc.org/confidentialite.html</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>yearly</changefreq>
