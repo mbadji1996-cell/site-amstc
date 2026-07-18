@@ -18,7 +18,8 @@
     { "label": "Projets", "href": "projets.html" },
     { "label": "Faire un don", "href": "don.html" },
     { "label": "Espace consultation", "href": "https://consultations-amstc.org" },
-    { "label": "Espace membres", "href": "membres/connexion.html" }
+    { "label": "Espace membres", "href": "membres/connexion.html" },
+    { "label": "Guide de navigation", "href": "guide.html" }
   ],
   "contact_email": "contact@amstc.org"
 }

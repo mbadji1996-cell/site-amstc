@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide de navigation - AMSTC</title>
+<meta name="description" content="Guide de navigation du site amstc.org : site public, espace membres et outils d'administration.">
+<link rel="canonical" href="https://amstc.org/guide.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AMSTC">
+<meta property="og:title" content="Guide de navigation - AMSTC">
+<meta property="og:description" content="Guide de navigation du site amstc.org : site public, espace membres et outils d'administration.">
+<meta property="og:url" content="https://amstc.org/guide.html">
+<meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F7F1;
+    --paper-raised:#FFFFFF;
+    --paper-alt:#ECEFE3;
+    --ink:#0B2E17;
+    --ink-soft:#48594E;
+    --ink-faint:#8A9E8F;
+    --line:rgba(6,68,28,0.14);
+    --line-strong:rgba(6,68,28,0.24);
+    --green:#17763B;
+    --green-deep:#06441C;
+    --gold:#F8B718;
+    --gold-deep:#AA7B11;
+    --slate:#46577A;
+    --slate-bg:#EEF1F7;
+    --lock:#B23B3B;
+    --lock-bg:#FDEEEE;
+    --sidebar-bg:#06441C;
+    --sidebar-ink:rgba(255,255,255,0.68);
+    --sidebar-ink-strong:#FFFFFF;
+    --sidebar-line:rgba(255,255,255,0.12);
+    --shadow:0 1px 2px rgba(6,68,28,0.06), 0 8px 24px rgba(6,68,28,0.06);
+    --display:'Sora', sans-serif;
+    --body:'Inter', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink); font-family:var(--body);
+    line-height:1.6; font-size:15.5px; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--green);}
+  h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0; color:var(--ink);}
+  p{margin:0;}
+  ul,ol{margin:0; padding:0;}
+  code{font-family:var(--mono);}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.14em;
+    color:var(--gold-deep); display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:20px; height:1px; background:var(--gold-deep); flex-shrink:0;}
+
+  /* ===== Shell layout ===== */
+  .shell{display:grid; grid-template-columns:272px minmax(0,1fr); min-height:100vh;}
+  @media (max-width:900px){ .shell{grid-template-columns:1fr;} }
+
+  .toc{
+    background:var(--sidebar-bg); color:var(--sidebar-ink); padding:28px 22px 40px;
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  }
+  @media (max-width:900px){ .toc{position:static; height:auto; overflow-y:visible; padding:22px 20px 26px;} }
+
+  .toc-brand{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .toc-mark{
+    width:34px; height:34px; border-radius:9px; background:rgba(248,183,24,0.16);
+    display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--gold); flex-shrink:0;
+  }
+  .toc-brand-text{font-family:var(--display); font-weight:700; font-size:0.98rem; color:var(--sidebar-ink-strong); letter-spacing:-0.01em;}
+  .toc-brand-sub{font-family:var(--mono); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--sidebar-ink); opacity:0.75;}
+
+  .toc-search-hint{
+    font-size:0.76rem; color:var(--sidebar-ink); background:rgba(255,255,255,0.06); border:1px solid var(--sidebar-line);
+    border-radius:8px; padding:8px 10px; margin:18px 0 22px; line-height:1.45;
+  }
+  .toc-search-hint kbd{
+    font-family:var(--mono); background:rgba(255,255,255,0.14); border-radius:4px; padding:1px 5px; font-size:0.72rem;
+  }
+
+  .toc-group{margin-bottom:22px;}
+  .toc-group-label{
+    font-family:var(--mono); font-size:0.64rem; text-transform:uppercase; letter-spacing:0.12em;
+    color:var(--sidebar-ink); opacity:0.6; margin-bottom:8px; display:block;
+  }
+  .toc nav ul{list-style:none; display:flex; flex-direction:column; gap:1px;}
+  .toc nav a{
+    display:block; padding:6px 10px; border-radius:7px; font-size:0.84rem; color:var(--sidebar-ink);
+    text-decoration:none; border-left:2px solid transparent; transition:background .12s ease, color .12s ease;
+  }
+  .toc nav a:hover{background:rgba(255,255,255,0.07); color:var(--sidebar-ink-strong);}
+  .toc nav a.active{background:rgba(248,183,24,0.12); color:var(--sidebar-ink-strong); border-left-color:var(--gold);}
+  .toc nav a.sub{padding-left:20px; font-size:0.79rem; opacity:0.9;}
+
+  main{padding:56px 48px 100px; max-width:900px;}
+  @media (max-width:640px){ main{padding:36px 20px 80px;} }
+
+  /* ===== Hero ===== */
+  .hero{margin-bottom:52px;}
+  .hero h1{font-size:clamp(1.9rem,4.2vw,2.5rem); font-weight:700; letter-spacing:-0.015em; margin:12px 0 14px; line-height:1.15;}
+  .hero-lede{font-size:1.04rem; color:var(--ink-soft); max-width:62ch; line-height:1.65;}
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:26px; padding:16px 18px;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  }
+  .legend-item{display:flex; align-items:center; gap:7px; font-size:0.78rem; color:var(--ink-soft);}
+
+  /* ===== Badges ===== */
+  .badge{
+    font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em;
+    padding:3px 8px; border-radius:999px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;
+  }
+  .badge.public{background:var(--paper-alt); color:var(--green-deep);}
+  .badge.member{background:rgba(248,183,24,0.16); color:var(--gold-deep);}
+  .badge.card{background:rgba(23,118,59,0.12); color:var(--green);}
+  .badge.admin{background:var(--slate-bg); color:var(--slate);}
+  .badge.locked{background:var(--lock-bg); color:var(--lock);}
+
+  /* ===== Section chrome ===== */
+  .tier-section{margin-bottom:64px; scroll-margin-top:24px;}
+  .tier-head{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:8px; padding-top:16px; border-top:3px solid var(--line-strong);}
+  .tier-head h2{font-size:1.55rem; font-weight:700; letter-spacing:-0.01em;}
+  .tier-num{font-family:var(--mono); font-size:0.85rem; color:var(--ink-faint);}
+  .tier-desc{color:var(--ink-soft); max-width:64ch; margin:10px 0 30px; font-size:0.95rem;}
+
+  .subsection{margin:38px 0 22px; scroll-margin-top:24px;}
+  .subsection h3{font-size:1.12rem; font-weight:700; margin-bottom:4px;}
+  .subsection-desc{color:var(--ink-soft); font-size:0.89rem; max-width:64ch; margin-bottom:16px;}
+
+  /* ===== Page card ===== */
+  .page-card{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:12px;
+    margin-bottom:12px; box-shadow:var(--shadow); scroll-margin-top:24px; overflow:hidden;
+  }
+  .page-card > summary{
+    list-style:none; cursor:pointer; padding:15px 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .page-card > summary::-webkit-details-marker{display:none;}
+  .page-card > summary .chev{
+    margin-left:auto; color:var(--ink-faint); font-size:0.75rem; transition:transform .15s ease; flex-shrink:0;
+  }
+  .page-card[open] > summary .chev{transform:rotate(90deg);}
+  .page-title{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink);}
+  .page-path{font-family:var(--mono); font-size:0.72rem; color:var(--ink-faint);}
+  .page-badges{display:flex; gap:6px; flex-wrap:wrap;}
+
+  .page-body{padding:0 18px 18px; border-top:1px solid var(--line); margin-top:2px; padding-top:14px;}
+  .page-body p{font-size:0.88rem; color:var(--ink-soft); margin-bottom:10px;}
+  .page-body p:last-child{margin-bottom:0;}
+  .page-body strong{color:var(--ink); font-weight:600;}
+  .field-line{display:flex; gap:8px; font-size:0.85rem; margin-bottom:8px; align-items:baseline;}
+  .field-line:last-child{margin-bottom:0;}
+  .field-label{
+    font-family:var(--mono); font-size:0.64rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint);
+    flex-shrink:0; width:108px; padding-top:2px;
+  }
+  .field-val{color:var(--ink-soft); font-size:0.87rem;}
+  .field-val code{background:var(--paper-alt); padding:1px 6px; border-radius:5px; font-size:0.8rem; color:var(--ink);}
+
+  /* ===== Nav map (for header/footer inventories) ===== */
+  .nav-map{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:16px 0 28px;}
+  .nav-map-col{background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+  .nav-map-col h4{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); margin-bottom:10px;}
+  .nav-map-col ul{list-style:none; display:flex; flex-direction:column; gap:6px;}
+  .nav-map-col li{font-size:0.86rem; color:var(--ink-soft);}
+  .nav-map-col li b{color:var(--ink); font-weight:600;}
+
+  /* ===== Card status states ===== */
+  .state-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0 30px;}
+  .state-card{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--paper-raised); box-shadow:var(--shadow);}
+  .state-card .dot{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:7px;}
+  .state-card.ok .dot{background:var(--green);}
+  .state-card.grace .dot{background:var(--gold);}
+  .state-card.blocked .dot{background:var(--lock);}
+  .state-card h4{font-size:0.92rem; font-weight:700; margin-bottom:6px;}
+  .state-card p{font-size:0.84rem; color:var(--ink-soft);}
+
+  /* ===== FAQ ===== */
+  .faq-item{border-bottom:1px solid var(--line); padding:16px 0;}
+  .faq-item:first-child{padding-top:0;}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{font-family:var(--display); font-weight:600; font-size:0.95rem; margin-bottom:6px; display:flex; gap:8px;}
+  .faq-q .qmark{color:var(--gold-deep); flex-shrink:0;}
+  .faq-a{font-size:0.88rem; color:var(--ink-soft); padding-left:20px;}
+  .faq-a a{font-weight:600;}
+
+  footer.page-footer{
+    margin-top:60px; padding-top:24px; border-top:1px solid var(--line);
+    font-size:0.78rem; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  ::selection{background:rgba(248,183,24,0.35);}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="toc">
+    <div class="toc-brand">
+      <span class="toc-mark">✺</span>
+      <div>
+        <div class="toc-brand-text">AMSTC.org</div>
+        <div class="toc-brand-sub">Guide de navigation</div>
+      </div>
+    </div>
+
+    <div class="toc-search-hint">Utilisez <kbd>Ctrl</kbd>+<kbd>F</kbd> pour chercher une page précise dans ce guide.</div>
+
+    <div class="toc-group">
+      <span class="toc-group-label">Repères</span>
+      <nav><ul>
+        <li><a href="#legende" data-toc>Légende des badges</a></li>
+        <li><a href="#parcours" data-toc>Parcours rapides</a></li>
+      </ul></nav>
+    </div>
+
+    <div class="toc-group">
+      <span class="toc-group-label">1 · Site public</span>
+      <nav><ul>
+        <li><a href="#public" data-toc>Vue d'ensemble</a></li>
+        <li><a href="#public-accueil" data-toc class="sub">Page d'accueil</a></li>
+        <li><a href="#public-menu" data-toc class="sub">Menu &amp; pied de page</a></li>
+        <li><a href="#public-realisations" data-toc class="sub">Réalisations</a></li>
+        <li><a href="#public-formations" data-toc class="sub">Formations</a></li>
+        <li><a href="#public-projets" data-toc class="sub">Projets</a></li>
+        <li><a href="#public-don" data-toc class="sub">Faire un don</a></li>
+        <li><a href="#public-legal" data-toc class="sub">Pages légales</a></li>
+      </ul></nav>
+    </div>
+
+    <div class="toc-group" data-tier="membres" style="display:none;">
+      <span class="toc-group-label">2 · Espace membres</span>
+      <nav><ul>
+        <li><a href="#membres" data-toc>Vue d'ensemble</a></li>
+        <li><a href="#membres-etats" data-toc class="sub">États de la carte</a></li>
+        <li><a href="#membres-acces" data-toc class="sub">Créer un compte / se connecter</a></li>
+        <li><a href="#membres-tableau" data-toc class="sub">Tableau de bord</a></li>
+        <li><a href="#membres-formations" data-toc class="sub">Formations (sous-hub)</a></li>
+        <li><a href="#membres-realisations" data-toc class="sub">Réalisations</a></li>
+        <li><a href="#membres-documents" data-toc class="sub">Documents officiels</a></li>
+        <li><a href="#membres-boutique" data-toc class="sub">Boutique AMSTC</a></li>
+        <li><a href="#membres-forum" data-toc class="sub">Forum</a></li>
+        <li><a href="#membres-mediatheque" data-toc class="sub">Médiathèque</a></li>
+        <li><a href="#membres-profil" data-toc class="sub">Mon Profil &amp; Adhésion</a></li>
+      </ul></nav>
+    </div>
+
+    <div class="toc-group" data-tier="admin" style="display:none;">
+      <span class="toc-group-label">3 · Administration</span>
+      <nav><ul>
+        <li><a href="#admin" data-toc>Vue d'ensemble</a></li>
+        <li><a href="#admin-membres" data-toc class="sub">Membres &amp; paiements</a></li>
+        <li><a href="#admin-contenu" data-toc class="sub">Contenus &amp; formations</a></li>
+        <li><a href="#admin-boutique-media" data-toc class="sub">Boutique &amp; médiathèque</a></li>
+        <li><a href="#admin-cms" data-toc class="sub">CMS du site public</a></li>
+      </ul></nav>
+    </div>
+  </aside>
+
+  <main>
+
+    <div class="hero">
+      <p class="eyebrow">Guide de navigation</p>
+      <h1>Se repérer sur amstc.org</h1>
+      <p class="hero-lede" id="heroLede">
+        Ce guide couvre le site public de l'Association Médico-Sociale des Talibés Cheikh :
+        présentation, activités, dons, et point d'entrée vers l'espace membres.
+      </p>
+
+      <div class="legend" id="legende">
+        <div class="legend-item"><span class="badge public">Public</span> visible sans compte</div>
+        <div class="legend-item" data-tier="membres" style="display:none;"><span class="badge member">Membre</span> compte approuvé requis</div>
+        <div class="legend-item" data-tier="membres" style="display:none;"><span class="badge card">Carte valide</span> accès suspendu si carte expirée &gt; 2 mois</div>
+        <div class="legend-item" data-tier="admin" style="display:none;"><span class="badge admin">Admin</span> réservé aux administrateurs</div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PARCOURS RAPIDES -->
+    <!-- ============================================================ -->
+    <section class="tier-section" id="parcours">
+      <div class="tier-head"><h2>Parcours rapides</h2></div>
+      <p class="tier-desc">Les questions les plus fréquentes, avec le chemin direct vers la réponse.</p>
+
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je veux faire un don</p>
+        <p class="faq-a">Bouton <strong>« Faire un don »</strong> dans le pied de page ou la 3<sup>e</sup> carte d'accroche de la page d'accueil → <a href="don.html">page « Faire un don »</a> (virement, Wave/Orange Money, don en nature ou institutionnel).</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je découvre l'AMSTC et je veux devenir membre</p>
+        <p class="faq-a"><strong>Espace membres → Créer un compte</strong>, choisir « Je souhaite adhérer », remplir le formulaire. Après validation du compte par un admin, payer les frais d'adhésion depuis Mon Profil &amp; Adhésion → Validité de la carte. <a href="membres/inscription.html">Créer un compte →</a></p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je suis déjà membre mais je n'ai pas encore de compte en ligne</p>
+        <p class="faq-a"><strong>Espace membres → Créer un compte</strong>, choisir « Je suis déjà membre ». Une fois approuvé, si une carte historique existe à votre nom, un bandeau « Réclamer ma carte » apparaît dans Mon Profil. <a href="membres/inscription.html">Créer un compte →</a></p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Ma carte de membre a expiré, je n'ai plus accès aux contenus réservés</p>
+        <p class="faq-a">Mon Profil &amp; Adhésion → Validité de la carte, indiquer le nombre d'années et régler (1000 F/an). L'accès revient dès confirmation du paiement par un admin. <a href="membres/profil.html?open=validity">Renouveler ma carte →</a></p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> J'ai oublié mon mot de passe</p>
+        <p class="faq-a">Sur l'écran de connexion, lien <strong>« Mot de passe oublié ? »</strong> → un e-mail de réinitialisation est envoyé. <a href="membres/mot-de-passe-oublie.html">Réinitialiser mon mot de passe →</a></p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je veux voir les photos des activités passées</p>
+        <p class="faq-a"><a href="index.html#mediatheque">Section « Médiathèque »</a> de la page d'accueil (par année), ou en tant que membre, l'onglet Médiathèque qui va plus en détail (albums et sous-dossiers).</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je veux suivre une consultation médicale gérée par l'AMSTC</p>
+        <p class="faq-a">Bouton <strong>« Espace consultation »</strong> (menu du site ou bandeau de la page d'accueil) — ouvre la plateforme dédiée sur un autre site, en dehors d'amstc.org. <a href="https://consultations-amstc.org" target="_blank" rel="noopener">Accéder à l'espace consultation →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 1. SITE PUBLIC -->
+    <!-- ============================================================ -->
+    <section class="tier-section" id="public">
+      <div class="tier-head"><span class="tier-num">01</span><h2>Site public</h2></div>
+      <p class="tier-desc">
+        Accessible à tout visiteur, sans compte. C'est la vitrine de l'association : présentation,
+        activités, dons, et point d'entrée vers l'espace membres.
+      </p>
+
+      <div class="subsection" id="public-accueil">
+        <h3>Page d'accueil</h3>
+        <p class="subsection-desc">Une page unique, longue, organisée en sections qui s'enchaînent du haut vers le bas.</p>
+
+        <details class="page-card" open>
+          <summary>
+            <span class="page-title">En-tête (hero)</span>
+            <span class="page-path">/index.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Première chose vue en arrivant sur le site : accroche « Depuis 2014 », titre « La santé pour tous, notre objectif ! », un diaporama de photos en fond, et deux boutons — <strong>« Découvrir nos actions »</strong> et <strong>« Faire un don »</strong>.</p>
+            <p>Juste en dessous, trois cartes d'accès rapide : <strong>01 · Identité</strong> (« Qui sommes-nous ? » → ancre « Qui sommes-nous »), <strong>02 · Actions</strong> (« Que faisons-nous ? » → ancre « Nos actions »), <strong>03 · Engagement</strong> (« Comment participer ? » → page Faire un don).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Notre mission &amp; notre emblème</span>
+            <span class="page-path">#qui-sommes-nous</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Présentation de la mission de l'association (« Fédérer les acteurs de la santé autour d'une même cause ») et de la symbolique de l'emblème de l'AMSTC, suivie de trois objectifs affichés en vignettes numérotées : <strong>Santé</strong>, <strong>Formation</strong>, <strong>Spiritualité</strong>.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Nos actions</span>
+            <span class="page-path">#nos-actions</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>« Le registre de nos interventions » : les moyens d'action définis par les statuts, présentés comme des fiches numérotées (N°01 à N°05) avec une étiquette de catégorie — <strong>Médical</strong>, <strong>Social</strong> ou <strong>Formation</strong> — par exemple les campagnes de consultations gratuites, les couvertures sanitaires d'événements (Gamou de Tivaouane…), les dons de sang/médicaments/denrées, ou les Enseignements Post-Universitaires (EPU).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Notre histoire</span>
+            <span class="page-path">#historique</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Frise chronologique en quatre périodes (2014 · naissance / 2015–2019 · montée en puissance / 2020–2022 · reprise après la pandémie / 2023 à aujourd'hui · constitution en association indépendante), suivie de deux galeries : <strong>Les Pionniers</strong> (membres fondateurs) et <strong>Nos anciens présidents</strong> (avec les mandats successifs jusqu'au président actuel).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Organisation</span>
+            <span class="page-path">#organisation</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>« Le Bureau Exécutif » : trombinoscope complet du présidium et des huit commissions statutaires (Sociale, Pédagogique, Relations extérieures, Organisation, Presse &amp; Information, Finance, Féminine, Comité des Sages), avec photo, rôle et filière de chaque membre.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Sections personnalisées</span>
+            <span class="page-path">— contenu variable</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Emplacement entre « Organisation » et « Réalisations » réservé à des blocs ajoutés au fil du temps (annonce, citation, grille de cartes, galerie photo) — le contenu ici change selon l'actualité de l'association.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Nos réalisations récentes</span>
+            <span class="page-path">#actus</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Les trois dernières réalisations publiées, avec un lien <strong>« Toutes nos réalisations »</strong> vers la liste complète.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Bandeau « Espace consultation »</span>
+            <span class="page-path">#espace-consultation</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>« Suivez une consultation en temps réel sur notre espace dédié » — bouton <strong>« Accéder à l'espace consultation »</strong> qui ouvre, sur un autre site, la plateforme utilisée par les équipes médicales sur le terrain.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Médiathèque</span>
+            <span class="page-path">#mediatheque</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>« Nos activités en images » — onglets par année, carrousel de photos. Version grand public de la médiathèque.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-menu">
+        <h3>Menu &amp; pied de page</h3>
+        <p class="subsection-desc">Présents sur toutes les pages publiques, ils donnent accès au reste du site.</p>
+
+        <div class="nav-map">
+          <div class="nav-map-col">
+            <h4>Menu — « Découvrir l'AMSTC »</h4>
+            <ul>
+              <li><b>Qui sommes-nous ?</b> → ancre sur l'accueil</li>
+              <li><b>Nos actions</b> → ancre sur l'accueil</li>
+              <li><b>Historique</b> → ancre sur l'accueil</li>
+            </ul>
+          </div>
+          <div class="nav-map-col">
+            <h4>Menu — « Nos activités »</h4>
+            <ul>
+              <li><b>Réalisations</b> → liste complète</li>
+              <li><b>Formation</b> → liste complète</li>
+              <li><b>Projets</b> → liste complète</li>
+            </ul>
+          </div>
+          <div class="nav-map-col">
+            <h4>Menu — liens directs</h4>
+            <ul>
+              <li><b>Espace consultation</b> → plateforme externe</li>
+              <li><b>Espace membres</b> → connexion / inscription</li>
+              <li><b>Contact</b> → ancre pied de page</li>
+            </ul>
+          </div>
+          <div class="nav-map-col">
+            <h4>Pied de page</h4>
+            <ul>
+              <li><b>Pages</b> : mêmes liens que le menu + Faire un don + ce guide</li>
+              <li><b>Contact</b> : téléphone, e-mail</li>
+              <li><b>Réseaux</b> : Facebook, Instagram, LinkedIn, YouTube, Telegram, TikTok</li>
+              <li><b>Bas de page</b> : Politique de confidentialité, CGU</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection" id="public-realisations">
+        <h3>Réalisations</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Liste des réalisations</span>
+            <span class="page-path">/actualites.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Toutes les activités menées par l'association (consultations, dons, événements…), triées par date. Chaque carte ouvre l'article complet.</p>
+          </div>
+        </details>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Détail d'une réalisation</span>
+            <span class="page-path">/article.html?slug=…</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Texte complet, photo de couverture et, si disponible, une vidéo YouTube intégrée.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-formations">
+        <h3>Formations</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Liste des formations</span>
+            <span class="page-path">/formations.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Sessions de formation organisées par l'AMSTC (Enseignements Post-Universitaires, ateliers…), avec leur fiche détaillée en <code>/formation.html?slug=…</code>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-projets">
+        <h3>Projets</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Liste des projets &amp; étapes de projet</span>
+            <span class="page-path">/projets.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Projets au long cours (par ex. le programme <strong>Nemekou Daara</strong>, d'aide et d'appui aux daara). La fiche d'un projet (<code>/projet.html?slug=…</code>) affiche une frise reliée de ses étapes, chacune consultable comme un article à part entière (<code>/etape.html?slug=…</code>) — date, lieu, montant collecté, partenaires.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-don">
+        <h3>Faire un don</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Faire un don</span>
+            <span class="page-path">/don.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Quatre façons de soutenir l'association, chacune avec ses coordonnées : <strong>virement bancaire</strong> (IBAN/RIB), <strong>Mobile Money</strong> (Wave, Orange Money…), <strong>don en nature</strong> (denrées, matériel), et <strong>don institutionnel</strong> (entreprises, partenaires). Une note de confiance rappelle le numéro de récépissé de l'association.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-legal">
+        <h3>Pages légales &amp; erreurs</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Politique de confidentialité · CGU · Page 404</span>
+            <span class="page-path">/confidentialite.html · /cgu.html · /404.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Textes légaux accessibles depuis le bas du pied de page. La page 404 s'affiche pour tout lien cassé ou toute page inexistante.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 2. ESPACE MEMBRES -->
+    <!-- ============================================================ -->
+    <section class="tier-section" id="membres" data-tier="membres" style="display:none;">
+      <div class="tier-head"><span class="tier-num">02</span><h2>Espace membres</h2></div>
+      <p class="tier-desc">
+        Réservé aux comptes créés via <strong>Espace membres → Créer un compte</strong> puis approuvés
+        par un administrateur. Une fois connecté, une barre de navigation à 8 onglets apparaît en haut
+        de chaque page principale : <strong>Tableau de bord · Formations · Réalisations · Documents
+        officiels · Boutique AMSTC · Forum · Médiathèque · Mon Profil &amp; Adhésion</strong>.
+      </p>
+
+      <div class="subsection" id="membres-etats">
+        <h3>Comprendre les états de la carte de membre</h3>
+        <p class="subsection-desc">
+          Au-delà d'avoir un compte approuvé, l'accès aux <em>contenus réservés</em> (formations,
+          réalisations et documents marqués « Membre ») dépend de la validité de la carte.
+        </p>
+        <div class="state-grid">
+          <div class="state-card ok">
+            <h4><span class="dot"></span>Carte valide</h4>
+            <p>Accès complet à tous les contenus réservés, sans restriction.</p>
+          </div>
+          <div class="state-card grace">
+            <h4><span class="dot"></span>Grâce (carte expirée)</h4>
+            <p>Un bandeau invite à renouveler avant le 1<sup>er</sup> mars, mais l'accès reste ouvert pendant cette période.</p>
+          </div>
+          <div class="state-card blocked">
+            <h4><span class="dot"></span>Accès suspendu</h4>
+            <p>Carte expirée depuis plus de 2 mois <em>et</em> restriction activée par un admin : les contenus réservés sont masqués jusqu'au renouvellement. La Boutique, le Forum et la Médiathèque restent accessibles.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection" id="membres-acces">
+        <h3>Créer un compte / se connecter</h3>
+
+        <details class="page-card" open>
+          <summary>
+            <span class="page-title">Créer un compte</span>
+            <span class="page-path">/membres/inscription.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Un premier écran demande de choisir : <strong>« Je suis déjà membre »</strong> ou <strong>« Je souhaite adhérer »</strong> — les deux mènent au même formulaire, mais ce choix aide ensuite l'administration à repérer les nouveaux adhérents.</p>
+            <p>Formulaire : titre (Dr/Pr), prénom, nom, e-mail, téléphone, domaine (Médecine, Pharmacie, Odontologie, Soins infirmiers, Soins obstétricaux…), spécialité, localité, mot de passe — ou inscription directe avec Google. Le compte est ensuite <strong>examiné par un administrateur</strong> avant activation (pas de confirmation par e-mail).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Se connecter</span>
+            <span class="page-path">/membres/connexion.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>E-mail + mot de passe, ou connexion Google. Lien <strong>« Mot de passe oublié ? »</strong> vers <code>mot-de-passe-oublie.html</code> (envoi d'un lien de réinitialisation), qui mène à <code>reinitialiser.html</code> pour choisir un nouveau mot de passe.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-tableau">
+        <h3>Tableau de bord</h3>
+        <details class="page-card" open>
+          <summary>
+            <span class="page-title">Tableau de bord</span>
+            <span class="page-path">/membres/index.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Page d'atterrissage après connexion : salutation nominative, bandeau d'alerte si la carte est en grâce ou suspendue (avec lien direct vers le renouvellement), et un fil <strong>« Activité récente »</strong> mêlant les derniers sujets du forum, albums médiathèque, formations et documents ajoutés.</p>
+            <p>Si le compte a un rôle administrateur, une carte <strong>« Administration »</strong> apparaît ici et mène vers le Centre d'administration.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-formations">
+        <h3>Formations (sous-hub)</h3>
+        <p class="subsection-desc">L'onglet « Formations » ouvre un carrefour de quatre modules, chacun avec sa propre page.</p>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Espace Daara</span>
+            <span class="page-path">/membres/daara.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Cours religieux classés en deux catégories, <strong>Islam</strong> et <strong>Tarikha</strong>, avec un compteur de progression et une section « Reprendre où vous en étiez ». Chaque cours (<code>cours.html</code>) affiche son contenu et une jauge « Ma progression » qu'on peut ajuster et marquer comme terminée.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Enseignements Médicaux</span>
+            <span class="page-path">/membres/medical.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Par filière (Médecine, Pharmacie, Odontologie, Soins infirmiers et obstétricaux) : des <strong>leçons</strong> à lire (<code>lecon.html</code>) et des <strong>quiz</strong> à tenter (<code>quiz.html</code>, tentatives illimitées, correction détaillée avec explications et meilleur score conservé).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Autres formations</span>
+            <span class="page-path">/membres/formations-cms.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Regroupe les formations publiques du site (mêmes que <a href="#public-formations">la liste publique</a>) et des formations réservées, marquées <strong>🔒 Réservé aux membres</strong>, consultables uniquement ici.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Bibliothèque</span>
+            <span class="page-path">/membres/bibliotheque.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Ouvrages et documents classés par thème — Islam, Médecine, Pharmacie, Odontologie, Soins infirmiers et obstétricaux, Entrepreneuriat, Développement personnel, Autres — consultables en ligne (aperçu PDF, pas de téléchargement).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-realisations">
+        <h3>Réalisations</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Réalisations (espace membres)</span>
+            <span class="page-path">/membres/actualites.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Comme la liste publique, augmentée des réalisations marquées <strong>🔒 Réservé aux membres</strong>, visibles uniquement ici.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-documents">
+        <h3>Documents officiels</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Documents officiels</span>
+            <span class="page-path">/membres/documents.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span><span class="badge card">Carte valide</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Statuts, règlement intérieur, rapports d'activité… Bouton <strong>« Consulter »</strong> ouvrant un aperçu PDF en lecture seule (pas de téléchargement).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-boutique">
+        <h3>Boutique AMSTC</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Boutique AMSTC</span>
+            <span class="page-path">/membres/boutique.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Catalogue de produits (recherche, filtres par catégorie), panier, et commande réglée par Wave ou Orange Money (référence de transaction demandée). La commande passe en <strong>« En attente »</strong> jusqu'à confirmation par un administrateur, qui recontacte pour la livraison. Non soumise à l'état de la carte.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-forum">
+        <h3>Forum</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Forum</span>
+            <span class="page-path">/membres/forum.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Discussions entre membres : liste de sujets, bouton <strong>« Nouveau sujet »</strong>, réponses en fil sous chaque sujet. Chacun peut modifier ou supprimer ses propres messages ; les administrateurs peuvent modérer tout le forum. Non soumis à l'état de la carte.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-mediatheque">
+        <h3>Médiathèque</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Médiathèque (espace membres)</span>
+            <span class="page-path">/membres/mediatheque.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Albums photo classés par année, pouvant contenir des sous-dossiers. Chaque album s'ouvre en visionneuse plein écran (navigation au clavier). Non soumise à l'état de la carte.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="membres-profil">
+        <h3>Mon Profil &amp; Adhésion</h3>
+        <details class="page-card" open>
+          <summary>
+            <span class="page-title">Mon Profil &amp; Adhésion</span>
+            <span class="page-path">/membres/profil.html</span>
+            <span class="page-badges"><span class="badge member">Membre</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>La page centrale du compte, organisée en plusieurs blocs dépliables :</p>
+            <div class="field-line"><span class="field-label">Carte virtuelle</span><span class="field-val">Photo, QR code, numéro de membre, statut, coordonnées, année d'adhésion, validité — avec un bouton <strong>« Télécharger ma carte (PDF) »</strong>.</span></div>
+            <div class="field-line"><span class="field-label">Infos perso.</span><span class="field-val">Modifier titre, nom, téléphone, domaine, spécialité, localité, photo de profil.</span></div>
+            <div class="field-line"><span class="field-label">Validité carte</span><span class="field-val">Payer 1000 F/an (Wave ou Orange Money + référence) pour prolonger la validité — soumis à confirmation par un admin.</span></div>
+            <div class="field-line"><span class="field-label">Cotisations</span><span class="field-val">Payer les cotisations mensuelles (1000 F/mois), débloquées une fois la carte validée au moins une fois.</span></div>
+            <div class="field-line"><span class="field-label">Réclamer ma carte</span><span class="field-val">Pour un membre de longue date : retrouver et associer sa carte historique importée par l'AMSTC (via <code>reclamer-carte.html</code>).</span></div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 3. ADMINISTRATION -->
+    <!-- ============================================================ -->
+    <section class="tier-section" id="admin" data-tier="admin" style="display:none;">
+      <div class="tier-head"><span class="tier-num">03</span><h2>Espace administration</h2></div>
+      <p class="tier-desc">
+        Réservé aux comptes ayant le rôle <strong>Administrateur</strong> ou <strong>Super Administrateur</strong>.
+        Accessible depuis la carte « Administration » du tableau de bord membre, qui mène au centre
+        d'administration — le point de départ de tous les outils ci-dessous.
+      </p>
+
+      <details class="page-card" open>
+        <summary>
+          <span class="page-title">Centre d'administration</span>
+          <span class="page-path">/membres/admin.html</span>
+          <span class="page-badges"><span class="badge admin">Admin</span></span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="page-body">
+          <p>Tableau de bord de gestion : comptes en attente, paiements en attente, commandes en attente, membres actifs — puis neuf blocs, chacun menant à un outil dédié (détaillés ci-dessous), plus un rappel que le <strong>contenu public du site</strong> (accueil, formations, réalisations, projets) se gère séparément, via le CMS.</p>
+        </div>
+      </details>
+
+      <div class="subsection" id="admin-membres">
+        <h3>Membres &amp; paiements</h3>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Membres</span>
+            <span class="page-path">/membres/validation.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Approuver ou refuser les <strong>inscriptions en attente</strong> (badge « Nouvel adhérent » pour les distinguer) ; gérer les <strong>comptes approuvés</strong> (désactiver/réactiver, réinitialiser un mot de passe, voir les détails, attribuer une carte, corriger année d'adhésion / fin de validité) ; consulter les <strong>comptes refusés</strong> ; et, pour un Super Administrateur, nommer ou révoquer des administrateurs.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Validation des paiements</span>
+            <span class="page-path">/membres/adhesion-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Deux tableaux — <strong>Validité de carte</strong> et <strong>Cotisations</strong> — listant chaque paiement soumis par les membres (montant, méthode, référence), avec un bouton <strong>Confirmer</strong> ou <strong>Refuser</strong>. Confirmer une validité de carte prolonge automatiquement <code>card_valid_until</code> du nombre d'années réglées.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Cartes de Membres</span>
+            <span class="page-path">/membres/cartes-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Gestion des cartes historiques (avant la mise en ligne du site) : import en masse depuis un fichier Excel ou par collage de texte, réclamations en attente à confirmer, ajout manuel d'une carte, et un <strong>interrupteur global</strong> qui décide si les cartes expirées depuis plus de 2 mois bloquent réellement l'accès aux contenus réservés (utile à désactiver pendant une campagne de renouvellement).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="admin-contenu">
+        <h3>Contenus &amp; formations</h3>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Contenus réservés</span>
+            <span class="page-path">/membres/contenu-reserve-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Formulaire unique pour créer/modifier les formations, réalisations et documents officiels marqués « réservés aux membres » — ce sont eux qui alimentent Autres formations, Réalisations et Documents officiels côté membre.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Bibliothèque</span>
+            <span class="page-path">/membres/bibliotheque-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Ajouter/modifier les livres et documents, classés par section (Islam, Médecine, Pharmacie…), avec couverture et fichier PDF.</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Daara</span>
+            <span class="page-path">/membres/daara-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Créer/modifier les cours des catégories Islam et Tarikha (titre, durée, ordre d'affichage, contenu, statut publié/brouillon).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Médical</span>
+            <span class="page-path">/membres/medical-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Deux volets, chacun décliné par filière : <strong>Leçons</strong> (contenu, durée, ordre) et <strong>Quiz</strong> (questions à choix multiples, durée limite optionnelle, liaison à une leçon).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="admin-boutique-media">
+        <h3>Boutique &amp; médiathèque</h3>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Boutique</span>
+            <span class="page-path">/membres/boutique-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Onglet <strong>Produits</strong> (nom, catégorie, prix, stock, photos) et onglet <strong>Commandes</strong> (filtrage par statut — en attente, payées, en traitement, expédiées, annulées — avec action de changement de statut par commande).</p>
+          </div>
+        </details>
+
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Médiathèque</span>
+            <span class="page-path">/membres/mediatheque-admin.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Créer des albums par année, importer un dossier entier par glisser-déposer, organiser des sous-dossiers, publier/dépublier, et gérer les photos de chaque album.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="admin-cms">
+        <h3>Contenu public du site</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">CMS Decap (contenu public)</span>
+            <span class="page-path">/admin/index.html</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Système distinct (connexion GitHub séparée) qui gère tout le site public : les huit sections de la page d'accueil, ainsi que les collections Réalisations, Formation, Projets et leurs Étapes de projet. Accessible depuis un bouton dédié en bas du Centre d'administration.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>Guide de navigation — amstc.org</span>
+      <span>AMSTC · Association Médico-Sociale des Talibés Cheikh</span>
+    </footer>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+  // Adapte le contenu du guide selon le profil du visiteur : un simple
+  // visiteur ne voit que le site public ; un membre approuvé voit aussi
+  // l'espace membres ; un admin/super_admin voit tout, y compris
+  // l'administration. Reste masqué par défaut (display:none inline) pour
+  // éviter un flash de contenu non autorisé le temps que Supabase réponde.
+  (async () => {
+    let profile = null;
+    try { profile = await getCurrentProfile(); } catch (e) { profile = null; }
+
+    const isMember = !!(profile && profile.status === 'approved');
+    const isAdmin = !!(profile && ['admin', 'super_admin'].includes(profile.role));
+
+    if (isMember || isAdmin) {
+      document.querySelectorAll('[data-tier="membres"]').forEach(el => { el.style.display = ''; });
+      document.getElementById('heroLede').textContent =
+        "Ce guide couvre le site public et l'espace membres de l'Association Médico-Sociale des Talibés Cheikh. Pour chaque page : à quoi elle sert, comment y accéder, et ce qu'on peut y faire.";
+    }
+    if (isAdmin) {
+      document.querySelectorAll('[data-tier="admin"]').forEach(el => { el.style.display = ''; });
+      document.getElementById('heroLede').textContent =
+        "Ce guide couvre les trois niveaux du site de l'Association Médico-Sociale des Talibés Cheikh : le site public, l'espace membres, et les outils d'administration. Pour chaque page : à quoi elle sert, comment y accéder, et ce qu'on peut y faire.";
+    }
+  })();
+
+  // Surlignage de l'entrée active dans le sommaire pendant le défilement.
+  const tocLinks = Array.from(document.querySelectorAll('[data-toc]'));
+
+  if ('IntersectionObserver' in window && tocLinks.length){
+    const linkByTarget = new Map();
+    tocLinks.forEach(a => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) linkByTarget.set(t, a);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = linkByTarget.get(entry.target);
+        if (!link) return;
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    linkByTarget.forEach((link, target) => observer.observe(target));
+  }
+</script>
+</body>
+</html>
