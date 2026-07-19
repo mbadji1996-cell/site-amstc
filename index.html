@@ -308,26 +308,30 @@
   @media (prefers-reduced-motion: reduce){ .pio-track{animation:none !important;} }
   @media (max-width:560px){ .pio-item{width:160px;} }
 
-  /* ===== Anciens présidents : frise de succession numérotée ===== */
-  .pres-carousel{position:relative;}
-  .pres-track{
-    display:flex; gap:20px; overflow-x:auto; padding:6px 6px 4px; margin:0 -6px;
-    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  /* ===== Anciens présidents : bande auto-défilante en boucle ===== */
+  .pres-marquee{
+    overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .pres-track::-webkit-scrollbar{display:none;}
-  .pres-card{flex:0 0 auto; width:210px; scroll-snap-align:start; background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px; text-align:center;}
-  .pres-card-num{font-family:var(--display); font-weight:800; font-size:1.7rem; color:var(--gold); line-height:1; margin-bottom:10px;}
-  .pres-card img{width:84px; height:84px; border-radius:50%; object-fit:cover; margin:0 auto 12px; display:block;}
-  .pres-card-fallback{width:84px; height:84px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.3rem;}
-  .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.98rem; color:var(--ink); margin-bottom:4px;}
-  .pres-card-mandate{font-weight:700; font-size:0.8rem; color:var(--green);}
-  .pres-line{position:relative; height:3px; background:var(--line); border-radius:999px; margin:18px 6px 0; overflow:hidden;}
-  .pres-line-fill{position:absolute; top:0; left:0; height:100%; background:var(--gold); border-radius:999px; transition:width .15s ease; width:0%;}
-  .pres-nav{display:flex; justify-content:flex-end; gap:10px; margin-top:14px;}
-  .pres-arrow{width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line); background:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--green-deep);}
-  .pres-arrow:hover{background:var(--paper-alt); border-color:var(--green);}
-  .pres-arrow svg{width:16px; height:16px;}
-  @media (max-width:560px){ .pres-card{width:170px;} }
+  .pres-track{display:flex; gap:20px; width:max-content; padding:6px 0; animation:pres-scroll linear infinite;}
+  .pres-marquee:hover .pres-track, .pres-marquee:focus-within .pres-track{animation-play-state:paused;}
+  .pres-card{
+    flex:0 0 auto; width:190px; background:var(--white); border:1px solid var(--line); border-radius:14px;
+    padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .pres-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
+  .pres-card img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin-bottom:14px; display:block;}
+  .pres-card-fallback{
+    width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
+    background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:600; font-size:1.6rem;
+  }
+  .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
+  .pres-card-mandate{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
+  @keyframes pres-scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  @media (prefers-reduced-motion: reduce){ .pres-track{animation:none !important;} }
+  @media (max-width:560px){ .pres-card{width:160px;} }
 
   /* ===== CTA banner ===== */
   .cta-banner{
@@ -612,13 +616,8 @@
       <div class="historique-sub" id="presidentsBlock" style="display:none;">
         <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
         <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
-        <div class="pres-carousel reveal">
+        <div class="pres-marquee reveal" id="presidentsMarqueeWrap">
           <div class="pres-track" id="cms-presidents-track"></div>
-          <div class="pres-line"><span class="pres-line-fill" id="presLineFill"></span></div>
-          <div class="pres-nav">
-            <button class="pres-arrow" id="presPrev" aria-label="Présidents précédents" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <button class="pres-arrow" id="presNext" aria-label="Présidents suivants" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
-          </div>
         </div>
       </div>
     </div>
@@ -1065,42 +1064,24 @@
   }
 
   // ===== Anciens présidents (frise de succession numérotée) =====
-  let presInited = false;
-
   function renderPresidents(list){
     const block = document.getElementById('presidentsBlock');
     const track = document.getElementById('cms-presidents-track');
     if (!block || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
-    track.innerHTML = list.map((p, i) => `
+    const itemsHtml = list.map(p => `
       <div class="pres-card">
-        <div class="pres-card-num">${String(i + 1).padStart(2, '0')}</div>
         ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
         <div class="pres-card-name">${esc(p.name)}</div>
         <div class="pres-card-mandate">${esc(p.mandate || '')}</div>
       </div>
     `).join('');
-    initPresCarousel();
-  }
-
-  function initPresCarousel(){
-    const track = document.getElementById('cms-presidents-track');
-    const fill = document.getElementById('presLineFill');
-    if (!track || !fill) return;
-    function updateFill(){
-      const max = track.scrollWidth - track.clientWidth;
-      fill.style.width = (max > 0 ? (track.scrollLeft / max) * 100 : 0) + '%';
-    }
-    updateFill();
-    if (presInited) return;
-    presInited = true;
-    const prev = document.getElementById('presPrev');
-    const next = document.getElementById('presNext');
-    track.addEventListener('scroll', updateFill, { passive: true });
-    if (prev) prev.addEventListener('click', () => track.scrollBy({ left: -240, behavior: 'smooth' }));
-    if (next) next.addEventListener('click', () => track.scrollBy({ left: 240, behavior: 'smooth' }));
-    window.addEventListener('resize', updateFill);
+    // Doublé pour boucler le défilement sans coupure visible (translateX -50%)
+    track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
+    const halfWidth = track.scrollWidth / (list.length > 1 ? 2 : 1);
+    const pxPerSecond = 34;
+    track.style.animationDuration = Math.max(halfWidth / pxPerSecond, 20) + 's';
   }
 
   // ===== Médiathèque (dossiers photos par année) =====
