@@ -448,11 +448,38 @@ accès complet et ne présentent pas le même risque d'aspiration en masse.
    Boutique) : elles doivent afficher leur contenu exactement comme avant.
 
 **Complément recommandé (aucun code à écrire)** : dans Supabase → **Project
-Settings** → **API**, le réglage **Max Rows** plafonne *toute* réponse de
-l'API REST, y compris un appel direct sur les tables elles-mêmes (donc même
-en contournant les fonctions RPC ci-dessus). Une valeur autour de 200-500
-est large pour la taille actuelle de l'association tout en bloquant un
-export massif en un seul appel.
+Settings** → **Data API**, le réglage **Max Rows** plafonne *toute* réponse
+de l'API REST, y compris un appel direct sur les tables elles-mêmes (donc
+même en contournant les fonctions RPC ci-dessus). Une valeur autour de
+200-500 est large pour la taille actuelle de l'association tout en
+bloquant un export massif en un seul appel. Pendant que vous y êtes,
+désactivez aussi **"Automatically expose new tables"** : ça évite qu'une
+future table soit exposée à l'API avant que ses policies RLS n'aient été
+définies.
+
+## 4sexdecies. Limiter le nombre d'appels par membre (rate limiting)
+
+**Contexte** : la Phase 4quindecies plafonne le volume d'*un* appel
+(LIMIT), mais rien n'empêche un compte d'appeler la même fonction en
+boucle pour reconstituer tout le contenu au fil du temps.
+`supabase/phase27-rate-limiting-rpc.sql` ajoute une limite de fréquence :
+30 appels toutes les 5 minutes par membre et par fonction (Forum,
+Enseignements Médicaux, Bibliothèque, Boutique) - très large pour un usage
+normal (une poignée de chargements de page), mais qui bloque un script en
+boucle. Au-delà, l'appel échoue avec le message "Trop de requêtes.
+Réessayez dans quelques minutes." affiché directement sur la page
+concernée.
+
+Les appels autorisés sont journalisés dans une nouvelle table
+`rpc_rate_limit_log`, sans aucune policy RLS créée dessus : elle est donc
+inaccessible en lecture/écriture directe pour tout le monde, seule la
+fonction `check_rate_limit` (SECURITY DEFINER) y touche.
+
+1. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
+   `supabase/phase27-rate-limiting-rpc.sql` (après avoir exécuté
+   phase26-rpc-listes-limitees.sql), cliquez **Run**.
+2. **Testez** les 4 pages : elles doivent continuer à afficher leur
+   contenu normalement pour un usage courant.
 
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
@@ -513,6 +540,9 @@ Une fois l'URL et la clé intégrées :
 - Listes du Forum, des Enseignements Médicaux, de la Bibliothèque et de la
   Boutique plafonnées côté serveur via des fonctions RPC, contre
   l'aspiration en masse du contenu (voir Phase 4quindecies ci-dessus)
+- Limite de fréquence (30 appels / 5 minutes par membre) sur ces mêmes
+  fonctions RPC, contre un compte qui boucle les appels (voir Phase
+  4sexdecies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

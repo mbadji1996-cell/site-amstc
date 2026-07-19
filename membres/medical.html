@@ -171,6 +171,15 @@
       supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId)
     ]);
 
+    const rpcError = lessRes.error || quizRes.error;
+    if (rpcError) {
+      document.getElementById('loadingMsg').style.display = '';
+      document.getElementById('loadingMsg').textContent = rpcError.message && rpcError.message.includes('Trop de requêtes')
+        ? rpcError.message
+        : "Impossible de charger les Enseignements Médicaux pour le moment.";
+      return;
+    }
+
     allLessons = lessRes.data || [];
     allQuizzes = quizRes.data || [];
     // best score per quiz

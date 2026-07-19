@@ -331,7 +331,13 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('cartBtn').style.display = '';
 
-    const { data } = await supabaseClient.rpc('published_products');
+    const { data, error } = await supabaseClient.rpc('published_products');
+    if (error) {
+      document.getElementById('loadingMsg').textContent = error.message && error.message.includes('Trop de requêtes')
+        ? error.message
+        : "Impossible de charger la boutique pour le moment.";
+      return;
+    }
 
     allProducts = data || [];
 

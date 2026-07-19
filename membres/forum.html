@@ -169,7 +169,7 @@
     const { data, error } = await supabaseClient.rpc('forum_topics_list');
 
     if (error) {
-      list.innerHTML = '<p class="empty">Impossible de charger le forum pour le moment.</p>';
+      list.innerHTML = `<p class="empty">${esc(error.message && error.message.includes('Trop de requêtes') ? error.message : "Impossible de charger le forum pour le moment.")}</p>`;
       return;
     }
     if (!data || data.length === 0) {
