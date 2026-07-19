@@ -199,24 +199,20 @@
       "photo": "assets/pioneers/20-adele.jpg"
     },
     {
-      "name": "Dr Massogui Bathily",
-      "photo": ""
+      "name": "Dr Youssoupha KASSE",
+      "photo": "/assets/uploads/dr-youssoupha-kasse.jpg"
     },
     {
-      "name": "Dr Khadija Ndiaye",
-      "photo": ""
+      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
+      "name": "Dr Ndèye Codou FAYE"
     },
     {
       "name": "Pap Alaaji Maalik Mbay",
       "photo": "/assets/uploads/présidents-03.png"
     },
     {
-      "name": "Dr Seydatouna Haissatou DIOP",
-      "photo": "assets/pioneers/16-seydatouna-haissatou-diop.jpg"
-    },
-    {
-      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
-      "name": "Dr Ndèye Codou FAYE"
+      "name": "Dr Massogui Bathily",
+      "photo": ""
     }
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
