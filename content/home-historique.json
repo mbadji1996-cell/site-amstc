@@ -91,28 +91,64 @@
       "photo": "assets/pioneers/05-racine-ly.jpg"
     },
     {
-      "name": "Dr Aida NDOUR",
-      "photo": "assets/pioneers/06-aida-ndour.jpg"
+      "name": "Dr Bineta GUEYE",
+      "photo": "/assets/uploads/dr-bineta-gueye-idh-cardio.jpg"
     },
     {
       "name": "Dr Demba Tahirou DIOP",
       "photo": "assets/pioneers/22-demba.jpg"
     },
     {
+      "name": "Dr Ndeye Khady BA",
+      "photo": ""
+    },
+    {
+      "name": "Dr Salmane ibn Rassoul Niengue",
+      "photo": ""
+    },
+    {
+      "name": "Dr Ndeye Seynabou NIANG",
+      "photo": ""
+    },
+    {
+      "name": "Dr Souleymane DIATTA",
+      "photo": "assets/pioneers/21-xulio.jpg"
+    },
+    {
+      "name": "Dr Ndeye Yaga CISSE",
+      "photo": "assets/pioneers/14-sans-nom.jpg"
+    },
+    {
+      "name": "El Hadji Malick GUEYE",
+      "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg"
+    },
+    {
+      "name": "Dr Niania",
+      "photo": ""
+    },
+    {
       "name": "Dr Mar FALL Dabakh",
       "photo": "assets/pioneers/07-mar-fall-dabakh.jpg"
     },
     {
-      "name": "Dr Bineta Kane DIA",
-      "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
+      "name": "Dr Yacine FALL",
+      "photo": ""
     },
     {
-      "name": "Dr El Hadji Malick GUEYE",
-      "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg"
+      "name": "Dr Mouhamadou Mansour BA",
+      "photo": "assets/pioneers/19-mansour.jpg"
     },
     {
-      "name": "Dr Amayel KANE",
-      "photo": "assets/pioneers/10-amayel.jpg"
+      "name": "Dr Khadija Samb",
+      "photo": ""
+    },
+    {
+      "name": "Dr Mbaye SOW",
+      "photo": "assets/pioneers/13-mbaye-sow.jpg"
+    },
+    {
+      "name": "Dr Boussou Ndiaye",
+      "photo": ""
     },
     {
       "name": "Dr Kaoussou A. BODIAN",
@@ -123,20 +159,20 @@
       "photo": "assets/pioneers/12-fatou-faye-fall.jpg"
     },
     {
-      "name": "Dr Mbaye SOW",
-      "photo": "assets/pioneers/13-mbaye-sow.jpg"
+      "photo": "/assets/uploads/bouba.jpg",
+      "name": "Dr El Hadji Boubacar GUEYE (Buba)"
     },
     {
-      "name": "Dr Ndeye Yaga CISSE",
-      "photo": "assets/pioneers/14-sans-nom.jpg"
+      "name": "Dr Aida NDOUR",
+      "photo": "assets/pioneers/06-aida-ndour.jpg"
     },
     {
       "name": "Dr Arona NDIAYE",
       "photo": "assets/pioneers/15-arone-ndiaye.jpg"
     },
     {
-      "name": "Dr Seydatouna Haissatou DIOP",
-      "photo": "assets/pioneers/16-seydatouna-haissatou-diop.jpg"
+      "name": "Dr Bineta Kane DIA",
+      "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
     },
     {
       "name": "Ismaila DIAGNE",
@@ -147,67 +183,27 @@
       "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg"
     },
     {
-      "name": "Dr Mouhamadou Mansour BA",
-      "photo": "assets/pioneers/19-mansour.jpg"
+      "name": "Dr El Hadji Babacar Fall",
+      "photo": ""
     },
     {
-      "name": "Dr Ndeye Adele GUEYE",
-      "photo": "assets/pioneers/20-adele.jpg"
-    },
-    {
-      "name": "Dr Souleymane DIATTA",
-      "photo": "assets/pioneers/21-xulio.jpg"
+      "name": "Dr Amayel KANE",
+      "photo": "assets/pioneers/10-amayel.jpg"
     },
     {
       "name": "Dr Mouhamadou Habib DIOP",
       "photo": "/assets/uploads/habib.jpg"
     },
     {
-      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
-      "name": "Dr Ndèye Codou FAYE"
-    },
-    {
-      "photo": "/assets/uploads/bouba.jpg",
-      "name": "Dr El Hadji Boubacar GUEYE (Buba)"
-    },
-    {
-      "name": "Dr Bineta GUEYE",
-      "photo": "/assets/uploads/dr-bineta-gueye-idh-cardio.jpg"
-    },
-    {
-      "name": "Dr Ndeye Khady BA",
-      "photo": ""
-    },
-    {
-      "name": "Dr Niania",
-      "photo": ""
-    },
-    {
-      "name": "Dr Boussou Ndiaye",
-      "photo": ""
-    },
-    {
-      "name": "Dr Khadija Samb",
-      "photo": ""
-    },
-    {
-      "name": "Dr Ndeye Seynabou NIANG",
-      "photo": ""
-    },
-    {
-      "name": "Dr Yacine FALL",
-      "photo": ""
-    },
-    {
-      "name": "Dr Salmane ibn Rassoul Niengue",
-      "photo": ""
-    },
-    {
-      "name": "Dr El Hadji Babacar Fall",
-      "photo": ""
+      "name": "Dr Ndeye Adele GUEYE",
+      "photo": "assets/pioneers/20-adele.jpg"
     },
     {
       "name": "Dr Massogui Bathily",
+      "photo": ""
+    },
+    {
+      "name": "Dr Khadija Ndiaye",
       "photo": ""
     },
     {
@@ -215,8 +211,12 @@
       "photo": ""
     },
     {
-      "name": "Dr Khadija Ndiaye",
-      "photo": ""
+      "name": "Dr Seydatouna Haissatou DIOP",
+      "photo": "assets/pioneers/16-seydatouna-haissatou-diop.jpg"
+    },
+    {
+      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
+      "name": "Dr Ndèye Codou FAYE"
     }
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
