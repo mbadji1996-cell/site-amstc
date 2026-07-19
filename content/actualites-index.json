@@ -91,7 +91,7 @@
   },
   {
     "slug": "2025-05-15-ndogou-social-2025",
-    "title": "Ndogou Social 2025",
+    "title": "Ndogou Social 2025 (11ème édition)",
     "date": "2025-05-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -171,7 +171,7 @@
   },
   {
     "slug": "2024-07-15-ndogou-sociale-2024",
-    "title": "Ndogou Sociale 2024",
+    "title": "Ndogou Sociale 2024 (10ème édition)",
     "date": "2024-07-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -371,7 +371,7 @@
   },
   {
     "slug": "2022-02-15-ndogou-social-2022",
-    "title": "Ndogou social 2022",
+    "title": "Ndogou Social 2022 (8ème édition)",
     "date": "2022-02-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -401,9 +401,19 @@
   },
   {
     "slug": "2021-01-15-ndogou-social-2021",
-    "title": "Ndogou Social 2021",
+    "title": "Ndogou Social 2021 (7ème édition)",
     "date": "2021-01-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
+    "slug": "2020-05-15-ndogou-social-2020",
+    "title": "Ndogou Social 2020",
+    "date": "2020-05-15T10:00:00.000Z",
+    "excerpt": "Annulé à cause du confinement lié à la COVID-19.",
     "image": "",
     "statut": "",
     "projet": "",
@@ -431,7 +441,7 @@
   },
   {
     "slug": "2019-09-15-ndogou-social-2019",
-    "title": "Ndogou Social 2019",
+    "title": "Ndogou Social 2019 (6ème édition)",
     "date": "2019-09-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -511,7 +521,7 @@
   },
   {
     "slug": "2018-02-15-ndogou-social-2018",
-    "title": "Ndogou Social 2018",
+    "title": "Ndogou Social 2018 (5ème édition)",
     "date": "2018-02-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -531,7 +541,7 @@
   },
   {
     "slug": "2017-01-15-ndogou-social-2017",
-    "title": "Ndogou Social 2017",
+    "title": "Ndogou Social 2017 (4ème édition)",
     "date": "2017-01-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -541,7 +551,7 @@
   },
   {
     "slug": "2016-06-16-3eme-edition-du-ndogou-social",
-    "title": "3ème édition du Ndogou Social",
+    "title": "Ndogou Social 2016 (3ème édition)",
     "date": "2016-06-16T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -591,7 +601,7 @@
   },
   {
     "slug": "2015-07-09-2eme-edition-du-ndogou-social",
-    "title": "2ème édition du Ndogou Social",
+    "title": "Ndogou Social 2015 (2ème édition)",
     "date": "2015-07-09T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
@@ -611,7 +621,7 @@
   },
   {
     "slug": "2014-07-18-1ere-edition-du-ndogou-social",
-    "title": "1ère édition du Ndogou Social",
+    "title": "Ndogou Social 2014 (1ère édition)",
     "date": "2014-07-18T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
     "image": "",
