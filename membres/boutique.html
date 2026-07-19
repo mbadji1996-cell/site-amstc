@@ -331,19 +331,11 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('cartBtn').style.display = '';
 
-    const { data } = await supabaseClient
-      .from('products')
-      .select('*')
-      .eq('is_published', true)
-      .order('category')
-      .order('created_at');
+    const { data } = await supabaseClient.rpc('published_products');
 
     allProducts = data || [];
 
-    const { data: photoRows } = await supabaseClient
-      .from('product_photos')
-      .select('product_id,storage_path,order_index')
-      .order('order_index');
+    const { data: photoRows } = await supabaseClient.rpc('published_product_photos');
     const paths = (photoRows || []).map(r => r.storage_path);
     let signedByPath = {};
     if (paths.length > 0) {

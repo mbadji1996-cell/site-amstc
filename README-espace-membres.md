@@ -418,6 +418,42 @@ sujet de forum sont enregistrés normalement même si la notification échoue
 - seul l'e-mail à l'admin ne part pas, et l'erreur reste visible dans les
 logs de la fonction Edge.
 
+## 4quindecies. Protéger le Forum, les Enseignements Médicaux, la Bibliothèque et la Boutique contre l'aspiration en masse
+
+**Contexte** : ces 4 pages chargent leur liste complète en une seule
+requête, sans pagination côté client. N'importe quel compte membre (même
+tout juste créé) peut donc appeler l'API Supabase directement et récupérer
+tout le contenu en un clic, en contournant l'interface du site. Ce n'est
+pas une faille RLS - "un membre approuvé peut lire le contenu publié" est
+un choix voulu - mais l'absence de toute limite de volume permet de
+transformer "consulter" en "aspirer tout d'un coup".
+
+`supabase/phase26-rpc-listes-limitees.sql` ajoute 6 fonctions RPC
+(`forum_topics_list`, `published_medical_lessons`, `published_quizzes`,
+`bibliotheque_documents`, `published_products`,
+`published_product_photos`) qui plafonnent le nombre de lignes renvoyées
+côté serveur (entre 100 et 1000 lignes selon la table), indépendamment de
+ce que demande le client. Les 4 pages concernées (`forum.html`,
+`medical.html`, `bibliotheque.html`, `boutique.html`) ont été mises à jour
+pour appeler ces fonctions au lieu d'interroger les tables directement.
+
+Portée volontairement limitée à ces 4 pages de liste "grand public" : les
+pages de détail (un sujet, une leçon, un quiz) et les panneaux d'admin
+continuent d'interroger les tables directement, car ils ont besoin d'un
+accès complet et ne présentent pas le même risque d'aspiration en masse.
+
+1. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
+   `supabase/phase26-rpc-listes-limitees.sql`, cliquez **Run**.
+2. **Testez** les 4 pages (Forum, Enseignements Médicaux, Bibliothèque,
+   Boutique) : elles doivent afficher leur contenu exactement comme avant.
+
+**Complément recommandé (aucun code à écrire)** : dans Supabase → **Project
+Settings** → **API**, le réglage **Max Rows** plafonne *toute* réponse de
+l'API REST, y compris un appel direct sur les tables elles-mêmes (donc même
+en contournant les fonctions RPC ci-dessus). Une valeur autour de 200-500
+est large pour la taille actuelle de l'association tout en bloquant un
+export massif en un seul appel.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -474,6 +510,9 @@ Une fois l'URL et la clé intégrées :
 - Notification par e-mail de l'admin à chaque inscription, réclamation de
   carte, achat en boutique ou nouveau sujet de forum, via une fonction
   Edge Supabase + Resend (voir Phase 4quaterdecies ci-dessus)
+- Listes du Forum, des Enseignements Médicaux, de la Bibliothèque et de la
+  Boutique plafonnées côté serveur via des fonctions RPC, contre
+  l'aspiration en masse du contenu (voir Phase 4quindecies ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

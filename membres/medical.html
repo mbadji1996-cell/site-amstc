@@ -166,8 +166,8 @@
     }
 
     const [lessRes, quizRes, attRes] = await Promise.all([
-      supabaseClient.from('medical_lessons').select('*').eq('is_published', true).order('category').order('order_index'),
-      supabaseClient.from('quizzes').select('*').eq('is_published', true).order('category'),
+      supabaseClient.rpc('published_medical_lessons'),
+      supabaseClient.rpc('published_quizzes'),
       supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId)
     ]);
 

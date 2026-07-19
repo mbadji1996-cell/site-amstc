@@ -146,11 +146,7 @@
       listEl.innerHTML = '<p class="empty">Bibliothèque verrouillée le temps de renouveler votre carte.</p>';
       return;
     }
-    const { data, error } = await supabaseClient
-      .from("restricted_articles")
-      .select("id,title,excerpt,cover_image,file_path,bib_section,created_at")
-      .eq("category", "bibliotheque")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabaseClient.rpc("bibliotheque_documents");
 
     if (error) {
       listEl.innerHTML = '<p class="error">Impossible de charger la bibliothèque pour le moment.</p>';
