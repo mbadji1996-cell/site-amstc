@@ -250,30 +250,76 @@
   .historique-sub{margin-top:56px;}
   .historique-sub-heading{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); margin-bottom:18px;}
   .historique-sub-subtitle{color:#465A4E; font-size:0.98rem; max-width:60ch; margin:-8px 0 20px;}
-  .team-avatar-fallback{
-    width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
-    background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
-    font-family:var(--display); font-weight:600; font-size:1.6rem;
+  /* ===== Bureau Exécutif : carrousel en vedette ===== */
+  .exec-carousel{position:relative;}
+  .exec-track-wrap{overflow:hidden; border-radius:var(--radius);}
+  .exec-track{display:flex; transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .exec-slide{
+    flex:0 0 100%; display:grid; grid-template-columns:260px 1fr; gap:36px; align-items:center;
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:36px; min-height:300px;
+  }
+  .exec-slide-photo{width:100%; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:var(--paper-alt);}
+  .exec-slide-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+  .exec-slide-fallback{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:2.2rem;
+  }
+  .exec-slide-num{font-family:var(--mono); font-size:0.74rem; color:var(--gold-deep); letter-spacing:0.1em; display:block; margin-bottom:10px;}
+  .exec-slide-name{font-family:var(--display); font-weight:700; font-size:1.5rem; color:var(--green-deep); margin-bottom:10px;}
+  .exec-slide-role{display:inline-block; background:var(--paper-alt); color:var(--green); font-weight:700; font-size:0.84rem; padding:6px 14px; border-radius:999px; margin-bottom:12px;}
+  .exec-slide-detail{font-size:0.94rem; color:#465A4E; max-width:48ch;}
+  .exec-nav{display:flex; align-items:center; justify-content:center; gap:18px; margin-top:22px;}
+  .exec-arrow{
+    width:42px; height:42px; border-radius:50%; border:1.5px solid var(--line); background:var(--white);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--green-deep);
+    transition:background .18s ease, border-color .18s ease; flex-shrink:0;
+  }
+  .exec-arrow:hover{background:var(--paper-alt); border-color:var(--green);}
+  .exec-arrow svg{width:18px; height:18px;}
+  .exec-dots{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; max-width:220px;}
+  .exec-dot{width:8px; height:8px; border-radius:50%; background:var(--line); border:none; cursor:pointer; padding:0; transition:background .18s ease, transform .18s ease;}
+  .exec-dot.active{background:var(--gold); transform:scale(1.3);}
+  @media (max-width:720px){
+    .exec-slide{grid-template-columns:1fr; padding:24px; text-align:center; min-height:0;}
+    .exec-slide-photo{max-width:200px; margin:0 auto;}
   }
 
-  /* ===== Governance ===== */
-  .team-row{
-    display:flex; gap:20px; overflow-x:auto; padding:6px 6px 20px; margin:0 -6px;
-    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  /* ===== Pionniers : bande auto-défilante en boucle ===== */
+  .pio-marquee{
+    overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .team-row::-webkit-scrollbar{height:8px;}
-  .team-row::-webkit-scrollbar-thumb{background:var(--line); border-radius:999px;}
-  .team-card{
-    flex:0 0 auto; width:190px; scroll-snap-align:start;
-    background:var(--white); border:1px solid var(--line); border-radius:14px; padding:16px;
-    text-align:center; transition:transform .2s ease, box-shadow .2s ease;
+  .pio-track{display:flex; gap:30px; width:max-content; padding:6px 0; animation:pio-scroll linear infinite;}
+  .pio-marquee:hover .pio-track, .pio-marquee:focus-within .pio-track{animation-play-state:paused;}
+  .pio-item{flex:0 0 auto; width:96px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;}
+  .pio-avatar{width:76px; height:76px; border-radius:50%; overflow:hidden; background:var(--paper-alt); border:2px solid var(--white); box-shadow:var(--shadow);}
+  .pio-avatar img{width:100%; height:100%; object-fit:cover; display:block;}
+  .pio-avatar-fallback{width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.1rem;}
+  .pio-item-name{font-size:0.78rem; font-weight:600; color:var(--ink); line-height:1.25;}
+  @keyframes pio-scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  @media (prefers-reduced-motion: reduce){ .pio-track{animation:none !important;} }
+
+  /* ===== Anciens présidents : frise de succession numérotée ===== */
+  .pres-carousel{position:relative;}
+  .pres-track{
+    display:flex; gap:20px; overflow-x:auto; padding:6px 6px 4px; margin:0 -6px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none;
   }
-  .team-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
-  .team-card img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin-bottom:14px; display:block;}
-  .team-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
-  .team-role{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
-  .team-detail{font-size:0.78rem; color:#5A6C60; margin-top:4px;}
-  @media (max-width:560px){ .team-card{width:160px;} }
+  .pres-track::-webkit-scrollbar{display:none;}
+  .pres-card{flex:0 0 auto; width:210px; scroll-snap-align:start; background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px; text-align:center;}
+  .pres-card-num{font-family:var(--display); font-weight:800; font-size:1.7rem; color:var(--gold); line-height:1; margin-bottom:10px;}
+  .pres-card img{width:84px; height:84px; border-radius:50%; object-fit:cover; margin:0 auto 12px; display:block;}
+  .pres-card-fallback{width:84px; height:84px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.3rem;}
+  .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.98rem; color:var(--ink); margin-bottom:4px;}
+  .pres-card-mandate{font-weight:700; font-size:0.8rem; color:var(--green);}
+  .pres-line{position:relative; height:3px; background:var(--line); border-radius:999px; margin:18px 6px 0; overflow:hidden;}
+  .pres-line-fill{position:absolute; top:0; left:0; height:100%; background:var(--gold); border-radius:999px; transition:width .15s ease; width:0%;}
+  .pres-nav{display:flex; justify-content:flex-end; gap:10px; margin-top:14px;}
+  .pres-arrow{width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line); background:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--green-deep);}
+  .pres-arrow:hover{background:var(--paper-alt); border-color:var(--green);}
+  .pres-arrow svg{width:16px; height:16px;}
+  @media (max-width:560px){ .pres-card{width:170px;} }
 
   /* ===== CTA banner ===== */
   .cta-banner{
@@ -550,13 +596,22 @@
         <div class="founders-box reveal" id="pioneersListWrap">
           <div class="founders-list" id="cms-pioneers-list"></div>
         </div>
-        <div class="team-row reveal" id="cms-pioneers-row"></div>
+        <div class="pio-marquee reveal" id="pioneersMarqueeWrap">
+          <div class="pio-track" id="cms-pioneers-track"></div>
+        </div>
       </div>
 
       <div class="historique-sub" id="presidentsBlock" style="display:none;">
         <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
         <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
-        <div class="team-row reveal" id="cms-presidents-row"></div>
+        <div class="pres-carousel reveal">
+          <div class="pres-track" id="cms-presidents-track"></div>
+          <div class="pres-line"><span class="pres-line-fill" id="presLineFill"></span></div>
+          <div class="pres-nav">
+            <button class="pres-arrow" id="presPrev" aria-label="Présidents précédents" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="pres-arrow" id="presNext" aria-label="Présidents suivants" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -569,7 +624,16 @@
         <h2 id="cms-gov-title">Le Bureau Exécutif et ses commissions</h2>
         <p id="cms-gov-subtitle">Conformément aux statuts, l'association est administrée par un Bureau Exécutif organisé autour d'un présidium et de huit commissions.</p>
       </div>
-      <div class="team-row reveal" id="cms-team-row"></div>
+      <div class="exec-carousel reveal">
+        <div class="exec-track-wrap">
+          <div class="exec-track" id="cms-team-track"></div>
+        </div>
+        <div class="exec-nav">
+          <button class="exec-arrow" id="execPrev" aria-label="Membre précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="exec-dots" id="execDots"></div>
+          <button class="exec-arrow" id="execNext" aria-label="Membre suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -869,25 +933,76 @@
     }).join('');
   }
 
-  // ===== Bureau Exécutif (fiches membres) =====
+  // ===== Bureau Exécutif (carrousel en vedette) =====
+  let execTimer = null, execIndex = 0, execCount = 0, execInited = false;
+
   function renderTeam(members){
-    const row = document.getElementById('cms-team-row');
-    if (!row || !Array.isArray(members) || members.length === 0) return;
-    row.innerHTML = members.map(m => {
+    const track = document.getElementById('cms-team-track');
+    const dots = document.getElementById('execDots');
+    if (!track || !dots || !Array.isArray(members) || members.length === 0) return;
+    execCount = members.length;
+    track.innerHTML = members.map((m, i) => {
       const role = m.role || '';
       const commission = m.commission || '';
       const roleLine = (commission && role.toLowerCase() !== commission.toLowerCase())
         ? `${esc(role)} · ${esc(commission)}`
         : esc(role || commission);
       return `
-        <div class="team-card reveal">
-          <img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">
-          <div class="team-name">${esc(m.name)}</div>
-          <div class="team-role">${roleLine}</div>
-          ${m.detail ? `<div class="team-detail">${esc(m.detail)}</div>` : ''}
+        <div class="exec-slide">
+          <div class="exec-slide-photo">
+            ${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<div class="exec-slide-fallback">${esc(memberInitials(m.name))}</div>`}
+          </div>
+          <div class="exec-slide-body">
+            <span class="exec-slide-num">${String(i + 1).padStart(2, '0')} / ${String(execCount).padStart(2, '0')}</span>
+            <h3 class="exec-slide-name">${esc(m.name)}</h3>
+            ${roleLine ? `<span class="exec-slide-role">${roleLine}</span>` : ''}
+            ${m.detail ? `<p class="exec-slide-detail">${esc(m.detail)}</p>` : ''}
+          </div>
         </div>
       `;
     }).join('');
+    dots.innerHTML = members.map((_, i) => `<button class="exec-dot${i === 0 ? ' active' : ''}" data-i="${i}" aria-label="Aller au membre ${i + 1}" type="button"></button>`).join('');
+    goToExec(0);
+    initExecCarousel();
+  }
+
+  function goToExec(i){
+    const track = document.getElementById('cms-team-track');
+    if (!track || execCount === 0) return;
+    execIndex = (i + execCount) % execCount;
+    track.style.transform = `translateX(-${execIndex * 100}%)`;
+    document.querySelectorAll('.exec-dot').forEach((d, idx) => d.classList.toggle('active', idx === execIndex));
+  }
+
+  function startExecTimer(){
+    stopExecTimer();
+    if (execCount <= 1) return;
+    execTimer = setInterval(() => goToExec(execIndex + 1), 5000);
+  }
+  function stopExecTimer(){ if (execTimer) { clearInterval(execTimer); execTimer = null; } }
+
+  function initExecCarousel(){
+    if (execInited) { startExecTimer(); return; }
+    execInited = true;
+    const carousel = document.querySelector('.exec-carousel');
+    const prev = document.getElementById('execPrev');
+    const next = document.getElementById('execNext');
+    const dots = document.getElementById('execDots');
+    if (prev) prev.addEventListener('click', () => { goToExec(execIndex - 1); startExecTimer(); });
+    if (next) next.addEventListener('click', () => { goToExec(execIndex + 1); startExecTimer(); });
+    if (dots) dots.addEventListener('click', e => {
+      const btn = e.target.closest('.exec-dot');
+      if (!btn) return;
+      goToExec(parseInt(btn.dataset.i, 10));
+      startExecTimer();
+    });
+    if (carousel) {
+      carousel.addEventListener('mouseenter', stopExecTimer);
+      carousel.addEventListener('mouseleave', startExecTimer);
+      carousel.addEventListener('focusin', stopExecTimer);
+      carousel.addEventListener('focusout', startExecTimer);
+    }
+    startExecTimer();
   }
 
   function setOptionalSubtitle(id, text){
@@ -905,26 +1020,34 @@
     const block = document.getElementById('pioneersBlock');
     const listWrap = document.getElementById('pioneersListWrap');
     const listEl = document.getElementById('cms-pioneers-list');
-    const row = document.getElementById('cms-pioneers-row');
-    if (!block || !listWrap || !listEl || !row) return;
+    const marqueeWrap = document.getElementById('pioneersMarqueeWrap');
+    const track = document.getElementById('cms-pioneers-track');
+    if (!block || !listWrap || !listEl || !marqueeWrap || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
 
     const useCards = layout !== 'liste';
     listWrap.style.display = useCards ? 'none' : '';
-    row.style.display = useCards ? '' : 'none';
+    marqueeWrap.style.display = useCards ? '' : 'none';
 
     if (useCards) {
-      row.innerHTML = list.map(p => {
+      const itemsHtml = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
         const photo = typeof p === 'string' ? '' : (p.photo || '');
         return `
-          <div class="team-card reveal">
-            ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(memberInitials(name))}</div>`}
-            ${name ? `<div class="team-name">${esc(name)}</div>` : ''}
+          <div class="pio-item">
+            <div class="pio-avatar">
+              ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
+            </div>
+            ${name ? `<div class="pio-item-name">${esc(name)}</div>` : ''}
           </div>
         `;
       }).join('');
+      // Doublé pour boucler le défilement sans coupure visible (translateX -50%)
+      track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
+      const halfWidth = track.scrollWidth / (list.length > 1 ? 2 : 1);
+      const pxPerSecond = 34;
+      track.style.animationDuration = Math.max(halfWidth / pxPerSecond, 20) + 's';
     } else {
       listEl.innerHTML = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
@@ -933,20 +1056,43 @@
     }
   }
 
-  // ===== Anciens présidents =====
+  // ===== Anciens présidents (frise de succession numérotée) =====
+  let presInited = false;
+
   function renderPresidents(list){
     const block = document.getElementById('presidentsBlock');
-    const row = document.getElementById('cms-presidents-row');
-    if (!block || !row) return;
+    const track = document.getElementById('cms-presidents-track');
+    if (!block || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
-    row.innerHTML = list.map(p => `
-      <div class="team-card reveal">
-        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="team-avatar-fallback">${esc(memberInitials(p.name))}</div>`}
-        <div class="team-name">${esc(p.name)}</div>
-        <div class="team-role">${esc(p.mandate || '')}</div>
+    track.innerHTML = list.map((p, i) => `
+      <div class="pres-card">
+        <div class="pres-card-num">${String(i + 1).padStart(2, '0')}</div>
+        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
+        <div class="pres-card-name">${esc(p.name)}</div>
+        <div class="pres-card-mandate">${esc(p.mandate || '')}</div>
       </div>
     `).join('');
+    initPresCarousel();
+  }
+
+  function initPresCarousel(){
+    const track = document.getElementById('cms-presidents-track');
+    const fill = document.getElementById('presLineFill');
+    if (!track || !fill) return;
+    function updateFill(){
+      const max = track.scrollWidth - track.clientWidth;
+      fill.style.width = (max > 0 ? (track.scrollLeft / max) * 100 : 0) + '%';
+    }
+    updateFill();
+    if (presInited) return;
+    presInited = true;
+    const prev = document.getElementById('presPrev');
+    const next = document.getElementById('presNext');
+    track.addEventListener('scroll', updateFill, { passive: true });
+    if (prev) prev.addEventListener('click', () => track.scrollBy({ left: -240, behavior: 'smooth' }));
+    if (next) next.addEventListener('click', () => track.scrollBy({ left: 240, behavior: 'smooth' }));
+    window.addEventListener('resize', updateFill);
   }
 
   // ===== Médiathèque (dossiers photos par année) =====
