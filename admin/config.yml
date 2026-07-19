@@ -107,6 +107,7 @@ collections:
             name: "pioneers"
             widget: "list"
             hint: "L'ordre ici définit l'ordre d'affichage sur le site. Laissez la liste vide pour masquer ce bloc."
+            summary: "{{fields.name}}"
             fields:
               - { label: "Photo", name: "photo", widget: "image", required: false }
               - { label: "Nom", name: "name", widget: "string", required: false }
@@ -117,6 +118,7 @@ collections:
             name: "presidents"
             widget: "list"
             hint: "Laissez la liste vide pour masquer ce bloc sur le site."
+            summary: "{{fields.name}}"
             fields:
               - { label: "Photo", name: "photo", widget: "image", required: false }
               - { label: "Nom", name: "name", widget: "string" }
@@ -134,6 +136,7 @@ collections:
             name: "members"
             widget: "list"
             hint: "Un membre par fiche. L'ordre ici définit l'ordre d'affichage sur le site."
+            summary: "{{fields.name}}"
             fields:
               - { label: "Photo", name: "photo", widget: "image" }
               - { label: "Nom", name: "name", widget: "string" }
