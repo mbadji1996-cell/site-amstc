@@ -398,11 +398,15 @@ d'envoi d'e-mails. Suivez les étapes dans l'ordre.
    - `NOTIFY_ADMIN_SECRET` - le jeton de l'étape 3 (si vous l'utilisez)
    - `NOTIFY_FROM_EMAIL` - optionnel, adresse d'expédition (laissez vide
      pour garder `onboarding@resend.dev`)
-7. Ouvrez `supabase/phase25-notifications-admin.sql`, remplacez
-   `REMPLACEZ_PAR_VOTRE_JETON` par la même valeur que `NOTIFY_ADMIN_SECRET`
-   (ou laissez tel quel si vous n'utilisez pas ce contrôle).
-8. Dans Supabase → **SQL Editor** → **New query**, collez tout le contenu
-   du fichier, cliquez **Run**.
+7. Ouvrez `supabase/phase25-notifications-admin.sql` **dans votre éditeur
+   local** (ne pas le renvoyer sur GitHub avec cette modification), et
+   remplacez `REMPLACEZ_PAR_VOTRE_JETON` par la même valeur que
+   `NOTIFY_ADMIN_SECRET` - c'est uniquement la copie collée dans le SQL
+   Editor de Supabase qui doit contenir le vrai jeton, jamais le fichier
+   du dépôt public (ou laissez `REMPLACEZ_PAR_VOTRE_JETON` tel quel dans
+   les deux si vous n'utilisez pas ce contrôle).
+8. Dans Supabase → **SQL Editor** → **New query**, collez le contenu du
+   fichier (avec le jeton remplacé), cliquez **Run**.
 9. **Testez** les 4 parcours (inscription, réclamation d'une carte, achat
    en boutique, nouveau sujet de forum) et vérifiez la réception de
    l'e-mail. En cas d'échec : Edge Functions → `notify-admin` → **Logs**
