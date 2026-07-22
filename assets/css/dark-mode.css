@@ -21,6 +21,8 @@
   --text-heading: var(--green-deep);
   --text-accent: var(--gold-deep);
   --surface: var(--white);
+  --header-bg: rgba(246, 247, 241, 0.94);
+  --text-muted: #5A6C60;
 }
 
 :root[data-theme="dark"] {
@@ -34,6 +36,8 @@
   --text-heading: #7FD9A0;
   --text-accent: #F0C955;
   --surface: #182019;
+  --header-bg: rgba(14, 23, 18, 0.9);
+  --text-muted: #9BB0A2;
 }
 
 /* ===== Bouton flottant (créé dynamiquement par theme-toggle.js) ===== */

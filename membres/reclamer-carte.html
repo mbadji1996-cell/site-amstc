@@ -49,7 +49,7 @@
   .state-icon.ok{color:#3B6D11;}
   .state-icon.pending{color:var(--text-accent);}
   .state-title{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--text-heading);margin-bottom:8px;}
-  .state-text{color:#5A6C60;font-size:0.92rem;max-width:480px;margin:0 auto;}
+  .state-text{color:var(--text-muted);font-size:0.92rem;max-width:480px;margin:0 auto;}
   .state-number{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--text-heading);background:var(--paper-alt);padding:8px 16px;border-radius:999px;display:inline-block;margin-top:14px;}
 
   /* Search + list */
@@ -75,7 +75,7 @@
   .claim-form input:focus{outline:none;border-color:var(--gold);}
   .btn-confirm{background:var(--green);color:var(--white);border:none;padding:10px 18px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;}
   .btn-confirm:hover{background:var(--green-deep);}
-  .btn-cancel{background:none;border:1.5px solid var(--line);color:#5A6C60;padding:10px 16px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;}
+  .btn-cancel{background:none;border:1.5px solid var(--line);color:var(--text-muted);padding:10px 16px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;}
   .claim-msg{font-size:0.85rem;margin-top:10px;}
   .claim-msg.error{color:#B23B3B;}
   .claim-msg.ok{color:#3B6D11;}
@@ -208,7 +208,7 @@
           </div>
           <button class="btn-claim" onclick="toggleClaimForm('${c.id}')"><i class="ti ti-hand-click"></i> C'est ma carte</button>
           <div class="claim-form" id="form-${c.id}">
-            <p style="font-size:0.85rem;color:#5A6C60;margin-bottom:10px;">Pour confirmer, saisissez le numéro de téléphone associé à cette carte :</p>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;">Pour confirmer, saisissez le numéro de téléphone associé à cette carte :</p>
             <div class="claim-form-row">
               <input type="tel" id="phone-${c.id}" placeholder="Ex : 77 123 45 67">
               <button class="btn-confirm" onclick="submitClaim('${c.id}')">Envoyer</button>

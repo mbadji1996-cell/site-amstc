@@ -87,7 +87,7 @@
   .accordion-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-accent);flex-shrink:0;}
   .accordion-text{min-width:0;}
   .accordion-title{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);}
-  .accordion-subtitle{font-size:0.87rem;color:#5A6C60;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .accordion-subtitle{font-size:0.87rem;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .accordion-chevron{font-size:18px;color:#8A9E8F;transition:transform .2s;flex-shrink:0;}
   .accordion-chevron.open{transform:rotate(180deg);}
   .accordion-body{display:none;padding:0 22px 22px;}
@@ -96,7 +96,7 @@
   /* Info rows */
   .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .info-row:last-child{border-bottom:none;}
-  .info-label{font-size:0.84rem;color:#5A6C60;display:flex;align-items:center;gap:6px;}
+  .info-label{font-size:0.84rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
   .info-label i{font-size:14px;color:#B0BFB5;}
   .info-val{font-size:0.9rem;color:var(--ink);font-weight:500;text-align:right;}
 
@@ -110,7 +110,7 @@
   /* Form */
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
   .form-group.full{grid-column:1/-1;}
-  .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:#5A6C60;margin-bottom:5px;}
+  .form-group label{display:block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:5px;}
   .form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;color:var(--ink);background:var(--paper);transition:border-color .15s;}
   .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);}
   .form-group input:disabled{background:var(--paper-alt);color:#8A9E8F;}
@@ -133,7 +133,7 @@
   .btn-row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;}
 
   .claim-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-  .claim-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .claim-banner-text{font-size:0.87rem;color:var(--text-muted);}
   .claim-banner-text strong{color:var(--text-heading);}
   .claim-banner a.btn-claim-link{background:var(--gold);color:var(--text-heading);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   .claim-banner a.btn-claim-link:hover{background:var(--gold-deep);color:var(--white);}
@@ -142,7 +142,7 @@
   .pay-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .pay-row:last-child{border-bottom:none;}
   .pay-year{font-family:var(--mono);font-size:0.9rem;font-weight:600;color:var(--text-heading);}
-  .pay-method{font-size:0.78rem;color:#5A6C60;margin-top:1px;}
+  .pay-method{font-size:0.78rem;color:var(--text-muted);margin-top:1px;}
   .pay-status{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;}
   .s-confirmed{background:#EAF3DE;color:#3B6D11;}
   .s-pending{background:#FEF6E4;color:var(--text-accent);}
@@ -157,7 +157,7 @@
 
   .locked-msg{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--text-accent);display:flex;align-items:flex-start;gap:10px;}
 
-  .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+  .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
@@ -352,7 +352,7 @@
             <input id="validityRef" type="text" placeholder="Ex : WV-20240501-XXXX">
           </div>
         </div>
-        <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
           <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
           Tarif : <strong style="color:var(--text-heading);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
         </p>
@@ -409,7 +409,7 @@
               <input id="cotisRef" type="text" placeholder="Ex : WV-20240501-XXXX">
             </div>
           </div>
-          <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
             <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
             Tarif : <strong style="color:var(--text-heading);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
           </p>

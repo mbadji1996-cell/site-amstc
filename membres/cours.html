@@ -46,7 +46,7 @@
   .back:hover{color:var(--text-accent);opacity:0.75;}
   .cat-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;background:var(--teal-light);color:var(--teal-dark);padding:4px 12px;border-radius:999px;margin-bottom:12px;}
   .course-header h1{font-family:var(--display);font-size:clamp(1.5rem,4vw,2rem);font-weight:600;color:var(--text-heading);margin-bottom:8px;}
-  .course-meta-row{display:flex;align-items:center;gap:16px;color:#5A6C60;font-size:0.85rem;flex-wrap:wrap;}
+  .course-meta-row{display:flex;align-items:center;gap:16px;color:var(--text-muted);font-size:0.85rem;flex-wrap:wrap;}
   .course-meta-row i{font-size:15px;}
   .prog-inline{display:flex;align-items:center;gap:8px;}
   .prog-bar-sm{width:80px;height:4px;background:var(--paper-alt);border-radius:2px;}
@@ -57,8 +57,8 @@
   .course-content h2{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:24px 0 10px;}
   .course-content h2:first-child{margin-top:0;}
   .course-content h3{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);margin:18px 0 8px;}
-  .course-content p{color:#3C4E44;margin-bottom:14px;}
-  .course-content ul,.course-content ol{color:#3C4E44;padding-left:22px;margin-bottom:14px;}
+  .course-content p{color:var(--text-muted);margin-bottom:14px;}
+  .course-content ul,.course-content ol{color:var(--text-muted);padding-left:22px;margin-bottom:14px;}
   .course-content li{margin-bottom:6px;}
   .course-content strong{color:var(--text-heading);}
   .course-content blockquote{border-left:3px solid var(--teal);padding:12px 18px;background:var(--teal-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--teal-dark);}
@@ -80,10 +80,10 @@
   .save-msg.show{display:block;}
 
   /* Empty / loading */
-  .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+  .loading-full{padding:80px 0;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
-  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text{font-size:0.87rem;color:var(--text-muted);}
   .card-status-banner-text strong{color:var(--text-heading);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--text-heading);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
@@ -120,7 +120,7 @@
         <div class="prog-inline">
           <i class="ti ti-chart-line" style="color:var(--teal);"></i>
           <div class="prog-bar-sm"><div class="prog-fill-sm" id="progBarTop" style="width:0%"></div></div>
-          <span style="font-family:var(--mono);font-size:0.75rem;color:#5A6C60;" id="progLabelTop">0%</span>
+          <span style="font-family:var(--mono);font-size:0.75rem;color:var(--text-muted);" id="progLabelTop">0%</span>
         </div>
       </div>
     </div>

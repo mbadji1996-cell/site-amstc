@@ -87,7 +87,7 @@
 
   /* ===== Header ===== */
   header{
-    position:sticky; top:0; z-index:100; background:rgba(246,247,241,0.94); backdrop-filter:blur(10px);
+    position:sticky; top:0; z-index:100; background:var(--header-bg); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
   .nav{display:flex; align-items:center; justify-content:space-between; padding:12px 0;}
@@ -120,7 +120,7 @@
   .nav-dropdown.open .nav-dropdown-menu{
     opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
   }
-  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap; color:#0B2E17;}
+  .nav-dropdown-menu a{padding:10px 14px; border-radius:8px; white-space:nowrap; color:var(--ink);}
   .nav-dropdown-menu a::after{display:none;}
   .nav-dropdown-menu a:hover{background:var(--paper-alt);}
 
@@ -147,7 +147,7 @@
        ".nav-dropdown-menu" seul) réapplique translateX(-50%) même en mobile,
        ce qui décalait le sous-menu d'une demi-largeur hors de l'écran. */
     .nav-dropdown.open .nav-dropdown-menu{display:flex; flex-direction:column; transform:none;}
-    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:#0B2E17;}
+    .nav-dropdown-menu a{padding:14px 28px 14px 44px; border-top:1px solid var(--line); border-radius:0; width:100%; color:var(--ink);}
   }
 
   /* ===== Hero ===== */
@@ -183,8 +183,8 @@
   .intro-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
   .intro-card .num{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-bottom:14px; display:block;}
   .intro-card h3{font-size:1.25rem; margin-bottom:10px;}
-  .intro-card p{color:#465A4E; font-size:0.96rem; margin-bottom:18px;}
-  .intro-card div p{color:#465A4E; font-size:0.96rem; margin-bottom:12px;}
+  .intro-card p{color:var(--text-muted); font-size:0.96rem; margin-bottom:18px;}
+  .intro-card div p{color:var(--text-muted); font-size:0.96rem; margin-bottom:12px;}
   .intro-card img, .emblem-row img, .tl-item img, .register-desc img{max-width:100%; border-radius:8px; margin:8px 0;}
   .intro-card a{font-weight:600; font-size:0.92rem; color:var(--green); border-bottom:1.5px solid var(--gold);}
 
@@ -192,12 +192,12 @@
   .section-alt{background:var(--paper-alt);}
   .section-head{max-width:660px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(1.6rem,3vw,2.3rem);}
-  .section-head p:not(.eyebrow){color:#465A4E; margin-top:14px; font-size:1.02rem;}
+  .section-head p:not(.eyebrow){color:var(--text-muted); margin-top:14px; font-size:1.02rem;}
 
   /* ===== Mission ===== */
   .mission-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
   @media (max-width:880px){ .mission-grid{grid-template-columns:1fr;} }
-  .mission-text p:not(.eyebrow){color:#3C4E44; font-size:1.03rem; margin-bottom:16px;}
+  .mission-text p:not(.eyebrow){color:var(--text-muted); font-size:1.03rem; margin-bottom:16px;}
   .mission-text img{max-width:100%; border-radius:10px; margin:14px 0;}
   .mission-figure{
     background:var(--green-deep); border-radius:var(--radius); padding:38px; color:var(--white);
@@ -220,7 +220,7 @@
   @media (max-width:720px){ .register-row{grid-template-columns:50px 1fr; row-gap:8px;} .register-row .register-tag, .register-row .register-arrow{grid-column:2;} }
   .register-id{font-family:var(--mono); color:var(--text-accent); font-size:0.85rem;}
   .register-title{font-family:var(--display); font-weight:600; font-size:1.1rem; color:var(--text-heading);}
-  .register-desc{font-size:0.92rem; color:#465A4E; margin-top:3px;}
+  .register-desc{font-size:0.92rem; color:var(--text-muted); margin-top:3px;}
   .register-desc p{margin:0;}
   .register-tag{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); justify-self:start;}
   .register-arrow{color:var(--text-accent); font-size:1.2rem; justify-self:end;}
@@ -235,9 +235,9 @@
   }
   .tl-year{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-bottom:4px; display:block;}
   .tl-item h4{font-family:var(--display); font-size:1.1rem; color:var(--text-heading); margin-bottom:6px;}
-  .tl-item p{font-size:0.94rem; color:#465A4E; max-width:60ch;}
-  .tl-item div p{font-size:0.94rem; color:#465A4E; max-width:60ch; margin:0;}
-  .tl-item div ul, .tl-item div ol{font-size:0.94rem; color:#465A4E; max-width:60ch; margin:0; padding-left:1.2em;}
+  .tl-item p{font-size:0.94rem; color:var(--text-muted); max-width:60ch;}
+  .tl-item div p{font-size:0.94rem; color:var(--text-muted); max-width:60ch; margin:0;}
+  .tl-item div ul, .tl-item div ol{font-size:0.94rem; color:var(--text-muted); max-width:60ch; margin:0; padding-left:1.2em;}
   .tl-item div li{margin-bottom:6px;}
   .tl-item div li:last-child{margin-bottom:0;}
 
@@ -252,7 +252,7 @@
   }
   .historique-sub{margin-top:56px;}
   .historique-sub-heading{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:18px;}
-  .historique-sub-subtitle{color:#465A4E; font-size:0.98rem; max-width:60ch; margin:-8px 0 20px;}
+  .historique-sub-subtitle{color:var(--text-muted); font-size:0.98rem; max-width:60ch; margin:-8px 0 20px;}
   /* ===== Bureau Exécutif : carrousel en vedette ===== */
   .exec-carousel{position:relative;}
   .exec-track-wrap{overflow:hidden; border-radius:var(--radius);}
@@ -270,7 +270,7 @@
   .exec-slide-num{font-family:var(--mono); font-size:0.74rem; color:var(--text-accent); letter-spacing:0.1em; display:block; margin-bottom:10px;}
   .exec-slide-name{font-family:var(--display); font-weight:700; font-size:1.5rem; color:var(--text-heading); margin-bottom:10px;}
   .exec-slide-role{display:inline-block; background:var(--paper-alt); color:var(--green); font-weight:700; font-size:0.84rem; padding:6px 14px; border-radius:999px; margin-bottom:12px;}
-  .exec-slide-detail{font-size:0.94rem; color:#465A4E; max-width:48ch;}
+  .exec-slide-detail{font-size:0.94rem; color:var(--text-muted); max-width:48ch;}
   .exec-nav{display:flex; align-items:center; justify-content:center; gap:18px; margin-top:22px;}
   .exec-arrow{
     width:42px; height:42px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface);
@@ -392,7 +392,7 @@
   .tx-img-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
   .tx-img-grid.reverse .tx-img-media{order:-1;}
   .tx-img-media img{width:100%; border-radius:16px; box-shadow:var(--shadow);}
-  .tx-img-text div p{color:#3C4E44; font-size:1.02rem; margin-bottom:14px;}
+  .tx-img-text div p{color:var(--text-muted); font-size:1.02rem; margin-bottom:14px;}
   @media (max-width:880px){ .tx-img-grid{grid-template-columns:1fr;} .tx-img-grid.reverse .tx-img-media{order:0;} }
 
   .banner-block{border-radius:22px; padding:52px 44px; text-align:center;}
@@ -410,7 +410,7 @@
   .gallery-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   @media (max-width:720px){ .gallery-grid{grid-template-columns:1fr 1fr;} }
   .gallery-grid img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; display:block;}
-  .gallery-caption{font-size:0.8rem; color:#5A6C60; margin-top:6px; text-align:center;}
+  .gallery-caption{font-size:0.8rem; color:var(--text-muted); margin-top:6px; text-align:center;}
 
   /* ===== Médiathèque ===== */
   .media-years{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;}
@@ -663,9 +663,9 @@
         <a href="actualites.html" class="btn btn-outline">Toutes nos réalisations</a>
       </div>
       <div class="intro-grid" id="actus-grid">
-        <p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
+        <p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
       </div>
-      <noscript><p style="color:#465A4E; font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos réalisations, ou consultez <a href="actualites.html">la page dédiée</a>.</p></noscript>
+      <noscript><p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos réalisations, ou consultez <a href="actualites.html">la page dédiée</a>.</p></noscript>
     </div>
   </section>
 
@@ -1320,7 +1320,7 @@
       if (!res.ok) throw new Error();
       const articles = await res.json();
       const latest = articles.slice(0, 3);
-      if (latest.length === 0) { grid.innerHTML = '<p style="color:#465A4E;">Aucun article publié pour le moment.</p>'; return; }
+      if (latest.length === 0) { grid.innerHTML = '<p style="color:var(--text-muted);">Aucun article publié pour le moment.</p>'; return; }
       grid.innerHTML = latest.map(a => `
         <a class="intro-card reveal" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
           <span class="num">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
@@ -1330,7 +1330,7 @@
       `).join("");
       initScrollReveal();
     } catch (e) {
-      grid.innerHTML = '<p style="color:#465A4E;">Réalisations indisponibles pour le moment.</p>';
+      grid.innerHTML = '<p style="color:var(--text-muted);">Réalisations indisponibles pour le moment.</p>';
     }
   }
   loadLatestActus();

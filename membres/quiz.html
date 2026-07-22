@@ -46,10 +46,10 @@
   .back:hover{opacity:0.75;}
 
   /* Loading */
-  .loading-full{padding:80px 0;text-align:center;color:#5A6C60;font-family:var(--mono);font-size:0.85rem;}
+  .loading-full{padding:80px 0;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
-  .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
+  .card-status-banner-text{font-size:0.87rem;color:var(--text-muted);}
   .card-status-banner-text strong{color:var(--text-heading);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--text-heading);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
@@ -58,9 +58,9 @@
   .quiz-intro-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px;}
   .quiz-icon{width:56px;height:56px;border-radius:14px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue-dark);margin-bottom:18px;}
   .quiz-intro-card h1{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--text-heading);margin-bottom:8px;}
-  .quiz-intro-desc{color:#5A6C60;margin-bottom:20px;font-size:0.95rem;}
+  .quiz-intro-desc{color:var(--text-muted);margin-bottom:20px;font-size:0.95rem;}
   .quiz-meta-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
-  .pill{font-family:var(--mono);font-size:0.7rem;display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:var(--paper-alt);color:#5A6C60;}
+  .pill{font-family:var(--mono);font-size:0.7rem;display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:var(--paper-alt);color:var(--text-muted);}
   .best-score-banner{background:var(--blue-light);border:1px solid #B5D4F4;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:0.9rem;color:var(--blue-deeper);}
   .best-score-banner i{font-size:20px;color:var(--text-accent);}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;padding:12px 24px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
@@ -81,7 +81,7 @@
 
   #quizScreen{padding:24px 0 60px;display:none;}
   .q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .q-counter{font-family:var(--mono);font-size:0.8rem;color:#5A6C60;}
+  .q-counter{font-family:var(--mono);font-size:0.8rem;color:var(--text-muted);}
   .q-timer{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--blue-dark);background:var(--blue-light);padding:5px 12px;border-radius:999px;}
   .q-timer.urgent{color:var(--bad);background:var(--bad-bg);}
 
@@ -120,7 +120,7 @@
   .score-pct.low{color:var(--bad);}
   .score-label{font-size:0.7rem;font-family:var(--mono);color:#8A9E8F;}
   .result-title{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--text-heading);margin-bottom:8px;}
-  .result-sub{color:#5A6C60;font-size:0.9rem;margin-bottom:20px;}
+  .result-sub{color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;}
   .result-stats{display:flex;justify-content:center;gap:24px;padding:16px 0;border-top:1px solid var(--paper-alt);border-bottom:1px solid var(--paper-alt);margin-bottom:20px;}
   .rstat{text-align:center;}
   .rstat-val{font-family:var(--display);font-size:1.3rem;font-weight:600;}
@@ -137,7 +137,7 @@
   .corr-opt{font-size:0.85rem;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;}
   .corr-opt.is-correct{background:var(--ok-bg);color:var(--ok);}
   .corr-opt.is-wrong{background:var(--bad-bg);color:var(--bad);}
-  .corr-opt.neutral{background:var(--paper);color:#5A6C60;}
+  .corr-opt.neutral{background:var(--paper);color:var(--text-muted);}
   .corr-exp{font-size:0.83rem;color:var(--blue-deeper);background:var(--blue-light);border-radius:8px;padding:10px 14px;}
 
   .history-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:60px;}
@@ -503,7 +503,7 @@
       const date = new Date(a.created_at).toLocaleDateString('fr-FR');
       const color = pct >= 80 ? 'var(--ok)' : pct >= 50 ? 'var(--blue-dark)' : 'var(--bad)';
       return `<div class="hist-row">
-        <span style="color:#5A6C60;font-size:0.82rem;">${i === 0 ? 'Cette tentative' : date}</span>
+        <span style="color:var(--text-muted);font-size:0.82rem;">${i === 0 ? 'Cette tentative' : date}</span>
         <span class="hist-score" style="color:${color};">${a.score}/${a.total} (${pct}%)</span>
       </div>`;
     }).join('');

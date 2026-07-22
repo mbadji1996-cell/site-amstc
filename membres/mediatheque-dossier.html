@@ -41,13 +41,13 @@
   .breadcrumb a{color:var(--text-accent);}
   .breadcrumb a:hover{opacity:0.75;}
   .breadcrumb span.sep{color:#B0BFB5;}
-  .breadcrumb span.current{color:#5A6C60;}
+  .breadcrumb span.current{color:var(--text-muted);}
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1.9rem; margin-bottom:6px;}
-  .folder-meta{color:#5A6C60; font-family:var(--mono); font-size:0.82rem; margin-bottom:28px;}
+  .folder-meta{color:var(--text-muted); font-family:var(--mono); font-size:0.82rem; margin-bottom:28px;}
 
   .subfolders-label{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-accent); margin-bottom:14px;}
   .subfolders-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:32px;}
-  .subfolder-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:box-shadow .18s,transform .18s;}
+  .subfolder-card{background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:box-shadow .18s,transform .18s;}
   .subfolder-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1); transform:translateY(-3px);}
   .subfolder-cover{width:100%; aspect-ratio:4/3; object-fit:cover; background:var(--paper); display:block;}
   .subfolder-cover-placeholder{width:100%; aspect-ratio:4/3; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--text-accent);}
@@ -58,7 +58,7 @@
   .photo-thumb{width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; cursor:pointer; background:var(--paper); display:block; border:1px solid var(--line); transition:transform .15s ease;}
   .photo-thumb:hover{transform:scale(1.02);}
 
-  .empty, .loading{color:#5A6C60; font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  .empty, .loading{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
 
   /* Lightbox */
   .lightbox{position:fixed; inset:0; background:rgba(6,20,12,0.92); z-index:400; display:none; align-items:center; justify-content:center;}
