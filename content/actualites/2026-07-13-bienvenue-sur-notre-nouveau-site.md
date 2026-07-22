@@ -4,7 +4,7 @@ date: 2026-07-17T10:00:00.000Z
 excerpt: "L'AMSTC lance amstc.org : un site public pour découvrir l'association
   et un espace membres complet pour ses adhérents. Tour d'horizon de ce qu'on y
   trouve."
-image: /assets/uploads/site.png
+image: /assets/uploads/site.jpg
 ---
 
 L'AMSTC est heureuse de lancer **amstc.org**, son nouvel espace numérique. L'objectif : présenter clairement nos actions au public, et offrir à nos membres un véritable espace de vie associative en ligne. Voici ce qu'on y trouve.
