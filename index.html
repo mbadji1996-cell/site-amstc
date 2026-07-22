@@ -87,9 +87,10 @@
 
   /* ===== Header ===== */
   header{
-    position:sticky; top:0; z-index:100; background:var(--header-bg); backdrop-filter:blur(10px);
+    position:sticky; top:0; z-index:100; background:rgba(6,68,28,0.92); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
+  header .logo-img{filter:brightness(0) invert(1);}
   .nav{display:flex; align-items:center; justify-content:space-between; padding:12px 0;}
   .logo-img{height:44px; width:auto; flex-shrink:0;}
   .brand{display:flex; align-items:center; gap:10px;}
@@ -99,7 +100,7 @@
   .nav-links a:hover::after{width:100%;}
   .nav-actions{display:flex; align-items:center; gap:14px;}
   .menu-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px;}
-  .menu-toggle span{display:block; width:24px; height:2px; background:var(--green-deep); margin:5px 0; transition:.2s;}
+  .menu-toggle span{display:block; width:24px; height:2px; background:var(--white); margin:5px 0; transition:.2s;}
 
   .nav-dropdown{position:relative;}
   .nav-dropdown-trigger{
@@ -109,6 +110,16 @@
   .nav-dropdown-trigger .chevron{
     width:0; height:0; margin-top:2px; border-left:4px solid transparent; border-right:4px solid transparent;
     border-top:5px solid var(--ink); transition:transform .18s ease;
+  }
+
+  /* Au-delà du point de rupture mobile, ces éléments sont posés
+     directement sur la barre du header (fond --green-deep fixe) : il
+     leur faut du texte clair, contrairement à leur variante mobile qui
+     s'affiche dans le panneau déroulant --paper (voir plus bas). */
+  @media (min-width:1181px){
+    .nav-links a{color:var(--white);}
+    .nav-dropdown-trigger{color:var(--white);}
+    .nav-dropdown-trigger .chevron{border-top-color:var(--white);}
   }
   .nav-dropdown.open .chevron{transform:rotate(180deg);}
   .nav-dropdown-menu{

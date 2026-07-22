@@ -21,7 +21,6 @@
   --text-heading: var(--green-deep);
   --text-accent: var(--gold-deep);
   --surface: var(--white);
-  --header-bg: rgba(246, 247, 241, 0.94);
   --text-muted: #5A6C60;
 }
 
@@ -36,15 +35,7 @@
   --text-heading: #7FD9A0;
   --text-accent: #F0C955;
   --surface: #182019;
-  --header-bg: rgba(6, 68, 28, 0.92);
   --text-muted: #9BB0A2;
-}
-
-/* Le header suit la teinte du footer (--green-deep, inchangé) plutôt que
-   de rester clair : logo forcé en blanc, comme sur les pages membres où
-   le header est déjà en permanence sur fond --green-deep. */
-:root[data-theme="dark"] header .logo-img {
-  filter: brightness(0) invert(1);
 }
 
 /* ===== Bouton flottant (créé dynamiquement par theme-toggle.js) ===== */
