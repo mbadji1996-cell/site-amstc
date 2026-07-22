@@ -1453,13 +1453,11 @@
         document.getElementById('verseFrench').textContent = 'Le verset de la semaine est momentanément indisponible.';
       });
 
+    // Limité aux deux recueils les plus unanimement reconnus (Sahih al-Bukhari
+    // et Sahih Muslim), tous deux disponibles en français dans cette source.
     const HADITH_COLLECTIONS = [
       { edition: 'fra-bukhari', name: 'Sahih al-Bukhari' },
-      { edition: 'fra-muslim', name: 'Sahih Muslim' },
-      { edition: 'fra-abudawud', name: 'Sunan Abu Dawud' },
-      { edition: 'fra-tirmidhi', name: 'Jami At-Tirmidhi' },
-      { edition: 'fra-ibnmajah', name: 'Sunan Ibn Majah' },
-      { edition: 'fra-nasai', name: 'Sunan an-Nasai' }
+      { edition: 'fra-muslim', name: 'Sahih Muslim' }
     ];
     const collection = HADITH_COLLECTIONS[Math.abs(weekIndex) % HADITH_COLLECTIONS.length];
     const hadithNumber = (Math.abs(weekIndex) % 900) + 1;
