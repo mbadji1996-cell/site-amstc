@@ -1,0 +1,73 @@
+/* ============================================================
+   Mode sombre — AMSTC
+   Palette additive : ne redéfinit que les tokens qui doivent changer
+   avec le thème. Charger APRÈS les styles propres à chaque page pour
+   que ces overrides gagnent la cascade (même spécificité, ordre de
+   chargement).
+
+   --green-deep et --gold-deep restent inchangés dans les deux thèmes :
+   ce sont les couleurs des surfaces sombres (header, hero, footer,
+   états actifs des boutons) qui fonctionnent déjà bien sur fond
+   sombre. Deux tokens dérivés (--text-heading, --text-accent) les
+   remplacent uniquement là où ils servent de couleur de TEXTE
+   (titres, liens d'accroche), pour pouvoir les éclaircir en mode
+   sombre sans casser les surfaces qui les utilisent comme fond.
+   Idem pour --surface, qui remplace --white uniquement pour les fonds
+   de cartes (--white reste blanc pur, utilisé aussi comme texte clair
+   sur fond coloré).
+   ============================================================ */
+
+:root {
+  --text-heading: var(--green-deep);
+  --text-accent: var(--gold-deep);
+  --surface: var(--white);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #E8F1EC;
+  --green: #35B872;
+  --paper: #0E1712;
+  --paper-alt: #17211A;
+  --line: rgba(255, 255, 255, 0.14);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --text-heading: #7FD9A0;
+  --text-accent: #F0C955;
+  --surface: #182019;
+}
+
+/* ===== Bouton flottant (créé dynamiquement par theme-toggle.js) ===== */
+.theme-toggle-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--green-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.theme-toggle-btn:hover { transform: translateY(-2px); border-color: var(--green); }
+.theme-toggle-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.theme-toggle-btn svg { width: 22px; height: 22px; }
+.theme-toggle-btn .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle-btn { color: var(--text-accent); }
+:root[data-theme="dark"] .theme-toggle-btn .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle-btn .icon-moon { display: block; }
+
+@media (max-width: 560px) {
+  .theme-toggle-btn { right: 14px; bottom: 14px; width: 44px; height: 44px; }
+  .theme-toggle-btn svg { width: 20px; height: 20px; }
+}
+
+@media print {
+  .theme-toggle-btn { display: none; }
+}

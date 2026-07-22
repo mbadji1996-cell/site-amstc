@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Forum - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -56,9 +59,9 @@
   .btn-outline:hover{border-color:var(--violet);color:var(--violet-dark);}
   .btn:disabled{opacity:0.6;cursor:not-allowed;}
 
-  .new-topic-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:24px;display:none;}
+  .new-topic-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:24px;display:none;}
   .new-topic-card.open{display:block;}
-  .new-topic-card label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:block;margin:12px 0 6px;}
+  .new-topic-card label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:block;margin:12px 0 6px;}
   .new-topic-card label:first-child{margin-top:0;}
   .new-topic-card input,.new-topic-card textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);resize:vertical;}
   .new-topic-card input:focus,.new-topic-card textarea:focus{outline:none;border-color:var(--violet);}
@@ -68,11 +71,11 @@
   .form-msg.error{color:#B23B3B;}
 
   .topics-list{display:flex;flex-direction:column;gap:10px;padding-bottom:60px;}
-  .topic-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .18s,transform .18s;}
+  .topic-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .18s,transform .18s;}
   .topic-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.08);transform:translateY(-2px);}
   .topic-icon{width:44px;height:44px;border-radius:10px;background:var(--violet-light);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--violet-dark);flex-shrink:0;}
   .topic-body{flex:1;min-width:0;}
-  .topic-title{font-family:var(--display);font-size:0.98rem;font-weight:600;color:var(--green-deep);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .topic-title{font-family:var(--display);font-size:0.98rem;font-weight:600;color:var(--text-heading);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .topic-excerpt{font-size:0.82rem;color:#5A6C60;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px;}
   .topic-meta{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;}
   .topic-meta span{display:flex;align-items:center;gap:4px;}

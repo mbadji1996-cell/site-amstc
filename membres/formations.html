@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formations - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -45,12 +48,12 @@
 
   .page-body{max-width:1100px;margin:0 auto;padding:28px 28px 60px;}
   .modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
-  .module-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:0;overflow:hidden;display:block;text-decoration:none;color:var(--ink);transition:transform .18s ease,box-shadow .18s ease;}
+  .module-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0;overflow:hidden;display:block;text-decoration:none;color:var(--ink);transition:transform .18s ease,box-shadow .18s ease;}
   .module-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(6,68,28,0.10);}
   .module-card-accent{height:4px;width:100%;}
   .module-card-body{padding:20px 22px;}
   .module-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:14px;}
-  .module-title{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--green-deep);margin-bottom:4px;}
+  .module-title{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);margin-bottom:4px;}
   .module-sub{font-size:0.82rem;color:#5A6C60;margin-bottom:16px;}
   .module-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .module-chip{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 10px;border-radius:999px;}
@@ -136,11 +139,11 @@
     <a class="module-card" href="formations-cms.html">
       <div class="module-card-accent" style="background:linear-gradient(90deg,#8A9E8F,#5A6C60);"></div>
       <div class="module-card-body">
-        <div class="module-icon" style="background:var(--paper-alt);"><i class="ti ti-notebook" style="color:var(--gold-deep);"></i></div>
+        <div class="module-icon" style="background:var(--paper-alt);"><i class="ti ti-notebook" style="color:var(--text-accent);"></i></div>
         <p class="module-title">Autres</p>
         <p class="module-sub">Formations publiques et réservées publiées via le site</p>
         <div class="module-foot">
-          <span class="module-chip" style="background:var(--paper-alt);color:var(--gold-deep);" id="otherBadge">Voir la liste</span>
+          <span class="module-chip" style="background:var(--paper-alt);color:var(--text-accent);" id="otherBadge">Voir la liste</span>
           <i class="ti ti-arrow-right module-arrow"></i>
         </div>
       </div>

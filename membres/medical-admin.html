@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestion Enseignements Médicaux - Admin AMSTC</title>
 <meta name="robots" content="noindex">
@@ -35,19 +38,19 @@
 
   .wrap{max-width:980px;margin:0 auto;padding:0 24px 80px;}
   .page-header{padding:32px 0 20px;}
-  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
   .back:hover{opacity:0.75;}
-  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
 
   /* Tabs */
   .main-tabs{display:flex;gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:24px;}
-  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--white);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
+  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--surface);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
   .main-tab:last-child{border-right:none;}
   .main-tab.active{background:var(--blue-dark);color:var(--white);}
 
   /* Cat sub-tabs */
   .cat-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
-  .cat-tab{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
+  .cat-tab{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:#5A6C60;cursor:pointer;}
   .cat-tab.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue-dark);}
 
   /* Toolbar */
@@ -66,21 +69,21 @@
 
   /* Cards grid */
   .items-grid{display:flex;flex-direction:column;gap:10px;}
-  .item-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:flex-start;gap:14px;}
+  .item-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:flex-start;gap:14px;}
   .item-icon{width:42px;height:42px;border-radius:9px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--blue-dark);flex-shrink:0;}
   .item-body{flex:1;min-width:0;}
-  .item-title{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--green-deep);}
+  .item-title{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--text-heading);}
   .item-desc{font-size:0.82rem;color:#5A6C60;margin-top:2px;}
   .item-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
-  .badge-draft{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.04em;padding:2px 8px;border-radius:999px;background:#FEF6E4;color:var(--gold-deep);margin-left:6px;}
+  .badge-draft{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.04em;padding:2px 8px;border-radius:999px;background:#FEF6E4;color:var(--text-accent);margin-left:6px;}
   .badge-pub{background:#EAF3DE;color:#3B6D11;}
   .empty-msg{color:#5A6C60;font-family:var(--mono);font-size:0.82rem;padding:32px 0;text-align:center;}
 
   /* ===== MODAL ===== */
   .modal-bg{position:fixed;inset:0;background:rgba(6,28,14,0.55);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
   .modal-bg.hidden{display:none;}
-  .modal{background:var(--white);border-radius:var(--radius);padding:28px 28px 24px;width:100%;max-width:680px;position:relative;}
-  .modal-title{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--green-deep);margin-bottom:20px;}
+  .modal{background:var(--surface);border-radius:var(--radius);padding:28px 28px 24px;width:100%;max-width:680px;position:relative;}
+  .modal-title{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin-bottom:20px;}
   .modal-close{position:absolute;top:16px;right:16px;background:var(--paper);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#5A6C60;}
   .modal-close:hover{background:var(--paper-alt);}
 
@@ -101,7 +104,7 @@
 
   /* Quiz question editor */
   .qs-section{margin-top:20px;border-top:2px dashed var(--line);padding-top:18px;}
-  .qs-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:12px;}
+  .qs-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:12px;}
   .q-item{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;position:relative;}
   .q-item-num{font-family:var(--mono);font-size:0.65rem;color:#8A9E8F;margin-bottom:8px;}
   .q-row{display:flex;gap:8px;align-items:flex-start;}

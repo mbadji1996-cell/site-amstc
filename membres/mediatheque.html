@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Médiathèque - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -49,16 +52,16 @@
   .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
 
   .year-section{padding:28px 0 8px;}
-  .year-title{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--green-deep);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .year-title{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--text-heading);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
   .year-title::after{content:"";flex:1;height:1px;background:var(--line);}
 
   .folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding-bottom:20px;}
-  .folder-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:box-shadow .18s,transform .18s;}
+  .folder-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:box-shadow .18s,transform .18s;}
   .folder-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1);transform:translateY(-3px);}
   .folder-cover{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--rose-light);display:block;}
   .folder-cover-placeholder{width:100%;aspect-ratio:4/3;background:var(--rose-light);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--rose-dark);}
   .folder-body{padding:14px 16px;}
-  .folder-title{font-family:var(--display);font-size:0.97rem;font-weight:600;color:var(--green-deep);margin-bottom:4px;}
+  .folder-title{font-family:var(--display);font-size:0.97rem;font-weight:600;color:var(--text-heading);margin-bottom:4px;}
   .folder-meta{font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;}
 
   .empty{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:60px 0;text-align:center;}

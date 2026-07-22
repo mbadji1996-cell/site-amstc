@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sujet - Forum AMSTC</title>
 <meta name="robots" content="noindex">
@@ -31,18 +34,18 @@
   .logo-img{height:42px;}
   .signout-btn{
     font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;
-    color:var(--gold-deep);background:none;border:1.5px solid var(--line);border-radius:999px;
+    color:var(--text-accent);background:none;border:1.5px solid var(--line);border-radius:999px;
     padding:9px 18px;cursor:pointer;transition:border-color .18s ease;
   }
-  .signout-btn:hover{border-color:var(--gold-deep);}
+  .signout-btn:hover{border-color:var(--text-accent);}
 
   .wrap{max-width:720px;margin:0 auto;padding:0 28px;}
-  .back{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-block;margin:36px 0 20px;text-decoration:none;}
+  .back{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-block;margin:36px 0 20px;text-decoration:none;}
 
   .loading,.error{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:20px 0;}
 
-  .topic-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;margin-bottom:22px;}
-  .topic-title{font-family:var(--display);font-weight:600;color:var(--green-deep);font-size:1.5rem;margin-bottom:10px;}
+  .topic-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;margin-bottom:22px;}
+  .topic-title{font-family:var(--display);font-weight:600;color:var(--text-heading);font-size:1.5rem;margin-bottom:10px;}
   .post-meta{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:0.75rem;color:#8A9E8F;margin-bottom:16px;flex-wrap:wrap;}
   .post-meta strong{color:var(--violet-dark);}
   .post-body{color:#3C4E44;white-space:pre-wrap;word-break:break-word;}
@@ -51,15 +54,15 @@
   .link-btn:hover{color:var(--violet-dark);}
   .link-btn.danger:hover{color:#B23B3B;}
 
-  .replies-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin:28px 0 14px;}
-  .reply-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:12px;}
+  .replies-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin:28px 0 14px;}
+  .reply-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:12px;}
 
   textarea,input[type=text]{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);resize:vertical;}
   textarea:focus,input[type=text]:focus{outline:none;border-color:var(--violet);}
   textarea{min-height:90px;}
 
-  .reply-form-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:22px 0 60px;}
-  .reply-form-card label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:block;margin-bottom:8px;}
+  .reply-form-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:22px 0 60px;}
+  .reply-form-card label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:block;margin-bottom:8px;}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
   .btn-primary{background:var(--violet-dark);color:var(--white);}
   .btn-primary:hover{background:var(--violet-deeper);}

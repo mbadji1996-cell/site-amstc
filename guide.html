@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="assets/css/dark-mode.css">
+<script src="assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guide de navigation - AMSTC</title>
 <meta name="description" content="Guide de navigation du site amstc.org : site public, espace membres et outils d'administration.">
@@ -62,7 +65,7 @@
 
   .eyebrow{
     font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.14em;
-    color:var(--gold-deep); display:flex; align-items:center; gap:10px;
+    color:var(--text-accent); display:flex; align-items:center; gap:10px;
   }
   .eyebrow::before{content:""; width:20px; height:1px; background:var(--gold-deep); flex-shrink:0;}
 
@@ -131,8 +134,8 @@
     font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em;
     padding:3px 8px; border-radius:999px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;
   }
-  .badge.public{background:var(--paper-alt); color:var(--green-deep);}
-  .badge.member{background:rgba(248,183,24,0.16); color:var(--gold-deep);}
+  .badge.public{background:var(--paper-alt); color:var(--text-heading);}
+  .badge.member{background:rgba(248,183,24,0.16); color:var(--text-accent);}
   .badge.card{background:rgba(23,118,59,0.12); color:var(--green);}
   .badge.admin{background:var(--slate-bg); color:var(--slate);}
   .badge.locked{background:var(--lock-bg); color:var(--lock);}
@@ -181,7 +184,7 @@
   /* ===== Nav map (for header/footer inventories) ===== */
   .nav-map{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:16px 0 28px;}
   .nav-map-col{background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
-  .nav-map-col h4{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); margin-bottom:10px;}
+  .nav-map-col h4{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:10px;}
   .nav-map-col ul{list-style:none; display:flex; flex-direction:column; gap:6px;}
   .nav-map-col li{font-size:0.86rem; color:var(--ink-soft);}
   .nav-map-col li b{color:var(--ink); font-weight:600;}
@@ -201,7 +204,7 @@
   .faq-item:first-child{padding-top:0;}
   .faq-item:last-child{border-bottom:none;}
   .faq-q{font-family:var(--display); font-weight:600; font-size:0.95rem; margin-bottom:6px; display:flex; gap:8px;}
-  .faq-q .qmark{color:var(--gold-deep); flex-shrink:0;}
+  .faq-q .qmark{color:var(--text-accent); flex-shrink:0;}
   .faq-a{font-size:0.88rem; color:var(--ink-soft); padding-left:20px;}
   .faq-a a{font-weight:600;}
 

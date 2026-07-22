@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -30,7 +33,7 @@
   .header-inner{max-width:1100px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
   .logo-img{height:36px;filter:brightness(0) invert(1);}
   .header-right{display:flex;align-items:center;gap:14px;}
-  .avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--green-deep);cursor:default;flex-shrink:0;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-heading);cursor:default;flex-shrink:0;}
   .signout-btn{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.65);background:none;border:1px solid rgba(255,255,255,0.22);border-radius:999px;padding:7px 15px;cursor:pointer;transition:border-color .18s;}
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
 
@@ -50,31 +53,31 @@
 
   /* ---- MAIN LAYOUT ---- */
   .page-body{max-width:1100px;margin:0 auto;padding:28px 28px 60px;}
-  .section-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold-deep);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .section-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-accent);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
   .empty-note{color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:50px 0;text-align:center;}
 
-  .card-status-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
   .card-status-banner-text{font-size:0.87rem;color:#5A6C60;}
-  .card-status-banner-text strong{color:var(--green-deep);}
-  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
+  .card-status-banner-text strong{color:var(--text-heading);}
+  .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--text-heading);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
   /* Activité récente */
   .activity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:36px;}
-  .activity-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .18s;}
+  .activity-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .18s;}
   .activity-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(6,68,28,0.08);transform:translateY(-2px);}
-  .activity-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold-deep);flex-shrink:0;}
+  .activity-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-accent);flex-shrink:0;}
   .activity-body{min-width:0;}
-  .activity-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);margin-bottom:3px;}
-  .activity-title{font-size:0.86rem;font-weight:600;color:var(--green-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .activity-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:3px;}
+  .activity-title{font-size:0.86rem;font-weight:600;color:var(--text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .activity-date{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;margin-top:3px;}
 
   /* Admin */
-  .admin-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);transition:all .18s;}
+  .admin-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);transition:all .18s;}
   .admin-card:hover{border-color:var(--gold);background:var(--paper-alt);}
-  .admin-card-icon{width:32px;height:32px;border-radius:7px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--gold-deep);flex-shrink:0;}
-  .admin-card-label{font-size:0.82rem;font-weight:600;color:var(--green-deep);}
+  .admin-card-icon{width:32px;height:32px;border-radius:7px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-accent);flex-shrink:0;}
+  .admin-card-label{font-size:0.82rem;font-weight:600;color:var(--text-heading);}
   .admin-card-sub{font-size:0.72rem;color:#8A9E8F;}
 
   /* Loading */
@@ -135,7 +138,7 @@
     <div id="adminSection" style="display:none;margin-bottom:32px;">
       <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
       <a class="admin-card" href="admin.html" style="max-width:360px;">
-        <div class="admin-card-icon" style="background:rgba(248,183,24,0.15);color:var(--gold-deep);"><i class="ti ti-shield-lock"></i></div>
+        <div class="admin-card-icon" style="background:rgba(248,183,24,0.15);color:var(--text-accent);"><i class="ti ti-shield-lock"></i></div>
         <div>
           <p class="admin-card-label">Centre d'administration</p>
           <p class="admin-card-sub">Membres, contenus, boutique, adhésions…</p>

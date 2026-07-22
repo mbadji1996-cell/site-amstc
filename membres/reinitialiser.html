@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nouveau mot de passe - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -27,13 +30,13 @@
   header{padding:24px 0; border-bottom:1px solid var(--line);}
   .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
   .logo-img{height:42px;}
-  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-deep); display:inline-block; margin:40px 0 18px;}
-  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-deep); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:40px 0 18px;}
+  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
   .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
-  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
   .intro{color:#3C4E44; font-size:1rem; margin-bottom:32px;}
-  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
-  label{display:block; font-size:0.85rem; font-weight:600; color:var(--green-deep); margin-top:16px;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
+  label{display:block; font-size:0.85rem; font-weight:600; color:var(--text-heading); margin-top:16px;}
   label:first-child{margin-top:0;}
   input{
     width:100%; padding:12px 14px; margin-top:6px; border:1.5px solid var(--line); border-radius:10px;
@@ -43,13 +46,13 @@
   .btn{
     display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:600; font-size:0.95rem;
     padding:13px 24px; border-radius:999px; border:none; cursor:pointer; width:100%; margin-top:24px;
-    background:var(--gold); color:var(--green-deep); transition:background .18s ease;
+    background:var(--gold); color:var(--text-heading); transition:background .18s ease;
   }
   .btn:hover{background:var(--gold-deep); color:var(--white);}
   .btn:disabled{opacity:0.6; cursor:not-allowed;}
   .form-message{margin-top:18px; padding:12px 14px; border-radius:10px; font-size:0.9rem; display:none;}
   .form-message.error{background:#FDEEEE; color:#B23B3B; display:block;}
-  .form-message.success{background:var(--paper-alt); color:var(--green-deep); display:block;}
+  .form-message.success{background:var(--paper-alt); color:var(--text-heading); display:block;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>

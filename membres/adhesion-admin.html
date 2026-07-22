@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Validation Adhésions - Admin AMSTC</title>
 <meta name="robots" content="noindex">
@@ -30,29 +33,29 @@
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
   .wrap{max-width:1000px;margin:0 auto;padding:0 24px 60px;}
   .page-header{padding:32px 0 20px;}
-  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
   .back:hover{opacity:0.75;}
-  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--green-deep);}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
 
   /* Main tabs */
   .main-tabs{display:flex;gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:24px;}
-  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--white);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
+  .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--surface);color:#5A6C60;cursor:pointer;border:none;border-right:1px solid var(--line);}
   .main-tab:last-child{border-right:none;}
   .main-tab.active{background:var(--green-deep);color:var(--white);}
 
   /* Stats row */
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
-  .stat-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .stat-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
   .stat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;}
-  .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--green-deep);}
+  .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--text-heading);}
 
   /* Filters */
   .filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-  .filter-btn{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:#5A6C60;cursor:pointer;}
-  .filter-btn.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--white);}
+  .filter-btn{font-size:0.82rem;font-weight:600;padding:7px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:#5A6C60;cursor:pointer;}
+  .filter-btn.active{background:var(--green-deep);border-color:var(--text-heading);color:var(--white);}
 
   /* Table */
-  .table-wrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
   table{width:100%;border-collapse:collapse;}
   th{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 16px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
   td{padding:13px 16px;font-size:0.87rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
@@ -60,9 +63,9 @@
   tr:hover td{background:var(--paper);}
   .badge{font-family:var(--mono);font-size:0.63rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;}
   .s-confirmed{background:#EAF3DE;color:#3B6D11;}
-  .s-pending{background:#FEF6E4;color:var(--gold-deep);}
+  .s-pending{background:#FEF6E4;color:var(--text-accent);}
   .s-rejected{background:#FDEEEE;color:#B23B3B;}
-  .badge.new-applicant{background:#FEF6E4;color:var(--gold-deep);margin-left:6px;}
+  .badge.new-applicant{background:#FEF6E4;color:var(--text-accent);margin-left:6px;}
   .td-actions{display:flex;gap:6px;}
   .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
   .btn-confirm{background:#EAF3DE;color:#3B6D11;}
@@ -70,7 +73,7 @@
   .btn-reject{background:#FDEEEE;color:#B23B3B;}
   .btn-reject:hover{background:#f5c0c0;}
   .btn:disabled{opacity:0.4;cursor:not-allowed;}
-  .member-name{font-weight:600;color:var(--green-deep);}
+  .member-name{font-weight:600;color:var(--text-heading);}
   .member-email{font-size:0.78rem;color:#8A9E8F;}
   .ref-code{font-family:var(--mono);font-size:0.8rem;color:#5A6C60;}
   .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:32px;}

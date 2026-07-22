@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mon Profil & Adhésion - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -38,9 +41,9 @@
 
   .wrap{max-width:900px;margin:0 auto;padding:0 24px 60px;}
   .page-header{padding:28px 0 20px;}
-  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;}
   .back:hover{opacity:0.75;}
-  .page-title{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:600;color:var(--green-deep);}
+  .page-title{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:600;color:var(--text-heading);}
 
   /* ===== CARTE MEMBRE ===== */
   .member-card{
@@ -50,17 +53,17 @@
   }
   .mc-deco{position:absolute;border-radius:50%;opacity:0.07;}
   .mc-deco-1{width:220px;height:220px;background:var(--gold);top:-80px;right:-60px;}
-  .mc-deco-2{width:120px;height:120px;background:var(--white);bottom:-40px;left:-30px;}
+  .mc-deco-2{width:120px;height:120px;background:var(--surface);bottom:-40px;left:-30px;}
 
   .mc-top{display:grid;grid-template-columns:auto 1fr auto;align-items:center;margin-bottom:14px;gap:10px;}
   .mc-logo{height:36px;width:auto;filter:brightness(0) invert(1);flex-shrink:0;}
   .mc-title-label{font-family:var(--display);font-size:1.1rem;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.02em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mc-qr-wrap{background:var(--white);border-radius:8px;padding:5px;width:76px;height:76px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .mc-qr-wrap{background:var(--surface);border-radius:8px;padding:5px;width:76px;height:76px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
   #mcQr{width:100%;height:100%;}
 
   .mc-identity{display:flex;align-items:center;gap:16px;margin-bottom:16px;position:relative;}
   .mc-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(248,183,24,0.4);}
-  .mc-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--green-deep);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+  .mc-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--text-heading);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
   .mc-name{font-family:var(--display);font-size:1.2rem;font-weight:700;color:var(--gold);letter-spacing:0.01em;line-height:1.25;}
   .mc-domain{font-size:0.8rem;color:rgba(255,255,255,0.55);margin-top:2px;}
 
@@ -77,13 +80,13 @@
   .mc-status-pill.warn{background:rgba(178,59,59,0.2);color:#F58080;border:1px solid rgba(178,59,59,0.25);}
 
   /* ===== ACCORDIONS ===== */
-  .section-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:14px;overflow:hidden;}
+  .section-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:14px;overflow:hidden;}
   .accordion-header{width:100%;background:none;border:none;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left;transition:background .15s;}
   .accordion-header:hover{background:var(--paper-alt);}
   .accordion-left{display:flex;align-items:center;gap:12px;min-width:0;}
-  .accordion-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold-deep);flex-shrink:0;}
+  .accordion-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-accent);flex-shrink:0;}
   .accordion-text{min-width:0;}
-  .accordion-title{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);}
+  .accordion-title{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);}
   .accordion-subtitle{font-size:0.87rem;color:#5A6C60;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .accordion-chevron{font-size:18px;color:#8A9E8F;transition:transform .2s;flex-shrink:0;}
   .accordion-chevron.open{transform:rotate(180deg);}
@@ -122,27 +125,27 @@
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
   .btn-primary{background:var(--green);color:var(--white);}
   .btn-primary:hover:not(:disabled){background:var(--green-deep);}
-  .btn-gold{background:var(--gold);color:var(--green-deep);}
+  .btn-gold{background:var(--gold);color:var(--text-heading);}
   .btn-gold:hover:not(:disabled){background:var(--gold-deep);color:var(--white);}
   .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
   .btn-ghost:hover:not(:disabled){border-color:var(--green);}
   .btn:disabled{opacity:0.4;cursor:not-allowed;}
   .btn-row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;}
 
-  .claim-banner{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .claim-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .claim-banner-text{font-size:0.87rem;color:#5A6C60;}
-  .claim-banner-text strong{color:var(--green-deep);}
-  .claim-banner a.btn-claim-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
+  .claim-banner-text strong{color:var(--text-heading);}
+  .claim-banner a.btn-claim-link{background:var(--gold);color:var(--text-heading);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   .claim-banner a.btn-claim-link:hover{background:var(--gold-deep);color:var(--white);}
 
   /* Payment history */
   .pay-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--paper-alt);}
   .pay-row:last-child{border-bottom:none;}
-  .pay-year{font-family:var(--mono);font-size:0.9rem;font-weight:600;color:var(--green-deep);}
+  .pay-year{font-family:var(--mono);font-size:0.9rem;font-weight:600;color:var(--text-heading);}
   .pay-method{font-size:0.78rem;color:#5A6C60;margin-top:1px;}
   .pay-status{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;}
   .s-confirmed{background:#EAF3DE;color:#3B6D11;}
-  .s-pending{background:#FEF6E4;color:var(--gold-deep);}
+  .s-pending{background:#FEF6E4;color:var(--text-accent);}
   .s-rejected{background:#FDEEEE;color:#B23B3B;}
 
   /* Cotisations grid */
@@ -152,7 +155,7 @@
   .cotis-badge i{font-size:14px;}
   .cotis-badge .cotis-status{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.03em;}
 
-  .locked-msg{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
+  .locked-msg{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--text-accent);display:flex;align-items:flex-start;gap:10px;}
 
   .loading-msg{color:#5A6C60;font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
@@ -350,8 +353,8 @@
           </div>
         </div>
         <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
-          <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
-          Tarif : <strong style="color:var(--green-deep);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
+          <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
+          Tarif : <strong style="color:var(--text-heading);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
         </p>
         <div class="success-flash" id="validitySuccessFlash"><i class="ti ti-circle-check"></i> Payé</div>
         <div class="form-msg" id="validityMsg"></div>
@@ -407,8 +410,8 @@
             </div>
           </div>
           <p style="font-size:0.82rem;color:#5A6C60;margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
-            <i class="ti ti-info-circle" style="margin-right:4px;color:var(--gold-deep);"></i>
-            Tarif : <strong style="color:var(--green-deep);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
+            <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
+            Tarif : <strong style="color:var(--text-heading);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
           </p>
           <div class="success-flash" id="cotisSuccessFlash"><i class="ti ti-circle-check"></i> Payé</div>
           <div class="form-msg" id="cotisMsg"></div>

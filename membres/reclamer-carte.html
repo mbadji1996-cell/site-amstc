@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Réclamer ma carte de membre - AMSTC</title>
 <meta name="robots" content="noindex">
@@ -41,27 +44,27 @@
   .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
 
   /* States */
-  .state-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;margin:28px 0 60px;text-align:center;}
+  .state-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;margin:28px 0 60px;text-align:center;}
   .state-icon{font-size:34px;margin-bottom:14px;}
   .state-icon.ok{color:#3B6D11;}
-  .state-icon.pending{color:var(--gold-deep);}
-  .state-title{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--green-deep);margin-bottom:8px;}
+  .state-icon.pending{color:var(--text-accent);}
+  .state-title{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--text-heading);margin-bottom:8px;}
   .state-text{color:#5A6C60;font-size:0.92rem;max-width:480px;margin:0 auto;}
-  .state-number{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--green-deep);background:var(--paper-alt);padding:8px 16px;border-radius:999px;display:inline-block;margin-top:14px;}
+  .state-number{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--text-heading);background:var(--paper-alt);padding:8px 16px;border-radius:999px;display:inline-block;margin-top:14px;}
 
   /* Search + list */
   .search-wrap{padding:24px 0 16px;position:relative;}
-  .search-input{width:100%;padding:12px 44px 12px 16px;border:1.5px solid var(--line);border-radius:999px;font-family:var(--body);font-size:0.95rem;background:var(--white);color:var(--ink);}
+  .search-input{width:100%;padding:12px 44px 12px 16px;border:1.5px solid var(--line);border-radius:999px;font-family:var(--body);font-size:0.95rem;background:var(--surface);color:var(--ink);}
   .search-input:focus{outline:none;border-color:var(--gold);}
   .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:17px;color:#B0BFB5;}
 
   .cards-list{display:flex;flex-direction:column;gap:10px;padding-bottom:60px;}
-  .card-row{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-  .card-avatar{width:42px;height:42px;border-radius:50%;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;color:var(--gold-deep);flex-shrink:0;}
+  .card-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .card-avatar{width:42px;height:42px;border-radius:50%;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;color:var(--text-accent);flex-shrink:0;}
   .card-body{flex:1;min-width:180px;}
-  .card-name{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--green-deep);}
+  .card-name{font-family:var(--display);font-size:0.95rem;font-weight:600;color:var(--text-heading);}
   .card-meta{font-size:0.8rem;color:#8A9E8F;}
-  .btn-claim{background:var(--gold);color:var(--green-deep);border:none;padding:9px 18px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;flex-shrink:0;transition:background .18s;}
+  .btn-claim{background:var(--gold);color:var(--text-heading);border:none;padding:9px 18px;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;flex-shrink:0;transition:background .18s;}
   .btn-claim:hover{background:var(--gold-deep);color:var(--white);}
 
   /* Claim form (inline expand) */

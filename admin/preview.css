@@ -67,3 +67,20 @@ hr{
   border-top:1px solid #D8DED9;
   margin:2em 0;
 }
+
+/* L'aperçu s'affiche dans un cadre isolé (iframe) sans accès au réglage
+   manuel du site : il suit uniquement les préférences système de la
+   personne qui édite, en CSS pur (aucun script requis). */
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E8F1EC;
+    --green:#35B872;
+    --green-deep:#7FD9A0;
+    --gold:#F8B718;
+    --gold-deep:#F0C955;
+    --paper:#12190F;
+  }
+  blockquote{ background:#1B241A; }
+  hr{ border-top-color:#33403A; }
+  .btn, button{ color:#12190F; }
+}

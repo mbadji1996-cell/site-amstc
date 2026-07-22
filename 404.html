@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="assets/css/dark-mode.css">
+<script src="assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Page introuvable - AMSTC</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -24,8 +27,8 @@
   }
   .box{max-width:480px;}
   img{height:56px; margin:0 auto 28px;}
-  .code{font-family:var(--mono); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:14px;}
-  h1{font-family:var(--display); font-weight:600; color:var(--green-deep); font-size:1.7rem; margin-bottom:14px;}
+  .code{font-family:var(--mono); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-accent); margin-bottom:14px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1.7rem; margin-bottom:14px;}
   p{color:#465A4E; margin-bottom:28px; font-size:1rem;}
   a.btn{
     display:inline-flex; font-weight:600; font-size:0.95rem; padding:13px 26px; border-radius:999px;
