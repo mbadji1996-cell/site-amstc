@@ -1,0 +1,14 @@
+{
+  "prayer_eyebrow": "Vie spirituelle",
+  "prayer_title": "Heures de prière",
+  "prayer_period_hijri": "",
+  "prayer_period_gregorian": "",
+  "prayer_times": [
+    { "label": "Fadjar", "time": "" },
+    { "label": "Souba", "time": "" },
+    { "label": "Tisbar", "time": "" },
+    { "label": "Takussan", "time": "" },
+    { "label": "Timis", "time": "" },
+    { "label": "Guéwé", "time": "" }
+  ]
+}

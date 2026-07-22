@@ -272,6 +272,23 @@ collections:
                 widget: "list"
                 field: { label: "Photo", name: "image", widget: "image" }
 
+      - name: "prieres"
+        label: "10. Heures de prière"
+        file: "content/home-prieres.json"
+        fields:
+          - { label: "Accroche", name: "prayer_eyebrow", widget: "string", default: "Vie spirituelle" }
+          - { label: "Titre de la section", name: "prayer_title", widget: "string", default: "Heures de prière" }
+          - { label: "Période (date hijri)", name: "prayer_period_hijri", widget: "string", required: false, hint: "Ex : Du 02 au 08 Safar 1448H" }
+          - { label: "Période (date grégorienne)", name: "prayer_period_gregorian", widget: "string", required: false, hint: "Ex : Du vendredi 17 au jeudi 23 juillet 2026" }
+          - label: "Heures de la semaine"
+            name: "prayer_times"
+            widget: "list"
+            summary: "{{fields.label}} — {{fields.time}}"
+            hint: "À mettre à jour chaque semaine. L'ordre ici définit l'ordre d'affichage."
+            fields:
+              - { label: "Nom de la prière", name: "label", widget: "string" }
+              - { label: "Heure", name: "time", widget: "string", hint: "Ex : 05H35" }
+
       - name: "don"
         label: "Faire un don (page dédiée don.html)"
         file: "content/don.json"

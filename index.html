@@ -26,7 +26,7 @@
 <link rel="apple-touch-icon" href="assets/favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: light;
@@ -446,6 +446,27 @@
   @keyframes media-scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
   @media (max-width:600px){ .media-item{width:220px;} }
   @media (prefers-reduced-motion: reduce){ .media-track{animation:none;} }
+
+  /* ===== Vie spirituelle : heures de prière, verset et hadith ===== */
+  .spirit-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; align-items:stretch;}
+  .prayer-card, .spirit-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px; display:flex; flex-direction:column;
+  }
+  .prayer-period{font-family:var(--mono); font-size:0.76rem; color:var(--text-muted); text-align:center; margin-bottom:18px; text-transform:uppercase; letter-spacing:0.04em;}
+  .prayer-list{display:flex; flex-direction:column;}
+  .prayer-row{display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--line);}
+  .prayer-row:last-child{border-bottom:none;}
+  .prayer-row-label{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.98rem;}
+  .prayer-row-time{font-family:var(--mono); font-weight:700; color:var(--green); font-size:1rem;}
+  .prayer-empty{color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px 0;}
+
+  .spirit-card-label{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-accent); margin-bottom:16px;}
+  .spirit-arabic{font-family:'Amiri', serif; font-size:1.5rem; line-height:2.1; color:var(--text-heading); margin-bottom:16px; text-align:right;}
+  .spirit-french{font-size:0.94rem; color:var(--ink); line-height:1.7; flex:1;}
+  .spirit-ref{font-family:var(--mono); font-size:0.76rem; color:var(--text-muted); margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
+
+  @media (max-width:900px){ .spirit-grid{grid-template-columns:1fr;} }
 </style>
 <script type="application/ld+json">
 {
@@ -708,6 +729,33 @@
       <div class="media-years reveal" id="cms-media-tabs"></div>
       <div class="media-carousel reveal">
         <div class="media-track" id="cms-media-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VIE SPIRITUELLE : heures de prière, verset et hadith ===== -->
+  <section id="vie-spirituelle">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow" id="cms-prayer-eyebrow">Vie spirituelle</p>
+        <h2 id="cms-prayer-title">Heures de prière</h2>
+      </div>
+      <div class="spirit-grid">
+        <div class="prayer-card reveal">
+          <p class="prayer-period" id="cms-prayer-period"></p>
+          <div class="prayer-list" id="cms-prayer-list"></div>
+        </div>
+        <div class="spirit-card reveal">
+          <p class="spirit-card-label">Verset de la semaine</p>
+          <p class="spirit-arabic" id="verseArabic" dir="rtl" lang="ar"></p>
+          <p class="spirit-french" id="verseFrench">Chargement…</p>
+          <p class="spirit-ref" id="verseRef"></p>
+        </div>
+        <div class="spirit-card reveal">
+          <p class="spirit-card-label">Hadith de la semaine</p>
+          <p class="spirit-french" id="hadithFrench">Chargement…</p>
+          <p class="spirit-ref" id="hadithRef"></p>
+        </div>
       </div>
     </div>
   </section>
@@ -1167,7 +1215,8 @@
     "content/home-sections-libres.json",
     "content/home-actualites.json",
     "content/navigation.json",
-    "content/mediatheque.json"
+    "content/mediatheque.json",
+    "content/home-prieres.json"
   ];
   Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
     .then(parts => {
@@ -1318,10 +1367,118 @@
     if (data.media_subtitle) document.getElementById('cms-media-subtitle').textContent = data.media_subtitle;
     renderMediaYears(data.media_years);
 
+    // Heures de prière
+    if (data.prayer_eyebrow) document.getElementById('cms-prayer-eyebrow').textContent = data.prayer_eyebrow;
+    if (data.prayer_title) document.getElementById('cms-prayer-title').textContent = data.prayer_title;
+    renderPrayerTimes(data);
+
     initHeroSlideshow(data.hero_slideshow);
     revealPage();
     initScrollReveal();
   }).catch(() => { initHeroSlideshow(); revealPage(); initScrollReveal(); });
+
+  // ===== Heures de prière (gérées via le CMS) =====
+  function renderPrayerTimes(data){
+    const periodEl = document.getElementById('cms-prayer-period');
+    const listEl = document.getElementById('cms-prayer-list');
+    if (!periodEl || !listEl) return;
+
+    const period = [data.prayer_period_hijri, data.prayer_period_gregorian].filter(Boolean).join(' · ');
+    periodEl.textContent = period;
+
+    const times = Array.isArray(data.prayer_times) ? data.prayer_times.filter(t => t && t.label && t.time) : [];
+    if (times.length === 0) {
+      listEl.innerHTML = '<p class="prayer-empty">Horaires à venir.</p>';
+      return;
+    }
+    listEl.innerHTML = times.map(t => `
+      <div class="prayer-row">
+        <span class="prayer-row-label">${esc(t.label)}</span>
+        <span class="prayer-row-time">${esc(t.time)}</span>
+      </div>
+    `).join('');
+  }
+
+  // ===== Verset et Hadith de la semaine (automatique, aucune intervention manuelle possible) =====
+  // Un numéro de semaine continu (depuis une date de référence fixe) détermine
+  // mathématiquement le verset et le hadith affichés : ni le site, ni un
+  // administrateur, ne peuvent le forcer manuellement.
+  (function loadVerseAndHadithOfWeek(){
+    const WEEK_EPOCH = Date.parse('2026-01-05T00:00:00Z');
+    const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const weekIndex = Math.floor((Date.now() - WEEK_EPOCH) / WEEK_MS);
+
+    const FRENCH_SURAH_NAMES = [
+      "Al-Fatiha (l'Ouverture)","Al-Baqara (la Vache)","Ali 'Imran (la Famille d'Imran)","An-Nisa (les Femmes)",
+      "Al-Ma'ida (la Table servie)","Al-An'am (les Bestiaux)","Al-A'raf (les Murailles)","Al-Anfal (le Butin)",
+      "At-Tawba (le Repentir)","Yunus (Jonas)","Hud (Hud)","Yusuf (Joseph)","Ar-Ra'd (le Tonnerre)",
+      "Ibrahim (Abraham)","Al-Hijr (Al-Hijr)","An-Nahl (les Abeilles)","Al-Isra (le Voyage nocturne)",
+      "Al-Kahf (la Caverne)","Maryam (Marie)","Ta-Ha (Ta-Ha)","Al-Anbiya (les Prophètes)","Al-Hajj (le Pèlerinage)",
+      "Al-Mu'minun (les Croyants)","An-Nur (la Lumière)","Al-Furqan (le Discernement)","Ash-Shu'ara (les Poètes)",
+      "An-Naml (les Fourmis)","Al-Qasas (le Récit)","Al-Ankabut (l'Araignée)","Ar-Rum (les Romains)",
+      "Luqman (Luqman)","As-Sajda (la Prosternation)","Al-Ahzab (les Coalisés)","Saba (Saba)","Fatir (le Créateur)",
+      "Ya-Sin (Ya-Sin)","As-Saffat (les Rangés)","Sad (Sad)","Az-Zumar (les Groupes)","Ghafir (le Pardonneur)",
+      "Fussilat (les Versets détaillés)","Ash-Shura (la Concertation)","Az-Zukhruf (l'Ornement)","Ad-Dukhan (la Fumée)",
+      "Al-Jathiya (l'Agenouillée)","Al-Ahqaf (les Dunes)","Muhammad (Muhammad)","Al-Fath (la Victoire éclatante)",
+      "Al-Hujurat (les Appartements)","Qaf (Qaf)","Adh-Dhariyat (les Vents qui éparpillent)","At-Tur (la Montagne)",
+      "An-Najm (l'Étoile)","Al-Qamar (la Lune)","Ar-Rahman (le Tout Miséricordieux)","Al-Waqi'a (l'Événement)",
+      "Al-Hadid (le Fer)","Al-Mujadila (la Discussion)","Al-Hashr (l'Exode)","Al-Mumtahana (l'Éprouvée)",
+      "As-Saff (le Rang)","Al-Jumu'a (le Vendredi)","Al-Munafiqun (les Hypocrites)","At-Taghabun (la Grande Perte)",
+      "At-Talaq (le Divorce)","At-Tahrim (l'Interdiction)","Al-Mulk (la Royauté)","Al-Qalam (la Plume)",
+      "Al-Haqqa (l'Inéluctable)","Al-Ma'arij (les Voies d'ascension)","Nuh (Noé)","Al-Jinn (les Djinns)",
+      "Al-Muzzammil (l'Enveloppé)","Al-Muddaththir (le Revêtu d'un manteau)","Al-Qiyama (la Résurrection)",
+      "Al-Insan (l'Homme)","Al-Mursalat (les Envoyés)","An-Naba (la Nouvelle)","An-Nazi'at (les Anges qui arrachent)",
+      "Abasa (Il s'est renfrogné)","At-Takwir (l'Obscurcissement)","Al-Infitar (la Rupture)","Al-Mutaffifin (les Fraudeurs)",
+      "Al-Inshiqaq (la Déchirure)","Al-Buruj (les Constellations)","At-Tariq (l'Astre nocturne)","Al-A'la (le Très-Haut)",
+      "Al-Ghashiya (l'Enveloppante)","Al-Fajr (l'Aube)","Al-Balad (la Cité)","Ash-Shams (le Soleil)","Al-Layl (la Nuit)",
+      "Ad-Duha (le Jour montant)","Ash-Sharh (l'Ouverture)","At-Tin (le Figuier)","Al-Alaq (l'Adhérence)",
+      "Al-Qadr (la Destinée)","Al-Bayyina (la Preuve)","Az-Zalzala (la Secousse)","Al-Adiyat (les Coursiers)",
+      "Al-Qari'a (le Fracas)","At-Takathur (la Course aux richesses)","Al-Asr (le Temps)","Al-Humaza (les Calomniateurs)",
+      "Al-Fil (l'Éléphant)","Quraysh (les Quraysh)","Al-Ma'un (l'Ustensile)","Al-Kawthar (l'Abondance)",
+      "Al-Kafirun (les Infidèles)","An-Nasr (le Secours)","Al-Masad (les Fibres)","Al-Ikhlas (le Monothéisme pur)",
+      "Al-Falaq (l'Aube naissante)","An-Nas (les Hommes)"
+    ];
+
+    const ayahNumber = (Math.abs(weekIndex) % 6236) + 1;
+    fetch(`https://api.alquran.cloud/v1/ayah/${ayahNumber}/editions/quran-uthmani,fr.hamidullah`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(json => {
+        const [arabic, french] = json.data;
+        const surahName = FRENCH_SURAH_NAMES[arabic.surah.number - 1] || arabic.surah.englishName;
+        document.getElementById('verseArabic').textContent = arabic.text;
+        document.getElementById('verseFrench').textContent = french.text;
+        document.getElementById('verseRef').textContent = `Sourate ${arabic.surah.number} - ${surahName} - Verset ${arabic.numberInSurah}`;
+      })
+      .catch(() => {
+        document.getElementById('verseFrench').textContent = 'Le verset de la semaine est momentanément indisponible.';
+      });
+
+    const HADITH_COLLECTIONS = [
+      { edition: 'fra-bukhari', name: 'Sahih al-Bukhari' },
+      { edition: 'fra-muslim', name: 'Sahih Muslim' },
+      { edition: 'fra-abudawud', name: 'Sunan Abu Dawud' },
+      { edition: 'fra-tirmidhi', name: 'Jami At-Tirmidhi' },
+      { edition: 'fra-ibnmajah', name: 'Sunan Ibn Majah' },
+      { edition: 'fra-nasai', name: 'Sunan an-Nasai' }
+    ];
+    const collection = HADITH_COLLECTIONS[Math.abs(weekIndex) % HADITH_COLLECTIONS.length];
+    const hadithNumber = (Math.abs(weekIndex) % 900) + 1;
+
+    function fetchHadith(number){
+      return fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/${collection.edition}/${number}.min.json`)
+        .then(r => r.ok ? r.json() : Promise.reject());
+    }
+    fetchHadith(hadithNumber)
+      .catch(() => fetchHadith(1))
+      .then(json => {
+        const hadith = json.hadiths[0];
+        document.getElementById('hadithFrench').textContent = hadith.text;
+        document.getElementById('hadithRef').textContent = `${collection.name} - Hadith n°${hadith.hadithnumber}`;
+      })
+      .catch(() => {
+        document.getElementById('hadithFrench').textContent = 'Le hadith de la semaine est momentanément indisponible.';
+      });
+  })();
 
   // Charge les 3 dernières actualités
   async function loadLatestActus() {
