@@ -12,7 +12,7 @@ logo_url: /assets/logo-horizontal-sm.png
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
 
-publish_mode: simple
+publish_mode: editorial_workflow
 locale: 'fr'
 
 collections:
