@@ -14,6 +14,7 @@
     { "label": "Nos actions", "href": "#nos-actions" },
     { "label": "Historique", "href": "#historique" },
     { "label": "Réalisations", "href": "actualites.html" },
+    { "label": "Bilans annuels", "href": "rapports/index.html" },
     { "label": "Formation", "href": "formations.html" },
     { "label": "Projets", "href": "projets.html" },
     { "label": "Faire un don", "href": "don.html" },
