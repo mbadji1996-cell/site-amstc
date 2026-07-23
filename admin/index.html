@@ -23,7 +23,12 @@
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <!-- Version épinglée volontairement (pas de "^") : decap-cms@3.15.0, publiée le
+       23/07/2026, provoque un plantage (React error #130) à l'enregistrement de
+       plusieurs fiches (Témoignages, Heures de prière). 3.14.1 est la dernière
+       version stable confirmée avant cette régression - ne pas repasser à une
+       plage flottante sans re-tester d'abord une publication réelle. -->
+  <script src="https://unpkg.com/decap-cms@3.14.1/dist/decap-cms.js"></script>
   <script>
     CMS.registerPreviewStyle('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
     CMS.registerPreviewStyle('/admin/preview.css');
