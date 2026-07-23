@@ -385,7 +385,9 @@
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
     padding:44px 40px; display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;
     animation:temoignageZoomIn .4s ease;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   }
+  .temoignage-card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10); border-color:var(--green);}
   @keyframes temoignageZoomIn{ from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
   .temoignage-quote-mark{position:absolute; top:18px; left:26px; font-family:var(--display); font-size:3.4rem; line-height:1; color:var(--gold); opacity:0.35;}
   .temoignage-text{font-size:1.05rem; font-style:italic; color:var(--ink); line-height:1.75; margin-bottom:24px; max-width:520px;}
@@ -1580,17 +1582,39 @@
   let temoignagesList = [];
   let temoignageIndex = 0;
   let temoignageAutoplayTimer = null;
-  const TEMOIGNAGE_DELAY = 6000;
   const temoignageReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Temps de lecture proportionnel à la longueur du texte (~18 caractères/
+  // seconde, une vitesse de lecture confortable), avec une marge fixe pour
+  // le temps de regarder la photo/le nom, et des bornes min/max raisonnables.
+  function temoignageReadDelay(quote){
+    const len = (quote || '').length;
+    return Math.min(15000, Math.max(5000, 2200 + (len / 18) * 1000));
+  }
 
   function startTemoignageAutoplay(){
     stopTemoignageAutoplay();
     if (temoignageReduceMotion || temoignagesList.length <= 1) return;
-    temoignageAutoplayTimer = setInterval(() => goToTemoignage(temoignageIndex + 1), TEMOIGNAGE_DELAY);
+    const current = temoignagesList[temoignageIndex];
+    const delay = temoignageReadDelay(current && current.quote);
+    temoignageAutoplayTimer = setTimeout(() => {
+      // Vérifie l'état :hover directement plutôt que de compter sur un
+      // événement mouseenter : si la page défile sous un curseur déjà
+      // immobile, aucun mouseenter ne se déclenche, donc s'appuyer
+      // uniquement sur cet événement raterait ce cas. Idem au clavier
+      // (focus-within couvre les flèches prev/next).
+      const carousel = document.querySelector('.temoignage-carousel');
+      if (carousel && (carousel.matches(':hover') || carousel.matches(':focus-within'))) {
+        temoignageAutoplayTimer = null;
+        startTemoignageAutoplay();
+        return;
+      }
+      goToTemoignage(temoignageIndex + 1);
+    }, delay);
   }
 
   function stopTemoignageAutoplay(){
-    if (temoignageAutoplayTimer) { clearInterval(temoignageAutoplayTimer); temoignageAutoplayTimer = null; }
+    if (temoignageAutoplayTimer) { clearTimeout(temoignageAutoplayTimer); temoignageAutoplayTimer = null; }
   }
 
   function renderTemoignages(data){
