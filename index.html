@@ -1579,6 +1579,19 @@
   // ===== Témoignages (carrousel) =====
   let temoignagesList = [];
   let temoignageIndex = 0;
+  let temoignageAutoplayTimer = null;
+  const TEMOIGNAGE_DELAY = 6000;
+  const temoignageReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function startTemoignageAutoplay(){
+    stopTemoignageAutoplay();
+    if (temoignageReduceMotion || temoignagesList.length <= 1) return;
+    temoignageAutoplayTimer = setInterval(() => goToTemoignage(temoignageIndex + 1), TEMOIGNAGE_DELAY);
+  }
+
+  function stopTemoignageAutoplay(){
+    if (temoignageAutoplayTimer) { clearInterval(temoignageAutoplayTimer); temoignageAutoplayTimer = null; }
+  }
 
   function renderTemoignages(data){
     const section = document.getElementById('temoignages');
@@ -1600,6 +1613,16 @@
     temoignageIndex = 0;
     renderTemoignageSlide();
     renderTemoignageDots();
+    startTemoignageAutoplay();
+
+    const carousel = document.querySelector('.temoignage-carousel');
+    if (carousel && !carousel.dataset.hoverBound) {
+      carousel.dataset.hoverBound = '1';
+      carousel.addEventListener('mouseenter', stopTemoignageAutoplay);
+      carousel.addEventListener('mouseleave', startTemoignageAutoplay);
+      carousel.addEventListener('focusin', stopTemoignageAutoplay);
+      carousel.addEventListener('focusout', startTemoignageAutoplay);
+    }
   }
 
   function renderTemoignageSlide(){
@@ -1636,6 +1659,7 @@
     temoignageIndex = (newIndex + temoignagesList.length) % temoignagesList.length;
     renderTemoignageSlide();
     renderTemoignageDots();
+    startTemoignageAutoplay();
   }
 
   document.getElementById('tcPrev')?.addEventListener('click', () => goToTemoignage(temoignageIndex - 1));
