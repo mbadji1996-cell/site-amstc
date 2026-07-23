@@ -158,3 +158,69 @@ fs.mkdirSync(outDir, { recursive: true });
 const outFile = path.join(outDir, `${year}.html`);
 fs.writeFileSync(outFile, html);
 console.log(`rapports/${year}.html généré avec ${yearItems.length} réalisation(s).`);
+
+// ===== Reconstruit rapports/index.html (liste toujours à jour des bilans
+// déjà générés, sans avoir à maintenir de liens à la main ailleurs) =====
+const years = fs.readdirSync(outDir)
+  .filter(f => /^\d{4}\.html$/.test(f))
+  .map(f => f.replace('.html', ''))
+  .sort((a, b) => b - a);
+
+const indexHtml = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilans annuels - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 28px;}
+  header{background:var(--green-deep);padding:36px 0;margin-bottom:36px;}
+  .report-logo{height:44px;filter:brightness(0) invert(1);margin-bottom:18px;}
+  header .eyebrow{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:8px;}
+  header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4vw,2.1rem);color:var(--white);}
+  .back{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-block;margin-bottom:20px;}
+  .year-list{display:flex;flex-direction:column;gap:12px;padding-bottom:60px;}
+  .year-card{
+    display:flex;align-items:center;justify-content:space-between;background:var(--white);
+    border:1px solid var(--line);border-radius:12px;padding:18px 22px;font-family:var(--display);
+    font-weight:600;font-size:1.1rem;color:var(--green-deep);transition:box-shadow .18s,transform .18s;
+  }
+  .year-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.08);transform:translateY(-2px);}
+  .year-card span{font-family:var(--mono);font-weight:400;font-size:0.85rem;color:var(--gold-deep);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img src="../assets/logo-horizontal.png" alt="AMSTC" class="report-logo">
+    <p class="eyebrow">Rapports</p>
+    <h1>Bilans annuels</h1>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="../actualites.html">← Retour aux réalisations</a>
+  <div class="year-list">
+${years.map(y => `    <a class="year-card" href="${y}.html">Bilan ${y} <span>Voir →</span></a>`).join('\n')}
+  </div>
+</div>
+
+</body>
+</html>
+`;
+
+fs.writeFileSync(path.join(outDir, 'index.html'), indexHtml);
+console.log(`rapports/index.html mis à jour (${years.length} bilan(s) : ${years.join(', ')}).`);
