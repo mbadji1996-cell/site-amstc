@@ -12,7 +12,12 @@
 -- query > coller > Run (après phase28-annuaire-membres.sql).
 -- ============================================================
 
-create or replace function public.member_directory(p_limit int default 300)
+-- PostgreSQL n'autorise pas CREATE OR REPLACE pour changer les colonnes
+-- d'une fonction RETURNS TABLE existante (même en ajoutant une colonne à
+-- la fin) : il faut d'abord la supprimer.
+drop function if exists public.member_directory(int);
+
+create function public.member_directory(p_limit int default 300)
 returns table (
   id            uuid,
   title         text,
