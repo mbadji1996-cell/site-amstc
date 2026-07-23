@@ -2,7 +2,9 @@
   "nav_decouvrir": [
     { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
     { "label": "Nos actions", "href": "#nos-actions" },
-    { "label": "Historique", "href": "#historique" }
+    { "label": "Historique", "href": "#historique" },
+    { "label": "Médiathèque", "href": "#mediatheque" },
+    { "label": "Vie spirituelle", "href": "#vie-spirituelle" }
   ],
   "nav_activites": [
     { "label": "Réalisations", "href": "actualites.html" },
@@ -14,6 +16,8 @@
     { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
     { "label": "Nos actions", "href": "#nos-actions" },
     { "label": "Historique", "href": "#historique" },
+    { "label": "Médiathèque", "href": "#mediatheque" },
+    { "label": "Vie spirituelle", "href": "#vie-spirituelle" },
     { "label": "Réalisations", "href": "actualites.html" },
     { "label": "Formation", "href": "formations.html" },
     { "label": "Projets", "href": "projets.html" },
