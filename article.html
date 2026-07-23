@@ -94,6 +94,31 @@
     return m ? m[1] : null;
   }
 
+  function injectArticleSchema(data, section) {
+    if (!data.title) return;
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": data.title,
+      "description": data.excerpt || undefined,
+      "datePublished": data.date || undefined,
+      "image": data.image ? [new URL(data.image, window.location.origin).href] : undefined,
+      "articleSection": section,
+      "url": window.location.href,
+      "author": { "@type": "Organization", "name": "AMSTC" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AMSTC - Association Médico-Sociale des Talibés Cheikh",
+        "logo": { "@type": "ImageObject", "url": "https://amstc.org/assets/logo-mark-sm.png" }
+      },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": window.location.href }
+    };
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+  }
+
   async function loadArticle() {
     const slug = new URLSearchParams(window.location.search).get("slug");
     const content = document.getElementById("content");
@@ -110,6 +135,7 @@
       if (data.excerpt) {
         document.getElementById('og-desc').setAttribute('content', data.excerpt);
       }
+      injectArticleSchema(data, "Réalisations");
       const ytId = youtubeEmbedId(data.video_youtube);
       content.innerHTML = `
         <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
