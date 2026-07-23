@@ -114,3 +114,8 @@ as $$
 $$;
 
 revoke all on function public.whatsapp_target_members(text) from public, anon, authenticated;
+
+-- Octroi explicite à service_role : REVOKE ALL FROM PUBLIC ne garantit pas
+-- que service_role garde l'exécution par défaut selon la configuration du
+-- projet - on le rend explicite pour ne dépendre d'aucune supposition.
+grant execute on function public.whatsapp_target_members(text) to service_role;
