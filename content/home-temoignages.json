@@ -2,5 +2,12 @@
   "temoignages_eyebrow": "Témoignages",
   "temoignages_title": "Ce qu'ils en disent",
   "temoignages_subtitle": "",
-  "temoignages_list": []
+  "temoignages_list": [
+    {
+      "quote": "Quand on travaille pour Dieu, il faut savoir mettre ses intérêts personnels de côté et œuvrer pour le bien collectif.",
+      "author_name": "Mouhamed BADJI",
+      "author_role": "Coordinateur du Comité des Sages",
+      "author_type": "membre"
+    }
+  ]
 }
