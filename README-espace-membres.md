@@ -521,6 +521,71 @@ supplémentaire ni changement du plafond/limite de fréquence.
 2. **Testez** `membres/annuaire.html` : chaque fiche membre doit afficher
    un lien WhatsApp cliquable vers son numéro.
 
+## 4undevicies. Diffusion WhatsApp aux membres
+
+Un admin peut envoyer une alerte WhatsApp (ex : nouvelle campagne de
+consultations) à tous les membres approuvés ayant renseigné un numéro de
+téléphone (`membres/whatsapp-admin.html`), en un clic depuis le Centre
+d'administration. Comme pour la Phase 4quaterdecies (e-mail), ceci
+introduit une nouvelle fonction Edge et nécessite un compte chez un
+service tiers - ici la **Meta Cloud API** (WhatsApp Business Platform),
+gratuite avec un quota généreux.
+
+**Point important à comprendre avant de commencer** : une entreprise ne
+peut PAS envoyer de message WhatsApp libre à quelqu'un qui ne lui a pas
+écrit dans les 24h précédentes - il faut obligatoirement passer par un
+**modèle de message ("template") pré-approuvé par WhatsApp**, avec une
+variable pour le texte de l'annonce. La validation d'un modèle par Meta
+prend généralement de quelques minutes à quelques heures.
+
+1. **Créer un compte Meta for Developers** sur
+   [developers.facebook.com](https://developers.facebook.com), créer une
+   "Business App", puis ajouter le produit **WhatsApp** à l'app.
+2. Dans la configuration WhatsApp de l'app, notez le **Numéro de
+   téléphone de test** (ou ajoutez/vérifiez votre propre numéro
+   professionnel) : vous obtenez un **Phone Number ID**.
+3. Générez un **jeton d'accès permanent** (Meta Business Manager → System
+   Users → créer un utilisateur système → générer un token avec la
+   permission `whatsapp_business_messaging`). Le jeton temporaire fourni
+   par défaut expire en 24h - utilisez un jeton permanent pour que la
+   diffusion continue de fonctionner sans y retoucher chaque jour.
+4. Dans **WhatsApp Manager → Message Templates**, créez un modèle :
+   - Nom : `nouvelle_annonce` (ou autre - à reporter dans le secret
+     `META_TEMPLATE_NAME` si différent)
+   - Catégorie : "Utility" ou "Marketing" selon le contenu habituel de vos
+     annonces
+   - Langue : Français
+   - Corps du message avec une variable, par exemple :
+     `Bonjour, {{1}}` (le `{{1}}` sera remplacé par le texte tapé dans
+     `membres/whatsapp-admin.html` à chaque envoi)
+   - Soumettez pour validation et attendez le statut "Approuvé".
+5. **Déployer la fonction Edge** : Dashboard Supabase → **Edge Functions**
+   → "Deploy a new function" → "Via Editor" → nommez-la exactement
+   `notify-members-whatsapp` → collez le contenu de
+   `supabase/functions/notify-members-whatsapp/index.ts` → **Deploy**.
+   Contrairement à `notify-admin`, **laissez le bouton "Verify JWT"
+   activé** : cette fonction est appelée directement depuis le navigateur
+   avec la session de l'admin connecté, pas depuis un trigger SQL.
+6. Dans **Project Settings → Edge Functions → Secrets**, ajoutez :
+   - `META_WHATSAPP_TOKEN` - le jeton permanent de l'étape 3
+   - `META_PHONE_NUMBER_ID` - l'identifiant de l'étape 2
+   - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
+   - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
+7. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
+   `supabase/phase30-whatsapp-broadcasts.sql`, cliquez **Run**.
+8. **Testez** depuis `membres/whatsapp-admin.html` (Centre
+   d'administration → carte "Diffusion WhatsApp") : le nombre de
+   destinataires affiché doit correspondre aux membres approuvés ayant un
+   téléphone, et l'historique en bas de page doit se remplir après envoi.
+   En cas d'échec : Edge Functions → `notify-members-whatsapp` → **Logs**,
+   et le détail des échecs individuels s'affiche aussi directement dans
+   la page après l'envoi.
+
+Comme pour les notifications e-mail, un échec d'envoi à un membre
+n'empêche jamais l'envoi aux autres - chaque échec est simplement listé
+séparément, et le nombre de succès est journalisé dans
+`whatsapp_broadcasts` pour garder une trace de chaque diffusion.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diffusion WhatsApp - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1000px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:800px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+
+  .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+
+  .compose-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:36px;}
+  .recipients-hint{font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:12px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;}
+  .recipients-hint strong{font-family:var(--mono);color:var(--text-heading);}
+  textarea{width:100%;min-height:140px;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--green);}
+  .char-count{font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;text-align:right;margin-top:6px;}
+  .char-count.over{color:#B23B3B;}
+  .compose-actions{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap;}
+  .btn-primary{background:var(--green);color:var(--white);border:none;padding:11px 22px;border-radius:999px;font-size:0.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+  .btn-primary:hover{background:var(--green-deep);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .send-msg{font-size:0.85rem;}
+  .send-msg.error{color:#B23B3B;}
+  .send-msg.ok{color:#3B6D11;}
+  .send-result{margin-top:14px;background:var(--paper-alt);border-radius:8px;padding:14px 16px;font-size:0.85rem;}
+  .send-result ul{margin:8px 0 0 18px;color:#B23B3B;}
+
+  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:36px;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:12px 14px;font-size:0.86rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--paper);}
+  .msg-cell{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .meta-cell{font-size:0.78rem;color:#8A9E8F;}
+  .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:28px;}
+
+  .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  .setup-note{background:#FEF6E4;border:1.5px dashed rgba(170,123,17,0.35);border-radius:var(--radius);padding:18px 20px;font-size:0.85rem;color:#6A6050;margin-bottom:36px;display:flex;gap:12px;align-items:flex-start;}
+  .setup-note i{color:var(--gold-deep);font-size:20px;flex-shrink:0;margin-top:1px;}
+  .setup-note code{font-family:var(--mono);font-size:0.8rem;color:var(--gold-deep);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <div class="page-header">
+    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <h1 class="page-title">Diffusion WhatsApp</h1>
+    <p class="page-sub">Envoyer une alerte WhatsApp à tous les membres approuvés ayant renseigné un numéro.</p>
+  </div>
+
+  <div class="setup-note">
+    <i class="ti ti-alert-circle"></i>
+    <span>Nécessite la fonction Edge <code>notify-members-whatsapp</code> déployée et configurée
+    (Meta Cloud API + modèle de message approuvé). Voir README-espace-membres.md,
+    section "Diffusion WhatsApp aux membres".</span>
+  </div>
+
+  <p class="section-label"><i class="ti ti-brand-whatsapp"></i> Composer une alerte</p>
+  <div class="compose-card">
+    <div class="recipients-hint">
+      <i class="ti ti-users"></i>
+      <span><strong id="recipientsCount">-</strong> membre(s) approuvé(s) avec un numéro de téléphone recevront ce message.</span>
+    </div>
+    <textarea id="messageInput" maxlength="800" placeholder="Ex : Nouvelle campagne de consultations gratuites ce samedi à Ouakam, de 9h à 16h. Venez nombreux !"></textarea>
+    <p class="char-count" id="charCount">0 / 800</p>
+    <div class="compose-actions">
+      <button class="btn-primary" id="sendBtn"><i class="ti ti-send"></i> Envoyer l'alerte</button>
+      <p class="send-msg" id="sendMsg"></p>
+    </div>
+    <div class="send-result" id="sendResult" style="display:none;"></div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-history"></i> Historique des diffusions</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Envoyé par</th>
+          <th>Destinataires</th>
+          <th>Réussis</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr class="empty-row"><td colspan="5">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    loadRecipientsCount();
+    loadHistory();
+  })();
+
+  async function loadRecipientsCount() {
+    try {
+      const { count } = await supabaseClient
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'approved')
+        .eq('is_active', true)
+        .not('phone', 'is', null);
+      document.getElementById('recipientsCount').textContent = count ?? 0;
+    } catch (e) {
+      document.getElementById('recipientsCount').textContent = '-';
+    }
+  }
+
+  async function loadHistory() {
+    const tbody = document.getElementById('historyBody');
+    try {
+      const { data, error } = await supabaseClient
+        .from('whatsapp_broadcasts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(30);
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucune diffusion envoyée pour le moment.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(b => `
+        <tr>
+          <td class="msg-cell" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
+          <td>${escapeHtml(b.sent_by_name || '—')}</td>
+          <td>${b.recipients_count}</td>
+          <td>${b.success_count}</td>
+          <td class="meta-cell">${formatDate(b.created_at)}</td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Impossible de charger l\'historique.</td></tr>';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  const messageInput = document.getElementById('messageInput');
+  const charCount = document.getElementById('charCount');
+  messageInput.addEventListener('input', () => {
+    const len = messageInput.value.length;
+    charCount.textContent = `${len} / 800`;
+    charCount.classList.toggle('over', len > 800);
+  });
+
+  document.getElementById('sendBtn').addEventListener('click', async () => {
+    const message = messageInput.value.trim();
+    const sendMsg = document.getElementById('sendMsg');
+    const sendResult = document.getElementById('sendResult');
+    const sendBtn = document.getElementById('sendBtn');
+    sendResult.style.display = 'none';
+    sendMsg.textContent = '';
+    sendMsg.className = 'send-msg';
+
+    if (!message) {
+      sendMsg.textContent = 'Écrivez un message avant d\'envoyer.';
+      sendMsg.classList.add('error');
+      return;
+    }
+    if (message.length > 800) {
+      sendMsg.textContent = 'Message trop long (800 caractères maximum).';
+      sendMsg.classList.add('error');
+      return;
+    }
+    if (!confirm(`Envoyer cette alerte WhatsApp à ${document.getElementById('recipientsCount').textContent} membre(s) ?`)) {
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendMsg.textContent = 'Envoi en cours…';
+
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('notify-members-whatsapp', {
+        body: { message },
+      });
+      if (error) throw error;
+      if (data && data.error) throw new Error(data.error);
+
+      sendMsg.textContent = `Envoyé : ${data.success_count} / ${data.recipients_count} message(s) livré(s).`;
+      sendMsg.classList.add('ok');
+
+      if (data.failures && data.failures.length > 0) {
+        sendResult.style.display = 'block';
+        sendResult.innerHTML = `<strong>${data.failures.length} échec(s) :</strong><ul>${data.failures.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>`;
+      }
+
+      messageInput.value = '';
+      charCount.textContent = '0 / 800';
+      loadHistory();
+    } catch (e) {
+      sendMsg.textContent = 'Échec de l\'envoi : ' + (e.message || 'erreur inconnue');
+      sendMsg.classList.add('error');
+    } finally {
+      sendBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
