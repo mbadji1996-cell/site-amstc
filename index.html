@@ -368,27 +368,48 @@
   .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
 
   /* ===== Témoignages ===== */
-  .temoignage-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px;}
+  .temoignage-carousel{display:flex; align-items:center; gap:18px; max-width:720px; margin:0 auto;}
+  .temoignage-stage{flex:1; min-width:0;}
+  .tc-arrow{
+    flex-shrink:0; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
+    color:var(--text-heading); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .tc-arrow:hover{border-color:var(--green); transform:translateY(-2px);}
+  .tc-arrow svg{width:20px; height:20px;}
+  .tc-dots{display:flex; justify-content:center; gap:8px; margin-top:22px;}
+  .tc-dot{width:8px; height:8px; padding:0; border:none; border-radius:999px; background:var(--line); cursor:pointer; transition:width .2s ease, background .2s ease;}
+  .tc-dot.active{width:24px; background:var(--green);}
+
   .temoignage-card{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:32px 28px; display:flex; flex-direction:column; position:relative;
+    padding:44px 40px; display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;
+    animation:temoignageZoomIn .4s ease;
   }
-  .temoignage-quote-mark{font-family:var(--display); font-size:3rem; line-height:1; color:var(--gold); opacity:0.5; margin-bottom:4px;}
-  .temoignage-text{font-size:0.98rem; font-style:italic; color:var(--ink); line-height:1.7; flex:1; margin-bottom:20px;}
-  .temoignage-author{display:flex; align-items:center; gap:12px;}
-  .temoignage-avatar{width:46px; height:46px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+  @keyframes temoignageZoomIn{ from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
+  .temoignage-quote-mark{position:absolute; top:18px; left:26px; font-family:var(--display); font-size:3.4rem; line-height:1; color:var(--gold); opacity:0.35;}
+  .temoignage-text{font-size:1.05rem; font-style:italic; color:var(--ink); line-height:1.75; margin-bottom:24px; max-width:520px;}
+  .temoignage-author{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .temoignage-avatar{width:56px; height:56px; border-radius:50%; object-fit:cover;}
   .temoignage-avatar-fallback{
-    width:46px; height:46px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:0.9rem;
+    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1rem;
   }
-  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:0.94rem; color:var(--text-heading);}
-  .temoignage-author-role{font-size:0.82rem; color:var(--text-muted);}
+  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:1rem; color:var(--text-heading);}
+  .temoignage-author-role{font-size:0.85rem; color:var(--text-muted);}
   .temoignage-badge{
     font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em;
     padding:3px 10px; border-radius:999px; display:inline-block; margin-top:4px;
   }
   .temoignage-badge.beneficiaire{background:#E1F5EE; color:#0F6E56;}
   .temoignage-badge.membre{background:var(--paper-alt); color:var(--green);}
+
+  @media (max-width:640px){
+    .temoignage-carousel{gap:6px;}
+    .tc-arrow{width:36px; height:36px;}
+    .tc-arrow svg{width:16px; height:16px;}
+    .temoignage-card{padding:32px 18px;}
+  }
 
   /* ===== CTA banner ===== */
   .cta-banner{
@@ -764,7 +785,16 @@
         <h2 id="cms-temoignages-title">Ce qu'ils en disent</h2>
         <p id="cms-temoignages-subtitle" style="display:none;"></p>
       </div>
-      <div class="temoignage-grid" id="cms-temoignages-grid"></div>
+      <div class="temoignage-carousel">
+        <button class="tc-arrow" id="tcPrev" aria-label="Témoignage précédent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="temoignage-stage" id="cms-temoignages-grid"></div>
+        <button class="tc-arrow" id="tcNext" aria-label="Témoignage suivant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="tc-dots" id="tcDots"></div>
     </div>
   </section>
 
@@ -1546,41 +1576,74 @@
     tiles.forEach(el => io.observe(el));
   }
 
-  // ===== Témoignages =====
+  // ===== Témoignages (carrousel) =====
+  let temoignagesList = [];
+  let temoignageIndex = 0;
+
   function renderTemoignages(data){
     const section = document.getElementById('temoignages');
-    const grid = document.getElementById('cms-temoignages-grid');
-    if (!section || !grid) return;
+    const stage = document.getElementById('cms-temoignages-grid');
+    if (!section || !stage) return;
 
-    const list = Array.isArray(data.temoignages_list) ? data.temoignages_list.filter(t => t && t.quote && t.author_name) : [];
-    if (list.length === 0) { section.style.display = 'none'; return; }
+    temoignagesList = Array.isArray(data.temoignages_list) ? data.temoignages_list.filter(t => t && t.quote && t.author_name) : [];
+    if (temoignagesList.length === 0) { section.style.display = 'none'; return; }
     section.style.display = '';
 
     if (data.temoignages_eyebrow) document.getElementById('cms-temoignages-eyebrow').textContent = data.temoignages_eyebrow;
     if (data.temoignages_title) document.getElementById('cms-temoignages-title').textContent = data.temoignages_title;
     setOptionalSubtitle('cms-temoignages-subtitle', data.temoignages_subtitle);
 
-    grid.innerHTML = list.map(t => {
-      const type = t.author_type === 'beneficiaire' ? 'beneficiaire' : 'membre';
-      const typeLabel = type === 'beneficiaire' ? 'Bénéficiaire' : 'Membre';
-      return `
-        <div class="temoignage-card reveal">
-          <span class="temoignage-quote-mark" aria-hidden="true">"</span>
-          <p class="temoignage-text">${esc(t.quote)}</p>
-          <div class="temoignage-author">
-            ${t.photo
-              ? `<img class="temoignage-avatar" src="${esc(t.photo)}" alt="${esc(t.author_name)}" loading="lazy">`
-              : `<div class="temoignage-avatar-fallback">${esc(memberInitials(t.author_name))}</div>`}
-            <div>
-              <div class="temoignage-author-name">${esc(t.author_name)}</div>
-              ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
-              <span class="temoignage-badge ${type}">${typeLabel}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+    const multi = temoignagesList.length > 1;
+    document.getElementById('tcPrev').style.display = multi ? '' : 'none';
+    document.getElementById('tcNext').style.display = multi ? '' : 'none';
+
+    temoignageIndex = 0;
+    renderTemoignageSlide();
+    renderTemoignageDots();
   }
+
+  function renderTemoignageSlide(){
+    const stage = document.getElementById('cms-temoignages-grid');
+    const t = temoignagesList[temoignageIndex];
+    const type = t.author_type === 'beneficiaire' ? 'beneficiaire' : 'membre';
+    const typeLabel = type === 'beneficiaire' ? 'Bénéficiaire' : 'Membre';
+    stage.innerHTML = `
+      <div class="temoignage-card">
+        <span class="temoignage-quote-mark" aria-hidden="true">"</span>
+        <p class="temoignage-text">${esc(t.quote)}</p>
+        <div class="temoignage-author">
+          ${t.photo
+            ? `<img class="temoignage-avatar" src="${esc(t.photo)}" alt="${esc(t.author_name)}" loading="lazy">`
+            : `<div class="temoignage-avatar-fallback">${esc(memberInitials(t.author_name))}</div>`}
+          <div class="temoignage-author-name">${esc(t.author_name)}</div>
+          ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
+          <span class="temoignage-badge ${type}">${typeLabel}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTemoignageDots(){
+    const dots = document.getElementById('tcDots');
+    if (!dots) return;
+    if (temoignagesList.length <= 1) { dots.innerHTML = ''; return; }
+    dots.innerHTML = temoignagesList.map((_, i) =>
+      `<button class="tc-dot${i === temoignageIndex ? ' active' : ''}" data-index="${i}" aria-label="Témoignage ${i + 1}"></button>`
+    ).join('');
+  }
+
+  function goToTemoignage(newIndex){
+    temoignageIndex = (newIndex + temoignagesList.length) % temoignagesList.length;
+    renderTemoignageSlide();
+    renderTemoignageDots();
+  }
+
+  document.getElementById('tcPrev')?.addEventListener('click', () => goToTemoignage(temoignageIndex - 1));
+  document.getElementById('tcNext')?.addEventListener('click', () => goToTemoignage(temoignageIndex + 1));
+  document.getElementById('tcDots')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tc-dot');
+    if (btn) goToTemoignage(Number(btn.dataset.index));
+  });
 
   // ===== Verset et Hadith de la semaine (automatique, aucune intervention manuelle possible) =====
   // Un numéro de semaine continu (depuis une date de référence fixe) détermine
