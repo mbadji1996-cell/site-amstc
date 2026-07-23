@@ -15,15 +15,22 @@
 // Un message WhatsApp envoyé par une entreprise en dehors d'une fenêtre
 // de conversation de 24h DOIT utiliser un modèle ("template") pré-approuvé
 // par WhatsApp — voir README-espace-membres.md, section "Diffusion
-// WhatsApp aux membres", pour la création de ce modèle.
+// WhatsApp aux membres", pour la création de ces modèles. Deux modèles
+// distincts sont utilisés selon l'audience, car leur contenu relève de
+// deux catégories différentes chez Meta :
+//   - "tous" (annonces générales, événements) -> modèle Marketing
+//   - rappels ciblés (carte/cotisation)       -> modèle Utilitaire
+// Les deux utilisent un paramètre NOMMÉ "message" dans leur corps (ex :
+// "Bonjour, {{message}} ..."), pas l'ancienne syntaxe positionnelle {{1}}.
 //
 // Secrets requis (Dashboard > Project Settings > Edge Functions > Secrets) :
 //   SUPABASE_URL              - déjà fourni automatiquement par Supabase
 //   SUPABASE_SERVICE_ROLE_KEY - déjà fourni automatiquement par Supabase
 //   META_WHATSAPP_TOKEN       - jeton d'accès permanent Meta Cloud API
 //   META_PHONE_NUMBER_ID      - identifiant du numéro expéditeur WhatsApp Business
-//   META_TEMPLATE_NAME        - optionnel, défaut "nouvelle_annonce"
-//   META_TEMPLATE_LANG        - optionnel, défaut "fr"
+//   META_TEMPLATE_NAME          - optionnel, défaut "nouvelle_annonce" (Marketing, audience "tous")
+//   META_TEMPLATE_NAME_RAPPEL   - optionnel, défaut "rappel_compte" (Utilitaire, audiences carte/cotisation)
+//   META_TEMPLATE_LANG          - optionnel, défaut "fr"
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -32,7 +39,14 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const META_WHATSAPP_TOKEN = Deno.env.get("META_WHATSAPP_TOKEN");
 const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
 const META_TEMPLATE_NAME = Deno.env.get("META_TEMPLATE_NAME") || "nouvelle_annonce";
+const META_TEMPLATE_NAME_RAPPEL = Deno.env.get("META_TEMPLATE_NAME_RAPPEL") || "rappel_compte";
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
+
+const REMINDER_AUDIENCES = ["carte_expiree", "carte_expire_bientot", "cotisation_impayee"];
+
+function templateNameFor(audience: string): string {
+  return REMINDER_AUDIENCES.includes(audience) ? META_TEMPLATE_NAME_RAPPEL : META_TEMPLATE_NAME;
+}
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -92,10 +106,11 @@ Deno.serve(async (req: Request) => {
   if (message.length > 800) return json({ error: "Message trop long (800 caractères maximum)" }, 400);
 
   const audience = String(payload.audience || "tous");
-  const KNOWN_AUDIENCES = ["tous", "carte_expiree", "carte_expire_bientot", "cotisation_impayee"];
+  const KNOWN_AUDIENCES = ["tous", ...REMINDER_AUDIENCES];
   if (!KNOWN_AUDIENCES.includes(audience)) {
     return json({ error: `Audience inconnue : ${audience}` }, 400);
   }
+  const templateName = templateNameFor(audience);
 
   const { data: recipients, error: recErr } = await admin
     .rpc("whatsapp_target_members", { p_audience: audience });
@@ -124,10 +139,10 @@ Deno.serve(async (req: Request) => {
           to,
           type: "template",
           template: {
-            name: META_TEMPLATE_NAME,
+            name: templateName,
             language: { code: META_TEMPLATE_LANG },
             components: [
-              { type: "body", parameters: [{ type: "text", text: message }] },
+              { type: "body", parameters: [{ type: "text", parameter_name: "message", text: message }] },
             ],
           },
         }),

@@ -554,16 +554,51 @@ prend généralement de quelques minutes à quelques heures.
    permission `whatsapp_business_messaging`). Le jeton temporaire fourni
    par défaut expire en 24h - utilisez un jeton permanent pour que la
    diffusion continue de fonctionner sans y retoucher chaque jour.
-4. Dans **WhatsApp Manager → Message Templates**, créez un modèle :
-   - Nom : `nouvelle_annonce` (ou autre - à reporter dans le secret
-     `META_TEMPLATE_NAME` si différent)
-   - Catégorie : "Utility" ou "Marketing" selon le contenu habituel de vos
-     annonces
-   - Langue : Français
-   - Corps du message avec une variable, par exemple :
-     `Bonjour, {{1}}` (le `{{1}}` sera remplacé par le texte tapé dans
-     `membres/whatsapp-admin.html` à chaque envoi)
-   - Soumettez pour validation et attendez le statut "Approuvé".
+4. Dans **WhatsApp Manager → Modèles de messages**, créez **deux** modèles
+   (Meta classe automatiquement le contenu et refuse un modèle Utilitaire
+   si le texte ressemble à de la promotion - d'où la séparation en deux) :
+
+   **a) `nouvelle_annonce`** (catégorie **Marketing**, utilisé pour
+   l'audience "Tous les membres" - annonces d'événements/campagnes) :
+   - Langue : Français · Type de variable : **Nom** (texte libre, pas
+     "Valeur numérique")
+   - Corps :
+     ```
+     Bonjour,
+
+     {{message}}
+
+     Plus d'infos sur amstc.org
+
+     ©AMSTC
+     ```
+   - Exemple pour `{{message}}` : `Nouvelle campagne de consultations
+     gratuites ce samedi à Ouakam, de 9h à 16h`
+   - Si Meta bloque avec "La catégorie ne correspond pas" en proposant
+     Marketing, acceptez sa recommandation.
+
+   **b) `rappel_compte`** (catégorie **Utilitaire**, utilisé pour les 3
+   audiences de rappel - carte expirée/à renouveler/cotisation impayée) :
+   - Langue : Français · Type de variable : **Nom**
+   - Corps :
+     ```
+     Bonjour,
+
+     {{message}}
+
+     Merci de régulariser votre situation sur amstc.org
+
+     ©AMSTC
+     ```
+   - Exemple pour `{{message}}` : `Votre carte de membre 2025 a expiré -
+     merci de la renouveler avant le 1er mars.` (un exemple qui ressemble
+     à une notification de compte, pas à une annonce, aide à passer la
+     catégorie Utilitaire sans blocage)
+
+   Notez bien : le nom de la variable (`message`) doit être en minuscules
+   avec des tirets bas uniquement, et ne peut pas se trouver en tout début
+   ou toute fin du corps du message - Meta l'exige entouré de texte fixe.
+   Soumettez les deux modèles et attendez le statut "Approuvé" pour chacun.
 5. **Déployer la fonction Edge** : Dashboard Supabase → **Edge Functions**
    → "Deploy a new function" → "Via Editor" → nommez-la exactement
    `notify-members-whatsapp` → collez le contenu de
@@ -575,6 +610,7 @@ prend généralement de quelques minutes à quelques heures.
    - `META_WHATSAPP_TOKEN` - le jeton permanent de l'étape 3
    - `META_PHONE_NUMBER_ID` - l'identifiant de l'étape 2
    - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
+   - `META_TEMPLATE_NAME_RAPPEL` - optionnel, si différent de `rappel_compte`
    - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
 7. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
    `supabase/phase30-whatsapp-broadcasts.sql`, cliquez **Run**, puis faites
@@ -592,9 +628,11 @@ prend généralement de quelques minutes à quelques heures.
 Comme pour les notifications e-mail, un échec d'envoi à un membre
 n'empêche jamais l'envoi aux autres - chaque échec est simplement listé
 séparément, et le nombre de succès est journalisé dans
-`whatsapp_broadcasts` pour garder une trace de chaque diffusion. Le même
-modèle de message approuvé (étape 4) sert pour toutes les audiences - seul
-le texte tapé dans la variable `{{1}}` change selon le rappel envoyé.
+`whatsapp_broadcasts` pour garder une trace de chaque diffusion. La
+fonction Edge choisit automatiquement le bon modèle selon l'audience -
+`nouvelle_annonce` pour "Tous les membres", `rappel_compte` pour les 3
+audiences de rappel - seul le texte tapé dans la variable `{{message}}`
+change à chaque envoi.
 
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
