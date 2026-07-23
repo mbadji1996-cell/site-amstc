@@ -376,7 +376,7 @@ collections:
     preview_path: "article.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY" }
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -390,7 +390,7 @@ collections:
     preview_path: "formation.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY" }
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -404,7 +404,7 @@ collections:
     preview_path: "projet.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY" }
       - { label: "Statut", name: "statut", widget: "select", options: ["À venir", "En cours", "Terminé"], default: "En cours" }
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
@@ -421,7 +421,7 @@ collections:
       - { label: "Projet associé", name: "projet", widget: "relation", collection: "projets", search_fields: ["title"], display_fields: ["title"], value_field: "{{slug}}", hint: "Le projet auquel cette étape appartient." }
       - { label: "Titre de l'étape", name: "title", widget: "string" }
       - { label: "Ordre d'affichage", name: "ordre", widget: "number", default: 1, hint: "Détermine la position de l'étape dans la frise (1 = première), indépendamment de la date." }
-      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY" }
       - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
