@@ -318,6 +318,31 @@ collections:
                   - { label: "Calendrier (activités / événements)", value: "calendar-event" }
                   - { label: "Étoile (récompense / qualité)", value: "star" }
 
+      - name: "temoignages"
+        label: "12. Témoignages"
+        file: "content/home-temoignages.json"
+        fields:
+          - { label: "Accroche", name: "temoignages_eyebrow", widget: "string", default: "Témoignages" }
+          - { label: "Titre de la section", name: "temoignages_title", widget: "string", default: "Ce qu'ils en disent" }
+          - { label: "Sous-titre", name: "temoignages_subtitle", widget: "string", required: false }
+          - label: "Témoignages"
+            name: "temoignages_list"
+            widget: "list"
+            summary: "{{fields.author_name}} — {{fields.quote}}"
+            hint: "Recueillez toujours l'accord de la personne avant de publier son témoignage."
+            fields:
+              - { label: "Citation", name: "quote", widget: "text", hint: "Le témoignage tel quel, sans les guillemets." }
+              - { label: "Nom", name: "author_name", widget: "string" }
+              - { label: "Rôle / contexte", name: "author_role", widget: "string", required: false, hint: "Ex : Bénéficiaire, Daara Serigne Mor Diop ou Membre depuis 2021" }
+              - label: "Type"
+                name: "author_type"
+                widget: "select"
+                default: "membre"
+                options:
+                  - { label: "Bénéficiaire", value: "beneficiaire" }
+                  - { label: "Membre", value: "membre" }
+              - { label: "Photo", name: "photo", widget: "image", required: false }
+
       - name: "don"
         label: "Faire un don (page dédiée don.html)"
         file: "content/don.json"

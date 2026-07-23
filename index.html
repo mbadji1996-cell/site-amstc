@@ -362,6 +362,29 @@
   .impact-number{font-family:var(--display); font-weight:800; font-size:clamp(2rem,5vw,2.8rem); color:var(--white); line-height:1; margin-bottom:8px;}
   .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
 
+  /* ===== Témoignages ===== */
+  .temoignage-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px;}
+  .temoignage-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:32px 28px; display:flex; flex-direction:column; position:relative;
+  }
+  .temoignage-quote-mark{font-family:var(--display); font-size:3rem; line-height:1; color:var(--gold); opacity:0.5; margin-bottom:4px;}
+  .temoignage-text{font-size:0.98rem; font-style:italic; color:var(--ink); line-height:1.7; flex:1; margin-bottom:20px;}
+  .temoignage-author{display:flex; align-items:center; gap:12px;}
+  .temoignage-avatar{width:46px; height:46px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+  .temoignage-avatar-fallback{
+    width:46px; height:46px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:0.9rem;
+  }
+  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:0.94rem; color:var(--text-heading);}
+  .temoignage-author-role{font-size:0.82rem; color:var(--text-muted);}
+  .temoignage-badge{
+    font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em;
+    padding:3px 10px; border-radius:999px; display:inline-block; margin-top:4px;
+  }
+  .temoignage-badge.beneficiaire{background:#E1F5EE; color:#0F6E56;}
+  .temoignage-badge.membre{background:var(--paper-alt); color:var(--green);}
+
   /* ===== CTA banner ===== */
   .cta-banner{
     background:var(--green); border-radius:22px; padding:56px 48px; color:var(--white);
@@ -725,6 +748,18 @@
         <p id="cms-impact-subtitle" style="display:none;"></p>
       </div>
       <div class="impact-grid reveal" id="cms-impact-grid"></div>
+    </div>
+  </section>
+
+  <!-- ===== TÉMOIGNAGES ===== -->
+  <section id="temoignages" class="section-alt" style="display:none;">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow" id="cms-temoignages-eyebrow">Témoignages</p>
+        <h2 id="cms-temoignages-title">Ce qu'ils en disent</h2>
+        <p id="cms-temoignages-subtitle" style="display:none;"></p>
+      </div>
+      <div class="temoignage-grid" id="cms-temoignages-grid"></div>
     </div>
   </section>
 
@@ -1244,7 +1279,8 @@
     "content/navigation.json",
     "content/mediatheque.json",
     "content/home-prieres.json",
-    "content/home-impact.json"
+    "content/home-impact.json",
+    "content/home-temoignages.json"
   ];
   Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
     .then(parts => {
@@ -1403,6 +1439,9 @@
     // Chiffres d'impact
     renderImpact(data);
 
+    // Témoignages
+    renderTemoignages(data);
+
     initHeroSlideshow(data.hero_slideshow);
     revealPage();
     initScrollReveal();
@@ -1500,6 +1539,42 @@
       });
     }, { threshold: 0.4 });
     tiles.forEach(el => io.observe(el));
+  }
+
+  // ===== Témoignages =====
+  function renderTemoignages(data){
+    const section = document.getElementById('temoignages');
+    const grid = document.getElementById('cms-temoignages-grid');
+    if (!section || !grid) return;
+
+    const list = Array.isArray(data.temoignages_list) ? data.temoignages_list.filter(t => t && t.quote && t.author_name) : [];
+    if (list.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    if (data.temoignages_eyebrow) document.getElementById('cms-temoignages-eyebrow').textContent = data.temoignages_eyebrow;
+    if (data.temoignages_title) document.getElementById('cms-temoignages-title').textContent = data.temoignages_title;
+    setOptionalSubtitle('cms-temoignages-subtitle', data.temoignages_subtitle);
+
+    grid.innerHTML = list.map(t => {
+      const type = t.author_type === 'beneficiaire' ? 'beneficiaire' : 'membre';
+      const typeLabel = type === 'beneficiaire' ? 'Bénéficiaire' : 'Membre';
+      return `
+        <div class="temoignage-card reveal">
+          <span class="temoignage-quote-mark" aria-hidden="true">"</span>
+          <p class="temoignage-text">${esc(t.quote)}</p>
+          <div class="temoignage-author">
+            ${t.photo
+              ? `<img class="temoignage-avatar" src="${esc(t.photo)}" alt="${esc(t.author_name)}" loading="lazy">`
+              : `<div class="temoignage-avatar-fallback">${esc(memberInitials(t.author_name))}</div>`}
+            <div>
+              <div class="temoignage-author-name">${esc(t.author_name)}</div>
+              ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
+              <span class="temoignage-badge ${type}">${typeLabel}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   // ===== Verset et Hadith de la semaine (automatique, aucune intervention manuelle possible) =====
