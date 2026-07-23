@@ -1,9 +1,11 @@
 // supabase/functions/notify-members-whatsapp/index.ts
 //
-// Diffuse un message WhatsApp à tous les membres approuvés ayant un
-// numéro de téléphone renseigné (colonne profiles.phone), via la Meta
-// Cloud API. Contrairement à "notify-admin", cette fonction est appelée
-// DIRECTEMENT depuis le navigateur (membres/whatsapp-admin.html), avec le
+// Diffuse un message WhatsApp à une audience de membres (tous, carte
+// expirée, carte à renouveler bientôt, ou cotisation du mois impayée -
+// voir supabase/phase31-whatsapp-rappels-cibles.sql pour le détail du
+// ciblage), via la Meta Cloud API. Contrairement à "notify-admin", cette
+// fonction est appelée DIRECTEMENT depuis le navigateur
+// (membres/whatsapp-admin.html), avec le
 // jeton de session de l'admin connecté (Authorization: Bearer <JWT>,
 // envoyé automatiquement par supabaseClient.functions.invoke()). Elle
 // vérifie donc elle-même que l'appelant a le rôle admin/super_admin avant
@@ -78,7 +80,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Réservé aux administrateurs" }, 403);
   }
 
-  let payload: { message?: string };
+  let payload: { message?: string; audience?: string };
   try {
     payload = await req.json();
   } catch {
@@ -89,12 +91,14 @@ Deno.serve(async (req: Request) => {
   if (!message) return json({ error: "Message vide" }, 400);
   if (message.length > 800) return json({ error: "Message trop long (800 caractères maximum)" }, 400);
 
+  const audience = String(payload.audience || "tous");
+  const KNOWN_AUDIENCES = ["tous", "carte_expiree", "carte_expire_bientot", "cotisation_impayee"];
+  if (!KNOWN_AUDIENCES.includes(audience)) {
+    return json({ error: `Audience inconnue : ${audience}` }, 400);
+  }
+
   const { data: recipients, error: recErr } = await admin
-    .from("profiles")
-    .select("id, phone, full_name")
-    .eq("status", "approved")
-    .eq("is_active", true)
-    .not("phone", "is", null);
+    .rpc("whatsapp_target_members", { p_audience: audience });
 
   if (recErr) {
     console.error("notify-members-whatsapp: échec chargement destinataires", recErr);
@@ -141,6 +145,7 @@ Deno.serve(async (req: Request) => {
 
   const { error: logErr } = await admin.from("whatsapp_broadcasts").insert({
     message,
+    audience,
     sent_by: userData.user.id,
     sent_by_name: callerProfile.full_name,
     recipients_count: targets.length,

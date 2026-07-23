@@ -524,12 +524,17 @@ supplémentaire ni changement du plafond/limite de fréquence.
 ## 4undevicies. Diffusion WhatsApp aux membres
 
 Un admin peut envoyer une alerte WhatsApp (ex : nouvelle campagne de
-consultations) à tous les membres approuvés ayant renseigné un numéro de
-téléphone (`membres/whatsapp-admin.html`), en un clic depuis le Centre
-d'administration. Comme pour la Phase 4quaterdecies (e-mail), ceci
-introduit une nouvelle fonction Edge et nécessite un compte chez un
-service tiers - ici la **Meta Cloud API** (WhatsApp Business Platform),
-gratuite avec un quota généreux.
+consultations) depuis `membres/whatsapp-admin.html`, en un clic depuis le
+Centre d'administration - soit à **tous** les membres approuvés ayant
+renseigné un numéro de téléphone, soit ciblée sur une audience précise :
+**carte expirée** (jamais réglée ou expirée depuis une année précédente),
+**carte à renouveler bientôt** (valide jusqu'au 31 décembre de l'année en
+cours) ou **cotisation du mois en cours impayée** (uniquement pour les membres à
+carte valide - un membre à carte expirée reçoit le rappel "carte expirée"
+à la place). Comme pour la
+Phase 4quaterdecies (e-mail), ceci introduit une nouvelle fonction Edge et
+nécessite un compte chez un service tiers - ici la **Meta Cloud API**
+(WhatsApp Business Platform), gratuite avec un quota généreux.
 
 **Point important à comprendre avant de commencer** : une entreprise ne
 peut PAS envoyer de message WhatsApp libre à quelqu'un qui ne lui a pas
@@ -572,19 +577,24 @@ prend généralement de quelques minutes à quelques heures.
    - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
    - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
 7. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
-   `supabase/phase30-whatsapp-broadcasts.sql`, cliquez **Run**.
+   `supabase/phase30-whatsapp-broadcasts.sql`, cliquez **Run**, puis faites
+   de même avec `supabase/phase31-whatsapp-rappels-cibles.sql` (ajoute les
+   fonctions de ciblage par audience - carte expirée/à renouveler/
+   cotisation impayée).
 8. **Testez** depuis `membres/whatsapp-admin.html` (Centre
-   d'administration → carte "Diffusion WhatsApp") : le nombre de
-   destinataires affiché doit correspondre aux membres approuvés ayant un
-   téléphone, et l'historique en bas de page doit se remplir après envoi.
-   En cas d'échec : Edge Functions → `notify-members-whatsapp` → **Logs**,
-   et le détail des échecs individuels s'affiche aussi directement dans
-   la page après l'envoi.
+   d'administration → carte "Diffusion WhatsApp") : choisissez une
+   audience, le nombre de destinataires affiché doit se mettre à jour, et
+   l'historique en bas de page doit se remplir après envoi (avec
+   l'audience utilisée). En cas d'échec : Edge Functions →
+   `notify-members-whatsapp` → **Logs**, et le détail des échecs
+   individuels s'affiche aussi directement dans la page après l'envoi.
 
 Comme pour les notifications e-mail, un échec d'envoi à un membre
 n'empêche jamais l'envoi aux autres - chaque échec est simplement listé
 séparément, et le nombre de succès est journalisé dans
-`whatsapp_broadcasts` pour garder une trace de chaque diffusion.
+`whatsapp_broadcasts` pour garder une trace de chaque diffusion. Le même
+modèle de message approuvé (étape 4) sert pour toutes les audiences - seul
+le texte tapé dans la variable `{{1}}` change selon le rappel envoyé.
 
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 

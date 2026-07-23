@@ -43,6 +43,14 @@
   .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
 
   .compose-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:36px;}
+  .audience-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:10px;}
+  .audience-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+  .audience-option{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column;gap:2px;}
+  .audience-option:hover{border-color:var(--green);}
+  .audience-option.selected{border-color:var(--green);background:var(--paper-alt);}
+  .audience-option input{display:none;}
+  .audience-option-title{font-weight:600;font-size:0.86rem;color:var(--text-heading);display:flex;align-items:center;gap:6px;}
+  .audience-option-sub{font-size:0.75rem;color:var(--text-muted);}
   .recipients-hint{font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:12px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;}
   .recipients-hint strong{font-family:var(--mono);color:var(--text-heading);}
   textarea{width:100%;min-height:140px;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);resize:vertical;}
@@ -74,6 +82,10 @@
   .setup-note{background:#FEF6E4;border:1.5px dashed rgba(170,123,17,0.35);border-radius:var(--radius);padding:18px 20px;font-size:0.85rem;color:#6A6050;margin-bottom:36px;display:flex;gap:12px;align-items:flex-start;}
   .setup-note i{color:var(--gold-deep);font-size:20px;flex-shrink:0;margin-top:1px;}
   .setup-note code{font-family:var(--mono);font-size:0.8rem;color:var(--gold-deep);}
+
+  @media(max-width:560px){
+    .audience-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
@@ -91,7 +103,7 @@
   <div class="page-header">
     <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
     <h1 class="page-title">Diffusion WhatsApp</h1>
-    <p class="page-sub">Envoyer une alerte WhatsApp à tous les membres approuvés ayant renseigné un numéro.</p>
+    <p class="page-sub">Envoyer une alerte WhatsApp à tous les membres, ou cibler ceux à carte expirée/à renouveler ou en retard de cotisation.</p>
   </div>
 
   <div class="setup-note">
@@ -103,9 +115,32 @@
 
   <p class="section-label"><i class="ti ti-brand-whatsapp"></i> Composer une alerte</p>
   <div class="compose-card">
+    <p class="audience-label">Destinataires</p>
+    <div class="audience-grid" id="audienceGrid">
+      <label class="audience-option selected" data-audience="tous">
+        <input type="radio" name="audience" value="tous" checked>
+        <span class="audience-option-title"><i class="ti ti-users"></i> Tous les membres</span>
+        <span class="audience-option-sub">Tous les membres approuvés avec téléphone</span>
+      </label>
+      <label class="audience-option" data-audience="carte_expiree">
+        <input type="radio" name="audience" value="carte_expiree">
+        <span class="audience-option-title"><i class="ti ti-id-badge-2"></i> Carte expirée</span>
+        <span class="audience-option-sub">Jamais réglée ou expirée depuis une année précédente</span>
+      </label>
+      <label class="audience-option" data-audience="carte_expire_bientot">
+        <input type="radio" name="audience" value="carte_expire_bientot">
+        <span class="audience-option-title"><i class="ti ti-calendar-due"></i> Carte à renouveler bientôt</span>
+        <span class="audience-option-sub">Valide jusqu'au 31 décembre de cette année</span>
+      </label>
+      <label class="audience-option" data-audience="cotisation_impayee">
+        <input type="radio" name="audience" value="cotisation_impayee">
+        <span class="audience-option-title"><i class="ti ti-cash"></i> Cotisation du mois impayée</span>
+        <span class="audience-option-sub">Carte valide, mois en cours non réglé</span>
+      </label>
+    </div>
     <div class="recipients-hint">
       <i class="ti ti-users"></i>
-      <span><strong id="recipientsCount">-</strong> membre(s) approuvé(s) avec un numéro de téléphone recevront ce message.</span>
+      <span><strong id="recipientsCount">-</strong> membre(s) recevront ce message.</span>
     </div>
     <textarea id="messageInput" maxlength="800" placeholder="Ex : Nouvelle campagne de consultations gratuites ce samedi à Ouakam, de 9h à 16h. Venez nombreux !"></textarea>
     <p class="char-count" id="charCount">0 / 800</p>
@@ -122,6 +157,7 @@
       <thead>
         <tr>
           <th>Message</th>
+          <th>Audience</th>
           <th>Envoyé par</th>
           <th>Destinataires</th>
           <th>Réussis</th>
@@ -129,7 +165,7 @@
         </tr>
       </thead>
       <tbody id="historyBody">
-        <tr class="empty-row"><td colspan="5">Chargement…</td></tr>
+        <tr class="empty-row"><td colspan="6">Chargement…</td></tr>
       </tbody>
     </table>
   </div>
@@ -138,6 +174,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  const AUDIENCE_LABELS = {
+    tous: 'Tous les membres',
+    carte_expiree: 'Carte expirée',
+    carte_expire_bientot: 'Carte à renouveler bientôt',
+    cotisation_impayee: 'Cotisation impayée',
+  };
+
+  function selectedAudience() {
+    const checked = document.querySelector('input[name="audience"]:checked');
+    return checked ? checked.value : 'tous';
+  }
+
   (async () => {
     const profile = await requireAdmin('connexion.html');
     if (!profile) return;
@@ -146,21 +194,27 @@
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
 
+    document.querySelectorAll('.audience-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.audience-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        loadRecipientsCount();
+      });
+    });
+
     loadRecipientsCount();
     loadHistory();
   })();
 
   async function loadRecipientsCount() {
+    const el = document.getElementById('recipientsCount');
+    el.textContent = '…';
     try {
-      const { count } = await supabaseClient
-        .from('profiles')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'approved')
-        .eq('is_active', true)
-        .not('phone', 'is', null);
-      document.getElementById('recipientsCount').textContent = count ?? 0;
+      const { data, error } = await supabaseClient.rpc('whatsapp_target_count', { p_audience: selectedAudience() });
+      if (error) throw error;
+      el.textContent = data ?? 0;
     } catch (e) {
-      document.getElementById('recipientsCount').textContent = '-';
+      el.textContent = '-';
     }
   }
 
@@ -175,13 +229,14 @@
       if (error) throw error;
 
       if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucune diffusion envoyée pour le moment.</td></tr>';
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Aucune diffusion envoyée pour le moment.</td></tr>';
         return;
       }
 
       tbody.innerHTML = data.map(b => `
         <tr>
           <td class="msg-cell" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
+          <td class="meta-cell">${escapeHtml(AUDIENCE_LABELS[b.audience] || b.audience || '—')}</td>
           <td>${escapeHtml(b.sent_by_name || '—')}</td>
           <td>${b.recipients_count}</td>
           <td>${b.success_count}</td>
@@ -189,7 +244,7 @@
         </tr>
       `).join('');
     } catch (e) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Impossible de charger l\'historique.</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Impossible de charger l\'historique.</td></tr>';
     }
   }
 
@@ -229,7 +284,9 @@
       sendMsg.classList.add('error');
       return;
     }
-    if (!confirm(`Envoyer cette alerte WhatsApp à ${document.getElementById('recipientsCount').textContent} membre(s) ?`)) {
+    const audience = selectedAudience();
+    const count = document.getElementById('recipientsCount').textContent;
+    if (!confirm(`Envoyer cette alerte WhatsApp à ${count} membre(s) (${AUDIENCE_LABELS[audience]}) ?`)) {
       return;
     }
 
@@ -238,7 +295,7 @@
 
     try {
       const { data, error } = await supabaseClient.functions.invoke('notify-members-whatsapp', {
-        body: { message },
+        body: { message, audience },
       });
       if (error) throw error;
       if (data && data.error) throw new Error(data.error);
