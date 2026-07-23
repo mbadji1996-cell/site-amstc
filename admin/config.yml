@@ -350,6 +350,9 @@ collections:
           - { label: "Accroche", name: "eyebrow", widget: "string" }
           - { label: "Titre", name: "title", widget: "string" }
           - { label: "Texte d'introduction", name: "intro", widget: "text" }
+          - { label: "Titre de la jauge de dons (facultatif)", name: "jauge_titre", widget: "string", required: false, hint: "Ex : Objectif Ndogou Social 2026. Laissez l'objectif ci-dessous à 0 pour masquer toute la jauge." }
+          - { label: "Objectif de la jauge (FCFA)", name: "jauge_objectif", widget: "number", default: 0, valueType: "int" }
+          - { label: "Montant collecté (FCFA)", name: "jauge_collecte", widget: "number", default: 0, valueType: "int", hint: "À mettre à jour manuellement au fil des dons reçus." }
           - { label: "Titre - Virement bancaire", name: "bank_title", widget: "string" }
           - { label: "Coordonnées bancaires", name: "bank_details", widget: "markdown", hint: "Titulaire, banque, IBAN/RIB, SWIFT..." }
           - { label: "Titre - Mobile Money", name: "mobile_title", widget: "string" }

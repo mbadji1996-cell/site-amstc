@@ -60,6 +60,15 @@
   .mobile-item strong{display:block; font-family:var(--display); color:var(--text-heading); margin-bottom:6px;}
   .mobile-item span{display:block; font-family:var(--mono); font-size:0.88rem; color:var(--text-muted);}
   .trust{font-family:var(--mono); font-size:0.8rem; color:var(--text-accent); border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin-top:36px;}
+
+  .jauge-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 28px; margin-bottom:22px; display:none;}
+  .jauge-title{font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--text-heading); margin-bottom:14px;}
+  .jauge-track{background:var(--paper-alt); border-radius:999px; height:16px; overflow:hidden; margin-bottom:10px;}
+  .jauge-fill{height:100%; background:linear-gradient(90deg, var(--green), var(--gold)); border-radius:999px; transition:width .6s ease;}
+  .jauge-amounts{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;}
+  .jauge-collecte{font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--text-heading);}
+  .jauge-objectif{font-family:var(--mono); font-size:0.85rem; color:var(--text-muted);}
+  .jauge-percent{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-top:8px;}
   .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem; padding:13px 24px; border-radius:999px; background:var(--green); color:#fff; margin-top:8px;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
@@ -79,6 +88,16 @@
   <p class="eyebrow" id="cms-eyebrow">Nous soutenir</p>
   <h1 id="cms-title">Faire un don</h1>
   <p class="intro" id="cms-intro">Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation menée par nos équipes bénévoles.</p>
+
+  <div class="jauge-card" id="jauge-card">
+    <p class="jauge-title" id="jauge-title">Notre objectif de collecte</p>
+    <div class="jauge-track"><div class="jauge-fill" id="jauge-fill" style="width:0%"></div></div>
+    <div class="jauge-amounts">
+      <span class="jauge-collecte" id="jauge-collecte"></span>
+      <span class="jauge-objectif" id="jauge-objectif"></span>
+    </div>
+    <p class="jauge-percent" id="jauge-percent"></p>
+  </div>
 
   <div class="card">
     <h2 id="cms-bank-title">Virement bancaire</h2>
@@ -119,6 +138,19 @@
     if (data.eyebrow) document.getElementById('cms-eyebrow').textContent = data.eyebrow;
     if (data.title) document.getElementById('cms-title').textContent = data.title;
     if (data.intro) document.getElementById('cms-intro').textContent = data.intro;
+
+    const objectif = Number(data.jauge_objectif) || 0;
+    if (objectif > 0) {
+      const collecte = Math.max(0, Number(data.jauge_collecte) || 0);
+      const percent = Math.min(100, Math.round((collecte / objectif) * 100));
+      const fcfa = n => n.toLocaleString('fr-FR') + ' FCFA';
+      if (data.jauge_titre) document.getElementById('jauge-title').textContent = data.jauge_titre;
+      document.getElementById('jauge-fill').style.width = percent + '%';
+      document.getElementById('jauge-collecte').textContent = fcfa(collecte) + ' collectés';
+      document.getElementById('jauge-objectif').textContent = 'sur ' + fcfa(objectif);
+      document.getElementById('jauge-percent').textContent = percent + '% de l\'objectif atteint';
+      document.getElementById('jauge-card').style.display = 'block';
+    }
     if (data.bank_title) document.getElementById('cms-bank-title').textContent = data.bank_title;
     if (data.bank_details) document.getElementById('cms-bank-details').innerHTML = md(data.bank_details);
     if (data.mobile_title) document.getElementById('cms-mobile-title').textContent = data.mobile_title;
