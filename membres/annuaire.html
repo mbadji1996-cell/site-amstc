@@ -74,6 +74,12 @@
   .member-name{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--text-heading);}
   .member-domain{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--indigo-dark);background:var(--indigo-light);padding:3px 10px;border-radius:999px;margin-top:6px;}
   .member-city{font-size:0.82rem;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px;}
+  .member-contact{
+    font-family:var(--mono);font-size:0.78rem;font-weight:600;color:#1D9E75;
+    display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:6px 14px;
+    border-radius:999px;border:1.5px solid #1D9E75;transition:background .18s ease,color .18s ease;
+  }
+  .member-contact:hover{background:#1D9E75;color:var(--white);}
 
   .empty{text-align:center;padding:60px 0;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
 
@@ -156,6 +162,14 @@
     return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
   }
 
+  function whatsappLink(phone){
+    if (!phone) return null;
+    let digits = phone.replace(/\D/g, '');
+    if (!digits) return null;
+    if (digits.length <= 9) digits = '221' + digits; // numéro local sans indicatif
+    return `https://wa.me/${digits}`;
+  }
+
   function displayName(m){
     const parts = [m.title, m.first_name, m.last_name].filter(Boolean);
     return parts.length ? parts.join(' ') : (m.full_name || 'Membre');
@@ -222,7 +236,7 @@
     let items = currentFilter === 'all' ? allMembers : allMembers.filter(m => m.domain === currentFilter);
     if (searchQuery) {
       items = items.filter(m => {
-        const haystack = [displayName(m), m.city, m.specialty, domainLabel(m)].filter(Boolean).join(' ').toLowerCase();
+        const haystack = [displayName(m), m.city, m.specialty, domainLabel(m), m.phone].filter(Boolean).join(' ').toLowerCase();
         return haystack.includes(searchQuery);
       });
     }
@@ -241,6 +255,7 @@
         <div class="member-name">${esc(displayName(m))}</div>
         ${domainLabel(m) ? `<div class="member-domain">${esc([domainLabel(m), m.specialty].filter(Boolean).join(' · '))}</div>` : ''}
         ${m.city ? `<div class="member-city"><i class="ti ti-map-pin"></i> ${esc(m.city)}</div>` : ''}
+        ${whatsappLink(m.phone) ? `<a class="member-contact" href="${esc(whatsappLink(m.phone))}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> ${esc(m.phone)}</a>` : ''}
       </div>
     `).join('');
   }

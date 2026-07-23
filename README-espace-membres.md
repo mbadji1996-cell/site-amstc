@@ -492,17 +492,34 @@ et sa ville publics sur Internet.
 `member_directory()` (SECURITY DEFINER, même plafond LIMIT + limite de
 fréquence que les autres listes - voir Phase 4quindecies/4sexdecies)
 qui n'expose qu'un sous-ensemble de colonnes de `profiles` : titre, nom,
-domaine, spécialité, ville, photo. **Jamais l'e-mail, le téléphone, le
-rôle ou le statut de carte.** Aucune policy RLS n'est modifiée sur
-`profiles` - les membres continuent de ne voir que leur propre ligne en
-direct, seule cette fonction dédiée expose la liste complète.
+domaine, spécialité, ville, photo, téléphone (voir Phase 4duodevicies
+ci-dessous). **Jamais l'e-mail, le rôle ou le statut de carte.** Aucune
+policy RLS n'est modifiée sur `profiles` - les membres continuent de ne
+voir que leur propre ligne en direct, seule cette fonction dédiée expose
+la liste complète.
 
 1. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
    `supabase/phase28-annuaire-membres.sql` (après avoir exécuté
    phase27-rate-limiting-rpc.sql), cliquez **Run**.
 2. **Testez** `membres/annuaire.html` : la recherche et les filtres par
-   domaine doivent fonctionner, et aucun champ sensible (e-mail,
-   téléphone) ne doit apparaître.
+   domaine doivent fonctionner, et aucun champ sensible (e-mail) ne doit
+   apparaître.
+
+## 4duodevicies. Ajoute le téléphone à l'annuaire (lien WhatsApp)
+
+**Décision de l'association** : l'annuaire reste réservé à l'espace
+membres (jamais public), donc afficher le téléphone (déjà fourni par
+chaque membre à l'inscription, voir Phase 4terdecies) aux autres membres
+approuvés reste raisonnable pour un annuaire professionnel interne. Le
+numéro s'affiche comme un lien WhatsApp cliquable
+(`supabase/phase29-annuaire-telephone.sql`), toujours sans policy RLS
+supplémentaire ni changement du plafond/limite de fréquence.
+
+1. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
+   `supabase/phase29-annuaire-telephone.sql` (après avoir exécuté
+   phase28-annuaire-membres.sql), cliquez **Run**.
+2. **Testez** `membres/annuaire.html` : chaque fiche membre doit afficher
+   un lien WhatsApp cliquable vers son numéro.
 
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
