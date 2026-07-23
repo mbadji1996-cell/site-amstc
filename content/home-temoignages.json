@@ -4,10 +4,11 @@
   "temoignages_subtitle": "",
   "temoignages_list": [
     {
-      "quote": "Quand on travaille pour Dieu, il faut savoir mettre ses intérêts personnels de côté et œuvrer pour le bien collectif.",
-      "author_name": "Mouhamed BADJI",
+      "quote": "L'AMSTC, c'est plus qu'une association, c'est une famille.",
+      "author_name": "Dr Mouhamed BADJI",
       "author_role": "Coordinateur du Comité des Sages",
-      "author_type": "membre"
+      "author_type": "membre",
+      "photo": "/assets/uploads/présidents-06.png"
     }
   ]
 }
