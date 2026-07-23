@@ -347,6 +347,21 @@
   @media (prefers-reduced-motion: reduce){ .pres-track{animation:none !important;} }
   @media (max-width:560px){ .pres-card{width:160px;} }
 
+  /* ===== Chiffres d'impact ===== */
+  #impact{background:var(--green-deep); padding:80px 0;}
+  #impact .eyebrow{color:var(--gold);}
+  #impact .eyebrow::before{background:var(--gold);}
+  #impact h2{color:var(--white);}
+  .impact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:24px; margin-top:8px;}
+  .impact-tile{text-align:center; padding:8px 16px;}
+  .impact-icon{
+    width:56px; height:56px; border-radius:50%; background:rgba(248,183,24,0.15);
+    display:flex; align-items:center; justify-content:center; font-size:26px; color:var(--gold);
+    margin:0 auto 16px;
+  }
+  .impact-number{font-family:var(--display); font-weight:800; font-size:clamp(2rem,5vw,2.8rem); color:var(--white); line-height:1; margin-bottom:8px;}
+  .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
+
   /* ===== CTA banner ===== */
   .cta-banner{
     background:var(--green); border-radius:22px; padding:56px 48px; color:var(--white);
@@ -698,6 +713,18 @@
         <p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
       </div>
       <noscript><p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos réalisations, ou consultez <a href="actualites.html">la page dédiée</a>.</p></noscript>
+    </div>
+  </section>
+
+  <!-- ===== CHIFFRES D'IMPACT ===== -->
+  <section id="impact" style="display:none;">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow" id="cms-impact-eyebrow">Notre impact</p>
+        <h2 id="cms-impact-title">Ce que nous accomplissons ensemble</h2>
+        <p id="cms-impact-subtitle" style="display:none;"></p>
+      </div>
+      <div class="impact-grid reveal" id="cms-impact-grid"></div>
     </div>
   </section>
 
@@ -1216,7 +1243,8 @@
     "content/home-actualites.json",
     "content/navigation.json",
     "content/mediatheque.json",
-    "content/home-prieres.json"
+    "content/home-prieres.json",
+    "content/home-impact.json"
   ];
   Promise.all(CONTENT_FILES.map(f => fetch(f).then(r => r.ok ? r.json() : {}).catch(() => ({}))))
     .then(parts => {
@@ -1372,6 +1400,9 @@
     if (data.prayer_title) document.getElementById('cms-prayer-title').textContent = data.prayer_title;
     renderPrayerTimes(data);
 
+    // Chiffres d'impact
+    renderImpact(data);
+
     initHeroSlideshow(data.hero_slideshow);
     revealPage();
     initScrollReveal();
@@ -1397,6 +1428,78 @@
         <span class="prayer-row-time">${esc(t.time)}</span>
       </div>
     `).join('');
+  }
+
+  // ===== Chiffres d'impact (comptage animé à l'entrée dans l'écran) =====
+  const IMPACT_ICONS = {
+    stethoscope: '<path d="M8 4v6a4 4 0 0 0 8 0V4M8 4H6M8 4h2M16 4h-2M16 4h2M12 15v2a5 5 0 0 0 10 0v-1.5"/><circle cx="22" cy="13.5" r="1.5"/>',
+    droplet: '<path d="M12 2s7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 7-13 7-13Z"/>',
+    users: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="18" cy="9" r="2.6"/><path d="M15.8 14.3c2.9.4 4.7 2.5 4.7 5.7"/>',
+    book: '<path d="M3 5.5C3 4.7 3.7 4 4.5 4H11a2 2 0 0 1 2 2v14a1.5 1.5 0 0 0-1.5-1.5H4.5A1.5 1.5 0 0 1 3 17V5.5Z"/><path d="M21 5.5c0-.8-.7-1.5-1.5-1.5H13a2 2 0 0 0-2 2v14a1.5 1.5 0 0 1 1.5-1.5h6.5a1.5 1.5 0 0 0 1.5-1.5V5.5Z"/>',
+    heart: '<path d="M12 20s-7.5-4.6-10-9.3C.4 7.3 2 3.5 5.7 3c2.2-.3 4.2 1 6.3 3.3C14.1 4 16.1 2.7 18.3 3c3.7.5 5.3 4.3 3.7 7.7C19.5 15.4 12 20 12 20Z"/>',
+    home: '<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/>',
+    'calendar-event': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6"/>',
+    star: '<path d="M12 2.5l3 6.5 7 .9-5.2 4.8 1.4 6.9L12 17.9 5.8 21.6l1.4-6.9L2 9.9l7-.9 3-6.5Z"/>'
+  };
+
+  function renderImpact(data){
+    const section = document.getElementById('impact');
+    const grid = document.getElementById('cms-impact-grid');
+    if (!section || !grid) return;
+
+    const stats = Array.isArray(data.impact_stats) ? data.impact_stats.filter(s => s && s.number) : [];
+    if (stats.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    if (data.impact_eyebrow) document.getElementById('cms-impact-eyebrow').textContent = data.impact_eyebrow;
+    if (data.impact_title) document.getElementById('cms-impact-title').textContent = data.impact_title;
+    setOptionalSubtitle('cms-impact-subtitle', data.impact_subtitle);
+
+    grid.innerHTML = stats.map(s => `
+      <div class="impact-tile">
+        <div class="impact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IMPACT_ICONS[s.icon] || IMPACT_ICONS.star}</svg></div>
+        <div class="impact-number" data-raw="${esc(s.number)}">0</div>
+        <div class="impact-label">${esc(s.label || '')}</div>
+      </div>
+    `).join('');
+
+    initImpactCounters();
+  }
+
+  let impactCountersStarted = false;
+  function initImpactCounters(){
+    if (impactCountersStarted) return;
+    impactCountersStarted = true;
+    const tiles = document.querySelectorAll('.impact-number');
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function animate(el){
+      const raw = el.getAttribute('data-raw') || '';
+      const m = raw.match(/^([\d\s.,]+)(.*)$/);
+      if (!m) { el.textContent = raw; return; }
+      const target = parseInt(m[1].replace(/[\s.,]/g, ''), 10);
+      const suffix = m[2] || '';
+      if (isNaN(target)) { el.textContent = raw; return; }
+      if (reduceMotion) { el.textContent = target.toLocaleString('fr-FR') + suffix; return; }
+
+      const duration = 1400;
+      const startTime = performance.now();
+      function step(now){
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased).toLocaleString('fr-FR') + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    if (!('IntersectionObserver' in window)) { tiles.forEach(animate); return; }
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { animate(entry.target); obs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.4 });
+    tiles.forEach(el => io.observe(el));
   }
 
   // ===== Verset et Hadith de la semaine (automatique, aucune intervention manuelle possible) =====

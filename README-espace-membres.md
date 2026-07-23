@@ -481,6 +481,29 @@ fonction `check_rate_limit` (SECURITY DEFINER) y touche.
 2. **Testez** les 4 pages : elles doivent continuer à afficher leur
    contenu normalement pour un usage courant.
 
+## 4septdecies. Annuaire des membres (`membres/annuaire.html`)
+
+**Contexte** : recherche/filtre par nom, ville, domaine et spécialité
+parmi les membres approuvés, réservé à l'espace membres (pas de page
+publique) - aucun membre n'ayant explicitement consenti à rendre son nom
+et sa ville publics sur Internet.
+
+`supabase/phase28-annuaire-membres.sql` ajoute une fonction RPC
+`member_directory()` (SECURITY DEFINER, même plafond LIMIT + limite de
+fréquence que les autres listes - voir Phase 4quindecies/4sexdecies)
+qui n'expose qu'un sous-ensemble de colonnes de `profiles` : titre, nom,
+domaine, spécialité, ville, photo. **Jamais l'e-mail, le téléphone, le
+rôle ou le statut de carte.** Aucune policy RLS n'est modifiée sur
+`profiles` - les membres continuent de ne voir que leur propre ligne en
+direct, seule cette fonction dédiée expose la liste complète.
+
+1. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
+   `supabase/phase28-annuaire-membres.sql` (après avoir exécuté
+   phase27-rate-limiting-rpc.sql), cliquez **Run**.
+2. **Testez** `membres/annuaire.html` : la recherche et les filtres par
+   domaine doivent fonctionner, et aucun champ sensible (e-mail,
+   téléphone) ne doit apparaître.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
@@ -543,6 +566,9 @@ Une fois l'URL et la clé intégrées :
 - Limite de fréquence (30 appels / 5 minutes par membre) sur ces mêmes
   fonctions RPC, contre un compte qui boucle les appels (voir Phase
   4sexdecies ci-dessus)
+- Annuaire des membres, recherche/filtre par nom, ville, domaine et
+  spécialité, réservé à l'espace membres (voir Phase 4septdecies
+  ci-dessus)
 
 ## Limite connue : création de comptes par un administrateur
 

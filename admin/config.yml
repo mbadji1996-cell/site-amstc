@@ -289,6 +289,35 @@ collections:
               - { label: "Nom de la prière", name: "label", widget: "string" }
               - { label: "Heure", name: "time", widget: "string", hint: "Ex : 05H35" }
 
+      - name: "impact"
+        label: "11. Chiffres d'impact"
+        file: "content/home-impact.json"
+        fields:
+          - { label: "Accroche", name: "impact_eyebrow", widget: "string", default: "Notre impact" }
+          - { label: "Titre de la section", name: "impact_title", widget: "string", default: "Ce que nous accomplissons ensemble" }
+          - { label: "Sous-titre", name: "impact_subtitle", widget: "string", required: false }
+          - label: "Chiffres clés"
+            name: "impact_stats"
+            widget: "list"
+            summary: "{{fields.number}} — {{fields.label}}"
+            hint: "4 chiffres maximum recommandés pour rester lisible. Laissez le nombre vide pour masquer une tuile."
+            fields:
+              - { label: "Nombre", name: "number", widget: "string", required: false, hint: "Ex : 500+, 1 200, 15…" }
+              - { label: "Libellé", name: "label", widget: "string" }
+              - label: "Icône"
+                name: "icon"
+                widget: "select"
+                default: "stethoscope"
+                options:
+                  - { label: "Stéthoscope (santé)", value: "stethoscope" }
+                  - { label: "Goutte de sang (don de sang)", value: "droplet" }
+                  - { label: "Groupe de personnes (membres)", value: "users" }
+                  - { label: "Livre (formation / daara)", value: "book" }
+                  - { label: "Cœur (social / entraide)", value: "heart" }
+                  - { label: "Maison (daara / terrain)", value: "home" }
+                  - { label: "Calendrier (activités / événements)", value: "calendar-event" }
+                  - { label: "Étoile (récompense / qualité)", value: "star" }
+
       - name: "don"
         label: "Faire un don (page dédiée don.html)"
         file: "content/don.json"

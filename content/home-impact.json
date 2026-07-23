@@ -1,0 +1,11 @@
+{
+  "impact_eyebrow": "Notre impact",
+  "impact_title": "Ce que nous accomplissons ensemble",
+  "impact_subtitle": "",
+  "impact_stats": [
+    { "number": "", "label": "Consultations données", "icon": "stethoscope" },
+    { "number": "", "label": "Dons de sang collectés", "icon": "droplet" },
+    { "number": "", "label": "Membres actifs", "icon": "users" },
+    { "number": "", "label": "Daaras accompagnées", "icon": "book" }
+  ]
+}
