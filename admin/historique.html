@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historique des versions - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:900px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+
+  .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+
+  .auth-warning{background:#FDEEEE;border:1.5px solid #f5c0c0;border-radius:var(--radius);padding:20px 22px;margin-bottom:28px;font-size:0.9rem;color:#8a2b2b;display:flex;gap:12px;align-items:flex-start;}
+  .auth-warning i{font-size:20px;flex-shrink:0;margin-top:1px;}
+  .auth-warning a{text-decoration:underline;font-weight:600;}
+
+  .picker-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:28px;}
+  .picker-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .picker-row:last-child{margin-bottom:0;}
+  select{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
+  select:focus{outline:none;border-color:var(--green);}
+  label.field-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:block;margin-bottom:6px;}
+  .field-group{flex:1;min-width:200px;}
+
+  .status-msg{font-size:0.85rem;color:var(--text-muted);padding:20px 0;text-align:center;font-family:var(--mono);}
+  .status-msg.error{color:#B23B3B;}
+
+  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:28px;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:12px 14px;font-size:0.86rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--paper);}
+  .commit-msg{font-weight:600;color:var(--text-heading);}
+  .commit-meta{font-size:0.76rem;color:#8A9E8F;}
+  .commit-sha{font-family:var(--mono);font-size:0.72rem;color:var(--text-accent);}
+  .td-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;padding:6px 12px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-view{background:var(--paper-alt);color:var(--text-heading);}
+  .btn-view:hover{background:var(--line);}
+  .btn-restore{background:#FEF6E4;color:var(--gold-deep);}
+  .btn-restore:hover{background:#f5e0ad;}
+  .btn-restore:disabled{opacity:0.4;cursor:not-allowed;}
+  .current-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;background:#EAF3DE;color:#3B6D11;padding:3px 9px;border-radius:999px;}
+
+  .preview-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:28px;}
+  .preview-card pre{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:0.8rem;background:var(--paper);border-radius:8px;padding:16px;max-height:400px;overflow-y:auto;}
+  .preview-actions{margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .restore-msg{font-size:0.85rem;}
+  .restore-msg.error{color:#B23B3B;}
+  .restore-msg.ok{color:#3B6D11;}
+
+  @media(max-width:560px){
+    .picker-row{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-header">
+    <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Administration du contenu</a>
+    <h1 class="page-title">Historique des versions</h1>
+    <p class="page-sub">Consultez et restaurez une ancienne version d'une fiche, directement depuis l'historique Git - sans passer par GitHub.</p>
+  </div>
+
+  <div id="authWarning" class="auth-warning" style="display:none;">
+    <i class="ti ti-alert-circle"></i>
+    <span>Aucune session GitHub détectée. Ouvrez d'abord
+    <a href="index.html" target="_blank" rel="noopener">l'administration du contenu</a> et connectez-vous
+    avec GitHub, puis revenez sur cette page (rechargez-la si besoin).</span>
+  </div>
+
+  <div id="mainContent" style="display:none;">
+    <p class="section-label"><i class="ti ti-folder"></i> Choisir une fiche</p>
+    <div class="picker-card">
+      <div class="picker-row">
+        <div class="field-group">
+          <label class="field-label" for="collectionSelect">Collection</label>
+          <select id="collectionSelect">
+            <option value="actualites">Réalisations</option>
+            <option value="formations">Formation</option>
+            <option value="projets">Projets</option>
+            <option value="etapes">Étapes de projet</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="entrySelect">Fiche</label>
+          <select id="entrySelect">
+            <option value="">Chargement…</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="historySection" style="display:none;">
+      <p class="section-label"><i class="ti ti-history"></i> Historique Git</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Message de commit</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="commitsBody">
+            <tr><td colspan="3" class="status-msg">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="previewSection" style="display:none;">
+      <p class="section-label"><i class="ti ti-eye"></i> Aperçu de la version sélectionnée</p>
+      <div class="preview-card">
+        <pre id="previewContent"></pre>
+        <div class="preview-actions">
+          <button class="btn btn-restore" id="restoreBtn"><i class="ti ti-arrow-back-up"></i> Restaurer cette version</button>
+          <p class="restore-msg" id="restoreMsg"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const REPO = 'mbadji1996-cell/site-amstc';
+  const BRANCH = 'main';
+  const COLLECTIONS = {
+    actualites: { folder: 'content/actualites', index: '../content/actualites-index.json' },
+    formations: { folder: 'content/formations', index: '../content/formations-index.json' },
+    projets:    { folder: 'content/projets',    index: '../content/projets-index.json' },
+    etapes:     { folder: 'content/etapes',     index: '../content/etapes-index.json' },
+  };
+
+  function ghToken() {
+    try {
+      const raw = localStorage.getItem('decap-cms-user');
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && parsed.token ? parsed.token : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function ghApi(path, opts = {}) {
+    const token = ghToken();
+    const res = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+      ...opts,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        ...(opts.headers || {}),
+      },
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`GitHub API ${res.status} : ${text.slice(0, 200)}`);
+    }
+    return res.json();
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function b64DecodeUtf8(b64) {
+    const binary = atob(b64.replace(/\n/g, ''));
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function b64EncodeUtf8(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  }
+
+  let currentFilePath = null;
+
+  async function loadEntries() {
+    const collectionKey = document.getElementById('collectionSelect').value;
+    const entrySelect = document.getElementById('entrySelect');
+    entrySelect.innerHTML = '<option value="">Chargement…</option>';
+    document.getElementById('historySection').style.display = 'none';
+    document.getElementById('previewSection').style.display = 'none';
+
+    try {
+      const res = await fetch(COLLECTIONS[collectionKey].index);
+      const items = res.ok ? await res.json() : [];
+      const sorted = items.slice().sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+      if (sorted.length === 0) {
+        entrySelect.innerHTML = '<option value="">Aucune fiche trouvée</option>';
+        return;
+      }
+
+      entrySelect.innerHTML = '<option value="">Choisir une fiche…</option>' +
+        sorted.map(it => `<option value="${escapeHtml(it.slug)}">${escapeHtml(it.title || it.slug)}</option>`).join('');
+    } catch (e) {
+      entrySelect.innerHTML = '<option value="">Erreur de chargement</option>';
+    }
+  }
+
+  async function loadHistory() {
+    const collectionKey = document.getElementById('collectionSelect').value;
+    const slug = document.getElementById('entrySelect').value;
+    const historySection = document.getElementById('historySection');
+    const commitsBody = document.getElementById('commitsBody');
+    document.getElementById('previewSection').style.display = 'none';
+
+    if (!slug) {
+      historySection.style.display = 'none';
+      return;
+    }
+
+    currentFilePath = `${COLLECTIONS[collectionKey].folder}/${slug}.md`;
+    historySection.style.display = 'block';
+    commitsBody.innerHTML = '<tr><td colspan="3" class="status-msg">Chargement…</td></tr>';
+
+    try {
+      const commits = await ghApi(`/commits?path=${encodeURIComponent(currentFilePath)}&sha=${BRANCH}&per_page=30`);
+      if (!commits || commits.length === 0) {
+        commitsBody.innerHTML = '<tr><td colspan="3" class="status-msg">Aucun historique trouvé pour cette fiche.</td></tr>';
+        return;
+      }
+
+      commitsBody.innerHTML = commits.map((c, i) => `
+        <tr>
+          <td><span class="commit-msg">${escapeHtml((c.commit.message || '').split('\n')[0])}</span><br>
+              <span class="commit-sha">${c.sha.slice(0, 7)}</span></td>
+          <td class="commit-meta">${formatDate(c.commit.author && c.commit.author.date)}</td>
+          <td class="td-actions">
+            ${i === 0 ? '<span class="current-badge">Version actuelle</span>' :
+              `<button class="btn btn-view" data-sha="${c.sha}" onclick="previewVersion('${c.sha}')"><i class="ti ti-eye"></i> Voir</button>`}
+          </td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      commitsBody.innerHTML = `<tr><td colspan="3" class="status-msg error">Erreur : ${escapeHtml(e.message)}</td></tr>`;
+    }
+  }
+
+  let previewSha = null;
+  let previewText = null;
+
+  async function previewVersion(sha) {
+    const previewSection = document.getElementById('previewSection');
+    const previewContent = document.getElementById('previewContent');
+    const restoreMsg = document.getElementById('restoreMsg');
+    restoreMsg.textContent = '';
+    restoreMsg.className = 'restore-msg';
+    previewSection.style.display = 'block';
+    previewContent.textContent = 'Chargement…';
+
+    try {
+      const data = await ghApi(`/contents/${encodeURIComponent(currentFilePath)}?ref=${sha}`);
+      previewText = b64DecodeUtf8(data.content);
+      previewSha = sha;
+      previewContent.textContent = previewText;
+    } catch (e) {
+      previewContent.textContent = 'Erreur : ' + e.message;
+      previewSha = null;
+    }
+  }
+  window.previewVersion = previewVersion;
+
+  document.getElementById('restoreBtn').addEventListener('click', async () => {
+    const restoreMsg = document.getElementById('restoreMsg');
+    const restoreBtn = document.getElementById('restoreBtn');
+    restoreMsg.textContent = '';
+    restoreMsg.className = 'restore-msg';
+
+    if (!previewSha || !previewText) {
+      restoreMsg.textContent = 'Choisissez d\'abord une version à prévisualiser.';
+      restoreMsg.classList.add('error');
+      return;
+    }
+    if (!confirm('Restaurer cette version va créer un nouveau commit qui remplace le contenu actuel du fichier par cette ancienne version. Continuer ?')) {
+      return;
+    }
+
+    restoreBtn.disabled = true;
+    restoreMsg.textContent = 'Restauration en cours…';
+
+    try {
+      const current = await ghApi(`/contents/${encodeURIComponent(currentFilePath)}?ref=${BRANCH}`);
+      await ghApi(`/contents/${encodeURIComponent(currentFilePath)}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          message: `Restaure une version antérieure de ${currentFilePath} (${previewSha.slice(0, 7)})`,
+          content: b64EncodeUtf8(previewText),
+          sha: current.sha,
+          branch: BRANCH,
+        }),
+      });
+      restoreMsg.textContent = 'Version restaurée avec succès. Le site se mettra à jour au prochain déploiement.';
+      restoreMsg.classList.add('ok');
+      loadHistory();
+    } catch (e) {
+      restoreMsg.textContent = 'Échec : ' + e.message;
+      restoreMsg.classList.add('error');
+    } finally {
+      restoreBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('collectionSelect').addEventListener('change', loadEntries);
+  document.getElementById('entrySelect').addEventListener('change', loadHistory);
+
+  (function init() {
+    if (!ghToken()) {
+      document.getElementById('authWarning').style.display = 'flex';
+      return;
+    }
+    document.getElementById('mainContent').style.display = 'block';
+    loadEntries();
+  })();
+</script>
+
+</body>
+</html>

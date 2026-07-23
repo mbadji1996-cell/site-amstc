@@ -634,6 +634,40 @@ fonction Edge choisit automatiquement le bon modèle selon l'audience -
 audiences de rappel - seul le texte tapé dans la variable `{{message}}`
 change à chaque envoi.
 
+## 4vicies. Dupliquer une fiche & consulter l'historique des versions
+
+Deux améliorations pour l'édition de contenu via Decap CMS (Réalisations,
+Formations, Projets, Étapes) :
+
+**Dupliquer une fiche** - déjà disponible nativement, aucune installation
+nécessaire. En ouvrant une fiche existante dans `admin/index.html`, le
+menu déroulant à côté du bouton d'enregistrement/publication propose une
+option **"Dupliquer"** : elle crée un nouveau brouillon pré-rempli avec le
+même contenu, à ajuster (nouvelle date, texte mis à jour) avant de
+publier. Pratique pour les éditions annuelles récurrentes (Ndogou Social,
+Gamou, JSSCI...).
+
+**Historique des versions** (`admin/historique.html`) - panneau qui
+liste l'historique Git d'une fiche (dates, messages de commit) et permet
+de prévisualiser ou restaurer une ancienne version, sans passer par
+GitHub directement :
+1. Ouvrez d'abord `admin/index.html` et connectez-vous avec GitHub (ceci
+   place un jeton dans le stockage local du navigateur).
+2. Ouvrez ensuite `admin/historique.html` (accessible aussi depuis
+   `membres/admin.html` → bloc "Contenu public du site" → lien
+   "Historique des versions") dans le **même navigateur**.
+3. Choisissez une collection puis une fiche : l'historique Git s'affiche,
+   avec un bouton **"Voir"** par ancienne version (aperçu du contenu brut
+   markdown/frontmatter) et un bouton **"Restaurer cette version"** qui
+   crée un nouveau commit ramenant le fichier à cet état (rien n'est
+   jamais réécrit dans l'historique Git existant - c'est toujours un
+   commit en avant, donc réversible à son tour).
+
+Aucune installation ni secret requis : cette page réutilise directement
+le jeton GitHub déjà stocké par Decap CMS dans le navigateur au moment de
+la connexion - le même mécanisme que Decap CMS utilise lui-même en
+interne pour ses propres appels à l'API GitHub.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
