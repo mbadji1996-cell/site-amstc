@@ -24,18 +24,6 @@
     "ordre": ""
   },
   {
-    "slug": "2026-02-15-jssci-2026",
-    "title": "Journées Scientifiques, Sociales, Culturelles et d'Intégration (JSSCI 2026)",
-    "date": "2026-06-19T10:00:00.000Z",
-    "date_debut": "",
-    "date_fin": "",
-    "excerpt": "Dans le cadre des Journées Scientifiques, Sociales, Culturelles et d'Intégration (JSSCI 2026), l'AMSTC a organisé 72 heures d'activités intenses mêlant solidarité, cohésion, partage scientifique et intégration des nouveaux membres, du 19 au 21 juin 2026 (prolongées par un événement sportif le 24 juin) à la FMPO et au campus de l'UCAD.",
-    "image": "",
-    "statut": "",
-    "projet": "",
-    "ordre": ""
-  },
-  {
     "slug": "2026-06-06-match-day-2eme-edition",
     "title": "Match Day - 2ème édition",
     "date": "2026-06-06T10:00:00.000Z",
@@ -810,6 +798,18 @@
     "date_debut": "",
     "date_fin": "",
     "excerpt": "Contenu à venir.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
+    "slug": "2026-02-15-jssci-2026",
+    "title": "Journées Scientifiques, Sociales, Culturelles et d'Intégration (JSSCI 2026)",
+    "date": "24/06/2026",
+    "date_debut": "19/06/2026",
+    "date_fin": "21/06/2026",
+    "excerpt": "Dans le cadre des Journées Scientifiques, Sociales, Culturelles et d'Intégration (JSSCI 2026), l'AMSTC a organisé 72 heures d'activités intenses mêlant solidarité, cohésion, partage scientifique et intégration des nouveaux membres, du 19 au 21 juin 2026 (prolongées par un événement sportif le 24 juin) à la FMPO et au campus de l'UCAD.",
     "image": "",
     "statut": "",
     "projet": "",
