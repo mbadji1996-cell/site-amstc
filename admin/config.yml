@@ -368,6 +368,18 @@ collections:
           - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text" }
           - { label: "Note de confiance (récépissé)", name: "trust_note", widget: "string" }
 
+      - name: "popup-annonce"
+        label: "Annonce plein écran (pop-up)"
+        file: "content/popup-annonce.json"
+        fields:
+          - { label: "Activer l'annonce", name: "active", widget: "boolean", default: false, hint: "Une fois désactivée, plus personne ne la voit - le contenu ci-dessous reste en brouillon." }
+          - { label: "Titre", name: "titre", widget: "string" }
+          - { label: "Message", name: "message", widget: "text" }
+          - { label: "Image (facultative)", name: "image", widget: "image", required: false }
+          - { label: "Texte du bouton (facultatif)", name: "cta_label", widget: "string", required: false, hint: "Ex : Faire un don, Déposer ma candidature…" }
+          - { label: "Lien du bouton (facultatif)", name: "cta_url", widget: "string", required: false, hint: "Ex : don.html ou https://…" }
+          - { label: "Durée d'affichage (secondes)", name: "duree_secondes", widget: "number", default: 12, value_type: "int", min: 10, max: 15, hint: "Entre 10 et 15 secondes. Se ferme aussi si l'internaute clique." }
+
   - name: "actualites"
     label: "Réalisations"
     folder: "content/actualites"

@@ -1,0 +1,53 @@
+/* ===== Annonce plein écran (pop-up temporaire) ===== */
+.popup-annonce-overlay{
+  position:fixed; inset:0; z-index:3000;
+  background:rgba(6,28,14,0.65);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.popup-annonce-overlay.open{ display:flex; }
+
+.popup-annonce-card{
+  position:relative;
+  background:var(--surface); border-radius:18px;
+  box-shadow:0 30px 80px rgba(6,68,28,0.4);
+  max-width:480px; width:100%; max-height:90vh; overflow-y:auto;
+}
+
+.popup-annonce-close{
+  position:absolute; top:12px; right:12px; z-index:1;
+  width:34px; height:34px; border-radius:50%;
+  background:rgba(0,0,0,0.4); color:#fff; border:none; cursor:pointer;
+  font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center;
+}
+.popup-annonce-close:hover{ background:rgba(0,0,0,0.6); }
+
+.popup-annonce-image{
+  width:100%; aspect-ratio:16/9; object-fit:cover; display:block;
+  border-radius:18px 18px 0 0;
+}
+
+.popup-annonce-body{ padding:30px 32px 32px; }
+.popup-annonce-title{
+  font-family:var(--display,'Sora',sans-serif); font-weight:700; font-size:1.35rem;
+  color:var(--text-heading); margin-bottom:12px; line-height:1.25;
+}
+.popup-annonce-message{
+  font-size:0.98rem; color:var(--text-muted); white-space:pre-wrap; margin-bottom:20px;
+}
+.popup-annonce-cta{
+  display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem;
+  padding:13px 26px; border-radius:999px; background:var(--green); color:#fff;
+}
+.popup-annonce-cta:hover{ background:var(--green-deep); }
+
+.popup-annonce-timer-track{
+  height:4px; background:var(--paper-alt,rgba(0,0,0,0.08)); border-radius:0 0 18px 18px; overflow:hidden;
+}
+.popup-annonce-timer-bar{
+  height:100%; width:100%; background:var(--gold,#F8B718); transform-origin:left;
+  animation:popupAnnonceCountdown linear forwards;
+}
+@keyframes popupAnnonceCountdown{ from{ transform:scaleX(1); } to{ transform:scaleX(0); } }
+@media (prefers-reduced-motion:reduce){
+  .popup-annonce-timer-bar{ animation:none; transform:scaleX(0); }
+}
