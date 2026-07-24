@@ -21,18 +21,21 @@
     overlay.className = "popup-annonce-overlay";
 
     var duree = Math.min(15, Math.max(10, Number(data.duree_secondes) || 12));
+    var hasBodyContent = !!(data.titre || data.message || (data.cta_label && data.cta_url));
 
     overlay.innerHTML =
       '<div class="popup-annonce-card" role="dialog" aria-label="Annonce">' +
         '<button class="popup-annonce-close" type="button" aria-label="Fermer">✕</button>' +
         (data.image ? '<img class="popup-annonce-image" src="' + esc(data.image) + '" alt="">' : "") +
-        '<div class="popup-annonce-body">' +
-          (data.titre ? '<p class="popup-annonce-title">' + esc(data.titre) + "</p>" : "") +
-          (data.message ? '<p class="popup-annonce-message">' + esc(data.message) + "</p>" : "") +
-          (data.cta_label && data.cta_url
-            ? '<a class="popup-annonce-cta" href="' + esc(data.cta_url) + '">' + esc(data.cta_label) + "</a>"
-            : "") +
-        "</div>" +
+        (hasBodyContent
+          ? '<div class="popup-annonce-body">' +
+              (data.titre ? '<p class="popup-annonce-title">' + esc(data.titre) + "</p>" : "") +
+              (data.message ? '<p class="popup-annonce-message">' + esc(data.message) + "</p>" : "") +
+              (data.cta_label && data.cta_url
+                ? '<a class="popup-annonce-cta" href="' + esc(data.cta_url) + '">' + esc(data.cta_label) + "</a>"
+                : "") +
+            "</div>"
+          : "") +
         '<div class="popup-annonce-timer-track"><div class="popup-annonce-timer-bar" style="animation-duration:' + duree + 's;"></div></div>' +
       "</div>";
 
@@ -67,7 +70,7 @@
     fetch("content/popup-annonce.json")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (!data || !data.active || (!data.titre && !data.message)) return;
+        if (!data || !data.active || (!data.titre && !data.message && !data.image)) return;
 
         var signature = JSON.stringify(data);
         var alreadySeen = false;

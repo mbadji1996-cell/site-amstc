@@ -100,6 +100,7 @@
   .ann-modal-title{font-family:var(--display);font-size:1.1rem;font-weight:700;color:var(--text-heading);}
   .ann-modal-body{padding:10px 26px;overflow-y:auto;}
   .ann-item{padding:16px 0;border-bottom:1px solid var(--paper-alt);}
+  .ann-item-image{width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block;margin-bottom:12px;}
   .ann-item:last-child{border-bottom:none;}
   .ann-item-title{font-weight:600;font-size:0.95rem;color:var(--text-heading);margin-bottom:6px;}
   .ann-item-text{font-size:0.87rem;color:var(--text-muted);white-space:pre-wrap;}
@@ -305,16 +306,24 @@
     try {
       const { data, error } = await supabaseClient
         .from("member_announcements")
-        .select("title,body")
+        .select("title,body,image_path")
         .eq("is_pinned", true)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error || !data || data.length === 0) return;
 
+      const paths = data.map(a => a.image_path).filter(Boolean);
+      let imgUrlMap = {};
+      if (paths.length > 0) {
+        const { data: signed } = await supabaseClient.storage.from("annonce-photos").createSignedUrls(paths, 3600);
+        (signed || []).forEach(s => { if (s.signedUrl) imgUrlMap[s.path] = s.signedUrl; });
+      }
+
       document.getElementById("annModalBody").innerHTML = data.map(a => `
         <div class="ann-item">
-          <p class="ann-item-title">${esc(a.title)}</p>
-          <p class="ann-item-text">${esc(a.body)}</p>
+          ${a.image_path && imgUrlMap[a.image_path] ? `<img class="ann-item-image" src="${esc(imgUrlMap[a.image_path])}" alt="">` : ""}
+          ${a.title ? `<p class="ann-item-title">${esc(a.title)}</p>` : ""}
+          ${a.body ? `<p class="ann-item-text">${esc(a.body)}</p>` : ""}
         </div>
       `).join("");
       document.getElementById("annOverlay").classList.add("open");
