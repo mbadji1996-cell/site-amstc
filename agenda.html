@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
+<script src="assets/js/date-periode.js"></script>
 <script src="assets/js/site-search.js" defer></script>
 <link rel="stylesheet" href="assets/css/popup-annonce.css">
 <script src="assets/js/popup-annonce.js" defer></script>
@@ -141,7 +142,7 @@
         ${item.statut ? `<span class="status-badge statut-${slugifyStatut(item.statut)}">${esc(item.statut)}</span>` : ""}
         ${item.image ? `<img src="${item.image}" alt="">` : ""}
         <div class="card-body">
-          <span class="card-date">${item.date ? new Date(item.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+          <span class="card-date">${formatDatePeriode(item)}</span>
           <h3>${esc(item.title || 'Sans titre')}</h3>
           <p>${esc(item.excerpt || '')}</p>
         </div>

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
+<script src="assets/js/date-periode.js"></script>
 <script src="assets/js/site-search.js" defer></script>
 <link rel="stylesheet" href="assets/css/popup-annonce.css">
 <script src="assets/js/popup-annonce.js" defer></script>
@@ -174,7 +175,7 @@
       injectArticleSchema(data, "Projets");
       const ytId = youtubeEmbedId(data.video_youtube);
       content.innerHTML = `
-        <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+        <span class="art-date">${formatDatePeriode(data)}</span>
         ${data.statut ? `<span class="art-statut">${data.statut}</span>` : ""}
         <h1>${data.title || ''}</h1>
         ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
@@ -208,7 +209,7 @@
         <div class="etape-item">
           <div class="etape-dot">${i + 1}</div>
           <a class="etape-card" href="etape.html?slug=${encodeURIComponent(e.slug)}">
-            <span class="etape-date">${e.date ? new Date(e.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+            <span class="etape-date">${formatDatePeriode(e)}</span>
             <h3>${e.title || 'Sans titre'}</h3>
             <p>${e.excerpt || ''}</p>
           </a>

@@ -35,6 +35,8 @@ function buildIndex(folderName) {
       slug: f.replace(/\.md$/, ''),
       title: data.title || '',
       date: data.date || '',
+      date_debut: data.date_debut || '',
+      date_fin: data.date_fin || '',
       excerpt: data.excerpt || '',
       image: data.image || '',
       statut: data.statut || '',

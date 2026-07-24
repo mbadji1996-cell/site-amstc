@@ -38,9 +38,9 @@ function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-function formatDate(d) {
-  return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-}
+// Même formatage que les pages du site (période "du ... au ..." si la fiche
+// en définit une), pour que le bilan imprimé colle exactement au site.
+const formatDatePeriode = require('../assets/js/date-periode.js');
 
 function resolveAsset(p) {
   if (!p) return '';
@@ -54,7 +54,7 @@ const itemsHtml = yearItems.map((a, i) => `
         <div class="report-item-body">
           ${a.image ? `<img src="${esc(resolveAsset(a.image))}" alt="" class="report-item-img">` : ''}
           <div class="report-item-text">
-            <span class="report-item-date">${formatDate(a.date)}</span>
+            <span class="report-item-date">${formatDatePeriode(a)}</span>
             <h3>${esc(a.title)}</h3>
             ${a.excerpt ? `<p>${esc(a.excerpt)}</p>` : ''}
           </div>

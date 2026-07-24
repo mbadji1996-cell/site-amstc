@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
+<script src="assets/js/date-periode.js"></script>
 <script src="assets/js/site-search.js" defer></script>
 <link rel="stylesheet" href="assets/css/popup-annonce.css">
 <script src="assets/js/popup-annonce.js" defer></script>
@@ -140,7 +141,7 @@
       injectArticleSchema(data, "Formation");
       const ytId = youtubeEmbedId(data.video_youtube);
       content.innerHTML = `
-        <span class="art-date">${data.date ? new Date(data.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+        <span class="art-date">${formatDatePeriode(data)}</span>
         <h1>${data.title || ''}</h1>
         ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}

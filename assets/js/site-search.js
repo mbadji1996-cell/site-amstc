@@ -45,9 +45,14 @@
     });
   }
 
-  function formatDate(d) {
-    if (!d) return "";
-    return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  // Délègue à assets/js/date-periode.js (chargé avant ce script) pour afficher
+  // "du ... au ..." sur les fiches qui définissent une période. Repli sur une
+  // date simple si le helper n'est pas présent sur la page.
+  function formatDate(item) {
+    if (!item) return "";
+    if (typeof self.formatDatePeriode === "function") return self.formatDatePeriode(item);
+    var d = item.date || item;
+    return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   }
 
   function createUI() {
@@ -117,7 +122,7 @@
           '<a class="site-search-result" href="' + m.__page + "?slug=" + encodeURIComponent(m.slug) + '">' +
             '<span class="site-search-result-type">' + esc(m.__type) + "</span>" +
             '<span class="site-search-result-title">' + esc(m.title) + "</span>" +
-            '<span class="site-search-result-date">' + formatDate(m.date) + "</span>" +
+            '<span class="site-search-result-date">' + formatDate(m) + "</span>" +
           "</a>"
         );
       }).join("");

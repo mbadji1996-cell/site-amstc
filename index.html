@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
+<script src="assets/js/date-periode.js"></script>
 <script src="assets/js/site-search.js" defer></script>
 <link rel="stylesheet" href="assets/css/popup-annonce.css">
 <script src="assets/js/popup-annonce.js" defer></script>
@@ -1824,7 +1825,7 @@
       if (latest.length === 0) { grid.innerHTML = '<p style="color:var(--text-muted);">Aucun article publié pour le moment.</p>'; return; }
       grid.innerHTML = latest.map(a => `
         <a class="intro-card reveal" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
-          <span class="num">${a.date ? new Date(a.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+          <span class="num">${formatDatePeriode(a)}</span>
           <h3>${a.title || 'Sans titre'}</h3>
           <p>${a.excerpt || ''}</p>
         </a>
