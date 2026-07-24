@@ -693,6 +693,31 @@ service tiers requis.
 4. Désépingler, désactiver (masquer sans supprimer) ou supprimer une
    annonce se fait depuis la même page admin.
 
+## 4duovicies. Demande de campagne ou d'activité locale (formulaire public)
+
+Formulaire public (`demande-campagne.html`, sans compte requis) permettant
+à toute personne de solliciter l'AMSTC pour une campagne ou une activité
+dans sa localité ou son daara.
+
+**Mise en place** : `phase25-notifications-admin.sql` doit déjà être en
+place (fonction `notify_admin` + `pg_net`), puis exécuter
+`supabase/phase33-demandes-campagnes.sql` dans le SQL Editor. Le nouvel
+`event_type` "demande_campagne" est déjà géré par la fonction Edge
+`notify-admin` existante - aucun redéploiement ni nouveau secret requis.
+
+**Utilisation** :
+1. Un visiteur remplit le formulaire (nom, téléphone, e-mail optionnel,
+   localité/daara, description). L'insertion se fait directement depuis le
+   navigateur (clé anon), sans authentification.
+2. L'admin reçoit un e-mail (même adresse que les autres notifications,
+   `ADMIN_NOTIFY_EMAIL`) et retrouve la demande dans
+   `membres/demandes-campagnes-admin.html` (accessible depuis
+   `membres/admin.html` → carte "Demandes de campagnes", avec un badge du
+   nombre de demandes en attente).
+3. L'admin valide la demande ou la marque "non retenue" (avec une note
+   interne optionnelle) ; elle peut aussi être remise "en attente" en cas
+   d'erreur.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
