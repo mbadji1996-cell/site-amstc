@@ -257,6 +257,32 @@
   .tl-item div li{margin-bottom:6px;}
   .tl-item div li:last-child{margin-bottom:0;}
 
+  /* ===== Logo flottant en 3D à côté de "Notre histoire" (desktop) ===== */
+  /* Ne couvre que l'entête + la frise : s'arrête avant le bloc Pionniers pour ne jamais gêner son défilement. */
+  .historique-grid{display:grid; grid-template-columns:1fr; gap:0;}
+  .historique-watermark-col{display:none;}
+  @media (min-width:1101px){
+    .historique-grid{grid-template-columns:1fr 340px; gap:24px;}
+    .historique-watermark-col{display:block;}
+  }
+  .historique-watermark-sticky{
+    position:sticky; top:130px;
+    display:flex; align-items:center; justify-content:center;
+    perspective:1400px; pointer-events:none;
+  }
+  .historique-watermark{
+    width:280px; height:auto;
+    filter:drop-shadow(0 26px 32px rgba(6,68,28,0.30));
+    transform-style:preserve-3d;
+    animation:historiqueFloat 6s ease-in-out infinite;
+  }
+  @keyframes historiqueFloat{
+    0%, 100%{ transform:rotateY(-20deg) rotateX(8deg) translateY(0); }
+    50%{ transform:rotateY(-14deg) rotateX(4deg) translateY(-18px); }
+  }
+  :root[data-theme="dark"] .historique-watermark{filter:drop-shadow(0 26px 32px rgba(0,0,0,0.5));}
+  @media (prefers-reduced-motion:reduce){ .historique-watermark{animation:none;} }
+
   /* ===== Founders ===== */
   .founders-box{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:32px;
@@ -693,16 +719,25 @@
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
   <section class="section-alt" id="historique">
     <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
-        <h2 id="cms-history-title">Une décennie d'engagement</h2>
-        <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
-      </div>
-      <div class="timeline" id="cms-timeline">
-        <div class="tl-item reveal"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
+      <div class="historique-grid">
+        <div class="historique-main">
+          <div class="section-head reveal">
+            <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
+            <h2 id="cms-history-title">Une décennie d'engagement</h2>
+            <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
+          </div>
+          <div class="timeline" id="cms-timeline">
+            <div class="tl-item reveal"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
+          </div>
+        </div>
+        <div class="historique-watermark-col">
+          <div class="historique-watermark-sticky">
+            <img class="historique-watermark" src="assets/logo-mark-only.png" alt="" aria-hidden="true">
+          </div>
+        </div>
       </div>
 
       <div class="historique-sub" id="pioneersBlock" style="display:none;">
