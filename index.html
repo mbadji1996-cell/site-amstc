@@ -257,15 +257,32 @@
   .tl-item div li{margin-bottom:6px;}
   .tl-item div li:last-child{margin-bottom:0;}
 
-  /* ===== Filigrane décoratif (espace vide à droite de la frise, desktop) ===== */
-  #historique{position:relative; overflow:hidden;}
-  #historique .wrap{position:relative; z-index:1;}
-  .historique-watermark{
-    position:absolute; right:-30px; top:50%; transform:translateY(-50%);
-    width:400px; height:auto; opacity:0.05; pointer-events:none; z-index:0;
+  /* ===== Filigrane décoratif flottant (espace vide à droite de la frise, desktop) ===== */
+  .historique-grid{display:grid; grid-template-columns:1fr; gap:0;}
+  .historique-main{min-width:0; overflow:hidden;}
+  .historique-watermark-col{display:none;}
+  @media (min-width:1101px){
+    .historique-grid{grid-template-columns:1fr 360px; gap:24px; align-items:start;}
+    .historique-watermark-col{display:block; align-self:stretch;}
   }
-  :root[data-theme="dark"] .historique-watermark{opacity:0.07;}
-  @media (max-width:1100px){ .historique-watermark{display:none;} }
+  .historique-watermark-sticky{
+    position:sticky; top:130px;
+    display:flex; align-items:center; justify-content:center;
+    perspective:1400px; pointer-events:none;
+  }
+  .historique-watermark{
+    width:300px; height:auto; opacity:0.16;
+    filter:drop-shadow(0 30px 36px rgba(6,68,28,0.28));
+    transform-style:preserve-3d;
+    animation:historiqueFloat 6s ease-in-out infinite;
+  }
+  @keyframes historiqueFloat{
+    0%, 100%{ transform:rotateY(-20deg) rotateX(8deg) translateY(0); }
+    50%{ transform:rotateY(-14deg) rotateX(4deg) translateY(-20px); }
+  }
+  :root[data-theme="dark"] .historique-watermark{opacity:0.22; filter:drop-shadow(0 30px 36px rgba(0,0,0,0.45));}
+  @media (prefers-reduced-motion:reduce){ .historique-watermark{animation:none;} }
+  @media (max-width:1100px){ .historique-watermark-col{display:none;} }
 
   /* ===== Founders ===== */
   .founders-box{
@@ -702,36 +719,44 @@
 
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
   <section class="section-alt" id="historique">
-    <img class="historique-watermark" src="assets/logo-mark-only.png" alt="" aria-hidden="true">
     <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
-        <h2 id="cms-history-title">Une décennie d'engagement</h2>
-        <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
-      </div>
-      <div class="timeline" id="cms-timeline">
-        <div class="tl-item reveal"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
-        <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
-      </div>
+      <div class="historique-grid">
+        <div class="historique-main">
+          <div class="section-head reveal">
+            <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
+            <h2 id="cms-history-title">Une décennie d'engagement</h2>
+            <p id="cms-history-subtitle">De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.</p>
+          </div>
+          <div class="timeline" id="cms-timeline">
+            <div class="tl-item reveal"><span class="tl-year">2014</span><h4>Naissance de l'association</h4><div><p>Des étudiants de la Faculté de Médecine, de Pharmacie et d'Odontologie (FMPO) se reconnaissant comme « talibé Cheikh » fondent l'association et organisent la 1ère édition du Ndogou Social, devenue depuis le Grand Ndogou Social.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2015 – 2019</span><h4>Montée en puissance des campagnes de terrain</h4><div><p>Éditions annuelles du Grand Ndogou Social couplées à des enseignements post-universitaires (EPU), journées de don de sang, consultations gratuites à Ouakam, Tivaouane et dans plusieurs daaras, et couverture médicale du Gamou de Tivaouane avec COSKAS Santé.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2020 – 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
+            <div class="tl-item reveal"><span class="tl-year">2023 – 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
+          </div>
 
-      <div class="historique-sub" id="pioneersBlock" style="display:none;">
-        <h4 class="historique-sub-heading" id="cms-pioneers-title">Les Pionniers</h4>
-        <p class="historique-sub-subtitle" id="cms-pioneers-subtitle" style="display:none;"></p>
-        <div class="founders-box reveal" id="pioneersListWrap">
-          <div class="founders-list" id="cms-pioneers-list"></div>
-        </div>
-        <div class="pio-marquee reveal" id="pioneersMarqueeWrap">
-          <div class="pio-track" id="cms-pioneers-track"></div>
-        </div>
-      </div>
+          <div class="historique-sub" id="pioneersBlock" style="display:none;">
+            <h4 class="historique-sub-heading" id="cms-pioneers-title">Les Pionniers</h4>
+            <p class="historique-sub-subtitle" id="cms-pioneers-subtitle" style="display:none;"></p>
+            <div class="founders-box reveal" id="pioneersListWrap">
+              <div class="founders-list" id="cms-pioneers-list"></div>
+            </div>
+            <div class="pio-marquee reveal" id="pioneersMarqueeWrap">
+              <div class="pio-track" id="cms-pioneers-track"></div>
+            </div>
+          </div>
 
-      <div class="historique-sub" id="presidentsBlock" style="display:none;">
-        <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
-        <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
-        <div class="pres-marquee reveal" id="presidentsMarqueeWrap">
-          <div class="pres-track" id="cms-presidents-track"></div>
+          <div class="historique-sub" id="presidentsBlock" style="display:none;">
+            <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
+            <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
+            <div class="pres-marquee reveal" id="presidentsMarqueeWrap">
+              <div class="pres-track" id="cms-presidents-track"></div>
+            </div>
+          </div>
+        </div>
+        <div class="historique-watermark-col">
+          <div class="historique-watermark-sticky">
+            <img class="historique-watermark" src="assets/logo-mark-only.png" alt="" aria-hidden="true">
+          </div>
         </div>
       </div>
     </div>
