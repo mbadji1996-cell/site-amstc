@@ -385,6 +385,10 @@
   #impact .eyebrow{color:var(--gold);}
   #impact .eyebrow::before{background:var(--gold);}
   #impact h2{color:var(--white);}
+  /* Le fond de la section reste vert foncé dans les deux thèmes : le sous-titre
+     doit donc être clair, et non hériter de --text-muted (prévu pour le fond
+     clair de la page, illisible ici en mode clair et terne en mode sombre). */
+  #impact .section-head p:not(.eyebrow){color:rgba(255,255,255,0.75);}
   .impact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:24px; margin-top:8px;}
   .impact-tile{text-align:center; padding:8px 16px;}
   .impact-icon{
