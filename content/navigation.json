@@ -10,7 +10,8 @@
     { "label": "Réalisations", "href": "actualites.html" },
     { "label": "Formation", "href": "formations.html" },
     { "label": "Projets", "href": "projets.html" },
-    { "label": "Agenda", "href": "agenda.html" }
+    { "label": "Agenda", "href": "agenda.html" },
+    { "label": "Demander une campagne", "href": "demande-campagne.html" }
   ],
   "footer_pages": [
     { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
@@ -22,6 +23,7 @@
     { "label": "Formation", "href": "formations.html" },
     { "label": "Projets", "href": "projets.html" },
     { "label": "Agenda", "href": "agenda.html" },
+    { "label": "Demander une campagne", "href": "demande-campagne.html" },
     { "label": "Faire un don", "href": "don.html" },
     { "label": "Espace consultation", "href": "https://consultations-amstc.org" },
     { "label": "Espace membres", "href": "membres/connexion.html" },

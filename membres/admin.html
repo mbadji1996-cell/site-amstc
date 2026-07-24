@@ -217,6 +217,14 @@
           <p class="admin-card-sub">Épinglées à la connexion</p>
         </div>
       </a>
+      <a class="admin-card" href="demandes-campagnes-admin.html">
+        <div class="admin-card-icon"><i class="ti ti-map-pin"></i></div>
+        <div>
+          <p class="admin-card-label">Demandes de campagnes</p>
+          <p class="admin-card-sub">Localités & daaras</p>
+        </div>
+        <span class="admin-card-badge" id="badgeCampaignRequests" style="display:none;"></span>
+      </a>
     </div>
 
     <p class="section-label"><i class="ti ti-world"></i> Contenu public du site</p>
@@ -302,6 +310,13 @@
       const { count } = await supabaseClient
         .from('member_cards').select('id', { count: 'exact', head: true }).eq('claim_status', 'pending');
       setBadge('badgeCartes', count ?? 0);
+    } catch(e) {}
+
+    // Demandes de campagnes en attente
+    try {
+      const { count } = await supabaseClient
+        .from('campaign_requests').select('id', { count: 'exact', head: true }).eq('status', 'en_attente');
+      setBadge('badgeCampaignRequests', count ?? 0);
     } catch(e) {}
   }
 

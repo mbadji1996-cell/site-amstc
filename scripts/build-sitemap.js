@@ -56,6 +56,7 @@ addUrl(`${SITE_URL}/formations.html`, latestDate(formations, today), 'weekly', '
 addUrl(`${SITE_URL}/projets.html`, latestDate(projets, today), 'weekly', '0.8');
 addUrl(`${SITE_URL}/agenda.html`, latestDate([...actualites, ...formations, ...projets], today), 'weekly', '0.7');
 addUrl(`${SITE_URL}/don.html`, today, 'monthly', '0.6');
+addUrl(`${SITE_URL}/demande-campagne.html`, today, 'monthly', '0.5');
 addUrl(`${SITE_URL}/guide.html`, today, 'monthly', '0.4');
 addUrl(`${SITE_URL}/confidentialite.html`, today, 'yearly', '0.3');
 addUrl(`${SITE_URL}/cgu.html`, today, 'yearly', '0.3');

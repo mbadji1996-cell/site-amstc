@@ -1,11 +1,12 @@
 // supabase/functions/notify-admin/index.ts
 //
 // Fonction Edge partagée qui envoie un e-mail de notification à l'admin de
-// l'AMSTC pour 4 événements : inscription, réclamation de carte, achat
-// boutique, nouveau sujet de forum. Appelée UNIQUEMENT côté serveur par les
-// triggers Postgres (voir supabase/phase25-notifications-admin.sql) via
-// pg_net — jamais directement par le navigateur, donc aucune gestion CORS
-// n'est nécessaire ici (pas de préflight OPTIONS à gérer).
+// l'AMSTC pour 5 événements : inscription, réclamation de carte, achat
+// boutique, nouveau sujet de forum, demande de campagne/activité locale.
+// Appelée UNIQUEMENT côté serveur par les triggers Postgres (voir
+// supabase/phase25-notifications-admin.sql et phase33-demandes-campagnes.sql)
+// via pg_net — jamais directement par le navigateur, donc aucune gestion
+// CORS n'est nécessaire ici (pas de préflight OPTIONS à gérer).
 //
 // Secrets requis (Dashboard > Project Settings > Edge Functions > Secrets) :
 //   RESEND_API_KEY      - clé API Resend (https://resend.com)
@@ -88,6 +89,23 @@ function buildEmail(
           <p><strong>Articles :</strong></p>
           <ul>${itemsHtml}</ul>
           <p>À traiter dans membres/boutique-admin.html.</p>
+        `,
+      };
+    }
+    case "demande_campagne": {
+      return {
+        subject: `Demande de campagne/activité - ${esc(data.locality)}`,
+        html: `
+          <h2>Nouvelle demande de campagne ou d'activité locale</h2>
+          <ul>
+            <li><strong>Nom :</strong> ${esc(data.full_name)}</li>
+            <li><strong>Téléphone :</strong> ${esc(data.phone)}</li>
+            <li><strong>E-mail :</strong> ${esc(data.email)}</li>
+            <li><strong>Localité / daara :</strong> ${esc(data.locality)}</li>
+          </ul>
+          <p><strong>Description :</strong></p>
+          <p>${esc(data.description)}</p>
+          <p>À étudier dans membres/demandes-campagnes-admin.html.</p>
         `,
       };
     }

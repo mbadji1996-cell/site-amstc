@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demandes de campagnes - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1000px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+
+  .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+  .filter-pill{font-family:var(--mono);font-size:0.76rem;font-weight:600;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text-muted);cursor:pointer;}
+  .filter-pill:hover{border-color:var(--green);}
+  .filter-pill.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--white);}
+
+  .req-list{display:flex;flex-direction:column;gap:14px;}
+  .req-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;}
+  .req-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .req-name{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);}
+  .req-locality{font-size:0.85rem;color:var(--text-accent);margin-top:2px;}
+  .req-badge{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.06em;padding:4px 10px;border-radius:999px;background:var(--paper-alt);color:var(--text-muted);white-space:nowrap;}
+  .req-badge.en_attente{background:rgba(248,183,24,0.18);color:var(--gold-deep);}
+  .req-badge.validee{background:rgba(23,118,59,0.15);color:var(--green);}
+  .req-badge.non_retenue{background:rgba(178,59,59,0.12);color:#B23B3B;}
+  .req-contact{font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;margin-top:10px;}
+  .req-desc{font-size:0.88rem;color:var(--text-muted);margin-top:10px;white-space:pre-wrap;}
+  .req-notes{font-size:0.82rem;color:var(--text-muted);margin-top:10px;background:var(--paper-alt);border-radius:8px;padding:10px 14px;}
+  .req-notes strong{color:var(--text-heading);}
+  .req-meta{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;margin-top:10px;}
+  .req-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .req-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-radius:999px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--paper-alt);color:var(--ink);}
+  .req-btn:hover{border-color:var(--green);}
+  .req-btn.validate:hover{border-color:var(--green);color:var(--green);}
+  .req-btn.reject:hover{border-color:#B23B3B;color:#B23B3B;}
+
+  .empty-note{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:40px 0;}
+  .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <div class="page-header">
+    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <h1 class="page-title">Demandes de campagnes</h1>
+    <p class="page-sub">Demandes soumises via le formulaire public "Demander une campagne" (localités, daaras).</p>
+  </div>
+
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-pill active" data-status="tout">Toutes</button>
+    <button class="filter-pill" data-status="en_attente">En attente</button>
+    <button class="filter-pill" data-status="validee">Validées</button>
+    <button class="filter-pill" data-status="non_retenue">Non retenues</button>
+  </div>
+
+  <div class="req-list" id="reqList">
+    <p class="loading-msg">Chargement…</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const STATUS_LABELS = { en_attente: 'En attente', validee: 'Validée', non_retenue: 'Non retenue' };
+  let currentProfile = null;
+  let allRequests = [];
+  let currentFilter = 'tout';
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    currentProfile = profile;
+
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.status;
+        renderList();
+      });
+    });
+
+    loadRequests();
+  })();
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function loadRequests() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('campaign_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      allRequests = data || [];
+      renderList();
+    } catch (e) {
+      document.getElementById('reqList').innerHTML = '<p class="empty-note">Impossible de charger les demandes.</p>';
+    }
+  }
+
+  function renderList() {
+    const list = document.getElementById('reqList');
+    const items = currentFilter === 'tout' ? allRequests : allRequests.filter(r => r.status === currentFilter);
+
+    if (items.length === 0) {
+      list.innerHTML = '<p class="empty-note">Aucune demande pour le moment.</p>';
+      return;
+    }
+
+    list.innerHTML = items.map(r => `
+      <div class="req-card">
+        <div class="req-top">
+          <div>
+            <p class="req-name">${escapeHtml(r.full_name)}</p>
+            <p class="req-locality"><i class="ti ti-map-pin"></i> ${escapeHtml(r.locality)}</p>
+          </div>
+          <span class="req-badge ${r.status}">${escapeHtml(STATUS_LABELS[r.status] || r.status)}</span>
+        </div>
+        <p class="req-contact"><i class="ti ti-phone"></i> ${escapeHtml(r.phone)}${r.email ? ' · ' + escapeHtml(r.email) : ''}</p>
+        <p class="req-desc">${escapeHtml(r.description)}</p>
+        ${r.admin_notes ? `<p class="req-notes"><strong>Note admin :</strong> ${escapeHtml(r.admin_notes)}</p>` : ''}
+        <p class="req-meta">Reçue le ${formatDate(r.created_at)}${r.handled_at ? ' · traitée le ' + formatDate(r.handled_at) : ''}</p>
+        ${r.status === 'en_attente' ? `
+          <div class="req-actions">
+            <button class="req-btn validate" onclick="handleRequest('${r.id}', 'validee')"><i class="ti ti-check"></i> Valider</button>
+            <button class="req-btn reject" onclick="handleRequest('${r.id}', 'non_retenue')"><i class="ti ti-x"></i> Marquer non retenue</button>
+          </div>
+        ` : `
+          <div class="req-actions">
+            <button class="req-btn" onclick="handleRequest('${r.id}', 'en_attente')"><i class="ti ti-arrow-back-up"></i> Remettre en attente</button>
+          </div>
+        `}
+      </div>
+    `).join('');
+  }
+
+  async function handleRequest(id, newStatus) {
+    let admin_notes;
+    if (newStatus === 'non_retenue') {
+      admin_notes = prompt('Note optionnelle (raison, visible en interne uniquement) :') || null;
+    }
+    const payload = { status: newStatus, handled_by: currentProfile.id, handled_at: new Date().toISOString() };
+    if (admin_notes !== undefined) payload.admin_notes = admin_notes;
+
+    const { error } = await supabaseClient.from('campaign_requests').update(payload).eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    loadRequests();
+  }
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut(); window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>

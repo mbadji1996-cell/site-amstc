@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="assets/css/dark-mode.css">
+<script src="assets/js/theme-toggle.js" defer></script>
+<link rel="stylesheet" href="assets/css/site-search.css">
+<script src="assets/js/site-search.js" defer></script>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#06441C">
+<script src="assets/js/pwa-register.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demander une campagne ou une activité - AMSTC</title>
+<meta name="description" content="Sollicitez l'AMSTC pour organiser une campagne médicale ou une activité dans votre localité ou votre daara.">
+<link rel="canonical" href="https://amstc.org/demande-campagne.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AMSTC">
+<meta property="og:title" content="Demander une campagne ou une activité - AMSTC">
+<meta property="og:description" content="Sollicitez l'AMSTC pour organiser une campagne médicale ou une activité dans votre localité ou votre daara.">
+<meta property="og:url" content="https://amstc.org/demande-campagne.html">
+<meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --shadow:0 12px 32px rgba(6,68,28,0.10); --radius:14px;
+    --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:720px; margin:0 auto; padding:0 28px;}
+  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); line-height:1.15;}
+  header{padding:24px 0; border-bottom:1px solid var(--line); background:var(--green-deep);}
+  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .logo-img{height:42px;filter:brightness(0) invert(1);}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:40px 0 18px;}
+  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
+  h1{font-size:clamp(1.9rem,4vw,2.4rem); margin-bottom:18px;}
+  .intro{font-size:1.02rem; color:var(--text-muted); max-width:60ch; margin-bottom:36px;}
+
+  .form-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:30px 32px; margin-bottom:24px;}
+  .field{margin-bottom:20px;}
+  .field label{display:block; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:8px;}
+  .field input, .field textarea{
+    width:100%; border:1.5px solid var(--line); border-radius:8px; padding:12px 14px;
+    font-family:var(--body); font-size:0.95rem; color:var(--ink); background:var(--paper);
+  }
+  .field textarea{min-height:130px; resize:vertical;}
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--green);}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:560px){ .field-row{grid-template-columns:1fr;} }
+  .required-note{font-size:0.8rem; color:#8A9E8F; margin-bottom:20px;}
+
+  .btn-submit{
+    display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem;
+    padding:13px 26px; border-radius:999px; background:var(--green); color:#fff; border:none; cursor:pointer;
+  }
+  .btn-submit:hover{background:var(--green-deep);}
+  .btn-submit:disabled{opacity:0.55; cursor:not-allowed;}
+
+  .form-msg{font-size:0.9rem; margin-top:16px; display:none;}
+  .form-msg.error{color:#B23B3B; display:block;}
+  .form-msg.ok{color:#3B6D11; display:block;}
+
+  .success-card{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green); border-radius:var(--radius); padding:30px 32px; display:none;}
+  .success-card i{color:var(--green); font-size:32px; margin-bottom:14px; display:block;}
+  .success-card h2{font-family:var(--display); font-size:1.2rem; margin-bottom:10px; color:var(--text-heading);}
+  .success-card p{color:var(--text-muted); font-size:0.95rem;}
+
+  .trust{font-family:var(--mono); font-size:0.8rem; color:var(--text-accent); border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin-top:8px;}
+  footer{padding:40px 0; text-align:center;}
+  footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="back" href="index.html">← Retour à l'accueil</a>
+
+  <p class="eyebrow">Nous solliciter</p>
+  <h1>Demander une campagne ou une activité</h1>
+  <p class="intro">Vous représentez une localité ou un daara et souhaitez que l'AMSTC y organise une consultation gratuite, une campagne de sensibilisation ou une autre activité ? Décrivez votre besoin ci-dessous : notre équipe étudie chaque demande avant de vous répondre.</p>
+
+  <form class="form-card" id="requestForm">
+    <p class="required-note">Tous les champs sont obligatoires, sauf l'e-mail.</p>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="fullName">Nom complet</label>
+        <input type="text" id="fullName" required maxlength="120" placeholder="Votre nom">
+      </div>
+      <div class="field">
+        <label for="phone">Téléphone</label>
+        <input type="tel" id="phone" required maxlength="30" placeholder="+221 77 000 00 00">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">E-mail (optionnel)</label>
+      <input type="email" id="email" maxlength="160" placeholder="vous@exemple.com">
+    </div>
+
+    <div class="field">
+      <label for="locality">Localité ou daara concerné</label>
+      <input type="text" id="locality" required maxlength="160" placeholder="Ex : Daara de Ndiassane, quartier, village…">
+    </div>
+
+    <div class="field">
+      <label for="description">Décrivez votre demande</label>
+      <textarea id="description" required maxlength="1500" placeholder="Type d'activité souhaitée, contexte, nombre de personnes concernées, période envisagée…"></textarea>
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn"><i class="ti ti-send"></i> Envoyer la demande</button>
+    <p class="form-msg" id="formMsg"></p>
+  </form>
+
+  <div class="success-card" id="successCard">
+    <i class="ti ti-circle-check"></i>
+    <h2>Demande envoyée</h2>
+    <p>Merci ! Votre demande a bien été transmise à l'équipe AMSTC. Nous l'étudierons et reviendrons vers vous dès que possible.</p>
+  </div>
+
+  <p class="trust">Vous pouvez aussi nous écrire directement à <a href="mailto:contact@amstc.org" style="text-decoration:underline;">contact@amstc.org</a>.</p>
+</div>
+
+<footer>
+  <a href="index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+  document.getElementById('requestForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formMsg = document.getElementById('formMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    formMsg.textContent = ''; formMsg.className = 'form-msg';
+
+    const full_name = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const locality = document.getElementById('locality').value.trim();
+    const description = document.getElementById('description').value.trim();
+
+    if (!full_name || !phone || !locality || !description) {
+      formMsg.textContent = 'Merci de compléter tous les champs obligatoires.';
+      formMsg.classList.add('error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="ti ti-loader-2"></i> Envoi en cours…';
+
+    try {
+      const { error } = await supabaseClient.from('campaign_requests').insert({
+        full_name, phone, email: email || null, locality, description,
+      });
+      if (error) throw error;
+
+      document.getElementById('requestForm').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+    } catch (err) {
+      formMsg.textContent = 'Échec de l\'envoi : ' + (err.message || 'erreur inconnue') + '. Réessayez ou écrivez-nous directement.';
+      formMsg.classList.add('error');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="ti ti-send"></i> Envoyer la demande';
+    }
+  });
+</script>
+
+</body>
+</html>
