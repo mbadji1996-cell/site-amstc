@@ -257,6 +257,16 @@
   .tl-item div li{margin-bottom:6px;}
   .tl-item div li:last-child{margin-bottom:0;}
 
+  /* ===== Filigrane décoratif (espace vide à droite de la frise, desktop) ===== */
+  #historique{position:relative; overflow:hidden;}
+  #historique .wrap{position:relative; z-index:1;}
+  .historique-watermark{
+    position:absolute; right:-30px; top:50%; transform:translateY(-50%);
+    width:400px; height:auto; opacity:0.05; pointer-events:none; z-index:0;
+  }
+  :root[data-theme="dark"] .historique-watermark{opacity:0.07;}
+  @media (max-width:1100px){ .historique-watermark{display:none;} }
+
   /* ===== Founders ===== */
   .founders-box{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:32px;
@@ -692,6 +702,7 @@
 
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
   <section class="section-alt" id="historique">
+    <img class="historique-watermark" src="assets/logo-mark-only.png" alt="" aria-hidden="true">
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
