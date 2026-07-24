@@ -32,6 +32,12 @@ create table if not exists public.campaign_requests (
 
 alter table public.campaign_requests enable row level security;
 
+-- ===== Autorisation de base (indispensable en plus des policies RLS) =====
+-- Sans ce GRANT, Postgres refuse l'accès à la table avant même d'évaluer les
+-- policies RLS ci-dessous ("permission denied for table campaign_requests").
+grant insert on public.campaign_requests to anon, authenticated;
+grant select, update on public.campaign_requests to authenticated;
+
 -- ===== Soumission : ouverte à tous, sans compte (site public) =====
 drop policy if exists "Anyone can submit a campaign request" on public.campaign_requests;
 create policy "Anyone can submit a campaign request"

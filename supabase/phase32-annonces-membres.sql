@@ -26,6 +26,11 @@ create table if not exists public.member_announcements (
 
 alter table public.member_announcements enable row level security;
 
+-- ===== Autorisation de base (indispensable en plus des policies RLS) =====
+-- Sans ce GRANT, Postgres refuse l'accès à la table avant même d'évaluer les
+-- policies RLS ci-dessous ("permission denied for table member_announcements").
+grant select, insert, update, delete on public.member_announcements to authenticated;
+
 -- ===== Lecture : tout membre approuvé voit les annonces actives =====
 drop policy if exists "Members can view active announcements" on public.member_announcements;
 create policy "Members can view active announcements"
