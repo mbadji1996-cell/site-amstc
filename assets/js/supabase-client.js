@@ -1,11 +1,11 @@
 // ===== Configuration Supabase =====
-// Remplacez ces deux valeurs par celles de votre projet Supabase
-// (Dashboard > Project Settings > API). Voir README-espace-membres.md.
-// La clé "anon" est conçue pour être visible côté client : la sécurité
-// vient des règles RLS Postgres (voir supabase/schema.sql), pas du secret
-// de cette clé.
-const SUPABASE_URL = "https://qcdhtynqhpydtqnptvmo.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjZGh0eW5xaHB5ZHRxbnB0dm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMTYyMjUsImV4cCI6MjA5OTY5MjIyNX0.9PSZT4KmvKueqBxAW2ojpiB97PpZFCO_s1bLROWpTj4";
+// Instance Supabase auto-hébergée de l'AMSTC (VPS Hetzner, gérée via
+// Coolify) : la passerelle API est servie sur api.amstc.org. Voir
+// README-espace-membres.md. La clé "anon" est conçue pour être visible
+// côté client : la sécurité vient des règles RLS Postgres (voir
+// supabase/schema.sql), pas du secret de cette clé.
+const SUPABASE_URL = "https://api.amstc.org";
+const SUPABASE_ANON_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg3MTA2MCwiZXhwIjo0OTQwNTQ0NjYwLCJyb2xlIjoiYW5vbiJ9.At_rHwK9bgTh4eoh1ykkLGaPiVXpZBpXxtgDb_allaM";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

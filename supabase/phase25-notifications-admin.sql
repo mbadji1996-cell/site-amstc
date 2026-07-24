@@ -44,7 +44,7 @@ set search_path = public
 as $$
 begin
   perform net.http_post(
-    url := 'https://qcdhtynqhpydtqnptvmo.supabase.co/functions/v1/notify-admin',
+    url := 'https://api.amstc.org/functions/v1/notify-admin',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       -- ⚠️ Ceci N'EST PAS la clé "anon" (publique) : c'est un jeton dédié,
