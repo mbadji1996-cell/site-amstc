@@ -668,6 +668,31 @@ le jeton GitHub déjà stocké par Decap CMS dans le navigateur au moment de
 la connexion - le même mécanisme que Decap CMS utilise lui-même en
 interne pour ses propres appels à l'API GitHub.
 
+## 4unvicies. Annonces épinglées pour les membres
+
+Permet à un administrateur de publier des annonces vues par tous les
+membres à chaque connexion (ex. rappel d'événement, changement important),
+sans dépendre d'un canal externe (e-mail, WhatsApp) que tout le monde ne
+consulte pas forcément.
+
+**Mise en place** : exécuter `supabase/phase32-annonces-membres.sql` dans
+le SQL Editor (après `schema.sql` et `phase2-roles.sql`). Aucun secret ni
+service tiers requis.
+
+**Utilisation** :
+1. Un administrateur crée une annonce depuis `membres/annonces-admin.html`
+   (accessible depuis `membres/admin.html` → carte "Annonces") : titre,
+   message, et une case à cocher "Épingler".
+2. Au plus **3 annonces** peuvent être épinglées en même temps - la
+   limite est vérifiée à la fois côté interface et côté base (un trigger
+   Postgres refuse l'épinglage d'une 4e annonce).
+3. Toute annonce épinglée et active s'affiche dans une fenêtre modale au
+   chargement de `membres/index.html` (le tableau de bord), à **chaque**
+   connexion - elle n'est jamais mémorisée comme "déjà vue", pour qu'un
+   membre ne puisse pas la manquer même après plusieurs visites.
+4. Désépingler, désactiver (masquer sans supprimer) ou supprimer une
+   annonce se fait depuis la même page admin.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
