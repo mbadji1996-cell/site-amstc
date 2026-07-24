@@ -1,11 +1,11 @@
 {
   "impact_eyebrow": "Notre impact",
   "impact_title": "Ce que nous accomplissons ensemble",
-  "impact_subtitle": "",
+  "impact_subtitle": "Chiffres issus de nos rapports d'activités 2025 et du premier semestre 2026.",
   "impact_stats": [
-    { "number": "", "label": "Consultations données", "icon": "stethoscope" },
-    { "number": "", "label": "Dons de sang collectés", "icon": "droplet" },
-    { "number": "", "label": "Membres actifs", "icon": "users" },
-    { "number": "", "label": "Daaras accompagnées", "icon": "book" }
+    { "number": "1 100+", "label": "Consultations gratuites", "icon": "stethoscope" },
+    { "number": "100", "label": "Poches de sang collectées", "icon": "droplet" },
+    { "number": "340+", "label": "Membres", "icon": "users" },
+    { "number": "6", "label": "Daaras accompagnés", "icon": "book" }
   ]
 }

@@ -20,6 +20,16 @@
     "ordre": ""
   },
   {
+    "slug": "2026-02-15-jssci-2026",
+    "title": "JSSCI 2026 : don de sang et journées d'intégration",
+    "date": "2026-06-19T10:00:00.000Z",
+    "excerpt": "72 heures d'activités portées par la commission sociale : 100 poches de sang collectées avec la CNTS, un Yendu d'intégration réunissant 79 membres et un match anciens contre nouveaux.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
     "slug": "2026-06-06-match-day-2eme-edition",
     "title": "Match Day - 2ème édition",
     "date": "2026-06-06T10:00:00.000Z",
@@ -31,9 +41,9 @@
   },
   {
     "slug": "2026-03-15-nemekou-daara-6-tivaouane-2026",
-    "title": "Nemekou Daara 6 - Tivaouane - 2026",
-    "date": "2026-03-15T10:00:00.000Z",
-    "excerpt": "Contenu à venir.",
+    "title": "Nemekou Daara 6 - Tivaouane 2026 : 347 talibés consultés",
+    "date": "2026-05-09T11:00:00.000Z",
+    "excerpt": "347 talibés pris en charge en une journée à Tivaouane : 274 consultations de médecine générale et 73 consultations dentaires, avec traitement des cas de gale et dons de médicaments.",
     "image": "",
     "statut": "",
     "projet": "",
@@ -50,10 +60,10 @@
     "ordre": ""
   },
   {
-    "slug": "2026-02-15-jssci-2026",
-    "title": "JSSCI 2026",
-    "date": "2026-02-15T10:00:00.000Z",
-    "excerpt": "Contenu à venir.",
+    "slug": "2026-01-25-nemekou-daara-louga-2026",
+    "title": "Nemekou Daara Louga 2026 : 203 talibés consultés dans deux daaras",
+    "date": "2026-01-25T10:00:00.000Z",
+    "excerpt": "En collaboration avec DEESS Djamil et LAMe, l'AMSTC a mobilisé 24 agents de santé pour une journée de consultations gratuites et de dons de médicaments dans les daaras de Médina Salam et Vélingara, à Louga.",
     "image": "",
     "statut": "",
     "projet": "",
@@ -64,6 +74,16 @@
     "title": "Gamou Louga 2026",
     "date": "2026-01-15T10:00:00.000Z",
     "excerpt": "Contenu à venir.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
+    "slug": "2025-11-23-visite-daara-elhadji-a-cisse-rufisque",
+    "title": "Visite du daara Elhadji A. Cissé à Rufisque",
+    "date": "2025-11-23T10:00:00.000Z",
+    "excerpt": "Troisième visite de daara de l'année : consultations gratuites et important don de denrées alimentaires, de produits d'hygiène et d'un kit de soins infirmiers.",
     "image": "",
     "statut": "",
     "projet": "",
@@ -84,6 +104,16 @@
     "title": "Ndajé Soxna yi",
     "date": "2025-05-25T10:00:00.000Z",
     "excerpt": "Picnic des Amstiennes, organisé par la Cellule féminine de l'AMSTC au Parc Hann.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
+    "slug": "2025-05-18-visite-daara-serigne-babacar-sy-tivaouane-peul",
+    "title": "Visite du daara Serigne Babacar Sy à Tivaouane Peul",
+    "date": "2025-05-18T10:00:00.000Z",
+    "excerpt": "Consultations gratuites pour 68 personnes, don de denrées alimentaires, de matériel de première nécessité et de 40 moustiquaires imprégnées aux apprenants du daara.",
     "image": "",
     "statut": "",
     "projet": "",
@@ -131,9 +161,19 @@
   },
   {
     "slug": "2025-02-15-gamou-2025",
-    "title": "Gamou 2025",
+    "title": "Couverture médicale du Gamou de Tivaouane 2025 : 327 patients",
     "date": "2025-02-15T10:00:00.000Z",
-    "excerpt": "Contenu à venir.",
+    "excerpt": "Deux journées de consultations médicales gratuites et de dons de médicaments au profit des pèlerins du Gamou de Tivaouane : 327 patients pris en charge.",
+    "image": "",
+    "statut": "",
+    "projet": "",
+    "ordre": ""
+  },
+  {
+    "slug": "2025-02-15-visite-daara-darou-salam-keur-massar",
+    "title": "Visite de daara à Keur Massar : 200 patients consultés à Darou Salam",
+    "date": "2025-02-15T10:00:00.000Z",
+    "excerpt": "Journée de consultations gratuites à l'école coranique Darou Salam de Keur Massar : 200 patients pris en charge dont 175 enfants, accompagnée d'un don de denrées alimentaires.",
     "image": "",
     "statut": "",
     "projet": "",
