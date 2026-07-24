@@ -1,7 +1,7 @@
 {
-  "active": false,
-  "titre": "",
-  "message": "",
+  "active": true,
+  "titre": "Bienvenue sur notre site officiel",
+  "message": "test",
   "image": "",
   "cta_label": "",
   "cta_url": "",
