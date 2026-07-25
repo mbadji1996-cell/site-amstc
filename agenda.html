@@ -16,11 +16,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda - AMSTC</title>
 <link rel="canonical" href="https://amstc.org/agenda.html">
-<meta name="description" content="L'agenda de l'AMSTC - toutes les réalisations, formations et projets réunis dans une seule frise chronologique.">
+<meta name="description" content="Le calendrier de l'AMSTC - nos événements à venir, nos réalisations, formations et projets, mois par mois.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Agenda - AMSTC">
-<meta property="og:description" content="L'agenda de l'AMSTC - toutes les réalisations, formations et projets réunis dans une seule frise chronologique.">
+<meta property="og:description" content="Le calendrier de l'AMSTC - nos événements à venir, nos réalisations, formations et projets, mois par mois.">
 <meta property="og:url" content="https://amstc.org/agenda.html">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -45,9 +45,17 @@
   .logo-img{height:42px;filter:brightness(0) invert(1);}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:36px 0 8px;}
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:2.1rem; margin-bottom:12px;}
-  .page-sub{color:var(--text-muted); font-size:0.98rem; margin-bottom:28px; max-width:640px;}
+  .page-sub{color:var(--text-muted); font-size:0.98rem; margin-bottom:24px; max-width:640px;}
 
-  .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px;}
+  /* ===== Barres de contrôle (vue + filtres) ===== */
+  .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .view-switch{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; overflow:hidden;}
+  .view-btn{
+    font-family:var(--mono); font-size:0.76rem; font-weight:600; padding:9px 18px;
+    background:var(--surface); color:var(--text-muted); cursor:pointer; border:none;
+  }
+  .view-btn.active{background:var(--green-deep); color:var(--white);}
+  .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;}
   .filter-pill{
     font-family:var(--mono); font-size:0.78rem; font-weight:600; padding:9px 18px; border-radius:999px;
     border:1.5px solid var(--line); background:var(--surface); color:var(--text-muted); cursor:pointer;
@@ -56,12 +64,84 @@
   .filter-pill:hover{border-color:var(--green);}
   .filter-pill.active{background:var(--green-deep); border-color:var(--green-deep); color:var(--white);}
 
+  /* ===== Calendrier ===== */
+  .cal-nav{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+  .cal-arrow{
+    width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface);
+    color:var(--text-heading); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .cal-arrow:hover{border-color:var(--green);}
+  .cal-selects{display:flex; gap:8px;}
+  .cal-selects select{
+    font-family:var(--body); font-size:0.9rem; padding:8px 12px; border-radius:8px;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer;
+  }
+  .cal-today{
+    font-family:var(--mono); font-size:0.74rem; font-weight:600; padding:9px 16px; border-radius:999px;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--text-muted); cursor:pointer;
+  }
+  .cal-today:hover{border-color:var(--green);}
+
+  .cal-grid{
+    display:grid; grid-template-columns:repeat(7,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  .cal-dow{
+    background:var(--paper-alt); padding:9px 4px; text-align:center;
+    font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted);
+  }
+  .cal-cell{background:var(--surface); min-height:106px; padding:6px; display:flex; flex-direction:column; gap:3px;}
+  .cal-cell.out{background:var(--paper);}
+  .cal-cell.out .cal-daynum{opacity:0.4;}
+  .cal-daynum{
+    font-family:var(--mono); font-size:0.72rem; color:var(--text-muted);
+    width:23px; height:23px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .cal-cell.today .cal-daynum{background:var(--gold); color:var(--green-deep); border-radius:999px; font-weight:700;}
+  .cal-chip{
+    display:block; font-size:0.68rem; line-height:1.3; padding:2px 6px; border-radius:6px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;
+  }
+  .cal-chip:hover{filter:brightness(1.08);}
+  .cal-more{font-family:var(--mono); font-size:0.62rem; color:var(--text-muted); padding-left:4px;}
+
+  /* Couleurs par type, communes aux pastilles du calendrier et aux badges */
+  .type-actualites{background:var(--gold); color:#3a2a00;}
+  .type-formations{background:var(--green); color:var(--white);}
+  .type-projets{background:var(--paper-alt); color:var(--text-heading); border:1px solid var(--line);}
+  .type-evenements{background:var(--green-deep); color:var(--white);}
+
+  .cal-legend{display:flex; gap:14px; flex-wrap:wrap; margin:14px 0 30px; font-family:var(--mono); font-size:0.7rem; color:var(--text-muted);}
+  .cal-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .cal-legend i{width:11px; height:11px; border-radius:3px; display:inline-block;}
+
+  /* ===== Liste du mois (sous le calendrier) ===== */
+  .month-list{display:flex; flex-direction:column; gap:12px; margin-bottom:40px;}
+  .month-title{
+    font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--text-heading);
+    margin:8px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--line);
+  }
+  .ev-row{
+    display:flex; gap:14px; align-items:flex-start; background:var(--surface);
+    border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+  }
+  .ev-row:target{border-color:var(--gold); box-shadow:0 0 0 3px rgba(248,183,24,0.25);}
+  .ev-badge{
+    font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em;
+    padding:4px 9px; border-radius:999px; white-space:nowrap; flex-shrink:0;
+  }
+  .ev-body{min-width:0;}
+  .ev-date{font-family:var(--mono); font-size:0.7rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.05em;}
+  .ev-title{font-family:var(--display); font-size:1rem; font-weight:600; color:var(--text-heading); margin:3px 0;}
+  .ev-lieu{font-size:0.82rem; color:var(--text-muted);}
+  .ev-desc{font-size:0.88rem; color:var(--text-muted); margin-top:4px;}
+
+  /* ===== Vue liste (frise par année) ===== */
   .year-heading{
     font-family:var(--display); font-weight:700; font-size:1.4rem; color:var(--text-heading);
     margin:36px 0 20px; padding-bottom:10px; border-bottom:2px solid var(--line);
   }
   .year-heading:first-of-type{margin-top:0;}
-
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:8px;}
   @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
   .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:transform .2s ease, box-shadow .2s ease; position:relative;}
@@ -71,15 +151,10 @@
   .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
   .card h3{font-family:var(--display); font-size:1.15rem; color:var(--text-heading); margin:8px 0 8px;}
   .card p{font-size:0.92rem; color:var(--text-muted);}
-
   .type-badge{
     position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:0.66rem; text-transform:uppercase;
     letter-spacing:0.05em; padding:4px 10px; border-radius:999px; z-index:1;
   }
-  .type-badge.type-actualites{background:var(--gold); color:var(--green-deep);}
-  .type-badge.type-formations{background:var(--green); color:var(--white);}
-  .type-badge.type-projets{background:var(--surface); color:var(--text-heading); border:1px solid var(--line);}
-
   .status-badge{
     position:absolute; top:14px; right:14px; font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
     letter-spacing:0.05em; padding:5px 11px; border-radius:999px; background:var(--surface); color:var(--text-heading);
@@ -90,6 +165,22 @@
   .status-badge.statut-a-venir{background:var(--surface); color:var(--text-heading); border:1px solid var(--line);}
 
   .empty, .error{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  .hidden{display:none;}
+
+  /* ===== Mobile : les cases deviennent trop étroites pour du texte, les
+     pastilles se réduisent donc à des points ; la liste du mois juste en
+     dessous reste la lecture principale. ===== */
+  @media (max-width:720px){
+    .cal-cell{min-height:62px; padding:4px 3px;}
+    .cal-daynum{width:20px; height:20px; font-size:0.66rem;}
+    .cal-chip{
+      height:7px; width:100%; padding:0; border-radius:99px; font-size:0; line-height:0;
+      overflow:hidden; text-indent:-9999px;
+    }
+    .cal-more{font-size:0.55rem;}
+    .cal-dow{font-size:0.58rem; padding:7px 2px;}
+    .ev-row{flex-direction:column; gap:8px;}
+  }
 </style>
 </head>
 <body>
@@ -101,86 +192,271 @@
 <div class="wrap">
   <a class="back" href="index.html">← Retour à l'accueil</a>
   <h1>Agenda</h1>
-  <p class="page-sub">Toutes nos réalisations, formations et projets réunis dans une seule frise chronologique.</p>
+  <p class="page-sub">Nos événements, réalisations, formations et projets, mois par mois.</p>
+
+  <div class="toolbar">
+    <div class="view-switch" role="group" aria-label="Choix de l'affichage">
+      <button class="view-btn active" id="viewCalendrier" type="button">Calendrier</button>
+      <button class="view-btn" id="viewListe" type="button">Liste</button>
+    </div>
+  </div>
 
   <div class="filter-bar" id="filterBar">
     <button class="filter-pill active" data-type="tout">Tout</button>
+    <button class="filter-pill" data-type="evenements">Événements</button>
     <button class="filter-pill" data-type="actualites">Réalisations</button>
     <button class="filter-pill" data-type="formations">Formations</button>
     <button class="filter-pill" data-type="projets">Projets</button>
   </div>
 
   <noscript><p class="error">L'affichage de l'agenda nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
-  <div id="timeline">
-    <p class="empty">Chargement de l'agenda…</p>
-  </div>
+
+  <!-- Vue calendrier -->
+  <section id="calendrierView">
+    <div class="cal-nav">
+      <button class="cal-arrow" id="prevMonth" type="button" aria-label="Mois précédent">‹</button>
+      <div class="cal-selects">
+        <select id="monthSelect" aria-label="Mois"></select>
+        <select id="yearSelect" aria-label="Année"></select>
+      </div>
+      <button class="cal-arrow" id="nextMonth" type="button" aria-label="Mois suivant">›</button>
+      <button class="cal-today" id="todayBtn" type="button">Aujourd'hui</button>
+    </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+
+    <div class="cal-legend">
+      <span><i class="type-evenements"></i> Événement</span>
+      <span><i class="type-actualites"></i> Réalisation</span>
+      <span><i class="type-formations"></i> Formation</span>
+      <span><i class="type-projets"></i> Projet</span>
+    </div>
+
+    <h2 class="month-title" id="monthTitle"></h2>
+    <div class="month-list" id="monthList"></div>
+  </section>
+
+  <!-- Vue liste (frise chronologique par année) -->
+  <section id="listeView" class="hidden">
+    <div id="timeline"><p class="empty">Chargement de l'agenda…</p></div>
+  </section>
 </div>
 
 <script>
   const SOURCES = [
-    { type: 'actualites', label: 'Réalisation', page: 'article.html', file: 'content/actualites-index.json' },
-    { type: 'formations', label: 'Formation', page: 'formation.html', file: 'content/formations-index.json' },
-    { type: 'projets', label: 'Projet', page: 'projet.html', file: 'content/projets-index.json' },
+    { type: 'evenements', label: 'Événement',  page: '',                file: 'content/evenements-index.json' },
+    { type: 'actualites', label: 'Réalisation', page: 'article.html',   file: 'content/actualites-index.json' },
+    { type: 'formations', label: 'Formation',   page: 'formation.html', file: 'content/formations-index.json' },
+    { type: 'projets',    label: 'Projet',      page: 'projet.html',    file: 'content/projets-index.json' },
   ];
+  const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const MAX_CHIPS = 3;
 
   let allItems = [];
   let currentFilter = 'tout';
-
-  function slugifyStatut(s) {
-    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  }
+  let currentView = 'calendrier';
+  let viewYear, viewMonth;          // mois actuellement affiché
+  let dayMap = new Map();           // "AAAA-MM-JJ" -> [items]
 
   function esc(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-
-  function renderCard(item) {
-    const source = SOURCES.find(s => s.type === item.__type);
-    return `
-      <a class="card" href="${source.page}?slug=${encodeURIComponent(item.slug)}">
-        <span class="type-badge type-${item.__type}">${source.label}</span>
-        ${item.statut ? `<span class="status-badge statut-${slugifyStatut(item.statut)}">${esc(item.statut)}</span>` : ""}
-        ${item.image ? `<img src="${item.image}" alt="">` : ""}
-        <div class="card-body">
-          <span class="card-date">${formatDatePeriode(item)}</span>
-          <h3>${esc(item.title || 'Sans titre')}</h3>
-          <p>${esc(item.excerpt || '')}</p>
-        </div>
-      </a>
-    `;
+  function slugifyStatut(s) {
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
 
-  function render() {
-    const timeline = document.getElementById('timeline');
-    const filtered = currentFilter === 'tout' ? allItems : allItems.filter(it => it.__type === currentFilter);
+  // Toutes les dates sont manipulées à minuit UTC : les fiches sont datées en
+  // UTC et un décalage local ferait basculer un événement d'un jour à l'autre.
+  function parseDay(s) {
+    if (!s) return null;
+    const fr = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(s).trim());
+    if (fr) return new Date(Date.UTC(+fr[3], +fr[2] - 1, +fr[1]));
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return null;
+    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  }
+  function dayKey(d) { return d.toISOString().slice(0, 10); }
 
-    if (filtered.length === 0) {
-      timeline.innerHTML = '<p class="empty">Rien à afficher pour ce filtre.</p>';
+  // Un élément occupe toutes les cases entre son début et sa fin.
+  function itemDays(item) {
+    const start = parseDay(item.date_debut || item.date);
+    if (!start) return [];
+    let end = parseDay(item.date_fin) || start;
+    if (end < start) end = start;
+    const days = [];
+    let cur = new Date(start), guard = 0;
+    while (cur <= end && guard++ < 400) {
+      days.push(dayKey(cur));
+      cur = new Date(cur.getTime() + 86400000);
+    }
+    return days;
+  }
+
+  function itemHref(item) {
+    if (item.__type === 'evenements') return item.lien ? item.lien : '#ev-' + encodeURIComponent(item.slug);
+    const src = SOURCES.find(s => s.type === item.__type);
+    return src && src.page ? `${src.page}?slug=${encodeURIComponent(item.slug)}` : '#';
+  }
+
+  function filtered() {
+    return currentFilter === 'tout' ? allItems : allItems.filter(it => it.__type === currentFilter);
+  }
+
+  function rebuildDayMap() {
+    dayMap = new Map();
+    filtered().forEach(item => {
+      itemDays(item).forEach(k => {
+        if (!dayMap.has(k)) dayMap.set(k, []);
+        dayMap.get(k).push(item);
+      });
+    });
+  }
+
+  // ===== Calendrier =====
+  function renderCalendar() {
+    const grid = document.getElementById('calGrid');
+    const todayKey = dayKey(new Date());
+
+    let html = JOURS.map(j => `<div class="cal-dow">${j}</div>`).join('');
+
+    const first = new Date(Date.UTC(viewYear, viewMonth, 1));
+    // Semaine commençant le lundi : dimanche (0) devient l'index 6.
+    const offset = (first.getUTCDay() + 6) % 7;
+    const start = new Date(first.getTime() - offset * 86400000);
+
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start.getTime() + i * 86400000);
+      const k = dayKey(d);
+      const inMonth = d.getUTCMonth() === viewMonth && d.getUTCFullYear() === viewYear;
+      const events = dayMap.get(k) || [];
+      const shown = events.slice(0, MAX_CHIPS);
+      const rest = events.length - shown.length;
+
+      html += `<div class="cal-cell${inMonth ? '' : ' out'}${k === todayKey ? ' today' : ''}">
+        <span class="cal-daynum">${d.getUTCDate()}</span>
+        ${shown.map(it => `<a class="cal-chip type-${it.__type}" href="${esc(itemHref(it))}" title="${esc(it.title || '')}">${esc(it.title || 'Sans titre')}</a>`).join('')}
+        ${rest > 0 ? `<span class="cal-more">+${rest}</span>` : ''}
+      </div>`;
+    }
+    grid.innerHTML = html;
+
+    document.getElementById('monthSelect').value = String(viewMonth);
+    document.getElementById('yearSelect').value = String(viewYear);
+    renderMonthList();
+  }
+
+  function renderMonthList() {
+    const list = document.getElementById('monthList');
+    const title = document.getElementById('monthTitle');
+    title.textContent = `${MOIS[viewMonth].charAt(0).toUpperCase() + MOIS[viewMonth].slice(1)} ${viewYear}`;
+
+    // Un élément qui chevauche le mois affiché apparaît une seule fois ici.
+    const seen = new Set();
+    const items = [];
+    for (let day = 1; day <= 31; day++) {
+      const d = new Date(Date.UTC(viewYear, viewMonth, day));
+      if (d.getUTCMonth() !== viewMonth) break;
+      (dayMap.get(dayKey(d)) || []).forEach(it => {
+        const id = it.__type + '/' + it.slug;
+        if (!seen.has(id)) { seen.add(id); items.push(it); }
+      });
+    }
+
+    if (items.length === 0) {
+      list.innerHTML = '<p class="empty">Aucune activité ce mois-ci.</p>';
       return;
     }
 
-    let html = '';
-    let currentYear = null;
-    let yearItems = [];
+    list.innerHTML = items.map(it => {
+      const src = SOURCES.find(s => s.type === it.__type);
+      const href = itemHref(it);
+      const clickable = it.__type !== 'evenements' || it.lien;
+      const inner = `
+        <span class="ev-badge type-${it.__type}">${esc(src.label)}</span>
+        <div class="ev-body">
+          <span class="ev-date">${formatDatePeriode(it)}</span>
+          <p class="ev-title">${esc(it.title || 'Sans titre')}</p>
+          ${it.lieu ? `<p class="ev-lieu">📍 ${esc(it.lieu)}</p>` : ''}
+          ${it.excerpt ? `<p class="ev-desc">${esc(it.excerpt)}</p>` : ''}
+        </div>`;
+      return clickable
+        ? `<a class="ev-row" id="ev-${esc(it.slug)}" href="${esc(href)}">${inner}</a>`
+        : `<div class="ev-row" id="ev-${esc(it.slug)}">${inner}</div>`;
+    }).join('');
+  }
 
+  // ===== Vue liste (frise par année) =====
+  function renderCard(item) {
+    const source = SOURCES.find(s => s.type === item.__type);
+    const href = itemHref(item);
+    const inner = `
+      <span class="type-badge type-${item.__type}">${esc(source.label)}</span>
+      ${item.statut ? `<span class="status-badge statut-${slugifyStatut(item.statut)}">${esc(item.statut)}</span>` : ''}
+      ${item.image ? `<img src="${esc(item.image)}" alt="">` : ''}
+      <div class="card-body">
+        <span class="card-date">${formatDatePeriode(item)}</span>
+        <h3>${esc(item.title || 'Sans titre')}</h3>
+        <p>${esc(item.excerpt || '')}</p>
+      </div>`;
+    const clickable = item.__type !== 'evenements' || item.lien;
+    return clickable ? `<a class="card" href="${esc(href)}">${inner}</a>` : `<div class="card">${inner}</div>`;
+  }
+
+  function renderListe() {
+    const timeline = document.getElementById('timeline');
+    const items = filtered();
+    if (items.length === 0) {
+      timeline.innerHTML = '<p class="empty">Rien à afficher pour ce filtre.</p>';
+      return;
+    }
+    let html = '', currentYear = null, yearItems = [];
     function flushYear() {
       if (!yearItems.length) return;
       html += `<h2 class="year-heading">${currentYear}</h2><div class="grid">${yearItems.map(renderCard).join('')}</div>`;
       yearItems = [];
     }
-
-    filtered.forEach(item => {
-      const year = item.date ? new Date(item.date).getFullYear() : 'Sans date';
-      if (year !== currentYear) {
-        flushYear();
-        currentYear = year;
-      }
+    items.forEach(item => {
+      const d = parseDay(item.date);
+      const year = d ? d.getUTCFullYear() : 'Sans date';
+      if (year !== currentYear) { flushYear(); currentYear = year; }
       yearItems.push(item);
     });
     flushYear();
-
     timeline.innerHTML = html;
   }
+
+  function render() {
+    rebuildDayMap();
+    if (currentView === 'calendrier') renderCalendar();
+    else renderListe();
+  }
+
+  // ===== Navigation =====
+  function goToMonth(y, m) {
+    viewYear = y; viewMonth = m;
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    ensureYearOption(viewYear);
+    renderCalendar();
+  }
+  function ensureYearOption(y) {
+    const sel = document.getElementById('yearSelect');
+    if (![...sel.options].some(o => o.value === String(y))) {
+      const opt = new Option(y, y);
+      sel.add(opt);
+      [...sel.options].sort((a, b) => b.value - a.value).forEach(o => sel.add(o));
+    }
+  }
+
+  document.getElementById('prevMonth').addEventListener('click', () => goToMonth(viewYear, viewMonth - 1));
+  document.getElementById('nextMonth').addEventListener('click', () => goToMonth(viewYear, viewMonth + 1));
+  document.getElementById('todayBtn').addEventListener('click', () => {
+    const n = new Date();
+    goToMonth(n.getUTCFullYear(), n.getUTCMonth());
+  });
+  document.getElementById('monthSelect').addEventListener('change', e => goToMonth(viewYear, +e.target.value));
+  document.getElementById('yearSelect').addEventListener('change', e => goToMonth(+e.target.value, viewMonth));
 
   document.getElementById('filterBar').addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
@@ -191,23 +467,47 @@
     render();
   });
 
+  function setView(v) {
+    currentView = v;
+    document.getElementById('viewCalendrier').classList.toggle('active', v === 'calendrier');
+    document.getElementById('viewListe').classList.toggle('active', v === 'liste');
+    document.getElementById('calendrierView').classList.toggle('hidden', v !== 'calendrier');
+    document.getElementById('listeView').classList.toggle('hidden', v !== 'liste');
+    render();
+  }
+  document.getElementById('viewCalendrier').addEventListener('click', () => setView('calendrier'));
+  document.getElementById('viewListe').addEventListener('click', () => setView('liste'));
+
+  // ===== Chargement =====
   async function loadAgenda() {
-    const timeline = document.getElementById('timeline');
     try {
       const results = await Promise.all(SOURCES.map(s =>
         fetch(s.file).then(r => r.ok ? r.json() : []).catch(() => [])
       ));
       allItems = results.flatMap((items, i) =>
         items.map(it => ({ ...it, __type: SOURCES[i].type }))
-      ).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+      ).sort((a, b) => (parseDay(b.date) || 0) - (parseDay(a.date) || 0));
+
+      // Listes déroulantes : mois figés, années réellement présentes dans le contenu.
+      const monthSel = document.getElementById('monthSelect');
+      monthSel.innerHTML = MOIS.map((m, i) => `<option value="${i}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join('');
+
+      const now = new Date();
+      const years = new Set([now.getUTCFullYear()]);
+      allItems.forEach(it => { const d = parseDay(it.date); if (d) years.add(d.getUTCFullYear()); });
+      const yearSel = document.getElementById('yearSelect');
+      yearSel.innerHTML = [...years].sort((a, b) => b - a).map(y => `<option value="${y}">${y}</option>`).join('');
+
+      viewYear = now.getUTCFullYear();
+      viewMonth = now.getUTCMonth();
 
       if (allItems.length === 0) {
-        timeline.innerHTML = '<p class="empty">Aucun contenu publié pour le moment.</p>';
-        return;
+        document.getElementById('timeline').innerHTML = '<p class="empty">Aucun contenu publié pour le moment.</p>';
       }
       render();
     } catch (e) {
-      timeline.innerHTML = '<p class="error">Impossible de charger l\'agenda pour le moment.</p>';
+      document.getElementById('calGrid').innerHTML = '';
+      document.getElementById('monthList').innerHTML = '<p class="error">Impossible de charger l\'agenda pour le moment.</p>';
     }
   }
   loadAgenda();

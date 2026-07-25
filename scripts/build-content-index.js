@@ -51,7 +51,10 @@ function buildIndex(folderName) {
       image: data.image || '',
       statut: data.statut || '',
       projet: data.projet || '',
-      ordre: data.ordre !== undefined ? Number(data.ordre) : ''
+      ordre: data.ordre !== undefined ? Number(data.ordre) : '',
+      // Propres aux événements du calendrier (content/evenements)
+      lieu: data.lieu || '',
+      lien: data.lien || ''
     };
   });
 
@@ -64,3 +67,4 @@ buildIndex('actualites');
 buildIndex('formations');
 buildIndex('projets');
 buildIndex('etapes');
+buildIndex('evenements');

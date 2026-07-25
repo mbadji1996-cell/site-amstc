@@ -9,7 +9,9 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 6
+    "ordre": 6,
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-11-23-etape-3-daara-el-hadji-a-cisse-rufisque",
@@ -21,7 +23,9 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 3
+    "ordre": 3,
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-05-18-etape-2-daara-serigne-babacar-sy-tivaouane-peulh",
@@ -33,7 +37,9 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 2
+    "ordre": 2,
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-03-07-etape-4-ramadan-sadaqa-jariya-pour-abdoulaye-ba",
@@ -45,7 +51,9 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 4
+    "ordre": 4,
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-02-15-etape-1-internat-darou-salam-keur-massar",
@@ -57,7 +65,9 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 1
+    "ordre": 1,
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-01-24-etape-5-louga-48h-de-consultations-medicales-gratuites",
@@ -69,6 +79,8 @@
     "image": "",
     "statut": "",
     "projet": "2025-02-15-programme-nemekou-daara",
-    "ordre": 5
+    "ordre": 5,
+    "lieu": "",
+    "lien": ""
   }
 ]

@@ -8,6 +8,7 @@ on:
       - 'content/formations/**.md'
       - 'content/projets/**.md'
       - 'content/etapes/**.md'
+      - 'content/evenements/**.md'
   workflow_dispatch:
 
 permissions:
@@ -29,6 +30,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json sitemap.xml
+          git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json sitemap.xml
           git diff --cached --quiet || git commit -m "chore: rebuild content index et sitemap"
           git push

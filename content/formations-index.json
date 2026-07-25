@@ -9,7 +9,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2026-07-17-comment-naviguer-sur-le-site-amstc",
@@ -21,7 +23,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-10-01-octobre-rose-2025",
@@ -33,7 +37,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-08-09-webinaire-entreprendre-en-sante",
@@ -45,7 +51,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-06-15-syndromes-pneumologiques",
@@ -57,7 +65,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-04-24-webinaire-prise-en-charge-dune-crise-dasthme",
@@ -69,7 +79,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2026-07-13-epu-test",
@@ -81,7 +93,9 @@
     "image": "/assets/uploads/screenshot-2026-07-15-214457.png",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-03-08-webinaire-femme-exercant-dans-le-domaine-medical-et-vie-conjugale",
@@ -93,7 +107,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2025-01-18-webinaire-le-mariage",
@@ -105,7 +121,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2024-10-01-octobre-rose-sensibilisation-au-cancer-du-sein",
@@ -117,7 +135,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2024-04-17-masterclass-la-maladie-hemorroidaire",
@@ -129,7 +149,9 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   },
   {
     "slug": "2024-01-31-webinaire-prise-en-charge-des-angines",
@@ -141,6 +163,8 @@
     "image": "",
     "statut": "",
     "projet": "",
-    "ordre": ""
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
   }
 ]

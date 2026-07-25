@@ -446,3 +446,22 @@ collections:
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Contenu de l'étape", name: "body", widget: "markdown" }
+
+  # Événements du calendrier : activités à venir ou passées que l'on veut voir
+  # figurer dans l'agenda sans forcément leur consacrer un article complet
+  # (Gamou, Ndogou Social, assemblée générale, campagne à venir...).
+  - name: "evenements"
+    label: "Événements (calendrier)"
+    label_singular: "Événement"
+    folder: "content/evenements"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} — {{date}}"
+    fields:
+      - { label: "Titre de l'activité", name: "title", widget: "string" }
+      - { label: "Date de début", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Premier jour de l'activité. Pour une activité d'une seule journée, laissez la date de fin vide." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Dernier jour de l'activité. L'événement s'affichera alors sur toutes les cases du calendrier concernées." }
+      - { label: "Lieu (facultatif)", name: "lieu", widget: "string", required: false, hint: "Ex : FMPO, UCAD - Daara de Ndiassane - Tivaouane…" }
+      - { label: "Description (facultatif)", name: "excerpt", widget: "text", required: false }
+      - { label: "Image (facultatif)", name: "image", widget: "image", required: false }
+      - { label: "Lien (facultatif)", name: "lien", widget: "string", required: false, hint: "Vers une réalisation, une formation ou une page externe. Ex : article.html?slug=2026-01-25-nemekou-daara-louga-2026" }
