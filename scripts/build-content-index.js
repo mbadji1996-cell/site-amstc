@@ -28,15 +28,25 @@ function buildIndex(folderName) {
   const outFile = path.join(ROOT, 'content', `${folderName}-index.json`);
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.md')) : [];
 
+  // Normalise "JJ/MM/AAAA" (fiches enregistrées par Decap avant que le
+  // config.yml ne fixe un format de stockage ISO) : new Date() lirait ce
+  // format comme MM/JJ et produirait une date invalide, éjectant la fiche
+  // du tri, de l'agenda et des bilans annuels.
+  const normalizeDate = (d) => {
+    const fr = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(d || '').trim());
+    if (fr) return `${fr[3]}-${fr[2].padStart(2, '0')}-${fr[1].padStart(2, '0')}`;
+    return d || '';
+  };
+
   const items = files.map(f => {
     const raw = fs.readFileSync(path.join(dir, f), 'utf8');
     const data = parseFrontMatter(raw);
     return {
       slug: f.replace(/\.md$/, ''),
       title: data.title || '',
-      date: data.date || '',
-      date_debut: data.date_debut || '',
-      date_fin: data.date_fin || '',
+      date: normalizeDate(data.date),
+      date_debut: normalizeDate(data.date_debut),
+      date_fin: normalizeDate(data.date_fin),
       excerpt: data.excerpt || '',
       image: data.image || '',
       statut: data.statut || '',

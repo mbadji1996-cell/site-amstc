@@ -30,6 +30,12 @@
 
   function parse(d) {
     if (!d) return null;
+    if (d instanceof Date) return isNaN(d.getTime()) ? null : d;
+    // Format "JJ/MM/AAAA" : produit par Decap quand date_format était défini
+    // sans format de stockage (fiches enregistrées avant le correctif du
+    // config.yml). new Date() l'interpréterait comme MM/JJ -> date invalide.
+    var fr = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(d).trim());
+    if (fr) return new Date(Date.UTC(+fr[3], +fr[2] - 1, +fr[1]));
     var date = new Date(d);
     return isNaN(date.getTime()) ? null : date;
   }
