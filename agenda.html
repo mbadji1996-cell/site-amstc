@@ -148,6 +148,10 @@
   .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
   .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
   .card-body{padding:20px 22px;}
+  /* Sans image de couverture, la pastille de type (positionnée en absolu)
+     retomberait sur la ligne de date : on lui réserve la place au-dessus,
+     pour retrouver la même lecture que sur une fiche avec image. */
+  .card.no-image .card-body{padding-top:52px;}
   .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
   .card h3{font-family:var(--display); font-size:1.15rem; color:var(--text-heading); margin:8px 0 8px;}
   .card p{font-size:0.92rem; color:var(--text-muted);}
@@ -400,7 +404,8 @@
         <p>${esc(item.excerpt || '')}</p>
       </div>`;
     const clickable = item.__type !== 'evenements' || item.lien;
-    return clickable ? `<a class="card" href="${esc(href)}">${inner}</a>` : `<div class="card">${inner}</div>`;
+    const cls = 'card' + (item.image ? '' : ' no-image');
+    return clickable ? `<a class="${cls}" href="${esc(href)}">${inner}</a>` : `<div class="${cls}">${inner}</div>`;
   }
 
   function renderListe() {
