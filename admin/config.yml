@@ -373,12 +373,14 @@ collections:
         file: "content/popup-annonce.json"
         fields:
           - { label: "Activer l'annonce", name: "active", widget: "boolean", default: false, hint: "Une fois désactivée, plus personne ne la voit - le contenu ci-dessous reste en brouillon." }
-          - { label: "Titre", name: "titre", widget: "string" }
-          - { label: "Message", name: "message", widget: "text" }
-          - { label: "Image (facultative)", name: "image", widget: "image", required: false }
+          - { label: "Titre", name: "titre", widget: "string", required: false }
+          - { label: "Message", name: "message", widget: "text", required: false, hint: "Facultatif : si l'image est l'annonce elle-même (affiche, bannière), laisser vide pour n'afficher que l'image." }
+          - { label: "Image (facultative)", name: "image", widget: "image", required: false, hint: "Affichée dans ses dimensions d'origine, sans recadrage - juste réduite si besoin pour tenir dans l'écran." }
           - { label: "Texte du bouton (facultatif)", name: "cta_label", widget: "string", required: false, hint: "Ex : Faire un don, Déposer ma candidature…" }
           - { label: "Lien du bouton (facultatif)", name: "cta_url", widget: "string", required: false, hint: "Ex : don.html (page Faire un don), demande-campagne.html (formulaire), article.html?slug=xxx (une réalisation précise), ou une adresse https://… complète." }
-          - { label: "Durée d'affichage (secondes)", name: "duree_secondes", widget: "number", default: 12, value_type: "int", min: 10, max: 15, hint: "Entre 10 et 15 secondes. Se ferme aussi si l'internaute clique." }
+          - { label: "Plein écran", name: "plein_ecran", widget: "boolean", default: false, required: false, hint: "L'annonce recouvre alors la quasi-totalité de l'écran - utile pour une affiche ou une bannière graphique." }
+          - { label: "Texte du bouton de fermeture", name: "texte_fermeture", widget: "string", default: "OK", required: false, hint: "Affiché sur le bouton qui ferme l'annonce (ex : OK, Fermer, J'ai compris)." }
+          - { label: "Durée d'affichage (secondes)", name: "duree_secondes", widget: "number", default: 12, value_type: "int", min: 1, max: 300, hint: "De 1 seconde à 5 minutes (300 s). Se ferme aussi à tout moment via le bouton de fermeture ou un clic hors de l'annonce." }
 
   - name: "actualites"
     label: "Réalisations"
