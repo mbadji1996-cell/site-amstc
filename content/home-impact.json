@@ -5,11 +5,11 @@
   "impact_stats": [
     {
       "number": "1 100+",
-      "label": "Consultations gratuites",
+      "label": "Patients consultés",
       "icon": "stethoscope"
     },
     {
-      "number": "100",
+      "number": "100+",
       "label": "Poches de sang collectées",
       "icon": "droplet"
     },
