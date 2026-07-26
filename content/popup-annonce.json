@@ -1,9 +1,11 @@
 {
-  "active": true,
-  "titre": "🔴ASSEMBLÉE GÉNÉRALE ORDINAIRE🔴",
-  "message": "✨Salam Aleykoum chers condisciples, \n\nL’AMSTC vous convie à une\n🔴ASSEMBLÉE GÉNÉRALE ORDINAIRE 🔴 qui se tiendra :\n\n➡️Le Mercredi 29 Juillet 2026\n\n📍 À la salle CLAUDE BERNARD \n\n⏱️ À partir de 14H \n\nOrdre du jour :\n\n➡️Préparatifs GAMOU\n➡️Divers \n\nVotre présence est vivement souhaitée 🙌🏽\n\n©️Press-Info 💚🤍",
-  "image": "/assets/uploads/ag-29-07-2026.jpeg",
-  "cta_label": "",
+  "duree_secondes": 100,
   "cta_url": "",
-  "duree_secondes": 15
+  "cta_label": "",
+  "active": true,
+  "message": "✨Salam Aleykoum chers condisciples, \n\nL’AMSTC vous convie à une\n🔴ASSEMBLÉE GÉNÉRALE ORDINAIRE 🔴 qui se tiendra :\n\n➡️Le Mercredi 29 Juillet 2026\n\n📍 À la salle CLAUDE BERNARD \n\n⏱️ À partir de 14H \n\nOrdre du jour :\n\n➡️Préparatifs GAMOU\n➡️Divers \n\nVotre présence est vivement souhaitée 🙌🏽\n\n©️Press-Info 💚🤍",
+  "plein_ecran": true,
+  "titre": "🔴ASSEMBLÉE GÉNÉRALE ORDINAIRE🔴",
+  "texte_fermeture": "OK",
+  "image": "/assets/uploads/ag-29-07-2026.jpeg"
 }
