@@ -533,11 +533,39 @@
   .media-year-btn.is-active{background:var(--green); border-color:var(--green); color:var(--white);}
 
   .media-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
-  .media-item{border-radius:10px; overflow:hidden; aspect-ratio:4/3;}
+  .media-item{border:none; padding:0; border-radius:10px; overflow:hidden; aspect-ratio:4/3; cursor:pointer; display:block;}
   .media-item img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease;}
   .media-item:hover img{transform:scale(1.06);}
   @media (max-width:880px){ .media-grid{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:560px){ .media-grid{grid-template-columns:1fr;} }
+
+  /* ===== Visionneuse médiathèque (lightbox) ===== */
+  .lightbox{
+    position:fixed; inset:0; z-index:4000;
+    background:rgba(6,20,12,0.92);
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    max-width:92vw; max-height:88vh; width:auto; height:auto;
+    object-fit:contain; border-radius:10px; box-shadow:0 30px 80px rgba(0,0,0,0.5);
+  }
+  .lightbox-close, .lightbox-nav{
+    position:absolute; border:none; cursor:pointer; color:#fff;
+    background:rgba(255,255,255,0.12); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease;
+  }
+  .lightbox-close:hover, .lightbox-nav:hover{ background:rgba(255,255,255,0.24); }
+  .lightbox-close{ top:20px; right:20px; width:40px; height:40px; font-size:18px; }
+  .lightbox-nav{ top:50%; transform:translateY(-50%); width:48px; height:48px; font-size:22px; }
+  .lightbox-prev{ left:20px; }
+  .lightbox-next{ right:20px; }
+  .lightbox-counter{
+    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+    font-family:var(--mono); font-size:0.78rem; color:rgba(255,255,255,0.7);
+  }
+  @media (max-width:600px){ .lightbox-nav{width:40px; height:40px; font-size:18px;} }
 
   /* ===== Vie spirituelle : heures de prière, verset et hadith ===== */
   .spirit-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; align-items:stretch;}
@@ -864,6 +892,14 @@
       <div class="media-grid reveal" id="cms-media-grid"></div>
     </div>
   </section>
+
+  <div class="lightbox" id="mediaLightbox">
+    <button class="lightbox-close" type="button" aria-label="Fermer">✕</button>
+    <button class="lightbox-nav lightbox-prev" type="button" aria-label="Photo précédente">‹</button>
+    <img id="mediaLightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" type="button" aria-label="Photo suivante">›</button>
+    <span class="lightbox-counter" id="mediaLightboxCounter"></span>
+  </div>
 
   <!-- ===== VIE SPIRITUELLE : heures de prière, verset et hadith ===== -->
   <section id="vie-spirituelle">
@@ -1280,10 +1316,48 @@
     track.style.animationDuration = Math.max(halfWidth / pxPerSecond, 20) + 's';
   }
 
+  // ===== Visionneuse plein écran (lightbox) pour la médiathèque =====
+  const mediaLightbox = document.getElementById('mediaLightbox');
+  const mediaLightboxImg = document.getElementById('mediaLightboxImg');
+  const mediaLightboxCounter = document.getElementById('mediaLightboxCounter');
+  let lightboxPhotos = [];
+  let lightboxIndex = 0;
+
+  function renderLightbox(){
+    mediaLightboxImg.src = lightboxPhotos[lightboxIndex];
+    mediaLightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
+  }
+  function openLightbox(photos, index){
+    lightboxPhotos = photos;
+    lightboxIndex = index;
+    renderLightbox();
+    mediaLightbox.classList.add('open');
+  }
+  function closeLightbox(){
+    mediaLightbox.classList.remove('open');
+  }
+  function showLightbox(delta){
+    lightboxIndex = (lightboxIndex + delta + lightboxPhotos.length) % lightboxPhotos.length;
+    renderLightbox();
+  }
+  if (mediaLightbox) {
+    mediaLightbox.addEventListener('click', e => { if (e.target === mediaLightbox) closeLightbox(); });
+    mediaLightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    mediaLightbox.querySelector('.lightbox-prev').addEventListener('click', () => showLightbox(-1));
+    mediaLightbox.querySelector('.lightbox-next').addEventListener('click', () => showLightbox(1));
+    document.addEventListener('keydown', e => {
+      if (!mediaLightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showLightbox(-1);
+      if (e.key === 'ArrowRight') showLightbox(1);
+    });
+  }
+
   // ===== Médiathèque (dossiers photos par année) =====
   // Grille à 3 colonnes (2 en tablette, 1 en mobile), alignée par ligne :
   // les photos sont simplement placées dans l'ordre dans une grille CSS
-  // classique, sans décalage entre colonnes.
+  // classique, sans décalage entre colonnes. Un clic ouvre la photo en
+  // entier dans la visionneuse plein écran.
   function renderMediaYears(mediaYears){
     const section = document.getElementById('mediatheque');
     const tabsEl = document.getElementById('cms-media-tabs');
@@ -1291,11 +1365,16 @@
     if (!section || !tabsEl || !gridEl) return;
     if (!Array.isArray(mediaYears) || mediaYears.length === 0) { section.style.display = 'none'; return; }
 
+    let currentPhotos = [];
+
     function renderGrid(photos){
-      const list = Array.isArray(photos) ? photos : [];
-      gridEl.innerHTML = list.map(src => `
-        <div class="media-item"><img src="${esc(src)}" alt="" loading="lazy"></div>
+      currentPhotos = Array.isArray(photos) ? photos : [];
+      gridEl.innerHTML = currentPhotos.map((src, i) => `
+        <button type="button" class="media-item" data-index="${i}"><img src="${esc(src)}" alt="" loading="lazy"></button>
       `).join('');
+      gridEl.querySelectorAll('.media-item').forEach(btn => {
+        btn.addEventListener('click', () => openLightbox(currentPhotos, Number(btn.dataset.index)));
+      });
     }
     tabsEl.innerHTML = mediaYears.map((y, i) => `
       <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}">${esc(y.year)}</button>
