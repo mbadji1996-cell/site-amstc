@@ -23,6 +23,7 @@
    disponible et nécessite un défilement. */
 .popup-annonce-scroll{
   overflow-y:auto; min-height:0;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
 }
 
 .popup-annonce-close{

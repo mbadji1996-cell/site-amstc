@@ -9,6 +9,25 @@
    ============================================================ */
 (function () {
   var SEEN_KEY = "amstc-popup-annonce-seen";
+  var savedScrollY = 0;
+
+  function lockBackgroundScroll() {
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = -savedScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  }
+
+  function unlockBackgroundScroll() {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, savedScrollY);
+  }
 
   function esc(s) {
     return String(s || "").replace(/[&<>"']/g, function (c) {
@@ -54,6 +73,7 @@
       if (closed) return;
       closed = true;
       overlay.classList.remove("open");
+      unlockBackgroundScroll();
       if (autoTimer) clearTimeout(autoTimer);
       try { sessionStorage.setItem(SEEN_KEY, signature); } catch (e) {}
       setTimeout(function () {
@@ -67,6 +87,7 @@
     overlay.querySelector(".popup-annonce-close").addEventListener("click", close);
     overlay.querySelector(".popup-annonce-ok").addEventListener("click", close);
 
+    lockBackgroundScroll();
     overlay.classList.add("open");
     autoTimer = setTimeout(close, duree * 1000);
   }
