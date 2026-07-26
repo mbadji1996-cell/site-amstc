@@ -10,39 +10,45 @@
   position:relative;
   background:var(--surface); border-radius:18px;
   box-shadow:0 30px 80px rgba(6,68,28,0.4);
-  width:fit-content; max-width:min(80vw, 1100px); max-height:90vh; overflow-y:auto;
+  width:fit-content; max-width:min(80vw, 1100px); max-height:90vh;
+  display:flex; flex-direction:column; overflow:hidden;
 }
 .popup-annonce-overlay.fullscreen .popup-annonce-card{
   max-width:96vw; max-height:96vh;
 }
 
+/* Zone défilable : image + texte. Le bouton de fermeture, la barre de
+   progression et le bouton OK restent en dehors, donc toujours visibles
+   même si le contenu (grande image, long message) dépasse la hauteur
+   disponible et nécessite un défilement. */
+.popup-annonce-scroll{
+  overflow-y:auto; min-height:0;
+}
+
 .popup-annonce-close{
-  position:absolute; top:12px; right:12px; z-index:1;
+  position:absolute; top:12px; right:12px; z-index:2;
   width:34px; height:34px; border-radius:50%;
   background:rgba(0,0,0,0.4); color:#fff; border:none; cursor:pointer;
   font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center;
 }
 .popup-annonce-close:hover{ background:rgba(0,0,0,0.6); }
 
-.popup-annonce-ok{
-  position:absolute; right:14px; bottom:14px; z-index:1;
-  font-family:var(--body); font-weight:600; font-size:0.85rem;
-  padding:9px 24px; border-radius:999px; border:none; cursor:pointer;
-  background:rgba(0,0,0,0.55); color:#fff;
-}
-.popup-annonce-ok:hover{ background:rgba(0,0,0,0.75); }
-
+/* Le conteneur ne force jamais la taille de l'image au-delà de ses
+   dimensions d'origine (width/height:auto) : une petite image reste à sa
+   taille réelle, une grande se réduit proportionnellement (max-width /
+   max-height) pour tenir dans l'écran, sans jamais être recadrée ni
+   déformée. */
 .popup-annonce-image{
-  display:block; width:auto; height:auto;
-  max-width:100%; max-height:min(70vh, 620px);
+  display:block;
+  width:auto; height:auto;
+  max-width:100%; max-height:80vh;
   margin:0 auto;
-  border-radius:18px 18px 0 0;
 }
 .popup-annonce-overlay.fullscreen .popup-annonce-image{
-  max-height:82vh;
+  max-height:92vh;
 }
 
-.popup-annonce-body{ padding:30px 32px 32px; }
+.popup-annonce-body{ padding:24px 32px; }
 .popup-annonce-title{
   font-family:var(--display,'Sora',sans-serif); font-weight:700; font-size:1.35rem;
   color:var(--text-heading); margin-bottom:12px; line-height:1.25;
@@ -50,14 +56,17 @@
 .popup-annonce-message{
   font-size:0.98rem; color:var(--text-muted); white-space:pre-wrap; margin-bottom:20px;
 }
+.popup-annonce-actions{ display:flex; flex-wrap:wrap; }
 .popup-annonce-cta{
   display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem;
   padding:13px 26px; border-radius:999px; background:var(--green); color:#fff;
 }
 .popup-annonce-cta:hover{ background:var(--green-deep); }
 
+/* Pied fixe (hors défilement) : barre de progression + bouton OK. */
+.popup-annonce-footer{ flex:0 0 auto; border-top:1px solid var(--line); }
 .popup-annonce-timer-track{
-  height:4px; background:var(--paper-alt,rgba(0,0,0,0.08)); border-radius:0 0 18px 18px; overflow:hidden;
+  height:4px; background:var(--paper-alt,rgba(0,0,0,0.08)); overflow:hidden;
 }
 .popup-annonce-timer-bar{
   height:100%; width:100%; background:var(--gold,#F8B718); transform-origin:left;
@@ -67,3 +76,12 @@
 @media (prefers-reduced-motion:reduce){
   .popup-annonce-timer-bar{ animation:none; transform:scaleX(0); }
 }
+
+.popup-annonce-footer-actions{ display:flex; justify-content:flex-end; padding:10px 14px; }
+/* Bouton OK : contour neutre, volontairement distinct du CTA (plein, vert). */
+.popup-annonce-ok{
+  font-family:var(--body); font-weight:600; font-size:0.9rem;
+  padding:9px 22px; border-radius:999px; cursor:pointer;
+  background:transparent; color:var(--text-heading); border:1.5px solid var(--line);
+}
+.popup-annonce-ok:hover{ background:var(--paper-alt); }
