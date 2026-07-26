@@ -258,6 +258,7 @@
         <li><a href="#public-realisations" data-toc class="sub">Réalisations</a></li>
         <li><a href="#public-formations" data-toc class="sub">Formations</a></li>
         <li><a href="#public-projets" data-toc class="sub">Projets</a></li>
+        <li><a href="#public-agenda" data-toc class="sub">Agenda</a></li>
         <li><a href="#public-don" data-toc class="sub">Faire un don</a></li>
         <li><a href="#public-legal" data-toc class="sub">Pages légales</a></li>
       </ul></nav>
@@ -336,6 +337,10 @@
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">?</span> J'ai oublié mon mot de passe</p>
         <p class="faq-a">Sur l'écran de connexion, lien <strong>« Mot de passe oublié ? »</strong> → un e-mail de réinitialisation est envoyé. <a href="membres/mot-de-passe-oublie.html">Réinitialiser mon mot de passe →</a></p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">?</span> Je veux voir les prochaines activités de l'association</p>
+        <p class="faq-a"><a href="agenda.html">Page « Agenda »</a> (menu « Nos activités » → Agenda) - calendrier mensuel ou liste, filtrable par type d'activité.</p>
       </div>
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">?</span> Je veux voir les photos des activités passées</p>
@@ -490,6 +495,7 @@
               <li><b>Réalisations</b> → liste complète</li>
               <li><b>Formation</b> → liste complète</li>
               <li><b>Projets</b> → liste complète</li>
+              <li><b>Agenda</b> → calendrier des activités</li>
             </ul>
           </div>
           <div class="nav-map-col">
@@ -564,6 +570,23 @@
           </summary>
           <div class="page-body">
             <p>Projets au long cours (par ex. le programme <strong>Nemekou Daara</strong>, d'aide et d'appui aux daara). La fiche d'un projet (<code>/projet.html?slug=…</code>) affiche une frise reliée de ses étapes, chacune consultable comme un article à part entière (<code>/etape.html?slug=…</code>) — date, lieu, montant collecté, partenaires.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="subsection" id="public-agenda">
+        <h3>Agenda</h3>
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Calendrier des activités</span>
+            <span class="page-path">/agenda.html</span>
+            <span class="page-badges"><span class="badge public">Public</span></span>
+            <span class="chev">▸</span>
+          </summary>
+          <div class="page-body">
+            <p>Vue d'ensemble de tout ce qui se passe à l'AMSTC, en calendrier mensuel ou en liste (bouton <strong>Calendrier / Liste</strong> en haut de page). Regroupe quatre types de fiches, filtrables par pastille - <strong>Événement</strong>, <strong>Réalisations</strong>, <strong>Formations</strong>, <strong>Projets</strong> - chacune avec sa couleur.</p>
+            <p>Sur la vue Calendrier, chaque jour affiche les fiches qui y tombent (une activité sur plusieurs jours occupe toute la plage) ; cliquer un jour ou utiliser les flèches/le sélecteur mois-année déroule le détail du mois sous la grille. Un clic sur une fiche ouvre son article complet, sauf pour un Événement qui n'a pas de lien externe renseigné (alors non cliquable).</p>
+            <p>Les Réalisations, Formations et Projets viennent automatiquement du CMS dès qu'ils ont une date. Les <strong>Événements</strong> (réunions, journées dédiées…) sont une collection à part, créée directement pour l'agenda - voir <a href="#admin-cms">CMS Decap</a> ci-dessous.</p>
           </div>
         </details>
       </div>
@@ -980,7 +1003,8 @@
             <span class="chev">▸</span>
           </summary>
           <div class="page-body">
-            <p>Système distinct (connexion GitHub séparée) qui gère tout le site public : les huit sections de la page d'accueil, ainsi que les collections Réalisations, Formation, Projets et leurs Étapes de projet. Accessible depuis un bouton dédié en bas du Centre d'administration.</p>
+            <p>Système distinct (connexion GitHub séparée) qui gère tout le site public : les huit sections de la page d'accueil, ainsi que les collections Réalisations, Formation, Projets, leurs Étapes de projet, et <strong>Événements</strong> (fiches créées uniquement pour l'agenda - titre, date de début, date de fin optionnelle, lieu, description, image et lien externe, tous facultatifs sauf le titre et la date). Accessible depuis un bouton dédié en bas du Centre d'administration.</p>
+            <p>Sur les Réalisations, Formation, Projets et Étapes de projet, la date peut être une <strong>simple date</strong> ou une <strong>période</strong> (date de début + date de fin facultative) : renseignée, elle s'affiche partout sur le site sous la forme « du X au Y », y compris sur l'agenda où la fiche occupe alors toute la plage de jours correspondante.</p>
           </div>
         </details>
       </div>
