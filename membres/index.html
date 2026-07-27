@@ -196,6 +196,26 @@
 <script>
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+  // Empêche le défilement de la page en arrière-plan pendant que le modal
+  // d'annonces épinglées est ouvert.
+  let annScrollY = 0;
+  function lockBodyScroll(){
+    annScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = -annScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  }
+  function unlockBodyScroll(){
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, annScrollY);
+  }
+
   function timeAgo(dateStr) {
     const diffSec = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
     if (diffSec < 60) return "à l'instant";
@@ -326,6 +346,7 @@
           ${a.body ? `<p class="ann-item-text">${esc(a.body)}</p>` : ""}
         </div>
       `).join("");
+      lockBodyScroll();
       document.getElementById("annOverlay").classList.add("open");
     } catch (e) {
       // Silencieux : l'absence d'annonces ne doit jamais bloquer le tableau de bord.
@@ -334,6 +355,7 @@
 
   document.getElementById("annCloseBtn").addEventListener("click", () => {
     document.getElementById("annOverlay").classList.remove("open");
+    unlockBodyScroll();
   });
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
