@@ -74,9 +74,16 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
   const FOLDER = "content/etapes";
+
+  function esc(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
 
   function parseFrontMatter(raw) {
     const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
@@ -129,10 +136,10 @@
       content.innerHTML = `
         <span class="art-date">${formatDatePeriode(data)}</span>
         <span class="etape-badge">Étape de projet</span>
-        <h1>${data.title || ''}</h1>
-        ${data.image ? `<img id="cover" src="${data.image}" style="display:block">` : ""}
+        <h1>${esc(data.title || '')}</h1>
+        ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
-        <div id="body">${marked.parse(body || '')}</div>
+        <div id="body">${DOMPurify.sanitize(marked.parse(body || ''))}</div>
       `;
     } catch (e) {
       content.innerHTML = "<p>Impossible de charger cette étape.</p>";

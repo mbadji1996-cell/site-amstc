@@ -99,8 +99,8 @@
   }
   .cal-cell.today .cal-daynum{background:var(--gold); color:var(--green-deep); border-radius:999px; font-weight:700;}
   .cal-chip{
-    display:block; font-size:0.68rem; line-height:1.3; padding:2px 6px; border-radius:6px;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;
+    display:block; width:100%; font-family:inherit; font-size:0.68rem; line-height:1.3; padding:2px 6px; border-radius:6px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; text-align:left; border:none;
   }
   .cal-chip:hover{filter:brightness(1.08);}
   .cal-more{font-family:var(--mono); font-size:0.62rem; color:var(--text-muted); padding-left:4px;}
@@ -339,7 +339,17 @@
 
       html += `<div class="cal-cell${inMonth ? '' : ' out'}${k === todayKey ? ' today' : ''}">
         <span class="cal-daynum">${d.getUTCDate()}</span>
-        ${shown.map(it => `<a class="cal-chip type-${it.__type}" href="${esc(itemHref(it))}" title="${esc(it.title || '')}">${esc(it.title || 'Sans titre')}</a>`).join('')}
+        ${shown.map(it => {
+          // Un événement sans lien externe s'ouvre en ancre (#ev-slug) vers sa
+          // ligne dans la liste du mois - mais cette ligne n'existe que pour le
+          // mois actuellement affiché. Dans une cellule d'un mois adjacent
+          // (jours de bordure du calendrier), l'ancre serait absente du DOM et
+          // le clic ne ferait rien : on bascule d'abord sur le bon mois.
+          if (it.__type === 'evenements' && !it.lien) {
+            return `<button type="button" class="cal-chip type-${it.__type}" data-jump-year="${d.getUTCFullYear()}" data-jump-month="${d.getUTCMonth()}" data-anchor="ev-${esc(it.slug)}" title="${esc(it.title || '')}">${esc(it.title || 'Sans titre')}</button>`;
+          }
+          return `<a class="cal-chip type-${it.__type}" href="${esc(itemHref(it))}" title="${esc(it.title || '')}">${esc(it.title || 'Sans titre')}</a>`;
+        }).join('')}
         ${rest > 0 ? `<span class="cal-more">+${rest}</span>` : ''}
       </div>`;
     }
@@ -453,6 +463,20 @@
       [...sel.options].sort((a, b) => b.value - a.value).forEach(o => sel.add(o));
     }
   }
+
+  // Pastille d'un événement sans lien, affichée dans une cellule d'un mois
+  // adjacent : bascule d'abord sur ce mois (pour que l'ancre existe dans le
+  // DOM) avant d'y faire défiler la page.
+  document.getElementById('calGrid').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-anchor]');
+    if (!btn) return;
+    const y = Number(btn.dataset.jumpYear), m = Number(btn.dataset.jumpMonth);
+    if (y !== viewYear || m !== viewMonth) goToMonth(y, m);
+    requestAnimationFrame(() => {
+      const target = document.getElementById(btn.dataset.anchor);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
 
   document.getElementById('prevMonth').addEventListener('click', () => goToMonth(viewYear, viewMonth - 1));
   document.getElementById('nextMonth').addEventListener('click', () => goToMonth(viewYear, viewMonth + 1));

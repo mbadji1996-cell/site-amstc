@@ -27,6 +27,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add rapports/ content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json
+          git add rapports/ content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json
           git diff --cached --quiet || git commit -m "chore: génère le bilan annuel ${{ inputs.year }}"
           git push

@@ -81,7 +81,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script>
+  function esc(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
   function youtubeEmbedId(url) {
     if (!url) return null;
     const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
@@ -123,10 +130,10 @@
       ${cardStatusBannerHtml(state)}
       <span class="badge">Réservé aux membres</span>
       <span class="art-date">${data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
-      <h1>${data.title || ''}</h1>
-      ${data.cover_image ? `<img id="cover" src="${data.cover_image}" style="display:block">` : ""}
+      <h1>${esc(data.title || '')}</h1>
+      ${data.cover_image ? `<img id="cover" src="${esc(data.cover_image)}" style="display:block">` : ""}
       ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
-      <div id="body">${marked.parse(data.content || '')}</div>
+      <div id="body">${DOMPurify.sanitize(marked.parse(data.content || ''))}</div>
     `;
   }
 

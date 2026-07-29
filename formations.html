@@ -80,6 +80,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <script>
+  function esc(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
   async function loadArticles() {
     const grid = document.getElementById("grid");
     let publicArticles = [];
@@ -115,14 +121,14 @@
         : `formation.html?slug=${encodeURIComponent(a.slug)}`;
       return `
         <a class="card" href="${href}">
-          ${a.image ? `<img src="${a.image}" alt="">` : ""}
+          ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
           <div class="card-body">
             <div class="card-header-row">
               <span class="card-date">${formatDatePeriode({ date: a._date, date_debut: a.date_debut, date_fin: a.date_fin })}</span>
               ${a._restricted ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
             </div>
-            <h3>${a.title || 'Sans titre'}</h3>
-            <p>${a.excerpt || ''}</p>
+            <h3>${esc(a.title || 'Sans titre')}</h3>
+            <p>${esc(a.excerpt || '')}</p>
           </div>
         </a>
       `;

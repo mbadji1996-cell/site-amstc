@@ -1322,19 +1322,25 @@
   const mediaLightboxCounter = document.getElementById('mediaLightboxCounter');
   let lightboxPhotos = [];
   let lightboxIndex = 0;
+  let lightboxTrigger = null;
 
   function renderLightbox(){
     mediaLightboxImg.src = lightboxPhotos[lightboxIndex];
     mediaLightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
   }
-  function openLightbox(photos, index){
+  function openLightbox(photos, index, triggerEl){
     lightboxPhotos = photos;
     lightboxIndex = index;
+    lightboxTrigger = triggerEl || document.activeElement;
     renderLightbox();
     mediaLightbox.classList.add('open');
+    // Déplace le focus clavier dans la visionneuse à l'ouverture.
+    mediaLightbox.querySelector('.lightbox-close').focus();
   }
   function closeLightbox(){
     mediaLightbox.classList.remove('open');
+    // Restaure le focus sur la vignette d'origine pour la navigation clavier.
+    if (lightboxTrigger) { lightboxTrigger.focus(); lightboxTrigger = null; }
   }
   function showLightbox(delta){
     lightboxIndex = (lightboxIndex + delta + lightboxPhotos.length) % lightboxPhotos.length;
@@ -1373,7 +1379,7 @@
         <button type="button" class="media-item" data-index="${i}"><img src="${esc(src)}" alt="" loading="lazy"></button>
       `).join('');
       gridEl.querySelectorAll('.media-item').forEach(btn => {
-        btn.addEventListener('click', () => openLightbox(currentPhotos, Number(btn.dataset.index)));
+        btn.addEventListener('click', () => openLightbox(currentPhotos, Number(btn.dataset.index), btn));
       });
     }
     tabsEl.innerHTML = mediaYears.map((y, i) => `
@@ -1897,8 +1903,8 @@
       grid.innerHTML = latest.map(a => `
         <a class="intro-card reveal" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
           <span class="num">${formatDatePeriode(a)}</span>
-          <h3>${a.title || 'Sans titre'}</h3>
-          <p>${a.excerpt || ''}</p>
+          <h3>${esc(a.title || 'Sans titre')}</h3>
+          <p>${esc(a.excerpt || '')}</p>
         </a>
       `).join("");
       initScrollReveal();

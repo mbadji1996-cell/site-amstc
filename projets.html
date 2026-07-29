@@ -81,8 +81,13 @@
 </div>
 
 <script>
+  function esc(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function slugifyStatut(s) {
-    return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
   async function loadArticles() {
     const grid = document.getElementById("grid");
@@ -98,12 +103,12 @@
 
       grid.innerHTML = articles.map(a => `
         <a class="card" href="projet.html?slug=${encodeURIComponent(a.slug)}">
-          ${a.statut ? `<span class="status-badge statut-${slugifyStatut(a.statut)}">${a.statut}</span>` : ""}
-          ${a.image ? `<img src="${a.image}" alt="">` : ""}
+          ${a.statut ? `<span class="status-badge statut-${slugifyStatut(a.statut)}">${esc(a.statut)}</span>` : ""}
+          ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
           <div class="card-body">
             <span class="card-date">${formatDatePeriode(a)}</span>
-            <h3>${a.title || 'Sans titre'}</h3>
-            <p>${a.excerpt || ''}</p>
+            <h3>${esc(a.title || 'Sans titre')}</h3>
+            <p>${esc(a.excerpt || '')}</p>
           </div>
         </a>
       `).join("");
