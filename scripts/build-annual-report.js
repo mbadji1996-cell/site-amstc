@@ -88,6 +88,7 @@ const html = `<!DOCTYPE html>
   header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4vw,2.3rem);color:var(--white);margin-bottom:8px;}
   header p{color:rgba(255,255,255,0.75);font-size:0.98rem;}
 
+  .back{font-family:var(--mono);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);display:inline-block;margin-bottom:20px;}
   .toolbar{display:flex;justify-content:flex-end;margin-bottom:28px;}
   .btn-print{
     display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-weight:600;font-size:0.92rem;
@@ -117,6 +118,7 @@ const html = `<!DOCTYPE html>
     .report-logo{filter:none;height:38px;}
     header .eyebrow{color:var(--gold-deep);}
     header h1, header p{color:var(--ink) !important;}
+    .back{display:none;}
     .toolbar{display:none;}
     .report-item{border:1px solid #ccc;box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
   }
@@ -126,7 +128,7 @@ const html = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <img src="../assets/logo-horizontal.png" alt="AMSTC" class="report-logo">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapport annuel</p>
     <h1>Bilan des réalisations ${year}</h1>
     <p>${yearItems.length} réalisation${yearItems.length > 1 ? 's' : ''} - Association Médico-Sociale des Talibés Cheikh</p>
@@ -134,6 +136,7 @@ const html = `<!DOCTYPE html>
 </header>
 
 <div class="wrap">
+  <a class="back" href="index.html">← Retour aux bilans annuels</a>
   <div class="toolbar" id="printToolbar" style="display:none;">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
   </div>
@@ -216,7 +219,7 @@ const indexHtml = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <img src="../assets/logo-horizontal.png" alt="AMSTC" class="report-logo">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapports</p>
     <h1>Bilans annuels</h1>
   </div>
