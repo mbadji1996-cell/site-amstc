@@ -1,11 +1,11 @@
 {
-  "duree_secondes": 100,
-  "cta_url": "",
-  "cta_label": "",
+  "duree_secondes": 30,
+  "cta_url": "https://whatsapp.com/channel/0029Vb2VigAKLaHesPwMtb30/209",
+  "cta_label": "Télécharger",
   "active": true,
-  "message": "✨Salam Aleykoum chers condisciples, \n\nL’AMSTC vous convie à une ASSEMBLÉE GÉNÉRALE ORDINAIRE qui se tiendra :\n\n➡️Le Mercredi 29 Juillet 2026\n📍 À la salle CLAUDE BERNARD \n⏱️ À partir de 14H \n\nOrdre du jour :\n➡️Préparatifs GAMOU\n➡️Divers \n\nVotre présence est vivement souhaitée 🙌🏽\n\n©️Press-Info 💚🤍",
+  "message": "Du Vendredi 31 Juillet au 06 Août 2026",
   "plein_ecran": true,
-  "titre": "🔴ASSEMBLÉE GÉNÉRALE ORDINAIRE🔴",
+  "titre": "Heures de prières",
   "texte_fermeture": "OK",
-  "image": "/assets/uploads/ag-29-07-paysage.jpg"
+  "image": "/assets/uploads/31-juillet-au-06-aout.jpg"
 }
