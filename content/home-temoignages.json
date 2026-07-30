@@ -23,6 +23,12 @@
       "author_name": "Lamine SAMB",
       "author_role": "Médecin - Commission organisation",
       "photo": "/assets/uploads/samb.jpg"
+    },
+    {
+      "author_type": "membre",
+      "quote": "J'ai découvert dans l'AMSTC un esprit de solidarité, de partage et d'entraide. Chaque activité menée montre un véritable engagement au service des personnes qui en ont le plus besoin.",
+      "author_name": "Abdoulaye NDIAYE",
+      "author_role": "Infirmier d'Etat - Commission Organisation"
     }
   ]
 }
