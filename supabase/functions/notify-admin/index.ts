@@ -11,9 +11,8 @@
 // Secrets requis (Dashboard > Project Settings > Edge Functions > Secrets) :
 //   RESEND_API_KEY      - clé API Resend (https://resend.com)
 //   ADMIN_NOTIFY_EMAIL  - adresse qui reçoit les notifications
-//   NOTIFY_ADMIN_SECRET - (optionnel mais recommandé) jeton partagé avec le
-//                         trigger SQL, vérifié ci-dessous ; si absent, la
-//                         vérification est simplement désactivée
+//   NOTIFY_ADMIN_SECRET - jeton partagé avec le trigger SQL, requis : sans
+//                         lui, la fonction refuse toute requête (fail-closed)
 //   NOTIFY_FROM_EMAIL   - optionnel, adresse d'expédition (voir note ci-dessous)
 //
 // IMPORTANT — Resend exige un domaine d'expédition vérifié pour envoyer
@@ -138,13 +137,15 @@ Deno.serve(async (req: Request) => {
 
     // Vérification maison (indépendante du "Verify JWT" du dashboard, qui
     // doit être désactivé pour cette fonction — voir README-espace-membres.md).
-    // Si NOTIFY_ADMIN_SECRET n'est pas défini, ce contrôle est simplement
-    // ignoré (mode "sans jeton", plus simple mais moins strict).
-    if (NOTIFY_ADMIN_SECRET) {
-      const authHeader = req.headers.get("authorization") || "";
-      if (authHeader !== `Bearer ${NOTIFY_ADMIN_SECRET}`) {
-        return new Response(JSON.stringify({ error: "Non autorisé" }), { status: 401 });
-      }
+    // Fail-closed : sans secret configuré côté serveur, aucune requête n'est
+    // acceptée (plutôt que de désactiver silencieusement le contrôle).
+    if (!NOTIFY_ADMIN_SECRET) {
+      console.error("notify-admin: secret NOTIFY_ADMIN_SECRET manquant côté serveur");
+      return new Response(JSON.stringify({ error: "Configuration serveur incomplète" }), { status: 500 });
+    }
+    const authHeader = req.headers.get("authorization") || "";
+    if (authHeader !== `Bearer ${NOTIFY_ADMIN_SECRET}`) {
+      return new Response(JSON.stringify({ error: "Non autorisé" }), { status: 401 });
     }
 
     if (!RESEND_API_KEY || !ADMIN_NOTIFY_EMAIL) {
