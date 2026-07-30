@@ -332,14 +332,16 @@
     .exec-slide-photo{max-width:200px; margin:0 auto;}
   }
 
-  /* ===== Pionniers : bande auto-défilante en boucle ===== */
+  /* ===== Pionniers : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pio-marquee{
-    overflow:hidden;
+    overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab;
+    scrollbar-width:none; -ms-overflow-style:none;
     -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .pio-track{display:flex; gap:30px; width:max-content; padding:6px 0; animation:pio-scroll linear infinite;}
-  .pio-marquee:hover .pio-track, .pio-marquee:focus-within .pio-track{animation-play-state:paused;}
+  .pio-marquee::-webkit-scrollbar{display:none;}
+  .pio-marquee:active{cursor:grabbing;}
+  .pio-track{display:flex; gap:30px; width:max-content; padding:6px 0;}
   .pio-item{
     flex:0 0 auto; width:190px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
     padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
@@ -352,18 +354,18 @@
     background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.6rem;
   }
   .pio-item-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
-  @keyframes pio-scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
-  @media (prefers-reduced-motion: reduce){ .pio-track{animation:none !important;} }
   @media (max-width:560px){ .pio-item{width:160px;} }
 
-  /* ===== Anciens présidents : bande auto-défilante en boucle ===== */
+  /* ===== Anciens présidents : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pres-marquee{
-    overflow:hidden;
+    overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab;
+    scrollbar-width:none; -ms-overflow-style:none;
     -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .pres-track{display:flex; gap:20px; width:max-content; padding:6px 0; animation:pres-scroll linear infinite;}
-  .pres-marquee:hover .pres-track, .pres-marquee:focus-within .pres-track{animation-play-state:paused;}
+  .pres-marquee::-webkit-scrollbar{display:none;}
+  .pres-marquee:active{cursor:grabbing;}
+  .pres-track{display:flex; gap:20px; width:max-content; padding:6px 0;}
   .pres-card{
     flex:0 0 auto; width:190px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
     padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
@@ -377,8 +379,6 @@
   }
   .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
   .pres-card-mandate{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
-  @keyframes pres-scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
-  @media (prefers-reduced-motion: reduce){ .pres-track{animation:none !important;} }
   @media (max-width:560px){ .pres-card{width:160px;} }
 
   /* ===== Chiffres d'impact ===== */
@@ -1255,6 +1255,42 @@
   function memberInitials(name){
     return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
   }
+  // Bande auto-défilante en boucle, mais scrollable manuellement (glisser/molette) :
+  // le défilement automatique se met en pause pendant l'interaction et reprend
+  // juste après, sans jamais interrompre la boucle infinie.
+  function setupInfiniteMarquee(wrap, track, pxPerSecond){
+    if (!wrap || !track) return;
+    const halfWidth = track.scrollWidth / 2;
+    if (!(halfWidth > 0)) return;
+    if (wrap._marqueeRaf) cancelAnimationFrame(wrap._marqueeRaf);
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let userActive = false;
+    let wheelIdleTimer = null;
+    let lastTs = null;
+
+    wrap.addEventListener('pointerdown', () => { userActive = true; });
+    window.addEventListener('pointerup', () => { userActive = false; });
+    window.addEventListener('pointercancel', () => { userActive = false; });
+    wrap.addEventListener('wheel', () => {
+      userActive = true;
+      clearTimeout(wheelIdleTimer);
+      wheelIdleTimer = setTimeout(() => { userActive = false; }, 800);
+    }, { passive: true });
+
+    function step(ts){
+      if (lastTs === null) lastTs = ts;
+      const dt = ts - lastTs;
+      lastTs = ts;
+      if (!reduceMotion && !userActive) {
+        wrap.scrollLeft += pxPerSecond * dt / 1000;
+      }
+      if (wrap.scrollLeft >= halfWidth) wrap.scrollLeft -= halfWidth;
+      wrap._marqueeRaf = requestAnimationFrame(step);
+    }
+    wrap._marqueeRaf = requestAnimationFrame(step);
+  }
+
   function renderPioneers(list, layout){
     const block = document.getElementById('pioneersBlock');
     const listWrap = document.getElementById('pioneersListWrap');
@@ -1282,11 +1318,9 @@
           </div>
         `;
       }).join('');
-      // Doublé pour boucler le défilement sans coupure visible (translateX -50%)
+      // Doublé pour boucler le défilement sans coupure visible (scrollLeft -= moitié)
       track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
-      const halfWidth = track.scrollWidth / (list.length > 1 ? 2 : 1);
-      const pxPerSecond = 34;
-      track.style.animationDuration = Math.max(halfWidth / pxPerSecond, 20) + 's';
+      if (list.length > 1) setupInfiniteMarquee(marqueeWrap, track, 34);
     } else {
       listEl.innerHTML = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
@@ -1298,8 +1332,9 @@
   // ===== Anciens présidents (frise de succession numérotée) =====
   function renderPresidents(list){
     const block = document.getElementById('presidentsBlock');
+    const marqueeWrap = document.getElementById('presidentsMarqueeWrap');
     const track = document.getElementById('cms-presidents-track');
-    if (!block || !track) return;
+    if (!block || !marqueeWrap || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
     const itemsHtml = list.map(p => `
@@ -1309,11 +1344,9 @@
         <div class="pres-card-mandate">${esc(p.mandate || '')}</div>
       </div>
     `).join('');
-    // Doublé pour boucler le défilement sans coupure visible (translateX -50%)
+    // Doublé pour boucler le défilement sans coupure visible (scrollLeft -= moitié)
     track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
-    const halfWidth = track.scrollWidth / (list.length > 1 ? 2 : 1);
-    const pxPerSecond = 34;
-    track.style.animationDuration = Math.max(halfWidth / pxPerSecond, 20) + 's';
+    if (list.length > 1) setupInfiniteMarquee(marqueeWrap, track, 34);
   }
 
   // ===== Visionneuse plein écran (lightbox) pour la médiathèque =====
