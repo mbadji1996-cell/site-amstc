@@ -326,11 +326,18 @@
     try {
       const { data, error } = await supabaseClient
         .from("member_announcements")
-        .select("title,body,image_path")
+        .select("id,title,body,image_path")
         .eq("is_pinned", true)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error || !data || data.length === 0) return;
+
+      // Ne réaffiche pas une annonce déjà fermée cette session : mémorisée
+      // par signature (le jeu d'annonces épinglées), pas globalement, pour
+      // qu'une nouvelle annonce épinglée s'affiche quand même si l'admin en
+      // ajoute une pendant que le membre est encore sur le site.
+      const signature = data.map(a => a.id).sort().join(",");
+      if (sessionStorage.getItem("amstc-ann-seen") === signature) return;
 
       const paths = data.map(a => a.image_path).filter(Boolean);
       let imgUrlMap = {};
@@ -347,14 +354,18 @@
         </div>
       `).join("");
       lockBodyScroll();
-      document.getElementById("annOverlay").classList.add("open");
+      const overlay = document.getElementById("annOverlay");
+      overlay.dataset.signature = signature;
+      overlay.classList.add("open");
     } catch (e) {
       // Silencieux : l'absence d'annonces ne doit jamais bloquer le tableau de bord.
     }
   }
 
   document.getElementById("annCloseBtn").addEventListener("click", () => {
-    document.getElementById("annOverlay").classList.remove("open");
+    const overlay = document.getElementById("annOverlay");
+    if (overlay.dataset.signature) sessionStorage.setItem("amstc-ann-seen", overlay.dataset.signature);
+    overlay.classList.remove("open");
     unlockBodyScroll();
   });
 
