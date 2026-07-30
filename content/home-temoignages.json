@@ -16,6 +16,25 @@
       "author_name": "Boubacar Athé NIANG",
       "author_role": "Vice-président AMSTC",
       "photo": "/assets/uploads/photo_10_2024-09-16_22-19-02.jpg"
+    },
+    {
+      "author_type": "membre",
+      "quote": "Chaque activité au sein de l’AMSTC est une occasion d’apprendre et de grandir. La plus belle leçon que j’y ai reçue est le sens des responsabilités.",
+      "author_name": "Lamine SAMB",
+      "author_role": "Médecin - Commission organisation",
+      "photo": "/assets/uploads/samb.jpg"
+    },
+    {
+      "author_type": "membre",
+      "quote": "J'ai découvert dans l'AMSTC un esprit de solidarité, de partage et d'entraide. Chaque activité menée montre un véritable engagement au service des personnes qui en ont le plus besoin.",
+      "author_name": "Abdoulaye NDIAYE",
+      "author_role": "Infirmier d'Etat - Commission Organisation"
+    },
+    {
+      "author_type": "membre",
+      "quote": "Grâce à l’AMSTC, j’ai compris que chaque sourire retrouvé vaut plus que tous les diplômes du monde. C’est la plus belle leçon que la vie m’ait offerte.",
+      "author_name": "Amy DIOP",
+      "author_role": "Infirmière - Commission organisation"
     }
   ]
 }
