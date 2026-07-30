@@ -108,27 +108,35 @@
       "photo": ""
     },
     {
-      "name": "Dr Salmane ibn Rassoul Niengue",
-      "photo": ""
+      "name": "Dr Ababacar SOUMARE",
+      "photo": "/assets/uploads/dr-ababacar-soumare.jpg"
     },
     {
       "name": "Dr Ndeye Seynabou NIANG",
       "photo": ""
     },
     {
-      "name": "Dr Souleymane DIATTA",
-      "photo": "assets/pioneers/21-xulio.jpg"
+      "name": "Dr Salmane ibn Rassoul Niengue",
+      "photo": ""
     },
     {
       "name": "Feue Dr Ndeye Yaga CISSE",
       "photo": "/assets/uploads/1002164697.jpg"
     },
     {
+      "name": "Dr Souleymane DIATTA",
+      "photo": "assets/pioneers/21-xulio.jpg"
+    },
+    {
+      "name": "Dr Niania",
+      "photo": ""
+    },
+    {
       "name": "El Hadji Malick GUEYE",
       "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg"
     },
     {
-      "name": "Dr Niania",
+      "name": "Dr Yacine FALL",
       "photo": ""
     },
     {
@@ -136,7 +144,7 @@
       "photo": "assets/pioneers/07-mar-fall-dabakh.jpg"
     },
     {
-      "name": "Dr Yacine FALL",
+      "name": "Dr Khadija Samb",
       "photo": ""
     },
     {
@@ -144,7 +152,7 @@
       "photo": "assets/pioneers/19-mansour.jpg"
     },
     {
-      "name": "Dr Khadija Samb",
+      "name": "Dr Bousso Ndiaye",
       "photo": ""
     },
     {
@@ -152,48 +160,48 @@
       "photo": "assets/pioneers/13-mbaye-sow.jpg"
     },
     {
-      "name": "Dr Boussou Ndiaye",
-      "photo": ""
+      "name": "Dr Fatou Faye FALL",
+      "photo": "assets/pioneers/12-fatou-faye-fall.jpg"
     },
     {
       "name": "Dr Kaoussou A. BODIAN",
       "photo": "assets/pioneers/11-kaoussou.jpg"
     },
     {
-      "name": "Dr Fatou Faye FALL",
-      "photo": "assets/pioneers/12-fatou-faye-fall.jpg"
+      "name": "Dr Aida NDOUR",
+      "photo": "assets/pioneers/06-aida-ndour.jpg"
     },
     {
       "photo": "/assets/uploads/bouba.jpg",
       "name": "Dr El Hadji Boubacar GUEYE (Buba)"
     },
     {
-      "name": "Dr Aida NDOUR",
-      "photo": "assets/pioneers/06-aida-ndour.jpg"
+      "name": "Dr Bineta Kane DIA",
+      "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
     },
     {
       "name": "Dr Arona NDIAYE",
       "photo": "assets/pioneers/15-arone-ndiaye.jpg"
     },
     {
-      "name": "Dr Bineta Kane DIA",
-      "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
+      "name": "Dr Ndèye Mariètou DANFAKHA",
+      "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg"
     },
     {
       "name": "Ismaila DIAGNE",
       "photo": "assets/pioneers/17-ismaila-diagne.jpg"
     },
     {
-      "name": "Dr Ndèye Mariètou DANFAKHA",
-      "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg"
+      "name": "Dr Amayel KANE",
+      "photo": "assets/pioneers/10-amayel.jpg"
     },
     {
       "name": "Dr El Hadji Babacar Fall",
       "photo": ""
     },
     {
-      "name": "Dr Amayel KANE",
-      "photo": "assets/pioneers/10-amayel.jpg"
+      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
+      "name": "Dr Ndèye Codou FAYE"
     },
     {
       "name": "Dr Mouhamadou Habib DIOP",
@@ -206,10 +214,6 @@
     {
       "name": "Dr Youssoupha KASSE",
       "photo": "/assets/uploads/dr-youssoupha-kasse.jpg"
-    },
-    {
-      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
-      "name": "Dr Ndèye Codou FAYE"
     },
     {
       "name": "Pap Alaaji Maalik Mbay",
