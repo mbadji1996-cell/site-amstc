@@ -356,6 +356,27 @@
   .pio-item-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
   @media (max-width:560px){ .pio-item{width:160px;} }
 
+  /* ===== Pionniers (PC uniquement) : carrousel en éventail =====
+     Remplace la bande sur souris/trackpad (voir media query plus bas) ;
+     masqué par défaut, la bande scrollable reste l'expérience tactile. */
+  .pio-fan-wrap{ display:none; flex-direction:column; align-items:center; gap:22px; padding:20px 0 6px; }
+  .pio-fan-stage{ position:relative; width:100%; max-width:64rem; margin:0 auto; height:17rem; }
+  .pio-fan-card{
+    position:absolute; top:0; left:50%; width:11rem; height:15rem; margin-left:-5.5rem;
+    border-radius:14px; overflow:hidden; box-shadow:var(--shadow); cursor:pointer;
+    transform-origin:center bottom; transition:transform .45s cubic-bezier(0.34,1.56,0.64,1), opacity .3s ease;
+  }
+  .pio-fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
+  .pio-fan-name{
+    position:absolute; left:0; right:0; bottom:0; padding:22px 8px 10px;
+    background:linear-gradient(180deg, transparent, rgba(6,68,28,0.9) 60%);
+    color:#fff; font-family:var(--display); font-weight:600; font-size:0.82rem; text-align:center;
+    line-height:1.25; opacity:0; transition:opacity .25s ease; pointer-events:none;
+  }
+  .pio-fan-card:hover .pio-fan-name{ opacity:1; }
+  .pio-fan-controls{ display:flex; align-items:center; gap:16px; }
+  .pio-fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+
   /* ===== Anciens présidents : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pres-marquee{
     overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab;
@@ -386,21 +407,24 @@
      pour signaler qu'on peut les parcourir latéralement. Masquée sur tactile
      (mobile/tablette), où le balayage est déjà l'interaction naturelle. */
   @media (hover:hover) and (pointer:fine){
-    .pio-marquee, .pres-marquee{
+    .pres-marquee{
       scrollbar-width:auto; -ms-overflow-style:auto; padding-bottom:16px;
     }
-    .pio-marquee::-webkit-scrollbar, .pres-marquee::-webkit-scrollbar{
+    .pres-marquee::-webkit-scrollbar{
       display:block; height:8px;
     }
-    .pio-marquee::-webkit-scrollbar-track, .pres-marquee::-webkit-scrollbar-track{
+    .pres-marquee::-webkit-scrollbar-track{
       background:var(--paper-alt); border-radius:999px;
     }
-    .pio-marquee::-webkit-scrollbar-thumb, .pres-marquee::-webkit-scrollbar-thumb{
+    .pres-marquee::-webkit-scrollbar-thumb{
       background:var(--green); border-radius:999px;
     }
-    .pio-marquee::-webkit-scrollbar-thumb:hover, .pres-marquee::-webkit-scrollbar-thumb:hover{
+    .pres-marquee::-webkit-scrollbar-thumb:hover{
       background:var(--green-deep);
     }
+    /* Pionniers : carrousel en éventail plutôt que la bande défilante. */
+    .pio-marquee{ display:none; }
+    .pio-fan-wrap{ display:flex; }
   }
 
   /* ===== Chiffres d'impact ===== */
@@ -798,6 +822,14 @@
         </div>
         <div class="pio-marquee reveal" id="pioneersMarqueeWrap">
           <div class="pio-track" id="cms-pioneers-track"></div>
+        </div>
+        <div class="pio-fan-wrap reveal" id="pioneersFanWrap">
+          <div class="pio-fan-stage" id="cms-pioneers-fan-stage"></div>
+          <div class="pio-fan-controls">
+            <button class="exec-arrow" id="pioneersFanPrev" aria-label="Pionnier précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="pio-fan-counter" id="cms-pioneers-fan-counter"></span>
+            <button class="exec-arrow" id="pioneersFanNext" aria-label="Pionnier suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
         </div>
       </div>
 
@@ -1337,12 +1369,138 @@
     wrap._marqueeRaf = requestAnimationFrame(step);
   }
 
+  // ===== Pionniers (PC) : carrousel en éventail =====
+  const FAN_POSITIONS = [
+    { rot: -21, scale: 0.7756, x: -30, y: 7.3 },
+    { rot: -14, scale: 0.8498, x: -22, y: 4.0 },
+    { rot: -7,  scale: 0.9346, x: -11, y: 1.3 },
+    { rot: 0,   scale: 1.0,    x: 0,   y: 0.0 },
+    { rot: 7,   scale: 0.9346, x: 11,  y: 1.3 },
+    { rot: 14,  scale: 0.8498, x: 22,  y: 4.0 },
+    { rot: 21,  scale: 0.7756, x: 30,  y: 7.3 },
+  ];
+  const FAN_MAX = 7;
+  const FAN_HALF = 3;
+
+  function fanResponsiveMultiplier(width){
+    if (width < 480) return 0.5;
+    if (width < 768) return 0.65;
+    if (width < 1024) return 0.85;
+    return 1;
+  }
+
+  function setupFanCarousel(stage, prevBtn, nextBtn, counterEl, list){
+    if (!stage || !Array.isArray(list) || list.length === 0) return;
+    const total = list.length;
+    const paginated = total > FAN_MAX;
+    let center = paginated ? FAN_HALF : total >> 1;
+    const slotCount = paginated ? FAN_MAX : total;
+    const centerSlot = slotCount >> 1;
+    let mult = fanResponsiveMultiplier(window.innerWidth);
+
+    function slotConfig(slot){
+      if (paginated) return FAN_POSITIONS[slot];
+      const c = total >> 1;
+      const d = total > 1 ? (slot - c) / c : 0;
+      const ad = Math.abs(d);
+      return { rot: d * 21, scale: 1 - 0.2244 * ad * ad, x: d * 30, y: ad * ad * 7.3 };
+    }
+
+    function visibleMap(centerIdx){
+      const map = new Map();
+      if (!paginated) { list.forEach((_, i) => map.set(i, i)); return map; }
+      for (let slot = 0; slot < FAN_MAX; slot++){
+        map.set(((centerIdx + slot - FAN_HALF) % total + total) % total, slot);
+      }
+      return map;
+    }
+
+    function applyBase(card){
+      const slot = Number(card.dataset.slot);
+      const c = slotConfig(slot);
+      card.style.transform = `translate(${c.x * mult}rem, ${c.y * mult}rem) rotate(${c.rot}deg) scale(${c.scale})`;
+      card.style.zIndex = String(10 - Math.abs(slot - centerSlot));
+    }
+
+    function applyHover(hoveredSlot){
+      Array.from(stage.children).forEach(card => {
+        const slot = Number(card.dataset.slot);
+        const c = slotConfig(slot);
+        if (slot === hoveredSlot) {
+          card.style.transform = `translate(${c.x * mult}rem, ${c.y * mult - 2.5 * mult}rem) rotate(${c.rot}deg) scale(${c.scale * 1.08})`;
+          return;
+        }
+        const distance = Math.abs(slot - hoveredSlot);
+        const normalized = centerSlot > 0 ? (slot - centerSlot) / centerSlot : 0;
+        const push = 8 * (1 - Math.abs(normalized)) * (1 + 0.2 * Math.max(0, 3 - distance)) * mult;
+        let x = c.x * mult, rot = c.rot;
+        if (slot < hoveredSlot) { x -= push; rot -= 3 / (distance + 1); }
+        else { x += push; rot += 3 / (distance + 1); }
+        card.style.transform = `translate(${x}rem, ${c.y * mult}rem) rotate(${rot}deg) scale(${c.scale})`;
+      });
+    }
+
+    function resetHover(){
+      Array.from(stage.children).forEach(applyBase);
+    }
+
+    function render(){
+      mult = fanResponsiveMultiplier(window.innerWidth);
+      const map = visibleMap(center);
+      const entries = [];
+      map.forEach((slot, idx) => entries.push({ idx, slot }));
+      entries.sort((a, b) => a.slot - b.slot);
+      stage.innerHTML = '';
+      entries.forEach(({ idx, slot }) => {
+        const p = list[idx];
+        const name = typeof p === 'string' ? p : (p.name || '');
+        const photo = typeof p === 'string' ? '' : (p.photo || '');
+        const card = document.createElement('div');
+        card.className = 'pio-fan-card';
+        card.dataset.slot = String(slot);
+        card.innerHTML = photo
+          ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">`
+          : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`;
+        if (name) {
+          const label = document.createElement('div');
+          label.className = 'pio-fan-name';
+          label.textContent = name;
+          card.appendChild(label);
+        }
+        card.addEventListener('mouseenter', () => applyHover(slot));
+        stage.appendChild(card);
+        applyBase(card);
+      });
+      if (counterEl) counterEl.textContent = paginated ? `${center + 1} / ${total}` : '';
+    }
+
+    if (!stage._fanInit) {
+      stage._fanInit = true;
+      stage.addEventListener('mouseleave', resetHover);
+      if (prevBtn) prevBtn.addEventListener('click', () => { center = (center - 1 + total) % total; render(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { center = (center + 1) % total; render(); });
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(render, 150);
+      });
+    }
+    if (prevBtn) prevBtn.style.display = paginated ? '' : 'none';
+    if (nextBtn) nextBtn.style.display = paginated ? '' : 'none';
+    render();
+  }
+
   function renderPioneers(list, layout){
     const block = document.getElementById('pioneersBlock');
     const listWrap = document.getElementById('pioneersListWrap');
     const listEl = document.getElementById('cms-pioneers-list');
     const marqueeWrap = document.getElementById('pioneersMarqueeWrap');
     const track = document.getElementById('cms-pioneers-track');
+    const fanWrap = document.getElementById('pioneersFanWrap');
+    const fanStage = document.getElementById('cms-pioneers-fan-stage');
+    const fanPrev = document.getElementById('pioneersFanPrev');
+    const fanNext = document.getElementById('pioneersFanNext');
+    const fanCounter = document.getElementById('cms-pioneers-fan-counter');
     if (!block || !listWrap || !listEl || !marqueeWrap || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
@@ -1350,8 +1508,10 @@
     const useCards = layout !== 'liste';
     listWrap.style.display = useCards ? 'none' : '';
     marqueeWrap.style.display = useCards ? '' : 'none';
+    if (fanWrap) fanWrap.style.display = useCards ? '' : 'none';
 
     if (useCards) {
+      if (fanStage) setupFanCarousel(fanStage, fanPrev, fanNext, fanCounter, list);
       const itemsHtml = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
         const photo = typeof p === 'string' ? '' : (p.photo || '');
