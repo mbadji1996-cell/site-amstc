@@ -134,11 +134,14 @@ language plpgsql
 as $$
 begin
   perform public.check_rate_limit('bibliotheque_documents', 30, interval '5 minutes');
+  -- Colonnes préfixées par l'alias ra : sans cela, elles entrent en conflit
+  -- avec les colonnes de sortie du RETURNS TABLE, qui portent les mêmes noms
+  -- ("column reference id is ambiguous" en plpgsql).
   return query
-    select id, title, excerpt, cover_image, file_path, bib_section, created_at
-    from public.restricted_articles
-    where category = 'bibliotheque'
-    order by created_at desc
+    select ra.id, ra.title, ra.excerpt, ra.cover_image, ra.file_path, ra.bib_section, ra.created_at
+    from public.restricted_articles ra
+    where ra.category = 'bibliotheque'
+    order by ra.created_at desc
     limit least(coalesce(p_limit, 100), 200);
 end;
 $$;
