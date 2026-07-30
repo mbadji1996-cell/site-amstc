@@ -134,7 +134,7 @@ const html = `<!DOCTYPE html>
 </header>
 
 <div class="wrap">
-  <div class="toolbar">
+  <div class="toolbar" id="printToolbar" style="display:none;">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
   </div>
 
@@ -148,6 +148,17 @@ ${itemsHtml}
     <p>Généré automatiquement depuis amstc.org</p>
   </footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  (async () => {
+    const profile = await getCurrentProfile();
+    if (profile && ["admin", "super_admin"].includes(profile.role)) {
+      document.getElementById("printToolbar").style.display = "";
+    }
+  })();
+</script>
 
 </body>
 </html>

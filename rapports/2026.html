@@ -71,7 +71,7 @@
 </header>
 
 <div class="wrap">
-  <div class="toolbar">
+  <div class="toolbar" id="printToolbar" style="display:none;">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
   </div>
 
@@ -140,7 +140,7 @@
       <article class="report-item">
         <div class="report-item-num">06</div>
         <div class="report-item-body">
-          
+          <img src="/assets/uploads/00.affiche-jssci-2026-72h-amstc_affiche.jpg" alt="" class="report-item-img">
           <div class="report-item-text">
             <span class="report-item-date">du 19 au 21 juin 2026</span>
             <h3>Journées Scientifiques, Sociales, Culturelles et d&#39;Intégration (JSSCI 2026)</h3>
@@ -180,6 +180,17 @@
     <p>Généré automatiquement depuis amstc.org</p>
   </footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  (async () => {
+    const profile = await getCurrentProfile();
+    if (profile && ["admin", "super_admin"].includes(profile.role)) {
+      document.getElementById("printToolbar").style.display = "";
+    }
+  })();
+</script>
 
 </body>
 </html>
