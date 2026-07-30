@@ -335,7 +335,7 @@
   /* ===== Pionniers : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pio-marquee{
     overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab;
-    scrollbar-width:none; -ms-overflow-style:none;
+    scrollbar-width:none; -ms-overflow-style:none; user-select:none;
     -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
@@ -348,7 +348,7 @@
   }
   .pio-item:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
   .pio-avatar{width:100%; aspect-ratio:1/1; border-radius:10px; overflow:hidden; background:var(--paper-alt); margin-bottom:14px;}
-  .pio-avatar img{width:100%; height:100%; object-fit:cover; display:block;}
+  .pio-avatar img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
   .pio-avatar-fallback{
     width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.6rem;
@@ -359,7 +359,7 @@
   /* ===== Anciens présidents : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pres-marquee{
     overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab;
-    scrollbar-width:none; -ms-overflow-style:none;
+    scrollbar-width:none; -ms-overflow-style:none; user-select:none;
     -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
@@ -371,7 +371,7 @@
     padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
   }
   .pres-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
-  .pres-card img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin-bottom:14px; display:block;}
+  .pres-card img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin-bottom:14px; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
   .pres-card-fallback{
     width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
     background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
@@ -380,6 +380,28 @@
   .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
   .pres-card-mandate{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
   @media (max-width:560px){ .pres-card{width:160px;} }
+
+  /* Sur souris/trackpad (PC), le glisser tactile n'est pas un geste évident :
+     on affiche une barre de défilement visible et stylée en bas des slides
+     pour signaler qu'on peut les parcourir latéralement. Masquée sur tactile
+     (mobile/tablette), où le balayage est déjà l'interaction naturelle. */
+  @media (hover:hover) and (pointer:fine){
+    .pio-marquee, .pres-marquee{
+      scrollbar-width:auto; -ms-overflow-style:auto; padding-bottom:16px;
+    }
+    .pio-marquee::-webkit-scrollbar, .pres-marquee::-webkit-scrollbar{
+      display:block; height:8px;
+    }
+    .pio-marquee::-webkit-scrollbar-track, .pres-marquee::-webkit-scrollbar-track{
+      background:var(--paper-alt); border-radius:999px;
+    }
+    .pio-marquee::-webkit-scrollbar-thumb, .pres-marquee::-webkit-scrollbar-thumb{
+      background:var(--green); border-radius:999px;
+    }
+    .pio-marquee::-webkit-scrollbar-thumb:hover, .pres-marquee::-webkit-scrollbar-thumb:hover{
+      background:var(--green-deep);
+    }
+  }
 
   /* ===== Chiffres d'impact ===== */
   #impact{background:var(--green-deep); padding:80px 0;}
@@ -1267,11 +1289,23 @@
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let userActive = false;
     let wheelIdleTimer = null;
+    let failsafeTimer = null;
     let lastTs = null;
 
-    wrap.addEventListener('pointerdown', () => { userActive = true; });
-    window.addEventListener('pointerup', () => { userActive = false; });
-    window.addEventListener('pointercancel', () => { userActive = false; });
+    // Filet de sécurité : si le navigateur avale le pointerup (ex. glisser-
+    // déposer natif déclenché en cliquant sur une image sur PC), on force la
+    // reprise de toute façon au bout de quelques secondes, pour ne jamais
+    // rester figé.
+    function resumeAfter(ms){
+      clearTimeout(failsafeTimer);
+      failsafeTimer = setTimeout(() => { userActive = false; }, ms);
+    }
+    function pause(){ userActive = true; resumeAfter(4000); }
+    function resume(){ userActive = false; clearTimeout(failsafeTimer); }
+
+    wrap.addEventListener('pointerdown', pause);
+    window.addEventListener('pointerup', resume);
+    window.addEventListener('pointercancel', resume);
     wrap.addEventListener('wheel', () => {
       userActive = true;
       clearTimeout(wheelIdleTimer);
@@ -1312,7 +1346,7 @@
         return `
           <div class="pio-item">
             <div class="pio-avatar">
-              ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
+              ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
             </div>
             ${name ? `<div class="pio-item-name">${esc(name)}</div>` : ''}
           </div>
@@ -1339,7 +1373,7 @@
     block.style.display = '';
     const itemsHtml = list.map(p => `
       <div class="pres-card">
-        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
+        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" draggable="false">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
         <div class="pres-card-name">${esc(p.name)}</div>
         <div class="pres-card-mandate">${esc(p.mandate || '')}</div>
       </div>
