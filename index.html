@@ -1288,30 +1288,42 @@
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let userActive = false;
+    let hoverTimer = null;
     let wheelIdleTimer = null;
-    let failsafeTimer = null;
-    let lastTs = null;
 
-    // Filet de sécurité : si le navigateur avale le pointerup (ex. glisser-
-    // déposer natif déclenché en cliquant sur une image sur PC), on force la
-    // reprise de toute façon au bout de quelques secondes, pour ne jamais
-    // rester figé.
-    function resumeAfter(ms){
-      clearTimeout(failsafeTimer);
-      failsafeTimer = setTimeout(() => { userActive = false; }, ms);
-    }
-    function pause(){ userActive = true; resumeAfter(4000); }
-    function resume(){ userActive = false; clearTimeout(failsafeTimer); }
+    // Survol à la souris : ne met en pause qu'après 1s d'immobilité au-dessus
+    // du slide (pas juste au passage), et reprend immédiatement dès que la
+    // souris quitte le slide. On utilise pointerenter/pointerleave plutôt que
+    // pointerdown/pointerup : ces derniers peuvent ne jamais se déclencher
+    // (relâchement avalé par un glisser-déposer natif d'image sur PC), ce qui
+    // figeait le défilement pour de bon.
+    wrap.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse') {
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(() => { userActive = true; }, 1000);
+      }
+    });
+    wrap.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') {
+        clearTimeout(hoverTimer);
+        userActive = false;
+      }
+    });
 
-    wrap.addEventListener('pointerdown', pause);
-    window.addEventListener('pointerup', resume);
-    window.addEventListener('pointercancel', resume);
+    // Molette (PC) : pause immédiate le temps de l'inactivité qui suit.
     wrap.addEventListener('wheel', () => {
+      clearTimeout(hoverTimer);
       userActive = true;
       clearTimeout(wheelIdleTimer);
       wheelIdleTimer = setTimeout(() => { userActive = false; }, 800);
     }, { passive: true });
 
+    // Glisser tactile (mobile) : pause pendant le geste, reprise au relâché.
+    wrap.addEventListener('touchstart', () => { userActive = true; }, { passive: true });
+    wrap.addEventListener('touchend', () => { userActive = false; }, { passive: true });
+    wrap.addEventListener('touchcancel', () => { userActive = false; }, { passive: true });
+
+    let lastTs = null;
     function step(ts){
       if (lastTs === null) lastTs = ts;
       const dt = ts - lastTs;
