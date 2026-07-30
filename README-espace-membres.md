@@ -32,6 +32,20 @@ Cela crée la table `profiles` (une ligne par compte : nom, e-mail, rôle,
 statut d'approbation) et les règles qui empêchent un utilisateur de lire
 ou modifier les comptes des autres.
 
+### Vérifier que la base est à jour (à faire après chaque déploiement)
+
+Les fichiers `supabase/*.sql` sont versionnés dans Git, mais **rien ne
+garantit qu'ils ont été exécutés sur la base de production** : il faut
+les coller à la main dans le SQL Editor. Un fichier oublié ne se voit
+pas tout de suite - la page concernée tombe en panne pour les membres,
+parfois bien plus tard.
+
+Pour contrôler en une fois : SQL Editor → New query → collez le contenu
+de `supabase/verification-schema.sql` → **Run**. Le script est en
+lecture seule et liste chaque table, vue et fonction attendue avec son
+statut. Tout ce qui remonte en **MANQUANT** en haut de la liste doit
+être créé en exécutant le fichier `supabase/*.sql` correspondant.
+
 ## 3. Récupérer l'URL et la clé du projet
 
 1. Dans le tableau de bord → **Project Settings** (icône engrenage) →
