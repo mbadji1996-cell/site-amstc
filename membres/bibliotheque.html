@@ -152,9 +152,10 @@
     const { data, error } = await supabaseClient.rpc("bibliotheque_documents");
 
     if (error) {
+      // Journalisé en console pour le dépannage, mais jamais affiché tel quel :
+      // les messages Postgres bruts n'ont pas de sens pour un membre.
       console.error("Bibliothèque :", error);
-      const detail = [error.message, error.hint, error.details].filter(Boolean).join(" - ");
-      listEl.innerHTML = `<p class="error">Impossible de charger la bibliothèque pour le moment.${detail ? `<br><small>${esc(detail)}</small>` : ""}</p>`;
+      listEl.innerHTML = `<p class="error">${esc(error.message && error.message.includes('Trop de requêtes') ? error.message : "Impossible de charger la bibliothèque pour le moment.")}</p>`;
       return;
     }
 
