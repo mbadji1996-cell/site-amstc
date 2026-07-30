@@ -152,7 +152,9 @@
     const { data, error } = await supabaseClient.rpc("bibliotheque_documents");
 
     if (error) {
-      listEl.innerHTML = `<p class="error">${esc(error.message && error.message.includes('Trop de requêtes') ? error.message : "Impossible de charger la bibliothèque pour le moment.")}</p>`;
+      console.error("Bibliothèque :", error);
+      const detail = [error.message, error.hint, error.details].filter(Boolean).join(" - ");
+      listEl.innerHTML = `<p class="error">Impossible de charger la bibliothèque pour le moment.${detail ? `<br><small>${esc(detail)}</small>` : ""}</p>`;
       return;
     }
 
