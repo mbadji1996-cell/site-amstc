@@ -1474,11 +1474,26 @@
       if (counterEl) counterEl.textContent = paginated ? `${center + 1} / ${total}` : '';
     }
 
+    // Défilement automatique (comme les autres carrousels du site) : avance
+    // toutes les 5s, en pause tant que la souris ou le clavier est dessus.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let autoTimer = null;
+    function stopAuto(){ if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+    function startAuto(){
+      stopAuto();
+      if (!paginated || reduceMotion) return;
+      autoTimer = setInterval(() => { center = (center + 1) % total; render(); }, 5000);
+    }
+
     if (!stage._fanInit) {
       stage._fanInit = true;
       stage.addEventListener('mouseleave', resetHover);
-      if (prevBtn) prevBtn.addEventListener('click', () => { center = (center - 1 + total) % total; render(); });
-      if (nextBtn) nextBtn.addEventListener('click', () => { center = (center + 1) % total; render(); });
+      stage.addEventListener('mouseenter', stopAuto);
+      stage.addEventListener('mouseleave', startAuto);
+      stage.addEventListener('focusin', stopAuto);
+      stage.addEventListener('focusout', startAuto);
+      if (prevBtn) prevBtn.addEventListener('click', () => { center = (center - 1 + total) % total; render(); startAuto(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { center = (center + 1) % total; render(); startAuto(); });
       let resizeTimer = null;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
@@ -1488,6 +1503,7 @@
     if (prevBtn) prevBtn.style.display = paginated ? '' : 'none';
     if (nextBtn) nextBtn.style.display = paginated ? '' : 'none';
     render();
+    startAuto();
   }
 
   function renderPioneers(list, layout){
