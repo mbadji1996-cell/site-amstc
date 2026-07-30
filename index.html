@@ -356,26 +356,27 @@
   .pio-item-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
   @media (max-width:560px){ .pio-item{width:160px;} }
 
-  /* ===== Pionniers (PC uniquement) : carrousel en éventail =====
+  /* ===== Pionniers / Présidents (PC uniquement) : carrousel en éventail =====
      Remplace la bande sur souris/trackpad (voir media query plus bas) ;
      masqué par défaut, la bande scrollable reste l'expérience tactile. */
-  .pio-fan-wrap{ display:none; flex-direction:column; align-items:center; gap:22px; padding:20px 0 6px; }
-  .pio-fan-stage{ position:relative; width:100%; max-width:64rem; margin:0 auto; height:17rem; }
-  .pio-fan-card{
+  .fan-wrap{ display:none; flex-direction:column; align-items:center; gap:22px; padding:20px 0 6px; }
+  .fan-stage{ position:relative; width:100%; max-width:64rem; margin:0 auto; height:17rem; }
+  .fan-card{
     position:absolute; top:0; left:50%; width:11rem; height:15rem; margin-left:-5.5rem;
     border-radius:14px; overflow:hidden; box-shadow:var(--shadow); cursor:pointer;
     transform-origin:center bottom; transition:transform .45s cubic-bezier(0.34,1.56,0.64,1), opacity .3s ease;
   }
-  .pio-fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
-  .pio-fan-name{
+  .fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
+  .fan-name{
     position:absolute; left:0; right:0; bottom:0; padding:22px 8px 10px;
     background:linear-gradient(180deg, transparent, rgba(6,68,28,0.9) 60%);
     color:#fff; font-family:var(--display); font-weight:600; font-size:0.82rem; text-align:center;
     line-height:1.25; opacity:0; transition:opacity .25s ease; pointer-events:none;
   }
-  .pio-fan-card:hover .pio-fan-name{ opacity:1; }
-  .pio-fan-controls{ display:flex; align-items:center; gap:16px; }
-  .pio-fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+  .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.68rem; opacity:0.85; margin-top:3px;}
+  .fan-card:hover .fan-name{ opacity:1; }
+  .fan-controls{ display:flex; align-items:center; gap:16px; }
+  .fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
 
   /* ===== Anciens présidents : bande auto-défilante en boucle, scrollable manuellement ===== */
   .pres-marquee{
@@ -402,29 +403,13 @@
   .pres-card-mandate{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
   @media (max-width:560px){ .pres-card{width:160px;} }
 
-  /* Sur souris/trackpad (PC), le glisser tactile n'est pas un geste évident :
-     on affiche une barre de défilement visible et stylée en bas des slides
-     pour signaler qu'on peut les parcourir latéralement. Masquée sur tactile
-     (mobile/tablette), où le balayage est déjà l'interaction naturelle. */
+  /* Sur PC (souris/trackpad), Pionniers et Présidents s'affichent en
+     carrousel en éventail plutôt qu'en bande défilante - le glisser tactile
+     n'étant pas un geste évident à la souris. La bande scrollable reste
+     l'expérience tactile (mobile/tablette), où le balayage est naturel. */
   @media (hover:hover) and (pointer:fine){
-    .pres-marquee{
-      scrollbar-width:auto; -ms-overflow-style:auto; padding-bottom:16px;
-    }
-    .pres-marquee::-webkit-scrollbar{
-      display:block; height:8px;
-    }
-    .pres-marquee::-webkit-scrollbar-track{
-      background:var(--paper-alt); border-radius:999px;
-    }
-    .pres-marquee::-webkit-scrollbar-thumb{
-      background:var(--green); border-radius:999px;
-    }
-    .pres-marquee::-webkit-scrollbar-thumb:hover{
-      background:var(--green-deep);
-    }
-    /* Pionniers : carrousel en éventail plutôt que la bande défilante. */
-    .pio-marquee{ display:none; }
-    .pio-fan-wrap{ display:flex; }
+    .pio-marquee, .pres-marquee{ display:none; }
+    .fan-wrap{ display:flex; }
   }
 
   /* ===== Chiffres d'impact ===== */
@@ -823,11 +808,11 @@
         <div class="pio-marquee reveal" id="pioneersMarqueeWrap">
           <div class="pio-track" id="cms-pioneers-track"></div>
         </div>
-        <div class="pio-fan-wrap reveal" id="pioneersFanWrap">
-          <div class="pio-fan-stage" id="cms-pioneers-fan-stage"></div>
-          <div class="pio-fan-controls">
+        <div class="fan-wrap reveal" id="pioneersFanWrap">
+          <div class="fan-stage" id="cms-pioneers-fan-stage"></div>
+          <div class="fan-controls">
             <button class="exec-arrow" id="pioneersFanPrev" aria-label="Pionnier précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <span class="pio-fan-counter" id="cms-pioneers-fan-counter"></span>
+            <span class="fan-counter" id="cms-pioneers-fan-counter"></span>
             <button class="exec-arrow" id="pioneersFanNext" aria-label="Pionnier suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
         </div>
@@ -838,6 +823,14 @@
         <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
         <div class="pres-marquee reveal" id="presidentsMarqueeWrap">
           <div class="pres-track" id="cms-presidents-track"></div>
+        </div>
+        <div class="fan-wrap reveal" id="presidentsFanWrap">
+          <div class="fan-stage" id="cms-presidents-fan-stage"></div>
+          <div class="fan-controls">
+            <button class="exec-arrow" id="presidentsFanPrev" aria-label="Président précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="fan-counter" id="cms-presidents-fan-counter"></span>
+            <button class="exec-arrow" id="presidentsFanNext" aria-label="Président suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
         </div>
       </div>
     </div>
@@ -1455,16 +1448,23 @@
         const p = list[idx];
         const name = typeof p === 'string' ? p : (p.name || '');
         const photo = typeof p === 'string' ? '' : (p.photo || '');
+        const mandate = typeof p === 'string' ? '' : (p.mandate || '');
         const card = document.createElement('div');
-        card.className = 'pio-fan-card';
+        card.className = 'fan-card';
         card.dataset.slot = String(slot);
         card.innerHTML = photo
           ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">`
           : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`;
         if (name) {
           const label = document.createElement('div');
-          label.className = 'pio-fan-name';
+          label.className = 'fan-name';
           label.textContent = name;
+          if (mandate) {
+            const sub = document.createElement('span');
+            sub.className = 'fan-name-sub';
+            sub.textContent = mandate;
+            label.appendChild(sub);
+          }
           card.appendChild(label);
         }
         card.addEventListener('mouseenter', () => applyHover(slot));
@@ -1540,9 +1540,14 @@
     const block = document.getElementById('presidentsBlock');
     const marqueeWrap = document.getElementById('presidentsMarqueeWrap');
     const track = document.getElementById('cms-presidents-track');
+    const fanStage = document.getElementById('cms-presidents-fan-stage');
+    const fanPrev = document.getElementById('presidentsFanPrev');
+    const fanNext = document.getElementById('presidentsFanNext');
+    const fanCounter = document.getElementById('cms-presidents-fan-counter');
     if (!block || !marqueeWrap || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
+    if (fanStage) setupFanCarousel(fanStage, fanPrev, fanNext, fanCounter, list);
     const itemsHtml = list.map(p => `
       <div class="pres-card">
         ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" draggable="false">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
