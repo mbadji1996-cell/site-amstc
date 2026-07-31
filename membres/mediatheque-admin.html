@@ -293,9 +293,18 @@
       return;
     }
 
-    const { data: counts } = await supabaseClient.from('media_photos').select('folder_id');
+    // Un comptage par album plutôt qu'une requête globale : avec plus de
+    // 7000 photos, la réponse était tronquée par la limite de lignes de
+    // l'API et les albums absents de la tranche renvoyée s'affichaient à
+    // tort avec 0 photo. head: true ne transfère aucune ligne.
     const countByFolder = {};
-    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
+    await Promise.all(allFolders.map(async f => {
+      const { count } = await supabaseClient
+        .from('media_photos')
+        .select('id', { count: 'exact', head: true })
+        .eq('folder_id', f.id);
+      countByFolder[f.id] = count || 0;
+    }));
 
     const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
