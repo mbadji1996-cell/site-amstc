@@ -133,8 +133,6 @@
   .pay-tab.active{border-color:var(--amber);background:var(--amber-light);color:var(--amber-dark);}
   .pay-info{background:var(--amber-light);border:1px solid #E8C97A;border-radius:10px;padding:12px 16px;font-size:0.85rem;color:var(--amber-deeper);margin-bottom:14px;line-height:1.6;}
   .pay-info strong{display:block;margin-bottom:4px;}
-  .pay-link-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green,#17763B);color:#fff;padding:11px 20px;border-radius:999px;font-size:0.88rem;font-weight:600;text-decoration:none;margin-bottom:14px;}
-  .pay-link-btn:hover{opacity:0.9;}
   .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
   .btn-cancel{background:var(--paper-alt);color:var(--text-muted);border:none;padding:10px 20px;border-radius:999px;font-size:0.88rem;font-weight:600;cursor:pointer;}
   .btn-confirm{background:var(--amber-dark);color:var(--white);border:none;padding:10px 22px;border-radius:999px;font-size:0.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
@@ -286,10 +284,6 @@
         Envoyez le montant au numéro AMSTC puis collez la référence ci-dessous.
       </div>
 
-      <a class="pay-link-btn" id="payLinkBtn" target="_blank" rel="noopener" style="display:none;">
-        <i class="ti ti-external-link"></i> <span id="payLinkLabel">Payer en ligne</span>
-      </a>
-
       <div class="form-group">
         <label>Référence de transaction *</label>
         <input type="text" id="payRef" placeholder="Ex : WV-20240701-XXXXXX">
@@ -328,7 +322,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
-<script src="../assets/js/payment-links.js"></script>
 <script>
   let allProducts = [], cart = {}, userId = null, payMethod = 'wave';
   let currentFilter = 'all', allCategories = [], searchQuery = '';
@@ -591,35 +584,16 @@
     document.getElementById('cartDrawer').classList.remove('open');
   }
 
-  // Liens de paiement configurés dans le CMS (content/don.json), chargés une
-  // seule fois puis réutilisés à chaque changement d'onglet.
-  let paymentLinks = {};
-  getPaymentLinks().then(links => { paymentLinks = links; updatePayLinkBtn(); });
-
-  function updatePayLinkBtn() {
-    const btn = document.getElementById('payLinkBtn');
-    const url = paymentLinks[payMethod];
-    if (url) {
-      btn.href = url;
-      document.getElementById('payLinkLabel').textContent =
-        payMethod === 'wave' ? 'Payer avec Wave' : 'Payer avec Orange Money';
-      btn.style.display = '';
-    } else {
-      btn.style.display = 'none';
-    }
-  }
-
   function setPayMethod(m) {
     payMethod = m;
     document.getElementById('pay-wave').classList.toggle('active', m === 'wave');
     document.getElementById('pay-om').classList.toggle('active', m === 'orange_money');
     const info = document.getElementById('payInfo');
     if (m === 'wave') {
-      info.innerHTML = '<strong>Paiement Wave</strong>Payez le montant à l\'AMSTC via Wave, puis collez la référence de transaction ci-dessous.';
+      info.innerHTML = '<strong>Paiement Wave</strong>Envoyez le montant au numéro AMSTC via Wave, puis collez la référence de transaction ci-dessous.';
     } else {
-      info.innerHTML = '<strong>Paiement Orange Money</strong>Payez le montant à l\'AMSTC via Orange Money, puis collez la référence de transaction ci-dessous.';
+      info.innerHTML = '<strong>Paiement Orange Money</strong>Envoyez le montant au numéro AMSTC via Orange Money, puis collez la référence de transaction ci-dessous.';
     }
-    updatePayLinkBtn();
   }
 
   function openCheckout() {

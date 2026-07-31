@@ -62,15 +62,6 @@
   .mobile-item{background:var(--paper-alt); border-radius:10px; padding:16px;}
   .mobile-item strong{display:block; font-family:var(--display); color:var(--text-heading); margin-bottom:6px;}
   .mobile-item span{display:block; font-family:var(--mono); font-size:0.88rem; color:var(--text-muted);}
-  .pay-link{
-    display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-weight:600; font-size:0.85rem;
-    padding:9px 16px; border-radius:999px; background:var(--green); color:#fff;
-  }
-  .pay-link:hover{background:var(--green-deep);}
-  .recu-card{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gold); border-radius:var(--radius); padding:24px 28px; margin-bottom:22px; display:none;}
-  .recu-card h2{font-size:1.15rem; margin-bottom:10px;}
-  .btn-whatsapp{background:#25D366; color:#fff;}
-  .btn-whatsapp:hover{background:#1da851;}
   .trust{font-family:var(--mono); font-size:0.8rem; color:var(--text-accent); border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin-top:36px;}
 
   .jauge-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 28px; margin-bottom:22px; display:none;}
@@ -121,12 +112,6 @@
     <div class="mobile-grid" id="cms-mobile-options"></div>
   </div>
 
-  <div class="recu-card" id="recu-card">
-    <h2>Envoyer votre reçu</h2>
-    <p id="cms-recu-text"></p>
-    <a class="btn btn-whatsapp" id="recu-link" target="_blank" rel="noopener">Envoyer mon reçu par WhatsApp</a>
-  </div>
-
   <div class="card">
     <h2 id="cms-nature-title">Don en nature</h2>
     <p id="cms-nature-text">Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.</p>
@@ -150,9 +135,6 @@
 <script>
   function md(s){ return s ? marked.parse(s) : ''; }
   function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  // N'accepte qu'une vraie URL http(s) : une saisie du type "javascript:..."
-  // dans le CMS ne doit jamais devenir un lien cliquable.
-  function safeUrl(u){ return /^https?:\/\//i.test((u || '').trim()) ? u.trim() : ''; }
 
   fetch("content/don.json").then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
@@ -181,21 +163,8 @@
           <strong>${esc(m.operator)}</strong>
           <span>${esc(m.number)}</span>
           ${m.name ? `<span>${esc(m.name)}</span>` : ''}
-          ${safeUrl(m.link) ? `<a class="pay-link" href="${esc(m.link)}" target="_blank" rel="noopener">Payer via ${esc(m.operator)} →</a>` : ''}
         </div>
       `).join('');
-    }
-
-    // Bouton d'envoi du reçu par WhatsApp, avec un message pré-rempli que le
-    // donateur complète (il joint lui-même sa capture d'écran dans WhatsApp).
-    const recuPhone = (data.recu_whatsapp || '').replace(/[^0-9]/g, '');
-    if (recuPhone) {
-      const message = encodeURIComponent(
-        "Bonjour, je viens de faire un don à l'AMSTC. Voici mon reçu de paiement."
-      );
-      document.getElementById('recu-link').href = `https://wa.me/${recuPhone}?text=${message}`;
-      if (data.recu_text) document.getElementById('cms-recu-text').textContent = data.recu_text;
-      document.getElementById('recu-card').style.display = 'block';
     }
     if (data.nature_title) document.getElementById('cms-nature-title').textContent = data.nature_title;
     if (data.nature_text) document.getElementById('cms-nature-text').textContent = data.nature_text;

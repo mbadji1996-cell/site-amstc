@@ -127,8 +127,6 @@
   .btn-primary:hover:not(:disabled){background:var(--green-deep);}
   .btn-gold{background:var(--gold);color:var(--green-deep);}
   .btn-gold:hover:not(:disabled){background:var(--gold-deep);color:var(--white);}
-  .pay-link-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;padding:11px 20px;border-radius:999px;font-size:0.88rem;font-weight:600;text-decoration:none;margin-bottom:14px;}
-  .pay-link-btn:hover{background:var(--green-deep);}
   .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
   .btn-ghost:hover:not(:disabled){border-color:var(--green);}
   .btn:disabled{opacity:0.4;cursor:not-allowed;}
@@ -355,9 +353,6 @@
             <input id="validityRef" type="text" placeholder="Ex : WV-20240501-XXXX">
           </div>
         </div>
-        <a class="pay-link-btn" id="validityPayLink" target="_blank" rel="noopener" style="display:none;">
-          <i class="ti ti-external-link"></i> <span></span>
-        </a>
         <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
           <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
           Tarif : <strong style="color:var(--text-heading);">1000 FCFA par an</strong>. Un renouvellement classique ajoute 2 ans à la validité de votre carte.
@@ -415,9 +410,6 @@
               <input id="cotisRef" type="text" placeholder="Ex : WV-20240501-XXXX">
             </div>
           </div>
-          <a class="pay-link-btn" id="cotisPayLink" target="_blank" rel="noopener" style="display:none;">
-            <i class="ti ti-external-link"></i> <span></span>
-          </a>
           <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;background:var(--paper-alt);padding:10px 14px;border-radius:8px;">
             <i class="ti ti-info-circle" style="margin-right:4px;color:var(--text-accent);"></i>
             Tarif : <strong style="color:var(--text-heading);">1000 FCFA par mois</strong>. Réglez plusieurs mois d'un coup si vous le souhaitez.
@@ -442,7 +434,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
-<script src="../assets/js/payment-links.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
@@ -451,32 +442,6 @@
   const currentYear = new Date().getFullYear();
   const MONTH_NAMES = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
   const PAY_METHODS = { wave: 'Wave', orange_money: 'Orange Money' };
-
-  // Liens de paiement configurés dans le CMS (content/don.json) : le bouton
-  // n'apparaît que si un lien existe pour la méthode choisie.
-  let paymentLinks = {};
-  getPaymentLinks().then(links => {
-    paymentLinks = links;
-    syncPayLink('validityMethod', 'validityPayLink');
-    syncPayLink('cotisMethod', 'cotisPayLink');
-  });
-
-  function syncPayLink(selectId, linkId) {
-    const select = document.getElementById(selectId);
-    const link = document.getElementById(linkId);
-    if (!select || !link) return;
-    const url = paymentLinks[select.value];
-    if (url) {
-      link.href = url;
-      link.querySelector('span').textContent = 'Payer avec ' + (PAY_METHODS[select.value] || 'ce service');
-      link.style.display = '';
-    } else {
-      link.style.display = 'none';
-    }
-  }
-
-  document.getElementById('validityMethod')?.addEventListener('change', () => syncPayLink('validityMethod', 'validityPayLink'));
-  document.getElementById('cotisMethod')?.addEventListener('change', () => syncPayLink('cotisMethod', 'cotisPayLink'));
   const DOMAIN_LABELS = {
     medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
