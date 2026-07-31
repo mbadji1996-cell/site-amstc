@@ -278,6 +278,38 @@
     await openFolderView(data.id);
   }
 
+  // Compte les photos de chaque album sans rapatrier les photos elles-mêmes.
+  // L'ancienne version téléchargeait toutes les lignes de media_photos pour
+  // les compter côté navigateur : passé quelques milliers de photos, la
+  // requête dépassait le délai maximal et tous les albums affichaient 0.
+  async function compterPhotosParDossier(folderIds) {
+    const parDossier = {};
+
+    // Voie rapide : une seule requête (nécessite phase36-mediatheque-performance.sql)
+    const { data, error } = await supabaseClient.rpc('media_photo_counts');
+    if (!error && Array.isArray(data)) {
+      data.forEach(l => { parDossier[l.folder_id] = Number(l.photo_count) || 0; });
+      return parDossier;
+    }
+
+    // Repli si la fonction n'existe pas encore en base : un comptage par
+    // album, qui ne transfère aucune ligne (head: true).
+    console.warn('media_photo_counts indisponible, comptage album par album', error);
+    let i = 0;
+    async function ouvrier() {
+      while (i < folderIds.length) {
+        const id = folderIds[i++];
+        const res = await supabaseClient
+          .from('media_photos')
+          .select('id', { count: 'exact', head: true })
+          .eq('folder_id', id);
+        parDossier[id] = res.count || 0;
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(4, folderIds.length) }, ouvrier));
+    return parDossier;
+  }
+
   async function loadFolders() {
     const list = document.getElementById('foldersList');
     const { data, error } = await supabaseClient
@@ -294,9 +326,7 @@
       return;
     }
 
-    const { data: counts } = await supabaseClient.from('media_photos').select('folder_id');
-    const countByFolder = {};
-    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
+    const countByFolder = await compterPhotosParDossier(allFolders.map(f => f.id));
 
     const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
