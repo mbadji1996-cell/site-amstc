@@ -115,7 +115,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
-<script src="../assets/js/media-thumbs.js"></script>
 <script>
   const MEDIA_BUCKET = "mediatheque-photos";
   function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -138,15 +137,17 @@
       return;
     }
 
-    // Comptage sans rapatrier les photos : au-delà de quelques milliers,
-    // l'ancienne requête dépassait le délai et affichait 0 partout.
-    const countByFolder = await mediaComptePhotos(folders.map(f => f.id));
+    const { data: counts } = await supabaseClient
+      .from("media_photos")
+      .select("folder_id");
+    const countByFolder = {};
+    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
 
     const coverPaths = folders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
     if (coverPaths.length > 0) {
-      // Vignettes : ces couvertures s'affichent en 240 px (.folders-grid)
-      signedByPath = await mediaVignettes(MEDIA_BUCKET, coverPaths, { largeur: 480, hauteur: 360 });
+      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
     }
 
     const byYear = {};

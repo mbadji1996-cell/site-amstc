@@ -106,7 +106,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
-<script src="../assets/js/media-thumbs.js"></script>
 <script>
   const MEDIA_BUCKET = "mediatheque-photos";
   const folderId = new URLSearchParams(location.search).get("id");
@@ -152,8 +151,8 @@
     const subfolderCoverPaths = subfolders.filter(f => f.cover_path).map(f => f.cover_path);
     let subCoverByPath = {};
     if (subfolderCoverPaths.length > 0) {
-      // Vignettes : ces couvertures s'affichent en 200 px, au format 4/3
-      subCoverByPath = await mediaVignettes(MEDIA_BUCKET, subfolderCoverPaths, { largeur: 400, hauteur: 300 });
+      const { data: signedCovers } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(subfolderCoverPaths, 3600);
+      (signedCovers || []).forEach(s => { if (s.signedUrl) subCoverByPath[s.path] = s.signedUrl; });
     }
 
     const subfoldersHtml = subfolders.length === 0 ? '' : `
@@ -180,25 +179,17 @@
     }
 
     const paths = photos.map(p => p.storage_path);
-    // Deux jeux d'URLs : des vignettes légères pour la grille (tuiles de
-    // 180 px), et les images pleine taille pour la visionneuse plein écran.
-    const [{ data: signed }, vignetteByPath] = await Promise.all([
-      supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600),
-      mediaVignettes(MEDIA_BUCKET, paths, { largeur: 360 }),
-    ]);
+    const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
     const signedByPath = {};
     (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
     photoUrls = photos.map(p => signedByPath[p.storage_path]).filter(Boolean);
-    const vignetteUrls = photos
-      .filter(p => signedByPath[p.storage_path])
-      .map(p => vignetteByPath[p.storage_path] || signedByPath[p.storage_path]);
 
     content.innerHTML = `
       <h1>${esc(folder.title)}</h1>
       <p class="folder-meta">${folder.year} - ${photos.length} photo${photos.length > 1 ? 's' : ''}</p>
       ${subfoldersHtml}
       <div class="photos-grid" id="photosGrid">
-        ${vignetteUrls.map((url, i) => `<img class="photo-thumb" src="${url}" alt="" loading="lazy" onclick="openLightbox(${i})">`).join('')}
+        ${photoUrls.map((url, i) => `<img class="photo-thumb" src="${url}" alt="" loading="lazy" onclick="openLightbox(${i})">`).join('')}
       </div>`;
 
     document.getElementById("loadingMsg").style.display = "none";

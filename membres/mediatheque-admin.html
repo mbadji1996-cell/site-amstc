@@ -193,7 +193,6 @@
       <p class="upload-progress" id="uploadProgress"></p>
 
       <div class="photos-admin-grid" id="photosAdminGrid"></div>
-      <div id="photosMoreZone" style="text-align:center;margin-top:18px;"></div>
     </div>
 
   </div>
@@ -205,7 +204,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
-<script src="../assets/js/media-thumbs.js"></script>
 <script>
   const MEDIA_BUCKET = "mediatheque-photos";
   const currentYear = new Date().getFullYear();
@@ -295,14 +293,15 @@
       return;
     }
 
-    const countByFolder = await mediaComptePhotos(allFolders.map(f => f.id));
+    const { data: counts } = await supabaseClient.from('media_photos').select('folder_id');
+    const countByFolder = {};
+    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
 
     const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
     if (coverPaths.length > 0) {
-      // Vignettes : ces couvertures s'affichent en 52 px (voir .folder-row-cover)
-      const signed = await mediaVignettes(MEDIA_BUCKET, coverPaths, { largeur: 104 });
-      Object.keys(signed).forEach(chemin => { signedByPath[chemin] = signed[chemin]; });
+      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
     }
 
     list.innerHTML = allFolders.map(f => {
@@ -413,9 +412,8 @@
     const coverPaths = subfolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
     if (coverPaths.length > 0) {
-      // Vignettes : ces couvertures s'affichent en 52 px (voir .folder-row-cover)
-      const signed = await mediaVignettes(MEDIA_BUCKET, coverPaths, { largeur: 104 });
-      Object.keys(signed).forEach(chemin => { signedByPath[chemin] = signed[chemin]; });
+      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
+      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
     }
 
     list.innerHTML = subfolders.map(f => {
@@ -480,48 +478,22 @@
     };
   }
 
-  // Les albums peuvent contenir plusieurs centaines de photos : on les
-  // charge par tranches, ce qui garde la grille rapide et reste sous le
-  // seuil de bascule des vignettes (voir assets/js/media-thumbs.js).
-  const PHOTOS_PAR_PAGE = 60;
-  let photosTotal = 0;
-
-  async function loadCurrentFolderPhotos(suite = false) {
+  async function loadCurrentFolderPhotos() {
     const grid = document.getElementById('photosAdminGrid');
-    if (!suite) {
-      currentPhotos = [];
-      photosTotal = 0;
-      grid.innerHTML = '<p class="empty">Chargement des photos…</p>';
-    }
-
-    const debut = currentPhotos.length;
-    const { data, error, count } = await supabaseClient
-      .from('media_photos')
-      .select('*', { count: 'exact' })
-      .eq('folder_id', currentFolder.id)
-      .order('order_index')
-      .range(debut, debut + PHOTOS_PAR_PAGE - 1);
-
-    if (error) {
-      grid.innerHTML = `<p class="empty">Impossible de charger les photos : ${esc(error.message)}</p>`;
-      console.error('Chargement des photos', error);
-      return;
-    }
-
-    if (typeof count === 'number') photosTotal = count;
-    const lot = data || [];
-    currentPhotos = suite ? currentPhotos.concat(lot) : lot;
+    const { data } = await supabaseClient.from('media_photos').select('*').eq('folder_id', currentFolder.id).order('order_index');
+    currentPhotos = data || [];
 
     if (currentPhotos.length === 0) {
-      grid.innerHTML = '<p class="empty">Aucune photo dans cet album.</p>';
-      majBoutonPlusPhotos();
+      grid.innerHTML = '';
       return;
     }
 
-    // Vignettes : la grille affiche ces photos en 150 px (.photos-admin-grid)
-    const signedByPath = await mediaVignettes(MEDIA_BUCKET, lot.map(p => p.storage_path), { largeur: 300 });
+    const paths = currentPhotos.map(p => p.storage_path);
+    const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
+    const signedByPath = {};
+    (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
 
-    const htmlLot = lot.map(p => {
+    grid.innerHTML = currentPhotos.map(p => {
       const isCover = currentFolder.cover_path === p.storage_path;
       const url = signedByPath[p.storage_path];
       if (!url) return '';
@@ -535,19 +507,6 @@
           </div>
         </div>`;
     }).join('');
-
-    if (suite) grid.insertAdjacentHTML('beforeend', htmlLot);
-    else grid.innerHTML = htmlLot;
-    majBoutonPlusPhotos();
-  }
-
-  function majBoutonPlusPhotos() {
-    const zone = document.getElementById('photosMoreZone');
-    if (!zone) return;
-    const restantes = photosTotal - currentPhotos.length;
-    zone.innerHTML = restantes > 0
-      ? `<button class="btn btn-outline" onclick="loadCurrentFolderPhotos(true)">Charger plus (${restantes} restante${restantes > 1 ? 's' : ''})</button>`
-      : '';
   }
 
   async function setCover(storagePath) {
@@ -620,18 +579,6 @@
     if (el) el.textContent = `Import en cours… ${state.done} photo(s), ${state.foldersCreated} dossier(s) créé(s)`;
   }
 
-  // Un import partiellement en échec doit le dire : le message d'origine
-  // comptait les photos en erreur comme "envoyées".
-  function messageFinImport(state, motDossier) {
-    const base = `Import terminé : ${state.foldersCreated} ${motDossier} créé(s), ${state.reussies} photo(s) envoyée(s)`;
-    return state.echecs.length ? `${base}, ${state.echecs.length} en échec.` : `${base}.`;
-  }
-
-  function alerteEchecsImport(state) {
-    return `${state.echecs.length} photo(s) n'ont pas pu être envoyées.\n\n` +
-      `Première erreur (${state.echecs[0].nom}) :\n${state.echecs[0].message}`;
-  }
-
   async function importFileIntoFolder(file, folderId, coverRef, state) {
     state.done++;
     updateImportProgress(state);
@@ -646,10 +593,8 @@
         await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', folderId);
         coverRef.value = path;
       }
-      state.reussies++;
     } catch (err) {
       console.error('Échec import photo', file.name, err);
-      state.echecs.push({ nom: file.name, message: (err && err.message) || String(err) });
     }
   }
 
@@ -672,7 +617,7 @@
   async function handleFolderViewDrop(entries) {
     const progress = document.getElementById('uploadProgress');
     progress.classList.add('show');
-    const state = { done: 0, reussies: 0, echecs: [], foldersCreated: 0, progressElId: 'uploadProgress' };
+    const state = { done: 0, foldersCreated: 0, progressElId: 'uploadProgress' };
     const coverRef = { value: currentFolder.cover_path };
 
     for (const entry of entries) {
@@ -692,8 +637,7 @@
     }
 
     currentFolder.cover_path = coverRef.value;
-    progress.textContent = messageFinImport(state, 'dossier(s)');
-    if (state.echecs.length) alert(alerteEchecsImport(state));
+    progress.textContent = `Import terminé : ${state.foldersCreated} dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
     setTimeout(() => progress.classList.remove('show'), 4000);
     await loadCurrentFolderPhotos();
     await loadSubfolders();
@@ -705,7 +649,7 @@
   async function handleRootDrop(entries) {
     const progress = document.getElementById('rootImportProgress');
     progress.classList.add('show');
-    const state = { done: 0, reussies: 0, echecs: [], foldersCreated: 0, progressElId: 'rootImportProgress' };
+    const state = { done: 0, foldersCreated: 0, progressElId: 'rootImportProgress' };
     let promptedYear = null;
 
     for (const entry of entries) {
@@ -743,8 +687,7 @@
       }
     }
 
-    progress.textContent = messageFinImport(state, 'album(s)/dossier(s)');
-    if (state.echecs.length) alert(alerteEchecsImport(state));
+    progress.textContent = `Import terminé : ${state.foldersCreated} album(s)/dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
     setTimeout(() => progress.classList.remove('show'), 4000);
     await loadFolders();
   }
@@ -755,11 +698,10 @@
 
     const progress = document.getElementById('uploadProgress');
     progress.classList.add('show');
-    let reussies = 0;
-    const echecs = [];
+    let done = 0;
 
     for (const file of files) {
-      progress.textContent = `Envoi en cours… (${reussies + echecs.length + 1}/${files.length})`;
+      progress.textContent = `Envoi en cours… (${done + 1}/${files.length})`;
       try {
         const blob = await resizeGalleryImage(file);
         const path = `${currentFolder.id}/${crypto.randomUUID()}.jpg`;
@@ -767,9 +709,7 @@
         if (uploadError) throw uploadError;
 
         const { error: insertError } = await supabaseClient.from('media_photos').insert({
-          // photosTotal et non currentPhotos.length : la grille étant paginée,
-          // les photos affichées ne représentent qu'une partie de l'album.
-          folder_id: currentFolder.id, storage_path: path, order_index: photosTotal + reussies,
+          folder_id: currentFolder.id, storage_path: path, order_index: currentPhotos.length + done,
         });
         if (insertError) throw insertError;
 
@@ -777,25 +717,14 @@
           await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', currentFolder.id);
           currentFolder.cover_path = path;
         }
-        reussies++;
       } catch (err) {
         console.error('Échec envoi photo', file.name, err);
-        echecs.push({ nom: file.name, message: (err && err.message) || String(err) });
       }
+      done++;
     }
 
-    // Un échec doit se voir : auparavant le compteur incluait les photos en
-    // erreur et annonçait "envoyées", ce qui masquait complètement le problème.
-    if (echecs.length === 0) {
-      progress.textContent = `${reussies} photo(s) envoyée(s).`;
-      setTimeout(() => progress.classList.remove('show'), 3000);
-    } else {
-      progress.textContent = `${reussies} envoyée(s), ${echecs.length} en échec - ${echecs[0].message}`;
-      alert(
-        `${echecs.length} photo(s) n'ont pas pu être envoyées.\n\n` +
-        `Première erreur (${echecs[0].nom}) :\n${echecs[0].message}`
-      );
-    }
+    progress.textContent = `${done} photo(s) envoyée(s).`;
+    setTimeout(() => progress.classList.remove('show'), 3000);
     await loadCurrentFolderPhotos();
   }
 
