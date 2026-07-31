@@ -581,6 +581,18 @@
     if (el) el.textContent = `Import en cours… ${state.done} photo(s), ${state.foldersCreated} dossier(s) créé(s)`;
   }
 
+  // Un import partiellement en échec doit le dire : le message d'origine
+  // comptait les photos en erreur comme "envoyées".
+  function messageFinImport(state, motDossier) {
+    const base = `Import terminé : ${state.foldersCreated} ${motDossier} créé(s), ${state.reussies} photo(s) envoyée(s)`;
+    return state.echecs.length ? `${base}, ${state.echecs.length} en échec.` : `${base}.`;
+  }
+
+  function alerteEchecsImport(state) {
+    return `${state.echecs.length} photo(s) n'ont pas pu être envoyées.\n\n` +
+      `Première erreur (${state.echecs[0].nom}) :\n${state.echecs[0].message}`;
+  }
+
   async function importFileIntoFolder(file, folderId, coverRef, state) {
     state.done++;
     updateImportProgress(state);
@@ -595,8 +607,10 @@
         await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', folderId);
         coverRef.value = path;
       }
+      state.reussies++;
     } catch (err) {
       console.error('Échec import photo', file.name, err);
+      state.echecs.push({ nom: file.name, message: (err && err.message) || String(err) });
     }
   }
 
@@ -619,7 +633,7 @@
   async function handleFolderViewDrop(entries) {
     const progress = document.getElementById('uploadProgress');
     progress.classList.add('show');
-    const state = { done: 0, foldersCreated: 0, progressElId: 'uploadProgress' };
+    const state = { done: 0, reussies: 0, echecs: [], foldersCreated: 0, progressElId: 'uploadProgress' };
     const coverRef = { value: currentFolder.cover_path };
 
     for (const entry of entries) {
@@ -639,7 +653,8 @@
     }
 
     currentFolder.cover_path = coverRef.value;
-    progress.textContent = `Import terminé : ${state.foldersCreated} dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
+    progress.textContent = messageFinImport(state, 'dossier(s)');
+    if (state.echecs.length) alert(alerteEchecsImport(state));
     setTimeout(() => progress.classList.remove('show'), 4000);
     await loadCurrentFolderPhotos();
     await loadSubfolders();
@@ -651,7 +666,7 @@
   async function handleRootDrop(entries) {
     const progress = document.getElementById('rootImportProgress');
     progress.classList.add('show');
-    const state = { done: 0, foldersCreated: 0, progressElId: 'rootImportProgress' };
+    const state = { done: 0, reussies: 0, echecs: [], foldersCreated: 0, progressElId: 'rootImportProgress' };
     let promptedYear = null;
 
     for (const entry of entries) {
@@ -689,7 +704,8 @@
       }
     }
 
-    progress.textContent = `Import terminé : ${state.foldersCreated} album(s)/dossier(s) créé(s), ${state.done} photo(s) envoyée(s).`;
+    progress.textContent = messageFinImport(state, 'album(s)/dossier(s)');
+    if (state.echecs.length) alert(alerteEchecsImport(state));
     setTimeout(() => progress.classList.remove('show'), 4000);
     await loadFolders();
   }
@@ -700,10 +716,11 @@
 
     const progress = document.getElementById('uploadProgress');
     progress.classList.add('show');
-    let done = 0;
+    let reussies = 0;
+    const echecs = [];
 
     for (const file of files) {
-      progress.textContent = `Envoi en cours… (${done + 1}/${files.length})`;
+      progress.textContent = `Envoi en cours… (${reussies + echecs.length + 1}/${files.length})`;
       try {
         const blob = await resizeGalleryImage(file);
         const path = `${currentFolder.id}/${crypto.randomUUID()}.jpg`;
@@ -711,7 +728,7 @@
         if (uploadError) throw uploadError;
 
         const { error: insertError } = await supabaseClient.from('media_photos').insert({
-          folder_id: currentFolder.id, storage_path: path, order_index: currentPhotos.length + done,
+          folder_id: currentFolder.id, storage_path: path, order_index: currentPhotos.length + reussies,
         });
         if (insertError) throw insertError;
 
@@ -719,14 +736,25 @@
           await supabaseClient.from('media_folders').update({ cover_path: path }).eq('id', currentFolder.id);
           currentFolder.cover_path = path;
         }
+        reussies++;
       } catch (err) {
         console.error('Échec envoi photo', file.name, err);
+        echecs.push({ nom: file.name, message: (err && err.message) || String(err) });
       }
-      done++;
     }
 
-    progress.textContent = `${done} photo(s) envoyée(s).`;
-    setTimeout(() => progress.classList.remove('show'), 3000);
+    // Un échec doit se voir : auparavant le compteur incluait les photos en
+    // erreur et annonçait "envoyées", ce qui masquait complètement le problème.
+    if (echecs.length === 0) {
+      progress.textContent = `${reussies} photo(s) envoyée(s).`;
+      setTimeout(() => progress.classList.remove('show'), 3000);
+    } else {
+      progress.textContent = `${reussies} envoyée(s), ${echecs.length} en échec - ${echecs[0].message}`;
+      alert(
+        `${echecs.length} photo(s) n'ont pas pu être envoyées.\n\n` +
+        `Première erreur (${echecs[0].nom}) :\n${echecs[0].message}`
+      );
+    }
     await loadCurrentFolderPhotos();
   }
 
