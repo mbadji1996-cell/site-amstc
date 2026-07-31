@@ -204,6 +204,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/media-thumbs.js"></script>
 <script>
   const MEDIA_BUCKET = "mediatheque-photos";
   const currentYear = new Date().getFullYear();
@@ -300,8 +301,9 @@
     const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
     if (coverPaths.length > 0) {
-      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
-      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+      // Vignettes : ces couvertures s'affichent en 52 px (voir .folder-row-cover)
+      const signed = await mediaVignettes(MEDIA_BUCKET, coverPaths, { largeur: 104 });
+      Object.keys(signed).forEach(chemin => { signedByPath[chemin] = signed[chemin]; });
     }
 
     list.innerHTML = allFolders.map(f => {
@@ -412,8 +414,9 @@
     const coverPaths = subfolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
     if (coverPaths.length > 0) {
-      const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(coverPaths, 3600);
-      (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+      // Vignettes : ces couvertures s'affichent en 52 px (voir .folder-row-cover)
+      const signed = await mediaVignettes(MEDIA_BUCKET, coverPaths, { largeur: 104 });
+      Object.keys(signed).forEach(chemin => { signedByPath[chemin] = signed[chemin]; });
     }
 
     list.innerHTML = subfolders.map(f => {
@@ -489,9 +492,8 @@
     }
 
     const paths = currentPhotos.map(p => p.storage_path);
-    const { data: signed } = await supabaseClient.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
-    const signedByPath = {};
-    (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+    // Vignettes : la grille affiche ces photos en 150 px (.photos-admin-grid)
+    const signedByPath = await mediaVignettes(MEDIA_BUCKET, paths, { largeur: 300 });
 
     grid.innerHTML = currentPhotos.map(p => {
       const isCover = currentFolder.cover_path === p.storage_path;
