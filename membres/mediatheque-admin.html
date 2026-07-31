@@ -193,6 +193,7 @@
       <p class="upload-progress" id="uploadProgress"></p>
 
       <div class="photos-admin-grid" id="photosAdminGrid"></div>
+      <div id="photosMoreZone" style="text-align:center;margin-top:18px;"></div>
     </div>
 
   </div>
@@ -278,38 +279,6 @@
     await openFolderView(data.id);
   }
 
-  // Compte les photos de chaque album sans rapatrier les photos elles-mêmes.
-  // L'ancienne version téléchargeait toutes les lignes de media_photos pour
-  // les compter côté navigateur : passé quelques milliers de photos, la
-  // requête dépassait le délai maximal et tous les albums affichaient 0.
-  async function compterPhotosParDossier(folderIds) {
-    const parDossier = {};
-
-    // Voie rapide : une seule requête (nécessite phase36-mediatheque-performance.sql)
-    const { data, error } = await supabaseClient.rpc('media_photo_counts');
-    if (!error && Array.isArray(data)) {
-      data.forEach(l => { parDossier[l.folder_id] = Number(l.photo_count) || 0; });
-      return parDossier;
-    }
-
-    // Repli si la fonction n'existe pas encore en base : un comptage par
-    // album, qui ne transfère aucune ligne (head: true).
-    console.warn('media_photo_counts indisponible, comptage album par album', error);
-    let i = 0;
-    async function ouvrier() {
-      while (i < folderIds.length) {
-        const id = folderIds[i++];
-        const res = await supabaseClient
-          .from('media_photos')
-          .select('id', { count: 'exact', head: true })
-          .eq('folder_id', id);
-        parDossier[id] = res.count || 0;
-      }
-    }
-    await Promise.all(Array.from({ length: Math.min(4, folderIds.length) }, ouvrier));
-    return parDossier;
-  }
-
   async function loadFolders() {
     const list = document.getElementById('foldersList');
     const { data, error } = await supabaseClient
@@ -326,7 +295,7 @@
       return;
     }
 
-    const countByFolder = await compterPhotosParDossier(allFolders.map(f => f.id));
+    const countByFolder = await mediaComptePhotos(allFolders.map(f => f.id));
 
     const coverPaths = allFolders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
@@ -511,21 +480,48 @@
     };
   }
 
-  async function loadCurrentFolderPhotos() {
-    const grid = document.getElementById('photosAdminGrid');
-    const { data } = await supabaseClient.from('media_photos').select('*').eq('folder_id', currentFolder.id).order('order_index');
-    currentPhotos = data || [];
+  // Les albums peuvent contenir plusieurs centaines de photos : on les
+  // charge par tranches, ce qui garde la grille rapide et reste sous le
+  // seuil de bascule des vignettes (voir assets/js/media-thumbs.js).
+  const PHOTOS_PAR_PAGE = 60;
+  let photosTotal = 0;
 
-    if (currentPhotos.length === 0) {
-      grid.innerHTML = '';
+  async function loadCurrentFolderPhotos(suite = false) {
+    const grid = document.getElementById('photosAdminGrid');
+    if (!suite) {
+      currentPhotos = [];
+      photosTotal = 0;
+      grid.innerHTML = '<p class="empty">Chargement des photos…</p>';
+    }
+
+    const debut = currentPhotos.length;
+    const { data, error, count } = await supabaseClient
+      .from('media_photos')
+      .select('*', { count: 'exact' })
+      .eq('folder_id', currentFolder.id)
+      .order('order_index')
+      .range(debut, debut + PHOTOS_PAR_PAGE - 1);
+
+    if (error) {
+      grid.innerHTML = `<p class="empty">Impossible de charger les photos : ${esc(error.message)}</p>`;
+      console.error('Chargement des photos', error);
       return;
     }
 
-    const paths = currentPhotos.map(p => p.storage_path);
-    // Vignettes : la grille affiche ces photos en 150 px (.photos-admin-grid)
-    const signedByPath = await mediaVignettes(MEDIA_BUCKET, paths, { largeur: 300 });
+    if (typeof count === 'number') photosTotal = count;
+    const lot = data || [];
+    currentPhotos = suite ? currentPhotos.concat(lot) : lot;
 
-    grid.innerHTML = currentPhotos.map(p => {
+    if (currentPhotos.length === 0) {
+      grid.innerHTML = '<p class="empty">Aucune photo dans cet album.</p>';
+      majBoutonPlusPhotos();
+      return;
+    }
+
+    // Vignettes : la grille affiche ces photos en 150 px (.photos-admin-grid)
+    const signedByPath = await mediaVignettes(MEDIA_BUCKET, lot.map(p => p.storage_path), { largeur: 300 });
+
+    const htmlLot = lot.map(p => {
       const isCover = currentFolder.cover_path === p.storage_path;
       const url = signedByPath[p.storage_path];
       if (!url) return '';
@@ -539,6 +535,19 @@
           </div>
         </div>`;
     }).join('');
+
+    if (suite) grid.insertAdjacentHTML('beforeend', htmlLot);
+    else grid.innerHTML = htmlLot;
+    majBoutonPlusPhotos();
+  }
+
+  function majBoutonPlusPhotos() {
+    const zone = document.getElementById('photosMoreZone');
+    if (!zone) return;
+    const restantes = photosTotal - currentPhotos.length;
+    zone.innerHTML = restantes > 0
+      ? `<button class="btn btn-outline" onclick="loadCurrentFolderPhotos(true)">Charger plus (${restantes} restante${restantes > 1 ? 's' : ''})</button>`
+      : '';
   }
 
   async function setCover(storagePath) {
@@ -758,7 +767,9 @@
         if (uploadError) throw uploadError;
 
         const { error: insertError } = await supabaseClient.from('media_photos').insert({
-          folder_id: currentFolder.id, storage_path: path, order_index: currentPhotos.length + reussies,
+          // photosTotal et non currentPhotos.length : la grille étant paginée,
+          // les photos affichées ne représentent qu'une partie de l'album.
+          folder_id: currentFolder.id, storage_path: path, order_index: photosTotal + reussies,
         });
         if (insertError) throw insertError;
 

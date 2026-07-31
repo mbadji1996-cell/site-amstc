@@ -23,6 +23,11 @@
   "use strict";
 
   var PARALLELISME = 6;
+  // Au-delà de ce nombre, demander une URL par photo devient plus lent que
+  // le gain obtenu : on repasse alors à la requête groupée pleine taille
+  // (une seule requête). Les pages qui affichent de gros albums doivent
+  // paginer plutôt que de dépasser ce seuil.
+  var SEUIL_LOT = 80;
   // null = pas encore testé, true/false une fois connu (par chargement de page)
   var transformationDisponible = null;
 
@@ -95,7 +100,7 @@
     if (!uniques.length) return {};
     if (!client()) return {};
 
-    if (transformationDisponible === false) {
+    if (transformationDisponible === false || uniques.length > SEUIL_LOT) {
       return urlsPleineTaille(bucket, uniques, expiration);
     }
 
@@ -140,5 +145,50 @@
     return map;
   }
 
+  /**
+   * Compte les photos de chaque album, sans rapatrier les photos.
+   *
+   * L'approche d'origine (select de toutes les lignes de media_photos, puis
+   * comptage dans le navigateur) dépassait le délai maximal au-delà de
+   * quelques milliers de photos : l'erreur était ignorée et tous les albums
+   * affichaient 0.
+   *
+   * @param {string[]} folderIds  identifiants des albums
+   * @returns {Promise<object>}   { folderId: nombre }
+   */
+  async function comptePhotos(folderIds) {
+    var parDossier = {};
+    if (!client() || !folderIds || !folderIds.length) return parDossier;
+
+    // Voie rapide : une requête (nécessite phase36-mediatheque-performance.sql)
+    var res = await client().rpc("media_photo_counts");
+    if (!res.error && Array.isArray(res.data)) {
+      res.data.forEach(function (l) {
+        parDossier[l.folder_id] = Number(l.photo_count) || 0;
+      });
+      return parDossier;
+    }
+
+    // Repli si la fonction n'existe pas encore en base : un comptage par
+    // album, sans transfert de lignes (head: true).
+    console.warn("media_photo_counts indisponible, comptage album par album", res.error);
+    var i = 0;
+    async function ouvrier() {
+      while (i < folderIds.length) {
+        var id = folderIds[i++];
+        var r = await client()
+          .from("media_photos")
+          .select("id", { count: "exact", head: true })
+          .eq("folder_id", id);
+        parDossier[id] = r.count || 0;
+      }
+    }
+    var ouvriers = [];
+    for (var k = 0; k < Math.min(4, folderIds.length); k++) ouvriers.push(ouvrier());
+    await Promise.all(ouvriers);
+    return parDossier;
+  }
+
   global.mediaVignettes = vignettes;
+  global.mediaComptePhotos = comptePhotos;
 })(window);

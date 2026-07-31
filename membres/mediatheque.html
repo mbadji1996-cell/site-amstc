@@ -138,11 +138,9 @@
       return;
     }
 
-    const { data: counts } = await supabaseClient
-      .from("media_photos")
-      .select("folder_id");
-    const countByFolder = {};
-    (counts || []).forEach(p => { countByFolder[p.folder_id] = (countByFolder[p.folder_id] || 0) + 1; });
+    // Comptage sans rapatrier les photos : au-delà de quelques milliers,
+    // l'ancienne requête dépassait le délai et affichait 0 partout.
+    const countByFolder = await mediaComptePhotos(folders.map(f => f.id));
 
     const coverPaths = folders.filter(f => f.cover_path).map(f => f.cover_path);
     let signedByPath = {};
