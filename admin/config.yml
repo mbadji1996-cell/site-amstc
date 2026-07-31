@@ -362,6 +362,9 @@ collections:
               - { label: "Opérateur", name: "operator", widget: "string", hint: "Ex: Orange Money, Wave, Free Money…" }
               - { label: "Numéro", name: "number", widget: "string" }
               - { label: "Nom du titulaire", name: "name", widget: "string" }
+              - { label: "Lien de paiement (facultatif)", name: "link", widget: "string", required: false, hint: "Ex : https://pay.wave.com/m/M_sn_XXXX/c/sn/ - affiche un bouton \"Payer via ...\" sur la page Don ET dans l'espace membres (boutique, cotisations, carte)." }
+          - { label: "Numéro WhatsApp pour l'envoi des reçus", name: "recu_whatsapp", widget: "string", required: false, hint: "Ex : +221 78 828 32 16. Laissez vide pour masquer le bouton d'envoi de reçu sur la page Don." }
+          - { label: "Texte d'invitation à envoyer le reçu", name: "recu_text", widget: "text", required: false }
           - { label: "Titre - Don en nature", name: "nature_title", widget: "string" }
           - { label: "Texte - Don en nature", name: "nature_text", widget: "text" }
           - { label: "Titre - Don institutionnel", name: "institution_title", widget: "string" }

@@ -9,9 +9,11 @@
   "bank_details": "**Compte bancaire :** Disponible bientôt",
   "mobile_title": "Mobile Money",
   "mobile_options": [
-    { "operator": "Orange Money", "number": "+221 78 867 96 23", "name": "" },
-    { "operator": "Wave", "number": "+221 78 828 32 16", "name": "" }
+    { "operator": "Orange Money", "number": "+221 78 867 96 23", "name": "", "link": "" },
+    { "operator": "Wave", "number": "+221 78 828 32 16", "name": "", "link": "https://pay.wave.com/m/M_sn_LLKSu3LdpVFV/c/sn/" }
   ],
+  "recu_whatsapp": "+221 78 828 32 16",
+  "recu_text": "Après votre don, envoyez-nous votre reçu (capture d'écran de la confirmation) par WhatsApp : il nous permet de confirmer la réception et de vous remercier.",
   "nature_title": "Don en nature",
   "nature_text": "Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.",
   "institution_title": "Don institutionnel ou partenariat",
