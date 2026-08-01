@@ -212,6 +212,10 @@
       "photo": "assets/pioneers/20-adele.jpg"
     },
     {
+      "name": "Dr Bacary BA",
+      "photo": "/assets/uploads/dr-bacary-ba.jpg"
+    },
+    {
       "name": "Dr Youssoupha KASSE",
       "photo": "/assets/uploads/dr-youssoupha-kasse.jpg"
     },
@@ -221,7 +225,15 @@
     },
     {
       "name": "Dr Massogui Bathily",
-      "photo": ""
+      "photo": "/assets/uploads/dr-massogui.jpg"
+    },
+    {
+      "name": "Dr Ibrahima SECK",
+      "photo": "/assets/uploads/dr-ibrahima-seck.jpg"
+    },
+    {
+      "name": "Dr Babacar SEYE",
+      "photo": "/assets/uploads/dr-babacar-seye.jpg"
     }
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
