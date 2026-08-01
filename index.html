@@ -432,8 +432,11 @@
   .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
 
   /* ===== Témoignages ===== */
-  .temoignage-carousel{display:flex; align-items:center; gap:18px; max-width:720px; margin:0 auto;}
+  .temoignage-carousel{display:flex; align-items:center; gap:18px; max-width:1060px; margin:0 auto;}
   .temoignage-stage{flex:1; min-width:0;}
+  /* Deux témoignages par ligne ; une seule colonne dès que la place manque. */
+  .temoignage-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:stretch;}
+  @media (max-width:860px){ .temoignage-grid{grid-template-columns:minmax(0,1fr);} }
   .tc-arrow{
     flex-shrink:0; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
     color:var(--text-heading); display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -447,34 +450,39 @@
 
   .temoignage-card{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:44px 40px; display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;
+    padding:26px 26px 24px; display:flex; flex-direction:column; gap:16px; text-align:left; position:relative;
     animation:temoignageZoomIn .4s ease;
     transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   }
   .temoignage-card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10); border-color:var(--green);}
   @keyframes temoignageZoomIn{ from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
-  .temoignage-quote-mark{position:absolute; top:18px; left:26px; font-family:var(--display); font-size:3.4rem; line-height:1; color:var(--gold); opacity:0.35;}
-  .temoignage-text{font-size:1.05rem; font-style:italic; color:var(--ink); line-height:1.75; margin-bottom:24px; max-width:520px;}
-  .temoignage-author{display:flex; flex-direction:column; align-items:center; gap:6px;}
-  .temoignage-avatar{width:56px; height:56px; border-radius:50%; object-fit:cover;}
+
+  /* En-tête : photo, nom et rôle sur une même ligne (voir modèle fourni). */
+  .temoignage-head{display:flex; align-items:center; gap:14px;}
+  .temoignage-avatar{width:54px; height:54px; border-radius:50%; object-fit:cover; flex-shrink:0;}
   .temoignage-avatar-fallback{
-    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
     background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1rem;
   }
-  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:1rem; color:var(--text-heading);}
-  .temoignage-author-role{font-size:0.85rem; color:var(--text-muted);}
+  .temoignage-head-text{min-width:0; flex:1;}
+  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:1rem; color:var(--text-heading); line-height:1.3;}
+  .temoignage-author-role{font-size:0.85rem; color:var(--text-muted); line-height:1.35; margin-top:2px;}
   .temoignage-badge{
     font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em;
-    padding:3px 10px; border-radius:999px; display:inline-block; margin-top:4px;
+    padding:3px 10px; border-radius:999px; flex-shrink:0; align-self:flex-start;
   }
   .temoignage-badge.beneficiaire{background:#E1F5EE; color:#0F6E56;}
   .temoignage-badge.membre{background:var(--paper-alt); color:var(--green);}
+
+  .temoignage-quote-mark{font-family:var(--display); font-size:2.4rem; line-height:0.6; color:var(--gold); opacity:0.4; display:block;}
+  .temoignage-text{font-size:0.99rem; font-style:italic; color:var(--ink); line-height:1.7; margin:0;}
 
   @media (max-width:640px){
     .temoignage-carousel{gap:6px;}
     .tc-arrow{width:36px; height:36px;}
     .tc-arrow svg{width:16px; height:16px;}
-    .temoignage-card{padding:32px 18px;}
+    .temoignage-card{padding:22px 18px;}
+    .temoignage-badge{display:none;}
   }
 
   /* ===== CTA banner ===== */
@@ -1973,9 +1981,11 @@
 
   function startTemoignageAutoplay(){
     stopTemoignageAutoplay();
-    if (temoignageReduceMotion || temoignagesList.length <= 1) return;
-    const current = temoignagesList[temoignageIndex];
-    const delay = temoignageReadDelay(current && current.quote);
+    if (temoignageReduceMotion || temoignagePages() <= 1) return;
+    // La page affiche deux témoignages : on laisse le temps de lire le plus long.
+    const pageCourante = temoignagesDeLaPage(temoignageIndex);
+    const plusLong = pageCourante.reduce((m, t) => Math.max(m, (t.quote || '').length), 0);
+    const delay = temoignageReadDelay('x'.repeat(plusLong));
     temoignageAutoplayTimer = setTimeout(() => {
       // Vérifie l'état :hover directement plutôt que de compter sur un
       // événement mouseenter : si la page défile sous un curseur déjà
@@ -2009,7 +2019,8 @@
     if (data.temoignages_title) document.getElementById('cms-temoignages-title').textContent = data.temoignages_title;
     setOptionalSubtitle('cms-temoignages-subtitle', data.temoignages_subtitle);
 
-    const multi = temoignagesList.length > 1;
+    // Les flèches ne servent que s'il y a plus d'une page de deux témoignages.
+    const multi = temoignagePages() > 1;
     document.getElementById('tcPrev').style.display = multi ? '' : 'none';
     document.getElementById('tcNext').style.display = multi ? '' : 'none';
 
@@ -2028,38 +2039,60 @@
     }
   }
 
-  function renderTemoignageSlide(){
-    const stage = document.getElementById('cms-temoignages-grid');
-    const t = temoignagesList[temoignageIndex];
+  // Deux témoignages par page : l'index du carrousel désigne une page, pas
+  // un témoignage.
+  const TEMOIGNAGES_PAR_PAGE = 2;
+
+  function temoignagePages(){
+    return Math.max(1, Math.ceil(temoignagesList.length / TEMOIGNAGES_PAR_PAGE));
+  }
+
+  function temoignagesDeLaPage(page){
+    const debut = page * TEMOIGNAGES_PAR_PAGE;
+    return temoignagesList.slice(debut, debut + TEMOIGNAGES_PAR_PAGE);
+  }
+
+  function carteTemoignage(t){
     const type = t.author_type === 'beneficiaire' ? 'beneficiaire' : 'membre';
     const typeLabel = type === 'beneficiaire' ? 'Bénéficiaire' : 'Membre';
-    stage.innerHTML = `
+    return `
       <div class="temoignage-card">
-        <span class="temoignage-quote-mark" aria-hidden="true">"</span>
-        <p class="temoignage-text">${esc(t.quote)}</p>
-        <div class="temoignage-author">
+        <div class="temoignage-head">
           ${t.photo
             ? `<img class="temoignage-avatar" src="${esc(t.photo)}" alt="${esc(t.author_name)}" loading="lazy">`
             : `<div class="temoignage-avatar-fallback">${esc(memberInitials(t.author_name))}</div>`}
-          <div class="temoignage-author-name">${esc(t.author_name)}</div>
-          ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
+          <div class="temoignage-head-text">
+            <div class="temoignage-author-name">${esc(t.author_name)}</div>
+            ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
+          </div>
           <span class="temoignage-badge ${type}">${typeLabel}</span>
+        </div>
+        <div>
+          <span class="temoignage-quote-mark" aria-hidden="true">"</span>
+          <p class="temoignage-text">${esc(t.quote)}</p>
         </div>
       </div>
     `;
   }
 
+  function renderTemoignageSlide(){
+    const stage = document.getElementById('cms-temoignages-grid');
+    stage.innerHTML = `<div class="temoignage-grid">${temoignagesDeLaPage(temoignageIndex).map(carteTemoignage).join('')}</div>`;
+  }
+
   function renderTemoignageDots(){
     const dots = document.getElementById('tcDots');
     if (!dots) return;
-    if (temoignagesList.length <= 1) { dots.innerHTML = ''; return; }
-    dots.innerHTML = temoignagesList.map((_, i) =>
-      `<button class="tc-dot${i === temoignageIndex ? ' active' : ''}" data-index="${i}" aria-label="Témoignage ${i + 1}"></button>`
+    const pages = temoignagePages();
+    if (pages <= 1) { dots.innerHTML = ''; return; }
+    dots.innerHTML = Array.from({ length: pages }, (_, i) =>
+      `<button class="tc-dot${i === temoignageIndex ? ' active' : ''}" data-index="${i}" aria-label="Témoignages ${i + 1}"></button>`
     ).join('');
   }
 
   function goToTemoignage(newIndex){
-    temoignageIndex = (newIndex + temoignagesList.length) % temoignagesList.length;
+    const pages = temoignagePages();
+    temoignageIndex = (newIndex + pages) % pages;
     renderTemoignageSlide();
     renderTemoignageDots();
     startTemoignageAutoplay();
