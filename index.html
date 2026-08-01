@@ -432,7 +432,10 @@
   .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
 
   /* ===== Témoignages ===== */
-  .temoignage-carousel{display:flex; align-items:center; gap:18px; max-width:1060px; margin:0 auto;}
+  /* Pas de largeur maximale propre : le carrousel occupe toute la largeur du
+     contenu (.wrap), pour que les flèches se placent aux extrémités et que
+     les fiches soient aussi larges que possible. */
+  .temoignage-carousel{display:flex; align-items:center; gap:24px; margin:0 auto;}
   .temoignage-stage{flex:1; min-width:0;}
   /* Deux témoignages par ligne ; une seule colonne dès que la place manque. */
   .temoignage-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:stretch;}
