@@ -436,6 +436,9 @@
   .temoignage-stage{flex:1; min-width:0;}
   /* Deux témoignages par ligne ; une seule colonne dès que la place manque. */
   .temoignage-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:stretch;}
+  /* Page ne contenant qu'une fiche (nombre impair de témoignages) : on la
+     centre au lieu de la laisser collée à gauche. */
+  .temoignage-grid.solo{grid-template-columns:minmax(0,520px); justify-content:center;}
   @media (max-width:860px){ .temoignage-grid{grid-template-columns:minmax(0,1fr);} }
   .tc-arrow{
     flex-shrink:0; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
@@ -2039,17 +2042,23 @@
     }
   }
 
-  // Deux témoignages par page : l'index du carrousel désigne une page, pas
-  // un témoignage.
-  const TEMOIGNAGES_PAR_PAGE = 2;
+  // L'index du carrousel désigne une page, pas un témoignage. Deux par page
+  // sur ordinateur, un seul sur mobile (même seuil que la bascule CSS en une
+  // colonne, pour éviter deux fiches empilées sur un petit écran).
+  const TEMOIGNAGES_MOBILE = window.matchMedia('(max-width:860px)');
+
+  function temoignagesParPage(){
+    return TEMOIGNAGES_MOBILE.matches ? 1 : 2;
+  }
 
   function temoignagePages(){
-    return Math.max(1, Math.ceil(temoignagesList.length / TEMOIGNAGES_PAR_PAGE));
+    return Math.max(1, Math.ceil(temoignagesList.length / temoignagesParPage()));
   }
 
   function temoignagesDeLaPage(page){
-    const debut = page * TEMOIGNAGES_PAR_PAGE;
-    return temoignagesList.slice(debut, debut + TEMOIGNAGES_PAR_PAGE);
+    const parPage = temoignagesParPage();
+    const debut = page * parPage;
+    return temoignagesList.slice(debut, debut + parPage);
   }
 
   function carteTemoignage(t){
@@ -2075,14 +2084,26 @@
     `;
   }
 
+  // Ramène l'index dans les bornes : le nombre de pages change avec la
+  // largeur d'écran (2 témoignages par page sur ordinateur, 1 sur mobile),
+  // et un index devenu hors bornes afficherait une page vide.
+  function clampTemoignageIndex(){
+    const pages = temoignagePages();
+    if (temoignageIndex >= pages || temoignageIndex < 0) temoignageIndex = 0;
+  }
+
   function renderTemoignageSlide(){
     const stage = document.getElementById('cms-temoignages-grid');
-    stage.innerHTML = `<div class="temoignage-grid">${temoignagesDeLaPage(temoignageIndex).map(carteTemoignage).join('')}</div>`;
+    clampTemoignageIndex();
+    const cartes = temoignagesDeLaPage(temoignageIndex);
+    const solo = cartes.length === 1 && temoignagesParPage() > 1 ? ' solo' : '';
+    stage.innerHTML = `<div class="temoignage-grid${solo}">${cartes.map(carteTemoignage).join('')}</div>`;
   }
 
   function renderTemoignageDots(){
     const dots = document.getElementById('tcDots');
     if (!dots) return;
+    clampTemoignageIndex();
     const pages = temoignagePages();
     if (pages <= 1) { dots.innerHTML = ''; return; }
     dots.innerHTML = Array.from({ length: pages }, (_, i) =>
@@ -2097,6 +2118,24 @@
     renderTemoignageDots();
     startTemoignageAutoplay();
   }
+
+  // Passage mobile <-> ordinateur : le nombre de témoignages par page change,
+  // donc l'index de page courant n'a plus le même sens. On repart de la
+  // première page plutôt que d'afficher une page vide.
+  const onTemoignageBreakpoint = () => {
+    if (!temoignagesList.length) return;
+    temoignageIndex = 0;
+    const multi = temoignagePages() > 1;
+    const prev = document.getElementById('tcPrev');
+    const next = document.getElementById('tcNext');
+    if (prev) prev.style.display = multi ? '' : 'none';
+    if (next) next.style.display = multi ? '' : 'none';
+    renderTemoignageSlide();
+    renderTemoignageDots();
+    startTemoignageAutoplay();
+  };
+  if (TEMOIGNAGES_MOBILE.addEventListener) TEMOIGNAGES_MOBILE.addEventListener('change', onTemoignageBreakpoint);
+  else TEMOIGNAGES_MOBILE.addListener(onTemoignageBreakpoint);
 
   document.getElementById('tcPrev')?.addEventListener('click', () => goToTemoignage(temoignageIndex - 1));
   document.getElementById('tcNext')?.addEventListener('click', () => goToTemoignage(temoignageIndex + 1));
