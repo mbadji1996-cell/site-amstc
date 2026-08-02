@@ -153,6 +153,10 @@
     medecine: "Médecine", pharmacie: "Pharmacie", odontologie: "Odontologie",
     soins_infirmiers: "Soins infirmiers", soins_obstetricaux: "Soins obstétricaux",
   };
+  // Domaines ouvrant droit à un accès sur consultations-amstc.org (les
+  // autres n'affichent pas le bouton : plateforme réservée aux soignants).
+  const CONSULT_DOMAINS = ["medecine", "pharmacie", "odontologie", "soins_infirmiers", "soins_obstetricaux"];
+  let profilesById = {};
   function domainLabel(p){
     if (!p.domain) return "";
     if (p.domain === "autre") return p.domain_autre || "Autre";
@@ -175,6 +179,9 @@
       pendingEl.innerHTML = '<p class="empty">Impossible de charger les comptes.</p>';
       return;
     }
+
+    profilesById = {};
+    (data || []).forEach(p => { profilesById[p.id] = p; });
 
     const pending = data.filter(p => p.status === "pending");
     const approved = data.filter(p => p.status === "approved");
@@ -246,6 +253,15 @@
               </div>
               <p class="assign-msg" id="yearsMsg-${esc(p.id)}"></p>
             </div>
+            ${p.consultation_user_id ? `
+            <div class="consult-provision">
+              <p class="assign-msg ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + formatDate(p.consultation_linked_at) : ''}. L'activation et le site restent à attribuer par l'admin de consultations-amstc.org.</p>
+            </div>` : (CONSULT_DOMAINS.includes(p.domain) ? `
+            <div class="consult-provision">
+              <button class="btn-sm btn-outline-sm" id="consultBtn-${esc(p.id)}" onclick="provisionConsultation('${esc(p.id)}')">Créer l'accès consultations</button>
+              <p class="assign-msg" id="consultMsg-${esc(p.id)}"></p>
+              <div id="consultLink-${esc(p.id)}" style="display:none;"></div>
+            </div>` : '')}
           </div>
         </div>
       `).join("");
@@ -372,6 +388,69 @@
     }
 
     await loadLists();
+  }
+
+  // ===== Accès consultations-amstc.org (voir supabase/functions/provision-consultation-user) =====
+  async function provisionConsultation(memberId) {
+    const btn = document.getElementById('consultBtn-' + memberId);
+    const msg = document.getElementById('consultMsg-' + memberId);
+    const linkBox = document.getElementById('consultLink-' + memberId);
+    const member = profilesById[memberId] || {};
+
+    if (!confirm("Créer un compte sur consultations-amstc.org pour " + (member.full_name || "ce membre") + " ?\n\nLe compte arrivera inactif : l'admin des consultations devra l'activer et lui attribuer un site.")) return;
+
+    btn.disabled = true;
+    msg.textContent = "Création du compte en cours…";
+    msg.className = 'assign-msg';
+
+    const { data, error } = await supabaseClient.functions.invoke('provision-consultation-user', {
+      body: { member_id: memberId },
+    });
+
+    if (error) {
+      // Pour un statut non-2xx, le détail est dans le corps de la réponse.
+      let detail = error.message || '';
+      try { const body = await error.context.json(); if (body && body.error) detail = body.error; } catch (_) {}
+      btn.disabled = false;
+      msg.textContent = 'Erreur : ' + detail;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    if (data.already_existed) {
+      msg.textContent = "Un compte existait déjà côté consultations avec cet e-mail : il a été rattaché à ce membre (fiche complétée, activation inchangée). Le membre garde son mot de passe actuel.";
+      msg.className = 'assign-msg ok';
+      btn.style.display = 'none';
+      return;
+    }
+
+    msg.textContent = "Compte créé (inactif, sans site). Transmettez au membre ce lien pour définir son mot de passe :";
+    msg.className = 'assign-msg ok';
+    btn.style.display = 'none';
+
+    const link = data.action_link || '';
+    const waDigits = String(member.phone || '').replace(/[^0-9]/g, '');
+    const waText = encodeURIComponent(
+      "Bonjour" + (member.first_name ? ' ' + member.first_name : '') + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
+      "1. Définissez votre mot de passe via ce lien : " + link + "\n" +
+      "2. Connectez-vous ensuite sur https://consultations-amstc.org\n\n" +
+      "Votre compte sera activé par un administrateur après attribution de votre site."
+    );
+    linkBox.innerHTML = link ? `
+      <div class="assign-inline-row" style="margin-top:8px;">
+        <input type="text" readonly value="${esc(link)}" id="consultLinkInput-${esc(memberId)}" onclick="this.select()">
+        <button class="btn-sm btn-outline-sm" onclick="copyConsultLink('${esc(memberId)}')">Copier</button>
+        ${waDigits ? `<a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waText}" target="_blank" rel="noopener">Envoyer par WhatsApp</a>` : ''}
+      </div>
+      <p class="assign-msg">Ce lien est à usage unique et expire : envoyez-le sans tarder. En cas de besoin, le membre pourra aussi utiliser "Mot de passe oublié" sur consultations-amstc.org.</p>
+    ` : '<p class="assign-msg error">Compte créé, mais le lien n\'a pas pu être généré. Le membre peut utiliser "Mot de passe oublié" sur consultations-amstc.org avec son adresse e-mail.</p>';
+    linkBox.style.display = '';
+  }
+
+  function copyConsultLink(memberId) {
+    const input = document.getElementById('consultLinkInput-' + memberId);
+    input.select();
+    navigator.clipboard.writeText(input.value).then(() => alert('Lien copié.'));
   }
 
   async function handleAction(action, id, email) {

@@ -732,6 +732,54 @@ place (fonction `notify_admin` + `pg_net`), puis exécuter
    interne optionnelle) ; elle peut aussi être remise "en attente" en cas
    d'erreur.
 
+## 4tervicies. Créer l'accès consultations d'un membre soignant (liaison avec consultations-amstc.org)
+
+Un membre soignant validé sur amstc.org peut recevoir en un clic un compte
+sur la plateforme consultations-amstc.org (instance Supabase DISTINCTE,
+`api.consultations-amstc.org`), sans double saisie : identité, téléphone et
+profession sont recopiés depuis son profil. Garde-fous : le compte arrive
+**inactif et sans site** (l'activation reste au supra-admin des
+consultations, données de santé obligent), et seuls les domaines de santé
+(médecine, pharmacie, odontologie, soins infirmiers, soins obstétricaux)
+affichent le bouton.
+
+Mise en service :
+
+1. **SQL (instance amstc, `api.amstc.org`)** : exécutez
+   `supabase/phase37-liaison-consultations.sql` (deux colonnes de
+   traçabilité sur `profiles`).
+2. **Déployer la fonction Edge** : comme `notify-admin` (le Studio
+   self-hosted n'a pas d'éditeur), via le Terminal Coolify du conteneur
+   `supabase-edge-functions` de l'instance **amstc** : créez
+   `/home/deno/functions/provision-consultation-user/index.ts` avec le
+   contenu de `supabase/functions/provision-consultation-user/index.ts`.
+3. **Secrets** : dans Coolify, sur le service edge-functions de l'instance
+   **amstc**, ajoutez :
+   - `CONSULT_SUPABASE_URL` = `https://api.consultations-amstc.org`
+   - `CONSULT_SERVICE_ROLE_KEY` = clé `service_role` de l'instance
+     consultations (Coolify > service Supabase consultations > variables ;
+     cette clé donne un accès TOTAL à la base de santé : uniquement en
+     secret serveur, jamais dans une page).
+   Puis redémarrez le service edge-functions.
+4. **Utilisation** : `membres/validation.html` → Détails d'un membre
+   approuvé → bouton "Créer l'accès consultations". La page affiche alors
+   un lien "définir son mot de passe" à transmettre au membre (bouton
+   d'envoi WhatsApp prérempli si son numéro est renseigné) - aucun serveur
+   e-mail requis. Si un compte existait déjà côté consultations avec le
+   même e-mail, il est simplement rattaché (fiche complétée, mot de passe
+   et activation inchangés).
+
+Correspondance des professions (voir `mapToConsultation` dans la fonction) :
+médecine + "Médecine générale" → Médecin ; médecine + autre spécialité →
+Spécialiste (libellés traduits vers la nomenclature consultations) ;
+pharmacie → Pharmacien ; odontologie → Dentiste ; soins infirmiers →
+Infirmier ; soins obstétricaux → Sage-femme.
+
+Révocation : désactiver un membre sur amstc.org NE désactive PAS son accès
+consultations (décision volontairement laissée manuelle au supra-admin,
+pour ne pas couper un praticien en pleine campagne). Pensez-y lors des
+départs.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
