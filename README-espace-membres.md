@@ -747,7 +747,10 @@ Mise en service :
 
 1. **SQL (instance amstc, `api.amstc.org`)** : exécutez
    `supabase/phase37-liaison-consultations.sql` (deux colonnes de
-   traçabilité sur `profiles`).
+   traçabilité sur `profiles`) puis
+   `supabase/phase38-mot-de-passe-partage.sql` (fonction réservée au
+   service_role qui permet de recopier l'empreinte bcrypt du mot de
+   passe à la création du compte consultations).
 2. **Déployer la fonction Edge** : comme `notify-admin` (le Studio
    self-hosted n'a pas d'éditeur), via le Terminal Coolify du conteneur
    `supabase-edge-functions` de l'instance **amstc** : créez
@@ -762,12 +765,16 @@ Mise en service :
      secret serveur, jamais dans une page).
    Puis redémarrez le service edge-functions.
 4. **Utilisation** : `membres/validation.html` → Détails d'un membre
-   approuvé → bouton "Créer l'accès consultations". La page affiche alors
-   un lien "définir son mot de passe" à transmettre au membre (bouton
-   d'envoi WhatsApp prérempli si son numéro est renseigné) - aucun serveur
-   e-mail requis. Si un compte existait déjà côté consultations avec le
-   même e-mail, il est simplement rattaché (fiche complétée, mot de passe
-   et activation inchangés).
+   approuvé → bouton "Créer l'accès consultations". Cas normal : le membre
+   se connecte ensuite sur consultations-amstc.org avec le même e-mail et
+   le même mot de passe que sur amstc.org (l'empreinte bcrypt est recopiée
+   à la création ; s'il change ensuite son mot de passe d'un côté, les
+   deux divergent). Cas particulier - membre inscrit via Google (pas de
+   mot de passe) : la page affiche un lien "définir son mot de passe" à
+   lui transmettre (bouton WhatsApp prérempli), et le bouton "Continuer
+   avec Google" de consultations fonctionne aussi pour lui. Si un compte
+   existait déjà côté consultations avec le même e-mail, il est simplement
+   rattaché (fiche complétée, mot de passe et activation inchangés).
 
 Correspondance des professions (voir `mapToConsultation` dans la fonction) :
 médecine + "Médecine générale" → Médecin ; médecine + autre spécialité →

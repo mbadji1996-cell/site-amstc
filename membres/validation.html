@@ -424,14 +424,37 @@
       return;
     }
 
-    msg.textContent = "Compte créé (inactif, sans site). Transmettez au membre ce lien pour définir son mot de passe :";
-    msg.className = 'assign-msg ok';
     btn.style.display = 'none';
+    const waDigits = String(member.phone || '').replace(/[^0-9]/g, '');
+    const prenomMembre = member.first_name ? ' ' + member.first_name : '';
+
+    if (data.password_synced) {
+      // Cas normal : l'empreinte du mot de passe amstc a été recopiée, le
+      // membre se connecte avec les mêmes identifiants des deux côtés.
+      msg.textContent = "Compte créé (inactif, sans site). Le membre se connecte sur consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org.";
+      msg.className = 'assign-msg ok';
+      const waTextSync = encodeURIComponent(
+        "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
+        "Connectez-vous sur https://consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org.\n\n" +
+        "Votre compte sera activé par un administrateur après attribution de votre site."
+      );
+      linkBox.innerHTML = waDigits ? `
+        <div class="assign-inline-row" style="margin-top:8px;">
+          <a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waTextSync}" target="_blank" rel="noopener">Prévenir le membre par WhatsApp</a>
+        </div>` : '';
+      linkBox.style.display = '';
+      return;
+    }
+
+    // Repli (membre inscrit via Google sur amstc.org : pas de mot de passe à
+    // recopier) : lien "définir son mot de passe" à transmettre. Le bouton
+    // "Continuer avec Google" de consultations fonctionne aussi pour lui.
+    msg.textContent = "Compte créé (inactif, sans site). Ce membre n'a pas de mot de passe sur amstc.org (connexion Google) : transmettez-lui ce lien pour en définir un, ou indiquez-lui le bouton Google de consultations-amstc.org.";
+    msg.className = 'assign-msg ok';
 
     const link = data.action_link || '';
-    const waDigits = String(member.phone || '').replace(/[^0-9]/g, '');
     const waText = encodeURIComponent(
-      "Bonjour" + (member.first_name ? ' ' + member.first_name : '') + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
+      "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
       "1. Définissez votre mot de passe via ce lien : " + link + "\n" +
       "2. Connectez-vous ensuite sur https://consultations-amstc.org\n\n" +
       "Votre compte sera activé par un administrateur après attribution de votre site."
@@ -442,8 +465,8 @@
         <button class="btn-sm btn-outline-sm" onclick="copyConsultLink('${esc(memberId)}')">Copier</button>
         ${waDigits ? `<a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waText}" target="_blank" rel="noopener">Envoyer par WhatsApp</a>` : ''}
       </div>
-      <p class="assign-msg">Ce lien est à usage unique et expire : envoyez-le sans tarder. En cas de besoin, le membre pourra aussi utiliser "Mot de passe oublié" sur consultations-amstc.org.</p>
-    ` : '<p class="assign-msg error">Compte créé, mais le lien n\'a pas pu être généré. Le membre peut utiliser "Mot de passe oublié" sur consultations-amstc.org avec son adresse e-mail.</p>';
+      <p class="assign-msg">Ce lien est à usage unique et expire : envoyez-le sans tarder.</p>
+    ` : '<p class="assign-msg error">Compte créé, mais le lien n\'a pas pu être généré. Le membre peut se connecter avec le bouton Google de consultations-amstc.org (même e-mail).</p>';
     linkBox.style.display = '';
   }
 

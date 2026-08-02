@@ -13,9 +13,15 @@
 //   - le compte créé arrive INACTIF et SANS site : l'habilitation reste
 //     une décision explicite du supra-admin des consultations, jamais un
 //     effet de bord de l'adhésion (données de santé oblige) ;
-//   - seuls les domaines de santé sont provisionnables ;
-//   - la fonction renvoie un lien "définir mon mot de passe" que l'admin
-//     transmet au membre (WhatsApp) : rien ne dépend d'un serveur SMTP.
+//   - seuls les domaines de santé sont provisionnables.
+//
+// Mot de passe : l'empreinte bcrypt du mot de passe amstc du membre est
+// recopiée telle quelle à la création (fonction SQL
+// consultation_password_hash, phase38, réservée au service_role) : le
+// membre se connecte des deux côtés avec le même e-mail et le même mot
+// de passe, sans lien ni e-mail. Membres inscrits via Google (pas
+// d'empreinte) : repli sur un lien "définir mon mot de passe", et le
+// bouton Google de consultations fonctionne aussi pour eux.
 //
 // Secrets requis (variables d'environnement du service edge-functions) :
 //   SUPABASE_URL              - fourni automatiquement (instance amstc)
@@ -154,9 +160,20 @@ Deno.serve(async (req: Request) => {
   let consultUserId: string | null = null;
   let alreadyExisted = false;
 
+  // Empreinte bcrypt du mot de passe amstc (phase38). Vide pour les membres
+  // inscrits via Google : on retombe alors sur un mot de passe jetable + lien.
+  let passwordHash: string | null = null;
+  {
+    const { data: hashData, error: hashErr } = await amstc.rpc("consultation_password_hash", {
+      target_user_id: member.id,
+    });
+    if (hashErr) console.error("provision-consultation-user: échec lecture empreinte", hashErr.message);
+    if (typeof hashData === "string" && hashData.startsWith("$2")) passwordHash = hashData;
+  }
+
   const { data: created, error: createErr } = await consult.auth.admin.createUser({
     email,
-    password: randomPassword(),
+    ...(passwordHash ? { password_hash: passwordHash } : { password: randomPassword() }),
     email_confirm: true,
     // Le déclencheur serveur de l'instance consultations construit la ligne
     // profiles depuis ces métadonnées, comme lors d'une inscription normale.
@@ -223,12 +240,12 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // ===== 5. Lien "définir mon mot de passe" =====
-  // Type recovery : ouvre l'écran de nouveau mot de passe de l'application
-  // consultations (flux type=recovery déjà géré par son code). Transmis par
-  // l'admin au membre, généralement via WhatsApp.
+  // ===== 5. Lien "définir mon mot de passe" (repli uniquement) =====
+  // Inutile quand l'empreinte a été recopiée : le membre utilise déjà son
+  // mot de passe amstc. Pour les autres (Google), un lien type recovery
+  // ouvre l'écran de nouveau mot de passe de l'application consultations.
   let actionLink: string | null = null;
-  if (!alreadyExisted) {
+  if (!alreadyExisted && !passwordHash) {
     const { data: linkData, error: linkErr } = await consult.auth.admin.generateLink({
       type: "recovery",
       email,
@@ -248,6 +265,7 @@ Deno.serve(async (req: Request) => {
     ok: true,
     already_existed: alreadyExisted,
     consultation_user_id: consultUserId,
+    password_synced: !!passwordHash && !alreadyExisted,
     action_link: actionLink,
   });
 });
