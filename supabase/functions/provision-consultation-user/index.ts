@@ -9,11 +9,19 @@
 // le jeton de session de l'admin connecté, comme notify-members-whatsapp :
 // la fonction vérifie elle-même que l'appelant est admin/super_admin.
 //
-// Garde-fous voulus par le bureau :
-//   - le compte créé arrive INACTIF et SANS site : l'habilitation reste
-//     une décision explicite du supra-admin des consultations, jamais un
-//     effet de bord de l'adhésion (données de santé oblige) ;
-//   - seuls les domaines de santé sont provisionnables.
+// Le compte créé est ACTIF immédiatement : la même personne assurant les
+// deux validations, exiger un second clic dans l'autre application n'ajoutait
+// aucun contrôle réel, seulement des allers-retours. L'accès aux données de
+// santé n'est pas pour autant un effet de bord de l'adhésion : il découle du
+// clic explicite sur "Créer l'accès consultations", distinct de l'approbation
+// du membre, et seuls les domaines de santé sont provisionnables.
+//
+// SANS site attribué en revanche : c'est l'état normal d'un compte fraîchement
+// activé, le praticien choisit son site à sa première connexion.
+//
+// Un compte préexistant côté consultations (créé à la main avant cette
+// liaison) est rattaché sans être réactivé : on ne réactive jamais d'office
+// quelqu'un qui a pu être désactivé volontairement.
 //
 // Mot de passe : l'empreinte bcrypt du mot de passe amstc du membre est
 // recopiée telle quelle à la création (fonction SQL
@@ -216,19 +224,20 @@ Deno.serve(async (req: Request) => {
     .eq("id", consultUserId)
     .maybeSingle();
   if (consultProfile) {
-    await consult
-      .from("profiles")
-      .update({
-        prenom,
-        nom,
-        telephone: member.phone || null,
-        specialite: mapping.specialite,
-        specialite_detail: mapping.specialite_detail,
-      })
-      .eq("id", consultUserId);
+    // actif seulement pour un compte que l'on vient de créer : sur un compte
+    // préexistant, on ne réactive pas d'office quelqu'un qui aurait pu être
+    // désactivé volontairement (fin de campagne, départ).
+    const fiche: Record<string, unknown> = {
+      prenom,
+      nom,
+      telephone: member.phone || null,
+      specialite: mapping.specialite,
+      specialite_detail: mapping.specialite_detail,
+    };
+    if (!alreadyExisted) fiche.actif = true;
+    await consult.from("profiles").update(fiche).eq("id", consultUserId);
   } else if (!alreadyExisted) {
-    // Filet si le déclencheur n'a pas créé la ligne : insertion minimale,
-    // sans "actif" (le défaut de la table, inactif, s'applique).
+    // Filet si le déclencheur n'a pas créé la ligne.
     await consult.from("profiles").insert({
       id: consultUserId,
       prenom,
@@ -237,6 +246,7 @@ Deno.serve(async (req: Request) => {
       specialite: mapping.specialite,
       specialite_detail: mapping.specialite_detail,
       role: "agent",
+      actif: true,
     });
   }
 

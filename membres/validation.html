@@ -266,7 +266,7 @@
             </div>
             ${p.consultation_user_id ? `
             <div class="consult-provision">
-              <p class="assign-msg ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + formatDate(p.consultation_linked_at) : ''}. L'activation et le site restent à attribuer par l'admin de consultations-amstc.org.</p>
+              <p class="assign-msg ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + formatDate(p.consultation_linked_at) : ''} et actif. Le membre choisit son site à sa première connexion sur consultations-amstc.org.</p>
             </div>` : (CONSULT_DOMAINS.includes(p.domain) ? `
             <div class="consult-provision">
               <button class="btn-sm btn-outline-sm" id="consultBtn-${esc(p.id)}" onclick="provisionConsultation('${esc(p.id)}')">Créer l'accès consultations</button>
@@ -461,7 +461,7 @@
     const linkBox = document.getElementById('consultLink-' + memberId);
     const member = profilesById[memberId] || {};
 
-    if (!confirm("Créer un compte sur consultations-amstc.org pour " + (member.full_name || "ce membre") + " ?\n\nLe compte arrivera inactif : l'admin des consultations devra l'activer et lui attribuer un site.")) return;
+    if (!confirm("Créer un compte sur consultations-amstc.org pour " + (member.full_name || "ce membre") + " ?\n\nLe compte sera immédiatement actif : le membre pourra se connecter et choisir son site dès sa première connexion.")) return;
 
     btn.disabled = true;
     msg.textContent = "Création du compte en cours…";
@@ -495,12 +495,12 @@
     if (data.password_synced) {
       // Cas normal : l'empreinte du mot de passe amstc a été recopiée, le
       // membre se connecte avec les mêmes identifiants des deux côtés.
-      msg.textContent = "Compte créé (inactif, sans site). Le membre se connecte sur consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org.";
+      msg.textContent = "Compte créé et actif. Le membre se connecte sur consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org, et choisit son site à la première connexion.";
       msg.className = 'assign-msg ok';
       const waTextSync = encodeURIComponent(
         "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
         "Connectez-vous sur https://consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org.\n\n" +
-        "Votre compte sera activé par un administrateur après attribution de votre site."
+        "Votre compte est déjà actif : vous choisirez votre site à votre première connexion."
       );
       linkBox.innerHTML = waDigits ? `
         <div class="assign-inline-row" style="margin-top:8px;">
@@ -513,7 +513,7 @@
     // Repli (membre inscrit via Google sur amstc.org : pas de mot de passe à
     // recopier) : lien "définir son mot de passe" à transmettre. Le bouton
     // "Continuer avec Google" de consultations fonctionne aussi pour lui.
-    msg.textContent = "Compte créé (inactif, sans site). Ce membre n'a pas de mot de passe sur amstc.org (connexion Google) : transmettez-lui ce lien pour en définir un, ou indiquez-lui le bouton Google de consultations-amstc.org.";
+    msg.textContent = "Compte créé et actif. Ce membre n'a pas de mot de passe sur amstc.org (connexion Google) : transmettez-lui ce lien pour en définir un, ou indiquez-lui le bouton Google de consultations-amstc.org.";
     msg.className = 'assign-msg ok';
 
     const link = data.action_link || '';
@@ -521,7 +521,7 @@
       "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
       "1. Définissez votre mot de passe via ce lien : " + link + "\n" +
       "2. Connectez-vous ensuite sur https://consultations-amstc.org\n\n" +
-      "Votre compte sera activé par un administrateur après attribution de votre site."
+      "Votre compte est déjà actif : vous choisirez votre site à votre première connexion."
     );
     linkBox.innerHTML = link ? `
       <div class="assign-inline-row" style="margin-top:8px;">

@@ -737,11 +737,14 @@ place (fonction `notify_admin` + `pg_net`), puis exécuter
 Un membre soignant validé sur amstc.org peut recevoir en un clic un compte
 sur la plateforme consultations-amstc.org (instance Supabase DISTINCTE,
 `api.consultations-amstc.org`), sans double saisie : identité, téléphone et
-profession sont recopiés depuis son profil. Garde-fous : le compte arrive
-**inactif et sans site** (l'activation reste au supra-admin des
-consultations, données de santé obligent), et seuls les domaines de santé
-(médecine, pharmacie, odontologie, soins infirmiers, soins obstétricaux)
-affichent le bouton.
+profession sont recopiés depuis son profil. Le compte créé est
+**immédiatement actif** (la même personne assurant les deux validations,
+le clic sur le bouton vaut habilitation) mais **sans site** : le membre
+choisit le sien à sa première connexion. Un compte qui existait déjà côté
+consultations est rattaché sans être réactivé (quelqu'un a pu le
+désactiver volontairement). Seuls les domaines de santé (médecine,
+pharmacie, odontologie, soins infirmiers, soins obstétricaux) affichent
+le bouton.
 
 Mise en service :
 
