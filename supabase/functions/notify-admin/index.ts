@@ -139,18 +139,25 @@ Deno.serve(async (req: Request) => {
     // doit être désactivé pour cette fonction — voir README-espace-membres.md).
     // Fail-closed : sans secret configuré côté serveur, aucune requête n'est
     // acceptée (plutôt que de désactiver silencieusement le contrôle).
+    // Le nom du secret manquant figure dans la réponse : elle n'est lue que
+    // par pg_net (table net._http_response), jamais par un visiteur, et sans
+    // cela deux causes distinctes produisaient le même message opaque.
     if (!NOTIFY_ADMIN_SECRET) {
       console.error("notify-admin: secret NOTIFY_ADMIN_SECRET manquant côté serveur");
-      return new Response(JSON.stringify({ error: "Configuration serveur incomplète" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "Configuration serveur incomplète : NOTIFY_ADMIN_SECRET manquant" }), { status: 500 });
     }
     const authHeader = req.headers.get("authorization") || "";
     if (authHeader !== `Bearer ${NOTIFY_ADMIN_SECRET}`) {
       return new Response(JSON.stringify({ error: "Non autorisé" }), { status: 401 });
     }
 
-    if (!RESEND_API_KEY || !ADMIN_NOTIFY_EMAIL) {
-      console.error("notify-admin: secrets RESEND_API_KEY / ADMIN_NOTIFY_EMAIL manquants");
-      return new Response(JSON.stringify({ error: "Configuration serveur incomplète" }), { status: 500 });
+    const missing = [
+      !RESEND_API_KEY ? "RESEND_API_KEY" : null,
+      !ADMIN_NOTIFY_EMAIL ? "ADMIN_NOTIFY_EMAIL" : null,
+    ].filter(Boolean);
+    if (missing.length > 0) {
+      console.error("notify-admin: secrets manquants :", missing.join(", "));
+      return new Response(JSON.stringify({ error: `Configuration serveur incomplète : ${missing.join(" et ")} manquant(s)` }), { status: 500 });
     }
 
     let payload: Record<string, any>;
