@@ -215,9 +215,7 @@ Deno.serve(async (req: Request) => {
     consultUserId = created!.user.id;
   }
 
-  // ===== 4. Fiche praticien : compléter sans jamais habiliter =====
-  // On renseigne l'identité si elle manque, mais on ne touche NI à actif,
-  // NI à site_id, NI à role : l'activation reste au supra-admin.
+  // ===== 4. Fiche praticien : compléter, et activer si compte neuf =====
   const { data: consultProfile } = await consult
     .from("profiles")
     .select("id")
