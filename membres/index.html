@@ -59,6 +59,7 @@
 
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
+  .card-status-banner.profile-incomplete{border-left-color:var(--green);}
   .card-status-banner-text{font-size:0.87rem;color:var(--text-muted);}
   .card-status-banner-text strong{color:var(--text-heading);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
@@ -152,6 +153,8 @@
   <div class="page-body">
 
     <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
+
+    <div class="card-status-banner profile-incomplete" id="profileBanner" style="display:none;"></div>
 
     <div id="adminSection" style="display:none;margin-bottom:32px;">
       <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
@@ -297,6 +300,29 @@
     }
   }
 
+  // Bandeau permanent tant que le profil est incomplet : affiché à chaque
+  // visite du tableau de bord (pas de bouton pour le masquer, il disparaît
+  // de lui-même dès que les champs manquants sont renseignés). Les champs
+  // facultatifs (titre, spécialité...) ne comptent pas comme manquants.
+  function renderProfileBanner(profile) {
+    const el = document.getElementById("profileBanner");
+    const manquants = [
+      !profile.photo_url ? "photo de profil" : null,
+      !(profile.first_name || "").trim() ? "prénom" : null,
+      !(profile.last_name || "").trim() ? "nom" : null,
+      !(profile.phone || "").trim() ? "téléphone (WhatsApp)" : null,
+      !profile.domain ? "domaine" : null,
+      !(profile.city || "").trim() ? "localité" : null,
+    ].filter(Boolean);
+
+    if (manquants.length === 0) { el.style.display = "none"; return; }
+    el.innerHTML = '<p class="card-status-banner-text"><strong>Votre profil est incomplet.</strong> Il manque : '
+      + esc(manquants.join(", "))
+      + '. Un profil complet rend votre carte de membre et l\'annuaire plus utiles.</p>'
+      + '<a class="btn-renew-link" href="profil.html">Compléter mon profil →</a>';
+    el.style.display = "";
+  }
+
   (async () => {
     const result = await requireActiveMember("connexion.html");
     if (!result) return;
@@ -314,6 +340,7 @@
       name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
 
     renderCardStatusBanner(result.state);
+    renderProfileBanner(profile);
     loadRecentActivity(result.state === "blocked");
     loadPinnedAnnouncements();
 
