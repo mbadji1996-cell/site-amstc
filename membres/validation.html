@@ -388,10 +388,14 @@
     const memberSinceVal = document.getElementById('memberSince-' + memberId).value.trim();
     const cardValidUntilVal = document.getElementById('cardValidUntil-' + memberId).value.trim();
 
-    const { error } = await supabaseClient.from('profiles').update({
-      member_since: memberSinceVal ? parseInt(memberSinceVal, 10) : null,
-      card_valid_until: cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null,
-    }).eq('id', memberId);
+    // RPC (phase39) plutôt qu'une écriture directe sur profiles : cette
+    // dernière se heurtait à "permission denied for table profiles" sur
+    // cette instance, faute de droit UPDATE explicite pour authenticated.
+    const { error } = await supabaseClient.rpc('set_member_years', {
+      member_id: memberId,
+      new_member_since: memberSinceVal ? parseInt(memberSinceVal, 10) : null,
+      new_card_valid_until: cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null,
+    });
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;

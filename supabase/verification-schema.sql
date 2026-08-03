@@ -84,6 +84,7 @@ with attendu(nom, type_objet) as (values
   ('notify_admin_on_order',            'fonction'),
   ('notify_admin_on_signup',           'fonction'),
   ('reject_member_card_claim',         'fonction'),
+  ('set_member_years',                 'fonction'),
   ('set_user_active',                  'fonction'),
   ('set_user_role',                    'fonction')
 ),
