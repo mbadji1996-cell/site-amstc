@@ -12,16 +12,17 @@
 --      modifié le réglage global des cartes. Elles passent en SET NULL :
 --      le contenu de l'association survit à son auteur.
 --
---   2. Cinq colonnes étaient en CASCADE : supprimer un membre aurait
---      effacé ses cotisations, ses paiements et ses messages du forum.
---      Choix retenu par le bureau : conserver cet historique (traçabilité
---      comptable), donc SET NULL + suppression du NOT NULL, comme cela
---      avait déjà été fait pour orders en phase35.
+--   2. Plusieurs colonnes étaient en CASCADE : supprimer un membre aurait
+--      effacé ses paiements et ses messages du forum. Choix retenu par le
+--      bureau : conserver cet historique (traçabilité comptable), donc
+--      SET NULL + suppression du NOT NULL, comme cela avait déjà été fait
+--      pour orders en phase35.
 --
--- Ce qui est conservé après suppression : cotisations, paiements,
--- commandes boutique, messages du forum (sans auteur), albums et contenus
--- créés. Ce qui change : la carte de membre redevient « non attribuée »
--- et peut être réattribuée.
+-- Ce qui est conservé après suppression : paiements de cotisation et de
+-- validité de carte, commandes boutique, messages du forum (sans auteur),
+-- albums et contenus créés. Ce qui disparaît : le compte, et le décompte
+-- annuel des mois cotisés (table cotisations, voir la note plus bas).
+-- Ce qui change : la carte de membre redevient « non attribuée ».
 --
 -- À exécuter une seule fois : Studio (instance amstc) > SQL Editor > Run.
 -- ============================================================
@@ -52,11 +53,11 @@ alter table public.restricted_articles
 
 -- ===== 2. Conserver l'historique plutôt que de le supprimer en cascade =====
 
-alter table public.cotisations alter column user_id drop not null;
-alter table public.cotisations drop constraint if exists cotisations_user_id_fkey;
-alter table public.cotisations
-  add constraint cotisations_user_id_fkey
-  foreign key (user_id) references public.profiles(id) on delete set null;
+-- public.cotisations fait EXCEPTION et garde son CASCADE : sa clé primaire
+-- est (user_id, year), donc user_id ne peut pas être nul. Ce n'est qu'un
+-- décompte annuel des mois réglés ; la piste comptable réelle (montants,
+-- références, dates) vit dans cotisation_payments ci-dessous, qui est bien
+-- conservée. Le décompte d'un membre supprimé disparaît donc avec lui.
 
 alter table public.cotisation_payments alter column user_id drop not null;
 alter table public.cotisation_payments drop constraint if exists cotisation_payments_user_id_fkey;

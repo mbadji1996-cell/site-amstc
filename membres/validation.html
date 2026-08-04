@@ -558,9 +558,10 @@
       // exige de retaper le mot SUPPRIMER pour écarter tout clic réflexe.
       const ok = confirm(
         "Supprimer définitivement le compte de " + (name || "ce membre") + " ?\n\n" +
-        "CE QUI EST SUPPRIMÉ : le compte et son accès au site.\n\n" +
-        "CE QUI EST CONSERVÉ : ses cotisations, paiements, commandes et messages du forum " +
-        "(qui n'afficheront plus d'auteur). Sa carte de membre redevient attribuable.\n\n" +
+        "CE QUI EST SUPPRIMÉ : le compte, son accès au site, et le décompte des mois cotisés.\n\n" +
+        "CE QUI EST CONSERVÉ : ses paiements (montants et références), ses commandes " +
+        "et ses messages du forum, qui n'afficheront plus d'auteur. " +
+        "Sa carte de membre redevient attribuable.\n\n" +
         "Cette action est IRRÉVERSIBLE."
       );
       if (!ok) return;
