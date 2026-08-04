@@ -457,15 +457,29 @@
     const banner = document.getElementById('excelSuccessBanner');
     banner.style.display = 'none';
 
-    const rows = excelRows.filter(r => !r.skip).map(r => ({
-      full_name: r.full_name, phone: r.phone, city: r.city,
-      title: r.title, domain: r.domain, domain_autre: r.domain_autre, specialty: r.specialty,
-      member_since: r.member_since, expiry_hint: r.expiry_hint,
-    }));
-    if (rows.length === 0) { msg.textContent = 'Aucune ligne importable.'; msg.className = 'import-msg error'; return; }
+    const aImporter = excelRows.filter(r => !r.skip);
+    if (aImporter.length === 0) { msg.textContent = 'Aucune ligne importable.'; msg.className = 'import-msg error'; return; }
 
     btn.disabled = true;
     const totalBefore = await countMemberCards();
+
+    // Numérotation identique à l'import par collage et à la création
+    // manuelle : sans elle, ces cartes restaient sans numéro, et le membre
+    // à qui on les attribuait n'en affichait aucun.
+    const seqByYear = {};
+    const rows = [];
+    for (const r of aImporter) {
+      const year = r.member_since || new Date().getFullYear();
+      if (!(year in seqByYear)) seqByYear[year] = await nextCardSeq(year);
+      const seq = seqByYear[year]++;
+      rows.push({
+        full_name: r.full_name, phone: r.phone, city: r.city,
+        title: r.title, domain: r.domain, domain_autre: r.domain_autre, specialty: r.specialty,
+        member_since: r.member_since, expiry_hint: r.expiry_hint,
+        card_number: `AMSTC-${year}-${String(seq).padStart(3, '0')}`,
+      });
+    }
+
     const { error } = await supabaseClient.from('member_cards').insert(rows);
     btn.disabled = false;
 
