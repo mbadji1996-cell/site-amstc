@@ -2184,7 +2184,10 @@
   // mathématiquement le verset et le hadith affichés : ni le site, ni un
   // administrateur, ne peuvent le forcer manuellement.
   (function loadVerseAndHadithOfWeek(){
-    const WEEK_EPOCH = Date.parse('2026-01-05T00:00:00Z');
+    // Date de référence un JEUDI (1er janvier 2026) : le changement a donc
+    // lieu chaque jeudi à minuit. Le Sénégal étant à l'heure GMT toute
+    // l'année, minuit UTC correspond bien à minuit à Dakar.
+    const WEEK_EPOCH = Date.parse('2026-01-01T00:00:00Z');
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
     const weekIndex = Math.floor((Date.now() - WEEK_EPOCH) / WEEK_MS);
 
