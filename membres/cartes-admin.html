@@ -583,6 +583,7 @@
 
   let allCards = [], assignMembers = [];
   let expandedAssignId = null;
+  let expandedEditId = null;
 
   async function loadAssignData() {
     const [cardsRes, membersRes] = await Promise.all([
@@ -620,13 +621,34 @@
         ? `<p class="claimant">${escHtml(claimant.full_name || '-')}</p><p class="claimant-email">${escHtml(claimant.email || '')}</p>`
         : '-';
 
-      let actions = `<button class="btn btn-delete" onclick="deleteCard('${c.id}')"><i class="ti ti-trash"></i> Supprimer</button>`;
+      let actions = `<button class="btn" onclick="toggleEditRow('${c.id}')"><i class="ti ti-pencil"></i> Modifier</button>`
+        + `<button class="btn btn-delete" onclick="deleteCard('${c.id}')"><i class="ti ti-trash"></i> Supprimer</button>`;
       if (c.claim_status === 'unclaimed') {
         actions = `<button class="btn btn-confirm" onclick="toggleAssignRow('${c.id}')"><i class="ti ti-id-badge-2"></i> Attribuer</button>` + actions;
       }
 
       let expandRow = '';
-      if (c.claim_status === 'unclaimed' && expandedAssignId === c.id) {
+      if (expandedEditId === c.id) {
+        // Formulaire de correction : le numéro modifié est répercuté sur le
+        // profil du membre si la carte lui est déjà attribuée (voir phase41).
+        expandRow = `
+          <tr>
+            <td colspan="5" class="td-expand">
+              <div class="assign-inline">
+                <div class="assign-inline-row">
+                  <input type="text" id="editName-${c.id}" value="${escHtml(c.full_name || '')}" placeholder="Nom complet">
+                  <input type="text" id="editPhone-${c.id}" value="${escHtml(c.phone || '')}" placeholder="Téléphone">
+                  <input type="text" id="editNumber-${c.id}" value="${escHtml(c.card_number || '')}" placeholder="N° de carte">
+                  <input type="number" id="editSince-${c.id}" value="${c.member_since || ''}" placeholder="Depuis" title="Année d'adhésion">
+                  <input type="text" id="editCity-${c.id}" value="${escHtml(c.city || '')}" placeholder="Ville">
+                  <button class="btn btn-confirm" onclick="saveCardEdit('${c.id}')"><i class="ti ti-check"></i> Enregistrer</button>
+                  <button class="btn btn-reject" onclick="toggleEditRow('${c.id}')">Annuler</button>
+                </div>
+                <p class="assign-msg" id="editRowMsg-${c.id}"></p>
+              </div>
+            </td>
+          </tr>`;
+      } else if (c.claim_status === 'unclaimed' && expandedAssignId === c.id) {
         const options = assignMembers.map(m => `<option value="${m.id}">${escHtml(m.full_name || 'Sans nom')} (${escHtml(m.email)})</option>`).join('');
         expandRow = `
           <tr>
@@ -662,7 +684,37 @@
 
   function toggleAssignRow(id) {
     expandedAssignId = expandedAssignId === id ? null : id;
+    expandedEditId = null;
     renderCardsTable();
+  }
+
+  function toggleEditRow(id) {
+    expandedEditId = expandedEditId === id ? null : id;
+    expandedAssignId = null;
+    renderCardsTable();
+  }
+
+  async function saveCardEdit(id) {
+    const msg = document.getElementById('editRowMsg-' + id);
+    const since = document.getElementById('editSince-' + id).value.trim();
+
+    const { error } = await supabaseClient.rpc('update_member_card', {
+      card_id: id,
+      new_full_name: document.getElementById('editName-' + id).value,
+      new_phone: document.getElementById('editPhone-' + id).value,
+      new_card_number: document.getElementById('editNumber-' + id).value,
+      new_member_since: since ? parseInt(since, 10) : null,
+      new_city: document.getElementById('editCity-' + id).value,
+    });
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    expandedEditId = null;
+    await loadAll();
   }
 
   async function confirmAssignRow(id) {
