@@ -18,7 +18,7 @@ Gardez la structure de dossiers telle quelle (assets/ à côté de index.html).
 - Mission reprise des Articles 5 et 6 des statuts (objet et objectifs)
 - Moyens d'action repris de l'Article 7 des statuts
 - Symbolique de l'emblème (Article 4 des statuts)
-- Frise historique 2014–2024 basée sur l'historique de l'association
+- Frise historique 2014-2024 basée sur l'historique de l'association
 - Liste des membres fondateurs
 - Organisation du Bureau Exécutif et des commissions (Article 31)
 - Numéro de récépissé de déclaration (022909/MISP/DGAT/DLPL/DAPA) et siège social (Sacré Cœur 3, Villa N°9867, Dakar)
