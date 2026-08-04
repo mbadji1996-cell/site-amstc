@@ -1,4 +1,4 @@
--- Espace Membres — schéma Phase 1
+-- Espace Membres - schéma Phase 1
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 
 -- ===== Table des profils =====

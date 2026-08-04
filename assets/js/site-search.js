@@ -1,5 +1,5 @@
 /* ============================================================
-   Recherche globale — AMSTC
+   Recherche globale - AMSTC
    Bouton flottant + fenêtre modale, créés dynamiquement (aucune page
    n'a besoin d'ajouter de markup, seulement de charger ce script).
    Recherche côté client dans les index déjà publiés (réalisations,

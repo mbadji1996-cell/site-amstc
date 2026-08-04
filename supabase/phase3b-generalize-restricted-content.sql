@@ -1,4 +1,4 @@
--- Espace Membres — Phase 3b : généraliser le contenu réservé
+-- Espace Membres - Phase 3b : généraliser le contenu réservé
 -- (Formation ET Réalisations, pas seulement Formation)
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après supabase/phase3-restricted-formations.sql)

@@ -1,5 +1,5 @@
 /* ============================================================
-   Enregistrement du service worker — AMSTC
+   Enregistrement du service worker - AMSTC
    Silencieux si le navigateur ne supporte pas les service workers
    ou si servi hors HTTPS/localhost (l'enregistrement échouerait).
    ============================================================ */

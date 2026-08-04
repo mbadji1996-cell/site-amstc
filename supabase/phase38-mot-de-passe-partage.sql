@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 38 — Liaison consultations : même mot de passe qu'amstc.org
+-- PHASE 38 - Liaison consultations : même mot de passe qu'amstc.org
 --
 -- Complète la phase 37. À la création de l'accès consultations d'un
 -- membre, la fonction Edge provision-consultation-user recopie

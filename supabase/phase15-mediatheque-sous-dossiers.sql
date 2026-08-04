@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 15 — Sous-dossiers imbriqués dans la Médiathèque.
+-- PHASE 15 - Sous-dossiers imbriqués dans la Médiathèque.
 --
 -- Ajoute une auto-référence parent_id à media_folders, permettant une
 -- profondeur illimitée de sous-dossiers (Année > Dossier > Sous-dossier

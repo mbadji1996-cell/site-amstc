@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 9 — Enrichit member_cards pour l'import Excel (domaine, spécialité,
+-- PHASE 9 - Enrichit member_cards pour l'import Excel (domaine, spécialité,
 -- titre, année de validité attendue) et reporte ces champs sur le profil au
 -- moment de la confirmation d'une réclamation.
 -- À exécuter après phase7-validite-cotisations.sql.

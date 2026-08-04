@@ -5,7 +5,7 @@
 // boutique, nouveau sujet de forum, demande de campagne/activité locale.
 // Appelée UNIQUEMENT côté serveur par les triggers Postgres (voir
 // supabase/phase25-notifications-admin.sql et phase33-demandes-campagnes.sql)
-// via pg_net — jamais directement par le navigateur, donc aucune gestion
+// via pg_net - jamais directement par le navigateur, donc aucune gestion
 // CORS n'est nécessaire ici (pas de préflight OPTIONS à gérer).
 //
 // Secrets requis (Dashboard > Project Settings > Edge Functions > Secrets) :
@@ -15,7 +15,7 @@
 //                         lui, la fonction refuse toute requête (fail-closed)
 //   NOTIFY_FROM_EMAIL   - optionnel, adresse d'expédition (voir note ci-dessous)
 //
-// IMPORTANT — Resend exige un domaine d'expédition vérifié pour envoyer
+// IMPORTANT - Resend exige un domaine d'expédition vérifié pour envoyer
 // depuis une adresse @amstc.org. Tant qu'amstc.org n'est pas vérifié dans
 // Resend, seule l'adresse de test "onboarding@resend.dev" fonctionne, et
 // UNIQUEMENT vers l'adresse e-mail du compte Resend lui-même (pas vers
@@ -27,7 +27,7 @@ const NOTIFY_ADMIN_SECRET = Deno.env.get("NOTIFY_ADMIN_SECRET");
 const FROM_EMAIL = Deno.env.get("NOTIFY_FROM_EMAIL") || "AMSTC <onboarding@resend.dev>";
 
 function esc(v: unknown): string {
-  return String(v ?? "—").replace(
+  return String(v ?? "-").replace(
     /[<>&]/g,
     (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" } as Record<string, string>)[c],
   );
@@ -64,7 +64,7 @@ function buildEmail(
           <h2>Réclamation de carte membre en attente</h2>
           <ul>
             <li><strong>Membre :</strong> ${esc(data.claimant_name)} (${esc(data.claimant_email)})</li>
-            <li><strong>Carte réclamée :</strong> ${esc(data.card_full_name)} — n° ${esc(data.card_number)}</li>
+            <li><strong>Carte réclamée :</strong> ${esc(data.card_full_name)} - n° ${esc(data.card_number)}</li>
             <li><strong>Ville / membre depuis :</strong> ${esc(data.card_city)} / ${esc(data.card_member_since)}</li>
           </ul>
           <p>À confirmer dans membres/cartes-admin.html.</p>
@@ -74,7 +74,7 @@ function buildEmail(
     case "achat_boutique": {
       const items = Array.isArray(data.items) ? data.items : [];
       const itemsHtml = items
-        .map((it: any) => `<li>${esc(it.qty)} × ${esc(it.name)} — ${esc(it.price)} FCFA</li>`)
+        .map((it: any) => `<li>${esc(it.qty)} × ${esc(it.name)} - ${esc(it.price)} FCFA</li>`)
         .join("");
       return {
         subject: `Nouvelle commande boutique - ${esc(data.buyer_name)}`,
@@ -83,7 +83,7 @@ function buildEmail(
           <ul>
             <li><strong>Acheteur :</strong> ${esc(data.buyer_name)} (${esc(data.buyer_email)})</li>
             <li><strong>Total :</strong> ${esc(data.total_fcfa)} FCFA</li>
-            <li><strong>Paiement :</strong> ${esc(data.payment_method)} — réf. ${esc(data.payment_reference)}</li>
+            <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>
           </ul>
           <p><strong>Articles :</strong></p>
           <ul>${itemsHtml}</ul>
@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Vérification maison (indépendante du "Verify JWT" du dashboard, qui
-    // doit être désactivé pour cette fonction — voir README-espace-membres.md).
+    // doit être désactivé pour cette fonction - voir README-espace-membres.md).
     // Fail-closed : sans secret configuré côté serveur, aucune requête n'est
     // acceptée (plutôt que de désactiver silencieusement le contrôle).
     // Le nom du secret manquant figure dans la réponse : elle n'est lue que

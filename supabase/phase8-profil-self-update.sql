@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 8 — Un membre peut enfin modifier SA PROPRE ligne profiles
+-- PHASE 8 - Un membre peut enfin modifier SA PROPRE ligne profiles
 --
 -- Bug corrigé : aucune policy RLS n'a jamais autorisé un membre approuvé à
 -- modifier sa propre ligne dans `profiles` (la seule policy UPDATE de
@@ -8,7 +8,7 @@
 -- set_user_role). Résultat : membres/profil.html appelait bien
 -- `supabase.from('profiles').update(...)`, Supabase ne renvoyait AUCUNE
 -- erreur (RLS filtre silencieusement les lignes non autorisées), mais rien
--- n'était réellement écrit en base — d'où la perte de la photo, du
+-- n'était réellement écrit en base - d'où la perte de la photo, du
 -- téléphone, du domaine, de la spécialité, etc. au rechargement.
 --
 -- Correction : autoriser un membre à modifier SA PROPRE ligne, mais

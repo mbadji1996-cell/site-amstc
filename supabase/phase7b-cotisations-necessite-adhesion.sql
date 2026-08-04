@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 7b — Les cotisations mensuelles ne sont payables que si
+-- PHASE 7b - Les cotisations mensuelles ne sont payables que si
 -- l'adhésion (validité de carte) est en cours de validité.
 -- À exécuter après phase7-validite-cotisations.sql.
 -- ============================================================

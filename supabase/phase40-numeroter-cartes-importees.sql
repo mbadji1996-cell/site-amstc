@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 40 — Numéroter les cartes importées sans numéro, et reporter le
+-- PHASE 40 - Numéroter les cartes importées sans numéro, et reporter le
 -- numéro sur les membres à qui elles ont déjà été attribuées.
 --
 -- Cause : des trois chemins de création d'une carte dans

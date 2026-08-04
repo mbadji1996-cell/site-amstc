@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 10 — Restriction d'accès aux contenus réservés pour les cartes
+-- PHASE 10 - Restriction d'accès aux contenus réservés pour les cartes
 -- expirées depuis plus de 2 mois.
 --
 -- Convention : `profiles.card_valid_until` est une année (int). Une carte
@@ -14,8 +14,8 @@
 -- Interrupteur global : la règle ne s'applique que si
 -- app_settings.restriction_cartes_active vaut true. Tant qu'il est à
 -- false (valeur par défaut), le contenu réservé reste accessible à tout
--- membre approuvé quelle que soit la validité de sa carte — le temps de
--- mener une campagne de renouvellement — mais le rappel visuel (bandeau
+-- membre approuvé quelle que soit la validité de sa carte - le temps de
+-- mener une campagne de renouvellement - mais le rappel visuel (bandeau
 -- "carte expirée") continue de s'afficher dès que la carte est expirée,
 -- pour préparer les membres avant l'activation de la coupure.
 --

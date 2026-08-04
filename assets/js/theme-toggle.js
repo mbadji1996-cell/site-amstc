@@ -1,5 +1,5 @@
 /* ============================================================
-   Bascule mode clair/sombre — AMSTC
+   Bascule mode clair/sombre - AMSTC
    Le choix de l'utilisateur est mémorisé (localStorage) ; tant qu'il
    n'a rien choisi explicitement, le thème suit les réglages système.
    Le bouton flottant est créé dynamiquement ici : aucune page n'a

@@ -1,11 +1,11 @@
 -- ============================================================
--- Phase 4 — Nouveaux modules de l'espace membre
+-- Phase 4 - Nouveaux modules de l'espace membre
 -- Daara · Profil/Adhésion · Enseignements Médicaux + Quiz · Boutique
 -- À exécuter dans Supabase : Dashboard > SQL Editor > New query > Run
 -- ============================================================
 
 -- ============================================================
--- PHASE 4A — ESPACE DAARA
+-- PHASE 4A - ESPACE DAARA
 -- ============================================================
 
 create table if not exists public.daara_courses (
@@ -56,7 +56,7 @@ create policy "Admins can read daara progress"
 
 
 -- ============================================================
--- PHASE 4B — PROFIL ÉTENDU & ADHÉSION
+-- PHASE 4B - PROFIL ÉTENDU & ADHÉSION
 -- ============================================================
 
 alter table public.profiles add column if not exists specialty   text;
@@ -98,7 +98,7 @@ create policy "Admins can manage all payments"
 
 
 -- ============================================================
--- PHASE 4C — ENSEIGNEMENTS MÉDICAUX + QUIZ
+-- PHASE 4C - ENSEIGNEMENTS MÉDICAUX + QUIZ
 -- ============================================================
 
 create table if not exists public.medical_lessons (
@@ -190,7 +190,7 @@ create policy "Admins can read all attempts"
 
 
 -- ============================================================
--- PHASE 4D — BOUTIQUE
+-- PHASE 4D - BOUTIQUE
 -- ============================================================
 
 create table if not exists public.products (

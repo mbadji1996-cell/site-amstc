@@ -282,7 +282,7 @@ collections:
           - label: "Heures de la semaine"
             name: "prayer_times"
             widget: "list"
-            summary: "{{fields.label}} — {{fields.time}}"
+            summary: "{{fields.label}} - {{fields.time}}"
             hint: "À mettre à jour chaque semaine. L'ordre ici définit l'ordre d'affichage."
             fields:
               - { label: "Nom de la prière", name: "label", widget: "string" }
@@ -298,7 +298,7 @@ collections:
           - label: "Chiffres clés"
             name: "impact_stats"
             widget: "list"
-            summary: "{{fields.number}} — {{fields.label}}"
+            summary: "{{fields.number}} - {{fields.label}}"
             hint: "4 chiffres maximum recommandés pour rester lisible. Laissez le nombre vide pour masquer une tuile."
             fields:
               - { label: "Nombre", name: "number", widget: "string", required: false, hint: "Ex : 500+, 1 200, 15…" }
@@ -327,7 +327,7 @@ collections:
           - label: "Témoignages"
             name: "temoignages_list"
             widget: "list"
-            summary: "{{fields.author_name}} — {{fields.quote}}"
+            summary: "{{fields.author_name}} - {{fields.quote}}"
             hint: "Recueillez toujours l'accord de la personne avant de publier son témoignage."
             fields:
               - { label: "Citation", name: "quote", widget: "text", hint: "Le témoignage tel quel, sans les guillemets." }
@@ -458,7 +458,7 @@ collections:
     folder: "content/evenements"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    summary: "{{title}} — {{date}}"
+    summary: "{{title}} - {{date}}"
     fields:
       - { label: "Titre de l'activité", name: "title", widget: "string" }
       - { label: "Date de début", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Premier jour de l'activité. Pour une activité d'une seule journée, laissez la date de fin vide." }

@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 7 — Validité de carte (1000 F/an) + Cotisations mensuelles (1000 F/mois)
+-- PHASE 7 - Validité de carte (1000 F/an) + Cotisations mensuelles (1000 F/mois)
 -- Remplace l'ancien système d'adhésion annuelle unique (10 000 F/an).
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après phase5-cartes-membres.sql)

@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 29 — Ajoute le téléphone à l'annuaire des membres.
+-- PHASE 29 - Ajoute le téléphone à l'annuaire des membres.
 --
 -- La Phase 28 excluait volontairement le téléphone par précaution. Décision
 -- de l'association : l'annuaire reste réservé à l'espace membres (jamais

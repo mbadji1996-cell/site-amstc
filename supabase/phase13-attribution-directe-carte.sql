@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 13 — Attribution directe d'une carte par l'admin, sans attendre
+-- PHASE 13 - Attribution directe d'une carte par l'admin, sans attendre
 -- que le membre la réclame lui-même.
 --
 -- Reprend exactement la logique de confirm_member_card_claim (phase9),

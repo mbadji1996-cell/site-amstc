@@ -1,5 +1,5 @@
 -- ============================================================
--- VÉRIFICATION DU SCHÉMA — à exécuter après chaque déploiement
+-- VÉRIFICATION DU SCHÉMA - à exécuter après chaque déploiement
 --
 -- Pourquoi : les fichiers supabase/*.sql sont versionnés dans Git, mais
 -- rien ne garantit qu'ils ont réellement été exécutés sur la base de

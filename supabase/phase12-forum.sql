@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 12 — Forum de discussion entre membres.
+-- PHASE 12 - Forum de discussion entre membres.
 --
 -- Espace d'échange général (questions, discussions) accessible à tout
 -- membre approuvé, comme la Boutique : gouverné par is_approved_member(),

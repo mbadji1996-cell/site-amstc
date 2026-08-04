@@ -236,8 +236,8 @@
       tbody.innerHTML = data.map(b => `
         <tr>
           <td class="msg-cell" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
-          <td class="meta-cell">${escapeHtml(AUDIENCE_LABELS[b.audience] || b.audience || '—')}</td>
-          <td>${escapeHtml(b.sent_by_name || '—')}</td>
+          <td class="meta-cell">${escapeHtml(AUDIENCE_LABELS[b.audience] || b.audience || '-')}</td>
+          <td>${escapeHtml(b.sent_by_name || '-')}</td>
           <td>${b.recipients_count}</td>
           <td>${b.success_count}</td>
           <td class="meta-cell">${formatDate(b.created_at)}</td>

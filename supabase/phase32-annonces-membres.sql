@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 32 — Annonces de l'espace membres (créées par l'admin, épinglées
+-- PHASE 32 - Annonces de l'espace membres (créées par l'admin, épinglées
 -- pour être vues à chaque connexion).
 --
 -- Table simple gérée entièrement par l'admin (membres/annonces-admin.html).

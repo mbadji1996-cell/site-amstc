@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 14 — Médiathèque : galerie photo Année > Dossier d'activité > Photos.
+-- PHASE 14 - Médiathèque : galerie photo Année > Dossier d'activité > Photos.
 --
 -- Accès comme la Boutique/le Forum : tout membre approuvé
 -- (is_approved_member()), sans lien avec la validité de la carte. Gestion

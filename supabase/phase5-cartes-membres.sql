@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 5 — Cartes de membres historiques (import + réclamation)
+-- PHASE 5 - Cartes de membres historiques (import + réclamation)
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après schema.sql, phase2-roles.sql et phase4-nouveaux-modules.sql)
 -- ============================================================

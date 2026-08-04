@@ -1,5 +1,5 @@
 /* ============================================================
-   Service worker — AMSTC
+   Service worker - AMSTC
    Stratégie volontairement simple pour un site statique :
    - Pages (navigation) : réseau d'abord, cache en secours, puis
      offline.html si la page n'a jamais été visitée.

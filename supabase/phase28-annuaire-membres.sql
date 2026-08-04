@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 28 — Annuaire des membres (espace membres uniquement).
+-- PHASE 28 - Annuaire des membres (espace membres uniquement).
 --
 -- Aucune policy RLS n'est ajoutée sur profiles : les policies existantes
 -- (schema.sql) restent "un membre ne voit que sa propre ligne, sauf

@@ -1,8 +1,8 @@
 /* ============================================================
-   Formatage des dates et des périodes — AMSTC
+   Formatage des dates et des périodes - AMSTC
 
    Une fiche (réalisation, formation, projet, étape) a toujours une date de
-   référence obligatoire — c'est elle qui sert au tri, au nom du fichier et
+   référence obligatoire - c'est elle qui sert au tri, au nom du fichier et
    au regroupement dans les bilans annuels. Elle peut en plus porter une
    date de début et/ou une date de fin facultatives, pour les activités qui
    s'étalent sur plusieurs jours (72h d'activités, campagne sur deux jours,

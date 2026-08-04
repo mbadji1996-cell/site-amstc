@@ -9,12 +9,12 @@
 // jeton de session de l'admin connecté (Authorization: Bearer <JWT>,
 // envoyé automatiquement par supabaseClient.functions.invoke()). Elle
 // vérifie donc elle-même que l'appelant a le rôle admin/super_admin avant
-// d'envoyer quoi que ce soit — le bouton "Verify JWT" du Dashboard doit
+// d'envoyer quoi que ce soit - le bouton "Verify JWT" du Dashboard doit
 // rester ACTIVÉ pour cette fonction (contrairement à notify-admin).
 //
 // Un message WhatsApp envoyé par une entreprise en dehors d'une fenêtre
 // de conversation de 24h DOIT utiliser un modèle ("template") pré-approuvé
-// par WhatsApp — voir README-espace-membres.md, section "Diffusion
+// par WhatsApp - voir README-espace-membres.md, section "Diffusion
 // WhatsApp aux membres", pour la création de ces modèles. Deux modèles
 // distincts sont utilisés selon l'audience, car leur contenu relève de
 // deux catégories différentes chez Meta :

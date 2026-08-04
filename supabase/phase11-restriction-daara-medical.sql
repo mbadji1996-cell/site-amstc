@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 11 — Étend la restriction "carte expirée depuis 2 mois" (Phase 10)
+-- PHASE 11 - Étend la restriction "carte expirée depuis 2 mois" (Phase 10)
 -- à l'Espace Daara et aux Enseignements Médicaux + Quiz.
 --
 -- La page "Formations" (membres/formations.html) regroupe désormais trois

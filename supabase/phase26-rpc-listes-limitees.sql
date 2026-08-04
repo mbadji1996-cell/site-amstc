@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 26 — Fonctions RPC avec LIMIT pour les listes à fort volume
+-- PHASE 26 - Fonctions RPC avec LIMIT pour les listes à fort volume
 -- (protection contre l'aspiration en masse via l'API Supabase).
 --
 -- Contexte : le Forum, les Enseignements Médicaux, la Bibliothèque et la

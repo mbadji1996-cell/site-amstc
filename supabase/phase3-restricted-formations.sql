@@ -1,4 +1,4 @@
--- Espace Membres — Phase 3 : Formations réservées aux membres
+-- Espace Membres - Phase 3 : Formations réservées aux membres
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après supabase/schema.sql et supabase/phase2-roles.sql)
 

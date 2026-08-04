@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 27 — Limite de fréquence (rate limiting) sur les fonctions RPC
+-- PHASE 27 - Limite de fréquence (rate limiting) sur les fonctions RPC
 -- de listing (Phase 26), contre un compte qui boucle les appels pour
 -- reconstituer tout le contenu au fil du temps.
 --

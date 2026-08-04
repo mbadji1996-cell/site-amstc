@@ -1,4 +1,4 @@
--- Espace Membres — Documents officiels réservés (Statuts, Règlement intérieur,
+-- Espace Membres - Documents officiels réservés (Statuts, Règlement intérieur,
 -- rapports, PV d'AG...)
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après supabase/phase3b-generalize-restricted-content.sql)

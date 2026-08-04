@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 34 — Image dans les annonces de l'espace membres
+-- PHASE 34 - Image dans les annonces de l'espace membres
 --
 -- Permet à l'admin de publier une annonce avec une image seule, une image
 -- accompagnée d'un titre/texte, ou juste du texte (comportement existant,

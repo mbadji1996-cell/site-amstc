@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 25 — Notifications e-mail à l'admin (inscription, réclamation de
+-- PHASE 25 - Notifications e-mail à l'admin (inscription, réclamation de
 -- carte, achat boutique, nouveau sujet forum).
 --
 -- Envoie un e-mail à l'admin (via Resend) à chaque événement clé, en
@@ -7,7 +7,7 @@
 -- l'extension pg_net (requêtes HTTP asynchrones et non bloquantes : un
 -- échec d'envoi ne fait JAMAIS échouer l'INSERT/UPDATE de l'utilisateur).
 --
--- PRÉREQUIS — dans cet ordre :
+-- PRÉREQUIS - dans cet ordre :
 --   1. La fonction Edge "notify-admin" (supabase/functions/notify-admin/index.ts)
 --      doit être déployée AVANT d'exécuter ce fichier.
 --   2. Ses secrets doivent être configurés (RESEND_API_KEY,
@@ -33,7 +33,7 @@ create extension if not exists pg_net;
 -- l'utilisateur qui a déclenché l'INSERT/UPDATE (ex. "authenticated"), qui
 -- n'a pas forcément accès à net.http_post. En passant par cette fonction
 -- définie par le rôle propriétaire (postgres, celui qui exécute ce script
--- dans le SQL Editor), l'appel HTTP fonctionne quel que soit l'appelant —
+-- dans le SQL Editor), l'appel HTTP fonctionne quel que soit l'appelant -
 -- même schéma que public.claim_member_card / public.is_admin ailleurs
 -- dans ce projet.
 create or replace function public.notify_admin(event_type text, payload jsonb)
@@ -66,7 +66,7 @@ end;
 $$;
 
 -- ============================================================
--- 1. Inscription — public.profiles, AFTER INSERT
+-- 1. Inscription - public.profiles, AFTER INSERT
 -- ============================================================
 
 create or replace function public.notify_admin_on_signup()
@@ -96,7 +96,7 @@ create trigger on_profile_created_notify_admin
   for each row execute function public.notify_admin_on_signup();
 
 -- ============================================================
--- 2. Réclamation de carte — public.member_cards, AFTER UPDATE
+-- 2. Réclamation de carte - public.member_cards, AFTER UPDATE
 -- Ne se déclenche qu'au passage à claim_status = 'pending' (pas sur la
 -- confirmation admin ultérieure qui passe à 'confirmed', ni sur le refus
 -- qui repasse à 'unclaimed').
@@ -135,7 +135,7 @@ create trigger on_card_claim_notify_admin
   for each row execute function public.notify_admin_on_card_claim();
 
 -- ============================================================
--- 3. Achat boutique — public.orders, AFTER INSERT
+-- 3. Achat boutique - public.orders, AFTER INSERT
 -- ============================================================
 
 create or replace function public.notify_admin_on_order()
@@ -169,7 +169,7 @@ create trigger on_order_created_notify_admin
   for each row execute function public.notify_admin_on_order();
 
 -- ============================================================
--- 4. Nouveau sujet forum — public.forum_topics, AFTER INSERT
+-- 4. Nouveau sujet forum - public.forum_topics, AFTER INSERT
 -- ============================================================
 
 create or replace function public.notify_admin_on_forum_topic()

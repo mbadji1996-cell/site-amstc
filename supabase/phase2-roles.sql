@@ -1,4 +1,4 @@
--- Espace Membres — Phase 2 : rôles Administrateur / Super Administrateur
+-- Espace Membres - Phase 2 : rôles Administrateur / Super Administrateur
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- (à appliquer après supabase/schema.sql, qui doit déjà être en place)
 

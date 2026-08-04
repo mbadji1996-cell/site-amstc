@@ -1,9 +1,9 @@
 # Déploiement du site AMSTC sur GitHub Pages
 
 ## Fichiers
-- `index.html` — page d'accueil complète
-- `assets/logo-horizontal.png`, `assets/logo-mark.png` — logos officiels AMSTC
-- `CNAME` — requis par GitHub Pages pour pointer amstc.org vers le site
+- `index.html` - page d'accueil complète
+- `assets/logo-horizontal.png`, `assets/logo-mark.png` - logos officiels AMSTC
+- `CNAME` - requis par GitHub Pages pour pointer amstc.org vers le site
 
 Gardez la structure de dossiers telle quelle (assets/ à côté de index.html).
 

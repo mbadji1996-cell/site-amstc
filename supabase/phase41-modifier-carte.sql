@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 41 — Corriger une carte existante (coquilles de saisie).
+-- PHASE 41 - Corriger une carte existante (coquilles de saisie).
 --
 -- Une carte peut contenir une faute : nom mal orthographié, téléphone
 -- erroné, numéro de carte incorrect. Cette fonction permet de la corriger

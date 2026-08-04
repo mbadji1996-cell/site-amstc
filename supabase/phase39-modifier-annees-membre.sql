@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 39 — Corriger « permission denied for table profiles » sur
+-- PHASE 39 - Corriger « permission denied for table profiles » sur
 -- l'enregistrement de l'année d'adhésion / fin de validité de carte.
 --
 -- Cause : membres/validation.html (saveMemberYears) modifiait la table

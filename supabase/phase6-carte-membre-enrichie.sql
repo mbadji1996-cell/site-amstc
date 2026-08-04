@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 6 — Carte de membre enrichie (photo, titre, prénom/nom, domaine)
+-- PHASE 6 - Carte de membre enrichie (photo, titre, prénom/nom, domaine)
 -- À exécuter une seule fois dans Supabase : Dashboard > SQL Editor > New query > coller > Run
 -- ============================================================
 

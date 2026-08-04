@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 37 — Liaison des comptes vers la plateforme de consultations
+-- PHASE 37 - Liaison des comptes vers la plateforme de consultations
 --
 -- Un membre soignant validé sur amstc.org peut recevoir, en un clic
 -- depuis membres/validation.html, un compte sur la plateforme

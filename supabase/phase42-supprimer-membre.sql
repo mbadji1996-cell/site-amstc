@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 42 — Suppression d'un compte membre, réservée au Super
+-- PHASE 42 - Suppression d'un compte membre, réservée au Super
 -- Administrateur.
 --
 -- Jusqu'ici, un compte pouvait seulement être désactivé. Cette phase

@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 30 — Diffusion WhatsApp aux membres (déclenchement manuel admin)
+-- PHASE 30 - Diffusion WhatsApp aux membres (déclenchement manuel admin)
 --
 -- Table de journal des diffusions envoyées via la fonction Edge
 -- "notify-members-whatsapp" (Meta Cloud API). L'insertion se fait

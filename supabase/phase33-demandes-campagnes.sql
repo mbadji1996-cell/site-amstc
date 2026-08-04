@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 33 — Demandes de campagne / activité locale (site public)
+-- PHASE 33 - Demandes de campagne / activité locale (site public)
 --
 -- Formulaire public (demande-campagne.html) permettant à toute personne
 -- (membre ou non, sans compte requis) de solliciter l'association pour

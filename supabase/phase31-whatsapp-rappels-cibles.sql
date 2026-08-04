@@ -1,5 +1,5 @@
 -- ============================================================
--- PHASE 31 — Rappels WhatsApp ciblés (carte expirée / à renouveler /
+-- PHASE 31 - Rappels WhatsApp ciblés (carte expirée / à renouveler /
 -- cotisation du mois impayée), en plus de la diffusion "tous les membres"
 -- de la Phase 30.
 --
@@ -11,7 +11,7 @@
 --     par membres/whatsapp-admin.html pour afficher le compteur en direct)
 --   - public.whatsapp_target_members(p_audience) : liste complète avec
 --     téléphone, réservée à la clé service_role (jamais exposée à
---     authenticated/anon) — utilisée uniquement par la fonction Edge
+--     authenticated/anon) - utilisée uniquement par la fonction Edge
 --     notify-members-whatsapp au moment de l'envoi réel
 --
 -- Audiences reconnues :
