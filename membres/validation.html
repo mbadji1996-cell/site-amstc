@@ -120,6 +120,12 @@
   <h2>Inscriptions en attente</h2>
   <div id="pendingList"><p class="loading">Chargement…</p></div>
 
+  <div id="yearRequestsSection" style="display:none;">
+    <h2>Changements d'année d'adhésion</h2>
+    <p class="section-note">Demandés par les membres depuis leur profil. L'année d'adhésion détermine le numéro de carte : l'accepter renumérote la carte.</p>
+    <div id="yearRequestsList"></div>
+  </div>
+
   <h2>Membres</h2>
   <p class="section-note">Comptes approuvés : activation, désactivation et réinitialisation du mot de passe.</p>
   <div class="search-wrap">
@@ -287,11 +293,13 @@
     const rolesEl = document.getElementById("rolesList");
     const rejectedEl = document.getElementById("rejectedList");
 
-    const [{ data, error }, unclaimedRes] = await Promise.all([
+    const [{ data, error }, unclaimedRes, yearReqRes] = await Promise.all([
       supabaseClient.from("profiles").select("*").order("created_at", { ascending: false }),
       supabaseClient.from("member_cards_unclaimed").select("*").order("full_name"),
+      supabaseClient.rpc("member_since_requests_pending"),
     ]);
     unclaimedCards = unclaimedRes.data || [];
+    renderYearRequests(yearReqRes.data || [], yearReqRes.error);
 
     if (error) {
       pendingEl.innerHTML = '<p class="empty">Impossible de charger les comptes.</p>';
@@ -398,10 +406,12 @@
     const memberSinceVal = document.getElementById('memberSince-' + memberId).value.trim();
     const cardValidUntilVal = document.getElementById('cardValidUntil-' + memberId).value.trim();
 
-    // RPC (phase39) plutôt qu'une écriture directe sur profiles : cette
-    // dernière se heurtait à "permission denied for table profiles" sur
-    // cette instance, faute de droit UPDATE explicite pour authenticated.
-    const { error } = await supabaseClient.rpc('set_member_years', {
+    // RPC (phase39, étendue en phase43) plutôt qu'une écriture directe sur
+    // profiles : cette dernière se heurtait à "permission denied for table
+    // profiles" sur cette instance, faute de droit UPDATE explicite pour
+    // authenticated. La fonction renvoie le nouveau numéro de carte quand
+    // le changement d'année l'a fait renuméroter.
+    const { data: nouveauNumero, error } = await supabaseClient.rpc('set_member_years', {
       member_id: memberId,
       new_member_since: memberSinceVal ? parseInt(memberSinceVal, 10) : null,
       new_card_valid_until: cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null,
@@ -412,8 +422,93 @@
       msg.className = 'assign-msg error';
       return;
     }
+
+    if (nouveauNumero) {
+      // Le numéro de carte porte l'année d'adhésion : la liste affichée
+      // deviendrait fausse si on ne la rechargeait pas.
+      msg.textContent = 'Enregistré. Nouveau numéro de carte : ' + nouveauNumero;
+      msg.className = 'assign-msg ok';
+      const membre = allApprovedMembers.find(m => m.id === memberId);
+      if (membre) membre.legacy_card_number = nouveauNumero;
+      renderMembersList();
+      const rouvert = document.getElementById('details-' + memberId);
+      if (rouvert) {
+        rouvert.style.display = 'block';
+        document.getElementById('detailsBtn-' + memberId).textContent = 'Masquer';
+        const msgRouvert = document.getElementById('yearsMsg-' + memberId);
+        msgRouvert.textContent = 'Enregistré. Nouveau numéro de carte : ' + nouveauNumero;
+        msgRouvert.className = 'assign-msg ok';
+      }
+      return;
+    }
+
     msg.textContent = 'Enregistré.';
     msg.className = 'assign-msg ok';
+  }
+
+  // ===== Demandes de changement d'année d'adhésion (phase43) =====
+  // Le membre ne peut plus modifier son année lui-même : elle détermine son
+  // ancienneté et le numéro de sa carte.
+  function renderYearRequests(requests, error) {
+    const section = document.getElementById('yearRequestsSection');
+    const list = document.getElementById('yearRequestsList');
+
+    // Fonction absente (script SQL pas encore exécuté) : on masque la
+    // section plutôt que d'afficher une erreur à chaque chargement.
+    if (error || !Array.isArray(requests) || requests.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = '';
+    list.innerHTML = requests.map(r => `
+      <div class="member-row" id="yearReq-${esc(r.request_id)}">
+        <div>
+          <div class="member-name">
+            ${esc(r.full_name || '(nom non renseigné)')}
+            ${r.card_number ? `<span class="status-tag approved">Carte ${esc(r.card_number)}</span>` : ''}
+          </div>
+          <div class="member-email">${esc(r.email)}</div>
+          <div class="member-date">
+            Demande du ${formatDate(r.created_at)} :
+            ${r.previous_year ? esc(r.previous_year) : 'non renseignée'} → <strong>${esc(r.requested_year)}</strong>
+          </div>
+          <p class="assign-msg" id="yearReqMsg-${esc(r.request_id)}"></p>
+        </div>
+        <div class="member-actions">
+          <button class="btn-sm btn-approve" onclick="reviewYearRequest('${esc(r.request_id)}', true)">Accepter</button>
+          <button class="btn-sm btn-warning" onclick="reviewYearRequest('${esc(r.request_id)}', false)">Refuser</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function reviewYearRequest(requestId, approve) {
+    const msg = document.getElementById('yearReqMsg-' + requestId);
+    const row = document.getElementById('yearReq-' + requestId);
+    row.querySelectorAll('button').forEach(b => b.disabled = true);
+
+    const { data: nouveauNumero, error } = await supabaseClient.rpc('review_member_since_request', {
+      request_id: requestId,
+      approve,
+    });
+
+    if (error) {
+      msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      row.querySelectorAll('button').forEach(b => b.disabled = false);
+      return;
+    }
+
+    msg.textContent = approve
+      ? (nouveauNumero
+          ? 'Année appliquée. Nouveau numéro de carte : ' + nouveauNumero
+          : 'Année appliquée.')
+      : 'Demande refusée.';
+    msg.className = 'assign-msg ok';
+    // Rechargement complet : l'année et le numéro de carte du membre
+    // apparaissent aussi dans la liste des membres, plus bas.
+    setTimeout(loadLists, 1200);
   }
 
   function toggleAssignCard(memberId) {

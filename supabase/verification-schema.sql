@@ -32,6 +32,7 @@ with attendu(nom, type_objet) as (values
   ('medical_lessons',         'table'),
   ('member_announcements',    'table'),
   ('member_cards',            'table'),
+  ('member_since_requests',   'table'),
   ('membership_payments',     'table'),
   ('orders',                  'table'),
   ('product_photos',          'table'),
@@ -64,6 +65,7 @@ with attendu(nom, type_objet) as (values
 
   -- ===== Fonctions internes (contrôles d'accès, déclencheurs, admin) =====
   ('_whatsapp_targets',                'fonction'),
+  ('apply_member_since',               'fonction'),
   ('approve_or_reject_user',           'fonction'),
   ('assign_member_card',               'fonction'),
   ('check_max_pinned_announcements',   'fonction'),
@@ -77,6 +79,8 @@ with attendu(nom, type_objet) as (values
   ('is_admin',                         'fonction'),
   ('is_approved_member',               'fonction'),
   ('is_super_admin',                   'fonction'),
+  ('member_since_requests_pending',    'fonction'),
+  ('next_card_number',                 'fonction'),
   ('notify_admin',                     'fonction'),
   ('notify_admin_on_campaign_request', 'fonction'),
   ('notify_admin_on_card_claim',       'fonction'),
@@ -84,6 +88,8 @@ with attendu(nom, type_objet) as (values
   ('notify_admin_on_order',            'fonction'),
   ('notify_admin_on_signup',           'fonction'),
   ('reject_member_card_claim',         'fonction'),
+  ('request_member_since',             'fonction'),
+  ('review_member_since_request',      'fonction'),
   ('set_member_years',                 'fonction'),
   ('set_user_active',                  'fonction'),
   ('set_user_role',                    'fonction')

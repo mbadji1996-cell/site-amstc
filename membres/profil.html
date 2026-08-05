@@ -116,6 +116,9 @@
   .form-group input:disabled{background:var(--paper-alt);color:#8A9E8F;}
   .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
   .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
+  .form-msg.ok{background:#EAF3DE;color:#3B6D11;display:block;}
+  .field-hint{font-size:0.76rem;color:var(--text-muted);line-height:1.4;margin-top:5px;}
+  .field-hint.pending{color:#8A6D1F;font-weight:600;}
 
   /* Success flash */
   .success-flash{display:none;align-items:center;gap:8px;background:#EAF3DE;color:#3B6D11;border-radius:8px;padding:12px 16px;font-size:0.9rem;font-weight:600;margin-bottom:12px;}
@@ -306,7 +309,11 @@
             <input id="eSpecialtyText" type="text" style="display:none;" placeholder="Précisez votre spécialité">
           </div>
           <div class="form-group full" id="specialtyAutreGroup" style="display:none;"><label>Précisez la spécialité</label><input id="eSpecialtyAutre" type="text"></div>
-          <div class="form-group"><label>Année d'adhésion</label><select id="eMemberSince"></select></div>
+          <div class="form-group">
+            <label>Année d'adhésion</label>
+            <select id="eMemberSince"></select>
+            <p class="field-hint" id="memberSinceHint">Elle détermine votre numéro de carte : toute modification est validée par un administrateur.</p>
+          </div>
           <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
         <div class="success-flash" id="infoSuccessFlash"><i class="ti ti-circle-check"></i> Enregistré</div>
@@ -464,6 +471,7 @@
 
     populateMemberSinceOptions();
     renderProfile(profile);
+    await loadMemberSinceRequest();
     await loadClaimStatus(profile.id);
     await loadValidity(profile.id);
     await loadCotisations(profile.id);
@@ -748,24 +756,81 @@
       domain: domain || null,
       domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
       specialty,
-      member_since: parseInt(document.getElementById('eMemberSince').value) || currentYear,
       city: document.getElementById('eCity').value.trim() || null,
     };
     if (photoUrl) payload.photo_url = photoUrl;
 
+    // member_since ne fait plus partie du payload (phase43) : elle détermine
+    // l'ancienneté et le numéro de carte, et passe donc par une demande que
+    // l'admin valide. Le droit d'écriture a été retiré côté base.
+    const anneeChoisie = parseInt(document.getElementById('eMemberSince').value) || currentYear;
+    const anneeActuelle = currentProfile.member_since || currentYear;
+
     const { data, error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id).select();
-    saveBtn.disabled = false;
     if (error) {
+      saveBtn.disabled = false;
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
-    } else if (!data || data.length === 0) {
+      return;
+    }
+    if (!data || data.length === 0) {
+      saveBtn.disabled = false;
       msg.textContent = "Erreur : la mise à jour n'a pas été appliquée (droits insuffisants). Contactez un administrateur.";
       msg.className = 'form-msg error';
-    } else {
-      Object.assign(currentProfile, payload);
-      pendingPhotoBlob = null;
-      renderProfile(currentProfile);
-      showSuccessThenCollapse('info', 'infoSuccessFlash');
+      return;
     }
+
+    let demandeDeposee = false;
+    if (anneeChoisie !== anneeActuelle) {
+      const { error: reqError } = await supabaseClient.rpc('request_member_since', { new_year: anneeChoisie });
+      if (reqError) {
+        saveBtn.disabled = false;
+        msg.textContent = "Vos informations sont enregistrées, mais la demande de changement d'année d'adhésion n'a pas pu être transmise : " + reqError.message;
+        msg.className = 'form-msg error';
+        return;
+      }
+      demandeDeposee = true;
+    }
+
+    saveBtn.disabled = false;
+    Object.assign(currentProfile, payload);
+    pendingPhotoBlob = null;
+    renderProfile(currentProfile);
+    await loadMemberSinceRequest();
+    if (demandeDeposee) {
+      // Message explicite : sans lui, le membre croirait son année changée.
+      msg.textContent = "Enregistré. Votre demande de changement d'année d'adhésion (" + anneeActuelle + " → " + anneeChoisie + ") a été transmise à l'administration : elle prendra effet une fois validée.";
+      msg.className = 'form-msg ok';
+      return;
+    }
+    msg.textContent = ''; msg.className = 'form-msg';
+    showSuccessThenCollapse('info', 'infoSuccessFlash');
+  }
+
+  // ===== Demande de changement d'année d'adhésion (phase43) =====
+  async function loadMemberSinceRequest() {
+    const hint = document.getElementById('memberSinceHint');
+    const select = document.getElementById('eMemberSince');
+    const defaut = "Elle détermine votre numéro de carte : toute modification est validée par un administrateur.";
+
+    const { data, error } = await supabaseClient
+      .from('member_since_requests')
+      .select('requested_year, created_at')
+      .eq('user_id', currentProfile.id)
+      .eq('status', 'pending')
+      .maybeSingle();
+
+    // Table absente (script SQL pas encore exécuté) : on garde le libellé
+    // par défaut plutôt que d'afficher une erreur au membre.
+    if (error || !data) {
+      hint.textContent = defaut;
+      hint.className = 'field-hint';
+      select.value = currentProfile.member_since || currentYear;
+      return;
+    }
+
+    hint.textContent = "Demande en cours : " + data.requested_year + ", en attente de validation par un administrateur.";
+    hint.className = 'field-hint pending';
+    select.value = data.requested_year;
   }
 
   async function loadClaimStatus(userId) {
