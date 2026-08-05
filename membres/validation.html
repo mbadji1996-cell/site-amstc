@@ -500,54 +500,49 @@
 
     btn.style.display = 'none';
     const waDigits = String(member.phone || '').replace(/[^0-9]/g, '');
-    const prenomMembre = member.first_name ? ' ' + member.first_name : '';
+    const nomMembre = (member.full_name || member.first_name || '').trim();
+    const salutation = nomMembre ? 'Bonjour ' + nomMembre + ',' : 'Bonjour,';
+
+    // Le message nomme d'abord les deux sites, puis dit l'essentiel : c'est un
+    // seul et même compte. Seule la dernière phrase change, selon que le membre
+    // a un mot de passe sur amstc.org ou qu'il s'y connecte avec Google.
+    const enTete = salutation + "\n\nVotre compte AMSTC vous donne désormais accès à deux sites :\n\n"
+      + "1. amstc.org - l'espace membres de l'association\n"
+      + "2. consultations-amstc.org - la plateforme de consultations\n\n";
 
     if (data.password_synced) {
-      // Cas normal : l'empreinte du mot de passe amstc a été recopiée, le
-      // membre se connecte avec les mêmes identifiants des deux côtés.
+      // L'empreinte du mot de passe amstc a été recopiée : mêmes identifiants
+      // des deux côtés.
       msg.textContent = "Compte créé et actif. Le membre se connecte sur consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org, et choisit son site à la première connexion.";
       msg.className = 'assign-msg ok';
-      const waTextSync = encodeURIComponent(
-        "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
-        "Connectez-vous sur https://consultations-amstc.org avec le même e-mail et le même mot de passe que sur amstc.org.\n\n" +
-        "Votre compte est déjà actif : vous choisirez votre site à votre première connexion."
+      const waTexte = encodeURIComponent(
+        enTete
+        + "C'est le MÊME compte pour les deux : même adresse e-mail, même mot de passe. Rien de nouveau à créer, ni à retenir."
       );
       linkBox.innerHTML = waDigits ? `
         <div class="assign-inline-row" style="margin-top:8px;">
-          <a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waTextSync}" target="_blank" rel="noopener">Prévenir le membre par WhatsApp</a>
+          <a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waTexte}" target="_blank" rel="noopener">Prévenir le membre par WhatsApp</a>
         </div>` : '';
       linkBox.style.display = '';
       return;
     }
 
-    // Repli (membre inscrit via Google sur amstc.org : pas de mot de passe à
-    // recopier) : lien "définir son mot de passe" à transmettre. Le bouton
-    // "Continuer avec Google" de consultations fonctionne aussi pour lui.
-    msg.textContent = "Compte créé et actif. Ce membre n'a pas de mot de passe sur amstc.org (connexion Google) : transmettez-lui ce lien pour en définir un, ou indiquez-lui le bouton Google de consultations-amstc.org.";
+    // Membre inscrit via Google sur amstc.org : aucun mot de passe à recopier,
+    // et aucun lien à transmettre - il lui suffit d'utiliser le même bouton
+    // Google sur l'autre site, avec la même adresse.
+    msg.textContent = "Compte créé et actif. Ce membre se connecte à amstc.org avec Google : il utilisera le bouton « Continuer avec Google » de consultations-amstc.org, avec la même adresse.";
     msg.className = 'assign-msg ok';
 
-    const link = data.action_link || '';
-    const waText = encodeURIComponent(
-      "Bonjour" + prenomMembre + ", votre accès à la plateforme de consultations de l'AMSTC a été créé.\n\n" +
-      "1. Définissez votre mot de passe via ce lien : " + link + "\n" +
-      "2. Connectez-vous ensuite sur https://consultations-amstc.org\n\n" +
-      "Votre compte est déjà actif : vous choisirez votre site à votre première connexion."
+    const waTexteGoogle = encodeURIComponent(
+      enTete
+      + "C'est le MÊME compte pour les deux. Comme vous vous connectez à amstc.org avec Google, "
+      + "utilisez également le bouton « Continuer avec Google » sur consultations-amstc.org, avec la même adresse."
     );
-    linkBox.innerHTML = link ? `
+    linkBox.innerHTML = waDigits ? `
       <div class="assign-inline-row" style="margin-top:8px;">
-        <input type="text" readonly value="${esc(link)}" id="consultLinkInput-${esc(memberId)}" onclick="this.select()">
-        <button class="btn-sm btn-outline-sm" onclick="copyConsultLink('${esc(memberId)}')">Copier</button>
-        ${waDigits ? `<a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waText}" target="_blank" rel="noopener">Envoyer par WhatsApp</a>` : ''}
-      </div>
-      <p class="assign-msg">Ce lien est à usage unique et expire : envoyez-le sans tarder.</p>
-    ` : '<p class="assign-msg error">Compte créé, mais le lien n\'a pas pu être généré. Le membre peut se connecter avec le bouton Google de consultations-amstc.org (même e-mail).</p>';
+        <a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waTexteGoogle}" target="_blank" rel="noopener">Prévenir le membre par WhatsApp</a>
+      </div>` : '';
     linkBox.style.display = '';
-  }
-
-  function copyConsultLink(memberId) {
-    const input = document.getElementById('consultLinkInput-' + memberId);
-    input.select();
-    navigator.clipboard.writeText(input.value).then(() => alert('Lien copié.'));
   }
 
   async function handleAction(action, id, email, name) {
