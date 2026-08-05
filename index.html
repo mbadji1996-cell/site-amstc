@@ -1161,6 +1161,19 @@
   function md(s){ return s ? marked.parse(s) : ''; }
   function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+  // Adresse externe saisie dans le CMS : sans "https://", le navigateur la
+  // traite comme un chemin du site (amstc.org/www.linkedin.com/...) et
+  // affiche une page 404. On rétablit le préfixe quand il manque, en
+  // laissant intacts les ancres (#section), les chemins internes (/page)
+  // et les autres protocoles (mailto:, tel:).
+  function lienExterne(url){
+    const u = String(url || '').trim();
+    if (!u) return u;
+    if (/^(#|\/)/.test(u)) return u;          // ancre ou chemin interne
+    if (/^[a-z][a-z0-9+.-]*:/i.test(u)) return u; // https:, mailto:, tel:...
+    return 'https://' + u;
+  }
+
   // ===== Rendu des blocs personnalisables =====
   function renderTextImage(b){
     const reverse = b.image_position === 'gauche';
@@ -1834,7 +1847,7 @@
     if (data.cta_title) document.getElementById('cms-cta-title').textContent = data.cta_title;
     if (data.cta_text) document.getElementById('cms-cta-text').textContent = data.cta_text;
     if (data.cta_button_text) document.getElementById('cms-cta-button').textContent = data.cta_button_text;
-    if (data.cta_button_href) document.getElementById('cms-cta-button').setAttribute('href', data.cta_button_href);
+    if (data.cta_button_href) document.getElementById('cms-cta-button').setAttribute('href', lienExterne(data.cta_button_href));
     if (data.cta_bg_image) document.getElementById('cta-banner-bg').style.backgroundImage = `url('${data.cta_bg_image}')`;
 
     // Pied de page
@@ -1859,7 +1872,7 @@
     ];
     const socialLinks = socialEntries
       .filter(([, url]) => url)
-      .map(([key, url]) => `<a class="social-icon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${key}">${SOCIAL_ICONS[key]}</a>`)
+      .map(([key, url]) => `<a class="social-icon" href="${esc(lienExterne(url))}" target="_blank" rel="noopener" aria-label="${key}">${SOCIAL_ICONS[key]}</a>`)
       .join('');
     if (socialLinks) document.getElementById('cms-social-links').innerHTML = socialLinks;
 
