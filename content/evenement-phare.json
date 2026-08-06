@@ -1,10 +1,10 @@
 {
-  "actif": true,
-  "titre": "Couverture Médicale du Gamou de Tivaouane 2026",
+  "lien": "",
   "sous_titre": "L'AMSTC au service de la Hadara Tidjaniya",
+  "actif": true,
   "date_debut": "2026-08-24T08:00",
-  "date_fin": "2026-08-25T12:00",
-  "date_retrait": "",
+  "titre": "Couverture Médicale du Gamou de Tivaouane 2026",
+  "note": "",
   "message_fin": "",
   "phases": [
     {
@@ -20,6 +20,19 @@
       "en_cours": false
     }
   ],
-  "campagne_id": "",
-  "lien": ""
+  "date_fin": "2026-08-25T12:00",
+  "stats": [
+    {
+      "label": "Consultations",
+      "valeur": 0
+    },
+    {
+      "label": "Ordonnances délivrées",
+      "valeur": 0
+    },
+    {
+      "label": "Orientations / références",
+      "valeur": 0
+    }
+  ]
 }
