@@ -183,7 +183,9 @@
   }
 
   function displayName(m){
-    const parts = [m.title, m.first_name, m.last_name].filter(Boolean);
+    // Même règle que profil.html : seuls Dr et Pr s'affichent devant le nom.
+    const titre = (m.title === 'Dr' || m.title === 'Pr') ? m.title : null;
+    const parts = [titre, m.first_name, m.last_name].filter(Boolean);
     return parts.length ? parts.join(' ') : (m.full_name || 'Membre');
   }
 

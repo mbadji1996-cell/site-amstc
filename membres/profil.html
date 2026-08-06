@@ -619,7 +619,10 @@
   }
 
   function fullDisplayName(p) {
-    const parts = [p.title, p.first_name, p.last_name].filter(Boolean);
+    // Seuls Dr et Pr précèdent le nom à l'affichage : M., Mme et Me restent
+    // enregistrés (et visibles dans les exports admin) mais le nom s'affiche nu.
+    const titreAffiche = (p.title === 'Dr' || p.title === 'Pr') ? p.title : null;
+    const parts = [titreAffiche, p.first_name, p.last_name].filter(Boolean);
     return parts.length ? parts.join(' ') : (p.full_name || p.email || '-');
   }
 
