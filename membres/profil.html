@@ -639,6 +639,12 @@
     const photoEl = document.getElementById('mcPhoto');
     const avatarEl = document.getElementById('mcAvatar');
     if (p.photo_url) {
+      // Photo introuvable (URL morte, ex-instance cloud d'avant migration) :
+      // retomber sur les initiales plutôt qu'afficher une image cassée.
+      photoEl.onerror = () => {
+        photoEl.style.display = 'none';
+        avatarEl.style.display = ''; avatarEl.textContent = initials;
+      };
       photoEl.src = p.photo_url; photoEl.style.display = '';
       avatarEl.style.display = 'none';
     } else {
