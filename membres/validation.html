@@ -247,13 +247,14 @@
           </div>
           <div class="member-actions">
             <button class="btn-sm btn-outline-sm" id="detailsBtn-${esc(p.id)}" onclick="toggleMemberDetails('${esc(p.id)}')">Détails</button>
-            <button class="btn-sm btn-outline-sm" data-action="reset-password" data-email="${esc(p.email)}">Réinitialiser le mot de passe</button>
+            <button class="btn-sm btn-outline-sm" id="resetBtn-${esc(p.id)}" onclick="sendResetLink('${esc(p.id)}')">Réinitialiser le mot de passe</button>
             ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>`}
             ${p.is_active === false
               ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
           </div>
           <div class="assign-inline" id="assign-${esc(p.id)}" style="display:none;"></div>
+          <div class="assign-inline" id="resetBox-${esc(p.id)}" style="display:none;"></div>
           <div class="member-details" id="details-${esc(p.id)}" style="display:none;">
             <div class="member-details-grid">
               <div><span class="detail-label">Prénom</span><span class="detail-value">${esc(p.first_name) || '-'}</span></div>
@@ -652,6 +653,71 @@
     linkBox.style.display = '';
   }
 
+  // ===== Réinitialisation de mot de passe (voir supabase/functions/admin-reset-link) =====
+  // La fonction Edge génère UN SEUL lien de récupération et l'envoie par
+  // e-mail ; elle nous le renvoie pour le canal WhatsApp. Surtout ne pas
+  // combiner avec resetPasswordForEmail : GoTrue ne garde qu'un jeton de
+  // récupération par compte, un second envoi invaliderait le premier lien.
+  async function sendResetLink(memberId) {
+    const btn = document.getElementById('resetBtn-' + memberId);
+    const box = document.getElementById('resetBox-' + memberId);
+    const member = profilesById[memberId] || {};
+
+    if (!confirm("Envoyer un lien de réinitialisation de mot de passe à " + (member.full_name || member.email || "ce membre") + " ?\n\nLe lien partira par e-mail, et vous pourrez aussi le transmettre par WhatsApp.")) return;
+
+    btn.disabled = true;
+    box.style.display = 'block';
+    box.innerHTML = '<p class="assign-msg">Génération du lien en cours…</p>';
+
+    const { data, error } = await supabaseClient.functions.invoke('admin-reset-link', {
+      body: {
+        member_id: memberId,
+        redirect_to: window.location.origin + window.location.pathname.replace("validation.html", "reinitialiser.html"),
+      },
+    });
+
+    btn.disabled = false;
+
+    if (error) {
+      // Pour un statut non-2xx, le détail est dans le corps de la réponse.
+      let detail = error.message || '';
+      try { const body = await error.context.json(); if (body && body.error) detail = body.error; } catch (_) {}
+      box.innerHTML = `<p class="assign-msg error">Erreur : ${esc(detail)}</p>`;
+      return;
+    }
+
+    const lien = data.action_link;
+    const waDigits = String(data.phone || member.phone || '').replace(/[^0-9]/g, '');
+    const nomMembre = (data.full_name || data.first_name || '').trim();
+    const waTexte = encodeURIComponent(
+      (nomMembre ? 'Bonjour ' + nomMembre + ',' : 'Bonjour,') + "\n\n"
+      + "Voici votre lien pour définir un nouveau mot de passe sur l'espace membres de l'AMSTC :\n\n"
+      + lien + "\n\n"
+      + "Ce lien est personnel et expire rapidement : utilisez-le sans tarder. "
+      + "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message."
+    );
+
+    const etatMail = data.email_sent
+      ? `E-mail envoyé à ${esc(data.email)}.`
+      : `L'e-mail n'a pas pu être envoyé${data.email_error ? ' (' + esc(data.email_error) + ')' : ''} : transmettez le lien par WhatsApp ou copiez-le ci-dessous.`;
+
+    box.innerHTML = `
+      <p class="assign-msg ${data.email_sent ? 'ok' : 'error'}">${etatMail}</p>
+      <div class="assign-inline-row" style="margin-top:8px;">
+        <input type="text" readonly value="${esc(lien)}" id="resetLinkInput-${esc(memberId)}" onclick="this.select()">
+        <button class="btn-sm btn-outline-sm" onclick="copyResetLink('${esc(memberId)}')">Copier</button>
+        ${waDigits ? `<a class="btn-sm btn-approve" href="https://wa.me/${waDigits}?text=${waTexte}" target="_blank" rel="noopener">Envoyer par WhatsApp</a>` : ''}
+      </div>
+      <p class="assign-msg">Le même lien vaut pour les deux canaux : e-mail et WhatsApp. Il est à usage unique et expire : à transmettre sans tarder.</p>
+    `;
+  }
+
+  function copyResetLink(memberId) {
+    const input = document.getElementById('resetLinkInput-' + memberId);
+    input.select();
+    navigator.clipboard.writeText(input.value).then(() => alert('Lien copié.'));
+  }
+
   async function handleAction(action, id, email, name) {
     let error = null;
 
@@ -682,11 +748,6 @@
       ({ error } = await supabaseClient.rpc("set_user_role", {
         target_user_id: id, new_role: action === "promote-admin" ? "admin" : "user"
       }));
-    } else if (action === "reset-password") {
-      ({ error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname.replace("validation.html", "reinitialiser.html")
-      }));
-      if (!error) alert("Un lien de réinitialisation a été envoyé à " + email + ".");
     }
 
     if (error) {
