@@ -187,6 +187,21 @@
       return;
     }
 
+    // Membres avec un accès consultations-amstc.org : le même mot de passe
+    // vaut pour les deux sites, on recopie donc le nouveau vers l'autre
+    // instance (voir supabase/functions/sync-consultation-password). Pour
+    // les autres, la fonction ne fait rien. Meilleur effort : un échec ici
+    // ne doit pas faire croire au membre que son mot de passe amstc n'a pas
+    // été changé - il l'a été.
+    try {
+      const { error: syncError } = await supabaseClient.functions.invoke("sync-consultation-password", {
+        body: { new_password: password },
+      });
+      if (syncError) console.error("Synchronisation consultations :", syncError.message);
+    } catch (e) {
+      console.error("Synchronisation consultations :", e);
+    }
+
     messageEl.textContent = "Mot de passe mis à jour. Redirection vers la connexion…";
     messageEl.className = "form-message success";
     await supabaseClient.auth.signOut();
