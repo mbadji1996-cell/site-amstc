@@ -181,7 +181,21 @@
     position:absolute; inset:0; z-index:-1;
     background:linear-gradient(180deg, rgba(6,68,28,0.80) 0%, rgba(6,68,28,0.60) 45%, rgba(6,68,28,0.88) 100%);
   }
-  .hero-grid{max-width:700px;}
+  /* 760px (au lieu de 700) : laisse respirer la pastille d'événement sous
+     les boutons sans forcer son passage à la ligne. */
+  .hero-grid{max-width:760px;}
+  /* Pastille événement phare : compte à rebours visible dès l'arrivée,
+     cliquable vers la section complète plus bas. Alimentée par le même
+     script que la section (masquée tant que rien n'est actif). */
+  .hero-event{display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px;padding:10px 18px;
+    border-radius:999px;background:rgba(0,0,0,0.34);border:1px solid rgba(248,183,24,0.45);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;max-width:100%;}
+  .hero-event.visible{display:inline-flex;}
+  .hero-event-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+  .hero-event.live .hero-event-dot{background:#FF5A5A;animation:ep-pulse 1.4s ease-in-out infinite;}
+  .hero-event-label{font-weight:700;font-size:0.9rem;color:var(--white);}
+  .hero-event-count{font-family:var(--mono);font-size:0.85rem;letter-spacing:0.05em;color:var(--gold);white-space:nowrap;}
+  @media(max-width:560px){.hero-event{padding:9px 14px;}.hero-event-label{font-size:0.82rem;}.hero-event-count{font-size:0.78rem;}}
   .hero .eyebrow{color:var(--gold);}
   .hero .eyebrow::before{background:var(--gold);}
   .hero h1{color:var(--white); font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
@@ -708,6 +722,13 @@
         <a href="#nos-actions" class="btn btn-gold">Découvrir nos actions</a>
         <a href="don.html" class="btn btn-ghost">Faire un don</a>
       </div>
+      <!-- Pastille événement phare : remplie par le script de la section
+           #evenement-phare, invisible tant qu'aucun événement n'est actif. -->
+      <a class="hero-event" id="heroEvent" href="#evenement-phare" aria-label="Voir le suivi de l'événement">
+        <span class="hero-event-dot"></span>
+        <span class="hero-event-label" id="heroEventLabel"></span>
+        <span class="hero-event-count" id="heroEventCount"></span>
+      </a>
     </div>
   </section>
 
@@ -779,12 +800,27 @@
       const now = Date.now();
 
       // Retrait de l'accueil : à la date choisie dans le CMS, sinon 7 jours
-      // après la clôture. La section disparaît alors d'elle-même.
+      // après la clôture. La section ET la pastille du hero disparaissent.
+      const chip = document.getElementById('heroEvent');
       const retrait = Date.parse(epData.date_retrait || '') || (isNaN(fin) ? NaN : fin + 7 * 86400000);
       if (!isNaN(retrait) && now > retrait) {
         document.getElementById('evenement-phare').style.display = 'none';
+        chip.classList.remove('visible');
         return;
       }
+
+      // Pastille du hero : même cycle de vie que la section.
+      chip.classList.add('visible');
+      chip.classList.remove('live');
+      document.getElementById('heroEventLabel').textContent = epData.titre;
+      if (!isNaN(fin) && now > fin) {
+        document.getElementById('heroEventCount').textContent = 'Terminé';
+      } else if (!isNaN(debut) && now >= debut) {
+        chip.classList.add('live');
+        document.getElementById('heroEventCount').textContent = 'EN DIRECT';
+      }
+      // Avant l'ouverture : le décompte de la pastille est entretenu par
+      // epCompteARebours, à la seconde près.
 
       // 'block' obligatoire : le CSS masque la section (display:none), et un
       // style inline vide ne surclasse pas une règle de feuille de style.
@@ -872,6 +908,10 @@
         const s = Math.floor(restant % 60000 / 1000);
         el.innerHTML = [[j, 'jours'], [h, 'h'], [m, 'min'], [s, 'sec']].map(([v, l]) =>
           `<div class="ep-cd-box"><b>${v}</b><span>${l}</span></div>`).join('');
+        // Décompte compact de la pastille du hero, au même rythme.
+        const deux = v => String(v).padStart(2, '0');
+        document.getElementById('heroEventCount').textContent =
+          'J-' + j + ' · ' + deux(h) + ':' + deux(m) + ':' + deux(s);
       };
       if (epTick) clearInterval(epTick);
       maj();
