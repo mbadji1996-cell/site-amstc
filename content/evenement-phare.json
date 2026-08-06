@@ -1,5 +1,6 @@
 {
   "lien": "",
+  "date_retrait": "2026-09-05T09:00",
   "sous_titre": "L'AMSTC au service de la Hadara Tidjaniya",
   "actif": true,
   "date_debut": "2026-08-24T08:00",
@@ -20,7 +21,8 @@
       "en_cours": false
     }
   ],
-  "date_fin": "2026-08-25T12:00",
+  "date_fin": "2026-08-27T08:00",
+  "campagne_id": "95af9ed0-96d8-4df1-9b69-8a2884832289",
   "stats": [
     {
       "label": "Consultations",
