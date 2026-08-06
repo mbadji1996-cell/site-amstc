@@ -485,8 +485,9 @@ collections:
           - { label: "Sous-titre (avant l'ouverture)", name: "sous_titre", widget: "text", hint: "Ex : Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main." }
           - { label: "Date et heure d'ouverture", name: "date_debut", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Le compte à rebours vise ce moment, puis la section passe en EN DIRECT." }
           - { label: "Date et heure de clôture", name: "date_fin", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Après ce moment, la section affiche le bilan final." }
+          - { label: "Retirer de l'accueil le (facultatif)", name: "date_retrait", widget: "datetime", format: "YYYY-MM-DDTHH:mm", required: false, default: "", hint: "Laissez vide pour un retrait automatique 7 jours après la clôture." }
           - { label: "Message de clôture", name: "message_fin", widget: "text", required: false, hint: "Affiché après la clôture, au-dessus des chiffres finaux." }
-          - label: "Phases / étapes"
+          - label: "Phases / étapes / jours"
             name: "phases"
             widget: "list"
             required: false
@@ -496,14 +497,5 @@ collections:
               - { label: "Lieu", name: "lieu", widget: "string", hint: "Ex : Mbour" }
               - { label: "Dates (texte libre)", name: "dates", widget: "string", hint: "Ex : 19-24 août" }
               - { label: "Phase en cours / mise en avant", name: "en_cours", widget: "boolean", default: false }
-          - label: "Chiffres du direct"
-            name: "stats"
-            widget: "list"
-            required: false
-            summary: "{{fields.label}} : {{fields.valeur}}"
-            hint: "Mettez les valeurs à jour pendant l'événement puis publiez : les pages ouvertes se rafraîchissent toutes seules."
-            fields:
-              - { label: "Libellé", name: "label", widget: "string", hint: "Ex : Patients accueillis" }
-              - { label: "Valeur", name: "valeur", widget: "number", default: 0, value_type: "int" }
-          - { label: "Note sous les chiffres", name: "note", widget: "string", required: false, hint: "Ex : Chiffres cumulés et mis à jour pendant la caravane. Données strictement anonymes et agrégées." }
+          - { label: "Campagne consultations liée (ID)", name: "campagne_id", widget: "string", required: false, hint: "Collez l'ID de la campagne depuis consultations-amstc.org (onglet Campagnes, bouton « Copier l'ID »). Les chiffres du direct (malades consultés, âge moyen, sexes, ordonnances) viennent alors automatiquement des données de cette campagne." }
           - { label: "Lien En savoir plus (facultatif)", name: "lien", widget: "string", required: false, hint: "Ex : etape.html?slug=... ou une page externe." }

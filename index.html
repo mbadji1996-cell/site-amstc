@@ -739,7 +739,6 @@
     .ep-stat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px 14px;text-align:center;box-shadow:0 6px 18px rgba(6,68,28,0.06);}
     .ep-stat b{display:block;font-family:var(--display);font-size:1.9rem;color:var(--green-deep);line-height:1.1;}
     .ep-stat span{font-size:0.83rem;color:#5B6E60;}
-    .ep-note{font-size:0.78rem;color:#7A8B7E;margin-top:12px;}
     @media(max-width:560px){.ep-card{padding:26px 20px;}.ep-cd-box{min-width:62px;}}
   </style>
   <section id="evenement-phare">
@@ -753,7 +752,6 @@
         <a class="ep-link" id="epLink" style="display:none;" href="#">En savoir plus →</a>
       </div>
       <div class="ep-stats" id="epStats"></div>
-      <p class="ep-note" id="epNote"></p>
     </div>
   </section>
   <script>
@@ -762,8 +760,14 @@
   // https://amstc.org/content/evenement-phare.json).
   (function(){
     const EP_SOURCE = 'content/evenement-phare.json';
-    const EP_POLL_MS = 120000; // les chiffres republiés via le CMS arrivent seuls
-    let epData = null, epTick = null;
+    const EP_POLL_MS = 120000; // contenu CMS et chiffres relus à ce rythme
+    // Chiffres du direct : agrégats publics de la campagne liée, calculés
+    // par la fonction stats_campagne_publique de l'instance consultations
+    // (aucune donnée individuelle ne transite - voir le fichier SQL du
+    // dépôt consultations-amstc). La clé anon est publique par conception.
+    const EP_CONSULT_URL = 'https://api.consultations-amstc.org';
+    const EP_CONSULT_ANON = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg5NjQ0MCwiZXhwIjo0OTQwNTcwMDQwLCJyb2xlIjoiYW5vbiJ9.xmHY7yUCit7vU4lyFqEH02r6xTGWWSaLm1RwhMkbm3A';
+    let epData = null, epTick = null, epStatsData = null;
 
     const epEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const epNum = n => Number(n || 0).toLocaleString('fr-FR');
@@ -773,6 +777,14 @@
       const debut = Date.parse(epData.date_debut || '');
       const fin = Date.parse(epData.date_fin || '');
       const now = Date.now();
+
+      // Retrait de l'accueil : à la date choisie dans le CMS, sinon 7 jours
+      // après la clôture. La section disparaît alors d'elle-même.
+      const retrait = Date.parse(epData.date_retrait || '') || (isNaN(fin) ? NaN : fin + 7 * 86400000);
+      if (!isNaN(retrait) && now > retrait) {
+        document.getElementById('evenement-phare').style.display = 'none';
+        return;
+      }
 
       // 'block' obligatoire : le CSS masque la section (display:none), et un
       // style inline vide ne surclasse pas une règle de feuille de style.
@@ -810,10 +822,43 @@
       if (epData.lien) { lien.href = epData.lien; lien.style.display = ''; }
       else lien.style.display = 'none';
 
-      document.getElementById('epStats').innerHTML = (epData.stats || []).map(s => `
-        <div class="ep-stat"><b>${epNum(s.valeur)}</b><span>${epEsc(s.label)}</span></div>
-      `).join('');
-      document.getElementById('epNote').textContent = epData.note || '';
+      epRenderStats();
+    }
+
+    // Quatre agrégats venant des données réelles de la campagne liée ;
+    // grille vide (masquée par le grid) tant qu'aucune campagne n'est liée
+    // ou que la fonction SQL ne répond pas.
+    function epRenderStats(){
+      const grid = document.getElementById('epStats');
+      if (!epStatsData) { grid.innerHTML = ''; return; }
+      const d = epStatsData;
+      const total = (d.hommes || 0) + (d.femmes || 0);
+      const repartition = total
+        ? Math.round(d.hommes / total * 100) + '% / ' + Math.round(d.femmes / total * 100) + '%'
+        : '-';
+      grid.innerHTML = [
+        [epNum(d.malades), 'Malades consultés'],
+        [d.age_moyen != null ? d.age_moyen + ' ans' : '-', 'Âge moyen'],
+        [repartition, 'Hommes / Femmes'],
+        [epNum(d.ordonnances), 'Ordonnances délivrées'],
+      ].map(([v, l]) => `<div class="ep-stat"><b>${epEsc(v)}</b><span>${epEsc(l)}</span></div>`).join('');
+    }
+
+    async function epChargerStats(){
+      epStatsData = null;
+      if (!epData || !epData.campagne_id) return;
+      try {
+        const res = await fetch(EP_CONSULT_URL + '/rest/v1/rpc/stats_campagne_publique', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': EP_CONSULT_ANON,
+            'Authorization': 'Bearer ' + EP_CONSULT_ANON,
+          },
+          body: JSON.stringify({ p_campagne_id: epData.campagne_id }),
+        });
+        if (res.ok) epStatsData = await res.json();
+      } catch (e) { /* grille simplement vide */ }
     }
 
     function epCompteARebours(debut){
@@ -838,6 +883,7 @@
         const res = await fetch(EP_SOURCE + '?t=' + Date.now(), { cache: 'no-store' });
         if (!res.ok) return;
         epData = await res.json();
+        await epChargerStats();
         epRender();
       } catch (e) { /* section simplement absente si le contenu ne charge pas */ }
     }
