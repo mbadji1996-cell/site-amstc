@@ -1,0 +1,46 @@
+{
+  "actif": true,
+  "titre": "Caravane Nationale 2026 - Phase 1, Mbour",
+  "sous_titre": "Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main.",
+  "date_debut": "2026-08-19T09:00",
+  "date_fin": "2026-08-24T18:00",
+  "message_fin": "La Phase 1 de la Caravane Nationale 2026 est terminée. Merci aux bénévoles, aux partenaires et à tous les participants !",
+  "phases": [
+    {
+      "nom": "Phase 1",
+      "lieu": "Mbour",
+      "dates": "19-24 août",
+      "en_cours": true
+    },
+    {
+      "nom": "Phase 2",
+      "lieu": "Kaolack",
+      "dates": "19-24 sept.",
+      "en_cours": false
+    }
+  ],
+  "stats": [
+    {
+      "label": "Patients accueillis",
+      "valeur": 0
+    },
+    {
+      "label": "Consultations",
+      "valeur": 0
+    },
+    {
+      "label": "Dépistages réalisés",
+      "valeur": 0
+    },
+    {
+      "label": "Ordonnances délivrées",
+      "valeur": 0
+    },
+    {
+      "label": "Orientations / références",
+      "valeur": 0
+    }
+  ],
+  "note": "Chiffres cumulés et mis à jour pendant la caravane. Données strictement anonymes, agrégées, sans aucune information identifiant les patients.",
+  "lien": ""
+}

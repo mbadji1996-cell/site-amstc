@@ -711,6 +711,140 @@
     </div>
   </section>
 
+  <!-- ===== ÉVÉNEMENT PHARE : compte à rebours puis suivi en direct =====
+       Contenu géré via /admin (content/evenement-phare.json). Bloc autonome
+       (style + logique inclus) : consultations-amstc.org embarque le même,
+       en lisant ce fichier JSON depuis amstc.org. Masqué si inactif. -->
+  <style>
+    #evenement-phare{display:none;padding:34px 0 10px;}
+    .ep-card{position:relative;overflow:hidden;border-radius:22px;padding:36px 38px;color:var(--white);
+      background:linear-gradient(115deg, var(--green-deep) 0%, #0A5A28 55%, var(--green) 100%);box-shadow:var(--shadow);}
+    .ep-card::after{content:"";position:absolute;right:-70px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,0.06);}
+    .ep-eyebrow{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+    .ep-eyebrow .ep-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+    .ep-eyebrow.live .ep-dot{background:#FF5A5A;animation:ep-pulse 1.4s ease-in-out infinite;}
+    @keyframes ep-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,90,0.55);}50%{box-shadow:0 0 0 8px rgba(255,90,90,0);}}
+    .ep-title{font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.18;margin-bottom:10px;color:var(--white);}
+    .ep-sub{max-width:560px;font-size:0.98rem;color:rgba(255,255,255,0.85);margin-bottom:22px;}
+    .ep-countdown{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+    .ep-cd-box{min-width:74px;text-align:center;background:rgba(0,0,0,0.28);border-radius:12px;padding:12px 10px;}
+    .ep-cd-box b{display:block;font-family:var(--display);font-size:1.7rem;line-height:1;color:var(--white);}
+    .ep-cd-box span{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.75);}
+    .ep-phases{display:flex;gap:10px;flex-wrap:wrap;}
+    .ep-phase{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-size:0.85rem;font-weight:600;
+      background:rgba(255,255,255,0.14);color:rgba(255,255,255,0.92);}
+    .ep-phase.encours{background:var(--white);color:var(--green-deep);}
+    .ep-link{display:inline-block;margin-top:18px;font-weight:700;color:var(--gold);}
+    .ep-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:18px;}
+    .ep-stat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px 14px;text-align:center;box-shadow:0 6px 18px rgba(6,68,28,0.06);}
+    .ep-stat b{display:block;font-family:var(--display);font-size:1.9rem;color:var(--green-deep);line-height:1.1;}
+    .ep-stat span{font-size:0.83rem;color:#5B6E60;}
+    .ep-note{font-size:0.78rem;color:#7A8B7E;margin-top:12px;}
+    @media(max-width:560px){.ep-card{padding:26px 20px;}.ep-cd-box{min-width:62px;}}
+  </style>
+  <section id="evenement-phare">
+    <div class="wrap">
+      <div class="ep-card">
+        <p class="ep-eyebrow" id="epEyebrow"><span class="ep-dot"></span><span id="epEyebrowText"></span></p>
+        <h2 class="ep-title" id="epTitle"></h2>
+        <p class="ep-sub" id="epSub"></p>
+        <div class="ep-countdown" id="epCountdown"></div>
+        <div class="ep-phases" id="epPhases"></div>
+        <a class="ep-link" id="epLink" style="display:none;" href="#">En savoir plus →</a>
+      </div>
+      <div class="ep-stats" id="epStats"></div>
+      <p class="ep-note" id="epNote"></p>
+    </div>
+  </section>
+  <script>
+  // Bloc autonome : ne dépend d'aucune autre fonction de la page (portable
+  // tel quel sur consultations-amstc.org, où EP_SOURCE devient l'URL absolue
+  // https://amstc.org/content/evenement-phare.json).
+  (function(){
+    const EP_SOURCE = 'content/evenement-phare.json';
+    const EP_POLL_MS = 120000; // les chiffres republiés via le CMS arrivent seuls
+    let epData = null, epTick = null;
+
+    const epEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const epNum = n => Number(n || 0).toLocaleString('fr-FR');
+
+    function epRender(){
+      if (!epData || epData.actif === false || !epData.titre) return;
+      const debut = Date.parse(epData.date_debut || '');
+      const fin = Date.parse(epData.date_fin || '');
+      const now = Date.now();
+
+      document.getElementById('evenement-phare').style.display = '';
+      document.getElementById('epTitle').textContent = epData.titre;
+
+      const eyebrow = document.getElementById('epEyebrow');
+      const eyebrowText = document.getElementById('epEyebrowText');
+      const sub = document.getElementById('epSub');
+      eyebrow.classList.remove('live');
+
+      if (!isNaN(fin) && now > fin) {
+        eyebrowText.textContent = 'Événement terminé';
+        sub.textContent = epData.message_fin || '';
+        sub.style.display = epData.message_fin ? '' : 'none';
+        document.getElementById('epCountdown').style.display = 'none';
+      } else if (!isNaN(debut) && now >= debut) {
+        eyebrow.classList.add('live');
+        eyebrowText.textContent = 'En direct';
+        sub.style.display = 'none';
+        document.getElementById('epCountdown').style.display = 'none';
+      } else {
+        eyebrowText.textContent = 'Bientôt en direct';
+        sub.textContent = epData.sous_titre || '';
+        sub.style.display = epData.sous_titre ? '' : 'none';
+        document.getElementById('epCountdown').style.display = '';
+        epCompteARebours(debut);
+      }
+
+      document.getElementById('epPhases').innerHTML = (epData.phases || []).map(p => `
+        <span class="ep-phase${p.en_cours ? ' encours' : ''}">${epEsc([p.nom, p.lieu, p.dates].filter(Boolean).join(' · '))}</span>
+      `).join('');
+
+      const lien = document.getElementById('epLink');
+      if (epData.lien) { lien.href = epData.lien; lien.style.display = ''; }
+      else lien.style.display = 'none';
+
+      document.getElementById('epStats').innerHTML = (epData.stats || []).map(s => `
+        <div class="ep-stat"><b>${epNum(s.valeur)}</b><span>${epEsc(s.label)}</span></div>
+      `).join('');
+      document.getElementById('epNote').textContent = epData.note || '';
+    }
+
+    function epCompteARebours(debut){
+      const el = document.getElementById('epCountdown');
+      const maj = () => {
+        let restant = Math.max(0, debut - Date.now());
+        if (restant === 0) { clearInterval(epTick); epTick = null; epRender(); return; }
+        const j = Math.floor(restant / 86400000);
+        const h = Math.floor(restant % 86400000 / 3600000);
+        const m = Math.floor(restant % 3600000 / 60000);
+        const s = Math.floor(restant % 60000 / 1000);
+        el.innerHTML = [[j, 'jours'], [h, 'h'], [m, 'min'], [s, 'sec']].map(([v, l]) =>
+          `<div class="ep-cd-box"><b>${v}</b><span>${l}</span></div>`).join('');
+      };
+      if (epTick) clearInterval(epTick);
+      maj();
+      epTick = setInterval(maj, 1000);
+    }
+
+    async function epCharger(){
+      try {
+        const res = await fetch(EP_SOURCE + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return;
+        epData = await res.json();
+        epRender();
+      } catch (e) { /* section simplement absente si le contenu ne charge pas */ }
+    }
+
+    epCharger();
+    setInterval(epCharger, EP_POLL_MS);
+  })();
+  </script>
+
   <!-- ===== THREE-CARD INTRO ===== -->
   <section class="intro">
     <div class="wrap intro-grid" id="cms-intro-cards">
@@ -1161,7 +1295,9 @@
 
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
-  function esc(s){ return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // String() : esc() reçoit aussi des nombres (chiffres du direct) - même
+  // durcissement que membres/validation.html.
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   // Adresse externe saisie dans le CMS : sans "https://", le navigateur la
   // traite comme un chemin du site (amstc.org/www.linkedin.com/...) et

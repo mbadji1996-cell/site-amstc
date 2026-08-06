@@ -467,3 +467,43 @@ collections:
       - { label: "Description (facultatif)", name: "excerpt", widget: "text", required: false }
       - { label: "Image (facultatif)", name: "image", widget: "image", required: false }
       - { label: "Lien (facultatif)", name: "lien", widget: "string", required: false, hint: "Vers une réalisation, une formation ou une page externe. Ex : article.html?slug=2026-01-25-nemekou-daara-louga-2026" }
+
+  # Événement phare : bandeau compte à rebours puis suivi en direct, affiché
+  # en tête de l'accueil d'amstc.org ET de consultations-amstc.org (qui lit
+  # le même fichier depuis amstc.org). Les chiffres se mettent à jour en
+  # publiant ce formulaire pendant l'événement : les pages ouvertes les
+  # rechargent toutes seules toutes les 2 minutes.
+  - name: "evenement_phare"
+    label: "Événement phare (direct)"
+    files:
+      - name: "evenement_phare"
+        label: "Compte à rebours et suivi en direct"
+        file: "content/evenement-phare.json"
+        fields:
+          - { label: "Afficher la section", name: "actif", widget: "boolean", default: false, hint: "Décochez pour masquer entièrement le bandeau sur les deux sites." }
+          - { label: "Titre", name: "titre", widget: "string", hint: "Ex : Caravane Nationale 2026 - Phase 1, Mbour" }
+          - { label: "Sous-titre (avant l'ouverture)", name: "sous_titre", widget: "text", hint: "Ex : Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main." }
+          - { label: "Date et heure d'ouverture", name: "date_debut", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Le compte à rebours vise ce moment, puis la section passe en EN DIRECT." }
+          - { label: "Date et heure de clôture", name: "date_fin", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Après ce moment, la section affiche le bilan final." }
+          - { label: "Message de clôture", name: "message_fin", widget: "text", required: false, hint: "Affiché après la clôture, au-dessus des chiffres finaux." }
+          - label: "Phases / étapes"
+            name: "phases"
+            widget: "list"
+            required: false
+            summary: "{{fields.nom}} · {{fields.lieu}}"
+            fields:
+              - { label: "Nom", name: "nom", widget: "string", hint: "Ex : Phase 1" }
+              - { label: "Lieu", name: "lieu", widget: "string", hint: "Ex : Mbour" }
+              - { label: "Dates (texte libre)", name: "dates", widget: "string", hint: "Ex : 19-24 août" }
+              - { label: "Phase en cours / mise en avant", name: "en_cours", widget: "boolean", default: false }
+          - label: "Chiffres du direct"
+            name: "stats"
+            widget: "list"
+            required: false
+            summary: "{{fields.label}} : {{fields.valeur}}"
+            hint: "Mettez les valeurs à jour pendant l'événement puis publiez : les pages ouvertes se rafraîchissent toutes seules."
+            fields:
+              - { label: "Libellé", name: "label", widget: "string", hint: "Ex : Patients accueillis" }
+              - { label: "Valeur", name: "valeur", widget: "number", default: 0, value_type: "int" }
+          - { label: "Note sous les chiffres", name: "note", widget: "string", required: false, hint: "Ex : Chiffres cumulés et mis à jour pendant la caravane. Données strictement anonymes et agrégées." }
+          - { label: "Lien En savoir plus (facultatif)", name: "lien", widget: "string", required: false, hint: "Ex : etape.html?slug=... ou une page externe." }
