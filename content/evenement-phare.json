@@ -1,24 +1,26 @@
 {
+  "lien": "",
+  "sous_titre": "L'AMSTC au service de la Hadara Tidjaniya",
   "actif": true,
-  "titre": "Caravane Nationale 2026 - Phase 1, Mbour",
-  "sous_titre": "Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main.",
-  "date_debut": "2026-08-19T09:00",
-  "date_fin": "2026-08-24T18:00",
-  "message_fin": "La Phase 1 de la Caravane Nationale 2026 est terminée. Merci aux bénévoles, aux partenaires et à tous les participants !",
+  "date_debut": "2026-08-06T08:00",
+  "titre": "Couverture Médicale du Gamou de Tivaouane 2026",
+  "note": "Chiffres cumulés et mis à jour pendant la caravane. Données strictement anonymes, agrégées, sans aucune information identifiant les patients.",
+  "message_fin": "",
   "phases": [
     {
-      "nom": "Phase 1",
-      "lieu": "Mbour",
-      "dates": "19-24 août",
+      "nom": "Jour 1",
+      "lieu": "Tivaouane",
+      "dates": "24 Août",
       "en_cours": true
     },
     {
-      "nom": "Phase 2",
-      "lieu": "Kaolack",
-      "dates": "19-24 sept.",
+      "nom": "Jour 2",
+      "lieu": "Tivaouane",
+      "dates": "25 Août",
       "en_cours": false
     }
   ],
+  "date_fin": "2026-08-25T12:00",
   "stats": [
     {
       "label": "Patients accueillis",
@@ -40,7 +42,5 @@
       "label": "Orientations / références",
       "valeur": 0
     }
-  ],
-  "note": "Chiffres cumulés et mis à jour pendant la caravane. Données strictement anonymes, agrégées, sans aucune information identifiant les patients.",
-  "lien": ""
+  ]
 }
