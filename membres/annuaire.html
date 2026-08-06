@@ -206,6 +206,11 @@
     }
 
     allMembers = data || [];
+    // Ordre alphabétique du nom AFFICHÉ (Prénom Nom), sans le titre : trier
+    // avec "Dr"/"Pr" regrouperait tous les docteurs ensemble, et le tri
+    // serveur (nom de famille) paraissait aléatoire à l'écran.
+    const cleAlpha = m => [m.first_name, m.last_name].filter(Boolean).join(' ') || m.full_name || '';
+    allMembers.sort((a, b) => cleAlpha(a).localeCompare(cleAlpha(b), 'fr', { sensitivity: 'base' }));
     allDomains = [...new Set(allMembers.map(m => m.domain).filter(Boolean))];
     const row = document.getElementById('filterRow');
     allDomains.forEach(d => {
