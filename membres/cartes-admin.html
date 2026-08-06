@@ -82,6 +82,9 @@
   .status-badge.unclaimed{background:var(--paper-alt);color:var(--text-muted);}
   .status-badge.pending{background:#FEF6E4;color:var(--gold-deep);}
   .status-badge.confirmed{background:#EAF3DE;color:#3B6D11;}
+  /* Demande de changement d'année d'adhésion en attente : l'année pilote le
+     numéro de carte, l'admin doit donc la voir avant de renuméroter. */
+  .year-request-flag{display:inline-block;margin-top:6px;font-size:0.72rem;line-height:1.35;background:#FEF6E4;color:var(--gold-deep);border-radius:8px;padding:5px 9px;}
   .assign-inline{background:var(--paper);border-radius:8px;padding:14px 16px;}
   .assign-inline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
   .assign-inline select{flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);}
@@ -584,17 +587,31 @@
   let allCards = [], assignMembers = [];
   let expandedAssignId = null;
   let expandedEditId = null;
+  // Demandes de changement d'année d'adhésion en attente, indexées par
+  // membre : l'année pilote le numéro de carte, donc renuméroter une carte
+  // pendant qu'une demande dort ailleurs produirait deux décisions
+  // contradictoires. L'admin doit la voir ici.
+  let yearRequestsByUser = {};
 
   async function loadAssignData() {
-    const [cardsRes, membersRes] = await Promise.all([
+    const [cardsRes, membersRes, yearReqRes] = await Promise.all([
       supabaseClient
         .from('member_cards')
         .select('id, full_name, phone, city, member_since, card_number, claim_status, claimed_by, profiles:claimed_by(full_name, email)')
         .order('full_name'),
       supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
+      supabaseClient.rpc('member_since_requests_pending'),
     ]);
     allCards = cardsRes.data || [];
     assignMembers = membersRes.data || [];
+
+    // Fonction absente (script SQL pas encore exécuté) : on continue sans
+    // les repères plutôt que de casser l'écran des cartes.
+    yearRequestsByUser = {};
+    if (!yearReqRes.error && Array.isArray(yearReqRes.data)) {
+      yearReqRes.data.forEach(r => { yearRequestsByUser[r.user_id] = r; });
+    }
+
     renderCardsTable();
   }
 
@@ -669,10 +686,21 @@
           </tr>`;
       }
 
+      // La demande porte sur le membre, pas sur la carte : on la rattache
+      // via le membre à qui la carte est attribuée.
+      const demandeAnnee = c.claimed_by ? yearRequestsByUser[c.claimed_by] : null;
+      const yearFlag = demandeAnnee
+        ? `<p class="year-request-flag">Changement d'année d'adhésion demandé :
+             ${demandeAnnee.previous_year ? escHtml(demandeAnnee.previous_year) : 'non renseignée'}
+             → <strong>${escHtml(demandeAnnee.requested_year)}</strong>.
+             À accepter ou refuser dans Gestion des membres.</p>`
+        : '';
+
       return `<tr>
         <td class="td-main">
           <p class="card-name">${escHtml(c.full_name)}</p>
           <p class="card-meta">${escHtml(meta || '-')}</p>
+          ${yearFlag}
         </td>
         <td data-label="N° carte">${escHtml(c.card_number || '-')}</td>
         <td data-label="Statut">${statusBadge(c.claim_status)}</td>
