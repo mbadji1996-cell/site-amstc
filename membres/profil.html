@@ -338,6 +338,7 @@
         <i class="ti ti-chevron-down accordion-chevron" id="chev-validity"></i>
       </button>
       <div class="accordion-body" id="body-validity">
+        <div id="validityPayNumbers"></div>
         <div class="form-grid">
           <div class="form-group">
             <label>Nombre d'années</label>
@@ -395,6 +396,7 @@
         <div id="cotisUnlocked">
           <div class="cotis-grid" id="cotisGrid"></div>
 
+          <div id="cotisPayNumbers"></div>
           <div class="form-grid">
             <div class="form-group">
               <label>Nombre de mois à régler</label>
@@ -441,9 +443,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/paiements.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
+  // Numéros de paiement de l'association (assets/js/paiements.js), affichés
+  // au-dessus des deux formulaires de paiement.
+  document.getElementById('validityPayNumbers').innerHTML = amstcNumerosPaiementHtml();
+  document.getElementById('cotisPayNumbers').innerHTML = amstcNumerosPaiementHtml();
+
   let currentProfile = null;
   let pendingPhotoBlob = null;
   const currentYear = new Date().getFullYear();

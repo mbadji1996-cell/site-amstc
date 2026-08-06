@@ -322,6 +322,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/paiements.js"></script>
 <script>
   let allProducts = [], cart = {}, userId = null, payMethod = 'wave';
   let currentFilter = 'all', allCategories = [], searchQuery = '';
@@ -588,12 +589,13 @@
     payMethod = m;
     document.getElementById('pay-wave').classList.toggle('active', m === 'wave');
     document.getElementById('pay-om').classList.toggle('active', m === 'orange_money');
+    // Le numéro affiché vient d'assets/js/paiements.js : la page disait
+    // « envoyez au numéro AMSTC » sans jamais le donner.
+    const p = window.AMSTC_PAIEMENTS[m];
     const info = document.getElementById('payInfo');
-    if (m === 'wave') {
-      info.innerHTML = '<strong>Paiement Wave</strong>Envoyez le montant au numéro AMSTC via Wave, puis collez la référence de transaction ci-dessous.';
-    } else {
-      info.innerHTML = '<strong>Paiement Orange Money</strong>Envoyez le montant au numéro AMSTC via Orange Money, puis collez la référence de transaction ci-dessous.';
-    }
+    info.innerHTML = '<strong>Paiement ' + p.label + '</strong>'
+      + 'Envoyez le montant au <strong style="font-family:var(--mono);letter-spacing:0.04em;">' + p.numero + '</strong> via '
+      + p.label + ', puis collez le numéro de la transaction ci-dessous.';
   }
 
   function openCheckout() {
