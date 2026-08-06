@@ -70,6 +70,12 @@
   <h1>Choisir un nouveau mot de passe</h1>
   <p class="intro" id="introText">Vérification du lien en cours…</p>
 
+  <div class="card" id="verifyCard" style="display:none;">
+    <p style="font-size:0.92rem;color:var(--text-muted);">Pour votre sécurité, confirmez que c'est bien vous avant de continuer.</p>
+    <button type="button" class="btn" id="verifyBtn">Définir mon nouveau mot de passe</button>
+    <div class="form-message" id="verifyMessage"></div>
+  </div>
+
   <div class="card" id="resetCard" style="display:none;">
     <form id="resetForm">
       <label for="password">Nouveau mot de passe</label>
@@ -92,35 +98,71 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const introText = document.getElementById("introText");
+  const verifyCard = document.getElementById("verifyCard");
+  const verifyBtn = document.getElementById("verifyBtn");
+  const verifyMessage = document.getElementById("verifyMessage");
   const resetCard = document.getElementById("resetCard");
   const form = document.getElementById("resetForm");
   const submitBtn = document.getElementById("submitBtn");
   const messageEl = document.getElementById("formMessage");
 
-  // Le lien reçu par e-mail ouvre une session temporaire de type "recovery".
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === "PASSWORD_RECOVERY" && session) {
-      introText.textContent = "Choisissez votre nouveau mot de passe.";
-      resetCard.style.display = "";
-    }
-  });
+  // Deux chemins d'arrivée :
+  //  - ?th=<token_hash> : lien envoyé par un admin (admin-reset-link). Le
+  //    jeton n'est PAS encore consommé - c'est voulu : l'aperçu de lien de
+  //    WhatsApp et les scanners d'e-mail visitent l'URL avant le membre, et
+  //    un lien GoTrue classique (à usage unique) arrivait déjà grillé. Ici,
+  //    le jeton n'est échangé (verifyOtp) qu'au clic du membre, qu'aucun
+  //    robot d'aperçu ne fait.
+  //  - flux classique : le lien "mot de passe oublié" de la page de
+  //    connexion ouvre une session temporaire de type "recovery".
+  const tokenHash = new URLSearchParams(window.location.search).get("th");
 
-  // Filet de sécurité : si l'événement a déjà eu lieu avant que ce script
-  // ne s'exécute, on vérifie directement s'il existe une session active.
-  (async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
+  if (tokenHash) {
+    introText.textContent = "Vous avez demandé à définir un nouveau mot de passe.";
+    verifyCard.style.display = "";
+
+    verifyBtn.addEventListener("click", async () => {
+      verifyBtn.disabled = true;
+      verifyMessage.className = "form-message";
+
+      const { error } = await supabaseClient.auth.verifyOtp({ type: "recovery", token_hash: tokenHash });
+
+      if (error) {
+        verifyBtn.disabled = false;
+        verifyMessage.textContent = "Ce lien est invalide ou a expiré. Demandez un nouveau lien à l'administration, ou utilisez « Mot de passe oublié » sur la page de connexion.";
+        verifyMessage.className = "form-message error";
+        return;
+      }
+
+      verifyCard.style.display = "none";
       introText.textContent = "Choisissez votre nouveau mot de passe.";
       resetCard.style.display = "";
-    } else {
-      setTimeout(async () => {
-        const { data: { session: retrySession } } = await supabaseClient.auth.getSession();
-        if (!retrySession) {
-          introText.textContent = "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau depuis la page de connexion.";
-        }
-      }, 1500);
-    }
-  })();
+    });
+  } else {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session) {
+        introText.textContent = "Choisissez votre nouveau mot de passe.";
+        resetCard.style.display = "";
+      }
+    });
+
+    // Filet de sécurité : si l'événement a déjà eu lieu avant que ce script
+    // ne s'exécute, on vérifie directement s'il existe une session active.
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        introText.textContent = "Choisissez votre nouveau mot de passe.";
+        resetCard.style.display = "";
+      } else {
+        setTimeout(async () => {
+          const { data: { session: retrySession } } = await supabaseClient.auth.getSession();
+          if (!retrySession) {
+            introText.textContent = "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau depuis la page de connexion.";
+          }
+        }, 1500);
+      }
+    })();
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();

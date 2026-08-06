@@ -117,7 +117,16 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Impossible de générer le lien : " + (linkErr?.message || "réponse vide") }, 502);
   }
 
-  const actionLink = linkData.properties.action_link;
+  // On ne transmet JAMAIS l'action_link brut : il est à usage unique et
+  // consommé dès sa première ouverture. Or l'aperçu de lien de WhatsApp
+  // (et certains scanners d'e-mail) visite l'URL avant le membre - le jeton
+  // était donc déjà grillé au moment du clic ("lien invalide ou expiré").
+  // À la place : un lien vers notre page reinitialiser.html portant le
+  // token_hash, que la page ne consomme (verifyOtp) qu'au clic du membre.
+  const hashedToken = linkData.properties.hashed_token;
+  const actionLink = hashedToken
+    ? `${redirectTo}?th=${encodeURIComponent(hashedToken)}`
+    : linkData.properties.action_link;
 
   // ===== 4. Envoi de l'e-mail =====
   // Un échec d'envoi n'annule pas la génération : le lien reste valide et
