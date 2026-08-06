@@ -260,7 +260,7 @@
         Colonnes attendues (l'ordre des colonnes n'importe pas, seuls les intitulés comptent) :<br>
         <code>Prénom · Nom · Filière · Téléphone · Localité · Validité</code><br>
         "Validité" au format <code>AAAA - AAAA</code> (année d'adhésion - année de fin de validité).
-        Le titre "Dr"/"Pr" est détecté automatiquement s'il est écrit au début du prénom.
+        Le titre ("Dr", "Pr", "M.", "Mme", "Me") est détecté automatiquement s'il est écrit au début du prénom.
       </p>
       <div class="import-success" id="excelSuccessBanner" style="display:none;"></div>
       <div class="file-drop">
@@ -347,8 +347,14 @@
 
   function extractTitle(prenomRaw) {
     const s = String(prenomRaw || '').trim();
-    const m = s.match(/^(Dr|Pr)\.?\s+(.+)$/i);
-    if (m) return { title: m[1][0].toUpperCase() + m[1].slice(1).toLowerCase(), prenom: m[2].trim() };
+    // "M." exige son point : un simple "M" isolé serait trop ambigu (initiale
+    // de prénom). La contrainte SQL (phase45) attend exactement ces graphies.
+    const m = s.match(/^(Dr|Pr|Mme|Me|M\.)\.?\s+(.+)$/i);
+    if (m) {
+      let t = m[1][0].toUpperCase() + m[1].slice(1).toLowerCase();
+      if (t === 'M') t = 'M.';
+      return { title: t, prenom: m[2].trim() };
+    }
     return { title: null, prenom: s };
   }
 

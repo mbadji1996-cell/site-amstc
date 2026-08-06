@@ -117,6 +117,24 @@
   .form-msg{font-size:0.85rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
   .form-msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
   .form-msg.ok{background:#EAF3DE;color:#3B6D11;display:block;}
+
+  /* Recadrage de la photo de profil */
+  .crop-overlay{position:fixed;inset:0;background:rgba(6,25,12,0.72);display:none;align-items:center;justify-content:center;z-index:1000;padding:18px;}
+  .crop-overlay.open{display:flex;}
+  .crop-card{background:var(--surface,#fff);border-radius:var(--radius);padding:20px;max-width:380px;width:100%;box-shadow:var(--shadow);}
+  .crop-title{font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--text-heading);margin-bottom:4px;}
+  .crop-hint{font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;}
+  .crop-viewport{position:relative;width:100%;aspect-ratio:1;overflow:hidden;border-radius:12px;background:#111;touch-action:none;cursor:grab;}
+  .crop-viewport.dragging{cursor:grabbing;}
+  .crop-viewport img{position:absolute;top:0;left:0;transform-origin:0 0;user-select:none;-webkit-user-drag:none;pointer-events:none;max-width:none;}
+  /* Cercle-repère : la photo est affichée en rond sur la carte de membre. */
+  .crop-viewport::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,0.42);pointer-events:none;}
+  .crop-zoom-row{display:flex;align-items:center;gap:10px;margin:14px 0 4px;}
+  .crop-zoom-row input[type=range]{flex:1;accent-color:var(--green);}
+  .crop-btns{display:flex;gap:10px;margin-top:12px;}
+  .crop-btns button{flex:1;padding:11px 0;border-radius:999px;font-weight:600;font-size:0.9rem;cursor:pointer;}
+  .crop-cancel{background:transparent;border:1.5px solid var(--line);color:inherit;}
+  .crop-ok{background:var(--gold);border:none;color:var(--green-deep);}
   .field-hint{font-size:0.76rem;color:var(--text-muted);line-height:1.4;margin-top:5px;}
   .field-hint.pending{color:#8A6D1F;font-weight:600;}
 
@@ -285,6 +303,9 @@
               <option value="">-</option>
               <option value="Dr">Dr</option>
               <option value="Pr">Pr</option>
+              <option value="M.">M.</option>
+              <option value="Mme">Mme</option>
+              <option value="Me">Me</option>
             </select>
           </div>
           <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
@@ -434,6 +455,28 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Recadrage de la photo de profil : déplacer pour centrer, zoomer à la
+     molette, au pincement ou au curseur. Le cercle montre ce qui sera
+     visible sur la carte de membre. -->
+<div class="crop-overlay" id="cropOverlay">
+  <div class="crop-card">
+    <p class="crop-title">Ajuster la photo</p>
+    <p class="crop-hint">Déplacez la photo pour la centrer, et zoomez avec le curseur, la molette ou en pinçant l'écran.</p>
+    <div class="crop-viewport" id="cropViewport">
+      <img id="cropImage" alt="">
+    </div>
+    <div class="crop-zoom-row">
+      <i class="ti ti-photo" style="font-size:14px;color:var(--text-muted);"></i>
+      <input type="range" id="cropZoom" min="0" max="100" value="0">
+      <i class="ti ti-photo" style="font-size:22px;color:var(--text-muted);"></i>
+    </div>
+    <div class="crop-btns">
+      <button type="button" class="crop-cancel" id="cropCancelBtn">Annuler</button>
+      <button type="button" class="crop-ok" id="cropOkBtn">Valider la photo</button>
+    </div>
   </div>
 </div>
 
@@ -685,36 +728,139 @@
     document.getElementById('eSpecialtyAutre').value = '';
   }
 
+  // ===== Recadrage de la photo de profil =====
+  // La photo choisie s'ouvre dans un recadreur : le membre la déplace pour
+  // la centrer et zoome (curseur, molette, pincement). La zone carrée
+  // recadrée est exportée en 512x512 puis suit le circuit d'envoi existant.
+  const crop = { img: null, scale: 1, minScale: 1, x: 0, y: 0, pointers: new Map(), lastDist: null };
+  const cropVp = document.getElementById('cropViewport');
+
   async function onPhotoSelected(e) {
     const file = e.target.files[0];
     if (!file) return;
-    pendingPhotoBlob = await resizeImageFile(file);
-    const preview = document.getElementById('photoPreview');
-    preview.src = URL.createObjectURL(pendingPhotoBlob);
-    preview.style.display = '';
+    const dataUrl = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = ev => resolve(ev.target.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+    const img = new Image();
+    img.onload = () => openCropper(img);
+    img.src = dataUrl;
+    // Réinitialise l'input : re-choisir le même fichier doit rouvrir le
+    // recadreur (l'événement change ne se déclenche pas sinon).
+    e.target.value = '';
   }
 
-  function resizeImageFile(file, maxSize = 480, quality = 0.85) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          let { width, height } = img;
-          if (width > height) { if (width > maxSize) { height = height * maxSize / width; width = maxSize; } }
-          else { if (height > maxSize) { width = width * maxSize / height; height = maxSize; } }
-          const canvas = document.createElement('canvas');
-          canvas.width = width; canvas.height = height;
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
-        };
-        img.onerror = reject;
-        img.src = e.target.result;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  function openCropper(img) {
+    crop.img = img;
+    document.getElementById('cropImage').src = img.src;
+    document.getElementById('cropOverlay').classList.add('open');
+    const size = cropVp.clientWidth;
+    // Échelle minimale : l'image couvre toujours tout le carré.
+    crop.minScale = size / Math.min(img.naturalWidth, img.naturalHeight);
+    crop.scale = crop.minScale;
+    crop.x = (size - img.naturalWidth * crop.scale) / 2;
+    crop.y = (size - img.naturalHeight * crop.scale) / 2;
+    document.getElementById('cropZoom').value = 0;
+    applyCrop();
   }
+
+  function applyCrop() {
+    const size = cropVp.clientWidth;
+    const w = crop.img.naturalWidth * crop.scale;
+    const h = crop.img.naturalHeight * crop.scale;
+    crop.x = Math.min(0, Math.max(size - w, crop.x));
+    crop.y = Math.min(0, Math.max(size - h, crop.y));
+    document.getElementById('cropImage').style.transform =
+      `translate(${crop.x}px, ${crop.y}px) scale(${crop.scale})`;
+  }
+
+  function zoomTo(newScale, cx, cy) {
+    // Zoom borné entre "couvre le carré" et 4x, centré sur (cx, cy) pour
+    // que le point visé reste sous le doigt ou le curseur.
+    newScale = Math.min(crop.minScale * 4, Math.max(crop.minScale, newScale));
+    const px = (cx - crop.x) / crop.scale, py = (cy - crop.y) / crop.scale;
+    crop.scale = newScale;
+    crop.x = cx - px * newScale;
+    crop.y = cy - py * newScale;
+    document.getElementById('cropZoom').value = Math.round((newScale / crop.minScale - 1) / 3 * 100);
+    applyCrop();
+  }
+
+  cropVp.addEventListener('pointerdown', ev => {
+    if (!crop.img) return;
+    cropVp.setPointerCapture(ev.pointerId);
+    crop.pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    cropVp.classList.add('dragging');
+  });
+
+  cropVp.addEventListener('pointermove', ev => {
+    if (!crop.img || !crop.pointers.has(ev.pointerId)) return;
+    const prev = crop.pointers.get(ev.pointerId);
+    crop.pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    const pts = [...crop.pointers.values()];
+    if (pts.length === 1) {
+      crop.x += ev.clientX - prev.x;
+      crop.y += ev.clientY - prev.y;
+      applyCrop();
+    } else if (pts.length === 2) {
+      // Pincement : l'écart entre les deux doigts pilote le zoom.
+      const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (crop.lastDist) {
+        const rect = cropVp.getBoundingClientRect();
+        zoomTo(crop.scale * d / crop.lastDist,
+          (pts[0].x + pts[1].x) / 2 - rect.left,
+          (pts[0].y + pts[1].y) / 2 - rect.top);
+      }
+      crop.lastDist = d;
+    }
+  });
+
+  function endCropPointer(ev) {
+    crop.pointers.delete(ev.pointerId);
+    crop.lastDist = null;
+    if (crop.pointers.size === 0) cropVp.classList.remove('dragging');
+  }
+  cropVp.addEventListener('pointerup', endCropPointer);
+  cropVp.addEventListener('pointercancel', endCropPointer);
+
+  cropVp.addEventListener('wheel', ev => {
+    if (!crop.img) return;
+    ev.preventDefault();
+    const rect = cropVp.getBoundingClientRect();
+    zoomTo(crop.scale * (ev.deltaY < 0 ? 1.07 : 1 / 1.07),
+      ev.clientX - rect.left, ev.clientY - rect.top);
+  }, { passive: false });
+
+  document.getElementById('cropZoom').addEventListener('input', ev => {
+    const size = cropVp.clientWidth;
+    zoomTo(crop.minScale * (1 + ev.target.value / 100 * 3), size / 2, size / 2);
+  });
+
+  function closeCropper() {
+    document.getElementById('cropOverlay').classList.remove('open');
+    crop.img = null;
+    crop.pointers.clear();
+    crop.lastDist = null;
+  }
+  document.getElementById('cropCancelBtn').addEventListener('click', closeCropper);
+
+  document.getElementById('cropOkBtn').addEventListener('click', () => {
+    const size = cropVp.clientWidth;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 512;
+    // La zone visible du viewport, reprojetée dans l'image d'origine.
+    const sx = -crop.x / crop.scale, sy = -crop.y / crop.scale, sw = size / crop.scale;
+    canvas.getContext('2d').drawImage(crop.img, sx, sy, sw, sw, 0, 0, 512, 512);
+    canvas.toBlob(blob => {
+      pendingPhotoBlob = blob;
+      const preview = document.getElementById('photoPreview');
+      preview.src = URL.createObjectURL(blob);
+      preview.style.display = '';
+      closeCropper();
+    }, 'image/jpeg', 0.88);
+  });
 
   async function uploadPendingPhoto() {
     if (!pendingPhotoBlob) return null;

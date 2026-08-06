@@ -180,7 +180,14 @@
     submitBtn.disabled = true;
     const { error } = await supabaseClient.auth.updateUser({ password });
 
-    if (error) {
+    // Le membre a le droit de reprendre son ancien mot de passe : GoTrue le
+    // refuse ("same_password"), mais le compte porte alors déjà exactement
+    // le mot de passe voulu - c'est un succès, pas une erreur. On poursuit
+    // jusqu'à la synchronisation consultations, qui peut être en retard.
+    const memeMotDePasse = error &&
+      (error.code === "same_password" || /different from the old password/i.test(error.message || ""));
+
+    if (error && !memeMotDePasse) {
       messageEl.textContent = error.message || "Une erreur est survenue. Réessayez.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;

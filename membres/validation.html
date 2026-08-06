@@ -128,6 +128,10 @@
 
   <h2>Membres</h2>
   <p class="section-note">Comptes approuvés : activation, désactivation et réinitialisation du mot de passe.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <button class="btn-sm btn-outline-sm" onclick="exporterMembresExcel()">⬇ Exporter en Excel</button>
+    <button class="btn-sm btn-outline-sm" onclick="exporterMembresPdf()">⬇ Exporter en PDF</button>
+  </div>
   <div class="search-wrap">
     <input type="text" class="search-input" id="memberSearchInput" placeholder="Rechercher un nom, un e-mail, une ville, une spécialité…" oninput="onMemberSearch()">
     <span class="search-icon" id="memberSearchIcon">🔍</span>
@@ -156,6 +160,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<!-- Export de la base des membres : tableur (SheetJS) et PDF (jsPDF + AutoTable). -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script>
   let currentUserId = null;
   let isSuperAdmin = false;
@@ -716,6 +724,64 @@
     const input = document.getElementById('resetLinkInput-' + memberId);
     input.select();
     navigator.clipboard.writeText(input.value).then(() => alert('Lien copié.'));
+  }
+
+  // ===== Export de la base des membres (Excel / PDF) =====
+  // Toujours la liste complète des membres approuvés, indépendamment de la
+  // recherche en cours : un export partiel silencieux serait un piège.
+  function membresPourExport() {
+    const liste = [...allApprovedMembers].sort((a, b) =>
+      String(a.full_name || a.email).localeCompare(String(b.full_name || b.email), 'fr', { sensitivity: 'base' }));
+    return liste.map(p => ({
+      'Titre': p.title || '',
+      'Prénom': p.first_name || '',
+      'Nom': p.last_name || '',
+      'Téléphone': p.phone || '',
+      'E-mail': p.email || '',
+      'Domaine': domainLabel(p) || '',
+      'Spécialité': p.specialty || '',
+      'Localité': p.city || '',
+      "Année d'adhésion": p.member_since || '',
+      'Fin de validité carte': p.card_valid_until || '',
+      'N° carte': p.legacy_card_number || '',
+      'Rôle': roleLabel(p.role) || '',
+      'Compte': p.is_active === false ? 'Désactivé' : 'Actif',
+      'Inscrit le': p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
+    }));
+  }
+
+  function exporterMembresExcel() {
+    const lignes = membresPourExport();
+    if (lignes.length === 0) { alert('Aucun membre à exporter.'); return; }
+    const ws = XLSX.utils.json_to_sheet(lignes);
+    // Largeur de chaque colonne ajustée à son contenu le plus long.
+    ws['!cols'] = Object.keys(lignes[0]).map(k => ({
+      wch: Math.min(40, Math.max(k.length, ...lignes.map(l => String(l[k]).length)) + 2),
+    }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Membres');
+    XLSX.writeFile(wb, 'membres-amstc-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  }
+
+  function exporterMembresPdf() {
+    const lignes = membresPourExport();
+    if (lignes.length === 0) { alert('Aucun membre à exporter.'); return; }
+    const doc = new jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const dateStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    doc.setFontSize(13);
+    doc.text('AMSTC - Base des membres', 14, 12);
+    doc.setFontSize(9);
+    doc.setTextColor(110);
+    doc.text(lignes.length + ' membre(s) approuvé(s) - export du ' + dateStr, 14, 18);
+    doc.autoTable({
+      startY: 22,
+      head: [Object.keys(lignes[0])],
+      body: lignes.map(l => Object.values(l)),
+      styles: { fontSize: 6.5, cellPadding: 1.2 },
+      headStyles: { fillColor: [6, 68, 28] },
+      margin: { left: 8, right: 8 },
+    });
+    doc.save('membres-amstc-' + new Date().toISOString().slice(0, 10) + '.pdf');
   }
 
   async function handleAction(action, id, email, name) {
