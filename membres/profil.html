@@ -298,8 +298,10 @@
           </div>
         </div>
         <div class="form-grid">
-          <div class="form-group"><label>Titre</label>
-            <select id="eTitle">
+          <!-- Le titre occupe seul la première ligne (largeur bornée pour ne
+               pas étirer un choix de deux lettres sur tout l'écran). -->
+          <div class="form-group full"><label>Titre</label>
+            <select id="eTitle" style="max-width:220px;">
               <option value="">-</option>
               <option value="Dr">Dr</option>
               <option value="Pr">Pr</option>
@@ -308,7 +310,6 @@
               <option value="Me">Me</option>
             </select>
           </div>
-          <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
           <div class="form-group"><label>Prénom</label><input id="eFirstName" type="text"></div>
           <div class="form-group"><label>Nom</label><input id="eLastName" type="text"></div>
           <div class="form-group">
@@ -323,6 +324,7 @@
               <option value="autre">Autres à préciser</option>
             </select>
           </div>
+          <div class="form-group"><label>Téléphone</label><input id="ePhone" type="text" placeholder="+221 77 000 0000"></div>
           <div class="form-group" id="domainAutreGroup" style="display:none;"><label>Précisez</label><input id="eDomainAutre" type="text"></div>
           <div class="form-group full" id="specialtyGroup" style="display:none;">
             <label>Spécialité</label>
