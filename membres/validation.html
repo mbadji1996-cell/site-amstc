@@ -162,7 +162,10 @@
   let unclaimedCards = [];
   let allApprovedMembers = [];
 
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  // String() est indispensable : esc() reçoit aussi des nombres (années,
+  // numéros), et (2017).replace n'existe pas - l'exception interrompait
+  // alors tout le rendu de la page, liste des membres comprise.
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   // Recherche insensible à la casse et aux accents (même convention que
   // assets/js/site-search.js et membres/annuaire.html).
   function normalize(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
@@ -299,7 +302,16 @@
       supabaseClient.rpc("member_since_requests_pending"),
     ]);
     unclaimedCards = unclaimedRes.data || [];
-    renderYearRequests(yearReqRes.data || [], yearReqRes.error);
+
+    // Isolé : cette section est secondaire, et une erreur de rendu ici a
+    // déjà fait disparaître la liste des membres - ce qui rendait la page
+    // inutilisable pour une fonctionnalité d'appoint.
+    try {
+      renderYearRequests(yearReqRes.data || [], yearReqRes.error);
+    } catch (e) {
+      console.error("Rendu des demandes d'année d'adhésion :", e);
+      document.getElementById('yearRequestsSection').style.display = 'none';
+    }
 
     if (error) {
       pendingEl.innerHTML = '<p class="empty">Impossible de charger les comptes.</p>';

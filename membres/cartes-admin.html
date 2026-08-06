@@ -698,7 +698,9 @@
     const msg = document.getElementById('editRowMsg-' + id);
     const since = document.getElementById('editSince-' + id).value.trim();
 
-    const { error } = await supabaseClient.rpc('update_member_card', {
+    // Renvoie le nouveau numéro quand le changement d'année a déclenché une
+    // renumérotation (phase44), sinon null.
+    const { data: nouveauNumero, error } = await supabaseClient.rpc('update_member_card', {
       card_id: id,
       new_full_name: document.getElementById('editName-' + id).value,
       new_phone: document.getElementById('editPhone-' + id).value,
@@ -710,6 +712,15 @@
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;
       msg.className = 'assign-msg error';
+      return;
+    }
+
+    if (nouveauNumero) {
+      // Le numéro a changé sans que l'admin l'ait saisi : le lui dire avant
+      // de replier la ligne, sinon la modification passe inaperçue.
+      msg.textContent = "Enregistré. L'année d'adhésion ayant changé, la carte est renumérotée : " + nouveauNumero;
+      msg.className = 'assign-msg ok';
+      setTimeout(async () => { expandedEditId = null; await loadAll(); }, 2200);
       return;
     }
 
