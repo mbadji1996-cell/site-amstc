@@ -774,7 +774,9 @@
       const fin = Date.parse(epData.date_fin || '');
       const now = Date.now();
 
-      document.getElementById('evenement-phare').style.display = '';
+      // 'block' obligatoire : le CSS masque la section (display:none), et un
+      // style inline vide ne surclasse pas une règle de feuille de style.
+      document.getElementById('evenement-phare').style.display = 'block';
       document.getElementById('epTitle').textContent = epData.titre;
 
       const eyebrow = document.getElementById('epEyebrow');

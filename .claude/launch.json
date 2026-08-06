@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["-y", "http-server", "-p", "8080", "-c-1"],
       "port": 8080
+    },
+    {
+      "name": "consult-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "http-server", "C:/AMSTC/consultations-amstc", "-p", "8081", "-c-1"],
+      "port": 8081
     }
   ]
 }
