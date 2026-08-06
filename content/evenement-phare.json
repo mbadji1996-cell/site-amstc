@@ -19,6 +19,12 @@
       "lieu": "Tivaouane",
       "dates": "25 Août",
       "en_cours": false
+    },
+    {
+      "en_cours": false,
+      "nom": "Jour 3",
+      "lieu": "Tivaouane",
+      "dates": "26 Août"
     }
   ],
   "date_fin": "2026-08-27T08:00",
