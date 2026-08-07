@@ -71,6 +71,7 @@ with attendu(nom, type_objet) as (values
   ('check_max_pinned_announcements',   'fonction'),
   ('check_rate_limit',                 'fonction'),
   ('confirm_card_validity_payment',    'fonction'),
+  ('creer_carte_membre',               'fonction'),
   ('confirm_cotisation_payment',       'fonction'),
   ('confirm_member_card_claim',        'fonction'),
   ('forum_touch_topic',                'fonction'),

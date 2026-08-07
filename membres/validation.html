@@ -276,7 +276,8 @@
           <div class="member-actions">
             <button class="btn-sm btn-outline-sm" id="detailsBtn-${esc(p.id)}" onclick="toggleMemberDetails('${esc(p.id)}')">Détails</button>
             <button class="btn-sm btn-outline-sm" id="resetBtn-${esc(p.id)}" onclick="sendResetLink('${esc(p.id)}')">Réinitialiser le mot de passe</button>
-            ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>`}
+            ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>
+            <button class="btn-sm btn-approve" onclick="creerCarteMembre('${esc(p.id)}', '${esc(p.full_name || p.email)}')">Créer une carte</button>`}
             ${p.is_active === false
               ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
@@ -550,6 +551,26 @@
     // Rechargement complet : l'année et le numéro de carte du membre
     // apparaissent aussi dans la liste des membres, plus bas.
     setTimeout(loadLists, 1200);
+  }
+
+  // Créer une carte neuve pour un membre qui n'en a jamais eu : numéro
+  // généré automatiquement (année d'adhésion), carte rattachée et numéro
+  // reporté sur le profil - tout est fait par la fonction SQL (phase47).
+  async function creerCarteMembre(memberId, nom) {
+    if (!confirm("Créer une carte de membre pour " + nom + " ?\n\n" +
+      "Le numéro sera généré automatiquement (année d'adhésion) et la carte " +
+      "sera immédiatement rattachée à son compte.")) return;
+
+    const { data: numero, error } = await supabaseClient.rpc('creer_carte_membre', {
+      member_id: memberId,
+    });
+
+    if (error) {
+      alert("Création impossible : " + error.message);
+      return;
+    }
+    alert("Carte créée : " + numero);
+    loadLists();
   }
 
   function toggleAssignCard(memberId) {
