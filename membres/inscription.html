@@ -187,6 +187,10 @@
       <label for="city">Localité</label>
       <input type="text" id="city" name="city" placeholder="Dakar, Thiès…" autocomplete="address-level2">
 
+      <label for="memberSinceInput">Année d'adhésion</label>
+      <select id="memberSinceInput" name="memberSinceInput"></select>
+      <p id="memberSinceNote" style="font-size:0.78rem;color:var(--text-muted,#5B6E60);margin:-6px 0 0;line-height:1.4;"></p>
+
       <label for="password">Mot de passe</label>
       <div class="password-field">
         <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password">
@@ -222,11 +226,39 @@
   const choiceCard = document.getElementById("choiceCard");
   const signupCard = document.getElementById("signupCard");
 
+  // Année d'adhésion : elle détermine l'année du numéro de carte
+  // (AMSTC-<année>-<n°>). Un nouvel adhérent adhère par définition cette
+  // année : le champ est verrouillé. Un membre existant choisit son année.
+  const ANNEE_COURANTE = new Date().getFullYear();
+  (function () {
+    const sel = document.getElementById("memberSinceInput");
+    for (let a = 2014; a <= ANNEE_COURANTE; a++) {
+      const opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      sel.appendChild(opt);
+    }
+    sel.value = ANNEE_COURANTE;
+  })();
+
+  function ajusterAnneeAdhesion() {
+    const sel = document.getElementById("memberSinceInput");
+    const note = document.getElementById("memberSinceNote");
+    if (applicantType === "nouvel_adherent") {
+      sel.value = ANNEE_COURANTE;
+      sel.disabled = true;
+      note.textContent = "Votre adhésion démarre cette année : l'année est fixée automatiquement.";
+    } else {
+      sel.disabled = false;
+      note.textContent = "L'année de votre première adhésion à l'AMSTC : elle figurera dans le numéro de votre carte de membre.";
+    }
+  }
+
   document.querySelectorAll(".choice-option").forEach(btn => {
     btn.addEventListener("click", () => {
       applicantType = btn.dataset.type;
       choiceCard.style.display = "none";
       signupCard.style.display = "";
+      ajusterAnneeAdhesion();
     });
   });
 
@@ -398,7 +430,10 @@
       options: { data: {
         full_name: fullName, phone, title, first_name: firstName || null, last_name: lastName || null,
         domain, domain_autre: domainAutre, specialty, city,
-        applicant_type: applicantType || "membre_existant"
+        applicant_type: applicantType || "membre_existant",
+        // Année du numéro de carte ; verrouillée à l'année en cours pour un
+        // nouvel adhérent (voir ajusterAnneeAdhesion).
+        member_since: parseInt(document.getElementById("memberSinceInput").value, 10) || ANNEE_COURANTE
       } }
     });
 
