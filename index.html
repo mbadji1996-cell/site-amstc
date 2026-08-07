@@ -737,7 +737,10 @@
        (style + logique inclus) : consultations-amstc.org embarque le même,
        en lisant ce fichier JSON depuis amstc.org. Masqué si inactif. -->
   <style>
-    #evenement-phare{display:none;padding:34px 0 10px;}
+    /* 90px en haut ; en bas, la section .intro apporte son propre espace
+       (padding + en-tête), mesuré à 118px : la marge négative absorbe le
+       surplus pour retrouver les mêmes 90px de part et d'autre. */
+    #evenement-phare{display:none;padding:90px 0 0;margin-bottom:-28px;}
     .ep-card{position:relative;overflow:hidden;border-radius:22px;padding:36px 38px;color:var(--white);
       background:linear-gradient(115deg, var(--green-deep) 0%, #0A5A28 55%, var(--green) 100%);box-shadow:var(--shadow);}
     .ep-card::after{content:"";position:absolute;right:-70px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,0.06);}
@@ -757,6 +760,9 @@
     .ep-phase.encours{background:var(--white);color:var(--green-deep);}
     .ep-link{display:inline-block;margin-top:18px;font-weight:700;color:var(--gold);}
     .ep-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:18px;}
+    /* Grille vide (pas encore de données) : sa marge ne doit pas créer
+       d'espace fantôme sous le bandeau. */
+    .ep-stats:empty{display:none;}
     .ep-stat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px 14px;text-align:center;box-shadow:0 6px 18px rgba(6,68,28,0.06);}
     .ep-stat b{display:block;font-family:var(--display);font-size:1.9rem;color:var(--green-deep);line-height:1.1;}
     .ep-stat span{font-size:0.83rem;color:#5B6E60;}
