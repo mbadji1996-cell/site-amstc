@@ -60,6 +60,14 @@
     background:#FEF6E4; color:var(--gold-deep); padding:3px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;
   }
   .empty, .error{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+
+  /* Barre de recherche (même convention que l'annuaire des membres) */
+  .search-wrap{position:relative;max-width:520px;margin:0 0 26px;}
+  .search-input{width:100%;padding:12px 42px 12px 16px;border:1.5px solid var(--line, rgba(6,68,28,0.14));border-radius:999px;font-family:inherit;font-size:0.92rem;background:var(--surface,#fff);color:inherit;}
+  .search-input:focus{outline:none;border-color:var(--green,#17763B);}
+  .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#8A9E8F;pointer-events:none;}
+  .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
+  .search-clear.show{display:block;}
 </style>
 </head>
 <body>
@@ -72,6 +80,11 @@
   <a class="back" href="index.html">← Retour à l'accueil</a>
   <h1>Formation</h1>
   <noscript><p class="error">L'affichage des actualités nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un titre, un mot-clé…" oninput="onRecherche()">
+    <span class="search-icon" id="rechercheIcon">&#128269;</span>
+    <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
+  </div>
   <div id="grid" class="grid">
     <p class="empty">Chargement des articles…</p>
   </div>
@@ -84,6 +97,21 @@
     return String(s || "").replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
+  }
+
+
+  // ===== Recherche (insensible à la casse et aux accents) =====
+  let tousLesArticles = [];
+  function normaliser(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+  function onRecherche(){
+    const q = document.getElementById("rechercheInput").value.trim();
+    document.getElementById("rechercheIcon").style.display = q ? "none" : "";
+    document.getElementById("rechercheClear").classList.toggle("show", !!q);
+    afficherArticles();
+  }
+  function effacerRecherche(){
+    document.getElementById("rechercheInput").value = "";
+    onRecherche();
   }
 
   async function loadArticles() {
@@ -105,17 +133,26 @@
       restrictedTeasers = data || [];
     } catch (e) { /* aperçus réservés indisponibles, on continue quand même */ }
 
-    const items = [
+    tousLesArticles = [
       ...publicArticles.map(a => ({ ...a, _restricted: false, _date: a.date })),
       ...restrictedTeasers.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
     ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
 
-    if (items.length === 0) {
-      grid.innerHTML = '<p class="empty">Aucun article publié pour le moment.</p>';
+    afficherArticles();
+  }
+
+  function afficherArticles() {
+    const grid = document.getElementById("grid");
+    const q = normaliser(document.getElementById("rechercheInput").value.trim());
+    const visibles = q
+      ? tousLesArticles.filter(a => normaliser([a.title, a.excerpt].filter(Boolean).join(" ")).includes(q))
+      : tousLesArticles;
+    if (visibles.length === 0) {
+      grid.innerHTML = (q ? '<p class="empty">Aucun résultat pour cette recherche.</p>' : '<p class="empty">Aucun article publié pour le moment.</p>');
       return;
     }
 
-    grid.innerHTML = items.map(a => {
+    grid.innerHTML = visibles.map(a => {
       const href = a._restricted
         ? `membres/formation-reservee.html?id=${encodeURIComponent(a.id)}`
         : `formation.html?slug=${encodeURIComponent(a.slug)}`;

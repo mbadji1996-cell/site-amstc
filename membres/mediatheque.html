@@ -68,6 +68,14 @@
 
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+
+  /* Barre de recherche (même convention que l'annuaire des membres) */
+  .search-wrap{position:relative;max-width:520px;margin:22px 0 4px;}
+  .search-input{width:100%;padding:12px 42px 12px 16px;border:1.5px solid var(--line, rgba(6,68,28,0.14));border-radius:999px;font-family:inherit;font-size:0.92rem;background:var(--surface,#fff);color:inherit;}
+  .search-input:focus{outline:none;border-color:var(--green,#17763B);}
+  .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#8A9E8F;pointer-events:none;}
+  .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
+  .search-clear.show{display:block;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -105,6 +113,11 @@
 </div>
 
 <div class="wrap">
+  <div class="search-wrap" id="rechercheWrap" style="display:none;">
+    <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un album, une année…" oninput="onRecherche()">
+    <span class="search-icon" id="rechercheIcon">&#128269;</span>
+    <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
+  </div>
   <p class="empty" id="loadingMsg">Chargement…</p>
   <div id="pageContent" style="display:none;"></div>
 </div>
@@ -157,8 +170,41 @@
       (signed || []).forEach(s => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
     }
 
+    // Tout est chargé : on mémorise pour la recherche et on affiche.
+    etatMediatheque = { folders, countByFolder, signedByPath };
+    document.getElementById('rechercheWrap').style.display = '';
+    afficherAlbums();
+  }
+
+  // ===== Recherche d'albums (titre ou année, insensible aux accents) =====
+  let etatMediatheque = null;
+  function normaliser(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+  function onRecherche(){
+    const q = document.getElementById("rechercheInput").value.trim();
+    document.getElementById("rechercheIcon").style.display = q ? "none" : "";
+    document.getElementById("rechercheClear").classList.toggle("show", !!q);
+    afficherAlbums();
+  }
+  function effacerRecherche(){
+    document.getElementById("rechercheInput").value = "";
+    onRecherche();
+  }
+
+  function afficherAlbums() {
+    const content = document.getElementById("pageContent");
+    const { folders, countByFolder, signedByPath } = etatMediatheque;
+    const q = normaliser(document.getElementById("rechercheInput").value.trim());
+    const visibles = q
+      ? folders.filter(f => normaliser(f.title + " " + f.year).includes(q))
+      : folders;
+
+    if (visibles.length === 0) {
+      content.innerHTML = '<p class="empty">Aucun album ne correspond à votre recherche.</p>';
+      return;
+    }
+
     const byYear = {};
-    folders.forEach(f => { (byYear[f.year] = byYear[f.year] || []).push(f); });
+    visibles.forEach(f => { (byYear[f.year] = byYear[f.year] || []).push(f); });
     const years = Object.keys(byYear).sort((a, b) => b - a);
 
     content.innerHTML = years.map(year => `
