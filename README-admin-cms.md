@@ -64,3 +64,45 @@ Allez sur `https://amstc.org/admin`, cliquez **Login with GitHub**, autorisez l'
 ## Limite à connaître
 
 Les listes d'articles (page d'accueil + actualites.html) utilisent l'API publique de GitHub pour lister les fichiers, sans authentification. Elle est limitée à 60 requêtes/heure par visiteur - largement suffisant pour un site associatif, mais à garder en tête si le trafic grossit beaucoup. Si besoin plus tard, on pourra passer par une build statique (Eleventy/Hugo) qui génère les pages à l'avance.
+
+## Donner accès au CMS à d'autres personnes
+
+Aucune configuration à changer : la connexion à amstc.org/admin passe par
+GitHub, donc toute personne invitée sur le dépôt peut se connecter au CMS
+avec son propre compte et publier directement. Chaque personne est
+indépendante ; l'administrateur garde la supervision par l'historique
+(chaque publication porte le nom de son auteur) et peut retirer un accès
+à tout moment.
+
+### Inviter une personne
+
+1. La personne se crée un compte gratuit sur [github.com](https://github.com/signup)
+   (elle n'a besoin de rien d'autre - elle ne touchera jamais à GitHub directement).
+2. Vous, sur GitHub : dépôt `site-amstc` → **Settings** → **Collaborators**
+   → **Add people** → son nom d'utilisateur ou son e-mail → rôle **Write**.
+3. Elle reçoit un e-mail d'invitation et clique **Accept**.
+4. Elle va sur **amstc.org/admin** → **Se connecter avec GitHub** → autorise
+   l'application AMSTC Admin → elle peut créer et publier ses articles.
+
+### Retirer un accès
+
+Dépôt `site-amstc` → **Settings** → **Collaborators** → **Remove** en face
+de son nom. Effet immédiat : sa prochaine action dans le CMS sera refusée.
+
+### Suivre qui a publié quoi
+
+- [github.com/mbadji1996-cell/site-amstc/commits/main](https://github.com/mbadji1996-cell/site-amstc/commits/main) :
+  chaque publication est un commit signé du nom de son auteur.
+- Pour annuler une publication : ouvrez le commit fautif → **Revert**, ou
+  demandez à l'assistant de le faire.
+
+### Limite à connaître
+
+Le rôle **Write** donne accès en écriture à TOUT le dépôt, pas seulement
+aux contenus du CMS : une personne invitée pourrait techniquement modifier
+le code du site en passant par GitHub directement. Avec une petite équipe
+de confiance c'est le compromis normal ; n'invitez que des personnes à qui
+vous confieriez le site. Si un jour il faut un vrai cloisonnement (les
+rédacteurs proposent, vous validez), le CMS a un mode « editorial
+workflow » qui transforme leurs publications en brouillons à approuver -
+demandez à l'assistant de l'activer.
