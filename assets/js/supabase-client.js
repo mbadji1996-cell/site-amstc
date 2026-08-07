@@ -50,6 +50,16 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
     window.location.href = redirectTo;
     return null;
   }
+  // Profil incomplet (photo exclue) : l'espace membres est verrouillé tant
+  // que les informations de base manquent - direction la fiche profil.
+  // Mêmes champs exigés que l'écran de complétion d'inscription.html.
+  const incomplet = !String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
+    || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
+    || !String(profile.city || "").trim();
+  if (incomplet && !window.location.pathname.endsWith("profil.html")) {
+    window.location.href = "profil.html?completer=1";
+    return null;
+  }
   return profile;
 }
 

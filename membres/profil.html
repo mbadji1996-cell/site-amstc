@@ -475,6 +475,16 @@
       toggleAccordion(openSection);
       document.getElementById('body-' + openSection).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    // Renvoyé ici par le verrou de l'espace membres (supabase-client.js) :
+    // informations de base manquantes. On ouvre la fiche et on l'explique.
+    if (new URLSearchParams(window.location.search).get('completer')) {
+      toggleAccordion('info');
+      const msg = document.getElementById('editMsg');
+      msg.textContent = "Complétez les informations manquantes (prénom, nom, téléphone, domaine, localité) puis enregistrez : l'accès aux autres pages de l'espace membres sera alors rétabli.";
+      msg.className = 'form-msg error';
+      document.getElementById('body-info').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   })();
 
   /* ===== Accordions ===== */

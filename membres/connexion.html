@@ -162,6 +162,16 @@
       await signOut();
       return false;
     }
+    // Profil incomplet (compte Google, formulaire interrompu) : direction
+    // l'écran de complétion obligatoire d'inscription.html, avant tout
+    // message d'attente - sinon un compte Google en attente serait
+    // déconnecté sans jamais pouvoir compléter ses informations.
+    if (!String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
+      || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
+      || !String(profile.city || "").trim()) {
+      window.location.href = "inscription.html";
+      return true;
+    }
     if (profile.status === "pending") {
       showMessage("Votre compte est en attente de validation par un administrateur. Vous recevrez un accès dès approbation.", "pending", msgEl);
       await signOut();

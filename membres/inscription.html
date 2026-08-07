@@ -109,6 +109,74 @@
     </button>
   </div>
 
+  <!-- Complétion obligatoire : affichée à la place de tout le reste quand
+       une session existe avec un profil incomplet (compte Google, ou
+       formulaire interrompu). Impossible à contourner : pas de lien de
+       sortie, l'enregistrement est la seule issue. -->
+  <div class="card" id="completionCard" style="display:none;">
+    <h2 style="font-family:var(--display);font-size:1.15rem;color:var(--text-heading);margin-bottom:6px;">Complétez votre inscription</h2>
+    <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:18px;">
+      Il ne manque que quelques informations pour que l'administration puisse valider votre compte.
+    </p>
+
+    <label>Vous êtes… *</label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer;">
+        <input type="radio" name="cType" value="membre_existant" checked onchange="cAjusterAnnee()"> Déjà membre
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer;">
+        <input type="radio" name="cType" value="nouvel_adherent" onchange="cAjusterAnnee()"> Nouvel adhérent
+      </label>
+    </div>
+
+    <label for="cTitle">Titre</label>
+    <select id="cTitle">
+      <option value="">-</option>
+      <option value="Dr">Dr</option>
+      <option value="Pr">Pr</option>
+      <option value="M.">M.</option>
+      <option value="Mme">Mme</option>
+      <option value="Me">Me</option>
+    </select>
+
+    <label for="cFirstName">Prénom *</label>
+    <input type="text" id="cFirstName" autocomplete="given-name">
+
+    <label for="cLastName">Nom *</label>
+    <input type="text" id="cLastName" autocomplete="family-name">
+
+    <label for="cPhone">Téléphone (WhatsApp) *</label>
+    <input type="text" id="cPhone" placeholder="+221 77 000 0000" autocomplete="tel">
+
+    <label for="cDomain">Domaine *</label>
+    <select id="cDomain" onchange="document.getElementById('cDomainAutreGroup').style.display = this.value === 'autre' ? '' : 'none';">
+      <option value="" disabled selected>- Choisir -</option>
+      <option value="medecine">Médecine</option>
+      <option value="pharmacie">Pharmacie</option>
+      <option value="odontologie">Odontologie</option>
+      <option value="soins_infirmiers">Soins infirmiers</option>
+      <option value="soins_obstetricaux">Soins obstétricaux</option>
+      <option value="autre">Autres à préciser</option>
+    </select>
+    <div id="cDomainAutreGroup" style="display:none;">
+      <label for="cDomainAutre">Précisez votre domaine</label>
+      <input type="text" id="cDomainAutre">
+    </div>
+
+    <label for="cSpecialty">Spécialité (facultatif)</label>
+    <input type="text" id="cSpecialty" placeholder="Ex : Médecine générale, Officine…">
+
+    <label for="cCity">Localité *</label>
+    <input type="text" id="cCity" placeholder="Dakar, Thiès…" autocomplete="address-level2">
+
+    <label for="cMemberSince">Année d'adhésion</label>
+    <select id="cMemberSince"></select>
+    <p id="cMemberSinceNote" style="font-size:0.78rem;color:var(--text-muted,#5B6E60);margin:-6px 0 0;line-height:1.4;"></p>
+
+    <button class="btn btn-primary" id="cSaveBtn" type="button" onclick="enregistrerCompletion()" style="margin-top:18px;">Enregistrer et continuer</button>
+    <div class="form-message" id="cMessage"></div>
+  </div>
+
   <div class="card" id="signupCard" style="display:none;">
     <a href="#" class="change-choice" id="changeChoiceLink">← Changer mon choix</a>
 
@@ -364,16 +432,115 @@
     window.location.href = "index.html";
   }
 
+  // ===== Complétion obligatoire du profil =====
+  // Champs exigés avant validation par l'admin (photo exclue) - mêmes
+  // champs que le verrou d'entrée de l'espace membres (supabase-client.js).
+  function profilIncomplet(p) {
+    return !String(p.first_name || "").trim() || !String(p.last_name || "").trim()
+      || !String(p.phone || "").trim() || !String(p.domain || "").trim()
+      || !String(p.city || "").trim();
+  }
+
+  function cAjusterAnnee() {
+    const type = document.querySelector('input[name="cType"]:checked').value;
+    const sel = document.getElementById("cMemberSince");
+    const note = document.getElementById("cMemberSinceNote");
+    if (type === "nouvel_adherent") {
+      sel.value = ANNEE_COURANTE;
+      sel.disabled = true;
+      note.textContent = "Votre adhésion démarre cette année : l'année est fixée automatiquement.";
+    } else {
+      sel.disabled = false;
+      note.textContent = "L'année de votre première adhésion : elle figurera dans le numéro de votre carte de membre.";
+    }
+  }
+
+  function montrerCompletion(p) {
+    choiceCard.style.display = "none";
+    signupCard.style.display = "none";
+    const sel = document.getElementById("cMemberSince");
+    if (sel.options.length === 0) {
+      for (let a = 2014; a <= ANNEE_COURANTE; a++) {
+        const opt = document.createElement("option");
+        opt.value = a; opt.textContent = a;
+        sel.appendChild(opt);
+      }
+    }
+    // Pré-remplissage avec ce que Google (ou le formulaire) a déjà fourni.
+    document.getElementById("cTitle").value = p.title || "";
+    document.getElementById("cFirstName").value = p.first_name || (p.full_name ? p.full_name.split(" ")[0] : "");
+    document.getElementById("cLastName").value = p.last_name || (p.full_name ? p.full_name.split(" ").slice(1).join(" ") : "");
+    document.getElementById("cPhone").value = p.phone || "";
+    if (p.domain) {
+      document.getElementById("cDomain").value = p.domain;
+      document.getElementById("cDomainAutreGroup").style.display = p.domain === "autre" ? "" : "none";
+    }
+    document.getElementById("cDomainAutre").value = p.domain_autre || "";
+    document.getElementById("cSpecialty").value = p.specialty || "";
+    document.getElementById("cCity").value = p.city || "";
+    sel.value = p.member_since || ANNEE_COURANTE;
+    if (p.applicant_type === "nouvel_adherent") {
+      document.querySelector('input[name="cType"][value="nouvel_adherent"]').checked = true;
+    }
+    cAjusterAnnee();
+    document.getElementById("completionCard").style.display = "";
+  }
+
+  async function enregistrerCompletion() {
+    const btn = document.getElementById("cSaveBtn");
+    const msg = document.getElementById("cMessage");
+    msg.className = "form-message";
+
+    const domaine = document.getElementById("cDomain").value;
+    const champs = {
+      p_title: document.getElementById("cTitle").value || null,
+      p_first_name: document.getElementById("cFirstName").value.trim(),
+      p_last_name: document.getElementById("cLastName").value.trim(),
+      p_phone: document.getElementById("cPhone").value.trim(),
+      p_domain: domaine || null,
+      p_domain_autre: document.getElementById("cDomainAutre").value.trim() || null,
+      p_specialty: document.getElementById("cSpecialty").value.trim() || null,
+      p_city: document.getElementById("cCity").value.trim(),
+      p_member_since: parseInt(document.getElementById("cMemberSince").value, 10) || ANNEE_COURANTE,
+      p_applicant_type: document.querySelector('input[name="cType"]:checked').value,
+    };
+    if (!champs.p_first_name || !champs.p_last_name || !champs.p_phone || !champs.p_domain || !champs.p_city) {
+      showMessage("Remplissez tous les champs marqués d'une étoile.", "error", msg);
+      return;
+    }
+
+    btn.disabled = true;
+    const { error } = await supabaseClient.rpc("completer_mon_profil", champs);
+    if (error) {
+      showMessage("Erreur : " + error.message, "error", msg);
+      btn.disabled = false;
+      return;
+    }
+
+    // Profil complet : reprendre le circuit normal (message d'attente ou
+    // entrée dans l'espace membres selon le statut du compte).
+    document.getElementById("completionCard").style.display = "none";
+    signupCard.style.display = "";
+    const profile = await getCurrentProfile();
+    await handleProfile(profile, googleMessageEl);
+  }
+
   // Après un redirect OAuth, Supabase remet la session dans l'URL.
   // On vérifie dès le chargement de la page.
   (async () => {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) return;
+    const profile = await getCurrentProfile();
+    // Profil incomplet (compte Google, formulaire interrompu) : l'écran de
+    // complétion remplace tout, avant même le message d'attente.
+    if (profile && profilIncomplet(profile)) {
+      montrerCompletion(profile);
+      return;
+    }
     // Retour d'un redirect OAuth Google : on saute l'écran de choix pour que
     // le message de statut (googleMessageEl, dans signupCard) soit visible.
     choiceCard.style.display = "none";
     signupCard.style.display = "";
-    const profile = await getCurrentProfile();
     await handleProfile(profile, googleMessageEl);
   })();
 
