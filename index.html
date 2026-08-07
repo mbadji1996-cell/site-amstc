@@ -827,6 +827,16 @@
       document.getElementById('evenement-phare').style.display = 'block';
       document.getElementById('epTitle').textContent = epData.titre;
 
+      // Image de fond choisie dans le CMS : posée derrière le dégradé vert
+      // (assombri côté texte, plus transparent à droite) pour rester lisible.
+      const carte = document.querySelector('#evenement-phare .ep-card');
+      if (epData.image) {
+        const urlImage = String(epData.image).replace(/"/g, '%22');
+        carte.style.background = 'linear-gradient(100deg, rgba(6,68,28,0.96) 0%, rgba(8,74,32,0.88) 45%, rgba(23,118,59,0.55) 100%), url("' + urlImage + '") center/cover no-repeat';
+      } else {
+        carte.style.background = '';
+      }
+
       const eyebrow = document.getElementById('epEyebrow');
       const eyebrowText = document.getElementById('epEyebrowText');
       const sub = document.getElementById('epSub');

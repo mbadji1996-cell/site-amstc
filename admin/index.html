@@ -35,5 +35,33 @@
     CMS.registerPreviewStyle('/admin/preview.css');
     CMS.init();
   </script>
+  <script>
+    // ===== Bouton OK sur le calendrier des champs date/heure =====
+    // Le sélecteur de date de Decap (bibliothèque MUI) se ferme uniquement en
+    // cliquant à côté - déroutant : on ne sait pas si la date est validée.
+    // Or elle l'est dès le clic sur un jour ; ce bouton ne fait donc que
+    // fermer le calendrier, mais rend la validation explicite.
+    // Repose sur les classes MUI de decap-cms 3.14.1 (version épinglée
+    // ci-dessus) : à re-tester si la version du CMS change un jour.
+    new MutationObserver(function () {
+      document.querySelectorAll('.MuiPickersLayout-root:not([data-ok-ajoute])').forEach(function (popup) {
+        popup.setAttribute('data-ok-ajoute', '1');
+        var ok = document.createElement('button');
+        ok.type = 'button';
+        ok.textContent = 'OK';
+        ok.style.cssText = 'margin:8px;padding:6px 22px;border:none;border-radius:6px;'
+          + 'background:#1976d2;color:#fff;font-weight:700;font-size:14px;cursor:pointer;';
+        ok.addEventListener('click', function () {
+          // Échap ferme le calendrier en conservant la valeur déjà écrite
+          // dans le champ ; le clic-à-côté simulé sert de repli.
+          popup.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+          document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        });
+        var barre = popup.querySelector('.MuiDialogActions-root');
+        if (barre) barre.appendChild(ok); else popup.appendChild(ok);
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  </script>
 </body>
 </html>

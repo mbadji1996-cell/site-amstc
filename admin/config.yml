@@ -483,6 +483,7 @@ collections:
           - { label: "Afficher la section", name: "actif", widget: "boolean", default: false, hint: "Décochez pour masquer entièrement le bandeau sur les deux sites." }
           - { label: "Titre", name: "titre", widget: "string", hint: "Ex : Caravane Nationale 2026 - Phase 1, Mbour" }
           - { label: "Sous-titre (avant l'ouverture)", name: "sous_titre", widget: "text", hint: "Ex : Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main." }
+          - { label: "Image de fond (facultatif)", name: "image", widget: "image", required: false, hint: "Affichée derrière le bandeau sur les deux sites, assombrie automatiquement pour garder le texte lisible." }
           - { label: "Date et heure d'ouverture", name: "date_debut", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Le compte à rebours vise ce moment, puis la section passe en EN DIRECT." }
           - { label: "Date et heure de clôture", name: "date_fin", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Après ce moment, la section affiche le bilan final." }
           - { label: "Retirer de l'accueil le (facultatif)", name: "date_retrait", widget: "datetime", format: "YYYY-MM-DDTHH:mm", required: false, default: "", hint: "Laissez vide pour un retrait automatique 7 jours après la clôture." }
@@ -493,9 +494,11 @@ collections:
             required: false
             summary: "{{fields.nom}} · {{fields.lieu}}"
             fields:
-              - { label: "Nom", name: "nom", widget: "string", hint: "Ex : Phase 1" }
-              - { label: "Lieu", name: "lieu", widget: "string", hint: "Ex : Mbour" }
-              - { label: "Dates (texte libre)", name: "dates", widget: "string", hint: "Ex : 19-24 août" }
+              # Tous facultatifs : la pastille n'affiche que ce qui est rempli
+              # (nom · lieu · dates, séparés par des points médians).
+              - { label: "Nom", name: "nom", widget: "string", required: false, hint: "Ex : Phase 1" }
+              - { label: "Lieu", name: "lieu", widget: "string", required: false, hint: "Ex : Mbour" }
+              - { label: "Dates (texte libre)", name: "dates", widget: "string", required: false, hint: "Ex : 19-24 août" }
               - { label: "Phase en cours / mise en avant", name: "en_cours", widget: "boolean", default: false }
           - { label: "Campagne consultations liée (ID)", name: "campagne_id", widget: "string", required: false, hint: "Collez l'ID de la campagne depuis consultations-amstc.org (onglet Campagnes, bouton « Copier l'ID »). Les chiffres du direct (malades consultés, âge moyen, sexes, ordonnances) viennent alors automatiquement des données de cette campagne." }
           - { label: "Lien En savoir plus (facultatif)", name: "lien", widget: "string", required: false, hint: "Ex : etape.html?slug=... ou une page externe." }
