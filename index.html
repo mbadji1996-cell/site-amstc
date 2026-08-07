@@ -876,7 +876,9 @@
     // ou que la fonction SQL ne répond pas.
     function epRenderStats(){
       const grid = document.getElementById('epStats');
-      if (!epStatsData) { grid.innerHTML = ''; return; }
+      // Pas de campagne liée, pas de réponse, ou aucune consultation encore
+      // enregistrée : la barre reste masquée plutôt que d'aligner des zéros.
+      if (!epStatsData || !(epStatsData.malades > 0)) { grid.innerHTML = ''; return; }
       const d = epStatsData;
       const total = (d.hommes || 0) + (d.femmes || 0);
       const repartition = total
