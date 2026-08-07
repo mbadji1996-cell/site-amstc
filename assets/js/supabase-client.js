@@ -7,7 +7,20 @@
 const SUPABASE_URL = "https://api.amstc.org";
 const SUPABASE_ANON_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg3MTA2MCwiZXhwIjo0OTQwNTQ0NjYwLCJyb2xlIjoiYW5vbiJ9.At_rHwK9bgTh4eoh1ykkLGaPiVXpZBpXxtgDb_allaM";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Session en sessionStorage (et non localStorage, le défaut) : fermer
+// l'onglet déconnecte réellement. Un membre sur un poste partagé avait
+// retrouvé son compte ouvert après avoir fermé la page. Contrepartie
+// assumée : chaque nouvel onglet demande une connexion.
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { storage: window.sessionStorage },
+});
+
+// Purge les sessions déjà enregistrées en localStorage par l'ancienne
+// configuration : sans cela, elles resteraient valides indéfiniment.
+try {
+  localStorage.removeItem("sb-api-auth-token");
+  localStorage.removeItem("sb-api-auth-token-user");
+} catch (e) { /* stockage indisponible */ }
 
 // ===== Aide partagée entre les pages membres/*.html =====
 
