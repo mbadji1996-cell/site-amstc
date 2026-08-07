@@ -695,26 +695,22 @@
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     try {
       const logo = await chargerImage('../assets/logo-mark-sm.png');
-      const lh = 140 * s, lw = lh * (logo.naturalWidth / logo.naturalHeight);
-      ctx.drawImage(logo, 585 * s - lw / 2, 48 * s, lw, lh);
+      const lh = 128 * s, lw = lh * (logo.naturalWidth / logo.naturalHeight);
+      ctx.drawImage(logo, 640 * s - lw / 2, 52 * s, lw, lh);
     } catch (e) { /* logo indisponible : la carte reste valable */ }
 
-    // Pilule CARTE DE MEMBRE (dessinée avant la photo, qui la chevauche)
-    pilule(ctx, 300 * s, 222 * s, 632 * s, 82 * s, CARTE.VERT);
+    // Pilule CARTE DE MEMBRE (à droite de la photo, sans chevauchement)
+    pilule(ctx, 370 * s, 198 * s, 580 * s, 74 * s, CARTE.VERT);
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 ' + (52 * s) + 'px Sora, Inter, sans-serif';
+    ctx.font = '800 ' + (50 * s) + 'px Sora, Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('CARTE DE MEMBRE', 616 * s, 281 * s);
+    ctx.fillText('CARTE DE MEMBRE', 660 * s, 252 * s);
 
-    // Photo ronde cerclée d'un dégradé + deux points décoratifs
-    const cx = 200 * s, cy = 270 * s, R = 112 * s;
+    // Photo ronde cerclée d'un dégradé
+    const cx = 205 * s, cy = 220 * s, R = 118 * s;
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
     ctx.strokeStyle = degrade(ctx, cx, cy - R, cx, cy + R);
-    ctx.lineWidth = 9 * s; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx + 100 * s, cy - 92 * s, 8 * s, 0, Math.PI * 2);
-    ctx.fillStyle = CARTE.OR; ctx.fill();
-    ctx.beginPath(); ctx.arc(cx + 118 * s, cy + 78 * s, 8 * s, 0, Math.PI * 2);
-    ctx.fillStyle = '#17763B'; ctx.fill();
+    ctx.lineWidth = 10 * s; ctx.stroke();
 
     const rPhoto = R - 9 * s;
     ctx.save();
@@ -743,7 +739,7 @@
     ctx.restore();
 
     // QR code dans un carré arrondi
-    const qx = 118 * s, qy = 408 * s, qc = 168 * s;
+    const qx = 127 * s, qy = 391 * s, qc = 170 * s;
     ctx.beginPath(); ctx.roundRect(qx, qy, qc, qc, 22 * s);
     ctx.strokeStyle = degrade(ctx, qx, qy, qx + qc, qy + qc);
     ctx.lineWidth = 4 * s; ctx.stroke();
@@ -754,34 +750,27 @@
       } catch (e) { /* QR indisponible */ }
     }
 
-    // Champs identité
+    // Champs identité (5 lignes, validité incluse - conforme au template)
+    const validite = p.card_valid_until
+      ? Math.min(currentYear, p.card_valid_until) + ' - ' + p.card_valid_until
+      : '-';
     const champs = [
       ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-')],
       ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase()],
       ['Filière : ', domainLabelCarte(p)],
       ['Tel : ', p.phone || '-'],
+      ['Validité : ', validite],
     ];
     ctx.textAlign = 'left';
-    let y = 348 * s;
+    let y = 330 * s;
     for (const [label, valeur] of champs) {
       ctx.fillStyle = CARTE.NOIR;
       ctx.font = '400 ' + (35 * s) + 'px Sora, Inter, sans-serif';
-      ctx.fillText(label, 352 * s, y);
+      ctx.fillText(label, 370 * s, y);
       const lw = ctx.measureText(label).width;
       ctx.font = '800 ' + (37 * s) + 'px Sora, Inter, sans-serif';
-      ctx.fillText(String(valeur), 352 * s + lw, y);
-      y += 64 * s;
-    }
-
-    // Pilule de validité, à cheval sur le bord bas (comme le template)
-    if (p.card_valid_until) {
-      const texte = Math.min(currentYear, p.card_valid_until) + ' - ' + p.card_valid_until;
-      ctx.font = '800 ' + (30 * s) + 'px Sora, Inter, sans-serif';
-      const tw = ctx.measureText(texte).width;
-      const pw = tw + 56 * s, ph = 46 * s, px = (W - pw) / 2, py = H - 11 * s - ph / 2 - 12 * s;
-      pilule(ctx, px, py, pw, ph, '#4C9A3F');
-      ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center';
-      ctx.fillText(texte, W / 2, py + ph / 2 + 11 * s);
+      ctx.fillText(String(valeur), 370 * s + lw, y);
+      y += 62 * s;
     }
 
     return canvas;
