@@ -281,6 +281,9 @@
             ${p.is_active === false
               ? `<button class="btn-sm btn-approve" data-action="activate" data-id="${esc(p.id)}">Réactiver</button>`
               : `<button class="btn-sm btn-warning" data-action="deactivate" data-id="${esc(p.id)}">Désactiver</button>`}
+            ${(isSuperAdmin && p.is_active === false && p.role !== "super_admin" && p.id !== currentUserId)
+              ? `<button class="btn-sm btn-danger-strong" data-action="delete-member" data-id="${esc(p.id)}" data-name="${esc(p.full_name || p.email)}">Supprimer définitivement</button>`
+              : ''}
           </div>
           <div class="assign-inline" id="assign-${esc(p.id)}" style="display:none;"></div>
           <div class="assign-inline" id="resetBox-${esc(p.id)}" style="display:none;"></div>
@@ -430,10 +433,17 @@
         </div>
       `).join("");
 
-    document.querySelectorAll("button[data-action]").forEach(btn => {
-      btn.addEventListener("click", () => handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email, btn.dataset.name));
-    });
   }
+
+  // Délégation : un seul écouteur pour tous les boutons d'action, présents
+  // et futurs. L'ancien câblage (posé une fois en fin de chargement) mourait
+  // dès qu'une liste se réaffichait - recherche, enregistrement d'une
+  // année... - et « Désactiver » ne répondait plus, sans erreur visible.
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email, btn.dataset.name);
+  });
 
   function toggleMemberDetails(memberId) {
     const box = document.getElementById('details-' + memberId);
