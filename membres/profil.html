@@ -750,6 +750,13 @@
       } catch (e) { /* QR indisponible */ }
     }
 
+    // Numéro de carte sous le QR
+    ctx.fillStyle = CARTE.VERT_FONCE;
+    ctx.font = '700 ' + (24 * s) + 'px Sora, Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(cardNumberFor(p), qx + qc / 2, qy + qc + 36 * s);
+    ctx.textAlign = 'left';
+
     // Champs identité (5 lignes, validité incluse - conforme au template)
     const validite = p.card_valid_until
       ? Math.min(currentYear, p.card_valid_until) + ' - ' + p.card_valid_until
