@@ -45,39 +45,15 @@
   .back:hover{opacity:0.75;}
   .page-title{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:600;color:var(--text-heading);}
 
-  /* ===== CARTE MEMBRE ===== */
-  .member-card{
-    position:relative;overflow:hidden;border-radius:20px;padding:26px 28px 24px;margin-bottom:20px;
-    background:linear-gradient(135deg, #063318 0%, #06441C 45%, #0A6130 100%);
-    box-shadow:0 12px 40px rgba(6,68,28,0.35);
-  }
-  .mc-deco{position:absolute;border-radius:50%;opacity:0.07;}
-  .mc-deco-1{width:220px;height:220px;background:var(--gold);top:-80px;right:-60px;}
-  .mc-deco-2{width:120px;height:120px;background:var(--surface);bottom:-40px;left:-30px;}
-
-  .mc-top{display:grid;grid-template-columns:auto 1fr auto;align-items:center;margin-bottom:14px;gap:10px;}
-  .mc-logo{height:36px;width:auto;filter:brightness(0) invert(1);flex-shrink:0;}
-  .mc-title-label{font-family:var(--display);font-size:1.1rem;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.02em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mc-qr-wrap{background:var(--surface);border-radius:8px;padding:5px;width:76px;height:76px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-  #mcQr{width:100%;height:100%;}
-
-  .mc-identity{display:flex;align-items:center;gap:16px;margin-bottom:16px;position:relative;}
-  .mc-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(248,183,24,0.4);}
-  .mc-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F5A000);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--text-heading);flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
-  .mc-name{font-family:var(--display);font-size:1.2rem;font-weight:700;color:var(--gold);letter-spacing:0.01em;line-height:1.25;}
-  .mc-domain{font-size:0.8rem;color:rgba(255,255,255,0.55);margin-top:2px;}
-
-  .mc-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;position:relative;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
-  .mc-field-label{font-family:var(--mono);font-size:0.56rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.35);margin-bottom:3px;}
-  .mc-field-val{font-size:0.83rem;color:rgba(255,255,255,0.85);font-weight:500;word-break:break-word;}
-  .mc-field-val.num{font-family:var(--mono);font-size:0.76rem;letter-spacing:0.04em;}
-  .mc-field-val.active{color:#5DCAA5;font-weight:700;}
-  .mc-field-val.warn{color:var(--gold);font-weight:600;}
-
-  .mc-status-pill{position:absolute;top:-38px;right:0;font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:999px;}
-  .mc-status-pill.active{background:rgba(29,158,117,0.25);color:#5DCAA5;border:1px solid rgba(29,158,117,0.3);}
-  .mc-status-pill.pending{background:rgba(248,183,24,0.2);color:var(--gold);border:1px solid rgba(248,183,24,0.25);}
-  .mc-status-pill.warn{background:rgba(178,59,59,0.2);color:#F58080;border:1px solid rgba(178,59,59,0.25);}
+  /* ===== CARTE MEMBRE (template officiel, dessinée sur canvas) ===== */
+  .member-card-neo{margin-bottom:20px;}
+  #mcCarteImg{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 12px 40px rgba(6,68,28,0.22);background:var(--surface);}
+  .mc-sous-carte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;padding:0 4px;}
+  .mc-sous-info{font-size:0.82rem;color:var(--text-muted);}
+  .mc-status-pill{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px;border-radius:999px;}
+  .mc-status-pill.active{background:#EAF3DE;color:#3B6D11;}
+  .mc-status-pill.pending{background:#FEF6E4;color:var(--gold-deep);}
+  .mc-status-pill.warn{background:#FDEEEE;color:#B23B3B;}
 
   /* ===== ACCORDIONS ===== */
   .section-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:14px;overflow:hidden;}
@@ -219,52 +195,14 @@
       <h1 class="page-title">Mon Profil & Adhésion</h1>
     </div>
 
-    <!-- Carte membre virtuelle -->
-    <div class="member-card">
-      <div class="mc-deco mc-deco-1"></div>
-      <div class="mc-deco mc-deco-2"></div>
-
-      <div class="mc-top">
-        <img class="mc-logo" src="../assets/logo-mark-sm.png" alt="AMSTC">
-        <p class="mc-title-label">Carte de membre</p>
-        <div class="mc-qr-wrap"><img id="mcQr" alt="QR code" style="width:100%;height:100%;object-fit:contain;"></div>
-      </div>
-
-      <div class="mc-identity">
-        <img class="mc-photo" id="mcPhoto" style="display:none;" alt="">
-        <div class="mc-avatar" id="mcAvatar">?</div>
-        <div>
-          <p class="mc-name" id="mcName">-</p>
-          <p class="mc-domain" id="mcDomain"></p>
-        </div>
-      </div>
-
-      <div class="mc-fields" style="position:relative;">
+    <!-- Carte membre : dessinée sur canvas d'après le template officiel
+         (assets + jsPDF partagent exactement le même rendu). -->
+    <div class="member-card-neo">
+      <img id="mcCarteImg" alt="Carte de membre AMSTC">
+      <div class="mc-sous-carte">
         <span class="mc-status-pill" id="mcStatusPill">…</span>
-        <div class="mc-field">
-          <p class="mc-field-label">N° Membre</p>
-          <p class="mc-field-val num" id="mcNumber">-</p>
-        </div>
-        <div class="mc-field">
-          <p class="mc-field-label">Membre depuis</p>
-          <p class="mc-field-val" id="mcSince">-</p>
-        </div>
-        <div class="mc-field">
-          <p class="mc-field-label">Téléphone</p>
-          <p class="mc-field-val" id="mcPhone">-</p>
-        </div>
-        <div class="mc-field">
-          <p class="mc-field-label">E-mail</p>
-          <p class="mc-field-val" id="mcEmail">-</p>
-        </div>
-        <div class="mc-field">
-          <p class="mc-field-label">Localité</p>
-          <p class="mc-field-val" id="mcCity">-</p>
-        </div>
-        <div class="mc-field">
-          <p class="mc-field-label">Validité de la carte</p>
-          <p class="mc-field-val" id="mcStatus">…</p>
-        </div>
+        <span class="mc-sous-info" id="mcStatus">…</span>
+        <span class="mc-sous-info" id="mcNumeroLigne"></span>
       </div>
     </div>
 
@@ -635,37 +573,11 @@
   }
 
   function renderProfile(p) {
-    const displayName = fullDisplayName(p);
-    const initials = (p.full_name || displayName).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-
-    document.getElementById('mcName').textContent = displayName;
-    document.getElementById('mcDomain').textContent = domainAndSpecialtyLabel(p);
-
-    const photoEl = document.getElementById('mcPhoto');
-    const avatarEl = document.getElementById('mcAvatar');
-    if (p.photo_url) {
-      // Photo introuvable (URL morte, ex-instance cloud d'avant migration) :
-      // retomber sur les initiales plutôt qu'afficher une image cassée.
-      photoEl.onerror = () => {
-        photoEl.style.display = 'none';
-        avatarEl.style.display = ''; avatarEl.textContent = initials;
-      };
-      photoEl.src = p.photo_url; photoEl.style.display = '';
-      avatarEl.style.display = 'none';
-    } else {
-      photoEl.style.display = 'none';
-      avatarEl.style.display = ''; avatarEl.textContent = initials;
-    }
-
-    document.getElementById('mcNumber').textContent = p.legacy_card_number
-      || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
-    document.getElementById('mcSince').textContent = p.member_since || currentYear;
-    document.getElementById('mcPhone').textContent = p.phone || '-';
-    document.getElementById('mcEmail').textContent = p.email || '-';
-    document.getElementById('mcCity').textContent = p.city || '-';
-
     renderCardValidityStatus(p);
-    renderQr(p);
+    document.getElementById('mcNumeroLigne').textContent = 'N° ' + cardNumberFor(p);
+    // Dessin asynchrone (photo, logo, QR à charger) : lancé sans attendre,
+    // l'image de la carte se met en place dès qu'elle est prête.
+    majCarteMembre(p);
     updateInfoSummary(p);
 
     document.getElementById('eTitle').value = p.title || '';
@@ -703,13 +615,13 @@
     const pill = document.getElementById('mcStatusPill');
     const cvu = p.card_valid_until;
     if (cvu && cvu >= currentYear) {
-      statusEl.textContent = 'Valide jusqu\'en ' + cvu; statusEl.className = 'mc-field-val active';
+      statusEl.textContent = 'Valide jusqu\'en ' + cvu;
       pill.textContent = '● Valide'; pill.className = 'mc-status-pill active';
     } else if (cvu) {
-      statusEl.textContent = 'Expirée (' + cvu + ')'; statusEl.className = 'mc-field-val warn';
+      statusEl.textContent = 'Expirée (' + cvu + ')';
       pill.textContent = '○ Expirée'; pill.className = 'mc-status-pill warn';
     } else {
-      statusEl.textContent = 'Non définie'; statusEl.className = 'mc-field-val warn';
+      statusEl.textContent = 'Validité non définie';
       pill.textContent = '○ Non définie'; pill.className = 'mc-status-pill warn';
     }
   }
@@ -723,10 +635,172 @@
   async function renderQr(p) {
     const text = `AMSTC | ${fullDisplayName(p)} | N° ${cardNumberFor(p)}`;
     try {
-      currentQrDataUrl = await QRCode.toDataURL(text, { width: 160, margin: 1, color: { dark: '#06441C', light: '#ffffff' } });
-      document.getElementById('mcQr').src = currentQrDataUrl;
+      currentQrDataUrl = await QRCode.toDataURL(text, { width: 340, margin: 1, color: { dark: '#06441C', light: '#ffffff' } });
     } catch (e) {
       currentQrDataUrl = null;
+    }
+  }
+
+  // ===== Dessin de la carte de membre (template officiel) =====
+  // Un seul rendu, sur canvas, partagé par l'affichage à l'écran et le PDF
+  // téléchargé : bord dégradé or->vert, logo et nom de l'association,
+  // pilule verte CARTE DE MEMBRE, photo ronde cerclée, QR code, champs
+  // Prénom / NOM / Filière / Tel, pilule de validité en pied de carte.
+  const CARTE = {
+    W: 2000, H: 1262,                      // ratio 85,6 x 54 mm (carte bancaire)
+    OR: '#F8B718', VERT: '#1B7A3E', VERT_FONCE: '#06441C', NOIR: '#111111',
+  };
+
+  function chargerImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function degrade(ctx, x0, y0, x1, y1) {
+    const g = ctx.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, CARTE.OR);
+    g.addColorStop(1, '#17763B');
+    return g;
+  }
+
+  function pilule(ctx, x, y, w, h, fill) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, h / 2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+
+  async function dessinerCarteMembre(p) {
+    await document.fonts.ready; // Sora/Inter chargées avant de dessiner
+    const { W, H } = CARTE;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const s = W / 1000; // toutes les cotes ci-dessous sont pensées sur 1000pt de large
+
+    // Fond blanc arrondi + bord dégradé
+    ctx.beginPath(); ctx.roundRect(0, 0, W, H, 56 * s / 2 * 2);
+    ctx.fillStyle = '#FFFFFF'; ctx.fill();
+    ctx.beginPath(); ctx.roundRect(11 * s, 11 * s, W - 22 * s, H - 22 * s, 48 * s);
+    ctx.strokeStyle = degrade(ctx, 0, 0, W, H);
+    ctx.lineWidth = 9 * s;
+    ctx.stroke();
+
+    // Logo complet du dépôt (emblème + AMSTC + nom de l'association) : il
+    // reproduit déjà exactement le haut du template, on le centre tel quel.
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    try {
+      const logo = await chargerImage('../assets/logo-mark-sm.png');
+      const lh = 140 * s, lw = lh * (logo.naturalWidth / logo.naturalHeight);
+      ctx.drawImage(logo, 585 * s - lw / 2, 48 * s, lw, lh);
+    } catch (e) { /* logo indisponible : la carte reste valable */ }
+
+    // Pilule CARTE DE MEMBRE (dessinée avant la photo, qui la chevauche)
+    pilule(ctx, 300 * s, 222 * s, 632 * s, 82 * s, CARTE.VERT);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 ' + (52 * s) + 'px Sora, Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('CARTE DE MEMBRE', 616 * s, 281 * s);
+
+    // Photo ronde cerclée d'un dégradé + deux points décoratifs
+    const cx = 200 * s, cy = 270 * s, R = 112 * s;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = degrade(ctx, cx, cy - R, cx, cy + R);
+    ctx.lineWidth = 9 * s; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx + 100 * s, cy - 92 * s, 8 * s, 0, Math.PI * 2);
+    ctx.fillStyle = CARTE.OR; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 118 * s, cy + 78 * s, 8 * s, 0, Math.PI * 2);
+    ctx.fillStyle = '#17763B'; ctx.fill();
+
+    const rPhoto = R - 9 * s;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, rPhoto, 0, Math.PI * 2); ctx.clip();
+    let photoOk = false;
+    if (p.photo_url) {
+      try {
+        const photo = await chargerImage(await urlToDataUrl(p.photo_url));
+        const cote = Math.min(photo.naturalWidth, photo.naturalHeight);
+        ctx.drawImage(photo,
+          (photo.naturalWidth - cote) / 2, (photo.naturalHeight - cote) / 2, cote, cote,
+          cx - rPhoto, cy - rPhoto, rPhoto * 2, rPhoto * 2);
+        photoOk = true;
+      } catch (e) { /* photo introuvable : initiales ci-dessous */ }
+    }
+    if (!photoOk) {
+      ctx.fillStyle = '#ECEFE3';
+      ctx.fillRect(cx - rPhoto, cy - rPhoto, rPhoto * 2, rPhoto * 2);
+      const initiales = (p.full_name || p.email || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      ctx.fillStyle = '#17763B';
+      ctx.font = '800 ' + (72 * s) + 'px Sora, Inter, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(initiales, cx, cy);
+      ctx.textBaseline = 'alphabetic';
+    }
+    ctx.restore();
+
+    // QR code dans un carré arrondi
+    const qx = 118 * s, qy = 408 * s, qc = 168 * s;
+    ctx.beginPath(); ctx.roundRect(qx, qy, qc, qc, 22 * s);
+    ctx.strokeStyle = degrade(ctx, qx, qy, qx + qc, qy + qc);
+    ctx.lineWidth = 4 * s; ctx.stroke();
+    if (currentQrDataUrl) {
+      try {
+        const qr = await chargerImage(currentQrDataUrl);
+        ctx.drawImage(qr, qx + 10 * s, qy + 10 * s, qc - 20 * s, qc - 20 * s);
+      } catch (e) { /* QR indisponible */ }
+    }
+
+    // Champs identité
+    const champs = [
+      ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-')],
+      ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase()],
+      ['Filière : ', domainLabelCarte(p)],
+      ['Tel : ', p.phone || '-'],
+    ];
+    ctx.textAlign = 'left';
+    let y = 348 * s;
+    for (const [label, valeur] of champs) {
+      ctx.fillStyle = CARTE.NOIR;
+      ctx.font = '400 ' + (35 * s) + 'px Sora, Inter, sans-serif';
+      ctx.fillText(label, 352 * s, y);
+      const lw = ctx.measureText(label).width;
+      ctx.font = '800 ' + (37 * s) + 'px Sora, Inter, sans-serif';
+      ctx.fillText(String(valeur), 352 * s + lw, y);
+      y += 64 * s;
+    }
+
+    // Pilule de validité, à cheval sur le bord bas (comme le template)
+    if (p.card_valid_until) {
+      const texte = Math.min(currentYear, p.card_valid_until) + ' - ' + p.card_valid_until;
+      ctx.font = '800 ' + (30 * s) + 'px Sora, Inter, sans-serif';
+      const tw = ctx.measureText(texte).width;
+      const pw = tw + 56 * s, ph = 46 * s, px = (W - pw) / 2, py = H - 11 * s - ph / 2 - 12 * s;
+      pilule(ctx, px, py, pw, ph, '#4C9A3F');
+      ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center';
+      ctx.fillText(texte, W / 2, py + ph / 2 + 11 * s);
+    }
+
+    return canvas;
+  }
+
+  // "Filière" du template : le domaine (ou sa précision "autre"), sans la
+  // spécialité pour rester sur une ligne.
+  function domainLabelCarte(p) {
+    if (p.domain === 'autre') return p.domain_autre || 'Autre';
+    return DOMAIN_LABELS[p.domain] || '-';
+  }
+
+  async function majCarteMembre(p) {
+    try {
+      await renderQr(p);
+      const canvas = await dessinerCarteMembre(p);
+      document.getElementById('mcCarteImg').src = canvas.toDataURL('image/png');
+    } catch (e) {
+      console.error('Dessin de la carte :', e);
     }
   }
 
@@ -1175,34 +1249,6 @@
     }
   }
 
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  // Recolore le logo (vert/or/noir) en blanc, comme le filtre CSS
-  // brightness(0)+invert(1) déjà utilisé sur les en-têtes du site - mais
-  // jsPDF ne peut pas appliquer de filtre CSS à une image intégrée.
-  async function whiteLogoDataUrl(src) {
-    const img = await loadImage(src);
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const d = imgData.data;
-    for (let i = 0; i < d.length; i += 4) {
-      if (d[i + 3] > 0) { d[i] = 255; d[i + 1] = 255; d[i + 2] = 255; }
-    }
-    ctx.putImageData(imgData, 0, 0);
-    return { dataUrl: canvas.toDataURL('image/png'), width: img.naturalWidth, height: img.naturalHeight };
-  }
-
   async function urlToDataUrl(url) {
     const res = await fetch(url);
     const blob = await res.blob();
@@ -1223,75 +1269,12 @@
     try {
       const p = currentProfile;
       const { jsPDF } = window.jspdf;
-      const W = 85.6, H = 54; // format carte bancaire, mm
+      // Même dessin que la carte affichée à l'écran : le PDF est simplement
+      // le canvas du template posé sur une page au format carte bancaire.
+      const canvas = await dessinerCarteMembre(p);
+      const W = 85.6, H = 54; // mm
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [W, H] });
-
-      doc.setFillColor(6, 51, 24);
-      doc.roundedRect(0, 0, W, H, 3, 3, 'F');
-
-      try {
-        const logo = await whiteLogoDataUrl('../assets/logo-mark-sm.png');
-        const logoH = 7;
-        const logoW = logoH * (logo.width / logo.height);
-        doc.addImage(logo.dataUrl, 'PNG', 4, 3, logoW, logoH);
-      } catch (e) { /* logo indisponible, on continue sans */ }
-
-      doc.setTextColor(255, 255, 255);
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(6.5);
-      doc.text('CARTE DE MEMBRE', W / 2, 7, { align: 'center' });
-      doc.setFont(undefined, 'normal');
-
-      let photoBottom = 10;
-      if (p.photo_url) {
-        try {
-          const photoData = await urlToDataUrl(p.photo_url);
-          doc.addImage(photoData, 'JPEG', 5, 12, 15, 15, undefined, 'FAST');
-          photoBottom = 27;
-        } catch (e) { /* photo indisponible, on continue sans */ }
-      }
-
-      const nameX = p.photo_url ? 23 : 5;
-      doc.setTextColor(248, 183, 24);
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(9);
-      doc.text(fullDisplayName(p), nameX, 17);
-
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(6);
-      doc.setTextColor(210, 210, 210);
-      doc.text(domainAndSpecialtyLabel(p) || '', nameX, 21);
-
-      const validityText = p.card_valid_until
-        ? (p.card_valid_until >= currentYear ? "Valide jusqu'en " + p.card_valid_until : 'Expirée (' + p.card_valid_until + ')')
-        : 'Non définie';
-
-      const fields = [
-        ['N° MEMBRE', cardNumberFor(p)],
-        ['MEMBRE DEPUIS', String(p.member_since || currentYear)],
-        ['TÉLÉPHONE', p.phone || '-'],
-        ['E-MAIL', p.email || '-'],
-        ['LOCALITÉ', p.city || '-'],
-        ['VALIDITÉ', validityText],
-      ];
-
-      let y = Math.max(32, photoBottom + 5);
-      const col1X = 5, col2X = 45, lineH = 6.5;
-      fields.forEach((f, i) => {
-        const x = i % 2 === 0 ? col1X : col2X;
-        const rowY = y + Math.floor(i / 2) * lineH;
-        doc.setFontSize(4.2);
-        doc.setTextColor(140, 175, 155);
-        doc.text(f[0], x, rowY);
-        doc.setFontSize(5.5);
-        doc.setTextColor(230, 230, 230);
-        doc.text(String(f[1]).slice(0, 26), x, rowY + 3);
-      });
-
-      if (currentQrDataUrl) {
-        doc.addImage(currentQrDataUrl, 'PNG', W - 16, 3, 11, 11);
-      }
-
+      doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
       doc.save('carte-membre-amstc.pdf');
     } catch (e) {
       alert('Erreur lors de la génération du PDF : ' + e.message);
