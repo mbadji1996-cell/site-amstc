@@ -278,7 +278,19 @@
     <div class="qs-section">
       <p class="qs-label"><i class="ti ti-help"></i> Questions QCM</p>
       <div id="questionsList"></div>
-      <button class="btn btn-edit btn-sm btn-add-q" onclick="addQuestion()"><i class="ti ti-plus"></i> Ajouter une question</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-edit btn-sm btn-add-q" onclick="addQuestion()"><i class="ti ti-plus"></i> Ajouter une question</button>
+        <button class="btn btn-pub btn-sm" type="button" onclick="telechargerModeleQuiz()"><i class="ti ti-file-spreadsheet"></i> Modèle Excel</button>
+        <label class="btn btn-pub btn-sm" style="cursor:pointer;margin:0;">
+          <i class="ti ti-upload"></i> Importer Excel
+          <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importerQuizExcel(event)">
+        </label>
+      </div>
+      <p style="font-size:0.75rem;color:#8A9E8F;margin-top:8px;">
+        Import : téléchargez le modèle, remplissez une ligne par question (4 réponses obligatoires,
+        bonne réponse A, B, C ou D), puis importez. Les questions s'ajoutent ci-dessus pour relecture
+        avant l'enregistrement.
+      </p>
     </div>
 
     <p class="form-msg" id="quizFormMsg"></p>
@@ -295,6 +307,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<!-- Import / modèle Excel des questions de quiz -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
@@ -538,6 +552,101 @@
     // scroll to last
     const items = document.querySelectorAll('.q-item');
     if (items.length) items[items.length-1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ===== Import Excel des questions =====
+  // Le fichier alimente l'éditeur ci-dessus (relecture possible) ; rien ne
+  // part en base avant le clic sur Enregistrer.
+  const COLONNES_MODELE = ['Question', 'Réponse A', 'Réponse B', 'Réponse C', 'Réponse D', 'Bonne réponse (A, B, C ou D)', 'Explication (optionnel)'];
+
+  // Normalisation sans regex Unicode : les caractères combinants écrits en
+  // clair dans une regex ont déjà cassé ce projet deux fois (voir
+  // validation.html). Le filtre par plage de codes est immunisé.
+  function normaliserTexte(s) {
+    return String(s || '').toLowerCase().normalize('NFD')
+      .split('').filter(c => { const cc = c.charCodeAt(0); return cc < 0x300 || cc > 0x36f; }).join('');
+  }
+
+  function telechargerModeleQuiz() {
+    const exemple = {};
+    COLONNES_MODELE.forEach(c => exemple[c] = '');
+    exemple['Question'] = 'Quel organe pompe le sang dans le corps humain ?';
+    exemple['Réponse A'] = 'Le foie';
+    exemple['Réponse B'] = 'Le cœur';
+    exemple['Réponse C'] = 'Les poumons';
+    exemple['Réponse D'] = 'Les reins';
+    exemple['Bonne réponse (A, B, C ou D)'] = 'B';
+    exemple['Explication (optionnel)'] = 'Le cœur est le moteur de la circulation sanguine.';
+
+    const ws = XLSX.utils.json_to_sheet([exemple], { header: COLONNES_MODELE });
+    ws['!cols'] = [{ wch: 50 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 26 }, { wch: 45 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Questions');
+    XLSX.writeFile(wb, 'modele-quiz-amstc.xlsx');
+  }
+
+  async function importerQuizExcel(e) {
+    const fichier = e.target.files[0];
+    e.target.value = ''; // permet de réimporter le même fichier
+    if (!fichier) return;
+    const msg = document.getElementById('quizFormMsg');
+
+    try {
+      const donnees = new Uint8Array(await fichier.arrayBuffer());
+      const wb = XLSX.read(donnees, { type: 'array' });
+      const lignes = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+      if (lignes.length === 0) throw new Error('Le fichier ne contient aucune ligne de question.');
+
+      // Intitulés tolérants : on retrouve chaque colonne par son début
+      // normalisé ("réponse a" ≈ "Reponse A", "bonne réponse" ≈ etc.).
+      const cles = Object.keys(lignes[0]);
+      const trouver = prefixe => cles.find(k => normaliserTexte(k).startsWith(prefixe));
+      const col = {
+        question: trouver('question'),
+        a: trouver('reponse a'), b: trouver('reponse b'),
+        c: trouver('reponse c'), d: trouver('reponse d'),
+        bonne: trouver('bonne reponse'),
+        expl: trouver('explication'),
+      };
+      const manquantes = ['question', 'a', 'b', 'c', 'd', 'bonne'].filter(k => !col[k]);
+      if (manquantes.length > 0) {
+        throw new Error('Colonnes introuvables dans le fichier - utilisez le modèle fourni (bouton « Modèle Excel »).');
+      }
+
+      const lettres = { a: 0, b: 1, c: 2, d: 3 };
+      const importees = [];
+      const rejets = [];
+      lignes.forEach((l, i) => {
+        const num = i + 2; // ligne Excel (1 = en-têtes)
+        const question = String(l[col.question] || '').trim();
+        const opts = [col.a, col.b, col.c, col.d].map(c => String(l[c] || '').trim());
+        const bonne = normaliserTexte(l[col.bonne]).trim();
+        if (!question && opts.every(o => !o)) return; // ligne vide : ignorée sans bruit
+        if (!question) { rejets.push('ligne ' + num + ' : question vide'); return; }
+        if (opts.some(o => !o)) { rejets.push('ligne ' + num + ' : les 4 réponses sont obligatoires'); return; }
+        if (!(bonne in lettres)) { rejets.push('ligne ' + num + ' : bonne réponse invalide (attendu A, B, C ou D)'); return; }
+        importees.push({
+          text: question,
+          opts,
+          correct: lettres[bonne],
+          expl: col.expl ? String(l[col.expl] || '').trim() : '',
+        });
+      });
+
+      if (importees.length === 0) {
+        throw new Error('Aucune question valide. ' + (rejets.length ? rejets.slice(0, 3).join(' ; ') : ''));
+      }
+
+      questionRows.push(...importees);
+      renderQuestionRows();
+      msg.textContent = importees.length + ' question(s) importée(s)'
+        + (rejets.length ? ' - ' + rejets.length + ' ligne(s) ignorée(s) : ' + rejets.slice(0, 3).join(' ; ') + (rejets.length > 3 ? '…' : '') : '')
+        + '. Relisez puis cliquez Enregistrer.';
+      msg.className = rejets.length ? 'form-msg error' : 'form-msg ok';
+    } catch (err) {
+      msg.textContent = 'Import impossible : ' + err.message;
+      msg.className = 'form-msg error';
+    }
   }
 
   function removeQuestion(idx) {
