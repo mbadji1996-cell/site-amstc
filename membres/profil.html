@@ -647,7 +647,7 @@
   // pilule verte CARTE DE MEMBRE, photo ronde cerclée, QR code, champs
   // Prénom / NOM / Filière / Tel, pilule de validité en pied de carte.
   const CARTE = {
-    W: 2000, H: 1262,                      // ratio 85,6 x 54 mm (carte bancaire)
+    W: 2000, H: 1294,                      // ratio 85 x 55 mm (format demandé)
     OR: '#F8B718', VERT: '#1B7A3E', VERT_FONCE: '#06441C', NOIR: '#111111',
   };
 
@@ -1261,7 +1261,7 @@
       // Même dessin que la carte affichée à l'écran : le PDF est simplement
       // le canvas du template posé sur une page au format carte bancaire.
       const canvas = await dessinerCarteMembre(p);
-      const W = 85.6, H = 54; // mm
+      const W = 85, H = 55; // mm - dimension demandée pour l'impression
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [W, H] });
       doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
       doc.save('carte-membre-amstc.pdf');
