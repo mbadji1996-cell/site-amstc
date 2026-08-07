@@ -737,10 +737,11 @@
        (style + logique inclus) : consultations-amstc.org embarque le même,
        en lisant ce fichier JSON depuis amstc.org. Masqué si inactif. -->
   <style>
-    /* 90px en haut ; en bas, la section .intro apporte son propre espace
-       (padding + en-tête), mesuré à 118px : la marge négative absorbe le
-       surplus pour retrouver les mêmes 90px de part et d'autre. */
-    #evenement-phare{display:none;padding:90px 0 0;margin-bottom:-28px;}
+    /* 90px en haut, 0 en bas : la section .intro qui suit apporte ses 90px
+       de padding-top, d'où des espaces identiques des deux côtés. (Ne pas
+       compenser le translateY(28px) mesuré avant l'animation .reveal : il
+       disparaît une fois les cartes révélées.) */
+    #evenement-phare{display:none;padding:90px 0 0;}
     .ep-card{position:relative;overflow:hidden;border-radius:22px;padding:36px 38px;color:var(--white);
       background:linear-gradient(115deg, var(--green-deep) 0%, #0A5A28 55%, var(--green) 100%);box-shadow:var(--shadow);}
     .ep-card::after{content:"";position:absolute;right:-70px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,0.06);}
