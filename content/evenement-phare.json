@@ -10,24 +10,25 @@
   "phases": [
     {
       "nom": "Jour 1",
-      "lieu": "Tivaouane",
+      "lieu": "",
       "dates": "24 Août",
-      "en_cours": true
+      "en_cours": false
     },
     {
       "nom": "Jour 2",
-      "lieu": "Tivaouane",
+      "lieu": "",
       "dates": "25 Août",
       "en_cours": false
     },
     {
       "en_cours": false,
       "nom": "Jour 3",
-      "lieu": "Tivaouane",
+      "lieu": "",
       "dates": "26 Août"
     }
   ],
   "date_fin": "2026-08-27T08:00",
+  "image": "/assets/uploads/777a0132.jpg",
   "campagne_id": "95af9ed0-96d8-4df1-9b69-8a2884832289",
   "stats": [
     {
@@ -42,6 +43,5 @@
       "label": "Orientations / références",
       "valeur": 0
     }
-  ],
-  "image": ""
+  ]
 }
