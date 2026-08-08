@@ -507,12 +507,42 @@
   document.getElementById('viewCalendrier').addEventListener('click', () => setView('calendrier'));
   document.getElementById('viewListe').addEventListener('click', () => setView('liste'));
 
+  // L'événement mis en compte à rebours sur l'accueil figure aussi dans
+  // l'agenda, sans double saisie : on le convertit au format des fiches
+  // d'événement (content/evenement-phare.json, CMS « Événement phare »).
+  async function evenementPhare() {
+    try {
+      const res = await fetch('content/evenement-phare.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return [];
+      const e = await res.json();
+      if (!e || e.actif === false || !e.titre || !e.date_debut) return [];
+      const jours = (e.phases || [])
+        .map(p => [p.nom, p.lieu, p.dates].filter(Boolean).join(' · '))
+        .filter(Boolean).join(' - ');
+      return [{
+        title: e.titre,
+        date: String(e.date_debut).slice(0, 10),
+        date_debut: String(e.date_debut).slice(0, 10),
+        date_fin: e.date_fin ? String(e.date_fin).slice(0, 10) : null,
+        lieu: (e.phases || []).map(p => p.lieu).filter(Boolean)[0] || '',
+        excerpt: [e.sous_titre, jours].filter(Boolean).join(' - '),
+        image: e.image || '',
+        // Sans lien explicite, l'agenda pointe vers le bandeau de l'accueil.
+        lien: e.lien || 'index.html#evenement-phare',
+        slug: 'evenement-phare',
+      }];
+    } catch (err) {
+      return []; // agenda inchangé si le contenu ne charge pas
+    }
+  }
+
   // ===== Chargement =====
   async function loadAgenda() {
     try {
       const results = await Promise.all(SOURCES.map(s =>
         fetch(s.file).then(r => r.ok ? r.json() : []).catch(() => [])
       ));
+      results[0] = [...(await evenementPhare()), ...results[0]];
       allItems = results.flatMap((items, i) =>
         items.map(it => ({ ...it, __type: SOURCES[i].type }))
       ).sort((a, b) => (parseDay(b.date) || 0) - (parseDay(a.date) || 0));
