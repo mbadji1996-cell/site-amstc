@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vérification avant mise en ligne - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --line:rgba(6,68,28,0.14); --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);padding:14px 0;}
+  .header-inner{max-width:860px;margin:0 auto;padding:0 24px;}
+  .logo-img{height:36px;filter:brightness(0) invert(1);}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 24px 80px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-block;margin-bottom:12px;}
+  h1{font-family:var(--display);font-size:1.5rem;color:var(--text-heading);margin-bottom:6px;}
+  .intro{color:var(--text-muted);font-size:0.9rem;margin-bottom:8px;}
+  .progress{font-family:var(--mono);font-size:0.8rem;color:var(--text-accent);margin-bottom:20px;}
+  .bloc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;}
+  .bloc h2{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin-bottom:12px;}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .item:last-child{border-bottom:none;}
+  .item input[type=checkbox]{margin-top:4px;width:16px;height:16px;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
+  .item .txt{font-size:0.88rem;}
+  .item .attendu{font-size:0.78rem;color:var(--text-muted);}
+  .item a{color:var(--green);font-weight:600;}
+  .item a:hover{text-decoration:underline;}
+  .note{font-size:0.8rem;color:var(--text-muted);background:var(--paper-alt);border-radius:10px;padding:10px 14px;margin-bottom:18px;}
+  .ok-banner{display:none;background:#EAF3DE;color:#3B6D11;font-weight:700;border-radius:10px;padding:12px 16px;margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <a class="back" href="admin.html">← Centre d'administration</a>
+  <h1>Vérification avant mise en ligne</h1>
+  <p class="intro">À dérouler après chaque déploiement important. Chaque lien s'ouvre dans un nouvel onglet : vérifiez le comportement attendu, cochez, passez au suivant.</p>
+  <p class="note">Rappel : un déploiement met 2 à 5 minutes à arriver en ligne (deux passages : commit + index de contenu). Toujours recharger avec Ctrl+F5 avant de conclure à un bug.</p>
+  <div class="ok-banner" id="okBanner">✔ Tous les points sont vérifiés - la mise en ligne est validée.</div>
+  <p class="progress" id="progress"></p>
+  <div id="listes"></div>
+</div>
+<div class="wrap"><p id="loadingMsg" style="font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);">Vérification de vos droits…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  // Les points critiques : chaque régression découverte en production doit
+  // devenir une ligne ici, pour ne jamais être redécouverte par un membre.
+  const BLOCS = [
+    { titre: "Site public - amstc.org", items: [
+      ["../index.html", "Accueil : bandeau événement phare", "Compte à rebours ou EN DIRECT selon la date ; chiffres si campagne liée avec données ; pastille dans le hero non déformée sur mobile."],
+      ["../actualites.html", "Réalisations : recherche", "Taper un mot d'un titre filtre la liste ; effacer la recherche la restaure."],
+      ["../agenda.html", "Agenda : événement phare présent", "L'événement du compte à rebours occupe ses dates dans le calendrier."],
+      ["../don.html", "Page Don", "Numéros Wave et Orange Money affichés."],
+    ]},
+    { titre: "Espace membres", items: [
+      ["connexion.html", "Connexion", "E-mail + mot de passe ; fermer l'onglet déconnecte réellement."],
+      ["profil.html", "Profil : carte de membre", "Carte au template (photo, QR, numéro sous le QR) ; PDF 85x55 ; reçu PDF sur un paiement confirmé."],
+      ["annuaire.html", "Annuaire", "Ordre alphabétique du nom affiché ; badge admin ; clic sur le numéro ouvre WhatsApp."],
+      ["mediatheque.html", "Médiathèque", "Recherche d'album ; compteurs de photos corrects."],
+    ]},
+    { titre: "Administration", items: [
+      ["validation.html", "Gestion des membres : boutons après recherche", "Faire une recherche PUIS cliquer Désactiver : le bouton doit répondre (régression déjà vue). Supprimer visible sur un compte désactivé (Super Admin)."],
+      ["validation.html", "Exports et impression", "Exporter Excel / PDF ; Imprimer les cartes en lot (une carte par page)."],
+      ["cartes-admin.html", "Cartes : modification", "Changer l'année « Depuis » renumérote ; le repère de demande d'année apparaît si une demande dort."],
+      ["medical-admin.html", "Quiz : import Excel", "Télécharger le modèle ; importer un fichier rempli ajoute les questions pour relecture."],
+    ]},
+    { titre: "consultations-amstc.org", items: [
+      ["https://consultations-amstc.org", "Accueil consultations", "Bandeau événement + chiffres identiques à amstc.org ; tout tient à l'écran sur ordinateur."],
+      ["https://consultations-amstc.org", "Connexion praticien", "Même e-mail / mot de passe qu'amstc.org ; bouton Google pour les comptes Google."],
+      ["https://consultations-amstc.org", "Campagnes (admin)", "Copier l'ID ; Bilan PDF généré avec les bons totaux."],
+    ]},
+  ];
+
+  function render() {
+    let total = 0, coches = 0;
+    document.getElementById('listes').innerHTML = BLOCS.map((b, bi) => `
+      <div class="bloc">
+        <h2>${b.titre}</h2>
+        ${b.items.map((it, ii) => {
+          total++;
+          return `
+          <label class="item">
+            <input type="checkbox" data-k="${bi}-${ii}" onchange="maj()">
+            <span class="txt"><a href="${it[0]}" target="_blank" rel="noopener">${it[1]}</a><br>
+            <span class="attendu">${it[2]}</span></span>
+          </label>`;
+        }).join('')}
+      </div>`).join('');
+    maj();
+  }
+
+  function maj() {
+    const cases = [...document.querySelectorAll('input[type=checkbox]')];
+    const n = cases.filter(c => c.checked).length;
+    document.getElementById('progress').textContent = n + ' / ' + cases.length + ' points vérifiés';
+    document.getElementById('okBanner').style.display = (n === cases.length && n > 0) ? 'block' : 'none';
+  }
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    render();
+  })();
+</script>
+
+</body>
+</html>
