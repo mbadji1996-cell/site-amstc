@@ -428,6 +428,7 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/paiements.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script src="../assets/js/carte-membre.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
   // Numéros de paiement de l'association (assets/js/paiements.js), affichés
@@ -584,7 +585,7 @@
 
   function renderProfile(p) {
     renderCardValidityStatus(p);
-    document.getElementById('mcNumeroLigne').textContent = 'N° ' + cardNumberFor(p);
+    document.getElementById('mcNumeroLigne').textContent = 'N° ' + carteNumeroPour(p);
     // Dessin asynchrone (photo, logo, QR à charger) : lancé sans attendre,
     // l'image de la carte se met en place dès qu'elle est prête.
     majCarteMembre(p);
@@ -636,174 +637,9 @@
     }
   }
 
-  let currentQrDataUrl = null;
-
-  function cardNumberFor(p) {
-    return p.legacy_card_number || ('AMSTC-' + String(p.member_since || currentYear) + '-' + p.id.slice(0,4).toUpperCase());
-  }
-
-  async function renderQr(p) {
-    const text = `AMSTC | ${fullDisplayName(p)} | N° ${cardNumberFor(p)}`;
-    try {
-      currentQrDataUrl = await QRCode.toDataURL(text, { width: 340, margin: 1, color: { dark: '#06441C', light: '#ffffff' } });
-    } catch (e) {
-      currentQrDataUrl = null;
-    }
-  }
-
-  // ===== Dessin de la carte de membre (template officiel) =====
-  // Un seul rendu, sur canvas, partagé par l'affichage à l'écran et le PDF
-  // téléchargé : bord dégradé or->vert, logo et nom de l'association,
-  // pilule verte CARTE DE MEMBRE, photo ronde cerclée, QR code, champs
-  // Prénom / NOM / Filière / Tel, pilule de validité en pied de carte.
-  const CARTE = {
-    W: 2000, H: 1294,                      // ratio 85 x 55 mm (format demandé)
-    OR: '#F8B718', VERT: '#1B7A3E', VERT_FONCE: '#06441C', NOIR: '#111111',
-  };
-
-  function chargerImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  function degrade(ctx, x0, y0, x1, y1) {
-    const g = ctx.createLinearGradient(x0, y0, x1, y1);
-    g.addColorStop(0, CARTE.OR);
-    g.addColorStop(1, '#17763B');
-    return g;
-  }
-
-  function pilule(ctx, x, y, w, h, fill) {
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, h / 2);
-    ctx.fillStyle = fill;
-    ctx.fill();
-  }
-
-  async function dessinerCarteMembre(p) {
-    await document.fonts.ready; // Sora/Inter chargées avant de dessiner
-    const { W, H } = CARTE;
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
-    const s = W / 1000; // toutes les cotes ci-dessous sont pensées sur 1000pt de large
-
-    // Fond blanc arrondi + bord dégradé
-    ctx.beginPath(); ctx.roundRect(0, 0, W, H, 56 * s / 2 * 2);
-    ctx.fillStyle = '#FFFFFF'; ctx.fill();
-    ctx.beginPath(); ctx.roundRect(11 * s, 11 * s, W - 22 * s, H - 22 * s, 48 * s);
-    ctx.strokeStyle = degrade(ctx, 0, 0, W, H);
-    ctx.lineWidth = 9 * s;
-    ctx.stroke();
-
-    // Logo complet du dépôt (emblème + AMSTC + nom de l'association) : il
-    // reproduit déjà exactement le haut du template, on le centre tel quel.
-    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-    try {
-      const logo = await chargerImage('../assets/logo-mark-sm.png');
-      const lh = 128 * s, lw = lh * (logo.naturalWidth / logo.naturalHeight);
-      ctx.drawImage(logo, 640 * s - lw / 2, 52 * s, lw, lh);
-    } catch (e) { /* logo indisponible : la carte reste valable */ }
-
-    // Pilule CARTE DE MEMBRE (à droite de la photo, sans chevauchement)
-    pilule(ctx, 370 * s, 198 * s, 580 * s, 74 * s, CARTE.VERT);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 ' + (50 * s) + 'px Sora, Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('CARTE DE MEMBRE', 660 * s, 252 * s);
-
-    // Photo ronde cerclée d'un dégradé
-    const cx = 205 * s, cy = 220 * s, R = 118 * s;
-    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.strokeStyle = degrade(ctx, cx, cy - R, cx, cy + R);
-    ctx.lineWidth = 10 * s; ctx.stroke();
-
-    const rPhoto = R - 9 * s;
-    ctx.save();
-    ctx.beginPath(); ctx.arc(cx, cy, rPhoto, 0, Math.PI * 2); ctx.clip();
-    let photoOk = false;
-    if (p.photo_url) {
-      try {
-        const photo = await chargerImage(await urlToDataUrl(p.photo_url));
-        const cote = Math.min(photo.naturalWidth, photo.naturalHeight);
-        ctx.drawImage(photo,
-          (photo.naturalWidth - cote) / 2, (photo.naturalHeight - cote) / 2, cote, cote,
-          cx - rPhoto, cy - rPhoto, rPhoto * 2, rPhoto * 2);
-        photoOk = true;
-      } catch (e) { /* photo introuvable : initiales ci-dessous */ }
-    }
-    if (!photoOk) {
-      ctx.fillStyle = '#ECEFE3';
-      ctx.fillRect(cx - rPhoto, cy - rPhoto, rPhoto * 2, rPhoto * 2);
-      const initiales = (p.full_name || p.email || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
-      ctx.fillStyle = '#17763B';
-      ctx.font = '800 ' + (72 * s) + 'px Sora, Inter, sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(initiales, cx, cy);
-      ctx.textBaseline = 'alphabetic';
-    }
-    ctx.restore();
-
-    // QR code dans un carré arrondi
-    const qx = 127 * s, qy = 391 * s, qc = 170 * s;
-    ctx.beginPath(); ctx.roundRect(qx, qy, qc, qc, 22 * s);
-    ctx.strokeStyle = degrade(ctx, qx, qy, qx + qc, qy + qc);
-    ctx.lineWidth = 4 * s; ctx.stroke();
-    if (currentQrDataUrl) {
-      try {
-        const qr = await chargerImage(currentQrDataUrl);
-        ctx.drawImage(qr, qx + 10 * s, qy + 10 * s, qc - 20 * s, qc - 20 * s);
-      } catch (e) { /* QR indisponible */ }
-    }
-
-    // Numéro de carte sous le QR
-    ctx.fillStyle = CARTE.VERT_FONCE;
-    ctx.font = '700 ' + (24 * s) + 'px Sora, Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(cardNumberFor(p), qx + qc / 2, qy + qc + 36 * s);
-    ctx.textAlign = 'left';
-
-    // Champs identité (5 lignes, validité incluse - conforme au template)
-    const validite = p.card_valid_until
-      ? Math.min(currentYear, p.card_valid_until) + ' - ' + p.card_valid_until
-      : '-';
-    const champs = [
-      ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-')],
-      ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase()],
-      ['Filière : ', domainLabelCarte(p)],
-      ['Tel : ', p.phone || '-'],
-      ['Validité : ', validite],
-    ];
-    ctx.textAlign = 'left';
-    let y = 330 * s;
-    for (const [label, valeur] of champs) {
-      ctx.fillStyle = CARTE.NOIR;
-      ctx.font = '400 ' + (35 * s) + 'px Sora, Inter, sans-serif';
-      ctx.fillText(label, 370 * s, y);
-      const lw = ctx.measureText(label).width;
-      ctx.font = '800 ' + (37 * s) + 'px Sora, Inter, sans-serif';
-      ctx.fillText(String(valeur), 370 * s + lw, y);
-      y += 62 * s;
-    }
-
-    return canvas;
-  }
-
-  // "Filière" du template : le domaine (ou sa précision "autre"), sans la
-  // spécialité pour rester sur une ligne.
-  function domainLabelCarte(p) {
-    if (p.domain === 'autre') return p.domain_autre || 'Autre';
-    return DOMAIN_LABELS[p.domain] || '-';
-  }
-
   async function majCarteMembre(p) {
     try {
-      await renderQr(p);
-      const canvas = await dessinerCarteMembre(p);
+      const canvas = await dessinerCarteMembre(p); // moteur partagé (assets/js/carte-membre.js)
       document.getElementById('mcCarteImg').src = canvas.toDataURL('image/png');
     } catch (e) {
       console.error('Dessin de la carte :', e);
@@ -1277,10 +1113,12 @@
       const { jsPDF } = window.jspdf;
       // Même dessin que la carte affichée à l'écran : le PDF est simplement
       // le canvas du template posé sur une page au format carte bancaire.
-      const canvas = await dessinerCarteMembre(p);
+      // JPEG fond blanc : un PNG à transparence est stocké décompressé par
+      // jsPDF (~10 Mo par carte) - voir carteJpegDataUrl dans carte-membre.js.
+      const image = await carteJpegDataUrl(p);
       const W = 85, H = 55; // mm - dimension demandée pour l'impression
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [W, H] });
-      doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
+      doc.addImage(image, 'JPEG', 0, 0, W, H);
       doc.save('carte-membre-amstc.pdf');
     } catch (e) {
       alert('Erreur lors de la génération du PDF : ' + e.message);

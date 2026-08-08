@@ -133,6 +133,7 @@
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
     <button class="btn-sm btn-outline-sm" onclick="exporterMembresExcel()">⬇ Exporter en Excel</button>
     <button class="btn-sm btn-outline-sm" onclick="exporterMembresPdf()">⬇ Exporter en PDF</button>
+    <button class="btn-sm btn-outline-sm" id="printCardsBtn" onclick="imprimerCartesPdf()">🖨 Imprimer les cartes (PDF)</button>
   </div>
   <div class="search-wrap">
     <input type="text" class="search-input" id="memberSearchInput" placeholder="Rechercher un nom, un e-mail, une ville, une spécialité…" oninput="onMemberSearch()">
@@ -166,6 +167,9 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<!-- Impression des cartes en lot : QR + moteur de dessin partagé -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script src="../assets/js/carte-membre.js"></script>
 <script>
   let currentUserId = null;
   let isSuperAdmin = false;
@@ -833,6 +837,39 @@
       margin: { left: 8, right: 8 },
     });
     doc.save('membres-amstc-' + new Date().toISOString().slice(0, 10) + '.pdf');
+  }
+
+  // ===== Impression des cartes en lot =====
+  // Une carte par page (85 x 55 mm), dessinée par le moteur partagé
+  // (assets/js/carte-membre.js) - rendu identique à la carte du profil.
+  // Porte sur les membres AFFICHÉS ayant une carte : la recherche sert
+  // ainsi de sélection (ex. "2026" pour les cartes de l'année).
+  async function imprimerCartesPdf() {
+    const liste = getFilteredApprovedMembers().filter(p => p.legacy_card_number);
+    if (liste.length === 0) {
+      alert("Aucun membre avec carte dans la liste affichée.\n\nAstuce : la recherche filtre la sélection ; videz-la pour imprimer toutes les cartes, ou attribuez/créez d'abord les cartes manquantes.");
+      return;
+    }
+    if (!confirm('Générer le PDF d\'impression de ' + liste.length + ' carte(s), une par page (85 x 55 mm) ?')) return;
+
+    const btn = document.getElementById('printCardsBtn');
+    btn.disabled = true;
+    const libelle = btn.textContent;
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85, 55] });
+      for (let i = 0; i < liste.length; i++) {
+        btn.textContent = 'Carte ' + (i + 1) + ' / ' + liste.length + '…';
+        const image = await carteJpegDataUrl(liste[i]);
+        if (i > 0) doc.addPage([85, 55], 'landscape');
+        doc.addImage(image, 'JPEG', 0, 0, 85, 55);
+      }
+      doc.save('cartes-membres-amstc-' + new Date().toISOString().slice(0, 10) + '.pdf');
+    } catch (e) {
+      alert('Génération impossible : ' + e.message);
+    }
+    btn.disabled = false;
+    btn.textContent = libelle;
   }
 
   async function handleAction(action, id, email, name) {
