@@ -54,6 +54,8 @@
   .mc-status-pill.active{background:#EAF3DE;color:#3B6D11;}
   .mc-status-pill.pending{background:#FEF6E4;color:var(--gold-deep);}
   .mc-status-pill.warn{background:#FDEEEE;color:#B23B3B;}
+  .btn-recu{border:1.5px solid var(--line);background:var(--surface);color:var(--green);font-size:0.72rem;font-weight:700;border-radius:999px;padding:4px 12px;cursor:pointer;}
+  .btn-recu:hover{border-color:var(--green);}
 
   /* ===== ACCORDIONS ===== */
   .section-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:14px;overflow:hidden;}
@@ -954,7 +956,10 @@
     renderValidityHistory(data || []);
   }
 
+  let paiementsValidite = [];
+
   function renderValidityHistory(rows) {
+    paiementsValidite = rows;
     const el = document.getElementById('validityHistory');
     if (rows.length === 0) {
       el.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement de validité enregistré.</p>';
@@ -968,7 +973,10 @@
             <p class="pay-year">${p.years_requested} an${p.years_requested > 1 ? 's' : ''} - ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
             <p class="pay-method">${PAY_METHODS[p.payment_method] || '-'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
           </div>
-          <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
+            ${p.status === 'confirmed' ? `<button class="btn-recu" onclick="telechargerRecu('validite','${p.id}')">Reçu PDF</button>` : ''}
+          </div>
         </div>`).join('');
   }
 
@@ -1046,7 +1054,10 @@
     }).join('');
   }
 
+  let paiementsCotisations = [];
+
   function renderCotisHistory(rows) {
+    paiementsCotisations = rows;
     const el = document.getElementById('cotisHistory');
     if (rows.length === 0) {
       el.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement de cotisation enregistré.</p>';
@@ -1060,7 +1071,10 @@
             <p class="pay-year">${p.months_requested} mois (${p.year}) - ${p.amount_fcfa.toLocaleString('fr-FR')} FCFA</p>
             <p class="pay-method">${PAY_METHODS[p.payment_method] || '-'} · <span style="font-family:var(--mono);font-size:0.75rem;">${escHtml(p.payment_reference)}</span></p>
           </div>
-          <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <span class="pay-status s-${p.status}">${statusLabel[p.status]}</span>
+            ${p.status === 'confirmed' ? `<button class="btn-recu" onclick="telechargerRecu('cotisation','${p.id}')">Reçu PDF</button>` : ''}
+          </div>
         </div>`).join('');
   }
 
@@ -1089,6 +1103,79 @@
       await loadCotisations(currentProfile.id);
       showSuccessThenCollapse('cotis', 'cotisSuccessFlash');
     }
+  }
+
+  // ===== Reçu PDF d'un paiement confirmé (validité ou cotisation) =====
+  async function telechargerRecu(type, paiementId) {
+    const liste = type === 'validite' ? paiementsValidite : paiementsCotisations;
+    const p = liste.find(x => String(x.id) === String(paiementId));
+    if (!p || p.status !== 'confirmed') { alert('Reçu indisponible pour ce paiement.'); return; }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a5' }); // 148 x 210
+    const W = 148;
+    const numeroRecu = 'AMSTC-' + String(p.id).replace(/-/g, '').slice(0, 8).toUpperCase();
+    const dateStr = new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const objet = type === 'validite'
+      ? 'Validité de la carte de membre - ' + p.years_requested + ' an' + (p.years_requested > 1 ? 's' : '')
+      : 'Cotisations mensuelles - ' + p.months_requested + ' mois (' + p.year + ')';
+
+    // Bandeau vert + logo + en-tête
+    doc.setFillColor(6, 68, 28);
+    doc.rect(0, 0, W, 30, 'F');
+    try {
+      const logo = await chargerImage('../assets/logo-mark-sm.png');
+      const c = document.createElement('canvas');
+      c.width = logo.naturalWidth; c.height = logo.naturalHeight;
+      const cctx = c.getContext('2d');
+      cctx.drawImage(logo, 0, 0);
+      // logo recoloré en blanc pour le bandeau sombre
+      const im = cctx.getImageData(0, 0, c.width, c.height);
+      for (let i = 0; i < im.data.length; i += 4) { if (im.data[i + 3] > 0) { im.data[i] = im.data[i + 1] = im.data[i + 2] = 255; } }
+      cctx.putImageData(im, 0, 0);
+      const lw = 9 * (logo.naturalWidth / logo.naturalHeight);
+      doc.addImage(c.toDataURL('image/png'), 'PNG', 10, 6, Math.min(lw, 60), 9);
+    } catch (e) { /* sans logo */ }
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+    doc.text('REÇU DE PAIEMENT', 10, 24);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+    doc.text('N° ' + numeroRecu, W - 10, 22, { align: 'right' });
+
+    // Coordonnées du membre
+    let y = 42;
+    doc.setTextColor(20, 20, 20);
+    const ligne = (etiquette, valeur, gras) => {
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+      doc.text(etiquette, 10, y);
+      doc.setFont('helvetica', gras ? 'bold' : 'normal'); doc.setFontSize(gras ? 12 : 10); doc.setTextColor(20, 20, 20);
+      doc.text(String(valeur), 52, y);
+      y += gras ? 9 : 7.5;
+    };
+    ligne('Membre', fullDisplayName(currentProfile));
+    ligne('N° de membre', carteNumeroPour(currentProfile));
+    ligne('E-mail', currentProfile.email || '-');
+    y += 3;
+    doc.setDrawColor(220, 226, 220); doc.line(10, y, W - 10, y); y += 9;
+
+    ligne('Objet', objet);
+    ligne('Montant', p.amount_fcfa.toLocaleString('fr-FR') + ' FCFA', true);
+    ligne('Moyen de paiement', PAY_METHODS[p.payment_method] || '-');
+    ligne('Référence', p.payment_reference || '-');
+    ligne('Date du paiement', dateStr);
+    y += 2;
+
+    // Statut confirmé
+    doc.setFillColor(234, 243, 222);
+    doc.roundedRect(10, y, 52, 9, 2, 2, 'F');
+    doc.setTextColor(59, 109, 17); doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+    doc.text('PAIEMENT CONFIRMÉ', 36, y + 6, { align: 'center' });
+
+    doc.setTextColor(140, 150, 143); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.text('Reçu généré électroniquement depuis l\'espace membres - amstc.org', W / 2, 200, { align: 'center' });
+    doc.text('Association Médico-Sociale des Talibés Cheikh', W / 2, 205, { align: 'center' });
+
+    doc.save('recu-' + numeroRecu + '.pdf');
   }
 
   async function urlToDataUrl(url) {
