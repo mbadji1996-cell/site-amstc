@@ -1,0 +1,78 @@
+/* Corrige le CMS (Decap CMS) qui n'est pas responsive sur mobile : l'éditeur
+   de fiche a une largeur minimale codée en dur à 800px (formulaire + aperçu
+   côte à côte), ce qui force un défilement horizontal et rend une partie de
+   la barre d'outils (Publier, statut, "Voir en direct"...) inaccessible sur
+   téléphone. On neutralise cette largeur minimale et on empile le
+   formulaire au-dessus de l'aperçu au lieu de les afficher côte à côte.
+
+   Decap fige par ailleurs l'éditeur en position:absolute avec overflow:hidden,
+   et le SplitPane est ancré aux quatre bords : une fois les panneaux empilés,
+   tout ce qui dépasse la hauteur de l'écran est purement coupé, sans aucun
+   moyen de défiler. On fait donc du conteneur de l'éditeur la zone de
+   défilement unique, ce qui rend le bas du formulaire toujours atteignable -
+   y compris dans l'application Android (TWA), qui n'a pas de barre d'adresse
+   rétractable pour masquer le problème. */
+@media (max-width: 800px) {
+  [class*="EditorContainer"] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  /* Le conteneur racine de l'éditeur devient la seule zone qui défile.
+     :not(...) épargne l'éditeur markdown, qui porte un nom voisin. */
+  [class*="EditorContainer"]:not([class*="RawEditorContainer"]) {
+    height: 100% !important;
+    /* la barre d'outils repasse dans le flux : sa réserve de 66px ferait un vide */
+    padding-top: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  [class*="ToolbarContainer"] {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    flex-wrap: wrap !important;
+  }
+  [class*="ToolbarSection"] {
+    min-width: 0 !important;
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+  /* Enfant direct du conteneur : le bloc "Editor" figé à height:100% */
+  [class*="EditorContainer"]:not([class*="RawEditorContainer"]) > [class*="-Editor"] {
+    height: auto !important;
+  }
+  /* Le SplitPane est en position:absolute ancré aux 4 bords : tant qu'il l'est,
+     sa hauteur reste celle de l'écran et le trop-plein est coupé. */
+  .SplitPane {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .SplitPane .Pane,
+  .Pane1,
+  .Pane2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  /* Sans hauteur propre, l'aperçu (iframe en height:100%) se réduirait à rien. */
+  .Pane2 {
+    min-height: 60vh !important;
+  }
+  [class*="PreviewPaneContainer"],
+  [class*="ControlPaneContainer"] {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .Resizer {
+    display: none !important;
+  }
+}

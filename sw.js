@@ -9,8 +9,13 @@
      ligne après une première visite.
    Incrémenter CACHE_VERSION invalide l'ancien cache au déploiement
    suivant.
+   L'administration (/admin/) est volontairement exclue : c'est un outil
+   de rédaction qui doit toujours refléter la dernière version en ligne.
+   Servie depuis le cache, une correction n'y apparaissait qu'à la visite
+   suivante - invisible dans l'application Android, qui garde son cache
+   d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v1";
+const CACHE_VERSION = "amstc-v2";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
@@ -43,6 +48,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET" || !req.url.startsWith(self.location.origin)) return;
+  if (new URL(req.url).pathname.startsWith("/admin/")) return;
 
   if (req.mode === "navigate") {
     event.respondWith(
