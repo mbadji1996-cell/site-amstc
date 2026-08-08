@@ -195,7 +195,15 @@
   .hero-event.live .hero-event-dot{background:#FF5A5A;animation:ep-pulse 1.4s ease-in-out infinite;}
   .hero-event-label{font-weight:700;font-size:0.9rem;color:var(--white);}
   .hero-event-count{font-family:var(--mono);font-size:0.85rem;letter-spacing:0.05em;color:var(--gold);white-space:nowrap;}
-  @media(max-width:560px){.hero-event{padding:9px 14px;}.hero-event-label{font-size:0.82rem;}.hero-event-count{font-size:0.78rem;}}
+  /* Mobile : le titre passe sur plusieurs lignes - l'arrondi "pilule"
+     (999px) déformait la pastille en gros ovale ; on passe en carte aux
+     coins doux, point et compte à rebours alignés proprement. */
+  @media(max-width:560px){
+    .hero-event{border-radius:14px;padding:12px 16px;align-items:flex-start;}
+    .hero-event-dot{margin-top:5px;}
+    .hero-event-label{font-size:0.85rem;line-height:1.35;flex:1 1 100%;flex-basis:calc(100% - 22px);}
+    .hero-event-count{font-size:0.8rem;margin-left:19px;}
+  }
   .hero .eyebrow{color:var(--gold);}
   .hero .eyebrow::before{background:var(--gold);}
   .hero h1{color:var(--white); font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
