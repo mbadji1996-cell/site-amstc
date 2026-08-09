@@ -146,6 +146,12 @@
   <div id="superAdminSection" style="display:none;">
     <h2>Droits d'administration</h2>
     <p class="section-note">Réservé au Super Administrateur : nommer ou révoquer des administrateurs.</p>
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="roleSearchInput" placeholder="Rechercher un nom, un e-mail, un rôle…" oninput="onRoleSearch()">
+      <span class="search-icon" id="roleSearchIcon">🔍</span>
+      <button class="search-clear" id="roleSearchClear" onclick="clearRoleSearch()" type="button">✕</button>
+    </div>
+    <p class="search-count" id="roleSearchCount" style="display:none;"></p>
     <div id="rolesList"></div>
   </div>
 
@@ -258,7 +264,7 @@
 
     if (q) {
       countEl.style.display = "";
-      countEl.textContent = `${list.length} résultat${list.length !== 1 ? "s" : ""} sur ${allApprovedMembers.length}`;
+      countEl.textContent = `${list.length} résultat${list.length > 1 ? "s" : ""} sur ${allApprovedMembers.length}`;
     } else {
       countEl.style.display = "none";
     }
@@ -327,10 +333,83 @@
       `).join("");
   }
 
+  // ===== Droits d'administration : même liste, même recherche =====
+  function getFilteredRoleMembers(){
+    const q = normalize(document.getElementById("roleSearchInput").value.trim());
+    if (!q) return allApprovedMembers;
+    return allApprovedMembers.filter(p => {
+      const haystack = normalize([
+        p.full_name, p.first_name, p.last_name, p.email, roleLabel(p.role),
+      ].filter(Boolean).join(" "));
+      return haystack.includes(q);
+    });
+  }
+
+  function onRoleSearch(){
+    const q = document.getElementById("roleSearchInput").value.trim();
+    document.getElementById("roleSearchIcon").style.display = q ? "none" : "";
+    document.getElementById("roleSearchClear").classList.toggle("show", !!q);
+    renderRolesList();
+  }
+
+  function clearRoleSearch(){
+    document.getElementById("roleSearchInput").value = "";
+    document.getElementById("roleSearchIcon").style.display = "";
+    document.getElementById("roleSearchClear").classList.remove("show");
+    renderRolesList();
+  }
+
+  function renderRolesList(){
+    const rolesEl = document.getElementById("rolesList");
+    const countEl = document.getElementById("roleSearchCount");
+    const q = document.getElementById("roleSearchInput").value.trim();
+    const list = getFilteredRoleMembers();
+
+    if (q) {
+      countEl.style.display = "";
+      countEl.textContent = `${list.length} résultat${list.length > 1 ? "s" : ""} sur ${allApprovedMembers.length}`;
+    } else {
+      countEl.style.display = "none";
+    }
+
+    rolesEl.innerHTML = list.length === 0
+      ? `<p class="empty">${q ? "Aucun membre ne correspond à votre recherche." : "Aucun membre approuvé pour le moment."}</p>`
+      : list.map(p => {
+          const isSelf = p.id === currentUserId;
+          let actionBtn = "";
+          if (isSelf) {
+            actionBtn = '<span class="self-note">C\'est votre compte</span>';
+          } else if (p.role === "super_admin") {
+            actionBtn = '<span class="self-note">Super Administrateur</span>';
+          } else if (p.role === "admin") {
+            actionBtn = `<button class="btn-sm btn-warning" data-action="revoke-admin" data-id="${esc(p.id)}">Révoquer les droits admin</button>`;
+          } else {
+            actionBtn = `<button class="btn-sm btn-promote" data-action="promote-admin" data-id="${esc(p.id)}">Nommer administrateur</button>`;
+          }
+          // Suppression définitive : proposée uniquement sur un compte déjà
+          // désactivé, pour qu'elle reste un second geste délibéré (la
+          // fonction SQL applique la même règle côté serveur).
+          const deleteBtn = (!isSelf && p.role !== "super_admin" && p.is_active === false)
+            ? `<button class="btn-sm btn-danger-strong" data-action="delete-member" data-id="${esc(p.id)}" data-name="${esc(p.full_name || p.email)}">Supprimer définitivement</button>`
+            : "";
+          return `
+            <div class="member-row">
+              <div>
+                <div class="member-name">
+                  ${esc(p.full_name || "(nom non renseigné)")}
+                  <span class="role-tag ${esc(p.role)}">${roleLabel(p.role)}</span>
+                  ${p.is_active === false ? '<span class="status-tag inactive">Désactivé</span>' : ''}
+                </div>
+                <div class="member-email">${esc(p.email)}</div>
+              </div>
+              <div class="member-actions">${actionBtn}${deleteBtn}</div>
+            </div>
+          `;
+        }).join("");
+  }
+
   async function loadLists() {
     const pendingEl = document.getElementById("pendingList");
-    const membersEl = document.getElementById("membersList");
-    const rolesEl = document.getElementById("rolesList");
     const rejectedEl = document.getElementById("rejectedList");
 
     const [{ data, error }, unclaimedRes, yearReqRes] = await Promise.all([
@@ -387,42 +466,7 @@
     renderMembersList();
 
     // ===== Droits d'administration (Super Admin uniquement) =====
-    if (isSuperAdmin) {
-      rolesEl.innerHTML = approved.length === 0
-        ? '<p class="empty">Aucun membre approuvé pour le moment.</p>'
-        : approved.map(p => {
-            const isSelf = p.id === currentUserId;
-            let actionBtn = "";
-            if (isSelf) {
-              actionBtn = '<span class="self-note">C\'est votre compte</span>';
-            } else if (p.role === "super_admin") {
-              actionBtn = '<span class="self-note">Super Administrateur</span>';
-            } else if (p.role === "admin") {
-              actionBtn = `<button class="btn-sm btn-warning" data-action="revoke-admin" data-id="${esc(p.id)}">Révoquer les droits admin</button>`;
-            } else {
-              actionBtn = `<button class="btn-sm btn-promote" data-action="promote-admin" data-id="${esc(p.id)}">Nommer administrateur</button>`;
-            }
-            // Suppression définitive : proposée uniquement sur un compte déjà
-            // désactivé, pour qu'elle reste un second geste délibéré (la
-            // fonction SQL applique la même règle côté serveur).
-            const deleteBtn = (!isSelf && p.role !== "super_admin" && p.is_active === false)
-              ? `<button class="btn-sm btn-danger-strong" data-action="delete-member" data-id="${esc(p.id)}" data-name="${esc(p.full_name || p.email)}">Supprimer définitivement</button>`
-              : "";
-            return `
-              <div class="member-row">
-                <div>
-                  <div class="member-name">
-                    ${esc(p.full_name || "(nom non renseigné)")}
-                    <span class="role-tag ${esc(p.role)}">${roleLabel(p.role)}</span>
-                    ${p.is_active === false ? '<span class="status-tag inactive">Désactivé</span>' : ''}
-                  </div>
-                  <div class="member-email">${esc(p.email)}</div>
-                </div>
-                <div class="member-actions">${actionBtn}${deleteBtn}</div>
-              </div>
-            `;
-          }).join("");
-    }
+    if (isSuperAdmin) renderRolesList();
 
     // ===== Refusés =====
     rejectedEl.innerHTML = rejected.length === 0
@@ -461,6 +505,8 @@
     const msg = document.getElementById('yearsMsg-' + memberId);
     const memberSinceVal = document.getElementById('memberSince-' + memberId).value.trim();
     const cardValidUntilVal = document.getElementById('cardValidUntil-' + memberId).value.trim();
+    const memberSince = memberSinceVal ? parseInt(memberSinceVal, 10) : null;
+    const cardValidUntil = cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null;
 
     // RPC (phase39, étendue en phase43) plutôt qu'une écriture directe sur
     // profiles : cette dernière se heurtait à "permission denied for table
@@ -469,8 +515,8 @@
     // le changement d'année l'a fait renuméroter.
     const { data: nouveauNumero, error } = await supabaseClient.rpc('set_member_years', {
       member_id: memberId,
-      new_member_since: memberSinceVal ? parseInt(memberSinceVal, 10) : null,
-      new_card_valid_until: cardValidUntilVal ? parseInt(cardValidUntilVal, 10) : null,
+      new_member_since: memberSince,
+      new_card_valid_until: cardValidUntil,
     });
 
     if (error) {
@@ -479,13 +525,23 @@
       return;
     }
 
+    // Les listes se réaffichent depuis ce cache : sans cette mise à jour, les
+    // champs revenaient à l'ancienne année juste après l'enregistrement, et
+    // l'administrateur ressaisissait la même valeur en croyant à un échec.
+    // (Les objets de allApprovedMembers sont ceux de profilesById : une seule
+    // écriture suffit, et elle fiabilise aussi l'impression des cartes.)
+    const membre = allApprovedMembers.find(m => m.id === memberId);
+    if (membre) {
+      membre.member_since = memberSince;
+      membre.card_valid_until = cardValidUntil;
+      if (nouveauNumero) membre.legacy_card_number = nouveauNumero;
+    }
+
     if (nouveauNumero) {
       // Le numéro de carte porte l'année d'adhésion : la liste affichée
       // deviendrait fausse si on ne la rechargeait pas.
       msg.textContent = 'Enregistré. Nouveau numéro de carte : ' + nouveauNumero;
       msg.className = 'assign-msg ok';
-      const membre = allApprovedMembers.find(m => m.id === memberId);
-      if (membre) membre.legacy_card_number = nouveauNumero;
       renderMembersList();
       const rouvert = document.getElementById('details-' + memberId);
       if (rouvert) {
