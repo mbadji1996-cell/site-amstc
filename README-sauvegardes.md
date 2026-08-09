@@ -118,3 +118,78 @@ tail -30 /var/backups/amstc/sauvegarde.log
 Le script s'arrête avec un code d'erreur si un dump est incomplet, et
 supprime le fichier tronqué plutôt que de le garder : une sauvegarde
 corrompue qui paraît valable est pire que pas de sauvegarde du tout.
+
+---
+
+# Supervision (être prévenu quand quelque chose tombe)
+
+Aujourd'hui, si le VPS ou une des deux API s'arrête, personne n'est
+prévenu : on le découvre parce qu'un membre le signale. Pendant le Gamou,
+c'est trop tard.
+
+## Ce qu'il faut surveiller
+
+| Adresse à surveiller | Ce que ça prouve |
+|---|---|
+| `https://amstc.org/` | Le site public est servi |
+| `https://consultations-amstc.org/` | Le site consultations est servi |
+| `https://api.amstc.org/functions/v1/sante?apikey=CLE_ANON_AMSTC` | VPS + proxy + **base amstc** |
+| `https://api.consultations-amstc.org/functions/v1/sante?apikey=CLE_ANON_CONSULT` | VPS + proxy + **base consultations** |
+
+Les clés `anon` sont publiques par conception (elles figurent déjà dans le
+code du site) : les mettre dans une adresse de supervision ne présente
+aucun risque. La sonde ne renvoie aucune donnée personnelle, seulement un
+état et un compteur.
+
+À défaut de déployer la fonction, `…/auth/v1/health?apikey=…` répond
+également 200, mais ne prouve que le proxy : une base arrêtée passerait
+inaperçue.
+
+## 1. Déployer la sonde `sante` sur les deux instances
+
+Sur le VPS, pour l'instance **amstc** :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/sante/index.ts -o /tmp/sante.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/sante && docker cp /tmp/sante.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/sante/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+```
+
+Puis pour l'instance **consultations** (même fichier, aucune adaptation) :
+
+```bash
+docker exec supabase-edge-functions-qmy744bqv0xnafmr9nndu34t mkdir -p /home/deno/functions/sante && docker cp /tmp/sante.ts supabase-edge-functions-qmy744bqv0xnafmr9nndu34t:/home/deno/functions/sante/index.ts && docker restart supabase-edge-functions-qmy744bqv0xnafmr9nndu34t
+```
+
+Vérifiez (remplacez la clé par la clé `anon` correspondante) :
+
+```bash
+curl -s "https://api.amstc.org/functions/v1/sante?apikey=CLE_ANON_AMSTC"
+```
+
+Vous devez recevoir `{"etat":"ok","base":"joignable","comptes":…}`. Si vous
+recevez `"etat":"degrade"`, la base ne répond pas : c'est précisément ce
+que la supervision doit détecter.
+
+## 2. Créer les alertes
+
+Sur [uptimerobot.com](https://uptimerobot.com) (offre gratuite : 50
+surveillances, vérification toutes les 5 minutes) :
+
+1. Créez un compte avec l'adresse qui doit recevoir les alertes.
+2. **Add New Monitor** → type **HTTP(s)** → collez une des quatre adresses
+   du tableau ci-dessus → intervalle **5 minutes**.
+3. Répétez pour les quatre.
+4. Dans **My Settings**, ajoutez un second contact d'alerte (une deuxième
+   adresse e-mail, ou l'intégration WhatsApp/Telegram) : si la panne
+   touche l'envoi d'e-mails, une seule adresse ne suffit pas.
+
+Pour les deux adresses `sante`, réglez le monitor pour n'accepter **que
+le code 200** : le 503 renvoyé par la sonde quand la base est en panne
+doit déclencher l'alerte.
+
+## 3. Vérifier que l'alerte fonctionne
+
+Ne vous fiez pas à une supervision jamais déclenchée. Une fois installée,
+mettez volontairement en pause l'un des services depuis Coolify pendant
+deux minutes et vérifiez que l'alerte arrive bien. Remettez-le ensuite en
+marche - à faire en dehors des heures d'affluence, et surtout pas pendant
+le Gamou.
