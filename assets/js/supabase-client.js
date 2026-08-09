@@ -50,12 +50,20 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
     window.location.href = redirectTo;
     return null;
   }
-  // Profil incomplet (photo exclue) : l'espace membres est verrouillé tant
-  // que les informations de base manquent - direction la fiche profil.
-  // Mêmes champs exigés que l'écran de complétion d'inscription.html.
+  // Profil incomplet : l'espace membres est verrouillé tant qu'il manque une
+  // des informations de la carte de membre, photo d'identité comprise -
+  // direction la fiche profil. Mêmes champs exigés que l'écran de
+  // complétion d'inscription.html (profilIncomplet).
+  // Spécialité exigée sauf pour le domaine « autre », où c'est la précision
+  // du domaine qui tient lieu de filière (et où la fiche profil ne propose
+  // d'ailleurs aucun champ spécialité).
   const incomplet = !String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
     || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
-    || !String(profile.city || "").trim();
+    || !String(profile.city || "").trim() || !String(profile.title || "").trim()
+    || !String(profile.photo_url || "").trim()
+    || (profile.domain === "autre"
+        ? !String(profile.domain_autre || "").trim()
+        : !String(profile.specialty || "").trim());
   if (incomplet && !window.location.pathname.endsWith("profil.html")) {
     window.location.href = "profil.html?completer=1";
     return null;

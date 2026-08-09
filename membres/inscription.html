@@ -465,15 +465,17 @@
   // ===== Complétion obligatoire du profil =====
   // Tout ce qui figure sur la carte de membre est exigé ici, photo comprise :
   // l'administration établit les cartes à partir de ces seules informations.
-  // (Le verrou d'entrée de l'espace membres, dans supabase-client.js, reste
-  // volontairement plus souple : il n'exige pas la photo, pour ne pas
-  // bloquer les membres approuvés de longue date qui n'en ont pas encore.)
+  // Le verrou d'entrée de l'espace membres (supabase-client.js) applique les
+  // mêmes exigences : un membre approuvé au profil incomplet est renvoyé sur
+  // sa fiche profil tant qu'il n'a pas tout renseigné.
   function profilIncomplet(p) {
     return !String(p.first_name || "").trim() || !String(p.last_name || "").trim()
       || !String(p.phone || "").trim() || !String(p.domain || "").trim()
       || !String(p.city || "").trim() || !String(p.title || "").trim()
-      || !String(p.specialty || "").trim() || !String(p.photo_url || "").trim()
-      || (p.domain === "autre" && !String(p.domain_autre || "").trim());
+      || !String(p.photo_url || "").trim()
+      || (p.domain === "autre"
+          ? !String(p.domain_autre || "").trim()
+          : !String(p.specialty || "").trim());
   }
 
   // Photo : recadrée en carré centré et ramenée à 512 px avant l'envoi, comme
@@ -620,7 +622,9 @@
       [champs.p_phone, "votre téléphone"],
       [champs.p_domain, "votre domaine"],
       [domaine === "autre" ? champs.p_domain_autre : "ok", "la précision de votre domaine"],
-      [champs.p_specialty, "votre spécialité"],
+      // Pour « autre », la précision du domaine tient lieu de filière : la
+      // spécialité n'y est pas bloquante (la fiche profil ne l'a pas non plus).
+      [domaine === "autre" ? "ok" : champs.p_specialty, "votre spécialité"],
       [champs.p_city, "votre localité"],
     ].find(([valeur]) => !valeur);
     if (manquant) {

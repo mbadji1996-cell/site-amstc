@@ -484,7 +484,7 @@
     if (new URLSearchParams(window.location.search).get('completer')) {
       toggleAccordion('info');
       const msg = document.getElementById('editMsg');
-      msg.textContent = "Complétez les informations manquantes (prénom, nom, téléphone, domaine, localité) puis enregistrez : l'accès aux autres pages de l'espace membres sera alors rétabli.";
+      msg.textContent = "Complétez les informations manquantes (photo d'identité, titre, prénom, nom, téléphone, domaine, spécialité, localité) puis enregistrez : l'accès aux autres pages de l'espace membres sera alors rétabli.";
       msg.className = 'form-msg error';
       document.getElementById('body-info').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -807,16 +807,6 @@
     saveBtn.disabled = true;
     msg.className = 'form-msg';
 
-    let photoUrl;
-    try {
-      photoUrl = await uploadPendingPhoto();
-    } catch (e) {
-      msg.textContent = "Erreur lors de l'envoi de la photo : " + e.message;
-      msg.className = 'form-msg error';
-      saveBtn.disabled = false;
-      return;
-    }
-
     const firstName = document.getElementById('eFirstName').value.trim();
     const lastName = document.getElementById('eLastName').value.trim();
     const domain = document.getElementById('eDomain').value;
@@ -841,6 +831,38 @@
       specialty,
       city: document.getElementById('eCity').value.trim() || null,
     };
+
+    // Tout ce qui figure sur la carte de membre est exigé, photo comprise :
+    // c'est ce même jeu de champs que le verrou de l'espace membres
+    // (requireApprovedMember) contrôle pour rétablir l'accès. Le contrôle
+    // précède l'envoi de la photo pour ne rien téléverser en vain.
+    const manquant = [
+      [payload.title, 'votre titre'],
+      [payload.first_name, 'votre prénom'],
+      [payload.last_name, 'votre nom'],
+      [payload.phone, 'votre téléphone (WhatsApp)'],
+      [payload.domain, 'votre domaine'],
+      [domain === 'autre' ? payload.domain_autre : 'ok', 'la précision de votre domaine'],
+      [specMode === 'none' ? 'ok' : payload.specialty, 'votre spécialité'],
+      [payload.city, 'votre localité'],
+      [(pendingPhotoBlob || String(currentProfile.photo_url || '').trim()) ? 'ok' : '', "votre photo d'identité"],
+    ].find(([valeur]) => !valeur);
+    if (manquant) {
+      msg.textContent = 'Il manque ' + manquant[1] + ' : toutes les informations de la carte de membre sont obligatoires.';
+      msg.className = 'form-msg error';
+      saveBtn.disabled = false;
+      return;
+    }
+
+    let photoUrl;
+    try {
+      photoUrl = await uploadPendingPhoto();
+    } catch (e) {
+      msg.textContent = "Erreur lors de l'envoi de la photo : " + e.message;
+      msg.className = 'form-msg error';
+      saveBtn.disabled = false;
+      return;
+    }
     if (photoUrl) payload.photo_url = photoUrl;
 
     // member_since ne fait plus partie du payload (phase43) : elle détermine
