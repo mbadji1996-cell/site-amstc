@@ -74,6 +74,10 @@
   .member-name{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--text-heading);}
   /* Comptes administrateurs : signalés à tous les membres dans l'annuaire. */
   .member-role-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-deep,#AA7B11);background:#FEF6E4;padding:3px 10px;border-radius:999px;margin-top:6px;}
+  /* Fonction au Bureau Exécutif : vert, pour se distinguer au premier coup
+     d'œil du badge doré des droits d'administration - ce sont deux choses
+     différentes, et un membre du Bureau n'est pas forcément administrateur. */
+  .member-bureau-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--white,#fff);background:var(--green,#17763B);padding:3px 10px;border-radius:999px;margin-top:6px;}
   .member-domain{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--indigo-dark);background:var(--indigo-light);padding:3px 10px;border-radius:999px;margin-top:6px;}
   .member-city{font-size:0.82rem;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px;}
   .member-contact{
@@ -182,6 +186,16 @@
     return `https://wa.me/${digits}`;
   }
 
+  // Fonction au Bureau Exécutif : « Président - Commission Sociale », ou la
+  // seule fonction quand elle ne dépend d'aucune commission (Président,
+  // Secrétaire général…). Vide pour la grande majorité des membres.
+  function fonctionLabel(m){
+    const f = String(m.fonction || '').trim();
+    const c = String(m.commission || '').trim();
+    if (!f && !c) return '';
+    return [f, c].filter(Boolean).join(' - ');
+  }
+
   function displayName(m){
     // Même règle que profil.html : seuls Dr et Pr s'affichent devant le nom.
     const titre = (m.title === 'Dr' || m.title === 'Pr') ? m.title : null;
@@ -272,6 +286,7 @@
           ? `<img class="member-avatar" src="${esc(m.photo_url)}" alt="${esc(displayName(m))}" loading="lazy" data-initials="${esc(memberInitials(m))}" onerror="avatarErreur(this)">`
           : `<div class="member-avatar-fallback">${esc(memberInitials(m))}</div>`}
         <div class="member-name">${esc(displayName(m))}</div>
+        ${fonctionLabel(m) ? `<div class="member-bureau-badge">${esc(fonctionLabel(m))}</div>` : ''}
         ${m.role === 'super_admin' ? '<div class="member-role-badge">Super Administrateur</div>'
           : m.role === 'admin' ? '<div class="member-role-badge">Administrateur</div>' : ''}
         ${domainLabel(m) ? `<div class="member-domain">${esc([domainLabel(m), m.specialty].filter(Boolean).join(' · '))}</div>` : ''}
