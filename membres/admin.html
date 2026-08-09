@@ -217,6 +217,13 @@
           <p class="admin-card-sub">Membres, cartes et encaissements</p>
         </div>
       </a>
+      <a class="admin-card" href="journal-admin.html" id="carteJournal" style="display:none;">
+        <div class="admin-card-icon"><i class="ti ti-history"></i></div>
+        <div>
+          <p class="admin-card-label">Journal d'administration</p>
+          <p class="admin-card-sub">Qui a fait quoi, et quand</p>
+        </div>
+      </a>
       <a class="admin-card" href="verification-admin.html">
         <div class="admin-card-icon"><i class="ti ti-checklist"></i></div>
         <div>
@@ -278,6 +285,13 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+
+    // Le journal sert notamment à suivre l'action des administrateurs : il
+    // ne leur est donc pas proposé. La page et la fonction SQL refusent de
+    // toute façon l'accès, ce masquage évite seulement une impasse.
+    if (profile.role === 'super_admin') {
+      document.getElementById('carteJournal').style.display = '';
+    }
 
     loadStats();
   })();
