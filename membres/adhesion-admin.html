@@ -42,6 +42,9 @@
   .main-tab{font-size:0.88rem;font-weight:600;padding:9px 22px;background:var(--surface);color:var(--text-muted);cursor:pointer;border:none;border-right:1px solid var(--line);}
   .main-tab:last-child{border-right:none;}
   .main-tab.active{background:var(--green-deep);color:var(--white);}
+  /* Compteur d'attente par onglet : la pastille du centre d'administration
+     totalise les deux tables, sans dire laquelle est concernée. */
+  .tab-count{display:inline-flex;align-items:center;justify-content:center;background:#B23B3B;color:#fff;font-family:var(--mono);font-size:0.66rem;font-weight:700;min-width:18px;height:18px;border-radius:999px;padding:0 5px;margin-left:6px;}
 
   /* Stats row */
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
@@ -120,8 +123,8 @@
     </div>
 
     <div class="main-tabs">
-      <button class="main-tab active" id="tab-validity" onclick="switchMain('validity')"><i class="ti ti-id-badge"></i> Validité de carte</button>
-      <button class="main-tab" id="tab-cotis" onclick="switchMain('cotis')"><i class="ti ti-calendar-check"></i> Cotisations</button>
+      <button class="main-tab active" id="tab-validity" onclick="switchMain('validity')"><i class="ti ti-id-badge"></i> Validité de carte <span class="tab-count" id="tabCountValidity" style="display:none;"></span></button>
+      <button class="main-tab" id="tab-cotis" onclick="switchMain('cotis')"><i class="ti ti-calendar-check"></i> Cotisations <span class="tab-count" id="tabCountCotis" style="display:none;"></span></button>
     </div>
 
     <!-- VALIDITÉ panel -->
@@ -187,7 +190,32 @@
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
     await Promise.all([reloadValidity(), reloadCotis()]);
+    ouvrirOngletUtile();
   })();
+
+  // La pastille du centre d'administration totalise validité + cotisations.
+  // En arrivant toujours sur « Validité de carte », un administrateur alerté
+  // pour une cotisation tombait sur un onglet affichant « En attente : 0 »
+  // et croyait la notification erronée. On ouvre donc l'onglet qui porte
+  // réellement l'attente.
+  function ouvrirOngletUtile(){
+    const enAttente = l => l.filter(p => p.status === 'pending').length;
+    if (enAttente(allValidityPayments) === 0 && enAttente(allCotisPayments) > 0) {
+      switchMain('cotis');
+    }
+  }
+
+  // Compteur sur chaque onglet : indique d'un coup d'œil où se trouve
+  // l'attente, y compris après avoir traité un paiement.
+  function majCompteursOnglets(){
+    [['tabCountValidity', allValidityPayments], ['tabCountCotis', allCotisPayments]].forEach(([id, liste]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const n = liste.filter(p => p.status === 'pending').length;
+      el.textContent = n;
+      el.style.display = n > 0 ? '' : 'none';
+    });
+  }
 
   function switchMain(tab) {
     ['validity','cotis'].forEach(t => {
@@ -212,6 +240,7 @@
     document.getElementById('vStatPending').textContent = allValidityPayments.filter(p => p.status === 'pending').length;
     document.getElementById('vStatConfirmed').textContent = allValidityPayments.filter(p => p.status === 'confirmed').length;
     document.getElementById('vStatTotal').textContent = allValidityPayments.length;
+    majCompteursOnglets();
   }
 
   function setValidityFilter(f) {
@@ -275,6 +304,7 @@
     document.getElementById('cStatPending').textContent = allCotisPayments.filter(p => p.status === 'pending').length;
     document.getElementById('cStatConfirmed').textContent = allCotisPayments.filter(p => p.status === 'confirmed').length;
     document.getElementById('cStatTotal').textContent = allCotisPayments.length;
+    majCompteursOnglets();
   }
 
   function setCotisFilter(f) {
