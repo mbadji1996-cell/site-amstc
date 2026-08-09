@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistiques - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --line:rgba(6,68,28,0.14); --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);padding:14px 0;}
+  .header-inner{max-width:980px;margin:0 auto;padding:0 24px;}
+  .logo-img{height:36px;filter:brightness(0) invert(1);}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 24px 80px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-block;margin-bottom:12px;}
+  h1{font-family:var(--display);font-size:1.5rem;color:var(--text-heading);margin-bottom:6px;}
+  .intro{color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;}
+  h2{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin:30px 0 12px;}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;}
+  .kpi-val{font-family:var(--display);font-size:1.7rem;font-weight:700;color:var(--text-heading);line-height:1.2;}
+  .kpi-lbl{font-size:0.78rem;color:var(--text-muted);margin-top:2px;}
+  .kpi-sub{font-family:var(--mono);font-size:0.68rem;color:#8A9E8F;margin-top:4px;}
+  .kpi.alerte .kpi-val{color:#B23B3B;}
+
+  .bloc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;}
+  .barre-ligne{display:grid;grid-template-columns:minmax(96px,26%) 1fr auto;align-items:center;gap:12px;padding:5px 0;}
+  .barre-lbl{font-size:0.84rem;color:var(--text-heading);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* display:block indispensable : sur un <span> laissé en ligne, largeur et
+     hauteur sont ignorées et la barre reste invisible. */
+  .barre-piste{display:block;background:var(--paper-alt);border-radius:999px;height:15px;overflow:hidden;}
+  .barre-val{display:block;height:100%;background:var(--green);border-radius:999px;min-width:2px;}
+  .barre-val.or{background:var(--gold-deep);}
+  .barre-nb{font-family:var(--mono);font-size:0.78rem;color:var(--text-muted);min-width:52px;text-align:right;}
+  .vide{color:var(--text-muted);font-size:0.86rem;font-style:italic;}
+  .note{font-size:0.78rem;color:var(--text-muted);margin-top:10px;}
+  .erreur{background:#FDEEEE;color:#B23B3B;border-radius:10px;padding:12px 16px;font-size:0.9rem;margin-bottom:16px;}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .btn-sm{font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;cursor:pointer;background:var(--surface);color:var(--text-heading);border:1.5px solid var(--line);}
+  .btn-sm:hover{border-color:var(--green);}
+  @media(max-width:520px){
+    .barre-ligne{grid-template-columns:minmax(80px,38%) 1fr auto;gap:8px;}
+    .barre-nb{min-width:42px;font-size:0.72rem;}
+  }
+</style>
+</head>
+<body>
+
+<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <a class="back" href="admin.html">&larr; Centre d'administration</a>
+  <h1>Statistiques</h1>
+  <p class="intro" id="intro">Vue d'ensemble de l'association.</p>
+  <div class="erreur" id="erreurBox" style="display:none;"></div>
+  <div class="actions">
+    <button class="btn-sm" onclick="exporterCsv()">&#8681; Exporter en CSV</button>
+    <button class="btn-sm" onclick="window.print()">&#128424; Imprimer</button>
+  </div>
+  <div id="contenu"></div>
+</div>
+<div class="wrap"><p id="loadingMsg" style="font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);">Chargement des statistiques…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  // String() est indispensable : esc() reçoit aussi des nombres (années,
+  // montants), et (2017).replace n'existe pas - l'exception interromprait
+  // tout le rendu de la page.
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function nb(n){ return Number(n || 0).toLocaleString('fr-FR'); }
+  function fcfa(n){ return Number(n || 0).toLocaleString('fr-FR') + ' F'; }
+
+  const ANNEE = new Date().getFullYear();
+  const DOMAINES = {
+    medecine:"Médecine", pharmacie:"Pharmacie", odontologie:"Odontologie",
+    soins_infirmiers:"Soins infirmiers", soins_obstetricaux:"Soins obstétricaux", autre:"Autre",
+  };
+
+  let statsExport = [];
+
+  function kpi(valeur, libelle, sousTitre, alerte){
+    return `<div class="kpi${alerte ? ' alerte' : ''}">
+      <p class="kpi-val">${esc(valeur)}</p>
+      <p class="kpi-lbl">${esc(libelle)}</p>
+      ${sousTitre ? `<p class="kpi-sub">${esc(sousTitre)}</p>` : ''}
+    </div>`;
+  }
+
+  // Diagramme en barres horizontales, dessiné en CSS : pas de bibliothèque
+  // externe à charger, et le tout reste lisible à l'impression.
+  function barres(entrees, options){
+    const opt = options || {};
+    if (!entrees.length) return '<p class="vide">Aucune donnée.</p>';
+    const max = Math.max(...entrees.map(e => e[1])) || 1;
+    const total = entrees.reduce((s, e) => s + e[1], 0);
+    return entrees.map(([libelle, valeur]) => {
+      const pourcent = total ? Math.round(valeur / total * 100) : 0;
+      return `<div class="barre-ligne">
+        <span class="barre-lbl" title="${esc(libelle)}">${esc(libelle)}</span>
+        <span class="barre-piste"><span class="barre-val${opt.or ? ' or' : ''}" style="width:${(valeur / max * 100).toFixed(1)}%"></span></span>
+        <span class="barre-nb">${nb(valeur)}${opt.pourcent === false ? '' : ` · ${pourcent}%`}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Regroupe une liste sur une clé, trie par effectif décroissant.
+  function compter(liste, cle, limite){
+    const m = new Map();
+    liste.forEach(x => {
+      const k = cle(x);
+      if (k === null || k === undefined || k === '') return;
+      m.set(k, (m.get(k) || 0) + 1);
+    });
+    const rangs = [...m.entries()].sort((a, b) => b[1] - a[1]);
+    return limite ? rangs.slice(0, limite) : rangs;
+  }
+
+  function libelleDomaine(p){
+    if (!p.domain) return null;
+    if (p.domain === 'autre') return p.domain_autre ? p.domain_autre : 'Autre';
+    return DOMAINES[p.domain] || p.domain;
+  }
+
+  // Douze derniers mois, y compris ceux sans inscription : sans cela, la
+  // courbe sauterait les mois creux et donnerait une fausse impression de
+  // régularité.
+  function parMois(liste){
+    const mois = [];
+    const d = new Date(ANNEE, new Date().getMonth(), 1);
+    for (let i = 11; i >= 0; i--) {
+      const m = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      mois.push([m.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
+                 m.getFullYear() * 12 + m.getMonth()]);
+    }
+    const compte = new Map(mois.map(([lbl]) => [lbl, 0]));
+    liste.forEach(p => {
+      if (!p.created_at) return;
+      const dt = new Date(p.created_at);
+      const rang = dt.getFullYear() * 12 + dt.getMonth();
+      const trouve = mois.find(m => m[1] === rang);
+      if (trouve) compte.set(trouve[0], compte.get(trouve[0]) + 1);
+    });
+    return [...compte.entries()];
+  }
+
+  function rendre(profils, validite, cotis){
+    const approuves = profils.filter(p => p.status === 'approved');
+    const actifs = approuves.filter(p => p.is_active !== false);
+    const enAttente = profils.filter(p => p.status === 'pending');
+    const desactives = approuves.filter(p => p.is_active === false);
+    const refuses = profils.filter(p => p.status === 'rejected');
+
+    const avecCarte = approuves.filter(p => p.card_valid_until);
+    const cartesValides = avecCarte.filter(p => p.card_valid_until >= ANNEE);
+    const cartesExpirees = avecCarte.filter(p => p.card_valid_until < ANNEE);
+    const sansCarte = approuves.filter(p => !p.card_valid_until);
+    const sansPhoto = approuves.filter(p => !String(p.photo_url || '').trim());
+
+    const confirmes = l => l.filter(p => p.status === 'confirmed');
+    const totalAnnee = l => confirmes(l)
+      .filter(p => p.created_at && new Date(p.created_at).getFullYear() === ANNEE)
+      .reduce((s, p) => s + Number(p.amount_fcfa || 0), 0);
+    const enAttenteMontant = l => l.filter(p => p.status === 'pending')
+      .reduce((s, p) => s + Number(p.amount_fcfa || 0), 0);
+
+    const parDomaine = compter(approuves, libelleDomaine);
+    const parVille = compter(approuves, p => (p.city || '').trim(), 10);
+    const parAnnee = compter(approuves, p => p.member_since).sort((a, b) => b[0] - a[0]);
+    const parType = compter(approuves, p => p.applicant_type === 'nouvel_adherent' ? 'Nouvel adhérent' : 'Membre existant');
+    const inscriptions = parMois(profils);
+
+    statsExport = [
+      ['Indicateur', 'Valeur'],
+      ['Membres approuvés', approuves.length],
+      ['Membres actifs', actifs.length],
+      ['Comptes en attente', enAttente.length],
+      ['Comptes désactivés', desactives.length],
+      ['Comptes refusés', refuses.length],
+      ['Cartes valides', cartesValides.length],
+      ['Cartes expirées', cartesExpirees.length],
+      ['Sans carte', sansCarte.length],
+      ['Sans photo', sansPhoto.length],
+      ['Validité encaissée ' + ANNEE, totalAnnee(validite)],
+      ['Cotisations encaissées ' + ANNEE, totalAnnee(cotis)],
+      ['Paiements en attente (montant)', enAttenteMontant(validite) + enAttenteMontant(cotis)],
+      [],
+      ['Domaine', 'Membres'], ...parDomaine,
+      [],
+      ['Localité', 'Membres'], ...parVille,
+      [],
+      ["Année d'adhésion", 'Membres'], ...parAnnee,
+      [],
+      ['Mois', 'Inscriptions'], ...inscriptions,
+    ];
+
+    document.getElementById('intro').textContent =
+      `Vue d'ensemble au ${new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' })}.`;
+
+    document.getElementById('contenu').innerHTML = `
+      <h2>Membres</h2>
+      <div class="kpis">
+        ${kpi(nb(actifs.length), 'Membres actifs', approuves.length !== actifs.length ? nb(desactives.length) + ' désactivé(s)' : '')}
+        ${kpi(nb(enAttente.length), 'Comptes en attente', enAttente.length ? 'à valider' : 'rien à traiter', enAttente.length > 0)}
+        ${kpi(nb(approuves.length), 'Total approuvés', nb(refuses.length) + ' refusé(s)')}
+        ${kpi(nb(sansPhoto.length), 'Sans photo', sansPhoto.length ? 'carte impossible' : 'toutes présentes', sansPhoto.length > 0)}
+      </div>
+
+      <h2>Répartition par domaine</h2>
+      <div class="bloc">${barres(parDomaine)}</div>
+
+      <h2>Dix premières localités</h2>
+      <div class="bloc">${barres(parVille)}
+        ${parVille.length ? '<p class="note">Seules les dix localités les plus représentées sont affichées.</p>' : ''}</div>
+
+      <h2>Année d'adhésion</h2>
+      <div class="bloc">${barres(parAnnee)}</div>
+
+      <h2>Type d'adhérent</h2>
+      <div class="bloc">${barres(parType)}</div>
+
+      <h2>Inscriptions des douze derniers mois</h2>
+      <div class="bloc">${barres(inscriptions, { or: true, pourcent: false })}
+        <p class="note">Tous statuts confondus, y compris les comptes encore en attente.</p></div>
+
+      <h2>Cartes de membre</h2>
+      <div class="kpis">
+        ${kpi(nb(cartesValides.length), 'Cartes valides', 'jusqu’en ' + ANNEE + ' ou après')}
+        ${kpi(nb(cartesExpirees.length), 'Cartes expirées', 'à renouveler', cartesExpirees.length > 0)}
+        ${kpi(nb(sansCarte.length), 'Sans validité', 'jamais définie')}
+      </div>
+
+      <h2>Encaissements ${ANNEE}</h2>
+      <div class="kpis">
+        ${kpi(fcfa(totalAnnee(validite)), 'Validité de carte', nb(confirmes(validite).length) + ' paiement(s) confirmé(s)')}
+        ${kpi(fcfa(totalAnnee(cotis)), 'Cotisations', nb(confirmes(cotis).length) + ' paiement(s) confirmé(s)')}
+        ${kpi(fcfa(enAttenteMontant(validite) + enAttenteMontant(cotis)), 'En attente de validation',
+              nb(validite.filter(p => p.status === 'pending').length + cotis.filter(p => p.status === 'pending').length) + ' paiement(s)',
+              (validite.filter(p => p.status === 'pending').length + cotis.filter(p => p.status === 'pending').length) > 0)}
+      </div>
+      <p class="note">Seuls les paiements confirmés sont comptés dans les deux premiers chiffres, et uniquement ceux enregistrés en ${ANNEE}.</p>
+    `;
+  }
+
+  function exporterCsv(){
+    // Point-virgule et BOM : Excel en configuration française ouvre alors le
+    // fichier en colonnes, accents compris, sans étape d'import.
+    const contenu = '﻿' + statsExport
+      .map(l => (l || []).map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(';'))
+      .join('\r\n');
+    const lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([contenu], { type: 'text/csv;charset=utf-8;' }));
+    lien.download = 'statistiques-amstc-' + new Date().toISOString().slice(0, 10) + '.csv';
+    lien.click();
+    URL.revokeObjectURL(lien.href);
+  }
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+
+    const [rProfils, rValidite, rCotis] = await Promise.all([
+      supabaseClient.from('profiles').select('status,is_active,domain,domain_autre,city,member_since,card_valid_until,applicant_type,photo_url,created_at'),
+      supabaseClient.from('card_validity_payments').select('status,amount_fcfa,created_at'),
+      supabaseClient.from('cotisation_payments').select('status,amount_fcfa,created_at'),
+    ]);
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    if (rProfils.error) {
+      document.getElementById('erreurBox').style.display = '';
+      document.getElementById('erreurBox').textContent = 'Impossible de charger les membres : ' + rProfils.error.message;
+      return;
+    }
+    // Les paiements sont secondaires : une table absente ne doit pas priver
+    // l'administrateur de toutes les autres statistiques.
+    if (rValidite.error || rCotis.error) {
+      document.getElementById('erreurBox').style.display = '';
+      document.getElementById('erreurBox').textContent =
+        "Les statistiques d'encaissement sont indisponibles (" + esc((rValidite.error || rCotis.error).message) + "). Le reste de la page est à jour.";
+    }
+
+    rendre(rProfils.data || [], rValidite.data || [], rCotis.data || []);
+  })();
+</script>
+
+</body>
+</html>
