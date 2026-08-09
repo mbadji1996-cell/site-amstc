@@ -81,6 +81,25 @@
   .btn-google:hover{background:var(--paper-alt); color:var(--ink);}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+  /* Photo de la complétion : elle est reprise telle quelle sur la carte de
+     membre, d'où le cadrage rond de l'aperçu, qui montre au membre ce qui
+     sera réellement imprimé. */
+  .photo-field{display:flex; align-items:center; gap:16px; margin-top:10px; flex-wrap:wrap;}
+  .photo-preview{
+    width:84px; height:84px; border-radius:50%; object-fit:cover; flex-shrink:0;
+    border:2.5px solid var(--green); background:var(--paper-alt);
+  }
+  .photo-placeholder{
+    width:84px; height:84px; border-radius:50%; flex-shrink:0; background:var(--paper-alt);
+    border:2.5px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:0.62rem; color:#8A9E8F; text-align:center; line-height:1.3; padding:6px;
+  }
+  .photo-btn{
+    width:auto; margin-top:0; padding:10px 20px; font-size:0.88rem;
+    background:var(--surface); color:var(--text-heading); border:1.5px solid var(--line);
+  }
+  .photo-btn:hover{background:var(--paper-alt); color:var(--text-heading); border-color:var(--green);}
+  .photo-hint{font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;}
 </style>
 </head>
 <body>
@@ -116,8 +135,19 @@
   <div class="card" id="completionCard" style="display:none;">
     <h2 style="font-family:var(--display);font-size:1.15rem;color:var(--text-heading);margin-bottom:6px;">Complétez votre inscription</h2>
     <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:18px;">
-      Il ne manque que quelques informations pour que l'administration puisse valider votre compte.
+      Toutes ces informations servent à établir votre carte de membre : merci de les renseigner en entier.
     </p>
+
+    <label>Photo d'identité *</label>
+    <div class="photo-field">
+      <div class="photo-placeholder" id="cPhotoPlaceholder">Aucune<br>photo</div>
+      <img class="photo-preview" id="cPhotoPreview" alt="Aperçu de votre photo" style="display:none;">
+      <div>
+        <button class="btn photo-btn" type="button" id="cPhotoBtn">Choisir une photo</button>
+        <input type="file" id="cPhotoInput" accept="image/*" style="display:none;">
+      </div>
+    </div>
+    <p class="photo-hint">Un portrait de face, comme sur une pièce d'identité. Elle figurera sur votre carte de membre.</p>
 
     <label>Vous êtes… *</label>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
@@ -129,9 +159,9 @@
       </label>
     </div>
 
-    <label for="cTitle">Titre</label>
+    <label for="cTitle">Titre *</label>
     <select id="cTitle">
-      <option value="">-</option>
+      <option value="" disabled selected>- Choisir -</option>
       <option value="Dr">Dr</option>
       <option value="Pr">Pr</option>
       <option value="M.">M.</option>
@@ -159,17 +189,17 @@
       <option value="autre">Autres à préciser</option>
     </select>
     <div id="cDomainAutreGroup" style="display:none;">
-      <label for="cDomainAutre">Précisez votre domaine</label>
+      <label for="cDomainAutre">Précisez votre domaine *</label>
       <input type="text" id="cDomainAutre">
     </div>
 
-    <label for="cSpecialty">Spécialité (facultatif)</label>
-    <input type="text" id="cSpecialty" placeholder="Ex : Médecine générale, Officine…">
+    <label for="cSpecialty">Spécialité *</label>
+    <input type="text" id="cSpecialty" placeholder="Ex : Médecine générale, Officine, Étudiant…">
 
     <label for="cCity">Localité *</label>
     <input type="text" id="cCity" placeholder="Dakar, Thiès…" autocomplete="address-level2">
 
-    <label for="cMemberSince">Année d'adhésion</label>
+    <label for="cMemberSince">Année d'adhésion *</label>
     <select id="cMemberSince"></select>
     <p id="cMemberSinceNote" style="font-size:0.78rem;color:var(--text-muted,#5B6E60);margin:-6px 0 0;line-height:1.4;"></p>
 
@@ -415,7 +445,7 @@
       return;
     }
     if (profile.status === "pending") {
-      showMessage("Compte créé avec Google. Il est en attente de validation par un administrateur, vous recevrez un accès dès approbation.", "pending", msgEl);
+      showMessage("Compte créé. Il est en attente de validation par un administrateur, vous recevrez un accès dès approbation.", "pending", msgEl);
       await signOut();
       return;
     }
@@ -433,12 +463,84 @@
   }
 
   // ===== Complétion obligatoire du profil =====
-  // Champs exigés avant validation par l'admin (photo exclue) - mêmes
-  // champs que le verrou d'entrée de l'espace membres (supabase-client.js).
+  // Tout ce qui figure sur la carte de membre est exigé ici, photo comprise :
+  // l'administration établit les cartes à partir de ces seules informations.
+  // (Le verrou d'entrée de l'espace membres, dans supabase-client.js, reste
+  // volontairement plus souple : il n'exige pas la photo, pour ne pas
+  // bloquer les membres approuvés de longue date qui n'en ont pas encore.)
   function profilIncomplet(p) {
     return !String(p.first_name || "").trim() || !String(p.last_name || "").trim()
       || !String(p.phone || "").trim() || !String(p.domain || "").trim()
-      || !String(p.city || "").trim();
+      || !String(p.city || "").trim() || !String(p.title || "").trim()
+      || !String(p.specialty || "").trim() || !String(p.photo_url || "").trim()
+      || (p.domain === "autre" && !String(p.domain_autre || "").trim());
+  }
+
+  // Photo : recadrée en carré centré et ramenée à 512 px avant l'envoi, comme
+  // le fait la fiche profil - c'est le format que le dessin de la carte
+  // attend, et cela évite d'envoyer une photo de 5 Mo depuis un téléphone.
+  let photoEnAttente = null;
+
+  function preparerPhoto(fichier) {
+    return new Promise((resolve, reject) => {
+      const lecteur = new FileReader();
+      lecteur.onerror = () => reject(new Error("Fichier illisible."));
+      lecteur.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("Ce fichier n'est pas une image valide."));
+        img.onload = () => {
+          const cote = Math.min(img.naturalWidth, img.naturalHeight);
+          const canvas = document.createElement("canvas");
+          canvas.width = 512; canvas.height = 512;
+          canvas.getContext("2d").drawImage(img,
+            (img.naturalWidth - cote) / 2, (img.naturalHeight - cote) / 2, cote, cote,
+            0, 0, 512, 512);
+          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Conversion impossible.")),
+            "image/jpeg", 0.88);
+        };
+        img.src = lecteur.result;
+      };
+      lecteur.readAsDataURL(fichier);
+    });
+  }
+
+  function afficherPhoto(src) {
+    const apercu = document.getElementById("cPhotoPreview");
+    apercu.src = src;
+    apercu.style.display = "";
+    document.getElementById("cPhotoPlaceholder").style.display = "none";
+    document.getElementById("cPhotoBtn").textContent = "Changer la photo";
+  }
+
+  document.getElementById("cPhotoBtn").addEventListener("click", () => {
+    document.getElementById("cPhotoInput").click();
+  });
+
+  document.getElementById("cPhotoInput").addEventListener("change", async ev => {
+    const fichier = ev.target.files[0];
+    if (!fichier) return;
+    const msg = document.getElementById("cMessage");
+    try {
+      photoEnAttente = await preparerPhoto(fichier);
+      afficherPhoto(URL.createObjectURL(photoEnAttente));
+      msg.className = "form-message";
+      msg.textContent = "";
+    } catch (e) {
+      photoEnAttente = null;
+      showMessage("Photo refusée : " + e.message, "error", msg);
+    }
+    // Réinitialisé pour que re-choisir le même fichier redéclenche l'événement.
+    ev.target.value = "";
+  });
+
+  async function envoyerPhoto(userId) {
+    if (!photoEnAttente) return null;
+    const chemin = userId + "/photo.jpg";
+    const { error } = await supabaseClient.storage.from("member-photos")
+      .upload(chemin, photoEnAttente, { upsert: true, contentType: "image/jpeg" });
+    if (error) throw error;
+    const { data } = supabaseClient.storage.from("member-photos").getPublicUrl(chemin);
+    return data.publicUrl + "?t=" + Date.now();
   }
 
   function cAjusterAnnee() {
@@ -455,7 +557,10 @@
     }
   }
 
+  let profilACompleter = null;
+
   function montrerCompletion(p) {
+    profilACompleter = p;
     choiceCard.style.display = "none";
     signupCard.style.display = "none";
     const sel = document.getElementById("cMemberSince");
@@ -478,6 +583,7 @@
     document.getElementById("cDomainAutre").value = p.domain_autre || "";
     document.getElementById("cSpecialty").value = p.specialty || "";
     document.getElementById("cCity").value = p.city || "";
+    if (p.photo_url) afficherPhoto(p.photo_url);
     sel.value = p.member_since || ANNEE_COURANTE;
     if (p.applicant_type === "nouvel_adherent") {
       document.querySelector('input[name="cType"][value="nouvel_adherent"]').checked = true;
@@ -504,12 +610,58 @@
       p_member_since: parseInt(document.getElementById("cMemberSince").value, 10) || ANNEE_COURANTE,
       p_applicant_type: document.querySelector('input[name="cType"]:checked').value,
     };
-    if (!champs.p_first_name || !champs.p_last_name || !champs.p_phone || !champs.p_domain || !champs.p_city) {
-      showMessage("Remplissez tous les champs marqués d'une étoile.", "error", msg);
+
+    // Le premier champ manquant est nommé : « remplissez tout » obligeait le
+    // membre à chercher lui-même lequel des dix champs bloquait l'envoi.
+    const manquant = [
+      [champs.p_title, "votre titre"],
+      [champs.p_first_name, "votre prénom"],
+      [champs.p_last_name, "votre nom"],
+      [champs.p_phone, "votre téléphone"],
+      [champs.p_domain, "votre domaine"],
+      [domaine === "autre" ? champs.p_domain_autre : "ok", "la précision de votre domaine"],
+      [champs.p_specialty, "votre spécialité"],
+      [champs.p_city, "votre localité"],
+    ].find(([valeur]) => !valeur);
+    if (manquant) {
+      showMessage("Il manque " + manquant[1] + " : tous les champs marqués d'une étoile sont obligatoires.", "error", msg);
+      return;
+    }
+    // La photo est reprise telle quelle sur la carte de membre : sans elle,
+    // la carte ne peut pas être établie.
+    const photoDejaEnvoyee = String((profilACompleter && profilACompleter.photo_url) || "").trim();
+    if (!photoEnAttente && !photoDejaEnvoyee) {
+      showMessage("Ajoutez votre photo d'identité : elle figurera sur votre carte de membre.", "error", msg);
       return;
     }
 
     btn.disabled = true;
+
+    // La photo part d'abord : si son envoi échoue, rien n'est enregistré et
+    // le membre peut réessayer sans avoir à ressaisir tout le formulaire.
+    let photoUrl = null;
+    if (photoEnAttente) {
+      showMessage("Envoi de la photo en cours…", "pending", msg);
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) throw new Error("Session expirée, reconnectez-vous.");
+        photoUrl = await envoyerPhoto(session.user.id);
+        // photo_url passe par l'écriture directe sur sa propre ligne
+        // (autorisée en phase8), ce qui évite d'ajouter un script SQL.
+        const { error: errPhoto } = await supabaseClient.from("profiles")
+          .update({ photo_url: photoUrl }).eq("id", session.user.id);
+        if (errPhoto) throw errPhoto;
+        photoEnAttente = null;
+        // L'état local sert au contrôle « photo présente » : sans cette
+        // ligne, un second enregistrement réclamerait à nouveau la photo.
+        if (profilACompleter) profilACompleter.photo_url = photoUrl;
+      } catch (e) {
+        showMessage("Erreur lors de l'envoi de la photo : " + e.message, "error", msg);
+        btn.disabled = false;
+        return;
+      }
+    }
+
     const { error } = await supabaseClient.rpc("completer_mon_profil", champs);
     if (error) {
       showMessage("Erreur : " + error.message, "error", msg);
@@ -613,6 +765,15 @@
     form.reset();
     showMessage("Compte créé. Il sera examiné par un administrateur avant activation - vous recevrez l'accès dès validation.", "success");
     submitBtn.disabled = true;
+
+    // Le formulaire ne recueille pas la photo : on enchaîne sur l'écran de
+    // complétion, qui la réclamera (le reste y est déjà pré-rempli). Sans
+    // session - cas où la confirmation d'e-mail est exigée - on en reste au
+    // message ci-dessus, la photo sera demandée à la première connexion.
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const profile = await getCurrentProfile();
+    if (profile && profilIncomplet(profile)) montrerCompletion(profile);
   });
 </script>
 
