@@ -9,6 +9,12 @@ on:
       - 'content/projets/**.md'
       - 'content/etapes/**.md'
       - 'content/evenements/**.md'
+      - 'scripts/build-pages-partage.js'
+  # Les cours du Daara vivent dans Supabase, pas dans le dépôt : aucun push
+  # ne signale leur publication. Un passage quotidien leur crée donc leur
+  # page d'aperçu, et « Run workflow » permet de ne pas attendre.
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,10 +32,14 @@ jobs:
       - name: Build sitemap
         run: node scripts/build-sitemap.js
 
+      - name: Build partage preview pages
+        run: node scripts/build-pages-partage.js
+
       - name: Commit index files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json sitemap.xml
-          git diff --cached --quiet || git commit -m "chore: rebuild content index et sitemap"
+          git add -A a f p e c
+          git diff --cached --quiet || git commit -m "chore: rebuild content index, sitemap et pages de partage"
           git push

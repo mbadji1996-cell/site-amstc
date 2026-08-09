@@ -130,6 +130,8 @@
       <!-- contenu chargé dynamiquement -->
     </div>
 
+    <div id="partageZone" class="partage-zone"></div>
+
     <div class="progress-card">
       <p class="progress-card-title">Ma progression</p>
       <div class="progress-slider-row">
@@ -151,6 +153,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script>
   const params = new URLSearchParams(location.search);
   const courseId = params.get('id');
@@ -222,6 +225,7 @@
     // Rendu du contenu (markdown simple ou HTML)
     const content = course.content || '<p><em>Contenu à venir.</em></p>';
     document.getElementById('courseContent').innerHTML = renderContent(content);
+    partageInit({ conteneur: 'partageZone', prefixe: 'c', cle: 'id' });
   }
 
   function renderContent(text) {

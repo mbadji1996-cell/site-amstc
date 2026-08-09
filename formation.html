@@ -7,6 +7,7 @@
 <script src="assets/js/theme-toggle.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
 <script src="assets/js/date-periode.js"></script>
+<script src="assets/js/partage.js"></script>
 <script src="assets/js/site-search.js" defer></script>
 <link rel="stylesheet" href="assets/css/popup-annonce.css">
 <script src="assets/js/popup-annonce.js" defer></script>
@@ -157,7 +158,10 @@
         ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
         <div id="body">${DOMPurify.sanitize(marked.parse(body || ''))}</div>
+        <div id="partageZone" class="partage-zone"></div>
       `;
+      // Apres l'injection du contenu : le bouton a besoin de son conteneur.
+      partageInit({ conteneur: 'partageZone', prefixe: 'f', cle: 'slug' });
     } catch (e) {
       content.innerHTML = "<p>Impossible de charger cet article.</p>";
     }
