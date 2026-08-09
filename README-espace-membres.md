@@ -790,6 +790,72 @@ consultations (décision volontairement laissée manuelle au supra-admin,
 pour ne pas couper un praticien en pleine campagne). Pensez-y lors des
 départs.
 
+## 4quatervicies. Prévenir LE MEMBRE (approbation, refus, carte qui expire)
+
+Jusqu'ici seule l'administration était prévenue (section 4quaterdecies).
+Le membre, lui, ne savait pas quand son compte devenait actif : il devait
+réessayer de se connecter au hasard. Trois e-mails sont maintenant
+envoyés automatiquement :
+
+| Évènement | Déclencheur |
+|---|---|
+| Compte validé | l'admin approuve dans `membres/validation.html` |
+| Demande non retenue | l'admin refuse |
+| Carte qui expire | tâche quotidienne, 45 jours avant l'échéance |
+
+**Prérequis absolu - domaine vérifié chez Resend.** Contrairement à
+`notify-admin`, qui n'écrit qu'à votre propre adresse, ces messages
+partent vers des adresses quelconques. Resend ne l'autorise que depuis un
+domaine vérifié : tant qu'`amstc.org` n'est pas vérifié dans Resend
+(Domains → Add Domain, puis les enregistrements DNS chez votre
+registraire), **ces e-mails seront refusés**. L'application continue de
+fonctionner normalement : l'échec est silencieux et journalisé, personne
+n'est bloqué.
+
+### Déploiement
+
+1. **Fonction Edge**, sur le VPS :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/notify-membre/index.ts -o /tmp/nm.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/notify-membre && docker cp /tmp/nm.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/notify-membre/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+```
+
+Aucun nouveau secret : la fonction réutilise `RESEND_API_KEY`,
+`NOTIFY_ADMIN_SECRET` et `NOTIFY_FROM_EMAIL`, déjà en place.
+
+2. **SQL** : ouvrez `supabase/phase50-notifications-membre.sql`,
+   remplacez `REMPLACEZ_PAR_VOTRE_JETON` par le même jeton que dans
+   `phase25-notifications-admin.sql`, puis exécutez-le dans le SQL Editor
+   de l'instance amstc.
+
+3. **Test** : approuvez un compte de test et vérifiez que l'e-mail
+   arrive. En cas d'absence, regardez Database → Logs (le relais
+   journalise les échecs sans jamais bloquer la validation).
+
+### Rappels d'expiration : la tâche quotidienne
+
+La fonction `envoyer_rappels_cartes(45)` prévient chaque membre dont la
+carte expire à la fin de l'année en cours, **une seule fois** par année de
+validité (table de traçage `rappels_carte_envoyes`). Elle ne fait rien
+tant que l'échéance est à plus de 45 jours - vous pouvez donc l'appeler
+tous les jours sans risque.
+
+Sur le VPS, pour l'exécuter chaque matin à 8 h :
+
+```bash
+(crontab -l 2>/dev/null; echo '0 8 * * * docker exec supabase-db-rffqs8ck1ckdixkuu2xjo5sc psql -U supabase_admin -d postgres -c "select public.envoyer_rappels_cartes(45);" >> /var/log/rappels-cartes.log 2>&1') | crontab -
+```
+
+Pour un essai immédiat sans attendre l'échéance, appelez-la avec un
+nombre de jours volontairement large depuis le SQL Editor :
+
+```sql
+select public.envoyer_rappels_cartes(400);
+```
+
+Elle renvoie le nombre de rappels envoyés. Rejouez-la : elle renverra `0`,
+puisque chaque membre n'est prévenu qu'une fois.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
