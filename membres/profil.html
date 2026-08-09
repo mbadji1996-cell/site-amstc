@@ -484,7 +484,7 @@
     if (new URLSearchParams(window.location.search).get('completer')) {
       toggleAccordion('info');
       const msg = document.getElementById('editMsg');
-      msg.textContent = "Complétez les informations manquantes (photo d'identité, titre, prénom, nom, téléphone, domaine, spécialité, localité) puis enregistrez : l'accès aux autres pages de l'espace membres sera alors rétabli.";
+      msg.textContent = "Complétez les informations manquantes (photo d'identité, titre, prénom, nom, téléphone, domaine, localité) puis enregistrez : l'accès aux autres pages de l'espace membres sera alors rétabli.";
       msg.className = 'form-msg error';
       document.getElementById('body-info').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -843,7 +843,6 @@
       [payload.phone, 'votre téléphone (WhatsApp)'],
       [payload.domain, 'votre domaine'],
       [domain === 'autre' ? payload.domain_autre : 'ok', 'la précision de votre domaine'],
-      [specMode === 'none' ? 'ok' : payload.specialty, 'votre spécialité'],
       [payload.city, 'votre localité'],
       [(pendingPhotoBlob || String(currentProfile.photo_url || '').trim()) ? 'ok' : '', "votre photo d'identité"],
     ].find(([valeur]) => !valeur);

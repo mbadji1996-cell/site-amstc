@@ -193,7 +193,7 @@
       <input type="text" id="cDomainAutre">
     </div>
 
-    <label for="cSpecialty">Spécialité *</label>
+    <label for="cSpecialty">Spécialité (facultatif)</label>
     <input type="text" id="cSpecialty" placeholder="Ex : Médecine générale, Officine, Étudiant…">
 
     <label for="cCity">Localité *</label>
@@ -473,9 +473,7 @@
       || !String(p.phone || "").trim() || !String(p.domain || "").trim()
       || !String(p.city || "").trim() || !String(p.title || "").trim()
       || !String(p.photo_url || "").trim()
-      || (p.domain === "autre"
-          ? !String(p.domain_autre || "").trim()
-          : !String(p.specialty || "").trim());
+      || (p.domain === "autre" && !String(p.domain_autre || "").trim());
   }
 
   // Photo : recadrée en carré centré et ramenée à 512 px avant l'envoi, comme
@@ -622,9 +620,6 @@
       [champs.p_phone, "votre téléphone"],
       [champs.p_domain, "votre domaine"],
       [domaine === "autre" ? champs.p_domain_autre : "ok", "la précision de votre domaine"],
-      // Pour « autre », la précision du domaine tient lieu de filière : la
-      // spécialité n'y est pas bloquante (la fiche profil ne l'a pas non plus).
-      [domaine === "autre" ? "ok" : champs.p_specialty, "votre spécialité"],
       [champs.p_city, "votre localité"],
     ].find(([valeur]) => !valeur);
     if (manquant) {

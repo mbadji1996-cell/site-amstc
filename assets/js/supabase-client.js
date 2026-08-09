@@ -54,16 +54,14 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
   // des informations de la carte de membre, photo d'identité comprise -
   // direction la fiche profil. Mêmes champs exigés que l'écran de
   // complétion d'inscription.html (profilIncomplet).
-  // Spécialité exigée sauf pour le domaine « autre », où c'est la précision
-  // du domaine qui tient lieu de filière (et où la fiche profil ne propose
-  // d'ailleurs aucun champ spécialité).
+  // La spécialité reste facultative ; pour le domaine « autre », la
+  // précision du domaine est en revanche exigée : elle tient lieu de
+  // filière sur la carte de membre.
   const incomplet = !String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
     || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
     || !String(profile.city || "").trim() || !String(profile.title || "").trim()
     || !String(profile.photo_url || "").trim()
-    || (profile.domain === "autre"
-        ? !String(profile.domain_autre || "").trim()
-        : !String(profile.specialty || "").trim());
+    || (profile.domain === "autre" && !String(profile.domain_autre || "").trim());
   if (incomplet && !window.location.pathname.endsWith("profil.html")) {
     window.location.href = "profil.html?completer=1";
     return null;
