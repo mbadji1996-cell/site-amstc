@@ -71,6 +71,7 @@
   .lesson-body{flex:1;min-width:0;}
   .lesson-title{font-family:var(--display);font-size:0.97rem;font-weight:600;color:var(--text-heading);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .lesson-desc{font-size:0.82rem;color:var(--text-muted);margin-bottom:0;}
+  .lesson-author{font-size:0.74rem;color:#8A9E8F;margin-top:3px;display:flex;align-items:center;gap:4px;}
   .lesson-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:2px 8px;border-radius:999px;background:#EAF3DE;color:#3B6D11;margin-left:8px;}
   .lesson-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
 
@@ -247,6 +248,7 @@
         <div class="lesson-body">
           <p class="lesson-title">${escHtml(l.title)}</p>
           <p class="lesson-desc">${escHtml(l.description || '')}</p>
+          ${l.author ? `<p class="lesson-author"><i class="ti ti-user"></i> ${escHtml(l.author)}</p>` : ''}
         </div>
         <i class="ti ti-chevron-right lesson-arrow"></i>
       </a>`).join('');

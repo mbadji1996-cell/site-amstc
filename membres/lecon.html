@@ -105,6 +105,7 @@
       <div class="cat-pill" id="catPill"><i class="ti ti-stethoscope"></i> <span id="catLabel">Médecine</span></div>
       <h1 id="lessonTitle">Titre de la leçon</h1>
       <div class="lesson-meta">
+        <span id="authorMeta" style="display:none;"><i class="ti ti-user"></i> <span id="authorVal"></span></span>
         <span id="durationMeta" style="display:none;"><i class="ti ti-clock"></i> <span id="durationVal"></span></span>
       </div>
     </div>
@@ -165,6 +166,13 @@
 
     const catLabels = { medecine: 'Médecine', pharmacie: 'Pharmacie', odonto: 'Odontologie', soins_infirmiers: 'Soins infirmiers et obstétricales' };
     document.getElementById('catLabel').textContent = catLabels[lesson.category] || lesson.category;
+
+    // textContent et non innerHTML : le nom est saisi librement par
+    // l'administration, il ne doit pas pouvoir injecter de balise.
+    if (lesson.author) {
+      document.getElementById('authorMeta').style.display = '';
+      document.getElementById('authorVal').textContent = lesson.author;
+    }
 
     if (lesson.duration_min) {
       document.getElementById('durationMeta').style.display = '';

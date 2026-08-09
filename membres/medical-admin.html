@@ -207,6 +207,10 @@
         <label>Description courte</label>
         <input type="text" id="l-desc" placeholder="Une phrase de résumé…">
       </div>
+      <div class="form-group full">
+        <label>Auteur de la leçon</label>
+        <input type="text" id="l-author" placeholder="Ex : Dr Codou NDIAYE, pharmacienne">
+      </div>
       <div class="form-group">
         <label>Durée de lecture (min)</label>
         <input type="number" id="l-duration" min="1" placeholder="10">
@@ -393,6 +397,7 @@
       document.getElementById('l-order').value = l.order_index || 0;
       document.getElementById('l-title').value = l.title;
       document.getElementById('l-desc').value = l.description || '';
+      document.getElementById('l-author').value = l.author || '';
       document.getElementById('l-duration').value = l.duration_min || '';
       document.getElementById('l-cover').value = l.cover_image || '';
       document.getElementById('l-published').checked = !!l.is_published;
@@ -421,6 +426,7 @@
       order_index: parseInt(document.getElementById('l-order').value) || 0,
       title,
       description: document.getElementById('l-desc').value.trim() || null,
+      author: document.getElementById('l-author').value.trim() || null,
       duration_min: parseInt(document.getElementById('l-duration').value) || null,
       cover_image: document.getElementById('l-cover').value.trim() || null,
       content: getLessonContentEditor().getMarkdown().trim() || null,

@@ -91,6 +91,9 @@
   .course-desc{font-size:0.8rem;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;}
   .course-meta{display:flex;align-items:center;gap:12px;}
   .course-duration{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;display:flex;align-items:center;gap:3px;}
+  /* Auteur : même discrétion que la durée, mais non tronqué - un nom coupé
+     ne rend service à personne. */
+  .course-author{font-size:0.72rem;color:var(--text-muted);display:flex;align-items:center;gap:4px;white-space:nowrap;}
   .completed-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:4px;}
   .course-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
 
@@ -296,6 +299,7 @@
           <p class="course-title">${escHtml(course.title)}</p>
           <p class="course-desc">${escHtml(course.description || '')}</p>
           <div class="course-meta">
+            ${course.author ? `<span class="course-author"><i class="ti ti-user"></i>${escHtml(course.author)}</span>` : ''}
             ${course.duration_min ? `<span class="course-duration"><i class="ti ti-clock"></i>${course.duration_min} min</span>` : ''}
             ${done
               ? '<span class="completed-badge"><i class="ti ti-check"></i> Terminé</span>'

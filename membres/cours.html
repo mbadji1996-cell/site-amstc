@@ -116,6 +116,7 @@
       <div class="cat-pill" id="catPill"><i class="ti ti-book"></i> <span id="catLabel">Islam</span></div>
       <h1 id="courseTitle">Titre du cours</h1>
       <div class="course-meta-row">
+        <span id="authorMeta" style="display:none;"><i class="ti ti-user"></i> <span id="authorVal"></span></span>
         <span id="durationMeta" style="display:none;"><i class="ti ti-clock"></i> <span id="durationVal"></span></span>
         <div class="prog-inline">
           <i class="ti ti-chart-line" style="color:var(--teal);"></i>
@@ -205,6 +206,13 @@
     document.title = course.title + ' - Daara AMSTC';
     document.getElementById('courseTitle').textContent = course.title;
     document.getElementById('catLabel').textContent = course.category === 'islam' ? 'Islam' : 'Tarikha';
+
+    // textContent et non innerHTML : le nom est saisi librement par
+    // l'administration, il ne doit pas pouvoir injecter de balise.
+    if (course.author) {
+      document.getElementById('authorMeta').style.display = '';
+      document.getElementById('authorVal').textContent = course.author;
+    }
 
     if (course.duration_min) {
       document.getElementById('durationMeta').style.display = '';

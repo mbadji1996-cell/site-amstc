@@ -179,6 +179,12 @@
       <input type="text" id="fDesc" placeholder="Résumé en une phrase">
     </div>
 
+    <div class="form-group">
+      <label for="fAuthor">Auteur du cours</label>
+      <input type="text" id="fAuthor" placeholder="Ex : Demba Tahirou DIOP">
+      <p class="hint">Affiché sous le titre, dans la liste et sur la page du cours.</p>
+    </div>
+
     <div class="form-row">
       <div class="form-group">
         <label for="fDuration">Durée estimée (minutes)</label>
@@ -278,6 +284,7 @@
     document.getElementById('fOrder').value = course ? course.order_index : 0;
     document.getElementById('fTitle').value = course ? course.title : '';
     document.getElementById('fDesc').value = course ? (course.description || '') : '';
+    document.getElementById('fAuthor').value = course ? (course.author || '') : '';
     document.getElementById('fDuration').value = course ? (course.duration_min || 30) : 30;
     document.getElementById('fCover').value = course ? (course.cover_image || '') : '';
     document.getElementById('fPublished').checked = course ? course.is_published : false;
@@ -311,6 +318,7 @@
       order_index: parseInt(document.getElementById('fOrder').value) || 0,
       title,
       description: document.getElementById('fDesc').value.trim() || null,
+      author: document.getElementById('fAuthor').value.trim() || null,
       duration_min: parseInt(document.getElementById('fDuration').value) || 0,
       cover_image: document.getElementById('fCover').value.trim() || null,
       content: getContentEditor().getMarkdown().trim() || null,
