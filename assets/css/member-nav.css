@@ -17,9 +17,33 @@
     font-family:'JetBrains Mono',monospace; font-size:0.72rem;
     text-transform:uppercase; letter-spacing:0.08em; color:#F8B718;
   }
-  .member-nav-toggle .mn-burger{
-    font-size:17px; line-height:1; color:rgba(255,255,255,0.85); flex-shrink:0;
+  /* La page courante situe le lecteur, sans prétendre être cliquable :
+     elle reste discrète et s'efface si le nom est long. */
+  .member-nav-toggle .mn-page{
+    color:rgba(255,255,255,0.55); overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; min-width:0;
   }
+
+  /* La partie droite, elle, ressemble à un bouton : cadre, fond et le mot
+     « Menu » en clair. C'est ce qui manquait - le ☰ seul n'est une
+     évidence que pour qui connaît déjà la convention. */
+  .member-nav-toggle .mn-bouton{
+    display:inline-flex; align-items:center; gap:7px; flex-shrink:0;
+    padding:7px 14px; border-radius:999px;
+    border:1.5px solid rgba(248,183,24,0.55); background:rgba(248,183,24,0.12);
+    color:#F8B718; transition:background .15s ease, border-color .15s ease;
+  }
+  .member-nav-toggle:hover .mn-bouton{
+    background:rgba(248,183,24,0.22); border-color:#F8B718;
+  }
+  .member-nav-toggle.ouvert .mn-bouton{
+    background:#F8B718; border-color:#F8B718; color:#06441C;
+  }
+  .member-nav-toggle .mn-burger{ font-size:15px; line-height:1; flex-shrink:0; }
+  .member-nav-toggle .mn-mot{ letter-spacing:0.08em; }
+
+  /* Repère au clavier : le contour doit rester visible sur fond vert. */
+  .member-nav-toggle:focus-visible{ outline:2px solid #F8B718; outline-offset:-3px; }
 
   .member-tabs.has-mobile-nav .member-nav-panel.open{
     display:block; background:#06441C;
