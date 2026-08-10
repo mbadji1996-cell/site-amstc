@@ -22,6 +22,11 @@
   --text-accent: var(--gold-deep);
   --surface: var(--white);
   --text-muted: #5A6C60;
+  /* --shadow n'existait que dans le bloc sombre : les pages qui s'en
+     servent (la fenêtre de recadrage de la photo, dans profil.html)
+     perdaient purement et simplement leur ombre en thème clair, la
+     propriété devenant invalide. */
+  --shadow: 0 12px 32px rgba(6, 68, 28, 0.18);
 }
 
 :root[data-theme="dark"] {

@@ -132,6 +132,10 @@
   /* Interrupteur de restriction d'accès */
   .restriction-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
   .restriction-card.active{border-color:#C0392B;background:#FFF7F5;}
+  /* Le titre et la description de cette carte suivent le thème
+     (var(--text-heading), var(--text-muted)) : sans cette teinte sombre,
+     ils s'éclaircissaient sur un fond resté presque blanc. */
+  :root[data-theme="dark"] .restriction-card.active{background:#2A1A18;}
   .restriction-info{flex:1;min-width:260px;}
   .restriction-title{font-family:var(--display);font-weight:600;color:var(--text-heading);font-size:1.02rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
   .restriction-status{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.06em;padding:3px 9px;border-radius:999px;background:#EAF3DE;color:#3B6D11;}

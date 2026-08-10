@@ -34,7 +34,9 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#F6F7F1; --line:rgba(6,68,28,0.14);
+    /* --paper-alt manquait alors que la page s'en sert : dark-mode.css le
+       redéfinit pour le thème sombre, mais rien ne le fournissait en clair. */
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --line:rgba(6,68,28,0.14);
     --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -48,7 +50,10 @@
   .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
   .etape-badge{
     font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;
-    background:#ECEFE3; color:var(--text-heading); padding:4px 11px; border-radius:999px;
+    /* var(--paper-alt) et non #ECEFE3 : la valeur était la même, mais
+       recopiée en dur le fond restait clair en thème sombre alors que
+       var(--text-heading) s'éclaircissait - contraste tombé à 1,46. */
+    background:var(--paper-alt); color:var(--text-heading); padding:4px 11px; border-radius:999px;
     display:inline-block; margin-left:10px; vertical-align:middle;
   }
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:2rem; margin:10px 0 28px;}
@@ -80,7 +85,7 @@
   const FOLDER = "content/etapes";
 
   function esc(s) {
-    return String(s || "").replace(/[&<>"']/g, function (c) {
+    return String(s ?? "").replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
