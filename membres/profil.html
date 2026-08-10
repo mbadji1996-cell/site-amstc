@@ -1218,7 +1218,7 @@
     btn.innerHTML = originalLabel;
   }
 
-  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut(); window.location.href = 'connexion.html';

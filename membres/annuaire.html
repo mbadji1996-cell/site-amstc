@@ -157,7 +157,7 @@
   };
   let allMembers = [], currentFilter = 'all', allDomains = [], searchQuery = '';
 
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   function domainLabel(m){
     if (m.domain === 'autre') return m.domain_autre || 'Autre';

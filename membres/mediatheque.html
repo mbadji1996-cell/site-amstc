@@ -131,7 +131,7 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const MEDIA_BUCKET = "mediatheque-photos";
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   async function loadFolders() {
     const content = document.getElementById("pageContent");

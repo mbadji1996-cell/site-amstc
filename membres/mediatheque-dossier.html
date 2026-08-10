@@ -112,7 +112,7 @@
   let photoUrls = [];
   let lightboxIndex = 0;
 
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   async function buildBreadcrumb(folder) {
     const crumbs = [];

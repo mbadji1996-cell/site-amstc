@@ -106,7 +106,7 @@
   const topicId = new URLSearchParams(location.search).get('id');
   let currentProfile = null, isAdmin = false, currentTopic = null;
 
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   function timeAgo(dateStr) {
     const diffSec = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);

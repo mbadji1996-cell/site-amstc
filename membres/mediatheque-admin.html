@@ -211,7 +211,7 @@
   let currentFolder = null;
   let currentPhotos = [];
 
-  function esc(s){ return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   /* ===== Redimensionnement côté client avant envoi (même principe que
      resizeImageFile() de membres/profil.html, adapté à une photo de

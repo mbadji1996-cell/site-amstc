@@ -622,7 +622,7 @@
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
   function formatPrice(n) { return new Intl.NumberFormat('fr-FR').format(n || 0) + ' FCFA'; }
-  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut(); window.location.href = 'connexion.html';
