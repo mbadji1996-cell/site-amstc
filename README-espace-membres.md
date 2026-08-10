@@ -386,20 +386,41 @@ d'envoi d'e-mails. Suivez les étapes dans l'ordre.
 > **Depuis la migration sur le VPS** (Supabase auto-hébergé sur
 > `api.amstc.org`, Coolify), il n'y a plus de « Project Settings → Edge
 > Functions → Secrets » : les secrets ci-dessous sont des **variables
-> d'environnement Coolify** sur la ressource Supabase. Pour en **changer
-> une** (par exemple l'adresse de réception `ADMIN_NOTIFY_EMAIL`) :
-> Coolify → le projet Supabase → **Environment Variables** → modifier la
-> valeur → **Save**, puis redémarrer le conteneur des fonctions Edge pour
-> qu'il relise la variable :
+> d'environnement Coolify** sur la ressource Supabase.
+>
+> **Changer une de ces valeurs demande trois précautions**, chacune
+> vérifiée à ses dépens en août 2026 sur `ADMIN_NOTIFY_EMAIL` :
+>
+> 1. La modifier dans Coolify → ressource Supabase → **Environment
+>    Variables** → **Update**. Coolify l'enregistre dans sa propre base,
+>    **pas** dans le fichier `.env` du serveur.
+> 2. `docker restart` ne sert à rien : l'environnement d'un conteneur est
+>    figé à sa création. Il faut le **recréer**.
+> 3. Recréer ne suffit pas non plus si le `.env` sur disque est resté à
+>    l'ancienne valeur - c'est lui que `docker compose` relit. Seul un
+>    **Redeploy** depuis Coolify régénère ce fichier.
+>
+> Donc : soit **Redeploy** depuis Coolify (régénère le `.env` puis recrée
+> les conteneurs, quelques secondes d'interruption sur toute la pile),
+> soit la voie ciblée, sans toucher au reste - corriger la ligne puis
+> recréer le seul conteneur des fonctions :
 >
 > ```
-> docker restart $(docker ps --format '{{.Names}}' | grep edge-functions)
+> sed -i 's/^ADMIN_NOTIFY_EMAIL=.*/ADMIN_NOTIFY_EMAIL=nouvelle@adresse.com/' /data/coolify/services/rffqs8ck1ckdixkuu2xjo5sc/.env
+> cd /data/coolify/services/rffqs8ck1ckdixkuu2xjo5sc && docker compose up -d --force-recreate supabase-edge-functions
 > ```
 >
-> Vérifier ensuite la valeur réellement vue par la fonction :
+> L'ancrage `^NOM=` vise cette seule ligne : d'autres variables peuvent
+> contenir la même adresse (l'expéditeur SMTP de l'authentification) et ne
+> doivent pas bouger. Pensez à mettre aussi la valeur à jour dans
+> l'interface Coolify, sinon le prochain Redeploy la fera revenir en
+> arrière.
+>
+> Contrôler enfin la valeur réellement vue par la fonction - c'est la
+> seule qui compte :
 >
 > ```
-> docker exec $(docker ps --format '{{.Names}}' | grep edge-functions) env | grep NOTIFY
+> docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc env | grep NOTIFY
 > ```
 
 1. **Créer un compte sur [resend.com](https://resend.com)**, puis
