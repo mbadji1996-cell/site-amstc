@@ -97,6 +97,20 @@
   .completed-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:4px;}
   .course-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
 
+  /* La carte n'est plus un lien unique : un bouton imbriqué dans un lien
+     est invalide, et le clic partirait aussi vers le cours. Le lien
+     couvre la vignette et le texte ; le bouton de partage vit à côté. */
+  .course-lien{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+  .course-partage{background:none;border:1.5px solid var(--line);border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:border-color .18s,color .18s;}
+  .course-partage:hover{border-color:var(--teal-dark);color:var(--teal-dark);}
+  .course-partage:focus-visible{outline:2px solid var(--teal-dark);outline-offset:2px;}
+  /* En thème sombre, var(--text-muted) sur var(--surface) tombe à 2,98 de
+     contraste : sous le seuil de 3 exigé pour un élément d'interface. */
+  :root[data-theme="dark"] .course-partage{color:var(--text-heading);border-color:rgba(127,217,160,0.3);}
+  /* Sur mobile, le bouton prendrait sa place au titre. La flèche part la
+     première : purement décorative, la carte reste entièrement cliquable. */
+  @media(max-width:560px){ .course-arrow{display:none;} }
+
   .empty{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:20px 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
@@ -169,6 +183,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script>
   let allCourses = [], progressMap = {}, currentUserId = null, currentCategory = 'islam';
 
@@ -291,7 +306,8 @@
       const pct = prog ? prog.progress_pct : 0;
       const done = pct === 100;
 
-      return `<a class="course-card" href="cours.html?id=${encodeURIComponent(course.id)}">
+      return `<div class="course-card">
+        <a class="course-lien" href="cours.html?id=${encodeURIComponent(course.id)}">
         <div class="course-thumb">
           ${course.cover_image ? `<img src="${escHtml(course.cover_image)}" alt="">` : `<i class="ti ti-book"></i>`}
         </div>
@@ -312,9 +328,23 @@
             }
           </div>
         </div>
+        </a>
+        <button type="button" class="course-partage" onclick="partagerCours('${course.id}', this)"
+          title="Partager ce cours" aria-label="Partager le cours ${escHtml(course.title)}"><i class="ti ti-share"></i></button>
         <i class="ti ti-chevron-right course-arrow"></i>
-      </a>`;
+      </div>`;
     }).join('');
+  }
+
+  // Les cours listés ici sont publiés par construction : la page d'aperçu
+  // /c/<id>.html existe donc toujours.
+  async function partagerCours(id, bouton) {
+    const etat = await partagerFiche('c', id, 'Cours AMSTC');
+    if (!etat || etat === 'annule' || etat === 'partage') return;
+    const avant = bouton.innerHTML;
+    bouton.innerHTML = '<i class="ti ti-check"></i>';
+    bouton.title = etat === 'copie' ? 'Lien copié' : etat;
+    setTimeout(() => { bouton.innerHTML = avant; bouton.title = 'Partager ce cours'; }, 2500);
   }
 
   function escHtml(s) {
