@@ -807,6 +807,9 @@
             <div class="member-date">Inscrit le ${formatDate(p.created_at)}</div>
           </div>
           <div class="member-actions">
+            ${p.applicant_type === 'nouvel_adherent' ? `
+            <button class="btn-sm btn-outline-sm" data-action="presenter" data-id="${esc(p.id)}"
+              ${lienWhatsApp(p.phone) ? '' : 'disabled title="Ce membre n\'a pas de numéro WhatsApp"'}>Présenter l'AMSTC</button>` : ''}
             <button class="btn-sm btn-approve" data-action="approve" data-id="${esc(p.id)}">Approuver</button>
             <button class="btn-sm btn-reject" data-action="reject" data-id="${esc(p.id)}">Refuser</button>
           </div>
@@ -846,8 +849,56 @@
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-action]");
     if (!btn) return;
+    // Traité ici, en synchrone : window.open doit rester rattaché au clic,
+    // sinon les navigateurs mobiles le bloquent comme une fenêtre
+    // intempestive (même piège que ouvrirRappelWhatsApp).
+    if (btn.dataset.action === "presenter") { presenterAssociation(btn.dataset.id); return; }
     handleAction(btn.dataset.action, btn.dataset.id, btn.dataset.email, btn.dataset.name);
   });
+
+  // ===== Présentation de l'AMSTC aux nouveaux adhérents =====
+  // Envoyée AVANT l'approbation, depuis la liste d'attente : le candidat
+  // découvre l'association, les conditions d'adhésion, et sait qu'il doit
+  // renvoyer la capture d'écran de son paiement ici même - c'est elle qui
+  // sert de justificatif pour valider son compte.
+  // Les astérisques sont la syntaxe du gras de WhatsApp.
+  function texteMessagePresentation(prenom){
+    return (prenom ? "Bonjour " + prenom + ",\n\n" : "Bonjour,\n\n")
+      + "Bienvenue ! Votre inscription sur amstc.org est bien enregistrée. "
+      + "Permettez-moi de vous présenter brièvement notre association.\n\n"
+      + "L'*AMSTC* (Association Médico-Sociale des Talibés Cheikh) est une association "
+      + "apolitique, confessionnelle et sans but lucratif, fondée en 2014 par des étudiants "
+      + "tidianes de la FMPO. Elle fédère les acteurs du domaine socio-sanitaire et tout "
+      + "sympathisant se reconnaissant comme « talibé Cheikh ».\n\n"
+      + "*Nos objectifs :*\n"
+      + "- promouvoir la santé communautaire et participer au développement socio-sanitaire du pays ;\n"
+      + "- assurer la formation des membres, en santé comme en social et en leadership ;\n"
+      + "- nous entraider dans le domaine de la religion et de la tarikha.\n\n"
+      + "En 11 ans d'existence : couvertures sanitaires d'événements religieux, campagnes de "
+      + "consultations médicales et de sensibilisation, dons de médicaments et de denrées, "
+      + "enseignements post-universitaires, ziaras...\n\n"
+      + "*Comment adhérer :*\n"
+      + "1. La carte de membre (obligatoire) : *2 000 F*, valable 2 ans.\n"
+      + "2. La cotisation annuelle : *12 000 F*, soit 1 000 F/mois, payable en plusieurs tranches.\n\n"
+      + "*Règlement à la Commission finances :*\n"
+      + "Wave : 78 828 32 16\n"
+      + "Orange Money : 78 867 96 23\n\n"
+      + "Une fois le paiement effectué, *envoyez-moi la capture d'écran de la transaction ici, "
+      + "sur WhatsApp* : elle sert de justificatif pour valider votre adhésion.\n\n"
+      + "*Responsables :*\n"
+      + "Mandiaye Sylla - 78 151 71 32\n"
+      + "Ndeye Awa Diaham - 78 018 63 57\n"
+      + "Mouhamed Badji - 77 889 04 59\n\n"
+      + "Merci, et à très bientôt dans l'espace membres !";
+  }
+
+  function presenterAssociation(memberId){
+    const p = profilesById[memberId] || {};
+    const wa = lienWhatsApp(p.phone);
+    if (!wa) return;
+    const prenom = (p.first_name || String(p.full_name || "").trim().split(/\s+/)[0] || "").trim();
+    window.open(wa + "?text=" + encodeURIComponent(texteMessagePresentation(prenom)), "_blank", "noopener");
+  }
 
   function toggleMemberDetails(memberId) {
     const box = document.getElementById('details-' + memberId);
