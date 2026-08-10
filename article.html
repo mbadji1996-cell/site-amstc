@@ -155,10 +155,10 @@
       content.innerHTML = `
         <span class="art-date">${formatDatePeriode(data)}</span>
         <h1>${esc(data.title || '')}</h1>
+        <div id="partageZone" class="partage-zone"></div>
         ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
         <div id="body">${DOMPurify.sanitize(marked.parse(body || ''))}</div>
-        <div id="partageZone" class="partage-zone"></div>
       `;
       // Après l'injection du contenu : le bouton a besoin de son conteneur.
       partageInit({ conteneur: 'partageZone', prefixe: 'a', cle: 'slug' });

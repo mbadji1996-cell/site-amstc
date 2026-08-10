@@ -228,6 +228,7 @@
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script>
   let editingId = null;
 
@@ -264,11 +265,28 @@
         <td><span class="badge-cat ${c.is_published ? 'badge-pub' : 'badge-draft'}">${c.is_published ? 'Publié' : 'Brouillon'}</span></td>
         <td>
           <div class="td-actions">
+            ${c.is_published
+              ? `<button class="btn btn-sm btn-ghost" onclick="partagerCours('${c.id}', this)"><i class="ti ti-share"></i> Partager</button>`
+              : `<button class="btn btn-sm btn-ghost" disabled title="La page d'aperçu n'est générée que pour un cours publié"><i class="ti ti-share"></i> Partager</button>`}
             <button class="btn btn-sm btn-ghost" onclick="editCourse('${c.id}')"><i class="ti ti-edit"></i> Modifier</button>
             <button class="btn btn-sm btn-danger" onclick="deleteCourse('${c.id}', '${escHtml(c.title)}')"><i class="ti ti-trash"></i></button>
           </div>
         </td>
       </tr>`).join('');
+  }
+
+  // Partage d'un cours depuis la liste : l'adresse est celle de la page
+  // d'aperçu pré-générée (/c/<id>.html), la seule qui affiche le titre
+  // exact sur WhatsApp. Elle n'existe que pour un cours publié - d'où le
+  // bouton désactivé sur les brouillons.
+  async function partagerCours(id, bouton) {
+    const etat = await partagerFiche('c', id, 'Cours AMSTC');
+    if (!etat || etat === 'annule' || etat === 'partage') return;
+    const avant = bouton.innerHTML;
+    bouton.innerHTML = etat === 'copie'
+      ? '<i class="ti ti-check"></i> Lien copié'
+      : '<i class="ti ti-link"></i> ' + escHtml(etat);
+    setTimeout(() => { bouton.innerHTML = avant; }, 2500);
   }
 
   let contentEditor = null;

@@ -12,12 +12,52 @@
  * Usage :
  *   partageInit({ conteneur: 'partageZone', prefixe: 'a', cle: 'slug' });
  *   partageInit({ conteneur: 'partageZone', prefixe: 'c', cle: 'id' });
+ *   await partagerFiche('c', idDuCours, 'Titre');   // écrans d'administration
  */
 
-function partageAdresse(prefixe, cle) {
-  const valeur = new URLSearchParams(location.search).get(cle);
+// valeurExplicite sert aux écrans qui listent PLUSIEURS fiches : là,
+// l'identifiant ne peut pas venir de la barre d'adresse, chaque ligne
+// ayant la sienne.
+function partageAdresse(prefixe, cle, valeurExplicite) {
+  const valeur = (valeurExplicite !== undefined && valeurExplicite !== null && valeurExplicite !== '')
+    ? String(valeurExplicite)
+    : new URLSearchParams(location.search).get(cle);
   if (!valeur) return null;
   return location.origin + '/' + prefixe + '/' + encodeURIComponent(valeur) + '.html';
+}
+
+/**
+ * Partage une adresse : menu natif du téléphone si disponible, sinon
+ * copie dans le presse-papiers.
+ * Renvoie 'partage', 'annule', 'copie', ou l'adresse elle-même quand ni
+ * l'un ni l'autre n'est possible (page non sécurisée, navigateur ancien).
+ */
+async function partagerAdresse(adresse, titre) {
+  // Sur téléphone, le menu natif propose directement WhatsApp : c'est le
+  // chemin le plus court vers l'usage réel. navigator.share exige un
+  // contexte sécurisé et un geste de l'utilisateur - d'où l'appel ici.
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: titre, url: adresse });
+      return 'partage';
+    } catch (e) {
+      if (e && e.name === 'AbortError') return 'annule';
+      // Tout autre échec bascule sur la copie ci-dessous.
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(adresse);
+    return 'copie';
+  } catch (e) {
+    return adresse;
+  }
+}
+
+/** Partage une fiche dont on connaît déjà l'identifiant. */
+async function partagerFiche(prefixe, valeur, titre) {
+  const adresse = partageAdresse(prefixe, null, valeur);
+  if (!adresse) return null;
+  return partagerAdresse(adresse, titre || document.title);
 }
 
 // Styles portés par ce fichier plutôt que par une feuille du site : le
@@ -28,7 +68,9 @@ function partageStyles() {
   const s = document.createElement('style');
   s.id = 'partage-styles';
   s.textContent =
-    '.partage-zone{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 8px;}' +
+    // Le bouton est en tête de fiche : il respire au-dessous, pour ne pas
+    // se coller au premier paragraphe.
+    '.partage-zone{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 26px;}' +
     '.btn-partage{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:600;' +
     'font-size:0.88rem;padding:10px 20px;border-radius:999px;cursor:pointer;' +
     'background:transparent;color:#17763B;border:1.5px solid rgba(6,68,28,0.2);transition:border-color .18s;}' +
@@ -55,29 +97,12 @@ function partageInit(options) {
 
   bouton.addEventListener('click', async () => {
     const titre = document.title.replace(/\s*-\s*AMSTC.*$/, '').trim();
-
-    // Sur téléphone, le menu natif propose directement WhatsApp : c'est le
-    // chemin le plus court vers l'usage réel. navigator.share exige un
-    // contexte sécurisé et un geste de l'utilisateur - d'où l'appel ici.
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: titre, url: adresse });
-        return;
-      } catch (e) {
-        // Partage annulé par l'utilisateur : ne rien afficher.
-        if (e && e.name === 'AbortError') return;
-        // Tout autre échec bascule sur la copie ci-dessous.
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(adresse);
-      message.textContent = 'Lien copié';
-    } catch (e) {
-      // clipboard indisponible (page non sécurisée, navigateur ancien) :
-      // on montre le lien pour que la personne le copie elle-même.
-      message.textContent = adresse;
-    }
+    const etat = await partagerAdresse(adresse, titre);
+    // Partage natif abouti ou annulé par l'utilisateur : rien à dire.
+    if (etat === 'partage' || etat === 'annule') return;
+    // Presse-papiers indisponible : on montre l'adresse pour que la
+    // personne la copie elle-même.
+    message.textContent = etat === 'copie' ? 'Lien copié' : etat;
     setTimeout(() => { message.textContent = ''; }, 4000);
   });
 
