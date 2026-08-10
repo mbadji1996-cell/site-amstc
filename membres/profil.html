@@ -114,7 +114,6 @@
   .crop-cancel{background:transparent;border:1.5px solid var(--line);color:inherit;}
   .crop-ok{background:var(--gold);border:none;color:var(--green-deep);}
   .field-hint{font-size:0.76rem;color:var(--text-muted);line-height:1.4;margin-top:5px;}
-  .field-hint.pending{color:#8A6D1F;font-weight:600;}
 
   /* Success flash */
   .success-flash{display:none;align-items:center;gap:8px;background:#EAF3DE;color:#3B6D11;border-radius:8px;padding:12px 16px;font-size:0.9rem;font-weight:600;margin-bottom:12px;}
@@ -275,7 +274,7 @@
           <div class="form-group">
             <label>Année d'adhésion</label>
             <select id="eMemberSince"></select>
-            <p class="field-hint" id="memberSinceHint">Elle détermine votre numéro de carte : toute modification est validée par un administrateur.</p>
+            <p class="field-hint" id="memberSinceHint">Elle détermine votre numéro de carte : la modifier renumérote votre carte de membre.</p>
           </div>
           <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
         </div>
@@ -465,7 +464,7 @@
 
     populateMemberSinceOptions();
     renderProfile(profile);
-    await loadMemberSinceRequest();
+    afficherAnneeAdhesion();
     await loadClaimStatus(profile.id);
     await loadValidity(profile.id);
     await loadCotisations(profile.id);
@@ -864,9 +863,11 @@
     }
     if (photoUrl) payload.photo_url = photoUrl;
 
-    // member_since ne fait plus partie du payload (phase43) : elle détermine
-    // l'ancienneté et le numéro de carte, et passe donc par une demande que
-    // l'admin valide. Le droit d'écriture a été retiré côté base.
+    // member_since ne fait pas partie du payload : elle est inscrite dans le
+    // numéro de carte, donc l'écrire seule laisserait le numéro la
+    // contredire. Le droit d'écriture direct reste retiré côté base et le
+    // changement passe par set_own_member_since (phase63), qui renumérote la
+    // carte dans le même mouvement - sans validation d'un administrateur.
     const anneeChoisie = parseInt(document.getElementById('eMemberSince').value) || currentYear;
     const anneeActuelle = currentProfile.member_since || currentYear;
 
@@ -883,26 +884,36 @@
       return;
     }
 
-    let demandeDeposee = false;
+    let anneeAppliquee = false;
+    let nouveauNumero = null;
     if (anneeChoisie !== anneeActuelle) {
-      const { error: reqError } = await supabaseClient.rpc('request_member_since', { new_year: anneeChoisie });
-      if (reqError) {
+      const { data: numero, error: anneeError } = await supabaseClient
+        .rpc('set_own_member_since', { new_year: anneeChoisie });
+      if (anneeError) {
         saveBtn.disabled = false;
-        msg.textContent = "Vos informations sont enregistrées, mais la demande de changement d'année d'adhésion n'a pas pu être transmise : " + reqError.message;
+        msg.textContent = anneeError.code === 'PGRST202'
+          ? "Vos informations sont enregistrées, mais le changement d'année d'adhésion n'est pas encore activé sur cette instance."
+          : "Vos informations sont enregistrées, mais l'année d'adhésion n'a pas pu être modifiée : " + anneeError.message;
         msg.className = 'form-msg error';
         return;
       }
-      demandeDeposee = true;
+      anneeAppliquee = true;
+      nouveauNumero = numero || null;
+      currentProfile.member_since = anneeChoisie;
+      if (nouveauNumero) currentProfile.legacy_card_number = nouveauNumero;
     }
 
     saveBtn.disabled = false;
     Object.assign(currentProfile, payload);
     pendingPhotoBlob = null;
     renderProfile(currentProfile);
-    await loadMemberSinceRequest();
-    if (demandeDeposee) {
-      // Message explicite : sans lui, le membre croirait son année changée.
-      msg.textContent = "Enregistré. Votre demande de changement d'année d'adhésion (" + anneeActuelle + " → " + anneeChoisie + ") a été transmise à l'administration : elle prendra effet une fois validée.";
+    afficherAnneeAdhesion();
+    if (anneeAppliquee) {
+      // Le numéro de carte change avec l'année : le taire laisserait le
+      // membre avec l'ancien numéro en tête, celui qu'il vient de perdre.
+      msg.textContent = "Enregistré. Votre année d'adhésion est passée de " + anneeActuelle
+        + " à " + anneeChoisie + "."
+        + (nouveauNumero ? " Votre carte porte désormais le numéro " + nouveauNumero + "." : "");
       msg.className = 'form-msg ok';
       return;
     }
@@ -910,31 +921,12 @@
     showSuccessThenCollapse('info', 'infoSuccessFlash');
   }
 
-  // ===== Demande de changement d'année d'adhésion (phase43) =====
-  async function loadMemberSinceRequest() {
+  // ===== Année d'adhésion (phase63 : modifiable sans validation) =====
+  function afficherAnneeAdhesion() {
+    document.getElementById('eMemberSince').value = currentProfile.member_since || currentYear;
     const hint = document.getElementById('memberSinceHint');
-    const select = document.getElementById('eMemberSince');
-    const defaut = "Elle détermine votre numéro de carte : toute modification est validée par un administrateur.";
-
-    const { data, error } = await supabaseClient
-      .from('member_since_requests')
-      .select('requested_year, created_at')
-      .eq('user_id', currentProfile.id)
-      .eq('status', 'pending')
-      .maybeSingle();
-
-    // Table absente (script SQL pas encore exécuté) : on garde le libellé
-    // par défaut plutôt que d'afficher une erreur au membre.
-    if (error || !data) {
-      hint.textContent = defaut;
-      hint.className = 'field-hint';
-      select.value = currentProfile.member_since || currentYear;
-      return;
-    }
-
-    hint.textContent = "Demande en cours : " + data.requested_year + ", en attente de validation par un administrateur.";
-    hint.className = 'field-hint pending';
-    select.value = data.requested_year;
+    hint.textContent = "Elle détermine votre numéro de carte : la modifier renumérote votre carte de membre.";
+    hint.className = 'field-hint';
   }
 
   async function loadClaimStatus(userId) {
