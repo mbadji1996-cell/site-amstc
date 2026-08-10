@@ -383,6 +383,25 @@ un fichier SQL : elle introduit une **fonction Edge Supabase** (jamais
 utilisée jusqu'ici sur ce projet) et nécessite un compte chez un service
 d'envoi d'e-mails. Suivez les étapes dans l'ordre.
 
+> **Depuis la migration sur le VPS** (Supabase auto-hébergé sur
+> `api.amstc.org`, Coolify), il n'y a plus de « Project Settings → Edge
+> Functions → Secrets » : les secrets ci-dessous sont des **variables
+> d'environnement Coolify** sur la ressource Supabase. Pour en **changer
+> une** (par exemple l'adresse de réception `ADMIN_NOTIFY_EMAIL`) :
+> Coolify → le projet Supabase → **Environment Variables** → modifier la
+> valeur → **Save**, puis redémarrer le conteneur des fonctions Edge pour
+> qu'il relise la variable :
+>
+> ```
+> docker restart $(docker ps --format '{{.Names}}' | grep edge-functions)
+> ```
+>
+> Vérifier ensuite la valeur réellement vue par la fonction :
+>
+> ```
+> docker exec $(docker ps --format '{{.Names}}' | grep edge-functions) env | grep NOTIFY
+> ```
+
 1. **Créer un compte sur [resend.com](https://resend.com)**, puis
    Dashboard → **API Keys** → **Create API Key**. Copiez la clé (elle n'est
    affichée qu'une seule fois).
