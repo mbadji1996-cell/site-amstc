@@ -581,16 +581,16 @@
         <select id="rappelType-${esc(memberId)}" onchange="majRappelLibre('${esc(memberId)}')">
           ${TYPES_RAPPEL.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}
         </select>
-        <button class="btn-sm btn-approve" onclick="envoyerRappelEmail('${esc(memberId)}')"
-          ${p.email ? "" : "disabled title=\"Ce membre n'a pas d'adresse e-mail\""}>Envoyer par e-mail</button>
-        <button class="btn-sm btn-outline-sm" onclick="ouvrirRappelWhatsApp('${esc(memberId)}')"
+        <button class="btn-sm btn-approve" onclick="ouvrirRappelWhatsApp('${esc(memberId)}')"
           ${wa ? "" : "disabled title=\"Ce membre n'a pas de numéro\""}>Ouvrir WhatsApp</button>
+        <button class="btn-sm btn-outline-sm" onclick="envoyerRappelEmail('${esc(memberId)}')"
+          ${p.email ? "" : "disabled title=\"Ce membre n'a pas d'adresse e-mail\""}>Envoyer par e-mail</button>
       </div>
       <div id="rappelLibreZone-${esc(memberId)}" style="display:none;margin-top:8px;">
         <textarea id="rappelTexte-${esc(memberId)}" rows="3" placeholder="Votre message…"
           style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);"></textarea>
       </div>
-      <p class="assign-msg" id="rappelMsg-${esc(memberId)}">L'e-mail part immédiatement ; WhatsApp s'ouvre avec le message pré-rempli, à vous de l'envoyer.</p>`;
+      <p class="assign-msg" id="rappelMsg-${esc(memberId)}">WhatsApp s'ouvre avec le message pré-rempli, à vous de l'envoyer ; l'e-mail, lui, part immédiatement.</p>`;
     box.style.display = "block";
   }
 
