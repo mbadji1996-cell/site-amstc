@@ -69,11 +69,9 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") return json({ error: "Méthode non autorisée" }, 405);
 
-  if (!META_WHATSAPP_TOKEN || !META_PHONE_NUMBER_ID) {
-    console.error("notify-members-whatsapp: secrets META_WHATSAPP_TOKEN / META_PHONE_NUMBER_ID manquants");
-    return json({ error: "Configuration serveur incomplète" }, 500);
-  }
-
+  // L'identité est vérifiée AVANT l'état de la configuration : sans cela,
+  // n'importe qui apprenait si les secrets Meta sont posés, et le message
+  // détaillé ci-dessous serait lisible sans être administrateur.
   const jwt = (req.headers.get("authorization") || "").replace(/^Bearer /, "");
   if (!jwt) return json({ error: "Non authentifié" }, 401);
 
@@ -92,6 +90,22 @@ Deno.serve(async (req: Request) => {
 
   if (!callerProfile || !["admin", "super_admin"].includes(callerProfile.role)) {
     return json({ error: "Réservé aux administrateurs" }, 403);
+  }
+
+  // Le secret manquant est nommé : « Configuration serveur incomplète »
+  // obligeait à chercher lequel des deux à l'aveugle, dans une interface
+  // Coolify où ils ne sont pas côte à côte.
+  const secretsManquants = [
+    !META_WHATSAPP_TOKEN ? "META_WHATSAPP_TOKEN" : null,
+    !META_PHONE_NUMBER_ID ? "META_PHONE_NUMBER_ID" : null,
+  ].filter(Boolean);
+  if (secretsManquants.length) {
+    console.error("notify-members-whatsapp : secrets manquants -", secretsManquants.join(", "));
+    return json({
+      error: "Configuration WhatsApp incomplète : " + secretsManquants.join(" et ")
+        + " " + (secretsManquants.length > 1 ? "ne sont pas définis" : "n'est pas défini")
+        + " sur le service edge-functions.",
+    }, 500);
   }
 
   let payload: { message?: string; audience?: string };

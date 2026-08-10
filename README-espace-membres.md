@@ -613,24 +613,34 @@ prend généralement de quelques minutes à quelques heures.
    avec des tirets bas uniquement, et ne peut pas se trouver en tout début
    ou toute fin du corps du message - Meta l'exige entouré de texte fixe.
    Soumettez les deux modèles et attendez le statut "Approuvé" pour chacun.
-5. **Déployer la fonction Edge** : Dashboard Supabase → **Edge Functions**
-   → "Deploy a new function" → "Via Editor" → nommez-la exactement
-   `notify-members-whatsapp` → collez le contenu de
-   `supabase/functions/notify-members-whatsapp/index.ts` → **Deploy**.
-   Contrairement à `notify-admin`, **laissez le bouton "Verify JWT"
-   activé** : cette fonction est appelée directement depuis le navigateur
-   avec la session de l'admin connecté, pas depuis un trigger SQL.
-6. Dans **Project Settings → Edge Functions → Secrets**, ajoutez :
+5. **Déployer la fonction Edge**, en SSH sur le VPS (l'instance est
+   auto-hébergée depuis juillet 2026 : il n'y a plus de Dashboard Supabase,
+   et le déploiement passe par le conteneur, comme pour les autres
+   fonctions) :
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/notify-members-whatsapp/index.ts -o /tmp/wa.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/notify-members-whatsapp && docker cp /tmp/wa.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/notify-members-whatsapp/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+   ```
+
+   Cette fonction est appelée directement depuis le navigateur avec la
+   session de l'administrateur : elle vérifie elle-même le rôle de
+   l'appelant, contrairement à `notify-admin` qui n'est appelée que par
+   des triggers SQL.
+6. **Secrets** : dans **Coolify → service Supabase (instance amstc) →
+   edge-functions → Environment Variables**, ajoutez puis redéployez :
    - `META_WHATSAPP_TOKEN` - le jeton permanent de l'étape 3
    - `META_PHONE_NUMBER_ID` - l'identifiant de l'étape 2
    - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
    - `META_TEMPLATE_NAME_RAPPEL` - optionnel, si différent de `rappel_compte`
    - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
-7. Dans Supabase → **SQL Editor** → **New query**, collez le contenu de
-   `supabase/phase30-whatsapp-broadcasts.sql`, cliquez **Run**, puis faites
-   de même avec `supabase/phase31-whatsapp-rappels-cibles.sql` (ajoute les
-   fonctions de ciblage par audience - carte expirée/à renouveler/
-   cotisation impayée).
+
+   Tant qu'un secret manque, la page d'envoi affiche précisément lequel :
+   « Configuration WhatsApp incomplète : META_WHATSAPP_TOKEN n'est pas
+   défini… ». Inutile de chercher dans les journaux.
+7. Dans le **Studio → SQL Editor**, exécutez
+   `supabase/phase30-whatsapp-broadcasts.sql`, puis
+   `supabase/phase31-whatsapp-rappels-cibles.sql` (fonctions de ciblage par
+   audience - carte expirée/à renouveler/cotisation impayée).
 8. **Testez** depuis `membres/whatsapp-admin.html` (Centre
    d'administration → carte "Diffusion WhatsApp") : choisissez une
    audience, le nombre de destinataires affiché doit se mettre à jour, et
