@@ -111,6 +111,11 @@ begin
   v_corps := v_corps || chr(10) || chr(10)
     || 'Où aller : ' || v_chemin || chr(10) || v_lien;
 
+  -- Signature commune à tous les messages sortants. Placée ici plutôt que
+  -- dans chaque branche : les cinq types la portent, par e-mail comme par
+  -- WhatsApp, sans risque d'en oublier une.
+  v_corps := v_corps || chr(10) || chr(10) || '©AMSTC';
+
   return query select v_titre, v_corps, v_lien;
 end;
 $$;

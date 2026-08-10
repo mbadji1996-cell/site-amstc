@@ -867,6 +867,12 @@
   // relancer sans re-présenter l'association.
   // Les astérisques sont la syntaxe du gras de WhatsApp.
 
+  // Signature de tous les messages sortants, écrite une seule fois : deux
+  // copies finiraient par diverger. Le message composé côté SQL
+  // (texte_rappel_membre) porte la sienne, ajoutée là-bas pour valoir
+  // aussi bien par e-mail que par WhatsApp.
+  const SIGNATURE = "\n\n©AMSTC";
+
   // Conditions d'adhésion + consigne de capture : le socle commun aux deux
   // messages, écrit une seule fois pour que les montants ne divergent pas.
   function blocAdhesion(){
@@ -898,14 +904,16 @@
       + "- ziaras\n\n"
       + "*Comment adhérer :*\n"
       + blocAdhesion() + "\n\n"
-      + "À très bientôt dans l'espace membres !";
+      + "À très bientôt dans l'espace membres !"
+      + SIGNATURE;
   }
 
   function texteMessageRappelPaiement(prenom){
     return (prenom ? "Bonjour " + prenom + ",\n\n" : "Bonjour,\n\n")
       + "Petit rappel pour finaliser votre adhésion à l'AMSTC :\n\n"
       + blocAdhesion() + "\n\n"
-      + "Merci !";
+      + "Merci !"
+      + SIGNATURE;
   }
 
   function ouvrirMessageAdhesion(memberId, composer){
@@ -1212,6 +1220,7 @@
       const waTexte = encodeURIComponent(
         enTete
         + "C'est le MÊME compte pour les deux : même adresse e-mail, même mot de passe. Rien de nouveau à créer, ni à retenir."
+        + SIGNATURE
       );
       linkBox.innerHTML = waDigits ? `
         <div class="assign-inline-row" style="margin-top:8px;">
@@ -1231,6 +1240,7 @@
       enTete
       + "C'est le MÊME compte pour les deux. Comme vous vous connectez à amstc.org avec Google, "
       + "utilisez également le bouton « Continuer avec Google » sur consultations-amstc.org, avec la même adresse."
+      + SIGNATURE
     );
     linkBox.innerHTML = waDigits ? `
       <div class="assign-inline-row" style="margin-top:8px;">
@@ -1281,6 +1291,7 @@
       + lien + "\n\n"
       + "Ce lien est personnel et expire rapidement : utilisez-le sans tarder. "
       + "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message."
+      + SIGNATURE
     );
 
     const etatMail = data.email_sent

@@ -51,6 +51,7 @@ function gabarit(titre: string, corps: string): string {
       <div style="padding:16px 24px;border-top:1px solid #ddd;font-size:12px;color:#5B6E60;">
         Association Médico-Sociale des Talibés Cheikh -
         <a href="${SITE}" style="color:#17763B;">amstc.org</a>
+        <br>&copy;AMSTC
       </div>
     </div>`;
 }
