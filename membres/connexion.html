@@ -5,6 +5,7 @@
 <script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/oeil-mot-de-passe.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion - Espace Membres - AMSTC</title>
 <meta name="description" content="Connectez-vous à l'espace membres de l'AMSTC.">
@@ -216,8 +217,34 @@
       await signOut();
       return false;
     }
+    await rattacherCarteEnAttente();
     window.location.href = destinationApresConnexion();
     return true;
+  }
+
+  /**
+   * Rattache la carte d'une invitation restée en suspens.
+   *
+   * Quand l'instance exige la confirmation de l'adresse e-mail, la page
+   * d'invitation crée bien le compte mais ne peut pas consommer le jeton,
+   * faute de session. Elle le met alors de côté, et c'est ici qu'on le
+   * reprend : le membre se connecte normalement, sa carte se rattache
+   * sans qu'il ait à rouvrir le lien reçu par WhatsApp.
+   *
+   * Silencieux à dessein : un jeton périmé ou déjà utilisé ne doit pas
+   * empêcher une connexion par ailleurs valide.
+   */
+  async function rattacherCarteEnAttente() {
+    let jeton = null;
+    try { jeton = localStorage.getItem("amstc-invitation"); } catch (e) { return; }
+    if (!jeton) return;
+    try {
+      const { error } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton });
+      // Le jeton n'est retiré que s'il a servi ou qu'il ne servira plus :
+      // une panne réseau doit laisser une nouvelle chance à la prochaine
+      // connexion.
+      if (!error || error.code === "P0001") localStorage.removeItem("amstc-invitation");
+    } catch (e) { /* réessai à la prochaine connexion */ }
   }
 
   // Après un redirect OAuth, Supabase remet la session dans l'URL.

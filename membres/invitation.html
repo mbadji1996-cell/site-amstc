@@ -5,6 +5,7 @@
 <script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/oeil-mot-de-passe.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Votre carte de membre AMSTC</title>
 <meta name="robots" content="noindex">
@@ -161,7 +162,14 @@
     // que de laisser croire que tout est terminé.
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
-      message("Compte créé. Confirmez votre adresse e-mail, puis rouvrez ce lien pour rattacher votre carte.", "ok");
+      // L'instance exige la confirmation de l'adresse : impossible de
+      // consommer l'invitation maintenant, faute de session. On met le
+      // jeton de côté pour que la page de connexion rattache la carte
+      // toute seule à la première connexion - sans quoi le membre devrait
+      // penser à rouvrir ce lien, ce que personne ne fait.
+      try { localStorage.setItem("amstc-invitation", jeton); } catch (e) { /* stockage indisponible */ }
+      message("Compte créé. Confirmez votre adresse e-mail (vérifiez vos indésirables), "
+        + "puis connectez-vous : votre carte sera rattachée automatiquement.", "ok");
       btn.disabled = false;
       return;
     }
