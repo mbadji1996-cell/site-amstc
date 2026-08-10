@@ -55,7 +55,6 @@
   .page-body{max-width:1100px;margin:0 auto;padding:28px 28px 60px;}
   .section-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-accent);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
-  .empty-note{color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:50px 0;text-align:center;}
 
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
@@ -64,15 +63,29 @@
   .card-status-banner-text strong{color:var(--text-heading);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
 
-  /* Activité récente */
-  .activity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:36px;}
-  .activity-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .18s;}
-  .activity-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(6,68,28,0.08);transform:translateY(-2px);}
-  .activity-icon{width:36px;height:36px;border-radius:9px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-accent);flex-shrink:0;}
-  .activity-body{min-width:0;}
-  .activity-label{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:3px;}
-  .activity-title{font-size:0.86rem;font-weight:600;color:var(--text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .activity-date{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;margin-top:3px;}
+  /* Les espaces : le tableau de bord sert de point de départ vers chaque
+     rubrique. Les onglets restent la navigation permanente ; ces encarts
+     les rendent visibles et explicites à l'arrivée. */
+  .espaces-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+  .espace-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:13px;align-items:center;transition:border-color .18s, box-shadow .18s, transform .18s;}
+  .espace-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(6,68,28,0.08);transform:translateY(-2px);}
+  .espace-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .espace-icon{width:40px;height:40px;border-radius:10px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--text-accent);flex-shrink:0;}
+  .espace-body{min-width:0;}
+  .espace-titre{font-size:0.92rem;font-weight:600;color:var(--text-heading);line-height:1.3;}
+  .espace-sub{font-size:0.76rem;color:var(--text-muted);line-height:1.4;margin-top:2px;}
+  .espace-fleche{margin-left:auto;color:#c0ccc5;font-size:16px;flex-shrink:0;}
+  .espace-tag{display:inline-block;font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:#C0392B;background:rgba(192,57,43,0.1);border-radius:5px;padding:2px 6px;margin-top:5px;}
+
+  /* Sur mobile, neuf encarts en pleine largeur feraient une page
+     interminable : on passe en tuiles carrées sur deux colonnes, icône
+     au-dessus du nom, sans description ni flèche. */
+  @media(max-width:620px){
+    .espaces-grid{grid-template-columns:1fr 1fr;gap:11px;}
+    .espace-card{flex-direction:column;align-items:center;text-align:center;gap:9px;padding:18px 10px;}
+    .espace-sub, .espace-fleche{display:none;}
+    .espace-titre{font-size:0.84rem;}
+  }
 
   /* Admin */
   .admin-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);transition:all .18s;}
@@ -169,11 +182,93 @@
       </a>
     </div>
 
-    <div id="activitySection" style="display:none;">
-      <p class="section-label"><i class="ti ti-clock"></i> Activité récente</p>
-      <div class="activity-grid" id="activityGrid"></div>
+    <div id="espacesSection">
+      <p class="section-label"><i class="ti ti-layout-grid"></i> Vos espaces</p>
+      <div class="espaces-grid">
+
+        <a class="espace-card" href="formations.html" data-espace="formations">
+          <div class="espace-icon"><i class="ti ti-certificate"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Formations</p>
+            <p class="espace-sub">Cours, leçons et quiz réservés aux membres.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="actualites.html">
+          <div class="espace-icon"><i class="ti ti-building-community"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Réalisations</p>
+            <p class="espace-sub">Les actions menées par l'association.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="documents.html" data-espace="documents">
+          <div class="espace-icon"><i class="ti ti-file-text"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Documents officiels</p>
+            <p class="espace-sub">Statuts, règlements et procès-verbaux.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="boutique.html">
+          <div class="espace-icon"><i class="ti ti-shopping-bag"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Boutique AMSTC</p>
+            <p class="espace-sub">Tenues, accessoires et objets de l'association.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="collectes.html">
+          <div class="espace-icon"><i class="ti ti-heart-handshake"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Collectes</p>
+            <p class="espace-sub">Cotisations d'activités et appels aux dons.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="forum.html">
+          <div class="espace-icon"><i class="ti ti-messages"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Forum</p>
+            <p class="espace-sub">Échanges et entraide entre membres.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="annuaire.html">
+          <div class="espace-icon"><i class="ti ti-address-book"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Annuaire</p>
+            <p class="espace-sub">Retrouver et contacter les autres membres.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="mediatheque.html">
+          <div class="espace-icon"><i class="ti ti-photo"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Médiathèque</p>
+            <p class="espace-sub">Photos et vidéos des évènements.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="profil.html">
+          <div class="espace-icon"><i class="ti ti-id-badge"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Mon Profil &amp; Adhésion</p>
+            <p class="espace-sub">Carte de membre, cotisations et informations.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+      </div>
     </div>
-    <p class="empty-note" id="emptyNote" style="display:none;">Aucune activité récente pour le moment.</p>
 
   </div><!-- /page-body -->
 </div>
@@ -220,70 +315,17 @@
     window.scrollTo(0, annScrollY);
   }
 
-  function timeAgo(dateStr) {
-    const diffSec = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
-    if (diffSec < 60) return "à l'instant";
-    const diffMin = Math.round(diffSec / 60);
-    if (diffMin < 60) return `il y a ${diffMin} min`;
-    const diffH = Math.round(diffMin / 60);
-    if (diffH < 24) return `il y a ${diffH} h`;
-    const diffJ = Math.round(diffH / 24);
-    if (diffJ < 30) return `il y a ${diffJ} j`;
-    return new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  async function loadRecentActivity(blocked) {
-    const section = document.getElementById("activitySection");
-    const grid = document.getElementById("activityGrid");
-    const emptyNote = document.getElementById("emptyNote");
-
-    const queries = [
-      supabaseClient.from("forum_topics").select("id,title,last_activity_at").order("last_activity_at", { ascending: false }).limit(4),
-      supabaseClient.from("media_folders").select("id,title,created_at").eq("is_published", true).is("parent_id", null).order("created_at", { ascending: false }).limit(4),
-    ];
-    if (!blocked) {
-      queries.push(
-        supabaseClient.from("restricted_articles").select("id,title,category,created_at").in("category", ["formation", "document"]).order("created_at", { ascending: false }).limit(4)
-      );
-    }
-
-    const [topicsRes, foldersRes, articlesRes] = await Promise.all(queries);
-
-    const items = [];
-    (topicsRes.data || []).forEach(t => items.push({
-      icon: "ti-messages", label: "Forum", title: t.title, date: t.last_activity_at,
-      url: `forum-sujet.html?id=${encodeURIComponent(t.id)}`,
-    }));
-    (foldersRes.data || []).forEach(f => items.push({
-      icon: "ti-photo", label: "Médiathèque", title: f.title, date: f.created_at,
-      url: `mediatheque-dossier.html?id=${encodeURIComponent(f.id)}`,
-    }));
-    (articlesRes && articlesRes.data || []).forEach(a => items.push({
-      icon: a.category === "document" ? "ti-file-text" : "ti-certificate",
-      label: a.category === "document" ? "Document" : "Formation",
-      title: a.title, date: a.created_at,
-      url: a.category === "document" ? "documents.html" : `formation-reservee.html?id=${encodeURIComponent(a.id)}`,
-    }));
-
-    items.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const top = items.slice(0, 4);
-
-    if (top.length === 0) {
-      emptyNote.style.display = "";
-      return;
-    }
-
-    grid.innerHTML = top.map(it => `
-      <a class="activity-card" href="${it.url}">
-        <div class="activity-icon"><i class="ti ${it.icon}"></i></div>
-        <div class="activity-body">
-          <p class="activity-label">${esc(it.label)}</p>
-          <p class="activity-title">${esc(it.title)}</p>
-          <p class="activity-date">${timeAgo(it.date)}</p>
-        </div>
-      </a>
-    `).join("");
-    section.style.display = "";
+  // Carte expirée depuis plus de deux mois : les formations et les documents
+  // réservés sont refusés à l'arrivée sur la page. Le dire ici évite le
+  // clic pour rien, et renvoie vers le renouvellement.
+  function marquerEspacesSuspendus(blocked) {
+    if (!blocked) return;
+    document.querySelectorAll('.espace-card[data-espace]').forEach(carte => {
+      const tag = document.createElement("span");
+      tag.className = "espace-tag";
+      tag.textContent = "Accès suspendu";
+      carte.querySelector(".espace-body").appendChild(tag);
+    });
   }
 
   function renderCardStatusBanner(state) {
@@ -342,7 +384,7 @@
 
     renderCardStatusBanner(result.state);
     renderProfileBanner(profile);
-    loadRecentActivity(result.state === "blocked");
+    marquerEspacesSuspendus(result.state === "blocked");
     loadPinnedAnnouncements();
 
     if (["admin","super_admin"].includes(profile.role)) {
