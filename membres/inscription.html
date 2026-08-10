@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/oeil-mot-de-passe.js" defer></script>
+<script src="../assets/js/messages-auth.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Créer un compte - Espace Membres - AMSTC</title>
 <meta name="description" content="Créez votre compte pour accéder à l'espace membres de l'AMSTC.">
@@ -757,7 +758,7 @@
     });
 
     if (error) {
-      showMessage(error.message || "Une erreur est survenue. Réessayez.", "error");
+      showMessage(messageAuth(error), "error");
       submitBtn.disabled = false;
       return;
     }
