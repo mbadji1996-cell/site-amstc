@@ -879,9 +879,11 @@
       + "sur WhatsApp* : elle sert de justificatif pour valider votre adhésion.";
   }
 
+  // Le texte est celui valide par l'association, mot pour mot : seul le
+  // « Bonjour {prenom} » s'ajoute en tete. Pas de phrase d'accueil ni de
+  // formule finale supplementaires.
   function texteMessagePresentation(prenom){
     return (prenom ? "Bonjour " + prenom + ",\n\n" : "Bonjour,\n\n")
-      + "Bienvenue ! Votre inscription sur amstc.org est bien enregistrée.\n\n"
       + "L'*AMSTC* (Association Médico-Sociale des Talibés Cheikh) est une association "
       + "apolitique, confessionnelle et sans but lucratif, fondée en 2014 par des étudiants "
       + "tidianes de la FMPO. Elle rassemble les acteurs du domaine socio-sanitaire et tout "
@@ -897,8 +899,7 @@
       + "- enseignements post-universitaires\n"
       + "- ziaras\n\n"
       + "*Comment adhérer :*\n"
-      + blocAdhesion() + "\n\n"
-      + "À très bientôt dans l'espace membres !";
+      + blocAdhesion();
   }
 
   function texteMessageRappelPaiement(prenom){
