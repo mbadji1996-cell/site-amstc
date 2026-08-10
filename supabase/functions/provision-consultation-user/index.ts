@@ -45,6 +45,10 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const CONSULT_URL = Deno.env.get("CONSULT_SUPABASE_URL");
 const CONSULT_KEY = Deno.env.get("CONSULT_SERVICE_ROLE_KEY");
+// Jeton partagé avec le trigger d'approbation (phase61), qui appelle cette
+// fonction sans session utilisateur. Le même que notify-admin : aucun
+// secret supplémentaire à poser.
+const SERVEUR_SECRET = Deno.env.get("NOTIFY_ADMIN_SECRET");
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -116,21 +120,29 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Configuration serveur incomplète" }, 500);
   }
 
-  // ===== 1. L'appelant est-il un admin de l'espace membres ? =====
+  // ===== 1. L'appelant est-il autorisé ? =====
+  // Deux appelants possibles :
+  //   - le trigger d'approbation (phase61), qui presente le jeton partage
+  //     NOTIFY_ADMIN_SECRET : il n'a pas de session utilisateur ;
+  //   - un administrateur depuis le navigateur, avec son jeton de session.
   const jwt = (req.headers.get("authorization") || "").replace(/^Bearer /, "");
   if (!jwt) return json({ error: "Non authentifié" }, 401);
 
   const amstc = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-  const { data: userData, error: userErr } = await amstc.auth.getUser(jwt);
-  if (userErr || !userData?.user) return json({ error: "Session invalide" }, 401);
+  const appelServeur = !!SERVEUR_SECRET && jwt === SERVEUR_SECRET;
 
-  const { data: caller } = await amstc
-    .from("profiles")
-    .select("role, is_active")
-    .eq("id", userData.user.id)
-    .single();
-  if (!caller || !["admin", "super_admin"].includes(caller.role) || caller.is_active === false) {
-    return json({ error: "Réservé aux administrateurs" }, 403);
+  if (!appelServeur) {
+    const { data: userData, error: userErr } = await amstc.auth.getUser(jwt);
+    if (userErr || !userData?.user) return json({ error: "Session invalide" }, 401);
+
+    const { data: caller } = await amstc
+      .from("profiles")
+      .select("role, is_active")
+      .eq("id", userData.user.id)
+      .single();
+    if (!caller || !["admin", "super_admin"].includes(caller.role) || caller.is_active === false) {
+      return json({ error: "Réservé aux administrateurs" }, 403);
+    }
   }
 
   // ===== 2. Le membre visé est-il provisionnable ? =====

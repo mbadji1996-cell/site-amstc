@@ -352,10 +352,16 @@
               <p class="assign-msg ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + formatDate(p.consultation_linked_at) : ''} et actif. Le membre choisit son site à sa première connexion sur consultations-amstc.org.</p>
             </div>` : (CONSULT_DOMAINS.includes(p.domain) ? `
             <div class="consult-provision">
-              <button class="btn-sm btn-outline-sm" id="consultBtn-${esc(p.id)}" onclick="provisionConsultation('${esc(p.id)}')">Créer l'accès consultations</button>
+              <p class="assign-msg">L'accès consultations est créé automatiquement à l'approbation (phase61).
+                S'il tarde, ce bouton force la création.</p>
+              <button class="btn-sm btn-outline-sm" id="consultBtn-${esc(p.id)}" onclick="provisionConsultation('${esc(p.id)}')">Créer l'accès maintenant</button>
               <p class="assign-msg" id="consultMsg-${esc(p.id)}"></p>
               <div id="consultLink-${esc(p.id)}" style="display:none;"></div>
-            </div>` : '')}
+            </div>` : `
+            <div class="consult-provision">
+              <p class="assign-msg">Pas d'accès consultations : ce domaine n'est pas un métier de santé.
+                consultations-amstc.org contient des données de patients.</p>
+            </div>`)}
           </div>
         </div>
       `).join("");
