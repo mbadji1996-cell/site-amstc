@@ -581,10 +581,14 @@
   // seul, WhatsApp ouvre la conversation avec le message déjà écrit -
   // celui-ci ne dépend d'aucune approbation Meta et fonctionne donc dès
   // maintenant, y compris pour un membre sans adresse e-mail.
+  // « Compte activé » est ajouté à la suite et non en tête : la première
+  // entrée est celle qui est sélectionnée par défaut, et la déplacer
+  // ferait partir le mauvais message à qui clique sans regarder.
   const TYPES_RAPPEL = [
     ["carte_expiree", "Carte expirée"],
     ["carte_expire_bientot", "Carte à renouveler bientôt"],
     ["cotisation_retard", "Cotisations en retard"],
+    ["compte_active", "Compte activé - se connecter"],
     ["libre", "Message libre"],
   ];
 
@@ -623,9 +627,16 @@
   }
 
   function erreurRappel(msg, error){
-    return error.message && error.code === "PGRST202"
-      ? "Le script supabase/phase57-rappel-individuel.sql n'a pas encore été exécuté."
-      : "Erreur : " + error.message;
+    if (error.code === "PGRST202") {
+      return "Le script supabase/phase57-rappel-individuel.sql n'a pas encore été exécuté.";
+    }
+    // La base connaît bien la fonction, mais pas ce type de message : c'est
+    // un script plus récent qui manque, pas le premier. Sans cette
+    // distinction, l'admin irait vérifier le mauvais fichier.
+    if (/Type de rappel inconnu/i.test(error.message || "")) {
+      return "Ce message n'existe pas encore dans la base : exécutez supabase/phase65-rappel-compte-active.sql.";
+    }
+    return "Erreur : " + error.message;
   }
 
   async function envoyerRappelEmail(memberId){
