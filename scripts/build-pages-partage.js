@@ -206,6 +206,19 @@ async function genererCours() {
     console.warn('  c    : cours ignorés (' + e.message + ')');
     return 0;
   }
+  // Une réponse vide alors que des pages existent est presque toujours un
+  // incident (base repartie à vide, droits retirés) plutôt qu'un retrait
+  // volontaire de TOUS les cours. On garde les pages : des liens déjà
+  // partagés qui cessent de fonctionner coûtent plus cher qu'un aperçu
+  // survivant à une dépublication.
+  const dossierCours = path.join(ROOT, 'c');
+  const existantes = fs.existsSync(dossierCours)
+    ? fs.readdirSync(dossierCours).filter((f) => f.endsWith('.html')).length : 0;
+  if (cours.length === 0 && existantes > 0) {
+    console.warn(`  c    : aucun cours renvoyé alors que ${existantes} page(s) existent - conservées par précaution.`);
+    return 0;
+  }
+
   const gardes = new Set();
   for (const c of cours) {
     if (!c.id) continue;

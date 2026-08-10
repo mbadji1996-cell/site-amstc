@@ -40,6 +40,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json sitemap.xml
-          git add -A a f p e c
+          # Un « git add » sur un dossier absent interrompt tout le job : c'est
+          # ce qui a fait échouer la première construction, avant que les
+          # pages de cours n'existent. On n'ajoute que ce qui est là.
+          for d in a f p e c; do [ -d "$d" ] && git add -A "$d"; done
           git diff --cached --quiet || git commit -m "chore: rebuild content index, sitemap et pages de partage"
           git push
