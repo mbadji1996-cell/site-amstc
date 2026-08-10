@@ -38,7 +38,7 @@ Une fois connecté, une barre de navigation dédiée apparaît en haut de chaque
 - **Boutique AMSTC** : parcourez les articles, ajoutez-les au panier et passez commande.
 - **Forum** : posez vos questions et échangez avec les autres membres.
 - **Médiathèque** : les albums photo complets de nos activités, classés par année.
-- **Mon Profil & Adhésion** : votre carte de membre virtuelle, la validité de votre carte et le suivi de votre cotisation annuelle.
+- **Carte de membre et Cotisations** : votre carte de membre virtuelle, la validité de votre carte et le suivi de votre cotisation annuelle.
 
 ## 4. Bon à savoir
 

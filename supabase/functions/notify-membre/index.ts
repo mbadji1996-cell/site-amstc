@@ -124,7 +124,7 @@ function construireEmail(
            <p style="font-size:13px;color:#5B6E60;">Si votre cotisation est déjà réglée,
               ce message ne demande aucune action de votre part.</p>
            ${chemin(SITE + "/membres/profil.html?open=validity",
-                    "Espace membres > Mon Profil & Adhésion > Validité de la carte")}`,
+                    "Espace membres > Carte de membre et Cotisations > Validité de la carte")}`,
         ),
       };
     }

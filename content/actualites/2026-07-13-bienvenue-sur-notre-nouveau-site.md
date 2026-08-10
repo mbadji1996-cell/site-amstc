@@ -29,7 +29,7 @@ Réservé aux adhérents de l'AMSTC, il regroupe tout ce dont un membre a besoin
 - **Boutique AMSTC** : nos articles, avec commande et suivi en ligne.
 - **Forum** : un espace d'échange entre membres pour poser des questions et discuter.
 - **Médiathèque** : les albums photo complets de nos activités, organisés par année.
-- **Mon Profil & Adhésion** : votre carte de membre virtuelle, le suivi de la validité de votre carte, et la gestion de votre cotisation annuelle.
+- **Carte de membre et Cotisations** : votre carte de membre virtuelle, le suivi de la validité de votre carte, et la gestion de votre cotisation annuelle.
 
 ## Continuer à évoluer
 

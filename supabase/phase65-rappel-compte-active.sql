@@ -72,7 +72,7 @@ begin
       || chr(10) || chr(10)
       || 'Merci de la renouveler pour continuer à bénéficier de l''accès aux contenus réservés.';
     v_lien := v_site || '/membres/profil.html?open=validity';
-    v_chemin := 'Espace membres > Mon Profil & Adhésion > Validité de la carte';
+    v_chemin := 'Espace membres > Carte de membre et Cotisations > Validité de la carte';
 
   elsif p_type = 'carte_expire_bientot' then
     v_titre := 'Votre carte de membre expire fin ' || coalesce(v_m.card_valid_until, v_annee);
@@ -81,7 +81,7 @@ begin
       || chr(10) || chr(10)
       || 'Pensez à la renouveler pour ne pas interrompre votre accès.';
     v_lien := v_site || '/membres/profil.html?open=validity';
-    v_chemin := 'Espace membres > Mon Profil & Adhésion > Validité de la carte';
+    v_chemin := 'Espace membres > Carte de membre et Cotisations > Validité de la carte';
 
   elsif p_type = 'cotisation_retard' then
     v_titre := 'Cotisations mensuelles AMSTC';
@@ -90,7 +90,7 @@ begin
       || 'Vous pouvez les régler à tout moment par Wave ou Orange Money, puis déclarer '
       || 'la référence de la transaction.';
     v_lien := v_site || '/membres/profil.html?open=cotis';
-    v_chemin := 'Espace membres > Mon Profil & Adhésion > Cotisations mensuelles';
+    v_chemin := 'Espace membres > Carte de membre et Cotisations > Cotisations mensuelles';
 
   elsif p_type = 'libre' then
     if btrim(coalesce(p_message, '')) = '' then

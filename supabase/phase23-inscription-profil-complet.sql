@@ -1,7 +1,7 @@
 -- Phase 23 : le formulaire d'inscription (membres/inscription.html) collecte
 -- désormais tout le profil dès la création du compte (titre, prénom, nom,
 -- domaine, spécialité, localité) au lieu de forcer chaque membre à repasser
--- par "Mon Profil & Adhésion" pour les renseigner après coup. Le trigger de
+-- par "Carte de membre et Cotisations" pour les renseigner après coup. Le trigger de
 -- création automatique du profil (schema.sql, complété en Phase 22 pour le
 -- téléphone) doit donc recopier ces nouveaux champs depuis raw_user_meta_data.
 --
