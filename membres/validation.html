@@ -335,6 +335,17 @@
             <div class="years-edit">
               <div class="years-edit-row">
                 <div class="form-group">
+                  <label>Téléphone (WhatsApp)</label>
+                  <input type="text" id="phone-${esc(p.id)}" value="${esc(p.phone) || ''}"
+                    placeholder="+221 77 000 0000" style="width:180px;">
+                </div>
+                <button class="btn-sm btn-approve" onclick="saveMemberPhone('${esc(p.id)}')">Enregistrer le numéro</button>
+              </div>
+              <p class="assign-msg" id="phoneMsg-${esc(p.id)}">${p.phone ? '' : "Sans numéro, ce membre ne peut pas être prévenu par WhatsApp."}</p>
+            </div>
+            <div class="years-edit">
+              <div class="years-edit-row">
+                <div class="form-group">
                   <label>Année d'adhésion</label>
                   <input type="number" id="memberSince-${esc(p.id)}" value="${p.member_since || ''}">
                 </div>
@@ -833,6 +844,50 @@
     const willOpen = box.style.display !== 'block';
     box.style.display = willOpen ? 'block' : 'none';
     btn.textContent = willOpen ? 'Masquer' : 'Détails';
+  }
+
+  /**
+   * Saisie d'un numéro par l'administration (phase62).
+   *
+   * Sans cela, un compte cree avant que le telephone ne devienne
+   * obligatoire - typiquement une inscription Google jamais completee -
+   * restait injoignable par WhatsApp, alors meme que le bouton
+   * « Prevenir » servait justement a lui demander de completer son
+   * profil.
+   */
+  async function saveMemberPhone(memberId) {
+    const msg = document.getElementById('phoneMsg-' + memberId);
+    const saisi = document.getElementById('phone-' + memberId).value.trim();
+    msg.className = 'assign-msg';
+
+    const { data, error } = await supabaseClient.rpc('set_member_phone', {
+      target_user_id: memberId, new_phone: saisi || null,
+    });
+    if (error) {
+      msg.textContent = error.code === 'PGRST202'
+        ? "Le script supabase/phase62-telephone-membre.sql n'a pas encore été exécuté."
+        : error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    // Le cache local alimente le lien WhatsApp de la liste et le bouton
+    // « Prevenir » : sans cette mise a jour, ils resteraient inertes
+    // jusqu'au rechargement de la page.
+    const membre = allApprovedMembers.find(m => m.id === memberId);
+    if (membre) membre.phone = data || null;
+
+    renderMembersList();
+    const rouvert = document.getElementById('details-' + memberId);
+    if (rouvert) {
+      rouvert.style.display = 'block';
+      document.getElementById('detailsBtn-' + memberId).textContent = 'Masquer';
+      const m = document.getElementById('phoneMsg-' + memberId);
+      if (m) {
+        m.textContent = data ? 'Numéro enregistré. WhatsApp est désormais disponible.' : 'Numéro retiré.';
+        m.className = 'assign-msg ok';
+      }
+    }
   }
 
   async function saveMemberYears(memberId) {
