@@ -61,6 +61,17 @@ function bouton(url: string, libelle: string): string {
   </p>`;
 }
 
+// Chemin à suivre, sous le bouton. Certains clients de messagerie
+// n'affichent pas les boutons, et un message lu sur téléphone est souvent
+// rouvert plus tard sur un autre appareil : l'adresse doit donc figurer en
+// toutes lettres, et le parcours dans le site être écrit.
+function chemin(url: string, parcours: string): string {
+  return `<p style="font-size:13px;color:#5B6E60;margin-top:18px;">
+    <strong>Où aller :</strong> ${esc(parcours)}<br>
+    <a href="${url}" style="color:#17763B;word-break:break-all;">${esc(url)}</a>
+  </p>`;
+}
+
 function construireEmail(
   eventType: string,
   data: Record<string, any>,
@@ -80,7 +91,8 @@ function construireEmail(
               l'adresse <strong>${esc(data.email)}</strong>.</p>
            ${bouton(SITE + "/membres/connexion.html", "Accéder à l'espace membres")}
            <p style="font-size:13px;color:#5B6E60;">Vous y trouverez votre carte de
-              membre, l'annuaire, les formations, la médiathèque et le forum.</p>`,
+              membre, l'annuaire, les formations, la médiathèque et le forum.</p>
+           ${chemin(SITE + "/membres/connexion.html", "Espace membres > Connexion")}`,
         ),
       };
 
@@ -108,9 +120,11 @@ function construireEmail(
            <p>Votre carte de membre est valable jusqu'à la fin de l'année
               <strong>${annee}</strong>. Pour continuer à bénéficier de l'accès aux
               contenus réservés, pensez à renouveler votre cotisation.</p>
-           ${bouton(SITE + "/membres/profil.html", "Voir ma carte et cotiser")}
+           ${bouton(SITE + "/membres/profil.html?open=validity", "Renouveler ma carte")}
            <p style="font-size:13px;color:#5B6E60;">Si votre cotisation est déjà réglée,
-              ce message ne demande aucune action de votre part.</p>`,
+              ce message ne demande aucune action de votre part.</p>
+           ${chemin(SITE + "/membres/profil.html?open=validity",
+                    "Espace membres > Mon Profil & Adhésion > Validité de la carte")}`,
         ),
       };
     }
@@ -125,14 +139,31 @@ function construireEmail(
       if (!corps) return null;
       // Le texte est saisi par l'administration : il est échappé, puis ses
       // sauts de ligne deviennent des paragraphes.
+      //
+      // Les adresses du site sont ensuite rendues cliquables : le corps se
+      // termine par « Où aller : … » suivi d'un lien, et un lien non
+      // cliquable dans un e-mail oblige à le recopier à la main. La
+      // transformation intervient APRÈS l'échappement, sur un texte donc
+      // déjà inoffensif.
       const paragraphes = esc(corps)
         .split(/\n{2,}/)
-        .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+        .map((p) =>
+          `<p>${
+            p.replace(/\n/g, "<br>")
+             .replace(/https:\/\/[^\s<]+/g,
+               (u) => `<a href="${u}" style="color:#17763B;word-break:break-all;">${u}</a>`)
+          }</p>`
+        )
         .join("");
+      // Le bouton mène à la section concernée (validité, cotisations…),
+      // pas à la seule page de connexion.
+      const cible = String(data.lien ?? "").startsWith(SITE)
+        ? String(data.lien)
+        : SITE + "/membres/connexion.html";
       return {
         subject: titre,
         html: gabarit(titre, `<p>${bonjour}</p>${paragraphes}
-          ${bouton(SITE + "/membres/connexion.html", "Accéder à l'espace membres")}`),
+          ${bouton(cible, "Ouvrir mon espace membres")}`),
       };
     }
 
