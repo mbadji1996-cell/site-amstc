@@ -67,6 +67,16 @@
   .lessons-grid{display:flex;flex-direction:column;gap:10px;padding-bottom:60px;}
   .lesson-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .18s,transform .18s;}
   .lesson-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.08);transform:translateY(-2px);}
+  /* La carte n'est plus un lien unique : un bouton imbriqué dans un lien
+     est invalide, et le clic partirait aussi vers la leçon. Le lien
+     couvre l'icône et le texte ; le bouton de partage vit à côté. */
+  .lesson-lien{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+  .lesson-partage{background:none;border:1.5px solid var(--line);border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:border-color .18s,color .18s;}
+  .lesson-partage:hover{border-color:var(--blue-dark);color:var(--blue-dark);}
+  .lesson-partage:focus-visible{outline:2px solid var(--blue-dark);outline-offset:2px;}
+  /* En thème sombre, var(--text-muted) sur var(--surface) tombe à 2,98 de
+     contraste : sous le seuil de 3 exigé pour un élément d'interface. */
+  :root[data-theme="dark"] .lesson-partage{color:var(--text-heading);border-color:rgba(127,217,160,0.3);}
   .lesson-icon{width:46px;height:46px;border-radius:10px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--blue-dark);flex-shrink:0;}
   .lesson-body{flex:1;min-width:0;}
   .lesson-title{font-family:var(--display);font-size:0.97rem;font-weight:600;color:var(--text-heading);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -74,6 +84,10 @@
   .lesson-author{font-size:0.74rem;color:#8A9E8F;margin-top:3px;display:flex;align-items:center;gap:4px;}
   .lesson-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:2px 8px;border-radius:999px;background:#EAF3DE;color:#3B6D11;margin-left:8px;}
   .lesson-arrow{font-size:18px;color:#c0ccc5;flex-shrink:0;}
+  /* Sur mobile, le bouton de partage prenait sa place au titre, tronqué
+     alors qu'il tenait auparavant. La flèche part la première : purement
+     décorative, alors que la carte entière reste cliquable. */
+  @media(max-width:560px){ .lesson-arrow{display:none;} }
 
   .empty{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:40px 0;text-align:center;}
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:20px 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
@@ -135,6 +149,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script>
   let allLessons = [], allQuizzes = [], myAttempts = {};
   let currentCat = 'medecine';
@@ -243,15 +258,30 @@
       return;
     }
     list.innerHTML = lessons.map(l => `
-      <a class="lesson-card" href="lecon.html?id=${encodeURIComponent(l.id)}">
-        <div class="lesson-icon"><i class="ti ti-file-text"></i></div>
-        <div class="lesson-body">
-          <p class="lesson-title">${escHtml(l.title)}</p>
-          <p class="lesson-desc">${escHtml(l.description || '')}</p>
-          ${l.author ? `<p class="lesson-author"><i class="ti ti-user"></i> ${escHtml(l.author)}</p>` : ''}
-        </div>
+      <div class="lesson-card">
+        <a class="lesson-lien" href="lecon.html?id=${encodeURIComponent(l.id)}">
+          <div class="lesson-icon"><i class="ti ti-file-text"></i></div>
+          <div class="lesson-body">
+            <p class="lesson-title">${escHtml(l.title)}</p>
+            <p class="lesson-desc">${escHtml(l.description || '')}</p>
+            ${l.author ? `<p class="lesson-author"><i class="ti ti-user"></i> ${escHtml(l.author)}</p>` : ''}
+          </div>
+        </a>
+        <button type="button" class="lesson-partage" onclick="partagerLecon('${l.id}', this)"
+          title="Partager cette leçon" aria-label="Partager la leçon ${escHtml(l.title)}"><i class="ti ti-share"></i></button>
         <i class="ti ti-chevron-right lesson-arrow"></i>
-      </a>`).join('');
+      </div>`).join('');
+  }
+
+  // Les leçons listées ici sont publiées par construction : la page
+  // d'aperçu /c/<id>.html existe donc toujours.
+  async function partagerLecon(id, bouton) {
+    const etat = await partagerFiche('c', id, 'Enseignement médical AMSTC');
+    if (!etat || etat === 'annule' || etat === 'partage') return;
+    const avant = bouton.innerHTML;
+    bouton.innerHTML = '<i class="ti ti-check"></i>';
+    bouton.title = etat === 'copie' ? 'Lien copié' : etat;
+    setTimeout(() => { bouton.innerHTML = avant; bouton.title = 'Partager cette leçon'; }, 2500);
   }
 
   function escHtml(s) {

@@ -65,6 +65,11 @@
   .btn-edit:hover{background:#cfe2f7;}
   .btn-pub{background:var(--paper-alt);color:var(--text-muted);}
   .btn-pub:hover{background:#DDE5D0;}
+  /* Contour neutre : « Partager » ne doit ressembler ni à « Modifier »
+     (bleu, action principale) ni à « Dépublier » (gris plein). Même
+     traitement que dans daara-admin.html. */
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover:not(:disabled){border-color:var(--blue-dark);}
   .btn:disabled{opacity:0.5;cursor:not-allowed;}
 
   /* Cards grid */
@@ -316,8 +321,23 @@
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script>
   let allLessons = [], allQuizzes = [];
+
+  // Partage d'une leçon depuis la liste : l'adresse est celle de la page
+  // d'aperçu pré-générée (/c/<id>.html), la seule qui affiche le titre
+  // exact sur WhatsApp. Elle n'existe que pour une leçon publiée - d'où
+  // le bouton désactivé sur les brouillons.
+  async function partagerLecon(id, bouton) {
+    const etat = await partagerFiche('c', id, 'Enseignement médical AMSTC');
+    if (!etat || etat === 'annule' || etat === 'partage') return;
+    const avant = bouton.innerHTML;
+    bouton.innerHTML = etat === 'copie'
+      ? '<i class="ti ti-check"></i> Lien copié'
+      : '<i class="ti ti-link"></i> ' + escHtml(etat);
+    setTimeout(() => { bouton.innerHTML = avant; }, 2500);
+  }
   let lessonCat = 'medecine', quizCat = 'medecine';
   let editingLessonId = null, editingQuizId = null;
   let questionRows = []; // [{text, opts:[str,str,str,str], correct:0-3, expl:str}]
@@ -373,6 +393,9 @@
           <p class="item-desc">${escHtml(l.description || '')}</p>
         </div>
         <div class="item-actions">
+          ${l.is_published
+            ? `<button class="btn btn-sm btn-ghost" onclick="partagerLecon('${l.id}', this)"><i class="ti ti-share"></i> Partager</button>`
+            : `<button class="btn btn-sm btn-ghost" disabled title="La page d'aperçu n'est générée que pour une leçon publiée"><i class="ti ti-share"></i> Partager</button>`}
           <button class="btn btn-sm btn-edit" onclick="openLessonModal('${l.id}')"><i class="ti ti-pencil"></i> Modifier</button>
           <button class="btn btn-sm btn-pub" onclick="togglePublishLesson('${l.id}',${l.is_published})">${l.is_published ? '<i class="ti ti-eye-off"></i> Dépublier' : '<i class="ti ti-eye"></i> Publier'}</button>
           <button class="btn btn-sm btn-danger" onclick="deleteLesson('${l.id}','${escHtml(l.title)}')"><i class="ti ti-trash"></i></button>
