@@ -144,6 +144,14 @@
         </div>
         <span class="admin-card-badge" id="badgePayments" style="display:none;"></span>
       </a>
+      <a class="admin-card" href="collectes-admin.html">
+        <div class="admin-card-icon"><i class="ti ti-heart-handshake"></i></div>
+        <div>
+          <p class="admin-card-label">Collectes</p>
+          <p class="admin-card-sub">Activités à cotisation & sassos</p>
+        </div>
+        <span class="admin-card-badge" id="badgeCollectes" style="display:none;"></span>
+      </a>
       <a class="admin-card" href="cartes-admin.html">
         <div class="admin-card-icon"><i class="ti ti-id-badge-2"></i></div>
         <div>
@@ -338,6 +346,14 @@
       const { count } = await supabaseClient
         .from('member_cards').select('id', { count: 'exact', head: true }).eq('claim_status', 'pending');
       setBadge('badgeCartes', count ?? 0);
+    } catch(e) {}
+
+    // Participations aux collectes en attente (phase55 ; table absente tant
+    // que le script n'est pas exécuté - le badge reste alors simplement vide)
+    try {
+      const { count } = await supabaseClient
+        .from('collecte_participations').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+      setBadge('badgeCollectes', count ?? 0);
     } catch(e) {}
 
     // Demandes de campagnes en attente

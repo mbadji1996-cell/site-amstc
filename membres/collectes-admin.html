@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collectes - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14); --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);padding:14px 0;}
+  .header-inner{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .logo-img{height:36px;filter:brightness(0) invert(1);}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 24px 80px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-block;margin-bottom:12px;}
+  .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px;}
+  h1{font-family:var(--display);font-size:1.5rem;color:var(--text-heading);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-primary{background:var(--gold);color:var(--green-deep);}
+  .btn-primary:hover{background:var(--gold-deep);color:var(--white);}
+  .btn-sm{font-weight:600;font-size:0.82rem;padding:8px 16px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-outline-sm{background:var(--surface);color:var(--text-heading);border:1.5px solid var(--line);}
+  .btn-outline-sm:hover{border-color:var(--green);}
+  .btn-approve{background:var(--green);color:var(--white);}
+  .btn-warning{background:#FEF6E4;color:var(--gold-deep);}
+  .btn-danger{background:#FDEEEE;color:#B23B3B;}
+  .btn-sm:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .collecte-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px;}
+  .collecte-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .collecte-titre{font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--text-heading);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;padding:3px 10px;border-radius:999px;}
+  .tag.cotisation{background:#EAF3FF;color:#1D4E89;}
+  .tag.sasso{background:#FEF6E4;color:var(--gold-deep);}
+  .tag.fermee{background:#FDEEEE;color:#B23B3B;}
+  .collecte-sub{font-size:0.85rem;color:var(--text-muted);margin-top:4px;}
+  .totaux{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 4px;}
+  .total-bloc{font-size:0.82rem;color:var(--text-muted);}
+  .total-bloc strong{font-family:var(--mono);color:var(--text-heading);font-size:0.95rem;display:block;}
+  .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+
+  .part-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:0.85rem;}
+  .part-table th{font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.06em;color:#8A9E8F;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);}
+  .part-table td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .statut{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .statut.pending{background:#FEF6E4;color:var(--gold-deep);}
+  .statut.confirmed,.statut.remis{background:#EAF3DE;color:#3B6D11;}
+  .statut.rejected{background:#FDEEEE;color:#B23B3B;}
+  .table-wrap{overflow-x:auto;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(6,28,14,0.55);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface);border-radius:var(--radius);padding:28px 30px;width:100%;max-width:640px;position:relative;}
+  .modal-title{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin-bottom:20px;}
+  .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:#8A9E8F;}
+  label{display:block;font-size:0.85rem;font-weight:600;color:var(--text-heading);margin-top:14px;}
+  input,select,textarea{width:100%;padding:11px 13px;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--body);font-size:0.92rem;color:var(--ink);background:var(--paper);}
+  textarea{font-family:var(--mono);font-size:0.85rem;min-height:130px;}
+  .hint{font-size:0.76rem;color:var(--text-muted);margin-top:5px;line-height:1.45;}
+  .apercu-items{background:var(--paper);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:0.83rem;}
+  .apercu-items .ok{color:#3B6D11;}
+  .apercu-items .ko{color:#B23B3B;}
+  .form-msg{font-size:0.85rem;margin-top:12px;}
+  .form-msg.error{color:#B23B3B;}
+  .form-msg.ok{color:#3B6D11;}
+  .empty{color:var(--text-muted);font-style:italic;font-size:0.9rem;}
+  .loading{font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);}
+  @media(max-width:640px){.modal{padding:20px 18px;}}
+</style>
+</head>
+<body>
+
+<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <a class="back" href="admin.html">&larr; Centre d'administration</a>
+  <div class="entete">
+    <h1>Collectes</h1>
+    <button class="btn btn-primary" onclick="ouvrirCreation()"><i class="ti ti-plus"></i> Nouvelle collecte</button>
+  </div>
+  <p class="collecte-sub" style="margin-bottom:18px;">Activités à cotisation (montant fixé) et sassos (dons en espèces ou en nature). Les paiements déclarés par les membres se valident ici.</p>
+  <div id="listeCollectes"><p class="loading">Chargement…</p></div>
+</div>
+<div class="wrap"><p class="loading" id="loadingMsg">Vérification de vos droits…</p></div>
+
+<!-- Création -->
+<div class="modal-overlay" id="modalCreation">
+  <div class="modal">
+    <button class="modal-close" onclick="fermerCreation()"><i class="ti ti-x"></i></button>
+    <h2 class="modal-title">Nouvelle collecte</h2>
+
+    <label for="cType">Type *</label>
+    <select id="cType" onchange="majType()">
+      <option value="cotisation">Activité à cotisation (montant fixé)</option>
+      <option value="sasso">Sasso - demande de don</option>
+    </select>
+
+    <label for="cTitre">Titre *</label>
+    <input type="text" id="cTitre" placeholder="Ex : Participation au Gamou 1448H">
+
+    <label for="cDesc">Description</label>
+    <textarea id="cDesc" style="min-height:70px;font-family:var(--body);" placeholder="Quelques phrases pour expliquer aux membres à quoi servira la collecte…"></textarea>
+
+    <div id="blocMontant">
+      <label for="cMontant">Montant de la cotisation (FCFA) *</label>
+      <input type="number" id="cMontant" min="1" step="100" placeholder="Ex : 5000">
+    </div>
+
+    <div id="blocItems" style="display:none;">
+      <label for="cItems">Liste des dons en nature (facultatif)</label>
+      <textarea id="cItems" oninput="apercuItems()" placeholder="Sac de riz 50 kg : 25000 x3&#10;Bidon d'huile 20 L : 18000&#10;Carton de sucre : 12000 x5"></textarea>
+      <p class="hint">Une ligne par item, au format <strong>Libellé : montant</strong>. Ajoutez <strong>xN</strong> à la fin
+        pour proposer plusieurs exemplaires (sans précision : un seul). Les membres pourront payer le montant ou donner l'objet.
+        Laissez vide pour un sasso uniquement en espèces.</p>
+      <div class="apercu-items" id="apercuItems" style="display:none;"></div>
+    </div>
+
+    <label for="cLimite">Date limite (facultatif)</label>
+    <input type="date" id="cLimite">
+
+    <button class="btn btn-primary" id="cBtn" style="margin-top:20px;" onclick="creerCollecte()">Créer la collecte</button>
+    <p class="form-msg" id="cMsg"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  // String() indispensable : esc() reçoit aussi des nombres (montants), et
+  // (5000).replace n'existe pas - l'exception casserait tout le rendu.
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function fcfa(n){ return Number(n || 0).toLocaleString('fr-FR') + ' F'; }
+  const PAY_METHODS = { wave: 'Wave', orange_money: 'Orange Money' };
+  const STATUTS = { pending: 'En attente', confirmed: 'Confirmé', remis: 'Remis', rejected: 'Rejeté' };
+
+  let isSuperAdmin = false;
+  let collectes = [], items = [], participations = [], profils = {};
+  let detailsOuverts = new Set();
+
+  // ===== Analyse de la liste collée =====
+  // "Libellé : montant xN" - les deux-points séparent, xN est facultatif.
+  // Les montants acceptent espaces et points de groupement (25 000, 25.000).
+  function analyserLignes(texte){
+    const resultat = [];
+    String(texte || '').split('\n').forEach((ligne, i) => {
+      const nu = ligne.trim();
+      if (!nu) return;
+      const m = /^(.+?)\s*:\s*([\d\s., ]+?)\s*(?:x\s*(\d+))?$/i.exec(nu);
+      if (!m) { resultat.push({ erreur: `Ligne ${i + 1} illisible : « ${nu} »` }); return; }
+      const montant = parseInt(m[2].replace(/[\s., ]/g, ''), 10);
+      if (!montant || montant <= 0) { resultat.push({ erreur: `Ligne ${i + 1} : montant invalide` }); return; }
+      resultat.push({ libelle: m[1].trim(), montant_fcfa: montant, quantite: Math.max(1, parseInt(m[3] || '1', 10)) });
+    });
+    return resultat;
+  }
+
+  function apercuItems(){
+    const zone = document.getElementById('apercuItems');
+    const lignes = analyserLignes(document.getElementById('cItems').value);
+    if (!lignes.length) { zone.style.display = 'none'; return; }
+    zone.style.display = '';
+    zone.innerHTML = lignes.map(l => l.erreur
+      ? `<div class="ko">✕ ${esc(l.erreur)}</div>`
+      : `<div class="ok">✓ ${esc(l.libelle)} - ${fcfa(l.montant_fcfa)}${l.quantite > 1 ? ' × ' + l.quantite : ''}</div>`
+    ).join('');
+  }
+
+  function majType(){
+    const sasso = document.getElementById('cType').value === 'sasso';
+    document.getElementById('blocMontant').style.display = sasso ? 'none' : '';
+    document.getElementById('blocItems').style.display = sasso ? '' : 'none';
+  }
+
+  function ouvrirCreation(){ document.getElementById('modalCreation').classList.add('open'); }
+  function fermerCreation(){ document.getElementById('modalCreation').classList.remove('open'); }
+
+  async function creerCollecte(){
+    const msg = document.getElementById('cMsg');
+    const type = document.getElementById('cType').value;
+    const titre = document.getElementById('cTitre').value.trim();
+    const montant = parseInt(document.getElementById('cMontant').value, 10) || null;
+    const lignes = type === 'sasso' ? analyserLignes(document.getElementById('cItems').value) : [];
+    const erreurs = lignes.filter(l => l.erreur);
+
+    msg.className = 'form-msg';
+    if (!titre) { msg.textContent = 'Le titre est obligatoire.'; msg.className = 'form-msg error'; return; }
+    if (type === 'cotisation' && (!montant || montant <= 0)) {
+      msg.textContent = 'Fixez le montant de la cotisation.'; msg.className = 'form-msg error'; return;
+    }
+    if (erreurs.length) {
+      msg.textContent = 'Corrigez la liste : ' + erreurs[0].erreur; msg.className = 'form-msg error'; return;
+    }
+
+    const btn = document.getElementById('cBtn');
+    btn.disabled = true;
+    const { error } = await supabaseClient.rpc('creer_collecte', {
+      p_titre: titre,
+      p_description: document.getElementById('cDesc').value.trim() || null,
+      p_type: type,
+      p_montant_fcfa: type === 'cotisation' ? montant : null,
+      p_date_limite: document.getElementById('cLimite').value || null,
+      p_items: lignes.filter(l => !l.erreur),
+    });
+    btn.disabled = false;
+
+    if (error) {
+      msg.textContent = error.message.includes('does not exist')
+        ? "Le script supabase/phase55-collectes.sql n'a pas encore été exécuté."
+        : 'Erreur : ' + error.message;
+      msg.className = 'form-msg error';
+      return;
+    }
+    fermerCreation();
+    ['cTitre','cDesc','cMontant','cItems','cLimite'].forEach(id => document.getElementById(id).value = '');
+    apercuItems();
+    await charger();
+  }
+
+  // ===== Liste et validation =====
+
+  async function charger(){
+    const [rC, rI, rP] = await Promise.all([
+      supabaseClient.from('collectes').select('*').order('created_at', { ascending: false }),
+      supabaseClient.from('collecte_items').select('*').order('ordre'),
+      supabaseClient.from('collecte_participations').select('*').order('created_at', { ascending: false }),
+    ]);
+    if (rC.error) {
+      document.getElementById('listeCollectes').innerHTML = rC.error.message.includes('does not exist')
+        ? '<p class="empty">Le script supabase/phase55-collectes.sql n\'a pas encore été exécuté.</p>'
+        : `<p class="empty">Erreur : ${esc(rC.error.message)}</p>`;
+      return;
+    }
+    collectes = rC.data || []; items = rI.data || []; participations = rP.data || [];
+
+    // Les noms des participants : un seul appel, mis en cache.
+    const ids = [...new Set(participations.map(p => p.user_id))].filter(id => !(id in profils));
+    if (ids.length) {
+      const { data } = await supabaseClient.from('profiles').select('id, full_name, email, phone').in('id', ids);
+      (data || []).forEach(p => { profils[p.id] = p; });
+    }
+    afficher();
+  }
+
+  function afficher(){
+    const zone = document.getElementById('listeCollectes');
+    if (!collectes.length) {
+      zone.innerHTML = '<p class="empty">Aucune collecte pour le moment. Créez la première.</p>';
+      return;
+    }
+    zone.innerHTML = collectes.map(c => {
+      const parts = participations.filter(p => p.collecte_id === c.id);
+      const especes = parts.filter(p => p.mode === 'espece' && p.status === 'confirmed')
+        .reduce((s, p) => s + p.montant_fcfa, 0);
+      const enAttente = parts.filter(p => p.status === 'pending').length;
+      const natureRemise = parts.filter(p => p.mode === 'nature' && p.status === 'remis')
+        .reduce((s, p) => s + p.montant_fcfa, 0);
+      const naturePromise = parts.filter(p => p.mode === 'nature' && p.status === 'pending').length;
+      const ouvert = detailsOuverts.has(c.id);
+
+      return `
+      <div class="collecte-card">
+        <div class="collecte-head">
+          <div>
+            <p class="collecte-titre">${esc(c.titre)}
+              <span class="tag ${esc(c.type)}">${c.type === 'cotisation' ? 'Cotisation' : 'Sasso'}</span>
+              ${c.is_open ? '' : '<span class="tag fermee">Clôturée</span>'}
+            </p>
+            <p class="collecte-sub">
+              ${c.type === 'cotisation' ? `Montant fixé : <strong>${fcfa(c.montant_fcfa)}</strong>` : 'Dons en espèces et en nature'}
+              ${c.date_limite ? ' · jusqu’au ' + new Date(c.date_limite + 'T00:00:00').toLocaleDateString('fr-FR') : ''}
+            </p>
+          </div>
+          <div class="actions-row" style="margin-top:0;">
+            <button class="btn-sm btn-outline-sm" onclick="basculerDetails('${esc(c.id)}')">${ouvert ? 'Masquer' : 'Détails'} (${parts.length})</button>
+            <button class="btn-sm ${c.is_open ? 'btn-warning' : 'btn-approve'}" onclick="basculerOuverture('${esc(c.id)}', ${c.is_open ? 'false' : 'true'})">${c.is_open ? 'Clôturer' : 'Rouvrir'}</button>
+            ${isSuperAdmin ? `<button class="btn-sm btn-danger" onclick="supprimer('${esc(c.id)}')">Supprimer</button>` : ''}
+          </div>
+        </div>
+        <div class="totaux">
+          <div class="total-bloc"><strong>${fcfa(especes)}</strong>espèces confirmées</div>
+          ${c.type === 'sasso' ? `<div class="total-bloc"><strong>${fcfa(natureRemise)}</strong>nature remise</div>
+          <div class="total-bloc"><strong>${naturePromise}</strong>promesse(s) en nature</div>` : ''}
+          <div class="total-bloc"><strong>${enAttente}</strong>à valider</div>
+        </div>
+        ${ouvert ? renduDetails(c, parts) : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function renduDetails(c, parts){
+    const itemsC = items.filter(i => i.collecte_id === c.id);
+    const restants = itemsC.map(i => {
+      const pris = parts.filter(p => p.item_id === i.id && p.status !== 'rejected').length;
+      return `${esc(i.libelle)} (${pris}/${i.quantite})`;
+    }).join(' · ');
+
+    if (!parts.length) {
+      return `<p class="empty" style="margin-top:12px;">Aucune participation pour le moment.</p>
+        ${itemsC.length ? `<p class="collecte-sub">Items : ${restants}</p>` : ''}`;
+    }
+
+    return `
+      ${itemsC.length ? `<p class="collecte-sub" style="margin-top:10px;">Items : ${restants}</p>` : ''}
+      <div class="table-wrap"><table class="part-table">
+        <thead><tr><th>Membre</th><th>Don</th><th>Montant</th><th>Référence</th><th>Statut</th><th></th></tr></thead>
+        <tbody>${parts.map(p => {
+          const profil = profils[p.user_id] || {};
+          const item = p.item_id ? items.find(i => i.id === p.item_id) : null;
+          const don = item ? esc(item.libelle) + (p.mode === 'nature' ? ' (en nature)' : ' (payé)')
+                     : (c.type === 'cotisation' ? 'Cotisation' : 'Espèces');
+          const actions = p.status === 'pending'
+            ? (p.mode === 'espece'
+               ? `<button class="btn-sm btn-approve" onclick="valider('${esc(p.id)}','confirmed')">Confirmer</button>
+                  <button class="btn-sm btn-danger" onclick="valider('${esc(p.id)}','rejected')">Rejeter</button>`
+               : `<button class="btn-sm btn-approve" onclick="valider('${esc(p.id)}','remis')">Marquer remis</button>
+                  <button class="btn-sm btn-danger" onclick="valider('${esc(p.id)}','rejected')">Rejeter</button>`)
+            : `<button class="btn-sm btn-outline-sm" onclick="valider('${esc(p.id)}','pending')">Annuler</button>`;
+          return `<tr>
+            <td><strong>${esc(profil.full_name || '(inconnu)')}</strong><br><span style="font-size:0.76rem;color:var(--text-muted);">${esc(profil.email || '')}</span></td>
+            <td>${don}</td>
+            <td style="font-family:var(--mono);">${fcfa(p.montant_fcfa)}</td>
+            <td>${p.mode === 'espece' ? `${PAY_METHODS[p.payment_method] || '-'}<br><span style="font-family:var(--mono);font-size:0.75rem;">${esc(p.payment_reference)}</span>` : '-'}</td>
+            <td><span class="statut ${esc(p.status)}">${STATUTS[p.status] || esc(p.status)}</span></td>
+            <td style="white-space:nowrap;">${actions}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>
+      <div class="actions-row"><button class="btn-sm btn-outline-sm" onclick="exporterCsv('${esc(c.id)}')">&#8681; Exporter en CSV</button></div>`;
+  }
+
+  function basculerDetails(id){
+    if (detailsOuverts.has(id)) detailsOuverts.delete(id); else detailsOuverts.add(id);
+    afficher();
+  }
+
+  async function basculerOuverture(id, ouvrir){
+    const { error } = await supabaseClient.rpc('modifier_collecte', {
+      p_id: id, p_titre: null, p_description: null, p_montant_fcfa: null,
+      p_date_limite: null, p_is_open: ouvrir === 'true' || ouvrir === true,
+    });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await charger();
+  }
+
+  async function valider(id, statut){
+    const { error } = await supabaseClient.rpc('valider_participation_collecte', { p_id: id, p_status: statut });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await charger();
+  }
+
+  async function supprimer(id){
+    // Titre retrouvé par identifiant : passé dans un onclick, une apostrophe
+    // (« Sasso de l'Aïd ») casserait le JavaScript.
+    const c = collectes.find(x => x.id === id) || {};
+    if (!confirm(`Supprimer définitivement « ${c.titre || 'cette collecte'} » et TOUTES ses participations ?\n\nCette action est irréversible.`)) return;
+    const { error } = await supabaseClient.rpc('supprimer_collecte', { p_id: id });
+    if (error) { alert('Erreur : ' + error.message); return; }
+    detailsOuverts.delete(id);
+    await charger();
+  }
+
+  function exporterCsv(collecteId){
+    const c = collectes.find(x => x.id === collecteId);
+    const parts = participations.filter(p => p.collecte_id === collecteId);
+    const lignes = [['Membre', 'E-mail', 'Téléphone', 'Don', 'Mode', 'Montant', 'Méthode', 'Référence', 'Statut', 'Date']]
+      .concat(parts.map(p => {
+        const profil = profils[p.user_id] || {};
+        const item = p.item_id ? items.find(i => i.id === p.item_id) : null;
+        return [profil.full_name || '', profil.email || '', profil.phone || '',
+          item ? item.libelle : (c.type === 'cotisation' ? 'Cotisation' : 'Espèces'),
+          p.mode === 'nature' ? 'En nature' : 'Paiement',
+          p.montant_fcfa, PAY_METHODS[p.payment_method] || '', p.payment_reference || '',
+          STATUTS[p.status] || p.status,
+          new Date(p.created_at).toLocaleDateString('fr-FR')];
+      }));
+    // Point-virgule et BOM : Excel en configuration française ouvre le
+    // fichier en colonnes, accents compris.
+    const contenu = '﻿' + lignes.map(l => l.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';')).join('\r\n');
+    const lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([contenu], { type: 'text/csv;charset=utf-8;' }));
+    lien.download = 'collecte-' + (c ? c.titre.toLowerCase().replace(/[^a-z0-9]+/gi, '-').slice(0, 40) : collecteId) + '.csv';
+    lien.click();
+    URL.revokeObjectURL(lien.href);
+  }
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    isSuperAdmin = profile.role === 'super_admin';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    majType();
+    await charger();
+  })();
+</script>
+
+</body>
+</html>

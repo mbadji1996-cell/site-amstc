@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collectes - Espace Membres - AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14); --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+  .member-tabs{background:var(--green-deep);border-top:1px solid rgba(255,255,255,0.08);}
+  .member-tabs-inner{max-width:1400px;margin:0 auto;padding:0 24px;display:flex;justify-content:safe center;gap:2px;overflow-x:auto;}
+  .member-tab{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.45);padding:14px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s;flex-shrink:0;}
+  .member-tab:hover{color:rgba(255,255,255,0.8);}
+  .member-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+  .hero{background:var(--green-deep);padding:32px 0 40px;}
+  .hero-inner{max-width:860px;margin:0 auto;padding:0 24px;}
+  .hero-icon{width:52px;height:52px;border-radius:12px;background:#FEF6E4;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--gold-deep);margin-bottom:14px;}
+  .hero h1{font-family:var(--display);font-size:clamp(1.6rem,4vw,2rem);font-weight:600;color:var(--white);margin-bottom:6px;}
+  .hero-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 24px 80px;}
+
+  h2{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin:26px 0 12px;}
+  .collecte{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;}
+  .collecte-titre{font-family:var(--display);font-weight:600;font-size:1.1rem;color:var(--text-heading);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;padding:3px 10px;border-radius:999px;}
+  .tag.cotisation{background:#EAF3FF;color:#1D4E89;}
+  .tag.sasso{background:#FEF6E4;color:var(--gold-deep);}
+  .collecte-desc{font-size:0.9rem;color:var(--text-muted);margin-top:8px;white-space:pre-wrap;}
+  .collecte-meta{font-family:var(--mono);font-size:0.74rem;color:#8A9E8F;margin-top:6px;}
+  .mon-etat{border-radius:10px;padding:10px 14px;font-size:0.86rem;margin-top:12px;}
+  .mon-etat.pending{background:#FEF6E4;color:var(--gold-deep);}
+  .mon-etat.ok{background:#EAF3DE;color:#3B6D11;}
+  .mon-etat.rejected{background:#FDEEEE;color:#B23B3B;}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:0.9rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-primary{background:var(--gold);color:var(--green-deep);}
+  .btn-primary:hover{background:var(--gold-deep);color:var(--white);}
+  .btn-outline{background:var(--surface);color:var(--text-heading);border:1.5px solid var(--line);}
+  .btn-outline:hover{border-color:var(--green);}
+  .btn-sm{font-weight:600;font-size:0.8rem;padding:7px 14px;border-radius:999px;border:none;cursor:pointer;}
+  .btn:disabled,.btn-sm:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .participer-bloc{background:var(--paper);border-radius:12px;padding:16px 18px;margin-top:14px;}
+  .participer-bloc h3{font-family:var(--display);font-size:0.95rem;color:var(--text-heading);margin-bottom:8px;}
+  label{display:block;font-size:0.83rem;font-weight:600;color:var(--text-heading);margin-top:12px;}
+  input,select{width:100%;padding:10px 12px;margin-top:5px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--body);font-size:0.9rem;color:var(--ink);background:var(--surface);}
+  .paiement-info{font-size:0.82rem;color:var(--text-muted);background:var(--paper-alt);border-radius:8px;padding:9px 12px;margin-top:10px;line-height:1.5;}
+  .form-msg{font-size:0.85rem;margin-top:10px;}
+  .form-msg.error{color:#B23B3B;}
+  .form-msg.ok{color:#3B6D11;}
+
+  .item-ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .item-ligne:last-child{border-bottom:none;}
+  .item-libelle{font-size:0.9rem;color:var(--text-heading);font-weight:600;}
+  .item-montant{font-family:var(--mono);font-size:0.82rem;color:var(--text-muted);}
+  .item-reste{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;}
+  .item-epuise{font-family:var(--mono);font-size:0.72rem;color:#B23B3B;}
+  .item-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .empty{color:var(--text-muted);font-style:italic;font-size:0.9rem;padding:20px 0;}
+  .loading{font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);padding:40px 0;text-align:center;}
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+</style>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab" href="index.html">Tableau de bord</a>
+    <a class="member-tab" href="formations.html">Formations</a>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
+    <a class="member-tab" href="documents.html">Documents officiels</a>
+    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
+    <a class="member-tab active" href="collectes.html">Collectes</a>
+    <a class="member-tab" href="forum.html">Forum</a>
+    <a class="member-tab" href="annuaire.html">Annuaire</a>
+    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="profil.html">Mon Profil & Adhésion</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-icon"><i class="ti ti-heart-handshake"></i></div>
+    <h1>Collectes</h1>
+    <p class="hero-sub">Activités à cotisation et sassos de l'association : participez par un paiement Wave / Orange Money, ou par un don en nature.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="loading" id="loadingMsg">Chargement…</p>
+  <div id="pageContent" style="display:none;">
+    <h2>Collectes en cours</h2>
+    <div id="listeOuvertes"></div>
+    <div id="blocHistorique" style="display:none;">
+      <h2>Mes participations passées</h2>
+      <div id="listeHistorique"></div>
+    </div>
+  </div>
+</div>
+
+<footer><a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  // String() indispensable : esc() reçoit aussi des nombres (montants).
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function fcfa(n){ return Number(n || 0).toLocaleString('fr-FR') + ' F'; }
+
+  let moi = null;
+  let collectes = [], items = [], mesParts = [];
+  let numerosPaiement = '';
+  // Un seul formulaire ouvert à la fois : (collecteId, itemId|null, mode)
+  let formulaireOuvert = null;
+
+  async function charger(){
+    const [rC, rI, rP] = await Promise.all([
+      supabaseClient.from('collectes').select('*').order('created_at', { ascending: false }),
+      supabaseClient.from('collecte_items').select('*').order('ordre'),
+      supabaseClient.from('collecte_participations').select('*').eq('user_id', moi.id).order('created_at', { ascending: false }),
+    ]);
+    if (rC.error) {
+      document.getElementById('listeOuvertes').innerHTML = rC.error.message.includes('does not exist')
+        ? '<p class="empty">Les collectes ne sont pas encore activées sur cette instance.</p>'
+        : `<p class="empty">Erreur : ${esc(rC.error.message)}</p>`;
+      return;
+    }
+    collectes = rC.data || []; items = rI.data || []; mesParts = rP.data || [];
+
+    // La disponibilité restante des items dépend des participations de TOUS
+    // les membres, que la RLS nous cache : on la demande à part, en ne
+    // lisant que le minimum (item_id des participations vivantes).
+    afficher();
+  }
+
+  function limiteDepassee(c){
+    return c.date_limite && new Date() > new Date(c.date_limite + 'T23:59:59');
+  }
+
+  function etatHtml(p){
+    if (!p) return '';
+    if (p.status === 'pending') {
+      return `<div class="mon-etat pending">${p.mode === 'nature'
+        ? 'Vous vous êtes engagé à donner cet item en nature - l\'administration le marquera « remis » à la réception.'
+        : 'Votre paiement est déclaré : il sera vérifié par l\'administration.'}</div>`;
+    }
+    if (p.status === 'confirmed') return '<div class="mon-etat ok">Votre paiement a été confirmé - merci pour votre participation !</div>';
+    if (p.status === 'remis') return '<div class="mon-etat ok">Votre don en nature a bien été remis - merci !</div>';
+    if (p.status === 'rejected') return '<div class="mon-etat rejected">Votre déclaration a été rejetée. Vérifiez la référence saisie et recommencez, ou contactez l\'administration.</div>';
+    return '';
+  }
+
+  function afficher(){
+    const ouvertes = collectes.filter(c => c.is_open && !limiteDepassee(c));
+    const zone = document.getElementById('listeOuvertes');
+
+    zone.innerHTML = ouvertes.length === 0
+      ? '<p class="empty">Aucune collecte en cours pour le moment.</p>'
+      : ouvertes.map(c => c.type === 'cotisation' ? renduCotisation(c) : renduSasso(c)).join('');
+
+    // Historique : mes participations sur les collectes closes ou dépassées.
+    const fermees = collectes.filter(c => !c.is_open || limiteDepassee(c));
+    const histo = fermees
+      .map(c => ({ c, parts: mesParts.filter(p => p.collecte_id === c.id) }))
+      .filter(x => x.parts.length);
+    document.getElementById('blocHistorique').style.display = histo.length ? '' : 'none';
+    document.getElementById('listeHistorique').innerHTML = histo.map(({ c, parts }) => `
+      <div class="collecte">
+        <p class="collecte-titre">${esc(c.titre)} <span class="tag ${esc(c.type)}">${c.type === 'cotisation' ? 'Cotisation' : 'Sasso'}</span></p>
+        ${parts.map(p => etatHtml(p)).join('')}
+      </div>`).join('');
+  }
+
+  // ===== Activité à cotisation =====
+  function renduCotisation(c){
+    const mienne = mesParts.find(p => p.collecte_id === c.id && p.status !== 'rejected')
+                || mesParts.find(p => p.collecte_id === c.id);
+    const dejaFait = mienne && mienne.status !== 'rejected';
+    const ouvert = formulaireOuvert && formulaireOuvert.collecteId === c.id;
+
+    return `
+    <div class="collecte">
+      <p class="collecte-titre">${esc(c.titre)} <span class="tag cotisation">Cotisation</span></p>
+      ${c.description ? `<p class="collecte-desc">${esc(c.description)}</p>` : ''}
+      <p class="collecte-meta">Montant : ${fcfa(c.montant_fcfa)}${c.date_limite ? ' · jusqu’au ' + new Date(c.date_limite + 'T00:00:00').toLocaleDateString('fr-FR') : ''}</p>
+      ${etatHtml(mienne)}
+      ${dejaFait ? '' : ouvert
+        ? formulairePaiement(c.id, null, c.montant_fcfa, 'Je participe : ' + fcfa(c.montant_fcfa))
+        : `<div style="margin-top:14px;"><button class="btn btn-primary" onclick="ouvrirFormulaire('${esc(c.id)}', null, 'espece')">Participer - ${fcfa(c.montant_fcfa)}</button></div>`}
+    </div>`;
+  }
+
+  // ===== Sasso =====
+  function renduSasso(c){
+    const itemsC = items.filter(i => i.collecte_id === c.id);
+    const ouvert = formulaireOuvert && formulaireOuvert.collecteId === c.id;
+    const mesPartsC = mesParts.filter(p => p.collecte_id === c.id);
+
+    return `
+    <div class="collecte">
+      <p class="collecte-titre">${esc(c.titre)} <span class="tag sasso">Sasso</span></p>
+      ${c.description ? `<p class="collecte-desc">${esc(c.description)}</p>` : ''}
+      ${c.date_limite ? `<p class="collecte-meta">Jusqu’au ${new Date(c.date_limite + 'T00:00:00').toLocaleDateString('fr-FR')}</p>` : ''}
+      ${mesPartsC.map(p => etatHtml(p)).join('')}
+
+      <div class="participer-bloc">
+        <h3><i class="ti ti-coin"></i> Don en espèces</h3>
+        ${ouvert && formulaireOuvert.itemId === null && formulaireOuvert.mode === 'espece'
+          ? formulairePaiement(c.id, null, null, 'Déclarer mon don')
+          : `<button class="btn btn-outline" onclick="ouvrirFormulaire('${esc(c.id)}', null, 'espece')">Faire un don en espèces</button>`}
+      </div>
+
+      ${itemsC.length ? `
+      <div class="participer-bloc">
+        <h3><i class="ti ti-gift"></i> Dons en nature</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);">Choisissez un item : payez son montant, ou apportez l'objet vous-même.</p>
+        ${itemsC.map(i => renduItem(c, i)).join('')}
+      </div>` : ''}
+    </div>`;
+  }
+
+  function renduItem(c, i){
+    // La disponibilité vue d'ici est partielle (on ne voit que ses propres
+    // participations) : le vrai verrou est dans la fonction SQL, qui refuse
+    // un item épuisé - ici on n'affiche que l'épuisement CONNU.
+    const ouvert = formulaireOuvert && formulaireOuvert.collecteId === c.id && formulaireOuvert.itemId === i.id;
+    const dejaPris = mesParts.some(p => p.item_id === i.id && p.status !== 'rejected');
+
+    return `
+    <div class="item-ligne">
+      <div>
+        <p class="item-libelle">${esc(i.libelle)}</p>
+        <p class="item-montant">${fcfa(i.montant_fcfa)}${i.quantite > 1 ? ` <span class="item-reste">· ${i.quantite} part(s) proposée(s)</span>` : ''}</p>
+      </div>
+      <div class="item-actions">
+        ${dejaPris ? '<span class="item-reste">Vous avez pris cet item</span>' : `
+        <button class="btn-sm btn-primary btn" style="padding:7px 14px;font-size:0.8rem;" onclick="ouvrirFormulaire('${esc(c.id)}', '${esc(i.id)}', 'espece')">Payer ${fcfa(i.montant_fcfa)}</button>
+        <button class="btn-sm btn-outline btn" style="padding:7px 14px;font-size:0.8rem;" onclick="donnerEnNature('${esc(c.id)}', '${esc(i.id)}')">Donner en nature</button>`}
+      </div>
+      ${ouvert && formulaireOuvert.mode === 'espece' ? `<div style="flex-basis:100%;">${formulairePaiement(c.id, i.id, i.montant_fcfa, 'Payer ' + fcfa(i.montant_fcfa))}</div>` : ''}
+    </div>`;
+  }
+
+  // ===== Formulaire de paiement commun =====
+  function formulairePaiement(collecteId, itemId, montantImpose, libelleBouton){
+    return `
+    <div class="participer-bloc" style="margin-top:10px;background:var(--surface);border:1.5px solid var(--line);">
+      ${numerosPaiement ? `<div class="paiement-info"><strong>1.</strong> Envoyez le montant par ${numerosPaiement}.<br><strong>2.</strong> Déclarez ici la référence de la transaction.</div>` : ''}
+      ${montantImpose === null ? `
+      <label>Montant du don (FCFA)</label>
+      <input type="number" id="fMontant" min="100" step="100" placeholder="Ex : 10000">` : ''}
+      <label>Moyen de paiement</label>
+      <select id="fMethode">
+        <option value="" disabled selected>Choisir…</option>
+        <option value="wave">Wave</option>
+        <option value="orange_money">Orange Money</option>
+      </select>
+      <label>Référence de la transaction</label>
+      <input type="text" id="fReference" placeholder="Ex : T_ABC123…">
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="fBtn" onclick="envoyerParticipation('${esc(collecteId)}', ${itemId ? `'${esc(itemId)}'` : 'null'}, 'espece', ${montantImpose === null ? 'null' : montantImpose})">${esc(libelleBouton)}</button>
+        <button class="btn btn-outline" onclick="fermerFormulaire()">Annuler</button>
+      </div>
+      <p class="form-msg" id="fMsg"></p>
+    </div>`;
+  }
+
+  function ouvrirFormulaire(collecteId, itemId, mode){
+    formulaireOuvert = { collecteId, itemId, mode };
+    afficher();
+  }
+  function fermerFormulaire(){ formulaireOuvert = null; afficher(); }
+
+  async function donnerEnNature(collecteId, itemId){
+    // Le libellé est retrouvé par identifiant : passé en paramètre d'un
+    // onclick, une apostrophe (« Bidon d'huile ») casserait le JavaScript.
+    const item = items.find(i => i.id === itemId) || {};
+    if (!confirm(`Vous vous engagez à donner « ${item.libelle || 'cet item'} » en nature.\n\nL'administration vous contactera pour la remise. Confirmer ?`)) return;
+    const { error } = await supabaseClient.rpc('participer_collecte', {
+      p_collecte_id: collecteId, p_item_id: itemId, p_mode: 'nature',
+      p_montant_fcfa: null, p_payment_method: null, p_payment_reference: null,
+    });
+    if (error) { alert(error.message); return; }
+    formulaireOuvert = null;
+    await charger();
+  }
+
+  async function envoyerParticipation(collecteId, itemId, mode, montantImpose){
+    const msg = document.getElementById('fMsg');
+    const methode = document.getElementById('fMethode').value;
+    const reference = document.getElementById('fReference').value.trim();
+    const montant = montantImpose !== null ? montantImpose
+      : parseInt((document.getElementById('fMontant') || {}).value, 10);
+
+    msg.className = 'form-msg';
+    if (montantImpose === null && (!montant || montant <= 0)) { msg.textContent = 'Indiquez le montant de votre don.'; msg.className = 'form-msg error'; return; }
+    if (!methode) { msg.textContent = 'Choisissez un moyen de paiement.'; msg.className = 'form-msg error'; return; }
+    if (!reference) { msg.textContent = 'Saisissez la référence de la transaction.'; msg.className = 'form-msg error'; return; }
+
+    const btn = document.getElementById('fBtn');
+    btn.disabled = true;
+    const { error } = await supabaseClient.rpc('participer_collecte', {
+      p_collecte_id: collecteId, p_item_id: itemId, p_mode: 'espece',
+      p_montant_fcfa: montant, p_payment_method: methode, p_payment_reference: reference,
+    });
+    btn.disabled = false;
+
+    if (error) { msg.textContent = error.message; msg.className = 'form-msg error'; return; }
+    formulaireOuvert = null;
+    await charger();
+  }
+
+  (async () => {
+    moi = await requireApprovedMember('connexion.html');
+    if (!moi) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    // Numéros de paiement : la même source que la page publique Don, gérée
+    // par le CMS - un changement de numéro n'exige aucune retouche ici.
+    try {
+      const don = await (await fetch('../content/don.json', { cache: 'no-store' })).json();
+      numerosPaiement = (don.mobile_options || [])
+        .map(o => `<strong>${esc(o.operator)}</strong> ${esc(o.number)}`).join(' ou ');
+    } catch (e) { /* sans numéros, le formulaire reste utilisable */ }
+
+    await charger();
+  })();
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion.html';
+  });
+</script>
+
+</body>
+</html>
