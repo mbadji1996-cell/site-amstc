@@ -97,6 +97,26 @@
   .member-details-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px 20px; margin-bottom:16px;}
   .detail-label{display:block; font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:#8A9E8F;}
   .detail-value{display:block; font-size:0.9rem; color:var(--ink); margin-top:2px;}
+  /* Repères d'état sous le nom : lisibles d'un coup d'œil dans une longue
+     liste, sans avoir à ouvrir la fiche de chaque membre. */
+  .etat-ligne{display:flex; gap:8px; flex-wrap:wrap; margin-top:5px;}
+  .etat-puce{font-family:var(--mono); font-size:0.66rem; padding:3px 10px; border-radius:999px; white-space:nowrap;}
+  .etat-ok{background:#EAF3DE; color:#3B6D11;}
+  .etat-partiel{background:#FEF6E4; color:var(--gold-deep);}
+  .etat-alerte{background:#FDEEEE; color:#B23B3B;}
+  .etat-absent{background:var(--paper-alt); color:var(--text-muted);}
+
+  .cotis-edit{border-top:1px solid var(--line); padding-top:14px; margin-top:14px;}
+  .cotis-edit-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:10px;}
+  .cotis-edit-head select{width:auto; padding:5px 8px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--mono); font-size:0.75rem; background:var(--surface); color:var(--ink); margin-left:6px;}
+  .cotis-edit-actions{display:flex; gap:6px;}
+  .cotis-mois{display:flex; gap:6px; flex-wrap:wrap;}
+  .cotis-case{position:relative; cursor:pointer;}
+  .cotis-case input{position:absolute; opacity:0; width:0; height:0;}
+  .cotis-case span{display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); font-family:var(--mono); font-size:0.78rem; color:var(--text-muted); transition:all .15s;}
+  .cotis-case.paye span{background:var(--green); border-color:var(--green); color:var(--white); font-weight:700;}
+  .cotis-case input:focus-visible + span{outline:2px solid var(--gold-deep); outline-offset:2px;}
+
   .years-edit{border-top:1px solid var(--line); padding-top:14px;}
   .years-edit-row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;}
   .years-edit-row .form-group{display:flex; flex-direction:column; gap:4px;}
@@ -285,6 +305,7 @@
               ${p.legacy_card_number ? `<span class="status-tag approved">Carte ${esc(p.legacy_card_number)}</span>` : ''}
               ${p.applicant_type === 'nouvel_adherent' ? '<span class="status-tag new-applicant">Nouvel adhérent</span>' : ''}
             </div>
+            ${etatAdhesionHtml(p)}
             ${coordonneesHtml(p)}
           </div>
           <div class="member-actions">
@@ -325,6 +346,7 @@
               </div>
               <p class="assign-msg" id="yearsMsg-${esc(p.id)}"></p>
             </div>
+            ${grilleCotisHtml(p.id)}
             ${p.consultation_user_id ? `
             <div class="consult-provision">
               <p class="assign-msg ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + formatDate(p.consultation_linked_at) : ''} et actif. Le membre choisit son site à sa première connexion sur consultations-amstc.org.</p>
@@ -418,6 +440,123 @@
             </div>
           `;
         }).join("");
+  }
+
+  // ===== État d'adhésion et de cotisation (phase58) =====
+  // L'état de référence est la table `cotisations` (months_paid), la même
+  // que celle mise à jour à la validation d'un paiement : on affiche donc
+  // ce que voit le membre, pas une reconstitution à partir des paiements.
+  const MOIS_COURTS = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+  const ANNEE_COURANTE = new Date().getFullYear();
+  let cotisationsParMembre = {};   // user_id -> [mois payés] pour anneeCotis
+  let anneeCotis = ANNEE_COURANTE;
+
+  function moisPayes(userId){ return cotisationsParMembre[userId] || []; }
+
+  function etatAdhesionHtml(p){
+    const cvu = p.card_valid_until;
+    const carte = !cvu
+      ? '<span class="etat-puce etat-absent">Adhésion non réglée</span>'
+      : cvu >= ANNEE_COURANTE
+        ? `<span class="etat-puce etat-ok">Adhésion valide jusqu'en ${esc(cvu)}</span>`
+        : `<span class="etat-puce etat-alerte">Adhésion expirée (${esc(cvu)})</span>`;
+
+    const n = moisPayes(p.id).length;
+    const cotis = n === 12
+      ? `<span class="etat-puce etat-ok">Cotisations ${esc(anneeCotis)} : 12/12</span>`
+      : n === 0
+        ? `<span class="etat-puce etat-alerte">Cotisations ${esc(anneeCotis)} : aucune</span>`
+        : `<span class="etat-puce etat-partiel">Cotisations ${esc(anneeCotis)} : ${n}/12</span>`;
+
+    return `<div class="etat-ligne">${carte}${cotis}</div>`;
+  }
+
+  async function chargerCotisations(){
+    const { data, error } = await supabaseClient.rpc("cotisations_membres", { p_year: anneeCotis });
+    cotisationsParMembre = {};
+    // Fonction absente (script non exécuté) : les repères affichent
+    // « aucune » plutôt que de faire échouer toute la page.
+    if (error) return;
+    (data || []).forEach(c => { cotisationsParMembre[c.user_id] = c.months_paid || []; });
+  }
+
+  // Grille des 12 mois, dans le panneau Détails : c'est par là qu'on
+  // enregistre les cotisations versées avant la mise en service du site.
+  function grilleCotisHtml(memberId){
+    const payes = moisPayes(memberId);
+    return `
+      <div class="cotis-edit">
+        <div class="cotis-edit-head">
+          <span>Cotisations
+            <select id="cotisAnnee-${esc(memberId)}" onchange="changerAnneeCotis(this.value)">
+              ${Array.from({ length: ANNEE_COURANTE - 2013 }, (_, i) => ANNEE_COURANTE - i)
+                .map(a => `<option value="${a}"${a === anneeCotis ? " selected" : ""}>${a}</option>`).join("")}
+            </select>
+          </span>
+          <span class="cotis-edit-actions">
+            <button type="button" class="btn-sm btn-outline-sm" onclick="cocherTousMois('${esc(memberId)}', true)">Tout cocher</button>
+            <button type="button" class="btn-sm btn-outline-sm" onclick="cocherTousMois('${esc(memberId)}', false)">Tout décocher</button>
+          </span>
+        </div>
+        <div class="cotis-mois" id="cotisMois-${esc(memberId)}">
+          ${MOIS_COURTS.map((lettre, i) => {
+            const m = i + 1;
+            return `<label class="cotis-case${payes.includes(m) ? " paye" : ""}" title="${esc(MOIS_NOMS[i])}">
+              <input type="checkbox" value="${m}"${payes.includes(m) ? " checked" : ""}
+                onchange="this.closest('.cotis-case').classList.toggle('paye', this.checked)">
+              <span>${esc(lettre)}</span></label>`;
+          }).join("")}
+        </div>
+        <div class="assign-inline-row" style="margin-top:10px;">
+          <button class="btn-sm btn-approve" onclick="enregistrerCotisations('${esc(memberId)}')">Enregistrer les cotisations</button>
+        </div>
+        <p class="assign-msg" id="cotisMsg-${esc(memberId)}">Cochez les mois déjà réglés, y compris ceux payés avant la mise en service du site.</p>
+      </div>`;
+  }
+
+  const MOIS_NOMS = ["Janvier","Février","Mars","Avril","Mai","Juin",
+                     "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+  function cocherTousMois(memberId, coche){
+    document.querySelectorAll(`#cotisMois-${CSS.escape(memberId)} input`).forEach(c => {
+      c.checked = coche;
+      c.closest(".cotis-case").classList.toggle("paye", coche);
+    });
+  }
+
+  async function changerAnneeCotis(annee){
+    anneeCotis = parseInt(annee, 10) || ANNEE_COURANTE;
+    await chargerCotisations();
+    renderMembersList();
+  }
+
+  async function enregistrerCotisations(memberId){
+    const msg = document.getElementById("cotisMsg-" + memberId);
+    const mois = [...document.querySelectorAll(`#cotisMois-${CSS.escape(memberId)} input:checked`)]
+      .map(c => parseInt(c.value, 10));
+
+    const { data, error } = await supabaseClient.rpc("set_cotisations_membre", {
+      p_user_id: memberId, p_year: anneeCotis, p_months: mois,
+    });
+    if (error) {
+      msg.textContent = error.message.includes("does not exist")
+        ? "Le script supabase/phase58-etat-cotisations-admin.sql n'a pas encore été exécuté."
+        : "Erreur : " + error.message;
+      msg.className = "assign-msg error";
+      return;
+    }
+
+    // Le cache local alimente les repères de la liste : sans cette mise à
+    // jour, le compteur resterait à l'ancienne valeur jusqu'au rechargement.
+    cotisationsParMembre[memberId] = data || mois;
+    renderMembersList();
+    const rouvert = document.getElementById("details-" + memberId);
+    if (rouvert) {
+      rouvert.style.display = "block";
+      document.getElementById("detailsBtn-" + memberId).textContent = "Masquer";
+      const m = document.getElementById("cotisMsg-" + memberId);
+      if (m) { m.textContent = `Enregistré : ${(data || mois).length}/12 mois en ${anneeCotis}.`; m.className = "assign-msg ok"; }
+    }
   }
 
   // ===== Prévenir un membre en particulier (phase57) =====
@@ -648,6 +787,10 @@
 
     // ===== Membres approuvés =====
     allApprovedMembers = approved;
+    // Les repères d'état ont besoin des cotisations : on les charge AVANT
+    // le premier affichage, sinon la liste montrerait « aucune » pour tout
+    // le monde le temps d'un aller-retour.
+    await chargerCotisations();
     renderMembersList();
 
     // ===== Droits d'administration (Super Admin uniquement) =====
