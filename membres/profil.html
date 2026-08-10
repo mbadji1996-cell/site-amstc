@@ -154,7 +154,6 @@
   .cotis-badge i{font-size:14px;}
   .cotis-badge .cotis-status{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.03em;}
 
-  .locked-msg{background:#FEF6E4;border:1px solid rgba(170,123,17,0.2);border-radius:10px;padding:14px 16px;font-size:0.87rem;color:var(--gold-deep);display:flex;align-items:flex-start;gap:10px;}
 
   .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
@@ -352,11 +351,11 @@
         <i class="ti ti-chevron-down accordion-chevron" id="chev-cotis"></i>
       </button>
       <div class="accordion-body" id="body-cotis">
-        <div class="locked-msg" id="cotisLockedMsg" style="display:none;">
-          <i class="ti ti-lock" style="font-size:18px;flex-shrink:0;margin-top:1px;"></i>
-          <span>Votre adhésion (validité de la carte) doit d'abord être validée avant de pouvoir régler vos cotisations mensuelles.</span>
-        </div>
-
+        <!-- Les cotisations ne dépendent plus de la validité de la carte
+             (phase56) : elles portent sur l'année en cours, pas sur l'année
+             d'adhésion. Le verrou d'origine bloquait précisément les membres
+             qu'on veut encaisser - nouvel approuvé sans validité saisie,
+             changement d'année en attente, carte expirée à renouveler. -->
         <div id="cotisUnlocked">
           <div class="cotis-grid" id="cotisGrid"></div>
 
@@ -1036,27 +1035,17 @@
     document.getElementById('cotisTotal').value = (months * 1000).toLocaleString('fr-FR') + ' FCFA';
   }
 
-  function isAdhesionValid() {
-    return !!(currentProfile.card_valid_until && currentProfile.card_valid_until >= currentYear);
-  }
-
-  function updateCotisSummary(paidMonths, locked) {
-    const el = document.getElementById('cotisSummary');
-    if (locked) el.textContent = 'Verrouillé - validez votre adhésion';
-    else el.textContent = `${paidMonths.length}/12 mois payés (${currentYear})`;
+  function updateCotisSummary(paidMonths) {
+    document.getElementById('cotisSummary').textContent =
+      `${paidMonths.length}/12 mois payés (${currentYear})`;
   }
 
   async function loadCotisations(userId) {
-    const adhesionValid = isAdhesionValid();
-    document.getElementById('cotisLockedMsg').style.display = adhesionValid ? 'none' : 'flex';
-    document.getElementById('cotisUnlocked').style.display = adhesionValid ? '' : 'none';
-    if (!adhesionValid) { updateCotisSummary([], true); return; }
-
     const { data } = await supabaseClient
       .from('cotisations').select('months_paid').eq('user_id', userId).eq('year', currentYear).maybeSingle();
     const paidMonths = (data && data.months_paid) || [];
     renderCotisGrid(paidMonths);
-    updateCotisSummary(paidMonths, false);
+    updateCotisSummary(paidMonths);
 
     const { data: paymentsData } = await supabaseClient
       .from('cotisation_payments').select('*').eq('user_id', userId).order('created_at', { ascending: false });
