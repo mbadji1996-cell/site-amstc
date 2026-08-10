@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votre carte de membre AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14); --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:var(--green);}
+  header{background:var(--green-deep);padding:20px 0;}
+  .header-inner{max-width:520px;margin:0 auto;padding:0 28px;}
+  .logo-img{height:40px;filter:brightness(0) invert(1);}
+  .wrap{max-width:520px;margin:0 auto;padding:36px 28px 80px;}
+  h1{font-family:var(--display);font-weight:600;color:var(--text-heading);font-size:1.6rem;margin-bottom:8px;}
+  .intro{color:var(--text-muted);font-size:0.95rem;margin-bottom:26px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;margin-bottom:20px;}
+
+  .carte-resume{background:var(--paper-alt);border-radius:12px;padding:18px 20px;margin-bottom:22px;}
+  .carte-resume-label{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);margin-bottom:6px;}
+  .carte-resume-nom{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--text-heading);}
+  .carte-resume-detail{font-family:var(--mono);font-size:0.8rem;color:var(--text-muted);margin-top:4px;}
+
+  label{display:block;font-size:0.85rem;font-weight:600;color:var(--text-heading);margin-top:16px;}
+  input{width:100%;padding:12px 14px;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--body);font-size:0.95rem;color:var(--ink);background:var(--paper);}
+  input:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green);}
+  .hint{font-size:0.78rem;color:var(--text-muted);margin-top:5px;line-height:1.45;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:0.95rem;
+       padding:13px 24px;border-radius:999px;border:none;cursor:pointer;width:100%;margin-top:24px;
+       background:var(--gold);color:var(--green-deep);}
+  .btn:hover{background:var(--gold-deep);color:var(--white);}
+  .btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .msg{margin-top:18px;padding:12px 14px;border-radius:10px;font-size:0.9rem;display:none;}
+  .msg.error{background:#FDEEEE;color:#B23B3B;display:block;}
+  .msg.ok{background:#EAF3DE;color:#3B6D11;display:block;}
+  .msg.info{background:#FEF6E4;color:var(--gold-deep);display:block;}
+  .loading{font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);}
+  footer{padding:40px 0;text-align:center;}
+  footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
+</style>
+</head>
+<body>
+
+<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+
+<div class="wrap">
+  <p class="loading" id="chargement">Vérification de votre invitation…</p>
+
+  <div id="contenu" style="display:none;">
+    <h1>Votre carte de membre vous attend</h1>
+    <p class="intro">L'AMSTC vous invite à activer votre accès à l'espace membres. Votre ancienneté est déjà enregistrée : il ne vous reste qu'à choisir vos identifiants.</p>
+
+    <div class="card">
+      <div class="carte-resume">
+        <p class="carte-resume-label">Carte de membre</p>
+        <p class="carte-resume-nom" id="cNom">-</p>
+        <p class="carte-resume-detail" id="cDetail">-</p>
+      </div>
+
+      <label for="cEmail">Votre adresse e-mail *</label>
+      <input type="email" id="cEmail" autocomplete="email" placeholder="vous@exemple.com">
+      <p class="hint">Elle vous servira à vous connecter et à recevoir les informations de l'association.</p>
+
+      <label for="cMdp">Choisissez un mot de passe *</label>
+      <input type="password" id="cMdp" autocomplete="new-password" placeholder="8 caractères minimum">
+
+      <label for="cMdp2">Confirmez le mot de passe *</label>
+      <input type="password" id="cMdp2" autocomplete="new-password">
+
+      <button class="btn" id="cBtn" type="button" onclick="activer()">Activer mon compte</button>
+      <div class="msg" id="cMsg"></div>
+    </div>
+
+    <p class="intro" style="font-size:0.85rem;">Vous avez déjà un compte ? <a href="connexion.html">Connectez-vous</a>.</p>
+  </div>
+
+  <div id="erreurBloc" style="display:none;">
+    <h1>Invitation indisponible</h1>
+    <p class="intro" id="erreurTexte"></p>
+    <div class="card">
+      <p style="font-size:0.9rem;color:var(--text-muted);">
+        Contactez l'administration de l'AMSTC pour recevoir un nouveau lien, ou
+        <a href="inscription.html">créez un compte normalement</a> - vous pourrez réclamer votre carte ensuite.
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer><a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  const jeton = new URLSearchParams(window.location.search).get("jeton");
+  let carte = null;
+
+  function montrerErreur(texte){
+    document.getElementById("chargement").style.display = "none";
+    document.getElementById("contenu").style.display = "none";
+    document.getElementById("erreurBloc").style.display = "";
+    document.getElementById("erreurTexte").textContent = texte;
+  }
+
+  function message(texte, type){
+    const el = document.getElementById("cMsg");
+    el.textContent = texte;
+    el.className = "msg " + type;
+  }
+
+  async function activer(){
+    const email = document.getElementById("cEmail").value.trim();
+    const mdp = document.getElementById("cMdp").value;
+    const mdp2 = document.getElementById("cMdp2").value;
+
+    if (!email || !email.includes("@")) { message("Saisissez une adresse e-mail valide.", "error"); return; }
+    if (mdp.length < 8) { message("Le mot de passe doit faire au moins 8 caractères.", "error"); return; }
+    if (mdp !== mdp2) { message("Les deux mots de passe ne correspondent pas.", "error"); return; }
+
+    const btn = document.getElementById("cBtn");
+    btn.disabled = true;
+    message("Création de votre compte…", "info");
+
+    // Le nom et l'année d'adhésion viennent de la carte : le membre n'a
+    // pas à les ressaisir, et ne peut pas les contredire.
+    const morceaux = String(carte.full_name || "").trim().split(/\s+/);
+    const { error: errSignUp } = await supabaseClient.auth.signUp({
+      email, password: mdp,
+      options: { data: {
+        full_name: carte.full_name,
+        first_name: morceaux[0] || null,
+        last_name: morceaux.slice(1).join(" ") || null,
+        city: carte.city || null,
+        member_since: carte.member_since || null,
+        applicant_type: "membre_existant",
+      } },
+    });
+    if (errSignUp) {
+      message(/already registered|already exists/i.test(errSignUp.message)
+        ? "Cette adresse a déjà un compte. Connectez-vous, puis réclamez votre carte depuis votre profil."
+        : "Erreur : " + errSignUp.message, "error");
+      btn.disabled = false;
+      return;
+    }
+
+    // Sans session (confirmation d'e-mail exigée sur l'instance), le lien
+    // ne peut pas être consommé maintenant : on le dit clairement plutôt
+    // que de laisser croire que tout est terminé.
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      message("Compte créé. Confirmez votre adresse e-mail, puis rouvrez ce lien pour rattacher votre carte.", "ok");
+      btn.disabled = false;
+      return;
+    }
+
+    const { error: errLien } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton });
+    if (errLien) {
+      message("Compte créé, mais la carte n'a pas pu être rattachée : " + errLien.message
+        + " Connectez-vous et contactez l'administration.", "error");
+      btn.disabled = false;
+      return;
+    }
+
+    // L'écran obligatoire d'inscription.html prend le relais : photo,
+    // titre, téléphone, domaine. Inutile de le dupliquer ici.
+    message("Compte activé. Encore quelques informations…", "ok");
+    window.location.href = "inscription.html";
+  }
+
+  (async () => {
+    if (!jeton) { montrerErreur("Ce lien est incomplet. Demandez-en un nouveau à l'administration."); return; }
+
+    const { data, error } = await supabaseClient.rpc("lire_invitation", { p_jeton: jeton });
+    if (error) {
+      montrerErreur(error.message.includes("does not exist")
+        ? "Les invitations ne sont pas encore activées sur cette instance."
+        : error.message);
+      return;
+    }
+
+    carte = Array.isArray(data) ? data[0] : data;
+    if (!carte) { montrerErreur("Cette invitation ne correspond à aucune carte."); return; }
+
+    document.getElementById("cNom").textContent = carte.full_name || "-";
+    document.getElementById("cDetail").textContent =
+      [carte.card_number, carte.member_since ? "Membre depuis " + carte.member_since : null, carte.city]
+        .filter(Boolean).join(" · ");
+    document.getElementById("chargement").style.display = "none";
+    document.getElementById("contenu").style.display = "";
+  })();
+</script>
+
+</body>
+</html>

@@ -647,7 +647,9 @@
       let actions = `<button class="btn" onclick="toggleEditRow('${c.id}')"><i class="ti ti-pencil"></i> Modifier</button>`
         + `<button class="btn btn-delete" onclick="deleteCard('${c.id}')"><i class="ti ti-trash"></i> Supprimer</button>`;
       if (c.claim_status === 'unclaimed') {
-        actions = `<button class="btn btn-confirm" onclick="toggleAssignRow('${c.id}')"><i class="ti ti-id-badge-2"></i> Attribuer</button>` + actions;
+        actions = `<button class="btn btn-confirm" onclick="toggleAssignRow('${c.id}')"><i class="ti ti-id-badge-2"></i> Attribuer</button>`
+          + `<button class="btn" onclick="inviterPorteur('${c.id}')"${c.phone ? '' : ' disabled title="Cette carte n\'a pas de numéro de téléphone"'}><i class="ti ti-brand-whatsapp"></i> Inviter</button>`
+          + actions;
       }
 
       let expandRow = '';
@@ -714,6 +716,48 @@
         <td class="td-act-cell"><div class="td-actions">${actions}</div></td>
       </tr>${expandRow}`;
     }).join('');
+  }
+
+  // ===== Inviter le porteur d'une carte (phase59) =====
+  // Les cartes importées n'ont pas d'adresse e-mail : impossible d'y créer
+  // un compte d'autorité. On engendre donc un lien d'invitation, envoyé
+  // par WhatsApp sur le téléphone de la carte - le membre choisit
+  // lui-même ses identifiants, et son ancienneté est reprise de la carte.
+  function lienWhatsAppCarte(phone){
+    let d = String(phone || '').replace(/\D/g, '');
+    if (!d) return null;
+    if (d.startsWith('00')) d = d.slice(2);
+    if (d.length <= 9) d = '221' + d;
+    return 'https://wa.me/' + d;
+  }
+
+  async function inviterPorteur(cardId){
+    const carte = allCards.find(c => c.id === cardId) || {};
+    const wa = lienWhatsAppCarte(carte.phone);
+    if (!wa) { alert("Cette carte n'a pas de numéro de téléphone exploitable."); return; }
+
+    const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: cardId });
+    if (error) {
+      alert(error.message.includes('does not exist')
+        ? "Le script supabase/phase59-invitation-carte.sql n'a pas encore été exécuté."
+        : 'Erreur : ' + error.message);
+      return;
+    }
+
+    const inv = Array.isArray(data) ? data[0] : data;
+    const lien = window.location.origin + '/membres/invitation.html?jeton=' + encodeURIComponent(inv.jeton);
+    const prenom = String(inv.full_name || '').trim().split(/\s+/)[0] || '';
+    const texte =
+      (prenom ? 'Bonjour ' + prenom + ',' : 'Bonjour,') + '\n\n'
+      + "Votre carte de membre AMSTC" + (inv.card_number ? ' (' + inv.card_number + ')' : '') + ' vous attend.\n\n'
+      + "Activez votre accès à l'espace membres en ouvrant ce lien :\n" + lien + '\n\n'
+      + "Il est personnel et valable 30 jours.\n\n©AMSTC";
+
+    // La fenêtre s'ouvre dans la foulée du clic : après une attente réseau,
+    // les navigateurs mobiles la bloqueraient comme fenêtre intempestive.
+    // L'appel RPC ci-dessus étant déjà passé, on ouvre ici sans await.
+    window.open(wa + '?text=' + encodeURIComponent(texte), '_blank', 'noopener');
+    loadCards();
   }
 
   function toggleAssignRow(id) {
