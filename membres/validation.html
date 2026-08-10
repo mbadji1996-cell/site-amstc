@@ -288,6 +288,7 @@
             ${coordonneesHtml(p)}
           </div>
           <div class="member-actions">
+            <button class="btn-sm btn-outline-sm" onclick="basculerRappel('${esc(p.id)}')">Prévenir</button>
             <button class="btn-sm btn-outline-sm" id="detailsBtn-${esc(p.id)}" onclick="toggleMemberDetails('${esc(p.id)}')">Détails</button>
             <button class="btn-sm btn-outline-sm" id="resetBtn-${esc(p.id)}" onclick="sendResetLink('${esc(p.id)}')">Réinitialiser le mot de passe</button>
             ${p.legacy_card_number ? '' : `<button class="btn-sm btn-outline-sm" onclick="toggleAssignCard('${esc(p.id)}')">Attribuer une carte</button>
@@ -301,6 +302,7 @@
           </div>
           <div class="assign-inline" id="assign-${esc(p.id)}" style="display:none;"></div>
           <div class="assign-inline" id="resetBox-${esc(p.id)}" style="display:none;"></div>
+          <div class="assign-inline" id="rappel-${esc(p.id)}" style="display:none;"></div>
           <div class="member-details" id="details-${esc(p.id)}" style="display:none;">
             <div class="member-details-grid">
               <div><span class="detail-label">Prénom</span><span class="detail-value">${esc(p.first_name) || '-'}</span></div>
@@ -416,6 +418,102 @@
             </div>
           `;
         }).join("");
+  }
+
+  // ===== Prévenir un membre en particulier (phase57) =====
+  // Deux canaux pour le même texte, composé côté SQL : l'e-mail part tout
+  // seul, WhatsApp ouvre la conversation avec le message déjà écrit -
+  // celui-ci ne dépend d'aucune approbation Meta et fonctionne donc dès
+  // maintenant, y compris pour un membre sans adresse e-mail.
+  const TYPES_RAPPEL = [
+    ["carte_expiree", "Carte expirée"],
+    ["carte_expire_bientot", "Carte à renouveler bientôt"],
+    ["cotisation_retard", "Cotisations en retard"],
+    ["libre", "Message libre"],
+  ];
+
+  function basculerRappel(memberId){
+    const box = document.getElementById("rappel-" + memberId);
+    if (box.style.display !== "none") { box.style.display = "none"; return; }
+    const p = allApprovedMembers.find(m => m.id === memberId) || {};
+    const wa = lienWhatsApp(p.phone);
+    box.innerHTML = `
+      <div class="assign-inline-row">
+        <select id="rappelType-${esc(memberId)}" onchange="majRappelLibre('${esc(memberId)}')">
+          ${TYPES_RAPPEL.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}
+        </select>
+        <button class="btn-sm btn-approve" onclick="envoyerRappelEmail('${esc(memberId)}')"
+          ${p.email ? "" : "disabled title=\"Ce membre n'a pas d'adresse e-mail\""}>Envoyer par e-mail</button>
+        <button class="btn-sm btn-outline-sm" onclick="ouvrirRappelWhatsApp('${esc(memberId)}')"
+          ${wa ? "" : "disabled title=\"Ce membre n'a pas de numéro\""}>Ouvrir WhatsApp</button>
+      </div>
+      <div id="rappelLibreZone-${esc(memberId)}" style="display:none;margin-top:8px;">
+        <textarea id="rappelTexte-${esc(memberId)}" rows="3" placeholder="Votre message…"
+          style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);"></textarea>
+      </div>
+      <p class="assign-msg" id="rappelMsg-${esc(memberId)}">L'e-mail part immédiatement ; WhatsApp s'ouvre avec le message pré-rempli, à vous de l'envoyer.</p>`;
+    box.style.display = "block";
+  }
+
+  function majRappelLibre(memberId){
+    const libre = document.getElementById("rappelType-" + memberId).value === "libre";
+    document.getElementById("rappelLibreZone-" + memberId).style.display = libre ? "" : "none";
+  }
+
+  function lireRappel(memberId){
+    const type = document.getElementById("rappelType-" + memberId).value;
+    const texte = (document.getElementById("rappelTexte-" + memberId) || {}).value || "";
+    return { type, message: type === "libre" ? texte.trim() : null };
+  }
+
+  function erreurRappel(msg, error){
+    return error.message && error.message.includes("does not exist")
+      ? "Le script supabase/phase57-rappel-individuel.sql n'a pas encore été exécuté."
+      : "Erreur : " + error.message;
+  }
+
+  async function envoyerRappelEmail(memberId){
+    const msg = document.getElementById("rappelMsg-" + memberId);
+    const { type, message } = lireRappel(memberId);
+    if (type === "libre" && !message) {
+      msg.textContent = "Saisissez votre message."; msg.className = "assign-msg error"; return;
+    }
+    msg.textContent = "Envoi en cours…"; msg.className = "assign-msg";
+    const { error } = await supabaseClient.rpc("envoyer_rappel_membre", {
+      p_user_id: memberId, p_type: type, p_message: message,
+    });
+    if (error) { msg.textContent = erreurRappel(msg, error); msg.className = "assign-msg error"; return; }
+    msg.textContent = "E-mail envoyé.";
+    msg.className = "assign-msg ok";
+  }
+
+  async function ouvrirRappelWhatsApp(memberId){
+    const msg = document.getElementById("rappelMsg-" + memberId);
+    const p = allApprovedMembers.find(m => m.id === memberId) || {};
+    const { type, message } = lireRappel(memberId);
+    if (type === "libre" && !message) {
+      msg.textContent = "Saisissez votre message."; msg.className = "assign-msg error"; return;
+    }
+
+    // Le texte vient du serveur, pas d'une copie côté navigateur : les deux
+    // canaux disent ainsi rigoureusement la même chose.
+    const { data, error } = await supabaseClient.rpc("texte_rappel_membre", {
+      p_user_id: memberId, p_type: type, p_message: message,
+    });
+    if (error) { msg.textContent = erreurRappel(msg, error); msg.className = "assign-msg error"; return; }
+
+    const t = Array.isArray(data) ? data[0] : data;
+    const prenom = (p.first_name || "").trim();
+    const corps = (prenom ? "Bonjour " + prenom + ",\n\n" : "Bonjour,\n\n") + (t.corps || "");
+
+    // La fenêtre est ouverte AVANT l'appel de traçage : un window.open
+    // déclenché après un await n'est plus rattaché au clic, et les
+    // navigateurs mobiles le bloquent comme une fenêtre intempestive.
+    window.open(lienWhatsApp(p.phone) + "?text=" + encodeURIComponent(corps), "_blank", "noopener");
+    msg.textContent = "WhatsApp ouvert : vérifiez le message puis envoyez-le.";
+    msg.className = "assign-msg ok";
+
+    supabaseClient.rpc("tracer_rappel_whatsapp", { p_user_id: memberId, p_type: type });
   }
 
   // ===== Fonction au Bureau Exécutif (phase52) =====

@@ -115,6 +115,27 @@ function construireEmail(
       };
     }
 
+    // Rappel envoyé à la demande par un administrateur, depuis la fiche du
+    // membre. Le titre et le corps sont composés côté SQL
+    // (envoyer_rappel_membre) : ajouter un nouveau type de rappel ne
+    // demande donc jamais de redéployer cette fonction.
+    case "rappel_admin": {
+      const titre = esc(data.titre) || "Message de l'AMSTC";
+      const corps = String(data.corps ?? "").trim();
+      if (!corps) return null;
+      // Le texte est saisi par l'administration : il est échappé, puis ses
+      // sauts de ligne deviennent des paragraphes.
+      const paragraphes = esc(corps)
+        .split(/\n{2,}/)
+        .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+        .join("");
+      return {
+        subject: titre,
+        html: gabarit(titre, `<p>${bonjour}</p>${paragraphes}
+          ${bouton(SITE + "/membres/connexion.html", "Accéder à l'espace membres")}`),
+      };
+    }
+
     default:
       return null;
   }
