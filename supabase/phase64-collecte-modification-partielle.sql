@@ -1,32 +1,43 @@
 -- ============================================================
--- PHASE 64 - Clôturer une collecte n'efface plus sa description ni sa
--- date limite.
+-- PHASE 64 - Modifier une collecte sans rien détruire.
 --
--- modifier_collecte (phase55) traitait ses paramètres de façon
--- incohérente : titre et is_open étaient préservés quand on passait NULL
--- (« ne touche pas »), mais description et date_limite étaient écrasés
--- (« mets NULL »).
+-- Deux corrections liées, l'une réparant un bug, l'autre rendant
+-- possible l'écran de modification (membres/collectes-admin.html).
 --
--- Or le seul appelant du site est le bouton « Clôturer » / « Rouvrir »
--- de membres/collectes-admin.html, qui n'envoie que l'identifiant et
--- is_open, et donc NULL partout ailleurs. Résultat : chaque clôture ou
--- réouverture détruisait silencieusement la description et l'échéance de
--- la collecte. Aucune erreur, aucun message - le texte disparaissait
--- simplement de la page des membres.
+-- 1. BUG : modifier_collecte (phase55) traitait ses paramètres de deux
+--    façons opposées. titre et is_open étaient préservés quand on
+--    passait NULL ; description et date_limite étaient écrasés. Or son
+--    seul appelant était le bouton « Clôturer » / « Rouvrir », qui
+--    n'envoie que l'identifiant et is_open - donc NULL partout ailleurs.
+--    Chaque clôture ou réouverture détruisait ainsi la description et
+--    l'échéance de la collecte, sans erreur ni message.
 --
--- Nouvelle règle, uniforme sur les cinq champs : NULL = ne pas toucher.
--- Pour vider une description, passer une chaîne vide plutôt que NULL.
+-- 2. Règle uniforme désormais : NULL = ne pas toucher. Une chaîne vide
+--    efface la description. Une date ne permettant pas de distinguer
+--    « ne touche pas » de « efface » avec un seul paramètre, un
+--    p_effacer_date explicite s'en charge.
 --
--- ATTENTION : ce script répare la fonction, pas les données déjà perdues.
--- Vérifiez les descriptions de vos collectes existantes après exécution.
+-- Le DROP est obligatoire : ajouter un paramètre, même avec valeur par
+-- défaut, créerait une seconde fonction au lieu de remplacer la
+-- première, et un appel à six arguments deviendrait ambigu.
+--
+-- ATTENTION : ce script répare la fonction, pas les données déjà
+-- perdues. Le dernier select liste les collectes sans description.
 --
 -- À exécuter une seule fois : Studio (instance amstc) > SQL Editor > Run.
 -- Ré-exécutable sans danger.
 -- ============================================================
 
+drop function if exists public.modifier_collecte(uuid, text, text, int, date, boolean);
+
 create or replace function public.modifier_collecte(
-  p_id uuid, p_titre text, p_description text,
-  p_montant_fcfa int, p_date_limite date, p_is_open boolean
+  p_id uuid,
+  p_titre text default null,
+  p_description text default null,
+  p_montant_fcfa int default null,
+  p_date_limite date default null,
+  p_is_open boolean default null,
+  p_effacer_date boolean default false
 )
 returns void
 language plpgsql
@@ -38,28 +49,36 @@ begin
     raise exception 'Accès refusé.';
   end if;
 
+  if not exists (select 1 from public.collectes where id = p_id) then
+    raise exception 'Collecte introuvable.';
+  end if;
+
   update public.collectes
      set titre        = coalesce(nullif(btrim(coalesce(p_titre, '')), ''), titre),
          -- NULL laisse la description en place ; une chaîne vide l'efface.
-         -- Sans cette distinction, le bouton « Clôturer » la détruisait.
          description  = case
                           when p_description is null then description
                           else nullif(btrim(p_description), '')
                         end,
          montant_fcfa = case when type = 'cotisation' then coalesce(p_montant_fcfa, montant_fcfa) else null end,
-         -- Une date ne permet pas de distinguer « ne touche pas » de
-         -- « efface » avec un seul paramètre : on retient « ne touche
-         -- pas », le seul choix qui ne perde jamais de donnée. Retirer
-         -- une échéance demandera un paramètre dédié le jour où un
-         -- formulaire de modification existera.
-         date_limite  = coalesce(p_date_limite, date_limite),
+         -- Effacer une échéance se demande explicitement : sans ce
+         -- drapeau, le NULL du bouton « Clôturer » la supprimerait.
+         date_limite  = case
+                          when p_effacer_date then null
+                          else coalesce(p_date_limite, date_limite)
+                        end,
          is_open      = coalesce(p_is_open, is_open)
    where id = p_id;
 end;
 $$;
 
+revoke all on function public.modifier_collecte(uuid, text, text, int, date, boolean, boolean) from public, anon;
+grant execute on function public.modifier_collecte(uuid, text, text, int, date, boolean, boolean) to authenticated;
+
+notify pgrst, 'reload schema';
+
 -- Contrôle : les collectes dont la description a peut-être été perdue.
--- Une collecte clôturée puis vidée de sa description est le symptôme.
+-- Une collecte déjà clôturée puis réouverte est la première suspecte.
 select id, titre, type, is_open, date_limite,
        case when description is null then 'DESCRIPTION VIDE' else 'ok' end as etat
   from public.collectes

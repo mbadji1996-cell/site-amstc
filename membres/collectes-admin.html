@@ -96,17 +96,20 @@
 </div>
 <div class="wrap"><p class="loading" id="loadingMsg">Vérification de vos droits…</p></div>
 
-<!-- Création -->
+<!-- Création et modification : une seule fenêtre, pour que l'analyse de la
+     liste d'items et son aperçu ne vivent qu'à un seul endroit. -->
 <div class="modal-overlay" id="modalCreation">
   <div class="modal">
     <button class="modal-close" onclick="fermerCreation()"><i class="ti ti-x"></i></button>
-    <h2 class="modal-title">Nouvelle collecte</h2>
+    <h2 class="modal-title" id="modalTitre">Nouvelle collecte</h2>
 
     <label for="cType">Type *</label>
     <select id="cType" onchange="majType()">
       <option value="cotisation">Activité à cotisation (montant fixé)</option>
       <option value="sasso">Sasso - demande de don</option>
     </select>
+    <p class="hint" id="typeVerrou" style="display:none;">Le type d'une collecte ne se change pas après sa création :
+      les participations déjà enregistrées en dépendent. Créez-en une nouvelle si besoin.</p>
 
     <label for="cTitre">Titre *</label>
     <input type="text" id="cTitre" placeholder="Ex : Participation au Gamou 1448H">
@@ -117,21 +120,27 @@
     <div id="blocMontant">
       <label for="cMontant">Montant de la cotisation (FCFA) *</label>
       <input type="number" id="cMontant" min="1" step="100" placeholder="Ex : 5000">
+      <p class="hint" id="montantAvertissement" style="display:none;">Des membres ont déjà payé l'ancien montant :
+        modifier celui-ci ne change pas leurs versements, déjà enregistrés.</p>
     </div>
 
     <div id="blocItems" style="display:none;">
       <label for="cItems">Liste des dons en nature (facultatif)</label>
       <textarea id="cItems" oninput="apercuItems()" placeholder="Sac de riz 50 kg : 25000 x3&#10;Bidon d'huile 20 L : 18000&#10;Carton de sucre : 12000 x5"></textarea>
-      <p class="hint">Une ligne par item, au format <strong>Libellé : montant</strong>. Ajoutez <strong>xN</strong> à la fin
+      <p class="hint" id="itemsAide">Une ligne par item, au format <strong>Libellé : montant</strong>. Ajoutez <strong>xN</strong> à la fin
         pour proposer plusieurs exemplaires (sans précision : un seul). Les membres pourront payer le montant ou donner l'objet.
         Laissez vide pour un sasso uniquement en espèces.</p>
+      <p class="hint" id="itemsVerrou" style="display:none;color:#B23B3B;">Des membres ont déjà participé : la liste
+        ne peut plus être modifiée, car retirer un item supprimerait leurs participations. Le reste de la fiche
+        reste modifiable.</p>
       <div class="apercu-items" id="apercuItems" style="display:none;"></div>
     </div>
 
     <label for="cLimite">Date limite (facultatif)</label>
     <input type="date" id="cLimite">
+    <p class="hint" id="limiteAide" style="display:none;">Videz le champ pour retirer l'échéance.</p>
 
-    <button class="btn btn-primary" id="cBtn" style="margin-top:20px;" onclick="creerCollecte()">Créer la collecte</button>
+    <button class="btn btn-primary" id="cBtn" style="margin-top:20px;" onclick="enregistrerCollecte()">Créer la collecte</button>
     <p class="form-msg" id="cMsg"></p>
   </div>
 </div>
@@ -170,7 +179,10 @@
   function apercuItems(){
     const zone = document.getElementById('apercuItems');
     const lignes = analyserLignes(document.getElementById('cItems').value);
-    if (!lignes.length) { zone.style.display = 'none'; return; }
+    // Vider et pas seulement masquer : sinon l'aperçu de la collecte
+    // précédente reste en place, prêt à réapparaître à la moindre
+    // réouverture de la fenêtre.
+    if (!lignes.length) { zone.style.display = 'none'; zone.innerHTML = ''; return; }
     zone.style.display = '';
     zone.innerHTML = lignes.map(l => l.erreur
       ? `<div class="ko">✕ ${esc(l.erreur)}</div>`
@@ -184,15 +196,85 @@
     document.getElementById('blocItems').style.display = sasso ? '' : 'none';
   }
 
-  function ouvrirCreation(){ document.getElementById('modalCreation').classList.add('open'); }
-  function fermerCreation(){ document.getElementById('modalCreation').classList.remove('open'); }
+  // Identifiant de la collecte en cours de modification, ou null en création.
+  let collecteEnEdition = null;
 
-  async function creerCollecte(){
+  function reinitialiserFormulaire(){
+    ['cTitre','cDesc','cMontant','cItems','cLimite'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('cMsg').textContent = '';
+    document.getElementById('cMsg').className = 'form-msg';
+    apercuItems();
+  }
+
+  // Bascule l'ensemble de la fenêtre entre création et modification : titre,
+  // libellé du bouton, champs verrouillés et aides contextuelles.
+  function configurerModale(collecte, participationsExistent){
+    const edition = !!collecte;
+    collecteEnEdition = edition ? collecte.id : null;
+
+    document.getElementById('modalTitre').textContent = edition ? 'Modifier la collecte' : 'Nouvelle collecte';
+    document.getElementById('cBtn').textContent = edition ? 'Enregistrer les modifications' : 'Créer la collecte';
+    // Le type détermine la forme des participations déjà enregistrées :
+    // le changer après coup les rendrait incohérentes.
+    document.getElementById('cType').disabled = edition;
+    document.getElementById('typeVerrou').style.display = edition ? '' : 'none';
+    document.getElementById('limiteAide').style.display = edition ? '' : 'none';
+    document.getElementById('montantAvertissement').style.display =
+      edition && participationsExistent ? '' : 'none';
+
+    // La liste d'items se fige dès la première participation : la base le
+    // refuse (remplacer_items_collecte), autant le dire avant le clic.
+    const verrou = edition && participationsExistent;
+    document.getElementById('cItems').disabled = verrou;
+    document.getElementById('itemsVerrou').style.display = verrou ? '' : 'none';
+    document.getElementById('itemsAide').style.display = verrou ? 'none' : '';
+  }
+
+  function ouvrirCreation(){
+    reinitialiserFormulaire();
+    document.getElementById('cType').value = 'cotisation';
+    configurerModale(null, false);
+    majType();
+    document.getElementById('modalCreation').classList.add('open');
+  }
+
+  function ouvrirEdition(id){
+    const c = collectes.find(x => x.id === id);
+    if (!c) return;
+    reinitialiserFormulaire();
+
+    document.getElementById('cType').value = c.type;
+    document.getElementById('cTitre').value = c.titre || '';
+    document.getElementById('cDesc').value = c.description || '';
+    document.getElementById('cMontant').value = c.montant_fcfa || '';
+    document.getElementById('cLimite').value = c.date_limite || '';
+    // La liste est reconstruite au format saisi : « Libellé : montant xN ».
+    // Le « xN » n'apparaît que s'il y a plusieurs exemplaires, comme à la saisie.
+    document.getElementById('cItems').value = items
+      .filter(i => i.collecte_id === id)
+      .map(i => `${i.libelle} : ${i.montant_fcfa}${i.quantite > 1 ? ' x' + i.quantite : ''}`)
+      .join('\n');
+
+    configurerModale(c, participations.some(p => p.collecte_id === id));
+    majType();
+    apercuItems();
+    document.getElementById('modalCreation').classList.add('open');
+  }
+
+  function fermerCreation(){
+    document.getElementById('modalCreation').classList.remove('open');
+    collecteEnEdition = null;
+  }
+
+  // Validation commune aux deux modes, puis aiguillage.
+  async function enregistrerCollecte(){
     const msg = document.getElementById('cMsg');
     const type = document.getElementById('cType').value;
     const titre = document.getElementById('cTitre').value.trim();
     const montant = parseInt(document.getElementById('cMontant').value, 10) || null;
-    const lignes = type === 'sasso' ? analyserLignes(document.getElementById('cItems').value) : [];
+    const itemsVerrouilles = document.getElementById('cItems').disabled;
+    const lignes = (type === 'sasso' && !itemsVerrouilles)
+      ? analyserLignes(document.getElementById('cItems').value) : [];
     const erreurs = lignes.filter(l => l.erreur);
 
     msg.className = 'form-msg';
@@ -206,6 +288,24 @@
 
     const btn = document.getElementById('cBtn');
     btn.disabled = true;
+    const erreur = collecteEnEdition
+      ? await appliquerModification(type, titre, montant, lignes, itemsVerrouilles)
+      : await appliquerCreation(type, titre, montant, lignes);
+    btn.disabled = false;
+
+    if (erreur) {
+      msg.textContent = erreur.code === 'PGRST202'
+        ? "Le script SQL correspondant n'a pas encore été exécuté sur cette instance."
+        : 'Erreur : ' + erreur.message;
+      msg.className = 'form-msg error';
+      return;
+    }
+    fermerCreation();
+    reinitialiserFormulaire();
+    await charger();
+  }
+
+  async function appliquerCreation(type, titre, montant, lignes){
     const { error } = await supabaseClient.rpc('creer_collecte', {
       p_titre: titre,
       p_description: document.getElementById('cDesc').value.trim() || null,
@@ -214,19 +314,41 @@
       p_date_limite: document.getElementById('cLimite').value || null,
       p_items: lignes.filter(l => !l.erreur),
     });
-    btn.disabled = false;
+    return error;
+  }
 
-    if (error) {
-      msg.textContent = error.code === 'PGRST202'
-        ? "Le script supabase/phase55-collectes.sql n'a pas encore été exécuté."
-        : 'Erreur : ' + error.message;
-      msg.className = 'form-msg error';
-      return;
+  async function appliquerModification(type, titre, montant, lignes, itemsVerrouilles){
+    const dateSaisie = document.getElementById('cLimite').value;
+    const { error } = await supabaseClient.rpc('modifier_collecte', {
+      p_id: collecteEnEdition,
+      p_titre: titre,
+      // Chaîne vide et non null : c'est ce qui efface la description.
+      // null signifierait « ne touche pas » et l'admin ne pourrait
+      // jamais la retirer (phase64).
+      p_description: document.getElementById('cDesc').value.trim(),
+      p_montant_fcfa: type === 'cotisation' ? montant : null,
+      p_date_limite: dateSaisie || null,
+      p_effacer_date: !dateSaisie,
+      p_is_open: null,
+    });
+    if (error) return error;
+
+    // Les items ne partent que si la liste a réellement changé : sinon un
+    // remplacement inutile échouerait dès la première participation.
+    if (type === 'sasso' && !itemsVerrouilles) {
+      const voulus = lignes.filter(l => !l.erreur);
+      const actuels = items.filter(i => i.collecte_id === collecteEnEdition)
+        .map(i => ({ libelle: i.libelle, montant_fcfa: i.montant_fcfa, quantite: i.quantite }));
+      const identiques = JSON.stringify(actuels) === JSON.stringify(
+        voulus.map(l => ({ libelle: l.libelle, montant_fcfa: l.montant_fcfa, quantite: l.quantite })));
+      if (!identiques) {
+        const { error: errItems } = await supabaseClient.rpc('remplacer_items_collecte', {
+          p_id: collecteEnEdition, p_items: voulus,
+        });
+        if (errItems) return errItems;
+      }
     }
-    fermerCreation();
-    ['cTitre','cDesc','cMontant','cItems','cLimite'].forEach(id => document.getElementById(id).value = '');
-    apercuItems();
-    await charger();
+    return null;
   }
 
   // ===== Liste et validation =====
@@ -285,6 +407,7 @@
           </div>
           <div class="actions-row" style="margin-top:0;">
             <button class="btn-sm btn-outline-sm" onclick="basculerDetails('${esc(c.id)}')">${ouvert ? 'Masquer' : 'Détails'} (${parts.length})</button>
+            <button class="btn-sm btn-outline-sm" onclick="ouvrirEdition('${esc(c.id)}')">Modifier</button>
             <button class="btn-sm ${c.is_open ? 'btn-warning' : 'btn-approve'}" onclick="basculerOuverture('${esc(c.id)}', ${c.is_open ? 'false' : 'true'})">${c.is_open ? 'Clôturer' : 'Rouvrir'}</button>
             ${isSuperAdmin ? `<button class="btn-sm btn-danger" onclick="supprimer('${esc(c.id)}')">Supprimer</button>` : ''}
           </div>
@@ -347,9 +470,13 @@
   }
 
   async function basculerOuverture(id, ouvrir){
+    // Tout est null sauf is_open : depuis phase64, null signifie « ne
+    // touche pas ». Auparavant ce même appel effaçait la description et
+    // la date limite de la collecte à chaque clôture.
     const { error } = await supabaseClient.rpc('modifier_collecte', {
       p_id: id, p_titre: null, p_description: null, p_montant_fcfa: null,
-      p_date_limite: null, p_is_open: ouvrir === 'true' || ouvrir === true,
+      p_date_limite: null, p_effacer_date: false,
+      p_is_open: ouvrir === 'true' || ouvrir === true,
     });
     if (error) { alert('Erreur : ' + error.message); return; }
     await charger();
