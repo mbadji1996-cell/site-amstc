@@ -154,6 +154,35 @@
     target.className = "form-message " + type;
   }
 
+  /**
+   * Page à ouvrir après la connexion.
+   *
+   * Le paramètre « suite » est posé par supabase-client.js quand un membre
+   * non connecté demande une page protégée - typiquement le lien d'un cours
+   * reçu par WhatsApp. Sans lui, on repartait systématiquement sur le
+   * tableau de bord et il fallait retrouver le cours à la main.
+   *
+   * Le contenu est traité comme hostile : il vient de la barre d'adresse et
+   * pourrait servir à renvoyer quelqu'un vers un site tiers depuis un lien
+   * d'apparence légitime. On n'accepte donc qu'un nom de fichier de
+   * l'espace membres, éventuellement suivi d'une requête - jamais de
+   * chemin, de « // », ni de schéma.
+   */
+  const CLE_SUITE = "amstc-suite-connexion";
+
+  function destinationApresConnexion() {
+    // L'adresse d'abord ; à défaut, la valeur mise de côté avant un départ
+    // vers Google (voir plus bas), qui ne peut pas transiter par l'URL.
+    let brut = new URLSearchParams(window.location.search).get("suite");
+    if (!brut) { try { brut = sessionStorage.getItem(CLE_SUITE); } catch (e) { brut = null; } }
+    try { sessionStorage.removeItem(CLE_SUITE); } catch (e) { /* stockage indisponible */ }
+
+    if (!brut) return "index.html";
+    if (!/^[\w-]+\.html(\?[^#\s]*)?$/.test(brut)) return "index.html";
+    if (brut.startsWith("connexion.html")) return "index.html";
+    return brut;
+  }
+
   // Vérifie le profil et redirige ou affiche le message d'erreur approprié.
   // Retourne true si redirigé, false si bloqué.
   async function handleProfile(profile, msgEl) {
@@ -187,7 +216,7 @@
       await signOut();
       return false;
     }
-    window.location.href = "index.html";
+    window.location.href = destinationApresConnexion();
     return true;
   }
 
@@ -224,6 +253,16 @@
   googleBtn.addEventListener("click", async () => {
     googleBtn.disabled = true;
     googleMessageEl.className = "form-message";
+
+    // La destination est mise de côté avant de partir chez Google : elle ne
+    // peut pas voyager dans l'adresse de retour, que Supabase compare à sa
+    // liste blanche - une requête en plus la ferait rejeter. sessionStorage
+    // survit à l'aller-retour dans le même onglet.
+    try {
+      const suite = new URLSearchParams(window.location.search).get("suite");
+      if (suite) sessionStorage.setItem(CLE_SUITE, suite);
+    } catch (e) { /* stockage indisponible : retour au tableau de bord */ }
+
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
       options: {

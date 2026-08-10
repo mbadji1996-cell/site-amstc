@@ -25,6 +25,31 @@ try {
 // ===== Aide partagée entre les pages membres/*.html =====
 
 /**
+ * Adresse de connexion conservant la page demandée.
+ *
+ * Sans cela, un membre qui reçoit le lien d'un cours atterrit sur la
+ * connexion, s'identifie, puis se retrouve sur le tableau de bord : il doit
+ * retrouver le cours par lui-même, et le partage perd tout son intérêt.
+ *
+ * Seuls le nom de fichier et sa requête sont transmis (jamais un chemin
+ * complet ni une adresse absolue) : la destination reste par construction
+ * une page de l'espace membres.
+ */
+function urlConnexionAvecRetour(redirectTo) {
+  try {
+    const fichier = window.location.pathname.split("/").pop();
+    if (!fichier || !/^[\w-]+\.html$/.test(fichier)) return redirectTo;
+    // La page de connexion elle-même ne se mémorise pas : on tournerait en rond.
+    if (fichier === "connexion.html" || fichier === "inscription.html") return redirectTo;
+    const suite = fichier + window.location.search;
+    const separateur = redirectTo.includes("?") ? "&" : "?";
+    return redirectTo + separateur + "suite=" + encodeURIComponent(suite);
+  } catch (e) {
+    return redirectTo;
+  }
+}
+
+/**
  * Récupère le profil (role, status...) du compte actuellement connecté.
  * Retourne null si personne n'est connecté.
  */
@@ -47,7 +72,7 @@ async function getCurrentProfile() {
 async function requireApprovedMember(redirectTo = "connexion.html") {
   const profile = await getCurrentProfile();
   if (!profile || profile.status !== "approved" || profile.is_active === false) {
-    window.location.href = redirectTo;
+    window.location.href = urlConnexionAvecRetour(redirectTo);
     return null;
   }
   // Profil incomplet : l'espace membres est verrouillé tant qu'il manque une
@@ -76,7 +101,7 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
 async function requireAdmin(redirectTo = "connexion.html") {
   const profile = await getCurrentProfile();
   if (!profile || !["admin", "super_admin"].includes(profile.role) || profile.is_active === false) {
-    window.location.href = redirectTo;
+    window.location.href = urlConnexionAvecRetour(redirectTo);
     return null;
   }
   return profile;
@@ -88,7 +113,7 @@ async function requireAdmin(redirectTo = "connexion.html") {
 async function requireSuperAdmin(redirectTo = "connexion.html") {
   const profile = await getCurrentProfile();
   if (!profile || profile.role !== "super_admin" || profile.is_active === false) {
-    window.location.href = redirectTo;
+    window.location.href = urlConnexionAvecRetour(redirectTo);
     return null;
   }
   return profile;
