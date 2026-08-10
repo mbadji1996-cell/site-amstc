@@ -747,10 +747,18 @@
     const inv = Array.isArray(data) ? data[0] : data;
     const lien = window.location.origin + '/membres/invitation.html?jeton=' + encodeURIComponent(inv.jeton);
     const prenom = String(inv.full_name || '').trim().split(/\s+/)[0] || '';
+    // L'annonce d'abord, la demande ensuite : beaucoup de destinataires
+    // ignorent encore l'existence du site, et un lien reçu sans contexte
+    // ressemble à une tentative d'hameçonnage. Énumérer ce que contient
+    // l'espace membre donne aussi une raison de cliquer - la carte seule
+    // n'y suffit pas toujours.
     const texte =
       (prenom ? 'Bonjour ' + prenom + ',' : 'Bonjour,') + '\n\n'
-      + "Votre carte de membre AMSTC" + (inv.card_number ? ' (' + inv.card_number + ')' : '') + ' vous attend.\n\n'
-      + "Activez votre accès à l'espace membres en ouvrant ce lien :\n" + lien + '\n\n'
+      + "L'AMSTC a désormais son site internet : amstc.org\n\n"
+      + "Vous y disposez d'un espace membre personnel, où vous retrouverez votre carte de membre"
+      + (inv.card_number ? ' (' + inv.card_number + ')' : '')
+      + ", l'annuaire des membres, les formations, la médiathèque et le forum de l'association.\n\n"
+      + "Activez votre accès en ouvrant ce lien :\n" + lien + '\n\n'
       + "Il est personnel et valable 30 jours.\n\n©AMSTC";
 
     // La fenêtre s'ouvre dans la foulée du clic : après une attente réseau,
