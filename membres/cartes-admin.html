@@ -738,7 +738,7 @@
 
     const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: cardId });
     if (error) {
-      alert(error.message.includes('does not exist')
+      alert(error.code === 'PGRST202'
         ? "Le script supabase/phase59-invitation-carte.sql n'a pas encore été exécuté."
         : 'Erreur : ' + error.message);
       return;

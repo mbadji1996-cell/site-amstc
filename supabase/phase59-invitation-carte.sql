@@ -68,9 +68,17 @@ begin
     raise exception 'Cette carte est déjà rattachée à un compte.';
   end if;
 
-  -- 24 octets : un lien qui circule sur WhatsApp doit être impossible à
-  -- deviner, puisqu'il vaut à lui seul autorisation.
-  v_jeton := encode(gen_random_bytes(24), 'hex');
+  -- Deux UUID concaténés : 64 caractères, 256 bits d'aléa. Un lien qui
+  -- circule sur WhatsApp doit être impossible à deviner, puisqu'il vaut à
+  -- lui seul autorisation.
+  --
+  -- gen_random_uuid() est natif à PostgreSQL et donc toujours visible.
+  -- gen_random_bytes(), lui, vient de pgcrypto et vit dans le schéma
+  -- « extensions » : avec le search_path fixé à public - indispensable
+  -- pour une fonction SECURITY DEFINER - il serait introuvable, et la
+  -- fonction échouerait sur « gen_random_bytes does not exist ».
+  v_jeton := replace(gen_random_uuid()::text, '-', '')
+          || replace(gen_random_uuid()::text, '-', '');
 
   -- Une nouvelle invitation annule les précédentes encore ouvertes : sans
   -- cela, un ancien lien partagé par erreur resterait valable.

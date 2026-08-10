@@ -217,7 +217,7 @@
     btn.disabled = false;
 
     if (error) {
-      msg.textContent = error.message.includes('does not exist')
+      msg.textContent = error.code === 'PGRST202'
         ? "Le script supabase/phase55-collectes.sql n'a pas encore été exécuté."
         : 'Erreur : ' + error.message;
       msg.className = 'form-msg error';
@@ -238,7 +238,7 @@
       supabaseClient.from('collecte_participations').select('*').order('created_at', { ascending: false }),
     ]);
     if (rC.error) {
-      document.getElementById('listeCollectes').innerHTML = rC.error.message.includes('does not exist')
+      document.getElementById('listeCollectes').innerHTML = rC.error.code === 'PGRST202'
         ? '<p class="empty">Le script supabase/phase55-collectes.sql n\'a pas encore été exécuté.</p>'
         : `<p class="empty">Erreur : ${esc(rC.error.message)}</p>`;
       return;

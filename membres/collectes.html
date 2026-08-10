@@ -151,7 +151,7 @@
       supabaseClient.from('collecte_participations').select('*').eq('user_id', moi.id).order('created_at', { ascending: false }),
     ]);
     if (rC.error) {
-      document.getElementById('listeOuvertes').innerHTML = rC.error.message.includes('does not exist')
+      document.getElementById('listeOuvertes').innerHTML = rC.error.code === 'PGRST202'
         ? '<p class="empty">Les collectes ne sont pas encore activées sur cette instance.</p>'
         : `<p class="empty">Erreur : ${esc(rC.error.message)}</p>`;
       return;

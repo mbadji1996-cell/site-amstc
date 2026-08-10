@@ -539,7 +539,7 @@
       p_user_id: memberId, p_year: anneeCotis, p_months: mois,
     });
     if (error) {
-      msg.textContent = error.message.includes("does not exist")
+      msg.textContent = error.code === "PGRST202"
         ? "Le script supabase/phase58-etat-cotisations-admin.sql n'a pas encore été exécuté."
         : "Erreur : " + error.message;
       msg.className = "assign-msg error";
@@ -606,7 +606,7 @@
   }
 
   function erreurRappel(msg, error){
-    return error.message && error.message.includes("does not exist")
+    return error.message && error.code === "PGRST202"
       ? "Le script supabase/phase57-rappel-individuel.sql n'a pas encore été exécuté."
       : "Erreur : " + error.message;
   }
@@ -705,7 +705,7 @@
       target_user_id: memberId, new_fonction: fonction, new_commission: commission,
     });
     if (error) {
-      msg.textContent = error.message && error.message.includes("does not exist")
+      msg.textContent = error.message && error.code === "PGRST202"
         ? "Le script supabase/phase52-fonctions-bureau.sql n'a pas encore été exécuté."
         : "Erreur : " + error.message;
       msg.className = "assign-msg error";

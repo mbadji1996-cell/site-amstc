@@ -185,7 +185,7 @@
 
     const { data, error } = await supabaseClient.rpc("lire_invitation", { p_jeton: jeton });
     if (error) {
-      montrerErreur(error.message.includes("does not exist")
+      montrerErreur(error.code === "PGRST202"
         ? "Les invitations ne sont pas encore activées sur cette instance."
         : error.message);
       return;
