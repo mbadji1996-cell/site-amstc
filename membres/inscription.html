@@ -161,14 +161,11 @@
       </label>
     </div>
 
-    <label for="cTitle">Titre *</label>
+    <label for="cTitle">Titre</label>
     <select id="cTitle">
-      <option value="" disabled selected>- Choisir -</option>
+      <option value="" selected>Aucune</option>
       <option value="Dr">Dr</option>
       <option value="Pr">Pr</option>
-      <option value="M.">M.</option>
-      <option value="Mme">Mme</option>
-      <option value="Me">Me</option>
     </select>
 
     <label for="cFirstName">Prénom *</label>
@@ -234,12 +231,9 @@
         <div>
           <label for="title">Titre</label>
           <select id="title" name="title">
-            <option value="">-</option>
+            <option value="">Aucune</option>
             <option value="Dr">Dr</option>
             <option value="Pr">Pr</option>
-            <option value="M.">M.</option>
-            <option value="Mme">Mme</option>
-            <option value="Me">Me</option>
           </select>
         </div>
         <div>
@@ -471,9 +465,11 @@
   // mêmes exigences : un membre approuvé au profil incomplet est renvoyé sur
   // sa fiche profil tant qu'il n'a pas tout renseigné.
   function profilIncomplet(p) {
+    // Le titre n'y figure plus : « Aucune » est un choix valide, et
+    // l'exiger renverrait indéfiniment sur cet écran celui qui le retient.
     return !String(p.first_name || "").trim() || !String(p.last_name || "").trim()
       || !String(p.phone || "").trim() || !String(p.domain || "").trim()
-      || !String(p.city || "").trim() || !String(p.title || "").trim()
+      || !String(p.city || "").trim()
       || !String(p.photo_url || "").trim()
       || (p.domain === "autre" && !String(p.domain_autre || "").trim());
   }
@@ -615,8 +611,8 @@
 
     // Le premier champ manquant est nommé : « remplissez tout » obligeait le
     // membre à chercher lui-même lequel des dix champs bloquait l'envoi.
+    // Le titre n'y figure pas : « Aucune » est un choix valide.
     const manquant = [
-      [champs.p_title, "votre titre"],
       [champs.p_first_name, "votre prénom"],
       [champs.p_last_name, "votre nom"],
       [champs.p_phone, "votre téléphone"],

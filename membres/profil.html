@@ -241,12 +241,9 @@
                pas étirer un choix de deux lettres sur tout l'écran). -->
           <div class="form-group full"><label>Titre</label>
             <select id="eTitle" style="max-width:220px;">
-              <option value="">-</option>
+              <option value="">Aucune</option>
               <option value="Dr">Dr</option>
               <option value="Pr">Pr</option>
-              <option value="M.">M.</option>
-              <option value="Mme">Mme</option>
-              <option value="Me">Me</option>
             </select>
           </div>
           <div class="form-group"><label>Prénom</label><input id="eFirstName" type="text"></div>
@@ -835,8 +832,8 @@
     // c'est ce même jeu de champs que le verrou de l'espace membres
     // (requireApprovedMember) contrôle pour rétablir l'accès. Le contrôle
     // précède l'envoi de la photo pour ne rien téléverser en vain.
+    // Le titre n'y figure pas : « Aucune » est un choix valide.
     const manquant = [
-      [payload.title, 'votre titre'],
       [payload.first_name, 'votre prénom'],
       [payload.last_name, 'votre nom'],
       [payload.phone, 'votre téléphone (WhatsApp)'],

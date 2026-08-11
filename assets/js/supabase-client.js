@@ -82,9 +82,12 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
   // La spécialité reste facultative ; pour le domaine « autre », la
   // précision du domaine est en revanche exigée : elle tient lieu de
   // filière sur la carte de membre.
+  // Le titre est facultatif lui aussi depuis que « Aucune » est un choix
+  // valide : l'exiger enfermerait sur l'écran de complétion quiconque le
+  // retient, sans jamais lui dire pourquoi.
   const incomplet = !String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
     || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
-    || !String(profile.city || "").trim() || !String(profile.title || "").trim()
+    || !String(profile.city || "").trim()
     || !String(profile.photo_url || "").trim()
     || (profile.domain === "autre" && !String(profile.domain_autre || "").trim());
   if (incomplet && !window.location.pathname.endsWith("profil.html")) {
