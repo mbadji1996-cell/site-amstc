@@ -44,6 +44,20 @@
   .intro{color:var(--text-muted); font-size:1.02rem; margin-bottom:32px;}
   h2{font-family:var(--display); font-size:1.1rem; color:var(--text-heading); margin:36px 0 4px;}
   .section-note{color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;}
+  /* Onglets Tous / Avec carte / Sans carte. Même traitement que la page
+     des cartes de membres, pour que les deux écrans se ressemblent. */
+  .membres-onglets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+  .membres-onglet{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text-muted);font-family:var(--body);font-size:0.86rem;font-weight:600;cursor:pointer;transition:border-color .18s,color .18s,background .18s;}
+  .membres-onglet:hover{border-color:var(--green);color:var(--text-heading);}
+  .membres-onglet.actif{background:var(--green);border-color:var(--green);color:var(--white);}
+  .membres-onglet:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  .membres-onglet-compte{font-family:var(--mono);font-size:0.74rem;padding:1px 7px;border-radius:999px;background:var(--paper-alt);color:var(--text-muted);}
+  .membres-onglet.actif .membres-onglet-compte{background:rgba(255,255,255,0.22);color:var(--white);}
+  /* En thème sombre, --green s'éclaircit et le blanc dessus tombe sous le
+     seuil de contraste : on assombrit le fond, la bordure vive détachant
+     l'onglet du fond de page. */
+  :root[data-theme="dark"] .membres-onglet.actif{background:var(--green-deep);border-color:var(--green);}
+
   .search-wrap{position:relative; margin:14px 0 4px;}
   .search-input{width:100%; padding:11px 42px 11px 16px; border:1.5px solid var(--line); border-radius:999px; font-family:var(--body); font-size:0.9rem; background:var(--surface); color:var(--ink); transition:border-color .18s;}
   .search-input:focus{outline:none; border-color:var(--green);}
@@ -158,6 +172,21 @@
     <button class="btn-sm btn-outline-sm" onclick="exporterMembresPdf()">⬇ Exporter en PDF</button>
     <button class="btn-sm btn-outline-sm" id="printCardsBtn" onclick="imprimerCartesPdf()">🖨 Imprimer les cartes (PDF)</button>
   </div>
+  <div class="membres-onglets" role="tablist" aria-label="Filtrer les membres">
+    <button type="button" class="membres-onglet actif" role="tab" aria-selected="true"
+      data-vue="tous" onclick="changerVueMembres('tous')">
+      Tous <span class="membres-onglet-compte" id="compteMembresTous">0</span>
+    </button>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="avec-carte" onclick="changerVueMembres('avec-carte')">
+      Avec carte <span class="membres-onglet-compte" id="compteMembresAvecCarte">0</span>
+    </button>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="sans-carte" onclick="changerVueMembres('sans-carte')">
+      Sans carte <span class="membres-onglet-compte" id="compteMembresSansCarte">0</span>
+    </button>
+  </div>
+
   <div class="search-wrap">
     <input type="text" class="search-input" id="memberSearchInput" placeholder="Rechercher un nom, un e-mail, une ville, une spécialité…" oninput="onMemberSearch()">
     <span class="search-icon" id="memberSearchIcon">🔍</span>
@@ -253,10 +282,49 @@
     return DOMAIN_LABELS[p.domain] || p.domain;
   }
 
+  // Vue courante : 'tous', 'avec-carte' ou 'sans-carte'.
+  let vueMembres = "tous";
+
+  // legacy_card_number est le marqueur de possession d'une carte sur le
+  // profil : toutes les voies d'attribution le renseignent - attribution
+  // directe par l'admin, réclamation confirmée, import Excel, création de
+  // carte neuve. C'est donc lui qui fait foi, et non un recoupement avec
+  // member_cards que cette page ne charge pas en entier.
+  function porteUneCarte(p){
+    return !!String(p.legacy_card_number || "").trim();
+  }
+
+  function changerVueMembres(vue){
+    vueMembres = vue;
+    document.querySelectorAll(".membres-onglet").forEach(b => {
+      const actif = b.dataset.vue === vue;
+      b.classList.toggle("actif", actif);
+      b.setAttribute("aria-selected", String(actif));
+    });
+    renderMembersList();
+  }
+
+  function membresDeLaVue(){
+    if (vueMembres === "avec-carte") return allApprovedMembers.filter(porteUneCarte);
+    if (vueMembres === "sans-carte") return allApprovedMembers.filter(p => !porteUneCarte(p));
+    return allApprovedMembers;
+  }
+
+  // Les compteurs portent sur la totalité, jamais sur le résultat de la
+  // recherche : ils répondent à « combien reste-t-il de membres sans
+  // carte ? », question indépendante du texte saisi.
+  function majComptesMembres(){
+    const avec = allApprovedMembers.filter(porteUneCarte).length;
+    document.getElementById("compteMembresTous").textContent = allApprovedMembers.length;
+    document.getElementById("compteMembresAvecCarte").textContent = avec;
+    document.getElementById("compteMembresSansCarte").textContent = allApprovedMembers.length - avec;
+  }
+
   function getFilteredApprovedMembers(){
     const q = normalize(document.getElementById("memberSearchInput").value.trim());
-    if (!q) return allApprovedMembers;
-    return allApprovedMembers.filter(p => {
+    const base = membresDeLaVue();
+    if (!q) return base;
+    return base.filter(p => {
       const haystack = normalize([
         p.full_name, p.first_name, p.last_name, p.email, p.city,
         domainLabel(p), p.specialty, p.legacy_card_number, p.phone,
@@ -283,17 +351,26 @@
     const membersEl = document.getElementById("membersList");
     const countEl = document.getElementById("memberSearchCount");
     const q = document.getElementById("memberSearchInput").value.trim();
+    majComptesMembres();
+    const base = membresDeLaVue();
     const list = getFilteredApprovedMembers();
 
     if (q) {
       countEl.style.display = "";
-      countEl.textContent = `${list.length} résultat${list.length > 1 ? "s" : ""} sur ${allApprovedMembers.length}`;
+      // Le total de référence est celui de l'onglet, pas celui de tous les
+      // membres : sinon « 2 résultats sur 112 » alors qu'on cherche parmi 23.
+      countEl.textContent = `${list.length} résultat${list.length > 1 ? "s" : ""} sur ${base.length}`;
     } else {
       countEl.style.display = "none";
     }
 
+    const vide = {
+      "avec-carte": "Aucun membre ne porte encore de carte.",
+      "sans-carte": "Tous les membres approuvés portent une carte.",
+    }[vueMembres] || "Aucun membre approuvé pour le moment.";
+
     membersEl.innerHTML = list.length === 0
-      ? `<p class="empty">${q ? "Aucun membre ne correspond à votre recherche." : "Aucun membre approuvé pour le moment."}</p>`
+      ? `<p class="empty">${q ? "Aucun membre ne correspond à votre recherche." : vide}</p>`
       : list.map(p => `
         <div class="member-row">
           <div>
