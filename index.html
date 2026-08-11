@@ -410,6 +410,10 @@
   }
   .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.68rem; opacity:0.85; margin-top:3px;}
   .fan-card:hover .fan-name{ opacity:1; }
+  /* La carte au centre porte toujours son nom : c'est celle que le
+     compteur désigne et sur laquelle l'œil se pose. Sans cela, il fallait
+     survoler chaque photo pour savoir qui l'on regarde. */
+  .fan-card.centre .fan-name{ opacity:1; }
   .fan-controls{ display:flex; align-items:center; gap:16px; }
   .fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
 
@@ -1770,6 +1774,8 @@
         const mandate = typeof p === 'string' ? '' : (p.mandate || '');
         const card = document.createElement('div');
         card.className = 'fan-card';
+        // La carte centrale garde son nom affiché en permanence.
+        if (slot === centerSlot) card.classList.add('centre');
         card.dataset.slot = String(slot);
         card.innerHTML = photo
           ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">`

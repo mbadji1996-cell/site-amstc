@@ -758,6 +758,7 @@
           ${wa ? "" : "disabled title=\"Ce membre n'a pas de numéro\""}>Ouvrir WhatsApp</button>
         <button class="btn-sm btn-outline-sm" onclick="envoyerRappelEmail('${esc(memberId)}')"
           ${p.email ? "" : "disabled title=\"Ce membre n'a pas d'adresse e-mail\""}>Envoyer par e-mail</button>
+        <button class="btn-sm btn-outline-sm" onclick="fermerRappel('${esc(memberId)}')">Masquer</button>
       </div>
       <div id="rappelLibreZone-${esc(memberId)}" style="display:none;margin-top:8px;">
         <textarea id="rappelTexte-${esc(memberId)}" rows="3" placeholder="Votre message…"
@@ -765,6 +766,18 @@
       </div>
       <p class="assign-msg" id="rappelMsg-${esc(memberId)}">WhatsApp s'ouvre avec le message pré-rempli, à vous de l'envoyer ; l'e-mail, lui, part immédiatement.</p>`;
     box.style.display = "block";
+  }
+
+  function fermerRappel(memberId){
+    const box = document.getElementById("rappel-" + memberId);
+    if (box) box.style.display = "none";
+  }
+
+  // Après un envoi réussi, le panneau n'a plus d'utilité : il se ferme de
+  // lui-même, avec un délai qui laisse lire la confirmation. Le bouton
+  // « Masquer » reste là pour refermer sans rien envoyer.
+  function fermerRappelApres(memberId, delai){
+    setTimeout(() => fermerRappel(memberId), delai);
   }
 
   function majRappelLibre(memberId){
@@ -804,6 +817,7 @@
     if (error) { msg.textContent = erreurRappel(msg, error); msg.className = "assign-msg error"; return; }
     msg.textContent = "E-mail envoyé.";
     msg.className = "assign-msg ok";
+    fermerRappelApres(memberId, 2500);
   }
 
   async function ouvrirRappelWhatsApp(memberId){
@@ -831,6 +845,8 @@
     window.open(lienWhatsApp(p.phone) + "?text=" + encodeURIComponent(corps), "_blank", "noopener");
     msg.textContent = "WhatsApp ouvert : vérifiez le message puis envoyez-le.";
     msg.className = "assign-msg ok";
+    // Plus long que pour l'e-mail : l'admin part sur WhatsApp et revient.
+    fermerRappelApres(memberId, 5000);
 
     supabaseClient.rpc("tracer_rappel_whatsapp", { p_user_id: memberId, p_type: type });
   }
