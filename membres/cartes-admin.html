@@ -656,6 +656,16 @@
     renderCardsTable();
   }
 
+  // Membres qui ne portent encore aucune carte. Les proposer alors qu'ils
+  // en ont déjà une créerait un second rattachement pour la même personne
+  // - et le doublon ne se verrait qu'au moment d'imprimer les cartes.
+  // claimed_by est renseigné dès qu'une carte est réclamée, en attente
+  // comme confirmée : les deux cas sont donc écartés.
+  function membresSansCarte() {
+    const pris = new Set(allCards.map(c => c.claimed_by).filter(Boolean));
+    return assignMembers.filter(m => !pris.has(m.id));
+  }
+
   function statusBadge(status) {
     if (status === 'unclaimed') return '<span class="status-badge unclaimed">Non réclamée</span>';
     if (status === 'pending') return '<span class="status-badge pending">En attente</span>';
@@ -751,21 +761,27 @@
             </td>
           </tr>`;
       } else if (c.claim_status === 'unclaimed' && expandedAssignId === c.id) {
-        const options = assignMembers.map(m => `<option value="${m.id}">${escHtml(m.full_name || 'Sans nom')} (${escHtml(m.email)})</option>`).join('');
+        const disponibles = membresSansCarte();
+        const options = disponibles.map(m => `<option value="${m.id}">${escHtml(m.full_name || 'Sans nom')} (${escHtml(m.email)})</option>`).join('');
+        // Plus personne à qui attribuer : on le dit au lieu de laisser une
+        // liste vide dont on ne saurait pas si elle a échoué à charger.
+        const aucun = disponibles.length === 0;
         expandRow = `
           <tr>
             <td colspan="5" class="td-expand">
               <div class="assign-inline">
                 <div class="assign-inline-row">
-                  <select id="assignMemberSelect-${c.id}">
-                    <option value="" disabled selected>Choisir un membre...</option>
+                  <select id="assignMemberSelect-${c.id}"${aucun ? ' disabled' : ''}>
+                    <option value="" disabled selected>${aucun ? 'Aucun membre sans carte' : 'Choisir un membre...'}</option>
                     ${options}
                   </select>
                   <input type="number" id="assignYear-${c.id}" value="${c.member_since || currentYear}" title="Année de fin de validité">
-                  <button class="btn btn-confirm" onclick="confirmAssignRow('${c.id}')"><i class="ti ti-check"></i> Confirmer</button>
+                  <button class="btn btn-confirm" onclick="confirmAssignRow('${c.id}')"${aucun ? ' disabled' : ''}><i class="ti ti-check"></i> Confirmer</button>
                   <button class="btn btn-reject" onclick="toggleAssignRow('${c.id}')">Annuler</button>
                 </div>
-                <p class="assign-msg" id="assignRowMsg-${c.id}"></p>
+                <p class="assign-msg" id="assignRowMsg-${c.id}">${aucun
+                  ? 'Tous les membres approuvés portent déjà une carte.'
+                  : disponibles.length + ' membre(s) sans carte.'}</p>
               </div>
             </td>
           </tr>`;
