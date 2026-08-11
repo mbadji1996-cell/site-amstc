@@ -62,6 +62,15 @@
   .admin-card-sub{font-size:0.76rem;color:#8A9E8F;margin-top:1px;}
   .admin-card-badge{position:absolute;top:14px;right:14px;background:#B23B3B;color:var(--white);font-family:var(--mono);font-size:0.65rem;font-weight:700;min-width:19px;height:19px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 5px;}
 
+  /* Fonctionnalité en cours de développement : la carte reste visible pour
+     annoncer ce qui vient, mais n'est ni cliquable ni survolable - ouvrir
+     un écran qui ne fonctionne pas serait pire que de le masquer. */
+  .admin-card.bientot{opacity:0.55;cursor:default;pointer-events:none;}
+  /* Dans le flux et non en position absolue comme le badge rond : « Bientôt
+     disponible » est bien plus large qu'une pastille de comptage et
+     recouvrait le titre de la carte. */
+  .admin-card-attente{margin-left:auto;flex-shrink:0;background:var(--paper-alt);color:var(--text-muted);font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.06em;border-radius:999px;padding:3px 9px;white-space:nowrap;}
+
   /* Decap CMS block */
   .decap-block{background:#FEF6E4;border:1.5px dashed rgba(170,123,17,0.35);border-radius:var(--radius);padding:24px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
   .decap-left{display:flex;align-items:flex-start;gap:14px;}
@@ -211,13 +220,6 @@
           <p class="admin-card-sub">Formations & actualités</p>
         </div>
       </a>
-      <a class="admin-card" href="whatsapp-admin.html">
-        <div class="admin-card-icon"><i class="ti ti-brand-whatsapp"></i></div>
-        <div>
-          <p class="admin-card-label">Diffusion WhatsApp</p>
-          <p class="admin-card-sub">Alerte aux membres</p>
-        </div>
-      </a>
       <a class="admin-card" href="statistiques-admin.html">
         <div class="admin-card-icon"><i class="ti ti-chart-bar"></i></div>
         <div>
@@ -254,6 +256,17 @@
         </div>
         <span class="admin-card-badge" id="badgeCampaignRequests" style="display:none;"></span>
       </a>
+      <!-- En dernier et grisée : la diffusion en masse attend l'ouverture
+           d'un canal (Meta Cloud API ou SMS opérateur). Les envois membre
+           par membre, eux, fonctionnent depuis l'écran Membres. -->
+      <span class="admin-card bientot" aria-disabled="true">
+        <div class="admin-card-icon"><i class="ti ti-brand-whatsapp"></i></div>
+        <div>
+          <p class="admin-card-label">Diffusion WhatsApp</p>
+          <p class="admin-card-sub">Alerte aux membres</p>
+        </div>
+        <span class="admin-card-attente">Bientôt disponible</span>
+      </span>
     </div>
 
     <p class="section-label"><i class="ti ti-world"></i> Contenu public du site</p>
