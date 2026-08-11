@@ -28,7 +28,8 @@
       "author_type": "membre",
       "quote": "J'ai découvert dans l'AMSTC un esprit de solidarité, de partage et d'entraide. Chaque activité menée montre un véritable engagement au service des personnes qui en ont le plus besoin.",
       "author_name": "Abdoulaye NDIAYE",
-      "author_role": "Infirmier d'Etat - Commission Organisation"
+      "author_role": "Infirmier d'Etat - Commission Organisation",
+      "photo": "/assets/uploads/abdoulaye-ndiaye-ide-221-70-773-09-92.jpg"
     },
     {
       "author_type": "membre",
@@ -41,7 +42,8 @@
       "author_type": "membre",
       "quote": "L’AMSTC est une association d’exception portée par de précieuses valeurs d’humanisme qui transforment des vies par l’humilité qui y demeure le maître mot.",
       "author_name": "Ablaye Faye",
-      "author_role": "Interne en Pharmacien - Commission organisation"
+      "author_role": "Interne en Pharmacien - Commission organisation",
+      "photo": "/assets/uploads/ablaye-faye.jpeg"
     }
   ]
 }
