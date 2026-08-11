@@ -51,6 +51,10 @@
   .membres-onglet:hover{border-color:var(--green);color:var(--text-heading);}
   .membres-onglet.actif{background:var(--green);border-color:var(--green);color:var(--white);}
   .membres-onglet:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  /* Sept pastilles alignées se liraient comme une seule liste : le trait
+     sépare les trois critères (carte, activation, cotisations) pour qu'on
+     voie du premier coup d'œil qu'ils ne se cumulent pas. */
+  .membres-onglets-sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px;}
   .membres-onglet-compte{font-family:var(--mono);font-size:0.74rem;padding:1px 7px;border-radius:999px;background:var(--paper-alt);color:var(--text-muted);}
   .membres-onglet.actif .membres-onglet-compte{background:rgba(255,255,255,0.22);color:var(--white);}
   /* En thème sombre, --green s'éclaircit et le blanc dessus tombe sous le
@@ -185,7 +189,28 @@
       data-vue="sans-carte" onclick="changerVueMembres('sans-carte')">
       Sans carte <span class="membres-onglet-compte" id="compteMembresSansCarte">0</span>
     </button>
+
+    <span class="membres-onglets-sep" aria-hidden="true"></span>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="actifs" onclick="changerVueMembres('actifs')">
+      Actifs <span class="membres-onglet-compte" id="compteMembresActifs">0</span>
+    </button>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="desactives" onclick="changerVueMembres('desactives')">
+      Désactivés <span class="membres-onglet-compte" id="compteMembresDesactives">0</span>
+    </button>
+
+    <span class="membres-onglets-sep" aria-hidden="true"></span>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="cotis-ok" onclick="changerVueMembres('cotis-ok')">
+      Cotisations à jour <span class="membres-onglet-compte" id="compteMembresCotisOk">0</span>
+    </button>
+    <button type="button" class="membres-onglet" role="tab" aria-selected="false"
+      data-vue="cotis-retard" onclick="changerVueMembres('cotis-retard')">
+      Cotisations en retard <span class="membres-onglet-compte" id="compteMembresCotisRetard">0</span>
+    </button>
   </div>
+  <p class="section-note" id="noteCotisOnglets" style="display:none;margin-top:0;"></p>
 
   <div class="search-wrap">
     <input type="text" class="search-input" id="memberSearchInput" placeholder="Rechercher un nom, un e-mail, une ville, une spécialité…" oninput="onMemberSearch()">
@@ -304,9 +329,33 @@
     renderMembersList();
   }
 
+  // is_active vaut true par défaut : seul false désactive explicitement.
+  function estActif(p){ return p.is_active !== false; }
+
+  /**
+   * Cotisations à jour pour l'année affichée (anneeCotis, que l'admin peut
+   * changer). La règle reprend celle des rappels WhatsApp (phase31) : le
+   * mois EN COURS doit être réglé - on n'est pas en retard pour décembre
+   * au mois d'août.
+   *
+   * Cette règle n'a de sens que sur l'année courante. Sur une année
+   * passée, tout est dû : il faut les douze mois. Sur une année à venir,
+   * rien n'est encore exigible.
+   */
+  function cotisationsAJour(p){
+    if (anneeCotis > ANNEE_COURANTE) return true;
+    const payes = moisPayes(p.id);
+    if (anneeCotis < ANNEE_COURANTE) return payes.length >= 12;
+    return payes.includes(new Date().getMonth() + 1);
+  }
+
   function membresDeLaVue(){
     if (vueMembres === "avec-carte") return allApprovedMembers.filter(porteUneCarte);
     if (vueMembres === "sans-carte") return allApprovedMembers.filter(p => !porteUneCarte(p));
+    if (vueMembres === "actifs") return allApprovedMembers.filter(estActif);
+    if (vueMembres === "desactives") return allApprovedMembers.filter(p => !estActif(p));
+    if (vueMembres === "cotis-ok") return allApprovedMembers.filter(cotisationsAJour);
+    if (vueMembres === "cotis-retard") return allApprovedMembers.filter(p => !cotisationsAJour(p));
     return allApprovedMembers;
   }
 
@@ -314,10 +363,30 @@
   // recherche : ils répondent à « combien reste-t-il de membres sans
   // carte ? », question indépendante du texte saisi.
   function majComptesMembres(){
+    const total = allApprovedMembers.length;
     const avec = allApprovedMembers.filter(porteUneCarte).length;
-    document.getElementById("compteMembresTous").textContent = allApprovedMembers.length;
+    const actifs = allApprovedMembers.filter(estActif).length;
+    const aJour = allApprovedMembers.filter(cotisationsAJour).length;
+    document.getElementById("compteMembresTous").textContent = total;
     document.getElementById("compteMembresAvecCarte").textContent = avec;
-    document.getElementById("compteMembresSansCarte").textContent = allApprovedMembers.length - avec;
+    document.getElementById("compteMembresSansCarte").textContent = total - avec;
+    document.getElementById("compteMembresActifs").textContent = actifs;
+    document.getElementById("compteMembresDesactives").textContent = total - actifs;
+    document.getElementById("compteMembresCotisOk").textContent = aJour;
+    document.getElementById("compteMembresCotisRetard").textContent = total - aJour;
+
+    // « À jour » ne veut pas dire la même chose selon l'année consultée :
+    // on le dit, plutôt que de laisser deviner.
+    const note = document.getElementById("noteCotisOnglets");
+    const surCotis = vueMembres === "cotis-ok" || vueMembres === "cotis-retard";
+    note.style.display = surCotis ? "" : "none";
+    if (surCotis) {
+      note.textContent = anneeCotis === ANNEE_COURANTE
+        ? `À jour pour ${anneeCotis} : le mois en cours (${MOIS_LONGS[new Date().getMonth()]}) est réglé.`
+        : anneeCotis < ANNEE_COURANTE
+          ? `Année ${anneeCotis} révolue : à jour signifie les douze mois réglés.`
+          : `Année ${anneeCotis} à venir : aucune cotisation n'est encore exigible.`;
+    }
   }
 
   function getFilteredApprovedMembers(){
@@ -367,6 +436,10 @@
     const vide = {
       "avec-carte": "Aucun membre ne porte encore de carte.",
       "sans-carte": "Tous les membres approuvés portent une carte.",
+      "actifs": "Aucun membre actif.",
+      "desactives": "Aucun compte désactivé.",
+      "cotis-ok": `Aucun membre à jour de ses cotisations ${anneeCotis}.`,
+      "cotis-retard": `Tous les membres sont à jour de leurs cotisations ${anneeCotis}.`,
     }[vueMembres] || "Aucun membre approuvé pour le moment.";
 
     membersEl.innerHTML = list.length === 0
@@ -541,6 +614,8 @@
   // que celle mise à jour à la validation d'un paiement : on affiche donc
   // ce que voit le membre, pas une reconstitution à partir des paiements.
   const MOIS_COURTS = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+  const MOIS_LONGS = ["janvier","février","mars","avril","mai","juin",
+                      "juillet","août","septembre","octobre","novembre","décembre"];
   const ANNEE_COURANTE = new Date().getFullYear();
   let cotisationsParMembre = {};   // user_id -> [mois payés] pour anneeCotis
   let anneeCotis = ANNEE_COURANTE;
