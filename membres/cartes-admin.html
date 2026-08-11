@@ -73,6 +73,22 @@
   .cards-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .cards-filter{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.88rem;background:var(--paper);color:var(--ink);}
   .cards-filter:focus{outline:none;border-color:var(--green);}
+
+  /* Onglets Toutes / Attribuées / Non attribuées. Le compteur fait partie
+     de l'onglet : c'est souvent la seule information cherchée - combien de
+     cartes restent à attribuer. */
+  .cards-onglets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .cards-onglet{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text-muted);font-family:var(--body);font-size:0.86rem;font-weight:600;cursor:pointer;transition:border-color .18s,color .18s,background .18s;}
+  .cards-onglet:hover{border-color:var(--green);color:var(--text-heading);}
+  .cards-onglet.actif{background:var(--green);border-color:var(--green);color:var(--white);}
+  .cards-onglet:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  .cards-onglet-compte{font-family:var(--mono);font-size:0.74rem;padding:1px 7px;border-radius:999px;background:var(--paper-alt);color:var(--text-muted);}
+  .cards-onglet.actif .cards-onglet-compte{background:rgba(255,255,255,0.22);color:var(--white);}
+  /* En thème sombre, --green s'éclaircit : du blanc dessus tombe à 2,55 de
+     contraste, et inverser le texte ne remonte qu'à 4,46. On garde donc le
+     blanc et on assombrit le fond ; la bordure vive détache l'onglet du
+     fond de carte. */
+  :root[data-theme="dark"] .cards-onglet.actif{background:var(--green-deep);border-color:var(--green);}
   .add-card-form{display:none;border:1.5px solid var(--line);border-radius:10px;padding:16px 18px;margin-top:14px;background:var(--paper);}
   .add-card-form.open{display:block;}
   .add-card-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
@@ -229,6 +245,21 @@
 
     <p class="section-label"><i class="ti ti-cards"></i> Toutes les cartes</p>
     <div class="cards-manage-card">
+      <div class="cards-onglets" role="tablist" aria-label="Filtrer les cartes">
+        <button type="button" class="cards-onglet actif" role="tab" aria-selected="true"
+          data-vue="toutes" onclick="changerVueCartes('toutes')">
+          Toutes <span class="cards-onglet-compte" id="compteToutes">0</span>
+        </button>
+        <button type="button" class="cards-onglet" role="tab" aria-selected="false"
+          data-vue="attribuees" onclick="changerVueCartes('attribuees')">
+          Attribuées <span class="cards-onglet-compte" id="compteAttribuees">0</span>
+        </button>
+        <button type="button" class="cards-onglet" role="tab" aria-selected="false"
+          data-vue="non-attribuees" onclick="changerVueCartes('non-attribuees')">
+          Non attribuées <span class="cards-onglet-compte" id="compteNonAttribuees">0</span>
+        </button>
+      </div>
+
       <div class="cards-toolbar">
         <input type="text" class="cards-filter" id="cardsFilter" placeholder="Filtrer par nom…" oninput="renderCardsTable()">
         <button class="btn-primary" id="addCardBtn" onclick="toggleAddCardForm()"><i class="ti ti-plus"></i> Ajouter une carte</button>
@@ -631,13 +662,55 @@
     return '<span class="status-badge confirmed">Confirmée</span>';
   }
 
+  // Vue courante des onglets : 'toutes', 'attribuees' ou 'non-attribuees'.
+  let vueCartes = 'toutes';
+
+  // Une carte est attribuée dès qu'elle porte un titulaire, que la
+  // réclamation soit confirmée ou encore en attente : dans les deux cas
+  // elle n'est plus disponible pour quelqu'un d'autre. Seul 'unclaimed'
+  // reste réellement libre - c'est déjà le critère qui décide d'afficher
+  // les boutons « Attribuer » et « Inviter ».
+  function estAttribuee(c) { return c.claim_status !== 'unclaimed'; }
+
+  function changerVueCartes(vue) {
+    vueCartes = vue;
+    document.querySelectorAll('.cards-onglet').forEach(b => {
+      const actif = b.dataset.vue === vue;
+      b.classList.toggle('actif', actif);
+      b.setAttribute('aria-selected', String(actif));
+    });
+    renderCardsTable();
+  }
+
+  function cartesDeLaVue() {
+    if (vueCartes === 'attribuees') return allCards.filter(estAttribuee);
+    if (vueCartes === 'non-attribuees') return allCards.filter(c => !estAttribuee(c));
+    return allCards;
+  }
+
+  // Les compteurs portent sur la totalité, jamais sur le résultat du
+  // filtre par nom : ils répondent à « combien reste-t-il à attribuer ? »,
+  // une question qui ne dépend pas de la recherche en cours.
+  function majComptesCartes() {
+    const attribuees = allCards.filter(estAttribuee).length;
+    document.getElementById('compteToutes').textContent = allCards.length;
+    document.getElementById('compteAttribuees').textContent = attribuees;
+    document.getElementById('compteNonAttribuees').textContent = allCards.length - attribuees;
+  }
+
   function renderCardsTable() {
     const q = document.getElementById('cardsFilter').value.trim().toLowerCase();
     const tbody = document.getElementById('allCardsTable');
-    const rows = q ? allCards.filter(c => c.full_name.toLowerCase().includes(q)) : allCards;
+    majComptesCartes();
+    const base = cartesDeLaVue();
+    const rows = q ? base.filter(c => c.full_name.toLowerCase().includes(q)) : base;
 
     if (rows.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucune carte pour cette recherche.</td></tr>';
+      const vide = {
+        attribuees: 'Aucune carte attribuée.',
+        'non-attribuees': 'Toutes les cartes sont attribuées.',
+      }[vueCartes] || 'Aucune carte enregistrée.';
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">${q ? 'Aucune carte pour cette recherche.' : vide}</td></tr>`;
       return;
     }
 
