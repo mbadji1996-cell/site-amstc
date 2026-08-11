@@ -290,9 +290,17 @@
   // Les leçons listées ici sont publiées par construction : la page
   // d'aperçu /c/<id>.html existe donc toujours.
   async function partagerLecon(id, bouton) {
+    const avant = bouton.innerHTML;
+    // Leçon publiée avant le passage horaire de génération : la page
+    // d'aperçu manque encore, le lien partagé n'aurait pas de titre.
+    if (!(await partageDisponible(partageAdresse('c', null, id)))) {
+      bouton.innerHTML = '<i class="ti ti-clock"></i>';
+      bouton.title = "L'aperçu de partage est en préparation : réessayez dans une heure.";
+      setTimeout(() => { bouton.innerHTML = avant; bouton.title = 'Partager cette leçon'; }, 5000);
+      return;
+    }
     const etat = await partagerFiche('c', id, 'Enseignement médical AMSTC');
     if (!etat || etat === 'annule' || etat === 'partage') return;
-    const avant = bouton.innerHTML;
     bouton.innerHTML = '<i class="ti ti-check"></i>';
     bouton.title = etat === 'copie' ? 'Lien copié' : etat;
     setTimeout(() => { bouton.innerHTML = avant; bouton.title = 'Partager cette leçon'; }, 2500);

@@ -11,10 +11,12 @@ on:
       - 'content/evenements/**.md'
       - 'scripts/build-pages-partage.js'
   # Les cours du Daara vivent dans Supabase, pas dans le dépôt : aucun push
-  # ne signale leur publication. Un passage quotidien leur crée donc leur
-  # page d'aperçu, et « Run workflow » permet de ne pas attendre.
+  # ne signale leur publication. Un passage HORAIRE leur crée leur page
+  # d'aperçu - quotidien, un cours publié le matin restait sans aperçu de
+  # partage jusqu'au lendemain, et les liens envoyés entre-temps
+  # n'affichaient aucun titre. « Run workflow » permet de ne pas attendre.
   schedule:
-    - cron: '17 4 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 permissions:

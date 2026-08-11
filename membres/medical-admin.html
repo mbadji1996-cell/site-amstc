@@ -330,9 +330,17 @@
   // exact sur WhatsApp. Elle n'existe que pour une leçon publiée - d'où
   // le bouton désactivé sur les brouillons.
   async function partagerLecon(id, bouton) {
+    const avant = bouton.innerHTML;
+    // Publiée à l'instant, la page d'aperçu n'existe pas encore (passage
+    // horaire) : partager maintenant enverrait un lien sans titre.
+    if (!(await partageDisponible(partageAdresse('c', null, id)))) {
+      bouton.innerHTML = '<i class="ti ti-clock"></i> Aperçu en préparation';
+      bouton.title = "La page d'aperçu de cette leçon n'est pas encore générée : réessayez dans une heure.";
+      setTimeout(() => { bouton.innerHTML = avant; bouton.title = ''; }, 5000);
+      return;
+    }
     const etat = await partagerFiche('c', id, 'Enseignement médical AMSTC');
     if (!etat || etat === 'annule' || etat === 'partage') return;
-    const avant = bouton.innerHTML;
     bouton.innerHTML = etat === 'copie'
       ? '<i class="ti ti-check"></i> Lien copié'
       : '<i class="ti ti-link"></i> ' + escHtml(etat);

@@ -27,6 +27,21 @@ function partageAdresse(prefixe, cle, valeurExplicite) {
 }
 
 /**
+ * La page d'aperçu existe-t-elle déjà ? Les fiches Supabase (cours,
+ * leçons) n'ont leur page /c/<id>.html qu'après le passage horaire de
+ * génération : partager avant, c'est envoyer un lien sans titre. En cas
+ * de doute (réseau, environnement de test), on ne bloque pas le partage.
+ */
+async function partageDisponible(adresse) {
+  try {
+    const r = await fetch(adresse, { method: 'HEAD', cache: 'no-store' });
+    return r.ok;
+  } catch (e) {
+    return true;
+  }
+}
+
+/**
  * Partage une adresse : menu natif du téléphone si disponible, sinon
  * copie dans le presse-papiers.
  * Renvoie 'partage', 'annule', 'copie', ou l'adresse elle-même quand ni
@@ -97,6 +112,13 @@ function partageInit(options) {
 
   bouton.addEventListener('click', async () => {
     const titre = document.title.replace(/\s*-\s*AMSTC.*$/, '').trim();
+    // Page d'aperçu pas encore générée : le dire vaut mieux que de
+    // laisser partir un lien dont l'aperçu n'affichera aucun titre.
+    if (!(await partageDisponible(adresse))) {
+      message.textContent = "L'aperçu de partage est en préparation : réessayez dans une heure.";
+      setTimeout(() => { message.textContent = ''; }, 6000);
+      return;
+    }
     const etat = await partagerAdresse(adresse, titre);
     // Partage natif abouti ou annulé par l'utilisateur : rien à dire.
     if (etat === 'partage' || etat === 'annule') return;
