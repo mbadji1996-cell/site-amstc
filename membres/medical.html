@@ -209,7 +209,21 @@
 
     document.getElementById('pageContent').style.display = '';
     render();
+    ouvrirSurLesQuiz();
   })();
+
+  // Le tableau de bord propose un raccourci « Quiz ». Il n'existe pas de
+  // page dédiée : les quiz vivent ici, par catégorie. Sans cela, le
+  // raccourci tomberait sur la catégorie par défaut, souvent sans quiz,
+  // et donc sur une section masquée.
+  function ouvrirSurLesQuiz() {
+    if (new URLSearchParams(location.search).get('vue') !== 'quiz') return;
+    const premiere = ['medecine','pharmacie','odonto','soins_infirmiers']
+      .find(c => allQuizzes.some(q => q.category === c));
+    if (!premiere) return;   // aucun quiz publié : on laisse la page telle quelle
+    setCategory(premiere);
+    document.getElementById('quizSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   function setCategory(cat) {
     currentCat = cat;

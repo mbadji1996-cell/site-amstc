@@ -186,16 +186,69 @@
       <p class="section-label"><i class="ti ti-layout-grid"></i> Vos espaces</p>
       <div class="espaces-grid">
 
-        <a class="espace-card" href="formations.html" data-espace="formations">
-          <div class="espace-icon"><i class="ti ti-certificate"></i></div>
+        <!-- En tête, toujours : c'est la raison première de venir ici. -->
+        <a class="espace-card" href="profil.html">
+          <div class="espace-icon"><i class="ti ti-id-badge"></i></div>
           <div class="espace-body">
-            <p class="espace-titre">Formations</p>
-            <p class="espace-sub">Cours, leçons et quiz réservés aux membres.</p>
+            <p class="espace-titre">Carte de membre et Cotisations</p>
+            <p class="espace-sub">Carte de membre, cotisations et informations.</p>
           </div>
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="actualites.html">
+        <!-- L'ancienne carte « Formations » menait à une page qui ne faisait
+             que réafficher ces quatre choix : un palier de plus pour rien.
+             Les destinations sont donc remontées ici. La page formations.html
+             reste en place, l'onglet du haut y conduit toujours. -->
+        <a class="espace-card" href="daara.html" data-espace="formations">
+          <div class="espace-icon"><i class="ti ti-book"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Espace Daara</p>
+            <p class="espace-sub">Cours en ligne Islam &amp; Tarikha.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="medical.html" data-espace="formations">
+          <div class="espace-icon"><i class="ti ti-stethoscope"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Enseignements Médicaux</p>
+            <p class="espace-sub">Médecine · Pharmacie · Odontologie · Soins infirmiers et obstétricales.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="formations-cms.html" data-espace="formations">
+          <div class="espace-icon"><i class="ti ti-notebook"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Autres formations</p>
+            <p class="espace-sub">Formations publiques et réservées publiées via le site.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <!-- Pas de page Quiz autonome : ils vivent dans les Enseignements
+             Médicaux, par catégorie. Le paramètre vue=quiz ouvre la première
+             catégorie qui en contient et fait défiler jusqu'à eux. -->
+        <a class="espace-card" href="medical.html?vue=quiz" data-espace="formations">
+          <div class="espace-icon"><i class="ti ti-rosette"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Quiz</p>
+            <p class="espace-sub">Évaluer ses connaissances après les leçons.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="bibliotheque.html" data-espace="bibliotheque">
+          <div class="espace-icon"><i class="ti ti-books"></i></div>
+          <div class="espace-body">
+            <p class="espace-titre">Bibliothèque</p>
+            <p class="espace-sub">Livres et documents à consulter en ligne.</p>
+          </div>
+          <i class="ti ti-arrow-right espace-fleche"></i>
+        </a>
+
+        <a class="espace-card" href="actualites.html" data-espace="realisations">
           <div class="espace-icon"><i class="ti ti-building-community"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Réalisations</p>
@@ -254,15 +307,6 @@
           <div class="espace-body">
             <p class="espace-titre">Médiathèque</p>
             <p class="espace-sub">Photos et vidéos des évènements.</p>
-          </div>
-          <i class="ti ti-arrow-right espace-fleche"></i>
-        </a>
-
-        <a class="espace-card" href="profil.html">
-          <div class="espace-icon"><i class="ti ti-id-badge"></i></div>
-          <div class="espace-body">
-            <p class="espace-titre">Carte de membre et Cotisations</p>
-            <p class="espace-sub">Carte de membre, cotisations et informations.</p>
           </div>
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
