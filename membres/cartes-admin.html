@@ -336,6 +336,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/garde-whatsapp.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   const currentYear = new Date().getFullYear();
@@ -835,6 +836,10 @@
     const carte = allCards.find(c => c.id === cardId) || {};
     const wa = lienWhatsAppCarte(carte.phone);
     if (!wa) { alert("Cette carte n'a pas de numéro de téléphone exploitable."); return; }
+
+    // Garde-fou anti-restriction, AVANT l'appel réseau : un refus ne doit
+    // pas laisser derrière lui un jeton d'invitation créé pour rien.
+    if (typeof gardeWhatsAppAutorise === 'function' && !gardeWhatsAppAutorise(carte.phone)) return;
 
     const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: cardId });
     if (error) {

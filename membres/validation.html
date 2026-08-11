@@ -246,6 +246,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/garde-whatsapp.js"></script>
 <!-- Export de la base des membres : tableur (SheetJS) et PDF (jsPDF + AutoTable). -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -839,6 +840,13 @@
     const prenom = (p.first_name || "").trim();
     const corps = (prenom ? "Bonjour " + prenom + ",\n\n" : "Bonjour,\n\n") + (t.corps || "");
 
+    // Garde-fou anti-restriction : au-delà du seuil quotidien, l'admin
+    // confirme. Refus = rien ne part, et le rappel n'est pas tracé.
+    if (typeof gardeWhatsAppAutorise === "function" && !gardeWhatsAppAutorise(p.phone)) {
+      msg.textContent = "Ouverture annulée.";
+      msg.className = "assign-msg";
+      return;
+    }
     // La fenêtre est ouverte AVANT l'appel de traçage : un window.open
     // déclenché après un await n'est plus rattaché au clic, et les
     // navigateurs mobiles le bloquent comme une fenêtre intempestive.
@@ -1088,6 +1096,8 @@
     const p = profilesById[memberId] || {};
     const wa = lienWhatsApp(p.phone);
     if (!wa) return;
+    // Garde-fou anti-restriction : confirmation au-delà du seuil quotidien.
+    if (typeof gardeWhatsAppAutorise === "function" && !gardeWhatsAppAutorise(p.phone)) return;
     const prenom = (p.first_name || String(p.full_name || "").trim().split(/\s+/)[0] || "").trim();
     window.open(wa + "?text=" + encodeURIComponent(composer(prenom)), "_blank", "noopener");
   }
