@@ -3,7 +3,8 @@
 // membres/validation.html (impression des cartes en lot). Un seul rendu,
 // sur canvas : bord dégradé or->vert, logo de l'association, pilule verte
 // CARTE DE MEMBRE, photo ronde cerclée (initiales en repli), QR code avec
-// le numéro dessous, champs Prénom / NOM / Filière / Tel / Validité.
+// le numéro dessous, champs Prénom / NOM / Filière / Localité / Tel /
+// Validité - la localité au format « Localité, Région ».
 //
 // Dépendances à charger par la page : qrcode.min.js (génération du QR) et
 // les polices Sora/Inter. Les pages appelantes vivent dans membres/, d'où
@@ -170,27 +171,44 @@ async function dessinerCarteMembre(p) {
   ctx.fillText(carteNumeroPour(p), qx + qc / 2, qy + qc + 36 * s);
   ctx.textAlign = 'left';
 
-  // Champs identité (5 lignes, validité incluse - conforme au template)
+  // Champs identité (6 lignes, validité incluse). La localité s'écrit
+  // « Localité, Région » - « Darou Salam, Thiès » ; sans région, la
+  // localité seule. L'interligne passe de 62 à 56 et le départ remonte :
+  // la sixième ligne doit rester dans le cadre (647 pt de haut).
   const validite = p.card_valid_until
     ? Math.min(anneeCourante, p.card_valid_until) + ' - ' + p.card_valid_until
     : '-';
+  const localite = [
+    String(p.city || '').trim(),
+    String(p.region || '').trim(),
+  ].filter(Boolean).join(', ') || '-';
   const champs = [
     ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-')],
     ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase()],
     ['Filière : ', carteFilierePour(p)],
+    ['Localité : ', localite],
     ['Tel : ', p.phone || '-'],
     ['Validité : ', validite],
   ];
   ctx.textAlign = 'left';
-  let y = 330 * s;
+  let y = 322 * s;
   for (const [label, valeur] of champs) {
     ctx.fillStyle = CARTE_MEMBRE.NOIR;
     ctx.font = '400 ' + (35 * s) + 'px Sora, Inter, sans-serif';
     ctx.fillText(label, 370 * s, y);
     const lw = ctx.measureText(label).width;
-    ctx.font = '800 ' + (37 * s) + 'px Sora, Inter, sans-serif';
+    // La valeur rétrécit jusqu'à tenir dans la carte : « Parcelles
+    // Assainies, Saint-Louis » déborderait du cadre à taille pleine.
+    // Aucun champ n'était protégé - une longue filière débordait déjà.
+    const maxLargeur = 960 * s - (370 * s + lw);
+    let taille = 37;
+    ctx.font = '800 ' + (taille * s) + 'px Sora, Inter, sans-serif';
+    while (taille > 22 && ctx.measureText(String(valeur)).width > maxLargeur) {
+      taille -= 1;
+      ctx.font = '800 ' + (taille * s) + 'px Sora, Inter, sans-serif';
+    }
     ctx.fillText(String(valeur), 370 * s + lw, y);
-    y += 62 * s;
+    y += 56 * s;
   }
 
   return canvas;

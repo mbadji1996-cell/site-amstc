@@ -195,8 +195,11 @@
     <label for="cSpecialty">Spécialité (facultatif)</label>
     <input type="text" id="cSpecialty" placeholder="Ex : Médecine générale, Officine, Étudiant…">
 
+    <label for="cRegion">Région *</label>
+    <select id="cRegion"></select>
+
     <label for="cCity">Localité *</label>
-    <input type="text" id="cCity" placeholder="Dakar, Thiès…" autocomplete="address-level2">
+    <input type="text" id="cCity" placeholder="Darou Salam, Ouakam, Ndiarème…" autocomplete="address-level2">
 
     <label for="cMemberSince">Année d'adhésion *</label>
     <select id="cMemberSince"></select>
@@ -278,8 +281,11 @@
         <input type="text" id="specialtyAutre" name="specialtyAutre">
       </div>
 
+      <label for="region">Région</label>
+      <select id="region" name="region"></select>
+
       <label for="city">Localité</label>
-      <input type="text" id="city" name="city" placeholder="Dakar, Thiès…" autocomplete="address-level2">
+      <input type="text" id="city" name="city" placeholder="Darou Salam, Ouakam, Ndiarème…" autocomplete="address-level2">
 
       <label for="memberSinceInput">Année d'adhésion</label>
       <select id="memberSinceInput" name="memberSinceInput"></select>
@@ -307,6 +313,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const form = document.getElementById("signupForm");
@@ -332,6 +339,10 @@
       sel.appendChild(opt);
     }
     sel.value = ANNEE_COURANTE;
+    // Les quatorze régions du formulaire d'inscription (liste partagée,
+    // assets/js/localites.js). Celui de l'écran de complétion est rempli
+    // au moment où le profil est chargé, avec sa valeur actuelle.
+    remplirSelectRegions(document.getElementById("region"));
   })();
 
   function ajusterAnneeAdhesion() {
@@ -580,6 +591,7 @@
     }
     document.getElementById("cDomainAutre").value = p.domain_autre || "";
     document.getElementById("cSpecialty").value = p.specialty || "";
+    remplirSelectRegions(document.getElementById("cRegion"), p.region || "");
     document.getElementById("cCity").value = p.city || "";
     if (p.photo_url) afficherPhoto(p.photo_url);
     sel.value = p.member_since || ANNEE_COURANTE;
@@ -605,6 +617,7 @@
       p_domain_autre: document.getElementById("cDomainAutre").value.trim() || null,
       p_specialty: document.getElementById("cSpecialty").value.trim() || null,
       p_city: document.getElementById("cCity").value.trim(),
+      p_region: document.getElementById("cRegion").value || null,
       p_member_since: parseInt(document.getElementById("cMemberSince").value, 10) || ANNEE_COURANTE,
       p_applicant_type: document.querySelector('input[name="cType"]:checked').value,
     };
@@ -618,6 +631,7 @@
       [champs.p_phone, "votre téléphone"],
       [champs.p_domain, "votre domaine"],
       [domaine === "autre" ? champs.p_domain_autre : "ok", "la précision de votre domaine"],
+      [champs.p_region, "votre région"],
       [champs.p_city, "votre localité"],
     ].find(([valeur]) => !valeur);
     if (manquant) {
@@ -659,7 +673,16 @@
       }
     }
 
-    const { error } = await supabaseClient.rpc("completer_mon_profil", champs);
+    let { error } = await supabaseClient.rpc("completer_mon_profil", champs);
+    // Base pas encore à jour (phase66 non exécutée) : la fonction à onze
+    // paramètres n'existe pas et l'appel échoue en PGRST202. On réessaie
+    // sans la région plutôt que de bloquer l'inscription du membre - la
+    // région sera resaisie depuis sa fiche profil.
+    if (error && error.code === "PGRST202" && "p_region" in champs) {
+      const sansRegion = Object.assign({}, champs);
+      delete sansRegion.p_region;
+      ({ error } = await supabaseClient.rpc("completer_mon_profil", sansRegion));
+    }
     if (error) {
       showMessage("Erreur : " + error.message, "error", msg);
       btn.disabled = false;
@@ -738,6 +761,7 @@
     }
 
     const city = document.getElementById("city").value.trim() || null;
+    const region = document.getElementById("region").value || null;
     const password = document.getElementById("password").value;
 
     const { error } = await supabaseClient.auth.signUp({
@@ -745,7 +769,7 @@
       password,
       options: { data: {
         full_name: fullName, phone, title, first_name: firstName || null, last_name: lastName || null,
-        domain, domain_autre: domainAutre, specialty, city,
+        domain, domain_autre: domainAutre, specialty, city, region,
         applicant_type: applicantType || "membre_existant",
         // Année du numéro de carte ; verrouillée à l'année en cours pour un
         // nouvel adhérent (voir ajusterAnneeAdhesion).

@@ -13,6 +13,30 @@
  *   localiteLibelle(s) - graphie à afficher.
  */
 
+// Les quatorze régions administratives du Sénégal. Liste UNIQUE du site :
+// les formulaires la déroulent, et elle doit rester identique à la
+// contrainte SQL profiles_region_check (phase66).
+var REGIONS_SENEGAL = [
+  'Dakar', 'Diourbel', 'Fatick', 'Kaffrine', 'Kaolack', 'Kédougou',
+  'Kolda', 'Louga', 'Matam', 'Saint-Louis', 'Sédhiou', 'Tambacounda',
+  'Thiès', 'Ziguinchor'
+];
+
+/**
+ * Remplit un <select> avec les quatorze régions, précédées d'une option
+ * vide. Conserve la valeur actuelle si elle est connue.
+ */
+function remplirSelectRegions(select, valeurActuelle) {
+  if (!select) return;
+  select.innerHTML = '<option value="">- Choisir -</option>'
+    + REGIONS_SENEGAL.map(function (r) {
+        return '<option value="' + r + '">' + r + '</option>';
+      }).join('');
+  if (valeurActuelle && REGIONS_SENEGAL.indexOf(valeurActuelle) !== -1) {
+    select.value = valeurActuelle;
+  }
+}
+
 // Graphies officielles des localités sénégalaises les plus courantes,
 // indexées par leur clé. Sans cette table, la variante affichée serait la
 // plus fréquente - « Thies » l'emporterait sur « Thiès » par 9 contre 5,

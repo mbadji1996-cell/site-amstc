@@ -273,7 +273,8 @@
             <select id="eMemberSince"></select>
             <p class="field-hint" id="memberSinceHint">Elle détermine votre numéro de carte : la modifier renumérote votre carte de membre.</p>
           </div>
-          <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Dakar, Thiès…"></div>
+          <div class="form-group"><label>Région</label><select id="eRegion"></select></div>
+          <div class="form-group"><label>Localité</label><input id="eCity" type="text" placeholder="Darou Salam, Ouakam, Ndiarème…"></div>
         </div>
         <div class="success-flash" id="infoSuccessFlash"><i class="ti ti-circle-check"></i> Enregistré</div>
         <div class="form-msg" id="editMsg"></div>
@@ -423,6 +424,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/paiements.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
@@ -596,6 +598,7 @@
     document.getElementById('eDomain').value = p.domain || '';
     document.getElementById('eDomainAutre').value = p.domain_autre || '';
     document.getElementById('eMemberSince').value = p.member_since || currentYear;
+    remplirSelectRegions(document.getElementById('eRegion'), p.region || '');
     document.getElementById('eCity').value = p.city || '';
     document.getElementById('domainAutreGroup').style.display = p.domain === 'autre' ? '' : 'none';
 
@@ -826,6 +829,7 @@
       domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
       specialty,
       city: document.getElementById('eCity').value.trim() || null,
+      region: document.getElementById('eRegion').value || null,
     };
 
     // Tout ce qui figure sur la carte de membre est exigé, photo comprise :
@@ -839,6 +843,7 @@
       [payload.phone, 'votre téléphone (WhatsApp)'],
       [payload.domain, 'votre domaine'],
       [domain === 'autre' ? payload.domain_autre : 'ok', 'la précision de votre domaine'],
+      [payload.region, 'votre région'],
       [payload.city, 'votre localité'],
       [(pendingPhotoBlob || String(currentProfile.photo_url || '').trim()) ? 'ok' : '', "votre photo d'identité"],
     ].find(([valeur]) => !valeur);
@@ -868,7 +873,15 @@
     const anneeChoisie = parseInt(document.getElementById('eMemberSince').value) || currentYear;
     const anneeActuelle = currentProfile.member_since || currentYear;
 
-    const { data, error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id).select();
+    let { data, error } = await supabaseClient.from('profiles').update(payload).eq('id', currentProfile.id).select();
+    // Base pas encore à jour (phase66 non exécutée) : la colonne region
+    // n'existe pas et TOUTE la sauvegarde échouerait. On réessaie sans
+    // elle plutôt que de bloquer la fiche entière du membre.
+    if (error && 'region' in payload && /region/i.test(error.message || '')) {
+      const sansRegion = Object.assign({}, payload);
+      delete sansRegion.region;
+      ({ data, error } = await supabaseClient.from('profiles').update(sansRegion).eq('id', currentProfile.id).select());
+    }
     if (error) {
       saveBtn.disabled = false;
       msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error';
