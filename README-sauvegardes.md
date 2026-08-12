@@ -43,7 +43,7 @@ Sur le VPS, connecté en SSH :
 curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/sauvegarde-vps.sh -o /root/sauvegarde-amstc.sh && chmod +x /root/sauvegarde-amstc.sh && wc -l /root/sauvegarde-amstc.sh
 ```
 
-Le compte doit afficher **215** lignes.
+Le compte doit afficher **222** lignes.
 
 ## 2. Vérifier à blanc (aucun fichier écrit)
 

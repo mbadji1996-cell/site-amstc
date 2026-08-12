@@ -80,11 +80,18 @@ utilisateur_de() {
 
 # Nom court et lisible pour le fichier produit : l'identifiant Coolify
 # seul ne dit rien de ce que l'archive contient.
+#
+# Le suffixe numérique des conteneurs Coolify (db-<uuid>-<numéro>) est
+# RETIRÉ : il change à chaque redéploiement, et le garder ferait
+# apparaître une nouvelle lignée de fichiers à chaque mise en ligne -
+# celui qui restaure verrait plusieurs séries sans savoir laquelle suit
+# l'autre.
 etiquette_de() {
+  local n
   case "$1" in
     coolify-db) echo "coolify-config" ;;
     supabase-db-*) echo "supabase-${1#supabase-db-}" ;;
-    db-*) echo "app-${1#db-}" ;;
+    db-*) n="${1#db-}"; echo "app-${n%-*}" ;;
     *) echo "$1" ;;
   esac
 }
