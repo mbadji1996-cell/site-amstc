@@ -851,7 +851,7 @@
 
       return `<tr>
         <td class="td-main">
-          <p class="card-name">${escHtml(c.full_name)}</p>
+          <p class="card-name">${escHtml([c.title, c.full_name].filter(Boolean).join(' '))}</p>
           <p class="card-meta">${escHtml(meta || '-')}</p>
           ${yearFlag}
           ${nomDiscordant(c) ? `<p class="card-flag-name">Nom différent de la fiche du membre :

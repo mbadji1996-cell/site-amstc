@@ -103,6 +103,7 @@
 <footer><a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -138,13 +139,20 @@
 
     // Le nom et l'année d'adhésion viennent de la carte : le membre n'a
     // pas à les ressaisir, et ne peut pas les contredire.
-    const morceaux = String(carte.full_name || "").trim().split(/\s+/);
+    //
+    // Le découpage suit les capitales du nom de famille. La règle
+    // précédente - premier mot = prénom, tout le reste = nom - fabriquait
+    // de fausses identités : « Abdoulaye Amadou NDIAYE » créait un compte
+    // au prénom « Abdoulaye » et au nom « Amadou Ndiaye », et c'est ce
+    // nom-là qui partait à l'impression.
+    const decoupe = decouperNomComplet(carte.full_name);
     const { error: errSignUp } = await supabaseClient.auth.signUp({
       email, password: mdp,
       options: { data: {
-        full_name: carte.full_name,
-        first_name: morceaux[0] || null,
-        last_name: morceaux.slice(1).join(" ") || null,
+        full_name: [decoupe.prenom, decoupe.nom].filter(Boolean).join(" ") || carte.full_name,
+        title: carte.title || decoupe.titre || null,
+        first_name: decoupe.prenom || null,
+        last_name: decoupe.nom || null,
         city: carte.city || null,
         member_since: carte.member_since || null,
         applicant_type: "membre_existant",
@@ -203,7 +211,10 @@
     carte = Array.isArray(data) ? data[0] : data;
     if (!carte) { montrerErreur("Cette invitation ne correspond à aucune carte."); return; }
 
-    document.getElementById("cNom").textContent = carte.full_name || "-";
+    // Le titre est stocké à part : sans lui, « Dr Becaye SALL » s'afficherait
+    // « Becaye SALL » sur l'invitation.
+    document.getElementById("cNom").textContent =
+      [carte.title, carte.full_name].filter(Boolean).join(" ") || "-";
     document.getElementById("cDetail").textContent =
       [carte.card_number, carte.member_since ? "Membre depuis " + carte.member_since : null, carte.city]
         .filter(Boolean).join(" · ");

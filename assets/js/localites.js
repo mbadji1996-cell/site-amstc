@@ -66,6 +66,50 @@ function nomCompletNormalise(prenom, nom) {
   return [normaliserPrenom(prenom), normaliserNom(nom)].filter(Boolean).join(' ');
 }
 
+// Un mot est-il écrit tout en capitales ? Sert à repérer le nom de
+// famille dans un nom complet. « Taïb » n'en est pas un, « SALL » oui.
+function motEnCapitales(mot) {
+  return /[a-zA-ZÀ-ÿ]/.test(mot) && mot === mot.toUpperCase();
+}
+
+/**
+ * Découpe un nom complet en { titre, prenom, nom }.
+ *
+ * POURQUOI. Les cartes portent le nom en un seul morceau, et la règle
+ * appliquée jusqu'ici - premier mot = prénom, tout le reste = nom -
+ * fabriquait de fausses identités : « Abdoulaye Amadou NDIAYE » donnait
+ * le prénom « Abdoulaye » et le nom « Amadou Ndiaye ».
+ *
+ * LA RÈGLE. Le nom de famille est écrit en capitales : on prend donc les
+ * derniers mots tout en capitales. Quand la carte n'en porte aucune -
+ * « Cheikh Tidiane Diop » -, le dernier mot fait office de nom, ce qui
+ * est la convention usuelle. Un « Dr » ou « Pr » de tête devient le
+ * titre au lieu d'être pris pour un prénom.
+ */
+function decouperNomComplet(valeur) {
+  var mots = String(valeur == null ? '' : valeur).trim().split(/\s+/).filter(Boolean);
+  var titre = null;
+
+  if (mots.length && /^(dr|pr)\.?$/i.test(mots[0])) {
+    titre = mots[0].replace('.', '').charAt(0).toUpperCase()
+          + mots[0].replace('.', '').slice(1).toLowerCase();
+    mots = mots.slice(1);
+  }
+  if (!mots.length) return { titre: titre, prenom: '', nom: '' };
+  if (mots.length === 1) return { titre: titre, prenom: '', nom: normaliserNom(mots[0]) };
+
+  var i = mots.length;
+  while (i - 1 >= 1 && motEnCapitales(mots[i - 1])) i--;
+  // Aucun mot en capitales : le dernier fait office de nom de famille.
+  if (i === mots.length) i = mots.length - 1;
+
+  return {
+    titre: titre,
+    prenom: normaliserPrenom(mots.slice(0, i).join(' ')),
+    nom: normaliserNom(mots.slice(i).join(' ')),
+  };
+}
+
 /**
  * Branche la normalisation sur un champ de saisie : elle s'applique quand
  * le champ est quitté, pour que la personne VOIE la correction plutôt que
