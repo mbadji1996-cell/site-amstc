@@ -270,7 +270,8 @@
           <input type="text" id="newCardName" placeholder="Nom complet">
           <input type="text" id="newCardPhone" placeholder="Téléphone">
           <input type="number" id="newCardSince" placeholder="Année d'adhésion">
-          <input type="text" id="newCardCity" placeholder="Ville">
+          <input type="text" id="newCardCity" placeholder="Localité">
+          <select id="newCardRegion" title="Région"></select>
           <button class="btn btn-confirm" onclick="submitAddCard()"><i class="ti ti-check"></i> Créer</button>
           <button class="btn btn-reject" onclick="toggleAddCardForm()">Annuler</button>
         </div>
@@ -293,8 +294,10 @@
     <div class="import-card">
       <p class="import-hint">
         Colonnes attendues (l'ordre des colonnes n'importe pas, seuls les intitulés comptent) :<br>
-        <code>Prénom · Nom · Filière · Téléphone · Localité · Validité</code><br>
+        <code>Prénom · Nom · Filière · Téléphone · Localité · Région · Validité</code><br>
         "Validité" au format <code>AAAA - AAAA</code> (année d'adhésion - année de fin de validité).
+        "Région" est facultative : une des 14 régions du Sénégal, avec ou sans accent. Absente ou
+        non reconnue, elle est déduite de la localité quand c'est possible, et l'aperçu le signale.
         Un titre écrit au début du prénom est détecté automatiquement : "Dr" et "Pr" sont conservés,
         les civilités "M.", "Mme" et "Me" sont simplement retirées du prénom.
       </p>
@@ -306,7 +309,7 @@
         <div class="preview-summary" id="excelSummary"></div>
         <div class="preview-table-wrap">
           <table>
-            <thead><tr><th>Nom</th><th>Téléphone</th><th>Domaine</th><th>Validité</th><th>Ville</th><th></th></tr></thead>
+            <thead><tr><th>Nom</th><th>Téléphone</th><th>Domaine</th><th>Validité</th><th>Localité</th><th>Région</th><th></th></tr></thead>
             <tbody id="excelPreviewTable"></tbody>
           </table>
         </div>
@@ -335,6 +338,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/garde-whatsapp.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -439,6 +443,7 @@
       filiere: findCol('filiere'),
       telephone: findCol('telephone'),
       localite: findCol('localite'),
+      region: findCol('region'),
       validite: findCol('validite'),
     };
 
@@ -450,6 +455,7 @@
         const filiereRaw = cols.filiere !== -1 ? r[cols.filiere] : '';
         const phone = cols.telephone !== -1 ? String(r[cols.telephone] || '').trim() : '';
         const city = cols.localite !== -1 ? String(r[cols.localite] || '').trim() : '';
+        const regionRaw = cols.region !== -1 ? String(r[cols.region] || '').trim() : '';
         const validite = cols.validite !== -1 ? r[cols.validite] : '';
 
         const { title, prenom } = extractTitle(prenomRaw);
@@ -457,9 +463,18 @@
         const { memberSince, expiryHint } = parseValidite(validite);
         const full_name = [title, prenom, nom].filter(Boolean).join(' ');
 
+        // La colonne Région est facultative : à défaut, la localité suffit
+        // souvent à la désigner (« Ouakam » vaut Dakar). Une saisie non
+        // reconnue devient vide plutôt qu'une région inventée - et
+        // « regionDouteuse » la signale dans l'aperçu, sans quoi la
+        // correction serait silencieuse.
+        const region = regionNormalisee(regionRaw) || regionNormalisee(city);
+        const regionDouteuse = !!regionRaw && !regionNormalisee(regionRaw);
+
         const skip = !phone || !nom;
         return {
           full_name, phone: phone || null, city: city || null,
+          region, region_raw: regionRaw, regionDouteuse,
           title, domain: filiere.domain, domain_autre: filiere.domain_autre || null,
           specialty: filiere.specialty || null,
           member_since: memberSince, expiry_hint: expiryHint,
@@ -479,12 +494,14 @@
     const valid = excelRows.filter(r => !r.skip);
     const skipped = excelRows.filter(r => r.skip);
     const flagged = excelRows.filter(r => r.flagged && !r.skip);
+    const douteuses = excelRows.filter(r => r.regionDouteuse && !r.skip);
 
     document.getElementById('excelSummary').innerHTML = `
       <span class="preview-stat"><strong>${excelRows.length}</strong> lignes détectées</span>
       <span class="preview-stat"><strong>${valid.length}</strong> importables</span>
       <span class="preview-stat"><strong>${skipped.length}</strong> ignorées (nom ou téléphone manquant)</span>
       <span class="preview-stat"><strong>${flagged.length}</strong> domaine non reconnu (à vérifier)</span>
+      ${douteuses.length ? `<span class="preview-stat"><strong>${douteuses.length}</strong> région non reconnue</span>` : ''}
     `;
 
     document.getElementById('excelPreviewTable').innerHTML = excelRows.map(r => {
@@ -498,6 +515,10 @@
         <td>${escHtml(domainText)}</td>
         <td>${escHtml(validText || '-')}</td>
         <td>${escHtml(r.city || '-')}</td>
+        <td>${r.regionDouteuse
+              ? `<span class="flag-tag" title="Non reconnue">${escHtml(r.region_raw)}</span>`
+                + (r.region ? ' &rarr; ' + escHtml(r.region) : '')
+              : escHtml(r.region || '-')}</td>
         <td>${tag}</td>
       </tr>`;
     }).join('');
@@ -525,14 +546,21 @@
       if (!(year in seqByYear)) seqByYear[year] = await nextCardSeq(year);
       const seq = seqByYear[year]++;
       rows.push({
-        full_name: r.full_name, phone: r.phone, city: r.city,
+        full_name: r.full_name, phone: r.phone, city: r.city, region: r.region,
         title: r.title, domain: r.domain, domain_autre: r.domain_autre, specialty: r.specialty,
         member_since: r.member_since, expiry_hint: r.expiry_hint,
         card_number: `AMSTC-${year}-${String(seq).padStart(3, '0')}`,
       });
     }
 
-    const { error } = await supabaseClient.from('member_cards').insert(rows);
+    // Base pas encore à jour (phase68 non exécutée) : la colonne region
+    // n'existe pas et TOUT l'import échouerait. On réessaie sans elle -
+    // perdre la région est moins grave que perdre l'import entier.
+    let { error } = await supabaseClient.from('member_cards').insert(rows);
+    if (error && /region/i.test(error.message || '')) {
+      const sansRegion = rows.map(x => { const c = Object.assign({}, x); delete c.region; return c; });
+      ({ error } = await supabaseClient.from('member_cards').insert(sansRegion));
+    }
     btn.disabled = false;
 
     if (error) {
@@ -646,7 +674,7 @@
     const [cardsRes, membersRes, yearReqRes] = await Promise.all([
       supabaseClient
         .from('member_cards')
-        .select('id, full_name, phone, city, member_since, card_number, claim_status, claimed_by, profiles:claimed_by(full_name, email)')
+        .select('id, full_name, phone, city, region, member_since, card_number, claim_status, claimed_by, profiles:claimed_by(full_name, email)')
         .order('full_name'),
       supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
       supabaseClient.rpc('member_since_requests_pending'),
@@ -760,7 +788,8 @@
                   <input type="text" id="editPhone-${c.id}" value="${escHtml(c.phone || '')}" placeholder="Téléphone">
                   <input type="text" id="editNumber-${c.id}" value="${escHtml(c.card_number || '')}" placeholder="N° de carte">
                   <input type="number" id="editSince-${c.id}" value="${c.member_since || ''}" placeholder="Depuis" title="Année d'adhésion">
-                  <input type="text" id="editCity-${c.id}" value="${escHtml(c.city || '')}" placeholder="Ville">
+                  <input type="text" id="editCity-${c.id}" value="${escHtml(c.city || '')}" placeholder="Localité">
+                  <select id="editRegion-${c.id}" title="Région"></select>
                   <button class="btn btn-confirm" onclick="saveCardEdit('${c.id}')"><i class="ti ti-check"></i> Enregistrer</button>
                   <button class="btn btn-reject" onclick="toggleEditRow('${c.id}')">Annuler</button>
                 </div>
@@ -817,6 +846,15 @@
         <td class="td-act-cell"><div class="td-actions">${actions}</div></td>
       </tr>${expandRow}`;
     }).join('');
+
+    // Les listes de régions se remplissent APRÈS l'écriture du tableau :
+    // les <select> n'existent pas avant, et un innerHTML posé dans la
+    // chaîne ci-dessus serait effacé à chaque réaffichage.
+    if (expandedEditId) {
+      const carte = allCards.find(c => c.id === expandedEditId);
+      remplirSelectRegions(document.getElementById('editRegion-' + expandedEditId),
+                           carte ? (carte.region || '') : '');
+    }
   }
 
   // ===== Inviter le porteur d'une carte (phase59) =====
@@ -906,6 +944,24 @@
       return;
     }
 
+    // La région part par une écriture directe, autorisée aux admins par
+    // la politique RLS des cartes. Elle n'est pas passée à
+    // update_member_card : cette fonction porte la renumérotation
+    // automatique (phase44), et lui ajouter un paramètre obligerait à
+    // reproduire tout son corps - un risque sans rapport avec la région.
+    const selRegion = document.getElementById('editRegion-' + id);
+    if (selRegion) {
+      const { error: errRegion } = await supabaseClient.from('member_cards')
+        .update({ region: selRegion.value || null }).eq('id', id);
+      // Colonne absente (phase68 non exécutée) : le reste est déjà
+      // enregistré, on ne transforme pas cela en échec.
+      if (errRegion && !/region/i.test(errRegion.message || '')) {
+        msg.textContent = 'Erreur : ' + errRegion.message;
+        msg.className = 'assign-msg error';
+        return;
+      }
+    }
+
     if (nouveauNumero) {
       // Le numéro a changé sans que l'admin l'ait saisi : le lui dire avant
       // de replier la ligne, sinon la modification passe inaperçue.
@@ -954,8 +1010,11 @@
   function toggleAddCardForm() {
     const form = document.getElementById('addCardForm');
     form.classList.toggle('open');
-    if (!form.classList.contains('open')) {
-      ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity'].forEach(id => document.getElementById(id).value = '');
+    if (form.classList.contains('open')) {
+      remplirSelectRegions(document.getElementById('newCardRegion'));
+    } else {
+      ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity', 'newCardRegion']
+        .forEach(id => document.getElementById(id).value = '');
       document.getElementById('addCardMsg').textContent = '';
       document.getElementById('addCardMsg').className = 'assign-msg';
     }
@@ -966,6 +1025,7 @@
     const phone = document.getElementById('newCardPhone').value.trim();
     const memberSinceRaw = document.getElementById('newCardSince').value;
     const city = document.getElementById('newCardCity').value.trim();
+    const region = document.getElementById('newCardRegion').value || null;
     const msg = document.getElementById('addCardMsg');
 
     if (!full_name || !phone) {
@@ -978,9 +1038,16 @@
     const year = member_since || currentYear;
     const card_number = `AMSTC-${year}-${String(await nextCardSeq(year)).padStart(3, '0')}`;
 
-    const { error } = await supabaseClient.from('member_cards').insert({
-      full_name, phone, member_since, city: city || null, card_number,
+    // Voir l'import Excel : sans la colonne (phase68 non exécutée), la
+    // création échouerait entièrement. On réessaie sans la région.
+    let { error } = await supabaseClient.from('member_cards').insert({
+      full_name, phone, member_since, city: city || null, region, card_number,
     });
+    if (error && /region/i.test(error.message || '')) {
+      ({ error } = await supabaseClient.from('member_cards').insert({
+        full_name, phone, member_since, city: city || null, card_number,
+      }));
+    }
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;

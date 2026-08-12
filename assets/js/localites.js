@@ -116,6 +116,27 @@ var LOCALITE_VERS_REGION = {
 };
 
 /**
+ * Ramène une saisie libre à l'une des quatorze régions, ou null.
+ *
+ * Sert aux imports, où la valeur vient d'un tableur rempli à la main :
+ * « thies », « THIÈS » et « Thies  » désignent tous la région de Thiès.
+ * Une localité connue est acceptée aussi - « Ouakam » dans une colonne
+ * Région désigne sans ambiguïté la région de Dakar, et refuser la ligne
+ * pour cette raison ferait perdre une donnée juste.
+ *
+ * Renvoie null sur ce qui n'est pas reconnaissable : mieux vaut une
+ * région vide qu'une région inventée.
+ */
+function regionNormalisee(valeur) {
+  var cle = localiteCle(valeur);
+  if (!cle) return null;
+  for (var i = 0; i < REGIONS_SENEGAL.length; i++) {
+    if (localiteCle(REGIONS_SENEGAL[i]) === cle) return REGIONS_SENEGAL[i];
+  }
+  return LOCALITE_VERS_REGION[cle] || null;
+}
+
+/**
  * Région d'un profil : celle qu'il a saisie, sinon celle déduite de sa
  * localité, sinon rien. Renvoie null plutôt qu'une valeur inventée.
  */
