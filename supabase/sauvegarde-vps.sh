@@ -2,13 +2,23 @@
 # ============================================================
 # AMSTC - Sauvegarde quotidienne du VPS
 #
-# Sauvegarde les DEUX instances Supabase auto-hébergées (amstc et
-# consultations) : bases de données complètes + fichiers du Storage
-# (photos des membres, pièces jointes).
+# Sauvegarde TOUTES les bases Postgres du serveur, pas seulement celles
+# de l'AMSTC :
+#   - supabase-db-*   les deux instances Supabase (amstc, consultations)
+#   - db-*            les bases des autres applications déployées par
+#                     Coolify (sontencare.com et suivantes)
+#   - coolify-db      la configuration de Coolify elle-même - elle
+#                     contient les VARIABLES D'ENVIRONNEMENT de tous les
+#                     services, qui n'existent nulle part ailleurs : sans
+#                     elle, il faudrait tout reconfigurer à la main.
+#
+# Plus les fichiers du Storage Supabase (photos des membres, pièces
+# jointes).
 #
 # Les conteneurs sont DÉCOUVERTS automatiquement : aucun identifiant
 # n'est écrit en dur, la sauvegarde continue donc de fonctionner si
-# Coolify recrée un service avec un nouvel identifiant.
+# Coolify recrée un service avec un nouvel identifiant, et une nouvelle
+# application déployée est prise en compte sans rien modifier ici.
 #
 # Installation : voir README-sauvegardes.md
 # Vérification à blanc : bash sauvegarde-vps.sh --test
@@ -39,11 +49,12 @@ fi
 
 dire "=== Sauvegarde AMSTC ($([ "$MODE_TEST" -eq 1 ] && echo 'MODE TEST' || echo 'réelle')) ==="
 
-CONTENEURS_DB=$(docker ps --format '{{.Names}}' | grep '^supabase-db-' || true)
+CONTENEURS_DB=$(docker ps --format '{{.Names}}' \
+  | grep -E '^(supabase-db-|db-|coolify-db$)' || true)
 CONTENEURS_ST=$(docker ps --format '{{.Names}}' | grep '^supabase-storage-' || true)
 
 if [ -z "$CONTENEURS_DB" ]; then
-  dire "ERREUR : aucun conteneur supabase-db-* en cours d'exécution."
+  dire "ERREUR : aucun conteneur de base de données trouvé."
   dire "Conteneurs visibles :"
   docker ps --format '  {{.Names}}'
   exit 1
@@ -51,6 +62,32 @@ fi
 
 dire "Bases trouvées   : $(echo "$CONTENEURS_DB" | tr '\n' ' ')"
 dire "Storage trouvés  : $(echo "$CONTENEURS_ST" | tr '\n' ' ')"
+
+# Identifiant de connexion propre à chaque conteneur.
+#
+# Supabase impose supabase_admin : son POSTGRES_USER vaut « postgres »,
+# un rôle qui n'a pas les droits suffisants pour un pg_dumpall complet.
+# Les autres conteneurs annoncent leur utilisateur dans POSTGRES_USER
+# (« coolify » pour coolify-db, souvent « postgres » ailleurs) : le lire
+# évite d'écrire en dur un identifiant qui changerait au prochain
+# déploiement.
+utilisateur_de() {
+  case "$1" in
+    supabase-db-*) echo "supabase_admin" ;;
+    *) docker exec "$1" printenv POSTGRES_USER 2>/dev/null || echo "postgres" ;;
+  esac
+}
+
+# Nom court et lisible pour le fichier produit : l'identifiant Coolify
+# seul ne dit rien de ce que l'archive contient.
+etiquette_de() {
+  case "$1" in
+    coolify-db) echo "coolify-config" ;;
+    supabase-db-*) echo "supabase-${1#supabase-db-}" ;;
+    db-*) echo "app-${1#db-}" ;;
+    *) echo "$1" ;;
+  esac
+}
 
 if [ "$MODE_TEST" -eq 1 ]; then
   dire "--- Vérification des accès (aucun fichier écrit) ---"
@@ -60,10 +97,14 @@ if [ "$MODE_TEST" -eq 1 ]; then
       dire "  $C : ECHEC - POSTGRES_PASSWORD introuvable dans le conteneur"
       continue
     fi
+    U=$(utilisateur_de "$C")
+    # La taille du CLUSTER, pas d'une base nommée : chaque application a
+    # la sienne (« plateforme_sanitaire », « coolify »…), et interroger
+    # « postgres » en dur afficherait 8 Mo pour une base pleine.
     TAILLE=$(docker exec -e PGPASSWORD="$PW" "$C" \
-      psql -U supabase_admin -h 127.0.0.1 -d postgres -tAc \
-      "select pg_size_pretty(pg_database_size('postgres'))" 2>/dev/null || echo "ECHEC")
-    dire "  $C : base postgres = $TAILLE"
+      psql -U "$U" -h 127.0.0.1 -d postgres -tAc \
+      "select pg_size_pretty(sum(pg_database_size(datname))) from pg_database" 2>/dev/null || echo "ECHEC")
+    dire "  $C : utilisateur $U, total des bases = ${TAILLE:-ECHEC}  -> $(etiquette_de "$C")"
   done
   for C in $CONTENEURS_ST; do
     N=$(docker exec "$C" sh -c 'find /var/lib/storage -type f 2>/dev/null | wc -l' || echo "ECHEC")
@@ -78,8 +119,7 @@ ECHECS=0
 
 # ---------- Bases de données ----------
 for C in $CONTENEURS_DB; do
-  UUID=${C#supabase-db-}
-  FICHIER="${DEST}/${DATE}_${UUID}_base.sql.gz"
+  FICHIER="${DEST}/${DATE}_$(etiquette_de "$C")_base.sql.gz"
   dire "Dump de $C ..."
 
   PW=$(docker exec "$C" printenv POSTGRES_PASSWORD 2>/dev/null || true)
@@ -88,10 +128,11 @@ for C in $CONTENEURS_DB; do
     ECHECS=$((ECHECS + 1))
     continue
   fi
+  U=$(utilisateur_de "$C")
 
   # pg_dumpall : rôles et bases comprises, pour une restauration complète.
   if docker exec -e PGPASSWORD="$PW" "$C" \
-       pg_dumpall -U supabase_admin -h 127.0.0.1 2>/dev/null | gzip > "$FICHIER"; then
+       pg_dumpall -U "$U" -h 127.0.0.1 2>/dev/null | gzip > "$FICHIER"; then
     # Un dump interrompu produit un fichier tronqué mais un code de retour 0
     # côté gzip : on vérifie donc que l'archive se relit et se termine bien.
     if gzip -t "$FICHIER" 2>/dev/null && zcat "$FICHIER" | tail -5 | grep -q "PostgreSQL database cluster dump complete"; then
@@ -111,10 +152,14 @@ done
 # ---------- Fichiers du Storage (photos des membres) ----------
 for C in $CONTENEURS_ST; do
   UUID=${C#supabase-storage-}
-  FICHIER="${DEST}/${DATE}_${UUID}_fichiers.tar.gz"
+  FICHIER="${DEST}/${DATE}_supabase-${UUID}_fichiers.tar.gz"
   dire "Archive des fichiers de $C ..."
-  if docker exec "$C" tar czf - -C /var/lib/storage . > "$FICHIER" 2>/dev/null && gzip -t "$FICHIER" 2>/dev/null; then
-    dire "  OK : $(du -h "$FICHIER" | cut -f1)"
+  # Une archive vide se relit parfaitement : sans ce compte, un Storage
+  # devenu illisible passerait pour sauvegardé.
+  N=$(docker exec "$C" sh -c 'find /var/lib/storage -type f 2>/dev/null | wc -l' 2>/dev/null || echo 0)
+  if docker exec "$C" tar czf - -C /var/lib/storage . > "$FICHIER" 2>/dev/null \
+     && gzip -t "$FICHIER" 2>/dev/null && [ "${N:-0}" -gt 0 ]; then
+    dire "  OK : $(du -h "$FICHIER" | cut -f1) ($N fichiers)"
   else
     dire "  ECHEC : archive des fichiers illisible, supprimée"
     rm -f "$FICHIER"

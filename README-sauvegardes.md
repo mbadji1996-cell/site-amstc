@@ -1,21 +1,37 @@
 # Sauvegardes du VPS
 
-Le VPS Hetzner héberge **les deux instances Supabase** (`api.amstc.org` et
-`api.consultations-amstc.org`). Sans sauvegarde hors du serveur, une panne
-matérielle ou une erreur de manipulation fait perdre définitivement les
-comptes membres, les paiements, les cartes, les photos et toutes les
-consultations. C'est le seul risque vraiment irréversible du système.
+Le VPS Hetzner n'héberge pas que l'AMSTC. On y trouve **quatre bases de
+données** :
 
-Le script `supabase/sauvegarde-vps.sh` traite les deux instances d'un coup :
+| Conteneur | Ce qu'il contient |
+|---|---|
+| `supabase-db-rffqs8ck…` | Espace membres : comptes, cartes, paiements, cotisations |
+| `supabase-db-qmy744bq…` | Consultations : données de patients |
+| `db-sil739opnq…` | `sontencare.com` (base `plateforme_sanitaire`) |
+| `coolify-db` | Configuration de Coolify, **et les variables d'environnement de tous les services** |
+
+Ce dernier point est facile à sous-estimer : les variables d'environnement
+ne vivent que dans la base de Coolify, jamais dans les fichiers `.env` du
+disque. La perdre, c'est devoir reconfigurer chaque service à la main.
+
+Sans sauvegarde hors du serveur, une panne matérielle ou une erreur de
+manipulation fait perdre définitivement tout cela. C'est le seul risque
+vraiment irréversible du système.
+
+Le script `supabase/sauvegarde-vps.sh` traite le tout d'un coup :
 
 - **Bases de données** : `pg_dumpall` complet (rôles compris), compressé.
-- **Fichiers** : photos des membres et pièces jointes du Storage.
+- **Fichiers** : photos des membres et pièces jointes du Storage
+  (~12 000 fichiers, sur le disque du conteneur `supabase-storage-*` -
+  MinIO est présent mais inutilisé).
 - **Copie hors du serveur** : envoi vers un espace distant (voir plus bas).
 - **Rotation** : les sauvegardes de plus de 14 jours sont effacées.
 
-Les conteneurs sont découverts automatiquement (`supabase-db-*` et
-`supabase-storage-*`) : aucun identifiant n'est écrit en dur, la sauvegarde
-continue donc de fonctionner si Coolify recrée un service.
+Les conteneurs sont découverts automatiquement (`supabase-db-*`, `db-*`,
+`coolify-db`, `supabase-storage-*`) : aucun identifiant n'est écrit en
+dur. La sauvegarde continue donc de fonctionner si Coolify recrée un
+service, et **une nouvelle application déployée est prise en compte sans
+rien modifier**.
 
 ---
 
@@ -27,7 +43,7 @@ Sur le VPS, connecté en SSH :
 curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/sauvegarde-vps.sh -o /root/sauvegarde-amstc.sh && chmod +x /root/sauvegarde-amstc.sh && wc -l /root/sauvegarde-amstc.sh
 ```
 
-Le compte doit afficher environ 160 lignes.
+Le compte doit afficher **197** lignes.
 
 ## 2. Vérifier à blanc (aucun fichier écrit)
 
@@ -39,8 +55,8 @@ lisibles.
 bash /root/sauvegarde-amstc.sh --test
 ```
 
-Vous devez voir **deux** lignes `supabase-db-...` avec une taille de base,
-**deux** lignes `supabase-storage-...` avec un nombre de fichiers, et
+Vous devez voir **quatre** lignes de bases (deux `supabase-db-…`, une `db-…`
+et `coolify-db`), **deux** lignes `supabase-storage-…` avec un nombre de fichiers, et
 l'espace disque disponible. Si une ligne affiche `ECHEC`, ne passez pas à
 la suite : envoyez-moi la sortie.
 
@@ -79,7 +95,7 @@ Vérifiez ensuite ce qui a été produit :
 ls -lh /var/backups/amstc/
 ```
 
-Vous devez avoir **quatre** fichiers : deux `_base.sql.gz` et deux
+Vous devez avoir **six** fichiers : quatre `_base.sql.gz` et deux
 `_fichiers.tar.gz`.
 
 ## 5. Automatiser (tous les jours à 3 h du matin)
@@ -99,7 +115,7 @@ Une sauvegarde jamais restaurée n'est pas une sauvegarde. À faire **une
 fois**, sur une base jetable, jamais sur la base de production :
 
 ```bash
-zcat /var/backups/amstc/*_rffqs8ck1ckdixkuu2xjo5sc_base.sql.gz | head -40
+zcat /var/backups/amstc/*_supabase-rffqs8ck1ckdixkuu2xjo5sc_base.sql.gz | head -40
 ```
 
 Vous devez voir des instructions `CREATE ROLE` puis `CREATE DATABASE`. Pour
