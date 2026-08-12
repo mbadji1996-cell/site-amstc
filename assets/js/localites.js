@@ -1,5 +1,10 @@
 /**
- * Localités : regrouper les graphies d'une même ville.
+ * Graphies des saisies libres : noms de personnes et localités.
+ *
+ * Deux sujets, une seule raison d'être : le site laisse saisir du texte
+ * libre, et ce texte finit sur une CARTE IMPRIMÉE ou dans un classement.
+ * « ndeye marieme niass » et « médina » doivent devenir « Ndeye Marieme
+ * NIASS » et « Médina » avant d'être enregistrés.
  *
  * POURQUOI. Le champ « localité » est libre. « Thiès », « Thies »,
  * « THIES » et « thiès » désignent la même ville mais comptaient pour
@@ -12,6 +17,68 @@
  *   localiteCle(s)     - clé de regroupement, invisible pour l'usager.
  *   localiteLibelle(s) - graphie à afficher.
  */
+
+/**
+ * Casse « titre » : une majuscule à chaque mot, le reste en minuscules.
+ *
+ * Le reste est bien ABAISSÉ, pas seulement la première lettre élevée :
+ * « MOUHAMED » doit donner « Mouhamed », pas rester en capitales.
+ *
+ * Coupent un mot : l'espace, le trait d'union et l'apostrophe - « n'diaye »
+ * donne « N'Diaye » et « marie-claire » donne « Marie-Claire ». Les
+ * espaces surnuméraires sont réduits au passage.
+ */
+function casseTitre(valeur) {
+  var s = String(valeur == null ? '' : valeur).replace(/\s+/g, ' ').trim();
+  if (!s) return '';
+  var sortie = '';
+  var debut = true;
+  for (var i = 0; i < s.length; i++) {
+    var c = s.charAt(i);
+    sortie += debut ? c.toUpperCase() : c.toLowerCase();
+    debut = (c === ' ' || c === '-' || c === "'" || c === '’');
+  }
+  return sortie;
+}
+
+/**
+ * Prénom(s) : « mouhamed » devient « Mouhamed », « NDEYE MARIEME » devient
+ * « Ndeye Marieme ».
+ */
+function normaliserPrenom(valeur) {
+  return casseTitre(valeur);
+}
+
+/**
+ * Nom de famille : tout en capitales, accents compris - « badji » devient
+ * « BADJI », « séne » devient « SÉNE ». C'est la convention de l'état
+ * civil, et elle distingue le nom du prénom sur la carte.
+ */
+function normaliserNom(valeur) {
+  return String(valeur == null ? '' : valeur)
+    .replace(/\s+/g, ' ').trim().toUpperCase();
+}
+
+/**
+ * Nom complet affiché : « Mouhamed BADJI ».
+ */
+function nomCompletNormalise(prenom, nom) {
+  return [normaliserPrenom(prenom), normaliserNom(nom)].filter(Boolean).join(' ');
+}
+
+/**
+ * Branche la normalisation sur un champ de saisie : elle s'applique quand
+ * le champ est quitté, pour que la personne VOIE la correction plutôt que
+ * de la découvrir sur sa carte. La saisie n'est jamais gênée en cours de
+ * frappe.
+ */
+function brancherNormalisation(champ, fonction) {
+  if (!champ) return;
+  champ.addEventListener('blur', function () {
+    var corrige = fonction(champ.value);
+    if (corrige !== champ.value) champ.value = corrige;
+  });
+}
 
 // Les quatorze régions administratives du Sénégal. Liste UNIQUE du site :
 // les formulaires la déroulent, et elle doit rester identique à la
@@ -175,9 +242,8 @@ function localiteLibelle(valeur) {
   var cle = localiteCle(valeur);
   if (!cle) return '';
   if (LOCALITES_CANONIQUES[cle]) return LOCALITES_CANONIQUES[cle];
-  return String(valeur == null ? '' : valeur)
-    .replace(/\s+/g, ' ').trim()
-    .replace(/(^|[\s\-'’])(\S)/g, function (_, avant, lettre) {
-      return avant + lettre.toUpperCase();
-    });
+  // casseTitre plutôt qu'une simple élévation de l'initiale : celle-ci
+  // laissait « TIVAOUANE PEULH » en capitales, la saisie tout en
+  // majuscules étant justement l'un des cas à corriger.
+  return casseTitre(valeur);
 }

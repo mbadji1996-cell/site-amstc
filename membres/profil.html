@@ -436,6 +436,14 @@
   document.getElementById('validityPayNumbers').innerHTML = amstcNumerosPaiementHtml();
   document.getElementById('cotisPayNumbers').innerHTML = amstcNumerosPaiementHtml();
 
+  // Casse corrigée à la sortie du champ, pour que le membre VOIE la
+  // correction plutôt que de la découvrir sur sa carte. Branché une seule
+  // fois ici, sur des champs statiques : le faire dans renderProfile
+  // empilerait un écouteur de plus à chaque réaffichage.
+  brancherNormalisation(document.getElementById('eFirstName'), normaliserPrenom);
+  brancherNormalisation(document.getElementById('eLastName'), normaliserNom);
+  brancherNormalisation(document.getElementById('eCity'), localiteLibelle);
+
   let currentProfile = null;
   let pendingPhotoBlob = null;
   const currentYear = new Date().getFullYear();
@@ -806,8 +814,8 @@
     saveBtn.disabled = true;
     msg.className = 'form-msg';
 
-    const firstName = document.getElementById('eFirstName').value.trim();
-    const lastName = document.getElementById('eLastName').value.trim();
+    const firstName = normaliserPrenom(document.getElementById('eFirstName').value);
+    const lastName = normaliserNom(document.getElementById('eLastName').value);
     const domain = document.getElementById('eDomain').value;
 
     const specMode = specialtyMode(domain);
@@ -828,7 +836,7 @@
       domain: domain || null,
       domain_autre: domain === 'autre' ? (document.getElementById('eDomainAutre').value.trim() || null) : null,
       specialty,
-      city: document.getElementById('eCity').value.trim() || null,
+      city: localiteLibelle(document.getElementById('eCity').value) || null,
       region: document.getElementById('eRegion').value || null,
     };
 

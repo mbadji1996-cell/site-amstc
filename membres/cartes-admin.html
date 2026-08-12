@@ -461,10 +461,18 @@
         const regionRaw = cols.region !== -1 ? String(r[cols.region] || '').trim() : '';
         const validite = cols.validite !== -1 ? r[cols.validite] : '';
 
-        const { title, prenom } = extractTitle(prenomRaw);
+        // La casse est mise en forme APRÈS extractTitle : celui-ci
+        // reconnaît « Dr » en tête du prénom, et le ferait moins bien sur
+        // un texte déjà retouché. Prénom en casse titre, NOM en capitales,
+        // localité par la table des localités - « mouhamed badji » de
+        // Médina donne « Mouhamed BADJI » à « Médina ».
+        const { title, prenom: prenomBrut } = extractTitle(prenomRaw);
+        const prenom = normaliserPrenom(prenomBrut);
+        const nomNormalise = normaliserNom(nom);
+        const cityNormalisee = localiteLibelle(city);
         const filiere = mapFiliere(filiereRaw);
         const { memberSince, expiryHint } = parseValidite(validite);
-        const full_name = [title, prenom, nom].filter(Boolean).join(' ');
+        const full_name = [title, prenom, nomNormalise].filter(Boolean).join(' ');
 
         // La colonne Région est facultative : à défaut, la localité suffit
         // souvent à la désigner (« Ouakam » vaut Dakar). Une saisie non
@@ -476,7 +484,7 @@
 
         const skip = !phone || !nom;
         return {
-          full_name, phone: phone || null, city: city || null,
+          full_name, phone: phone || null, city: cityNormalisee || null,
           region, region_raw: regionRaw, regionDouteuse,
           title, domain: filiere.domain, domain_autre: filiere.domain_autre || null,
           specialty: filiere.specialty || null,
@@ -960,7 +968,7 @@
       new_phone: document.getElementById('editPhone-' + id).value,
       new_card_number: document.getElementById('editNumber-' + id).value,
       new_member_since: since ? parseInt(since, 10) : null,
-      new_city: document.getElementById('editCity-' + id).value,
+      new_city: localiteLibelle(document.getElementById('editCity-' + id).value),
     });
 
     if (error) {
@@ -1049,7 +1057,7 @@
     const full_name = document.getElementById('newCardName').value.trim();
     const phone = document.getElementById('newCardPhone').value.trim();
     const memberSinceRaw = document.getElementById('newCardSince').value;
-    const city = document.getElementById('newCardCity').value.trim();
+    const city = localiteLibelle(document.getElementById('newCardCity').value);
     const region = document.getElementById('newCardRegion').value || null;
     const msg = document.getElementById('addCardMsg');
 

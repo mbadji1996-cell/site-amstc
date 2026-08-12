@@ -343,6 +343,16 @@
     // assets/js/localites.js). Celui de l'écran de complétion est rempli
     // au moment où le profil est chargé, avec sa valeur actuelle.
     remplirSelectRegions(document.getElementById("region"));
+
+    // Casse des noms et des localités, corrigée à la sortie du champ sur
+    // LES DEUX formulaires de la page : celui de l'inscription et celui de
+    // la complétion, qui vit dans le même document. « mouhamed badji »
+    // devient « Mouhamed BADJI », « médina » devient « Médina ».
+    [["firstName", normaliserPrenom], ["lastName", normaliserNom], ["city", localiteLibelle],
+     ["cFirstName", normaliserPrenom], ["cLastName", normaliserNom], ["cCity", localiteLibelle]]
+      .forEach(function (paire) {
+        brancherNormalisation(document.getElementById(paire[0]), paire[1]);
+      });
   })();
 
   function ajusterAnneeAdhesion() {
@@ -610,13 +620,13 @@
     const domaine = document.getElementById("cDomain").value;
     const champs = {
       p_title: document.getElementById("cTitle").value || null,
-      p_first_name: document.getElementById("cFirstName").value.trim(),
-      p_last_name: document.getElementById("cLastName").value.trim(),
+      p_first_name: normaliserPrenom(document.getElementById("cFirstName").value),
+      p_last_name: normaliserNom(document.getElementById("cLastName").value),
       p_phone: document.getElementById("cPhone").value.trim(),
       p_domain: domaine || null,
       p_domain_autre: document.getElementById("cDomainAutre").value.trim() || null,
       p_specialty: document.getElementById("cSpecialty").value.trim() || null,
-      p_city: document.getElementById("cCity").value.trim(),
+      p_city: localiteLibelle(document.getElementById("cCity").value),
       p_region: document.getElementById("cRegion").value || null,
       p_member_since: parseInt(document.getElementById("cMemberSince").value, 10) || ANNEE_COURANTE,
       p_applicant_type: document.querySelector('input[name="cType"]:checked').value,
@@ -743,8 +753,11 @@
     messageEl.className = "form-message";
 
     const title = document.getElementById("title").value || null;
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
+    // Normalisé ici AUSSI, pas seulement à la sortie du champ : un envoi
+    // au clavier ne déclenche pas toujours l'événement de sortie, et rien
+    // ne doit partir en base sans être mis en forme.
+    const firstName = normaliserPrenom(document.getElementById("firstName").value);
+    const lastName = normaliserNom(document.getElementById("lastName").value);
     const fullName = [firstName, lastName].filter(Boolean).join(" ");
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
@@ -760,7 +773,7 @@
       specialty = sel === "autre" ? (document.getElementById("specialtyAutre").value.trim() || null) : (sel || null);
     }
 
-    const city = document.getElementById("city").value.trim() || null;
+    const city = localiteLibelle(document.getElementById("city").value) || null;
     const region = document.getElementById("region").value || null;
     const password = document.getElementById("password").value;
 

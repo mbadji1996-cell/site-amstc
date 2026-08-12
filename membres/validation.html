@@ -1180,6 +1180,11 @@
       <p class="assign-msg" id="idMsg-${esc(memberId)}"></p>`;
 
     remplirSelectRegions(document.getElementById('idRegion-' + memberId), p.region || '');
+    // Le formulaire étant reconstruit à chaque ouverture, les écouteurs
+    // le sont aussi : aucun risque d'empilement.
+    brancherNormalisation(document.getElementById('idFirst-' + memberId), normaliserPrenom);
+    brancherNormalisation(document.getElementById('idLast-' + memberId), normaliserNom);
+    brancherNormalisation(document.getElementById('idCity-' + memberId), localiteLibelle);
     boite.style.display = '';
     bouton.textContent = 'Annuler la correction';
   }
@@ -1203,12 +1208,12 @@
     const { data, error } = await supabaseClient.rpc('admin_modifier_membre', {
       target_user_id: memberId,
       p_title: document.getElementById('idTitle-' + memberId).value || null,
-      p_first_name: val('First'),
-      p_last_name: val('Last'),
+      p_first_name: normaliserPrenom(val('First')),
+      p_last_name: normaliserNom(val('Last')),
       p_domain: document.getElementById('idDomain-' + memberId).value,
       p_domain_autre: val('Autre') || null,
       p_specialty: val('Specialty') || null,
-      p_city: val('City') || null,
+      p_city: localiteLibelle(val('City')) || null,
       p_region: document.getElementById('idRegion-' + memberId).value || null,
     });
     if (error) {
