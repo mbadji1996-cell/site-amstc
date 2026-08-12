@@ -172,7 +172,25 @@ done
 # sauvegardes : c'est le seul scénario réellement irréversible.
 if [ -n "$DISTANT" ]; then
   dire "Envoi vers $DISTANT ..."
-  if rsync -a --delete -e "ssh -p ${AMSTC_BACKUP_PORT:-23} -o StrictHostKeyChecking=accept-new" \
+
+  # La clé dédiée doit être NOMMÉE explicitement : elle ne porte pas un
+  # des noms que ssh essaie d'office (id_rsa, id_ed25519). Sans -i, la
+  # copie échouerait chaque nuit en réclamant un mot de passe que
+  # personne n'est là pour saisir.
+  CLE="${AMSTC_BACKUP_KEY:-/root/.ssh/storagebox}"
+  OPTIONS_SSH="-p ${AMSTC_BACKUP_PORT:-23} -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+  if [ -f "$CLE" ]; then
+    # IdentitiesOnly : sans cela ssh présente d'abord toutes les clés du
+    # serveur, et la Storage Box coupe la connexion après quelques essais
+    # infructueux - la bonne clé n'est alors jamais atteinte.
+    OPTIONS_SSH="$OPTIONS_SSH -i $CLE -o IdentitiesOnly=yes"
+  else
+    dire "  (pas de clé $CLE : on s'en remet aux clés par défaut)"
+  fi
+
+  # BatchMode interdit toute invite : en cas de problème la copie échoue
+  # franchement au lieu de rester bloquée jusqu'au prochain redémarrage.
+  if rsync -a --delete -e "ssh $OPTIONS_SSH" \
        "$DEST/" "$DISTANT" 2>&1; then
     dire "  OK"
   else

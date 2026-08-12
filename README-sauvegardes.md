@@ -43,7 +43,7 @@ Sur le VPS, connecté en SSH :
 curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/sauvegarde-vps.sh -o /root/sauvegarde-amstc.sh && chmod +x /root/sauvegarde-amstc.sh && wc -l /root/sauvegarde-amstc.sh
 ```
 
-Le compte doit afficher **197** lignes.
+Le compte doit afficher **215** lignes.
 
 ## 2. Vérifier à blanc (aucun fichier écrit)
 
@@ -66,21 +66,39 @@ Une sauvegarde qui reste sur le VPS ne protège de rien en cas de panne du
 VPS. Le plus simple chez Hetzner est une **Storage Box BX11** (1 To,
 environ 4 € par mois), commandée depuis la console Hetzner.
 
-Une fois la Storage Box créée, autorisez le VPS à y écrire sans mot de
-passe :
+Sur la page de la Storage Box : **Actions** → **Change settings** →
+activez **SSH Support**. Laissez SMB et WebDAV desactives, on n'en a pas
+besoin. Puis **Actions** → **Reset password** pour lui donner un mot de
+passe : il ne servira qu'une fois, a la commande `install-ssh-key`.
+
+Autorisez ensuite le VPS a y ecrire sans mot de passe :
 
 ```bash
-ssh-keygen -t ed25519 -f /root/.ssh/storagebox -N "" && cat /root/.ssh/storagebox.pub
+ssh-keygen -t ed25519 -f /root/.ssh/storagebox -N "" && echo "cle creee"
 ```
 
-Copiez la clé affichée, puis dans l'interface Hetzner de la Storage Box :
-**Sous-comptes / SSH keys** → collez la clé publique.
+```bash
+cat /root/.ssh/storagebox.pub | ssh -p 23 u123456@u123456.your-storagebox.de install-ssh-key
+```
+
+`install-ssh-key` est une commande fournie par Hetzner sur les Storage
+Box : elle evite d'aller coller la cle a la main dans l'interface.
 
 Testez la connexion (remplacez `u123456` par votre identifiant) :
 
 ```bash
-ssh -p 23 -i /root/.ssh/storagebox u123456@u123456.your-storagebox.de ls
+ssh -p 23 -i /root/.ssh/storagebox -o BatchMode=yes u123456@u123456.your-storagebox.de ls
 ```
+
+`BatchMode=yes` interdit toute invite : si la cle n'etait pas correctement
+installee, la commande echouerait franchement au lieu de reclamer un mot
+de passe et de laisser croire que tout va bien.
+
+La cle est attendue en `/root/.ssh/storagebox`. Le script la NOMME
+explicitement lors de la copie : elle ne porte pas un des noms que ssh
+essaie d'office, et sans cela la copie echouerait chaque nuit en
+reclamant un mot de passe que personne n'est la pour saisir. Pour la
+placer ailleurs, renseignez `AMSTC_BACKUP_KEY`.
 
 ## 4. Première sauvegarde réelle
 
