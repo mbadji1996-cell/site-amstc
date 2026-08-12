@@ -101,6 +101,9 @@
   /* Demande de changement d'année d'adhésion en attente : l'année pilote le
      numéro de carte, l'admin doit donc la voir avant de renuméroter. */
   .year-request-flag{display:inline-block;margin-top:6px;font-size:0.72rem;line-height:1.35;background:#FEF6E4;color:var(--gold-deep);border-radius:8px;padding:5px 9px;}
+  /* Même facture que le repère d'année : un écart à signaler, pas une
+     erreur. Le nom imprimé vient de la fiche du membre, jamais d'ici. */
+  .card-flag-name{display:inline-block;margin-top:6px;font-size:0.72rem;line-height:1.35;background:#FEF6E4;color:var(--gold-deep);border-radius:8px;padding:5px 9px;}
   .assign-inline{background:var(--paper);border-radius:8px;padding:14px 16px;}
   .assign-inline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
   .assign-inline select{flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);}
@@ -793,6 +796,10 @@
                   <button class="btn btn-confirm" onclick="saveCardEdit('${c.id}')"><i class="ti ti-check"></i> Enregistrer</button>
                   <button class="btn btn-reject" onclick="toggleEditRow('${c.id}')">Annuler</button>
                 </div>
+                ${c.claim_status === 'confirmed' && c.profiles ? `<p class="assign-msg">
+                  Carte attribuée : le nom <strong>imprimé</strong> est celui de la fiche du membre.
+                  Modifiez-le depuis Gestion des membres &rsaquo; Corriger l'identité, ce qui met aussi
+                  cette ligne à jour.</p>` : ''}
                 <p class="assign-msg" id="editRowMsg-${c.id}"></p>
               </div>
             </td>
@@ -839,6 +846,8 @@
           <p class="card-name">${escHtml(c.full_name)}</p>
           <p class="card-meta">${escHtml(meta || '-')}</p>
           ${yearFlag}
+          ${nomDiscordant(c) ? `<p class="card-flag-name">Nom différent de la fiche du membre :
+            <strong>${escHtml(c.profiles.full_name)}</strong> - c'est celui-là qui sera imprimé.</p>` : ''}
         </td>
         <td data-label="N° carte">${escHtml(c.card_number || '-')}</td>
         <td data-label="Statut">${statusBadge(c.claim_status)}</td>
@@ -855,6 +864,22 @@
       remplirSelectRegions(document.getElementById('editRegion-' + expandedEditId),
                            carte ? (carte.region || '') : '');
     }
+  }
+
+  /**
+   * Le nom porté par la carte diverge-t-il de celui de son porteur ?
+   *
+   * Le nom vit à deux endroits : sur la ligne de la carte, tel qu'il a été
+   * importé du tableur, et sur la fiche du membre. Tant que la carte n'est
+   * pas attribuée le doublon est normal - elle existe avant le compte.
+   * Une fois attribuée, c'est la fiche qui fait foi : la carte IMPRIMÉE
+   * lit le profil, pas cette ligne. Sans ce repère, l'administration
+   * voyait deux noms pour une personne sans savoir lequel serait imprimé.
+   */
+  function nomDiscordant(c){
+    if (c.claim_status !== 'confirmed' || !c.profiles) return false;
+    const duMembre = String(c.profiles.full_name || '').trim();
+    return !!duMembre && duMembre !== String(c.full_name || '').trim();
   }
 
   // ===== Inviter le porteur d'une carte (phase59) =====
