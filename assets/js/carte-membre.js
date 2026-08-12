@@ -39,6 +39,64 @@ function carteFilierePour(p) {
   return CARTE_DOMAINES[p.domain] || '-';
 }
 
+/**
+ * Réduit un texte jusqu'à ce qu'il tienne dans la largeur donnée, et
+ * renvoie { texte, taille }.
+ *
+ * POURQUOI. La carte part à l'impression : un nom qui sort du cadre n'est
+ * pas un défaut d'affichage, c'est une carte inutilisable. Or les membres
+ * saisissent librement - « AHMAD TIDIANE DIAWARA » en nom, un prénom
+ * composé de trois mots - et rien ne garantit la longueur.
+ *
+ * Trois leviers, dans cet ordre : rétrécir la police (le texte reste
+ * intact), abréger les mots intermédiaires (« AHMAD T. DIAWARA » - le
+ * premier et le dernier mot portent l'identité), puis tronquer. Le texte
+ * complet à petite taille est préféré à un texte abrégé en grand : mieux
+ * vaut un nom exact qu'un nom raccourci.
+ *
+ * L'abréviation ne vaut QUE pour les noms (option « abreger »). Appliquée
+ * à une filière ou à une adresse, elle produit du charabia : « Technicien
+ * supérieur en imagerie médicale » devenait « Technicien s. e. i.
+ * médicale », et « Parcelles Assainies Unité 26 » devenait « Parcelles A.
+ * U. 2. ». Pour ces champs, une troncature franche reste lisible.
+ */
+function carteAjusterTexte(ctx, texte, maxLargeur, options) {
+  const o = options || {};
+  const s = o.s || 1;
+  const poids = o.poids || '800';
+  const tailleMax = o.tailleMax || 37;
+  const tailleMin = o.tailleMin || 26;
+  const police = (t) => poids + ' ' + (t * s) + 'px Sora, Inter, sans-serif';
+  const tient = (txt, taille) => {
+    ctx.font = police(taille);
+    return ctx.measureText(txt).width <= maxLargeur;
+  };
+
+  for (let t = tailleMax; t >= tailleMin; t--) {
+    if (tient(texte, t)) return { texte: texte, taille: t };
+  }
+
+  const mots = String(texte).split(/\s+/).filter(Boolean);
+  if (o.abreger && mots.length > 2) {
+    const abrege = [mots[0]]
+      .concat(mots.slice(1, -1).map(m => m[0] + '.'))
+      .concat([mots[mots.length - 1]])
+      .join(' ');
+    for (let t = tailleMax; t >= tailleMin; t--) {
+      if (tient(abrege, t)) return { texte: abrege, taille: t };
+    }
+    texte = abrege;
+  }
+
+  // Dernier recours : on coupe. Jamais de débordement.
+  ctx.font = police(tailleMin);
+  let coupe = String(texte);
+  while (coupe.length > 1 && ctx.measureText(coupe + '…').width > maxLargeur) {
+    coupe = coupe.slice(0, -1);
+  }
+  return { texte: coupe.replace(/\s+$/, '') + '…', taille: tailleMin };
+}
+
 function carteChargerImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -182,32 +240,28 @@ async function dessinerCarteMembre(p) {
     String(p.city || '').trim(),
     String(p.region || '').trim(),
   ].filter(Boolean).join(', ') || '-';
+  // Le drapeau dit si le champ accepte l'abréviation en initiales : les
+  // noms oui, le reste non (voir carteAjusterTexte).
   const champs = [
-    ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-')],
-    ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase()],
-    ['Filière : ', carteFilierePour(p)],
-    ['Localité : ', localite],
-    ['Tel : ', p.phone || '-'],
-    ['Validité : ', validite],
+    ['Prénom : ', p.first_name || (p.full_name ? p.full_name.split(' ')[0] : '-'), true],
+    ['NOM : ', (p.last_name || (p.full_name ? p.full_name.split(' ').slice(1).join(' ') : '-') || '-').toUpperCase(), true],
+    ['Filière : ', carteFilierePour(p), false],
+    ['Localité : ', localite, false],
+    ['Tel : ', p.phone || '-', false],
+    ['Validité : ', validite, false],
   ];
   ctx.textAlign = 'left';
   let y = 322 * s;
-  for (const [label, valeur] of champs) {
+  for (const [label, valeur, abreger] of champs) {
     ctx.fillStyle = CARTE_MEMBRE.NOIR;
     ctx.font = '400 ' + (35 * s) + 'px Sora, Inter, sans-serif';
     ctx.fillText(label, 370 * s, y);
     const lw = ctx.measureText(label).width;
-    // La valeur rétrécit jusqu'à tenir dans la carte : « Parcelles
-    // Assainies, Saint-Louis » déborderait du cadre à taille pleine.
-    // Aucun champ n'était protégé - une longue filière débordait déjà.
-    const maxLargeur = 960 * s - (370 * s + lw);
-    let taille = 37;
-    ctx.font = '800 ' + (taille * s) + 'px Sora, Inter, sans-serif';
-    while (taille > 22 && ctx.measureText(String(valeur)).width > maxLargeur) {
-      taille -= 1;
-      ctx.font = '800 ' + (taille * s) + 'px Sora, Inter, sans-serif';
-    }
-    ctx.fillText(String(valeur), 370 * s + lw, y);
+    // Aucune valeur ne dépasse le bord intérieur (965 pt) : rétrécissement,
+    // puis abréviation, puis troncature. Voir carteAjusterTexte.
+    const ajuste = carteAjusterTexte(ctx, String(valeur), 965 * s - (370 * s + lw), { s, abreger });
+    ctx.font = '800 ' + (ajuste.taille * s) + 'px Sora, Inter, sans-serif';
+    ctx.fillText(ajuste.texte, 370 * s + lw, y);
     y += 56 * s;
   }
 

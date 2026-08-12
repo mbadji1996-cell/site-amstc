@@ -67,6 +67,65 @@ var LOCALITES_CANONIQUES = {
   'diamaguene': 'Diamaguène', 'golf sud': 'Golf Sud', 'wakhinane': 'Wakhinane'
 };
 
+// Région de rattachement des localités connues, indexée par la même clé
+// que la table ci-dessus.
+//
+// POURQUOI. La région n'est demandée que depuis phase66 : la centaine de
+// profils antérieurs ne la porte pas, et sans cette table le graphique
+// par région resterait vide pendant des mois. Elle sert UNIQUEMENT à
+// l'affichage des statistiques, jamais à écrire en base - la valeur
+// déduite est signalée comme telle à l'écran.
+var LOCALITE_VERS_REGION = {
+  // Région de Dakar (départements Dakar, Pikine, Guédiawaye, Rufisque)
+  'dakar': 'Dakar', 'pikine': 'Dakar', 'guediawaye': 'Dakar', 'rufisque': 'Dakar',
+  'gueule tapee': 'Dakar', 'parcelles assainies': 'Dakar', 'grand yoff': 'Dakar',
+  'yeumbeul': 'Dakar', 'keur massar': 'Dakar', 'guinaw rail': 'Dakar',
+  'ouakam': 'Dakar', 'ngor': 'Dakar', 'yoff': 'Dakar', 'medina': 'Dakar',
+  'point e': 'Dakar', 'sicap': 'Dakar', 'liberte': 'Dakar', 'hlm': 'Dakar',
+  'malika': 'Dakar', 'thiaroye': 'Dakar', 'bargny': 'Dakar',
+  'diamniadio': 'Dakar', 'sebikotane': 'Dakar', 'mbao': 'Dakar',
+  'diamaguene': 'Dakar', 'golf sud': 'Dakar', 'wakhinane': 'Dakar',
+  // Thiès
+  'thies': 'Thiès', 'tivaouane': 'Thiès', 'mbour': 'Thiès', 'joal fadiouth': 'Thiès',
+  // Saint-Louis
+  'saint louis': 'Saint-Louis', 'podor': 'Saint-Louis', 'dagana': 'Saint-Louis',
+  'richard toll': 'Saint-Louis',
+  // Louga
+  'louga': 'Louga', 'linguere': 'Louga', 'kebemer': 'Louga',
+  // Diourbel
+  'diourbel': 'Diourbel', 'touba': 'Diourbel', 'mbacke': 'Diourbel', 'bambey': 'Diourbel',
+  // Fatick
+  'fatick': 'Fatick', 'foundiougne': 'Fatick', 'gossas': 'Fatick',
+  // Kaolack
+  'kaolack': 'Kaolack', 'nioro': 'Kaolack', 'guinguineo': 'Kaolack',
+  // Kaffrine
+  'kaffrine': 'Kaffrine', 'koungheul': 'Kaffrine', 'birkelane': 'Kaffrine',
+  'malem hodar': 'Kaffrine',
+  // Ziguinchor
+  'ziguinchor': 'Ziguinchor', 'bignona': 'Ziguinchor', 'oussouye': 'Ziguinchor',
+  // Kolda
+  'kolda': 'Kolda', 'velingara': 'Kolda',
+  // Sédhiou
+  'sedhiou': 'Sédhiou', 'goudomp': 'Sédhiou',
+  // Tambacounda
+  'tambacounda': 'Tambacounda', 'bakel': 'Tambacounda',
+  // Kédougou
+  'kedougou': 'Kédougou', 'salemata': 'Kédougou', 'saraya': 'Kédougou',
+  // Matam
+  'matam': 'Matam', 'kanel': 'Matam', 'ranerou': 'Matam'
+};
+
+/**
+ * Région d'un profil : celle qu'il a saisie, sinon celle déduite de sa
+ * localité, sinon rien. Renvoie null plutôt qu'une valeur inventée.
+ */
+function regionDuProfil(profil) {
+  if (!profil) return null;
+  var saisie = String(profil.region || '').trim();
+  if (saisie) return saisie;
+  return LOCALITE_VERS_REGION[localiteCle(profil.city)] || null;
+}
+
 /**
  * Clé de regroupement : minuscules, sans accents, tirets et apostrophes
  * ramenés à des espaces, espaces multiples réduits.

@@ -51,6 +51,24 @@
   .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
   .btn-sm{font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;cursor:pointer;background:var(--surface);color:var(--text-heading);border:1.5px solid var(--line);}
   .btn-sm:hover{border-color:var(--green);}
+  /* Détail par région : repliable à l'écran, toujours déplié à
+     l'impression - un rapport imprimé ne doit pas perdre ses données
+     parce qu'un bloc était fermé. */
+  .region-detail{margin-bottom:10px;}
+  .region-detail summary{
+    cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    padding:9px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  }
+  .region-detail summary::-webkit-details-marker{display:none;}
+  .region-detail summary::before{content:"\25B8";color:var(--text-accent);font-size:0.8rem;}
+  .region-detail[open] summary::before{content:"\25BE";}
+  .region-nom{font-family:var(--display);font-weight:600;color:var(--text-heading);font-size:0.98rem;}
+  .region-compte{font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);}
+  .region-detail .bloc{margin-top:6px;}
+  @media print{
+    .region-detail summary::before{content:"";}
+    .region-detail > .bloc{display:block !important;}
+  }
   @media(max-width:520px){
     .barre-ligne{grid-template-columns:minmax(80px,38%) 1fr auto;gap:8px;}
     .barre-nb{min-width:42px;font-size:0.72rem;}
@@ -192,6 +210,22 @@
     // Regroupement sur la clé normalisée, affichage sur la graphie
     // officielle : « Thiès » et « Thies » ne font plus qu'une ligne.
     const parVille = compter(approuves, p => localiteCle(p.city), 10, p => localiteLibelle(p.city));
+
+    // Région : celle saisie, ou celle déduite de la localité pour les
+    // profils antérieurs à phase66. Les deux compteurs ci-dessous rendent
+    // la part de déduction visible - un graphique qui tairait son origine
+    // laisserait croire que tout le monde a renseigné sa région.
+    const parRegion = compter(approuves, regionDuProfil);
+    const regionDeduite = approuves.filter(p =>
+      !String(p.region || '').trim() && regionDuProfil(p)).length;
+    const regionInconnue = approuves.filter(p => !regionDuProfil(p)).length;
+
+    // Détail par région : ses localités, triées par effectif.
+    const detailRegions = parRegion.map(([region, total]) => [
+      region, total,
+      compter(approuves.filter(p => regionDuProfil(p) === region),
+              p => localiteCle(p.city), 0, p => localiteLibelle(p.city)),
+    ]);
     const parAnnee = compter(approuves, p => p.member_since).sort((a, b) => b[0] - a[0]);
     const parType = compter(approuves, p => p.applicant_type === 'nouvel_adherent' ? 'Nouvel adhérent' : 'Membre existant');
     const inscriptions = parMois(profils);
@@ -213,7 +247,14 @@
       [],
       ['Domaine', 'Membres'], ...parDomaine,
       [],
-      ['Localité', 'Membres'], ...parVille,
+      ['Région', 'Membres'], ...parRegion,
+      ['Région déduite de la localité', regionDeduite],
+      ['Sans région identifiable', regionInconnue],
+      [],
+      ...detailRegions.flatMap(([region, total, villes]) => [
+        [region + ' - localités', 'Membres'], ...villes, [],
+      ]),
+      ['Localité (toutes régions)', 'Membres'], ...parVille,
       [],
       ["Année d'adhésion", 'Membres'], ...parAnnee,
       [],
@@ -235,9 +276,25 @@
       <h2>Répartition par domaine</h2>
       <div class="bloc">${barres(parDomaine)}</div>
 
+      <h2>Répartition par région</h2>
+      <div class="bloc">${barres(parRegion)}
+        <p class="note">
+          ${regionDeduite ? nb(regionDeduite) + ' membre(s) n\'ont pas encore choisi leur région : elle est déduite de leur localité. ' : ''}
+          ${regionInconnue ? nb(regionInconnue) + ' membre(s) restent sans région identifiable.' : 'Tous les membres sont rattachés à une région.'}
+        </p></div>
+
+      <h2>Localités de chaque région</h2>
+      ${detailRegions.length ? detailRegions.map(([region, total, villes]) => `
+        <details class="region-detail" open>
+          <summary><span class="region-nom">${esc(region)}</span>
+            <span class="region-compte">${nb(total)} membre(s) · ${nb(villes.length)} localité(s)</span></summary>
+          <div class="bloc">${barres(villes, { or: true })}</div>
+        </details>`).join('')
+        : '<div class="bloc"><p class="vide">Aucune région identifiée.</p></div>'}
+
       <h2>Dix premières localités</h2>
       <div class="bloc">${barres(parVille)}
-        ${parVille.length ? '<p class="note">Seules les dix localités les plus représentées sont affichées.</p>' : ''}</div>
+        ${parVille.length ? '<p class="note">Toutes régions confondues. Seules les dix localités les plus représentées sont affichées.</p>' : ''}</div>
 
       <h2>Année d'adhésion</h2>
       <div class="bloc">${barres(parAnnee)}</div>

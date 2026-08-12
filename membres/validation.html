@@ -245,6 +245,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/garde-whatsapp.js"></script>
 <!-- Export de la base des membres : tableur (SheetJS) et PDF (jsPDF + AutoTable). -->
@@ -481,7 +482,13 @@
               <div><span class="detail-label">Nom</span><span class="detail-value">${esc(p.last_name) || '-'}</span></div>
               <div><span class="detail-label">Domaine</span><span class="detail-value">${esc(domainLabel(p)) || '-'}</span></div>
               ${p.specialty ? `<div><span class="detail-label">Spécialité</span><span class="detail-value">${esc(p.specialty)}</span></div>` : ''}
-              <div><span class="detail-label">Localité</span><span class="detail-value">${esc(p.city) || '-'}</span></div>
+              <div><span class="detail-label">Localité</span><span class="detail-value">${esc(localiteComplete(p)) || '-'}</span></div>
+            </div>
+            <div class="years-edit">
+              <button class="btn-sm btn-outline-sm" onclick="basculerEditionIdentite('${esc(p.id)}')"
+                id="editIdBtn-${esc(p.id)}">Corriger l'identité</button>
+              <p class="assign-msg" id="idStatut-${esc(p.id)}">Ces informations partent telles quelles sur la carte imprimée.</p>
+              <div id="editId-${esc(p.id)}" style="display:none;"></div>
             </div>
             <div class="years-edit">
               <div class="years-edit-row">
@@ -1108,6 +1115,132 @@
     const willOpen = box.style.display !== 'block';
     box.style.display = willOpen ? 'block' : 'none';
     btn.textContent = willOpen ? 'Masquer' : 'Détails';
+  }
+
+  // « Localité, Région », comme sur la carte imprimée.
+  function localiteComplete(p){
+    return [p.city, p.region].filter(x => String(x || '').trim()).join(', ');
+  }
+
+  /**
+   * Correction de l'identité par l'administration (phase67).
+   *
+   * Les membres saisissent eux-mêmes leur fiche et ne suivent pas
+   * toujours les consignes : prénom et nom intervertis, nom complet collé
+   * dans la case « nom ». Ces valeurs partent telles quelles sur la CARTE
+   * IMPRIMÉE - il faut pouvoir les corriger avant le tirage sans attendre
+   * le membre.
+   *
+   * Le formulaire n'est construit qu'à l'ouverture : la liste des membres
+   * est réaffichée à chaque action, et porter quinze champs de saisie par
+   * membre dans le HTML de la liste la rendrait lourde pour rien.
+   */
+  function basculerEditionIdentite(memberId){
+    const boite = document.getElementById('editId-' + memberId);
+    const bouton = document.getElementById('editIdBtn-' + memberId);
+    if (boite.style.display !== 'none') {
+      boite.style.display = 'none';
+      bouton.textContent = "Corriger l'identité";
+      return;
+    }
+    const p = profilesById[memberId] || allApprovedMembers.find(m => m.id === memberId) || {};
+    const optDomaine = Object.entries(DOMAIN_LABELS)
+      .concat([['autre', 'Autre']])
+      .map(([v, l]) => `<option value="${esc(v)}"${p.domain === v ? ' selected' : ''}>${esc(l)}</option>`)
+      .join('');
+    const optTitre = ['', 'Dr', 'Pr']
+      .map(v => `<option value="${esc(v)}"${(p.title || '') === v ? ' selected' : ''}>${v || 'Aucune'}</option>`)
+      .join('');
+
+    boite.innerHTML = `
+      <div class="years-edit-row">
+        <div class="form-group"><label>Civilité</label>
+          <select id="idTitle-${esc(memberId)}" style="width:110px;">${optTitre}</select></div>
+        <div class="form-group"><label>Prénom</label>
+          <input type="text" id="idFirst-${esc(memberId)}" value="${esc(p.first_name) || ''}" style="width:180px;"></div>
+        <div class="form-group"><label>Nom</label>
+          <input type="text" id="idLast-${esc(memberId)}" value="${esc(p.last_name) || ''}" style="width:180px;"></div>
+      </div>
+      <div class="years-edit-row">
+        <div class="form-group"><label>Domaine</label>
+          <select id="idDomain-${esc(memberId)}" onchange="majDomaineAutre('${esc(memberId)}')" style="width:180px;">${optDomaine}</select></div>
+        <div class="form-group" id="idAutreGroup-${esc(memberId)}" style="display:${p.domain === 'autre' ? '' : 'none'};">
+          <label>Préciser</label>
+          <input type="text" id="idAutre-${esc(memberId)}" value="${esc(p.domain_autre) || ''}" style="width:160px;"></div>
+        <div class="form-group"><label>Spécialité</label>
+          <input type="text" id="idSpecialty-${esc(memberId)}" value="${esc(p.specialty) || ''}" style="width:180px;"></div>
+      </div>
+      <div class="years-edit-row">
+        <div class="form-group"><label>Région</label>
+          <select id="idRegion-${esc(memberId)}" style="width:180px;"></select></div>
+        <div class="form-group"><label>Localité</label>
+          <input type="text" id="idCity-${esc(memberId)}" value="${esc(p.city) || ''}" style="width:180px;"></div>
+        <button class="btn-sm btn-approve" onclick="enregistrerIdentite('${esc(memberId)}')">Enregistrer</button>
+      </div>
+      <p class="assign-msg" id="idMsg-${esc(memberId)}"></p>`;
+
+    remplirSelectRegions(document.getElementById('idRegion-' + memberId), p.region || '');
+    boite.style.display = '';
+    bouton.textContent = 'Annuler la correction';
+  }
+
+  function majDomaineAutre(memberId){
+    const groupe = document.getElementById('idAutreGroup-' + memberId);
+    groupe.style.display = document.getElementById('idDomain-' + memberId).value === 'autre' ? '' : 'none';
+  }
+
+  async function enregistrerIdentite(memberId){
+    const msg = document.getElementById('idMsg-' + memberId);
+    const val = (suffixe) => document.getElementById('id' + suffixe + '-' + memberId).value.trim();
+    msg.className = 'assign-msg';
+
+    if (!val('First') || !val('Last')) {
+      msg.textContent = 'Le prénom et le nom sont obligatoires.';
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    const { data, error } = await supabaseClient.rpc('admin_modifier_membre', {
+      target_user_id: memberId,
+      p_title: document.getElementById('idTitle-' + memberId).value || null,
+      p_first_name: val('First'),
+      p_last_name: val('Last'),
+      p_domain: document.getElementById('idDomain-' + memberId).value,
+      p_domain_autre: val('Autre') || null,
+      p_specialty: val('Specialty') || null,
+      p_city: val('City') || null,
+      p_region: document.getElementById('idRegion-' + memberId).value || null,
+    });
+    if (error) {
+      msg.textContent = error.code === 'PGRST202'
+        ? "Le script supabase/phase67-admin-modifier-membre.sql n'a pas encore été exécuté."
+        : error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    // Les deux caches alimentent la liste et l'impression des cartes :
+    // sans cette recopie, la correction ne se verrait qu'au rechargement,
+    // et une carte imprimée dans la foulée porterait l'ancien nom.
+    [profilesById[memberId], allApprovedMembers.find(m => m.id === memberId)]
+      .filter(Boolean)
+      .forEach(cible => Object.assign(cible, data));
+
+    // La liste est reconstruite : le formulaire disparaît avec elle. La
+    // confirmation s'écrit donc dans le paragraphe du bloc statique, seul
+    // élément qui survit au réaffichage.
+    renderMembersList();
+    const details = document.getElementById('details-' + memberId);
+    if (details) {
+      details.style.display = 'block';
+      const bouton = document.getElementById('detailsBtn-' + memberId);
+      if (bouton) bouton.textContent = 'Masquer';
+      const statut = document.getElementById('idStatut-' + memberId);
+      if (statut) {
+        statut.textContent = 'Identité corrigée. La carte reprendra ces valeurs.';
+        statut.className = 'assign-msg ok';
+      }
+    }
   }
 
   /**
