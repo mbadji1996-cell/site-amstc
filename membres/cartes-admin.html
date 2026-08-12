@@ -783,6 +783,10 @@
       if (c.claim_status === 'unclaimed') {
         actions = `<button class="btn btn-confirm" onclick="toggleAssignRow('${c.id}')"><i class="ti ti-id-badge-2"></i> Attribuer</button>`
           + `<button class="btn" onclick="inviterPorteur('${c.id}')"${c.phone ? '' : ' disabled title="Cette carte n\'a pas de numéro de téléphone"'}><i class="ti ti-brand-whatsapp"></i> Inviter</button>`
+          // Pas de « disabled » sur le téléphone : un lien copié se
+          // transmet par n'importe quel moyen, contrairement à « Inviter »
+          // qui doit viser un numéro.
+          + `<button class="btn" onclick="copierLienInvitation('${c.id}', this)" title="Copier le lien pour le coller dans une conversation déjà ouverte"><i class="ti ti-link"></i> Copier le lien</button>`
           + actions;
       }
 
@@ -903,21 +907,21 @@
     return 'https://wa.me/' + d;
   }
 
-  async function inviterPorteur(cardId){
-    const carte = allCards.find(c => c.id === cardId) || {};
-    const wa = lienWhatsAppCarte(carte.phone);
-    if (!wa) { alert("Cette carte n'a pas de numéro de téléphone exploitable."); return; }
-
-    // Garde-fou anti-restriction, AVANT l'appel réseau : un refus ne doit
-    // pas laisser derrière lui un jeton d'invitation créé pour rien.
-    if (typeof gardeWhatsAppAutorise === 'function' && !gardeWhatsAppAutorise(carte.phone)) return;
-
+  /**
+   * Engendre une invitation et renvoie { lien, texte }, ou null en cas
+   * d'échec (le message d'erreur est déjà affiché).
+   *
+   * Partagé par les deux boutons : envoyer par WhatsApp, et copier le
+   * lien. Sans cette mise en commun, le message d'accueil existerait en
+   * deux exemplaires et finirait par diverger.
+   */
+  async function creerInvitationPourCarte(cardId){
     const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: cardId });
     if (error) {
       alert(error.code === 'PGRST202'
         ? "Le script supabase/phase59-invitation-carte.sql n'a pas encore été exécuté."
         : 'Erreur : ' + error.message);
-      return;
+      return null;
     }
 
     const inv = Array.isArray(data) ? data[0] : data;
@@ -937,11 +941,99 @@
       + "Activez votre accès en ouvrant ce lien :\n" + lien + '\n\n'
       + "Il est personnel et valable 30 jours.\n\n©AMSTC";
 
+    return { lien, texte };
+  }
+
+  async function inviterPorteur(cardId){
+    const carte = allCards.find(c => c.id === cardId) || {};
+    const wa = lienWhatsAppCarte(carte.phone);
+    if (!wa) { alert("Cette carte n'a pas de numéro de téléphone exploitable."); return; }
+
+    // Garde-fou anti-restriction, AVANT l'appel réseau : un refus ne doit
+    // pas laisser derrière lui un jeton d'invitation créé pour rien.
+    if (typeof gardeWhatsAppAutorise === 'function' && !gardeWhatsAppAutorise(carte.phone)) return;
+
+    const invitation = await creerInvitationPourCarte(cardId);
+    if (!invitation) return;
+
     // La fenêtre s'ouvre dans la foulée du clic : après une attente réseau,
     // les navigateurs mobiles la bloqueraient comme fenêtre intempestive.
     // L'appel RPC ci-dessus étant déjà passé, on ouvre ici sans await.
-    window.open(wa + '?text=' + encodeURIComponent(texte), '_blank', 'noopener');
-    loadCards();
+    window.open(wa + '?text=' + encodeURIComponent(invitation.texte), '_blank', 'noopener');
+    loadAll();
+  }
+
+  /**
+   * Copie le lien d'invitation dans le presse-papiers.
+   *
+   * POURQUOI. Le bouton « Inviter » ouvre une CONVERSATION NEUVE sur
+   * WhatsApp, et c'est précisément ce volume de conversations neuves qui
+   * a valu une restriction de 24 h au compte de l'association. Copier le
+   * lien permet de le coller dans une conversation DÉJÀ ouverte avec le
+   * membre : aucun nouveau fil, donc aucun signal d'envoi en masse.
+   *
+   * Le garde-fou WhatsApp n'est volontairement pas consulté ici : rien
+   * n'est envoyé, et décompter ce geste réduirait à tort le quota des
+   * envois qui, eux, comptent vraiment.
+   *
+   * Le téléphone n'est pas exigé non plus - « Inviter » en a besoin pour
+   * viser le numéro, un lien copié se transmet par n'importe quel moyen.
+   */
+  async function copierLienInvitation(cardId, bouton){
+    const invitation = await creerInvitationPourCarte(cardId);
+    if (!invitation) return;
+
+    const libelle = bouton ? bouton.innerHTML : null;
+    const confirmer = (texte) => {
+      if (!bouton) return;
+      bouton.innerHTML = texte;
+      setTimeout(() => { bouton.innerHTML = libelle; }, 2500);
+    };
+
+    if (await copierDansPressePapiers(invitation.lien)) {
+      confirmer('<i class="ti ti-check"></i> Lien copié');
+    } else {
+      // Dernier recours : le lien est montré pour une copie à la main.
+      // Perdre l'invitation parce que le presse-papiers est indisponible
+      // serait pire que ce dialogue.
+      window.prompt('Copiez ce lien d\'invitation :', invitation.lien);
+      confirmer('<i class="ti ti-link"></i> Copier le lien');
+    }
+    loadAll();
+  }
+
+  /**
+   * Écrit dans le presse-papiers, et dit si cela a fonctionné.
+   *
+   * navigator.clipboard n'existe qu'en contexte sécurisé (HTTPS), et
+   * plusieurs navigateurs le refusent lorsque l'écriture suit une attente
+   * réseau - ce qui est exactement notre cas, le jeton venant d'être créé.
+   * D'où la seconde tentative par zone de texte temporaire.
+   */
+  async function copierDansPressePapiers(texte){
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(texte);
+        return true;
+      }
+    } catch (e) { /* on tente la méthode de repli ci-dessous */ }
+
+    try {
+      const zone = document.createElement('textarea');
+      zone.value = texte;
+      // Hors écran plutôt que display:none : un élément masqué ne peut pas
+      // recevoir la sélection, et la copie échouerait sans rien dire.
+      zone.style.position = 'fixed';
+      zone.style.top = '-1000px';
+      zone.setAttribute('readonly', '');
+      document.body.appendChild(zone);
+      zone.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(zone);
+      return ok;
+    } catch (e) {
+      return false;
+    }
   }
 
   function toggleAssignRow(id) {
