@@ -75,6 +75,7 @@
 <div class="wrap"><p id="loadingMsg" style="font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);">Chargement des statistiques…</p></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   // String() est indispensable : esc() reçoit aussi des nombres (années,
@@ -118,14 +119,24 @@
   }
 
   // Regroupe une liste sur une clé, trie par effectif décroissant.
-  function compter(liste, cle, limite){
-    const m = new Map();
+  //
+  // « libelle » sépare ce sur quoi l'on regroupe de ce que l'on affiche.
+  // Sans cette distinction, les localités saisies librement se
+  // divisaient : « Thiès » et « Thies » comptaient pour deux villes, et
+  // une localité pouvait manquer au classement des dix premières parce
+  // que ses membres étaient répartis sur deux orthographes.
+  function compter(liste, cle, limite, libelle){
+    const effectifs = new Map();
+    const etiquettes = new Map();
     liste.forEach(x => {
       const k = cle(x);
       if (k === null || k === undefined || k === '') return;
-      m.set(k, (m.get(k) || 0) + 1);
+      effectifs.set(k, (effectifs.get(k) || 0) + 1);
+      if (libelle && !etiquettes.has(k)) etiquettes.set(k, libelle(x));
     });
-    const rangs = [...m.entries()].sort((a, b) => b[1] - a[1]);
+    const rangs = [...effectifs.entries()]
+      .map(([k, n]) => [etiquettes.has(k) ? etiquettes.get(k) : k, n])
+      .sort((a, b) => b[1] - a[1]);
     return limite ? rangs.slice(0, limite) : rangs;
   }
 
@@ -178,7 +189,9 @@
       .reduce((s, p) => s + Number(p.amount_fcfa || 0), 0);
 
     const parDomaine = compter(approuves, libelleDomaine);
-    const parVille = compter(approuves, p => (p.city || '').trim(), 10);
+    // Regroupement sur la clé normalisée, affichage sur la graphie
+    // officielle : « Thiès » et « Thies » ne font plus qu'une ligne.
+    const parVille = compter(approuves, p => localiteCle(p.city), 10, p => localiteLibelle(p.city));
     const parAnnee = compter(approuves, p => p.member_since).sort((a, b) => b[0] - a[0]);
     const parType = compter(approuves, p => p.applicant_type === 'nouvel_adherent' ? 'Nouvel adhérent' : 'Membre existant');
     const inscriptions = parMois(profils);
