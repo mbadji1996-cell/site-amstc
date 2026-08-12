@@ -1,9 +1,10 @@
 -- ============================================================
--- NETTOYAGE - Supprimer deux paiements de validité de test
+-- NETTOYAGE - Supprimer trois paiements de validité de test
 --
--- Deux paiements factices (références « sfsfsf » et « xwxw », 4 000 F et
--- 2 000 F, Wave, 16/07/2026) faussent les encaissements 2026. Ils sont
--- rattachés au compte drmouhamedbadji@gmail.com.
+-- Trois paiements factices du 16/07/2026 faussent les encaissements
+-- 2026 : « sfsfsf » (4 000 F) et « xwxw » (2 000 F) sur le compte
+-- drmouhamedbadji@gmail.com, et « zgfezgege » (5 000 F) sur un compte de
+-- test déjà supprimé.
 --
 -- ATTENTION, LA LIGNE N'EST PAS LA SEULE TRACE. Confirmer un paiement de
 -- validité ÉTEND profiles.card_valid_until du nombre d'années payées
@@ -17,8 +18,6 @@
 -- ============================================================
 
 -- ===== 1. Ce qui va être supprimé, avant d'y toucher =====
--- La ligne « zgfezgege » (5 000 F, membre supprimé) apparaît aussi : elle
--- ressemble à un test mais n'était pas dans la demande - voir l'étape 5.
 select v.id, p.email, v.years_requested, v.amount_fcfa, v.payment_method,
        v.payment_reference, v.status, v.created_at
   from public.card_validity_payments v
@@ -49,13 +48,14 @@ select email, card_valid_until, legacy_card_number
 --      set card_valid_until = card_valid_until - 6
 --    where email = 'drmouhamedbadji@gmail.com';
 
--- ===== 5. La ligne « zgfezgege » (COMMENTÉ - probablement un test aussi) =====
+-- ===== 5. La ligne « zgfezgege » : un test aussi, confirmé =====
 -- 5 000 F, 5 ans, rattachée à un compte supprimé (aucun profil ne la
 -- porte plus, d'où le « - » à l'écran). Son effet sur card_valid_until a
--- disparu avec le compte ; ne reste que le montant dans les statistiques.
---
---   delete from public.card_validity_payments
---    where payment_reference = 'zgfezgege' and user_id is null;
+-- disparu avec le compte ; ne restait que le montant dans les
+-- statistiques. La condition user_id is null protège toute ligne du même
+-- libellé qu'un membre réel porterait encore.
+delete from public.card_validity_payments
+ where payment_reference = 'zgfezgege' and user_id is null;
 
 -- ===== 6. Contrôle : les encaissements 2026 recalculés =====
 select count(*) as paiements_confirmes,
