@@ -1031,9 +1031,26 @@ Service **supabase (amstc)** → **Environment Variables** → ajoutez :
 GITHUB_TOKEN=github_pat_...
 ```
 
-Puis **Redeploy** - pas *Restart* : les variables d'environnement sont
-figées à la création du conteneur, et un simple redémarrage rejoue
-l'ancienne valeur sans le moindre message d'erreur.
+Puis **Restart** (en haut a droite). Un Service Coolify n'a pas de
+bouton « Redeploy » : c'est Restart qui recree les conteneurs a partir des
+variables enregistrees.
+
+VERIFIEZ QUE LA VARIABLE EST BIEN ARRIVEE, ce n'est pas une formalite :
+
+```bash
+docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc printenv GITHUB_TOKEN | cut -c1-14
+```
+
+Les variables vivent dans la base de Coolify, et un redemarrage peut ne
+pas les propager jusqu'au conteneur, sans le moindre message d'erreur -
+c'est ce qui s'est produit avec l'adresse de notification. Si rien ne
+s'affiche, ecrivez-la dans le fichier du disque puis recreez le
+conteneur :
+
+```bash
+F=/data/coolify/services/rffqs8ck1ckdixkuu2xjo5sc/.env
+grep -q '^GITHUB_TOKEN=' $F && sed -i 's|^GITHUB_TOKEN=.*|GITHUB_TOKEN=VOTRE_JETON|' $F || echo 'GITHUB_TOKEN=VOTRE_JETON' >> $F
+```
 
 Deux variables facultatives, si le dépôt ou le fichier de travail
 changent un jour : `GITHUB_REPO` (défaut `mbadji1996-cell/site-amstc`) et
@@ -1041,9 +1058,16 @@ changent un jour : `GITHUB_REPO` (défaut `mbadji1996-cell/site-amstc`) et
 
 ### 3. Déployer la fonction
 
+Le dossier des fonctions est monte depuis le disque de l'hote
+(`/data/coolify/services/<uuid>/volumes/functions`) : on y ecrit
+directement, et les fonctions survivent a une recreation du conteneur.
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/declencher-apercus/index.ts -o /tmp/da.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/declencher-apercus && docker cp /tmp/da.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/declencher-apercus/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+D=/data/coolify/services/rffqs8ck1ckdixkuu2xjo5sc/volumes/functions/declencher-apercus
+mkdir -p $D && curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/declencher-apercus/index.ts -o $D/index.ts && wc -l $D/index.ts
 ```
+
+Le compte doit afficher 124 lignes.
 
 ### 4. Vérifier
 
