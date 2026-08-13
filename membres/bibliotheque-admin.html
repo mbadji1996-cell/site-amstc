@@ -1090,7 +1090,20 @@
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     submitBtn.disabled = true;
-    messageEl.className = "form-message";
+    // Le bouton et le message disent TOUT DE SUITE que l'enregistrement
+    // est parti : rien ne bougeait a l'ecran pendant l'envoi, et dans le
+    // doute on recliquait.
+    const libelleRepos = submitBtn.textContent;
+    const direEnCours = (t) => {
+      submitBtn.textContent = t;
+      messageEl.textContent = t;
+      messageEl.className = "form-message success";
+    };
+    const rendreLaMain = () => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = libelleRepos;
+    };
+    direEnCours("Enregistrement en cours…");
 
     const id = document.getElementById("itemId").value;
     const existingFilePath = document.getElementById("existingFilePath").value;
@@ -1100,7 +1113,7 @@
     if (!newFile && !existingFilePath) {
       messageEl.textContent = "Veuillez choisir un fichier PDF.";
       messageEl.className = "form-message error";
-      submitBtn.disabled = false;
+      rendreLaMain();
       return;
     }
 
@@ -1115,6 +1128,8 @@
     };
 
     if (newFile) {
+      // L'envoi du fichier est le temps long ; il a son propre libelle.
+      direEnCours("Envoi du fichier…");
       const path = `${Date.now()}-${sanitizeFileName(newFile.name)}`;
       const { error: uploadError } = await supabaseClient.storage
         .from(DOCUMENTS_BUCKET)
@@ -1122,9 +1137,10 @@
       if (uploadError) {
         messageEl.textContent = "Erreur d'envoi du fichier : " + uploadError.message;
         messageEl.className = "form-message error";
-        submitBtn.disabled = false;
+        rendreLaMain();
         return;
       }
+      direEnCours("Enregistrement en cours…");
       if (existingFilePath) {
         await supabaseClient.storage.from(DOCUMENTS_BUCKET).remove([existingFilePath]);
       }
@@ -1141,7 +1157,7 @@
       ({ error } = await supabaseClient.from("restricted_articles").insert(payload));
     }
 
-    submitBtn.disabled = false;
+    rendreLaMain();
     if (error) {
       messageEl.textContent = "Erreur : " + error.message;
       messageEl.className = "form-message error";
