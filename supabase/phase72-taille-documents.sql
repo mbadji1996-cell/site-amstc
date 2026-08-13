@@ -43,6 +43,13 @@ update storage.buckets
    set file_size_limit = 209715200  -- 200 Mo
  where id = 'documents-reserves';
 
+-- annonce-photos, créé en phase34 APRÈS le script des limites (phase19),
+-- n'en avait jamais reçu : il était illimité, constaté au contrôle
+-- ci-dessous. Une photo d'annonce se borne comme les autres photos.
+update storage.buckets
+   set file_size_limit = 10485760  -- 10 Mo
+ where id = 'annonce-photos';
+
 -- Contrôle : la limite de chaque bucket, en Mo.
 select id,
        coalesce((file_size_limit / 1048576)::text, 'illimité') as limite_mo
