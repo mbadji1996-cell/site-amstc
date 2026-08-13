@@ -153,7 +153,7 @@
   <a class="back" href="admin.html">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
   <h1>Bibliothèque</h1>
-  <p class="intro">Livres et documents PDF réservés aux membres, consultables en ligne mais non téléchargeables. Chaque contenu est classé dans une section thématique.</p>
+  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Chaque contenu est classé dans un dossier thématique.</p>
 
   <details class="card" id="dossiersCard">
     <summary><span class="card-summary-icon">+</span> Dossiers de la bibliothèque</summary>
@@ -183,7 +183,9 @@
   <details class="card" id="importCard">
     <summary><span class="card-summary-icon">+</span> Importer un dossier entier</summary>
     <p class="field-hint">Le dossier de votre ordinateur devient un dossier de la bibliothèque, ses
-      sous-dossiers deviennent des sous-dossiers, et tous les PDF qu'ils contiennent sont publiés.
+      sous-dossiers deviennent des sous-dossiers, et tous les documents qu'ils contiennent sont
+      publiés. Formats acceptés : PDF, Word, Excel, PowerPoint, texte, ePub et images ; le reste
+      est laissé de côté et le journal le dit.
       Un dossier portant déjà le même nom est <strong>réutilisé</strong>, jamais dupliqué.</p>
 
     <div class="zone-depot" id="zoneDepot">
@@ -206,8 +208,8 @@
     <label for="lotDossier">Ranger dans</label>
     <select id="lotDossier"></select>
 
-    <label for="lotFichiers">Fichiers PDF</label>
-    <input type="file" id="lotFichiers" accept="application/pdf" multiple>
+    <label for="lotFichiers">Fichiers</label>
+    <input type="file" id="lotFichiers" accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.md,.xls,.xlsx,.ods,.csv,.ppt,.pptx,.odp,.epub,.jpg,.jpeg,.png,.gif,.webp,.avif" multiple>
     <p class="field-hint" id="lotResume"></p>
 
     <button type="button" class="btn btn-primary" id="lotEnvoyerBtn" style="margin-top:16px;">Envoyer les fichiers</button>
@@ -235,8 +237,8 @@
       <input type="url" id="cover_image" placeholder="https://...">
       <p class="field-hint">Pas d'envoi de fichier ici : collez l'URL d'une image déjà en ligne (ex. une couverture de livre hébergée ailleurs).</p>
 
-      <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
-      <input type="file" id="document_file" accept="application/pdf">
+      <label for="document_file">Fichier (facultatif si vous en avez déjà envoyé un)</label>
+      <input type="file" id="document_file" accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.md,.xls,.xlsx,.ods,.csv,.ppt,.pptx,.odp,.epub,.jpg,.jpeg,.png,.gif,.webp,.avif">
       <p class="field-hint" id="currentFileHint"></p>
 
       <label for="content">Description (facultative, visible des membres uniquement)</label>
@@ -592,11 +594,37 @@
 
   // ===== Import d'un dossier entier =====
 
-  // Le type MIME est parfois vide selon le système : l'extension sert de
-  // second recours, sans quoi des PDF parfaitement valables seraient
-  // ignorés sans explication.
-  function estPdf(f) {
-    return f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+  /**
+   * Formats acceptés dans la bibliothèque.
+   *
+   * Le PDF s'affiche dans la page ; les autres s'ouvrent dans
+   * l'application de l'appareil (voir lecteur-pdf.js). Les refuser
+   * revenait à laisser une partie des dossiers importés VIDE, sans
+   * que rien ne le dise - c'est ce qui a été signalé.
+   *
+   * La liste reste FERMÉE : un exécutable ou une archive n'a rien à
+   * faire dans une bibliothèque de documents, et le stockage les
+   * servirait tels quels aux membres.
+   */
+  const EXTENSIONS_ADMISES = [
+    "pdf",
+    "doc", "docx", "odt", "rtf", "txt", "md",
+    "xls", "xlsx", "ods", "csv",
+    "ppt", "pptx", "odp",
+    "epub",
+    "jpg", "jpeg", "png", "gif", "webp", "avif",
+  ];
+
+  function extensionDe(nom) {
+    const point = String(nom == null ? "" : nom).lastIndexOf(".");
+    return point === -1 ? "" : nom.slice(point + 1).toLowerCase();
+  }
+
+  // Le type MIME est parfois vide selon le système : l'extension fait
+  // foi, sans quoi des fichiers parfaitement valables seraient ignorés
+  // sans explication.
+  function estDocument(f) {
+    return EXTENSIONS_ADMISES.indexOf(extensionDe(f.name)) !== -1;
   }
 
   // --- Lecture d'un dossier déposé (glisser-déposer) ---
@@ -616,18 +644,23 @@
     });
   }
 
+  // Chaque nœud garde la liste des fichiers ÉCARTÉS. Sans elle, un
+  // format non admis disparaissait sans laisser de trace : le dossier
+  // apparaissait bien dans la bibliothèque, vide, et rien n'expliquait
+  // pourquoi.
   async function lireArborescence(entree) {
     const fichiers = [];
+    const refuses = [];
     const sous = {};
     for (const e of await lireTousLesLots(entree.createReader())) {
       if (e.isFile) {
         const f = await new Promise((res, rej) => e.file(res, rej));
-        if (estPdf(f)) fichiers.push(f);
+        if (estDocument(f)) fichiers.push(f); else refuses.push(f.name);
       } else if (e.isDirectory) {
         sous[e.name] = await lireArborescence(e);
       }
     }
-    return { fichiers, sous };
+    return { fichiers, refuses, sous };
   }
 
   // --- Lecture d'un dossier choisi par le bouton ---
@@ -635,20 +668,27 @@
   // (« Médecine/Cardiologie/ecg.pdf ») : on reconstruit l'arbre à partir
   // de là, la boîte de dialogue native ne donnant pas la structure.
   function arborescenceDepuisFichiers(fichiers) {
-    const racine = { nom: null, fichiers: [], sous: {} };
+    const racine = { nom: null, fichiers: [], refuses: [], sous: {} };
     for (const f of fichiers) {
-      if (!estPdf(f)) continue;
       const morceaux = (f.webkitRelativePath || f.name).split("/");
-      const nomFichier = morceaux.pop();
+      morceaux.pop();
+      // Le nom de la racine se lit sur TOUT fichier, même écarté : un
+      // dossier dont le premier fichier n'est pas admis avait sinon un
+      // nom nul, et l'import s'arrêtait avant d'avoir commencé.
       if (!racine.nom && morceaux.length) racine.nom = morceaux[0];
       let noeud = racine;
       morceaux.slice(1).forEach(nom => {
-        noeud.sous[nom] = noeud.sous[nom] || { fichiers: [], sous: {} };
+        noeud.sous[nom] = noeud.sous[nom] || { fichiers: [], refuses: [], sous: {} };
         noeud = noeud.sous[nom];
       });
-      noeud.fichiers.push(f);
+      if (estDocument(f)) noeud.fichiers.push(f); else noeud.refuses.push(f.name);
     }
     return racine;
+  }
+
+  function listerRefuses(arbre) {
+    return (arbre.refuses || []).concat(
+      ...Object.values(arbre.sous).map(listerRefuses));
   }
 
   function journalImport(texte, classe) {
@@ -715,7 +755,7 @@
    *
    * LA BIBLIOTHÈQUE NE COMPTE QUE DEUX NIVEAUX (phase74). Un arbre plus
    * profond n'est pas refusé - ce serait renvoyer l'administration à un
-   * réaménagement manuel de ses dossiers - mais APLATI : les PDF des
+   * réaménagement manuel de ses dossiers - mais APLATI : les documents des
    * niveaux inférieurs rejoignent le sous-dossier le plus proche, et le
    * journal le dit pour que personne ne cherche en vain un sous-sous-
    * dossier qui n'existera pas.
@@ -735,6 +775,13 @@
           journalImport(`« ${nom} » : ${compte} fichier(s) rattaché(s) au niveau supérieur (deux niveaux au maximum).`, "attente");
         }
         await importerArbre(sous, dossierId, niveau, etat);
+        continue;
+      }
+      // Un sous-dossier sans aucun document importable n'est PAS créé :
+      // le voir apparaître vide dans la bibliothèque donnait à croire
+      // que l'import avait perdu son contenu en route.
+      if (!compterFichiers(sous)) {
+        journalImport(`Dossier « ${nom} » : aucun document importable, non créé.`, "attente");
         continue;
       }
       const sousId = await trouverOuCreerDossier(nom, dossierId);
@@ -760,9 +807,20 @@
     const msg = document.getElementById("importMessage");
     document.getElementById("importJournal").innerHTML = "";
 
+    // Les fichiers écartés sont dits AVANT l'import : c'est la question
+    // qu'on se pose en voyant le compte final, et la réponse doit être
+    // sous les yeux plutôt que devinée.
+    const refuses = [].concat(...arbres.map(listerRefuses));
+    if (refuses.length) {
+      journalImport(`${refuses.length} fichier(s) d'un format non accepté, laissé(s) de côté : `
+        + `${refuses.slice(0, 6).join(", ")}${refuses.length > 6 ? "…" : ""}`, "attente");
+    }
+
     const utiles = arbres.filter(a => compterFichiers(a) > 0);
     if (!utiles.length) {
-      msg.textContent = "Aucun PDF trouvé dans ce qui a été déposé.";
+      msg.textContent = refuses.length
+        ? `Aucun document importable : les ${refuses.length} fichier(s) trouvé(s) ne sont pas d'un format accepté.`
+        : "Aucun document trouvé dans ce qui a été déposé.";
       msg.className = "form-message error";
       return;
     }
@@ -781,6 +839,7 @@
     // Le bilan sépare toujours réussites et échecs : un total unique
     // laisserait croire que tout est passé.
     msg.textContent = `Import terminé : ${etat.publies} document(s) publié(s), ${etat.dossiers} dossier(s) créé(s) ou complété(s).`
+      + (refuses.length ? ` ${refuses.length} fichier(s) écarté(s) (format non accepté).` : "")
       + (etat.echecs.length ? ` ${etat.echecs.length} fichier(s) en échec : ${etat.echecs.slice(0, 5).join(", ")}${etat.echecs.length > 5 ? "…" : ""}` : "");
     msg.className = etat.echecs.length ? "form-message error" : "form-message success";
 
@@ -1064,7 +1123,7 @@
     const newFile = fileInput.files[0];
 
     if (!newFile && !existingFilePath) {
-      messageEl.textContent = "Veuillez choisir un fichier PDF.";
+      messageEl.textContent = "Veuillez choisir un fichier.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;
       return;
@@ -1181,7 +1240,7 @@
     e.target.value = "";
     if (!arbre.nom) {
       const msg = document.getElementById("importMessage");
-      msg.textContent = "Aucun PDF trouvé dans ce dossier.";
+      msg.textContent = "Aucun fichier trouvé dans ce dossier.";
       msg.className = "form-message error";
       return;
     }

@@ -121,7 +121,7 @@
   <a class="back" href="formations.html">← Formations</a>
   <p class="eyebrow">Espace Membres - Formations & Daara</p>
   <h1><i class="ti ti-books"></i> Bibliothèque</h1>
-  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Ce contenu n'est pas téléchargeable.</p>
+  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Merci de ne pas les diffuser hors de l'association.</p>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <div class="bib-filtres" id="bibFiltres" style="display:none;">
@@ -390,7 +390,7 @@
     }
 
     btn.closest(".book-item").classList.add("ouvert");
-    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note");
+    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note", path);
     btn.textContent = "Fermer";
   }
 
