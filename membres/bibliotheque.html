@@ -50,6 +50,15 @@
      plus discret : la hiérarchie se lit sans avoir à la deviner. */
   .bib-sous-section{padding-left:16px; border-left:2px solid var(--paper-alt); margin:6px 0 14px;}
   .bib-sous-titre{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:10px;}
+  .bib-filtres{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:22px;}
+  .bib-filtres input, .bib-filtres select{
+    padding:11px 14px; border:1.5px solid var(--line); border-radius:10px;
+    font-family:var(--body); font-size:0.92rem; background:var(--surface); color:var(--ink);
+  }
+  .bib-filtres input{flex:1; min-width:200px;}
+  .bib-filtres select{min-width:190px;}
+  .bib-filtres input:focus, .bib-filtres select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
+  .bib-compte{font-family:var(--mono); font-size:0.74rem; color:var(--text-muted); white-space:nowrap;}
   .book-item{margin-bottom:14px;}
   .book-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 24px;
@@ -107,6 +116,11 @@
   <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Ce contenu n'est pas téléchargeable.</p>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
+  <div class="bib-filtres" id="bibFiltres" style="display:none;">
+    <input type="search" id="bibRecherche" placeholder="Rechercher un titre…" aria-label="Rechercher dans la bibliothèque">
+    <select id="bibDossier" aria-label="Filtrer par dossier"></select>
+    <span class="bib-compte" id="bibCompte"></span>
+  </div>
   <div id="list">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
   </div>
@@ -124,6 +138,7 @@
   // Chargés depuis la base : l'association crée et renomme ses dossiers
   // depuis l'écran d'administration.
   let dossiers = [];
+  let tousLesLivres = [];
 
   async function chargerDossiers() {
     const { data, error } = await supabaseClient
@@ -173,6 +188,90 @@
 
     if (!data || data.length === 0) {
       listEl.innerHTML = '<p class="empty">Aucun livre ou document publié pour le moment.</p>';
+      return;
+    }
+
+    // Les documents sont gardés en mémoire : recherche et filtre
+    // s'appliquent sans relire la base, ce qui les rend instantanés et
+    // ménage le limiteur de débit de bibliotheque_documents.
+    tousLesLivres = data;
+    remplirFiltreDossiers();
+    document.getElementById("bibFiltres").style.display = "";
+    afficherLivres();
+  }
+
+  // Recherche insensible à la casse et aux accents : « medecine » doit
+  // trouver « Médecine », personne ne tape les accents dans une
+  // recherche.
+  function normaliserRecherche(s) {
+    return String(s == null ? "" : s)
+      .normalize("NFD")
+      // Plage ECHAPPEE, jamais les caracteres eux-memes : invisibles a la
+      // lecture, ils se perdent au moindre copier-coller.
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().trim();
+  }
+
+  function remplirFiltreDossiers() {
+    const sel = document.getElementById("bibDossier");
+    const actuel = sel.value;
+    let html = '<option value="">Tous les dossiers</option>';
+    dossiers.filter(d => !d.parent_id).forEach(d => {
+      html += `<option value="${esc(d.id)}">${esc(d.nom)}</option>`;
+      dossiers.filter(s => s.parent_id === d.id).forEach(s => {
+        html += `<option value="${esc(s.id)}">&nbsp;&nbsp;&nbsp;&rsaquo; ${esc(s.nom)}</option>`;
+      });
+    });
+    // Les documents sans dossier doivent rester atteignables : sans cette
+    // entrée, un livre non classé serait invisible dès qu'un filtre est
+    // posé, alors qu'il figure bien dans la bibliothèque.
+    if (tousLesLivres.some(l => !l.dossier_id)) {
+      html += '<option value="__sans">Autres documents</option>';
+    }
+    sel.innerHTML = html;
+    sel.value = [...sel.options].some(o => o.value === actuel) ? actuel : "";
+  }
+
+  function livresFiltres() {
+    const q = normaliserRecherche(document.getElementById("bibRecherche").value);
+    const choix = document.getElementById("bibDossier").value;
+
+    // Choisir un dossier PARENT inclut ses sous-dossiers : filtrer sur
+    // « Médecine » sans voir « Cardiologie » surprendrait.
+    let permis = null;
+    if (choix === "__sans") {
+      permis = new Set([null]);
+    } else if (choix) {
+      permis = new Set([choix].concat(
+        dossiers.filter(d => d.parent_id === choix).map(d => d.id)));
+    }
+
+    return tousLesLivres.filter(l => {
+      if (permis) {
+        const cle = l.dossier_id || null;
+        if (!permis.has(cle)) return false;
+      }
+      if (!q) return true;
+      // Le nom du dossier entre dans la recherche : chercher « islam »
+      // doit ramener les livres de ce dossier, même si leur titre ne
+      // contient pas le mot.
+      const d = dossiers.find(x => x.id === l.dossier_id);
+      return normaliserRecherche(
+        [l.title, l.excerpt, d && d.nom].filter(Boolean).join(" ")
+      ).indexOf(q) !== -1;
+    });
+  }
+
+  function afficherLivres() {
+    const listEl = document.getElementById("list");
+    const data = livresFiltres();
+    const compte = document.getElementById("bibCompte");
+    compte.textContent = data.length === tousLesLivres.length
+      ? `${tousLesLivres.length} document(s)`
+      : `${data.length} sur ${tousLesLivres.length}`;
+
+    if (!data.length) {
+      listEl.innerHTML = '<p class="empty">Aucun document ne correspond à cette recherche.</p>';
       return;
     }
 
@@ -296,6 +395,11 @@
     await chargerDossiers();
     loadBooks(result.state === "blocked");
   })();
+
+  // Les champs sont statiques : les écouteurs se posent une fois, avant
+  // même que les données n'arrivent.
+  document.getElementById("bibRecherche").addEventListener("input", afficherLivres);
+  document.getElementById("bibDossier").addEventListener("change", afficherLivres);
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();

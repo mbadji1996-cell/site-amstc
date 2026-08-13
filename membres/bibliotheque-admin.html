@@ -95,6 +95,11 @@
   .dossier-ligne.enfant{padding-left:26px; border-left:2px solid var(--paper-alt); margin-left:6px;}
   .dossier-compte{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); white-space:nowrap;}
   .dossier-vide{color:var(--text-muted); font-size:0.86rem; font-style:italic;}
+  .bib-filtres{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;}
+  .bib-filtres input, .bib-filtres select{margin:0;}
+  .bib-filtres input{flex:1; min-width:190px;}
+  .bib-filtres select{width:210px;}
+  .bib-compte{font-family:var(--mono); font-size:0.72rem; color:var(--text-muted); white-space:nowrap;}
   .btn-mini{font-weight:600; font-size:0.8rem; padding:8px 14px; border-radius:999px; border:none; cursor:pointer;}
   /* Journal d'envoi : une ligne par fichier, pour que l'echec de l'un se
      voie sans masquer la reussite des autres. */
@@ -230,6 +235,11 @@
   </details>
 
   <h2>Contenus déjà publiés</h2>
+  <div class="bib-filtres">
+    <input type="search" id="rechercheDoc" placeholder="Rechercher un titre…" aria-label="Rechercher un document">
+    <select id="filtreDossier" aria-label="Filtrer par dossier"></select>
+    <span class="bib-compte" id="compteDoc"></span>
+  </div>
   <div id="itemsList"><p class="loading">Chargement…</p></div>
 </div>
 
@@ -262,6 +272,7 @@
   // fichiers et à exécuter un script pour ajouter une rubrique.
   let dossiers = [];
   let comptesParDossier = {};
+  let tousLesDocs = [];
 
   function nomDuDossier(id){
     const d = dossiers.find(x => x.id === id);
@@ -910,8 +921,67 @@
     });
     if (dossiers.length) afficherDossiers();
 
+    // Les documents sont gardés en mémoire : recherche et filtre
+    // s'appliquent sans relire la base.
+    tousLesDocs = data || [];
+    remplirFiltreDossiers();
+    afficherDocs();
+  }
+
+  function normaliserRecherche(s) {
+    return String(s == null ? "" : s)
+      .normalize("NFD")
+      // Plage ECHAPPEE, jamais les caracteres eux-memes : invisibles a la
+      // lecture, ils se perdent au moindre copier-coller.
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().trim();
+  }
+
+  function remplirFiltreDossiers() {
+    const sel = document.getElementById("filtreDossier");
+    const actuel = sel.value;
+    let html = '<option value="">Tous les dossiers</option>';
+    arborescence().forEach(({ d, enfant }) => {
+      html += `<option value="${esc(d.id)}">${enfant ? "&nbsp;&nbsp;&nbsp;&rsaquo; " : ""}${esc(d.nom)}</option>`;
+    });
+    // Sans cette entrée, un document non classé deviendrait introuvable
+    // dès qu'un filtre est posé, alors qu'il figure bien dans la liste.
+    if (tousLesDocs.some(x => !x.dossier_id)) {
+      html += '<option value="__sans">Sans dossier</option>';
+    }
+    sel.innerHTML = html;
+    sel.value = [...sel.options].some(o => o.value === actuel) ? actuel : "";
+  }
+
+  function docsFiltres() {
+    const q = normaliserRecherche(document.getElementById("rechercheDoc").value);
+    const choix = document.getElementById("filtreDossier").value;
+
+    // Choisir un dossier PARENT inclut ses sous-dossiers.
+    let permis = null;
+    if (choix === "__sans") permis = new Set([null]);
+    else if (choix) permis = new Set([choix].concat(
+      dossiers.filter(d => d.parent_id === choix).map(d => d.id)));
+
+    return tousLesDocs.filter(x => {
+      if (permis && !permis.has(x.dossier_id || null)) return false;
+      if (!q) return true;
+      return normaliserRecherche(
+        [x.title, x.excerpt, nomDuDossier(x.dossier_id)].filter(Boolean).join(" ")
+      ).indexOf(q) !== -1;
+    });
+  }
+
+  function afficherDocs() {
+    const listEl = document.getElementById("itemsList");
+    const data = docsFiltres();
+    document.getElementById("compteDoc").textContent =
+      data.length === tousLesDocs.length
+        ? `${tousLesDocs.length} document(s)`
+        : `${data.length} sur ${tousLesDocs.length}`;
+
     listEl.innerHTML = data.length === 0
-      ? '<p class="empty">Aucun livre ou document publié pour le moment.</p>'
+      ? `<p class="empty">${tousLesDocs.length ? 'Aucun document ne correspond à cette recherche.' : 'Aucun livre ou document publié pour le moment.'}</p>`
       : data.map(item => `
         <div class="item-row">
           <div>
@@ -1099,6 +1169,9 @@
     }
     await importerDossiers([arbre]);
   });
+
+  document.getElementById("rechercheDoc").addEventListener("input", afficherDocs);
+  document.getElementById("filtreDossier").addEventListener("change", afficherDocs);
 
   document.getElementById("lotEnvoyerBtn").addEventListener("click", envoyerLot);
   document.getElementById("lotFichiers").addEventListener("change", majResumeLot);
