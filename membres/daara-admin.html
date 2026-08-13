@@ -282,11 +282,17 @@
   async function partagerCours(id, bouton) {
     const avant = bouton.innerHTML;
     // Publié à l'instant, la page d'aperçu n'existe pas encore (passage
-    // horaire) : partager maintenant enverrait un lien sans titre.
+    // horaire) : partager maintenant enverrait un lien sans titre. Plutôt
+    // que de renvoyer l'administration à une heure d'attente, on lance la
+    // construction séance tenante.
     if (!(await partageDisponible(partageAdresse('c', null, id)))) {
+      bouton.innerHTML = '<i class="ti ti-clock"></i> Construction lancée…';
+      const lance = await partageDeclencherConstruction();
       bouton.innerHTML = '<i class="ti ti-clock"></i> Aperçu en préparation';
-      bouton.title = "La page d'aperçu de ce cours n'est pas encore générée : réessayez dans une heure.";
-      setTimeout(() => { bouton.innerHTML = avant; bouton.title = ''; }, 5000);
+      bouton.title = lance
+        ? "Construction lancée : réessayez dans une minute."
+        : "La page d'aperçu de ce cours n'est pas encore générée : réessayez dans une heure.";
+      setTimeout(() => { bouton.innerHTML = avant; bouton.title = ''; }, 6000);
       return;
     }
     const etat = await partagerFiche('c', id, 'Cours AMSTC');
@@ -361,6 +367,11 @@
     if (error) {
       showMsg('Erreur : ' + error.message, 'error');
     } else {
+      // Cours publié : sa page d'aperçu de partage n'existe pas encore.
+      // On lance la construction tout de suite, sans attendre le passage
+      // horaire - c'est juste après la publication que le lien est
+      // partagé, pas une heure plus tard.
+      if (payload.is_published) partageDeclencherConstruction();
       closeForm();
       await loadCourses();
     }

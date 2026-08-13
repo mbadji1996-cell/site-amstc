@@ -332,11 +332,17 @@
   async function partagerLecon(id, bouton) {
     const avant = bouton.innerHTML;
     // Publiée à l'instant, la page d'aperçu n'existe pas encore (passage
-    // horaire) : partager maintenant enverrait un lien sans titre.
+    // horaire) : partager maintenant enverrait un lien sans titre. Plutôt
+    // que de renvoyer l'administration à une heure d'attente, on lance la
+    // construction séance tenante.
     if (!(await partageDisponible(partageAdresse('c', null, id)))) {
+      bouton.innerHTML = '<i class="ti ti-clock"></i> Construction lancée…';
+      const lance = await partageDeclencherConstruction();
       bouton.innerHTML = '<i class="ti ti-clock"></i> Aperçu en préparation';
-      bouton.title = "La page d'aperçu de cette leçon n'est pas encore générée : réessayez dans une heure.";
-      setTimeout(() => { bouton.innerHTML = avant; bouton.title = ''; }, 5000);
+      bouton.title = lance
+        ? "Construction lancée : réessayez dans une minute."
+        : "La page d'aperçu de cette leçon n'est pas encore générée : réessayez dans une heure.";
+      setTimeout(() => { bouton.innerHTML = avant; bouton.title = ''; }, 6000);
       return;
     }
     const etat = await partagerFiche('c', id, 'Enseignement médical AMSTC');
@@ -474,6 +480,10 @@
     btn.disabled = false;
     if (error) { msg.textContent = 'Erreur : ' + error.message; msg.className = 'form-msg error'; return; }
     msg.textContent = 'Enregistré !'; msg.className = 'form-msg ok';
+    // Leçon publiée : sa page d'aperçu n'existe pas encore. On lance la
+    // construction sans attendre le passage horaire - c'est juste après
+    // la publication que le lien est partagé, pas une heure plus tard.
+    if (payload.is_published) partageDeclencherConstruction();
     await loadData();
     renderLessons();
     setTimeout(() => closeModal('lessonModal'), 800);
@@ -481,6 +491,7 @@
 
   async function togglePublishLesson(id, current) {
     await supabaseClient.from('medical_lessons').update({ is_published: !current }).eq('id', id);
+    if (!current) partageDeclencherConstruction();
     await loadData(); renderLessons();
   }
 

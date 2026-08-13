@@ -990,6 +990,72 @@ s'inscrit elle-même via `membres/inscription.html` (comme aujourd'hui),
 puis un administrateur ou Super Administrateur l'approuve depuis
 `membres/validation.html`.
 
+## Aperçus de partage : construction immédiate
+
+Les cours du Daara et les leçons médicales vivent dans Supabase, pas dans
+le dépôt : aucune publication ne déclenche de mise en ligne. Leur page
+d'aperçu de partage (`/c/<id>.html`), celle qui donne à WhatsApp le titre
+et l'image du cours, est donc fabriquée par un passage **horaire** de
+GitHub Actions. Entre la publication et ce passage, le bouton
+« Partager » refuse d'agir plutôt que d'envoyer un lien sans titre.
+
+La fonction `declencher-apercus` supprime cette attente : l'écran
+d'administration lui demande de lancer la construction dès qu'un cours ou
+une leçon est publié, et le délai tombe à environ une minute.
+
+**Tout fonctionne sans elle** : si elle n'est pas déployée, ou si le
+jeton n'est pas configuré, l'écran retombe simplement sur le message
+d'attente horaire. Aucune erreur technique n'est montrée - il n'y aurait
+rien à en faire.
+
+### 1. Créer le jeton GitHub
+
+Sur GitHub : **Settings** (du compte) → **Developer settings** →
+**Personal access tokens** → **Fine-grained tokens** → **Generate new
+token**.
+
+- **Repository access** : *Only select repositories* → `site-amstc`
+- **Permissions** → *Repository permissions* → **Actions** : `Read and write`
+- **Expiration** : notez la date, le jeton devra être renouvelé
+
+C'est le droit minimal : ce jeton peut lancer un travail, rien d'autre.
+Il ne peut pas écrire dans le code.
+
+Copiez le jeton affiché (il ne le sera qu'une fois).
+
+### 2. Le déclarer dans Coolify
+
+Service **supabase (amstc)** → **Environment Variables** → ajoutez :
+
+```
+GITHUB_TOKEN=github_pat_...
+```
+
+Puis **Redeploy** - pas *Restart* : les variables d'environnement sont
+figées à la création du conteneur, et un simple redémarrage rejoue
+l'ancienne valeur sans le moindre message d'erreur.
+
+Deux variables facultatives, si le dépôt ou le fichier de travail
+changent un jour : `GITHUB_REPO` (défaut `mbadji1996-cell/site-amstc`) et
+`GITHUB_WORKFLOW` (défaut `build-content-index.yml`).
+
+### 3. Déployer la fonction
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/declencher-apercus/index.ts -o /tmp/da.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/declencher-apercus && docker cp /tmp/da.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/declencher-apercus/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+```
+
+### 4. Vérifier
+
+Publiez un cours de test dans Gestion du Daara, puis regardez l'onglet
+**Actions** du dépôt : un travail *Build content index* doit démarrer
+dans les secondes qui suivent. Une minute plus tard, le bouton
+« Partager » du cours fonctionne.
+
+Si rien ne démarre, la cause est presque toujours le jeton : `404` côté
+GitHub signifie un jeton sans le droit **Actions**, `401` un jeton
+invalide ou expiré.
+
 ## Ce qui n'est pas encore fait
 
 - Aucune fonctionnalité prévue en attente pour l'instant (Phases 1, 2 et

@@ -13,7 +13,48 @@
  *   partageInit({ conteneur: 'partageZone', prefixe: 'a', cle: 'slug' });
  *   partageInit({ conteneur: 'partageZone', prefixe: 'c', cle: 'id' });
  *   await partagerFiche('c', idDuCours, 'Titre');   // écrans d'administration
+ *   await partageDeclencherConstruction();          // idem, admins seulement
  */
+
+/**
+ * Demande la construction immédiate des pages d'aperçu, sans attendre le
+ * passage horaire.
+ *
+ * Les cours et les leçons vivent dans Supabase : aucune publication ne
+ * déclenche de mise en ligne, et leur page d'aperçu n'est fabriquée qu'à
+ * heure fixe. Cette fonction raccourcit l'attente à environ une minute.
+ *
+ * Réservée aux administrateurs, le contrôle étant fait par la fonction
+ * serveur - le jeton GitHub ne peut pas descendre dans le navigateur.
+ *
+ * Renvoie { ok, message } à afficher, ou null quand il n'y a rien à dire
+ * (visiteur non connecté, fonction non déployée, jeton non configuré) :
+ * dans tous ces cas le passage horaire fait le travail, et une erreur
+ * technique n'apprendrait rien à l'administration.
+ */
+async function partageDeclencherConstruction() {
+  try {
+    if (typeof supabaseClient === 'undefined' || typeof SUPABASE_URL === 'undefined') return null;
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data && data.session;
+    if (!session) return null;
+
+    const reponse = await fetch(SUPABASE_URL + '/functions/v1/declencher-apercus', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + session.access_token,
+        'Content-Type': 'application/json',
+      },
+    });
+    const corps = await reponse.json().catch(() => ({}));
+    if (reponse.ok && corps.ok) return { ok: true, message: corps.message };
+    // 403 (pas admin), 501 (jeton absent), 404 (fonction non déployée) :
+    // rien d'actionnable pour la personne devant l'écran.
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
 
 // valeurExplicite sert aux écrans qui listent PLUSIEURS fiches : là,
 // l'identifiant ne peut pas venir de la barre d'adresse, chaque ligne
