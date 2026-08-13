@@ -201,7 +201,7 @@
       // Plage ECHAPPEE, jamais les caracteres eux-memes : invisibles a
       // la lecture, ils se perdent au moindre copier-coller et la
       // fonction cesse alors silencieusement de retirer les accents.
-      .replace(/[̀-ͯ]/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   }
 

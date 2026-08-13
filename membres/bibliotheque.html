@@ -27,9 +27,9 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
   a{color:inherit; text-decoration:none;}
-  .wrap{max-width:820px; margin:0 auto; padding:0 28px;}
+  .wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   header{padding:24px 0; border-bottom:1px solid var(--line); background:var(--green-deep);}
-  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
+  .header-wrap{max-width:1400px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between;}
   .logo-img{height:42px;filter:brightness(0) invert(1);}
   .signout-btn{
     font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
@@ -59,17 +59,25 @@
   .bib-filtres select{min-width:190px;}
   .bib-filtres input:focus, .bib-filtres select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
   .bib-compte{font-family:var(--mono); font-size:0.74rem; color:var(--text-muted); white-space:nowrap;}
-  .book-item{margin-bottom:14px;}
+  /* Grille de cartes : jusqu'a quatre par rangee sur grand ecran, moins
+     a mesure que la place manque. auto-fill + minmax evite d'entretenir
+     une liste de points de rupture. */
+  .book-grille{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;}
+  .book-item{margin-bottom:0;}
+  /* Le visionneur ouvert prend TOUTE la largeur de la grille : un PDF
+     dans une colonne de 260 px serait illisible. */
+  .book-item.ouvert{grid-column:1 / -1;}
   .book-row{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 24px;
-    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+    display:flex; flex-direction:column; gap:14px; height:100%;
   }
-  .book-main{display:flex; align-items:flex-start; gap:16px; min-width:0;}
-  .book-cover{width:52px; height:70px; object-fit:cover; border-radius:6px; flex-shrink:0; background:var(--paper-alt);}
+  .book-main{display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; flex:1; min-width:0;}
+  .book-cover{width:110px; height:150px; object-fit:cover; border-radius:8px; flex-shrink:0; background:var(--paper-alt);}
   .book-cover-placeholder{
-    width:52px; height:70px; border-radius:6px; flex-shrink:0; background:var(--paper-alt);
-    display:flex; align-items:center; justify-content:center; color:var(--text-accent); font-size:18px;
+    width:110px; height:150px; border-radius:8px; flex-shrink:0; background:var(--paper-alt);
+    display:flex; align-items:center; justify-content:center; color:var(--text-accent); font-size:30px;
   }
+  .book-title{overflow-wrap:anywhere;}
   .book-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1.05rem;}
   .book-excerpt{color:var(--text-muted); font-size:0.92rem; margin-top:4px;}
   .book-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:6px;}
@@ -80,8 +88,8 @@
   .btn-view:hover{opacity:0.88;}
   .btn-view:disabled{opacity:0.6; cursor:wait;}
   .book-viewer{
-    border:1px solid var(--line); border-top:none; border-radius:0 0 var(--radius) var(--radius);
-    margin-top:-14px; padding-top:14px; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); margin-top:10px;
+    padding-top:6px; background:var(--surface);
   }
   .book-viewer iframe{width:100%; height:75vh; border:0; display:block;}
   .book-viewer-note{
@@ -335,11 +343,11 @@
     listEl.innerHTML = groupes.map(g => `
         <div class="bib-section">
           <p class="bib-section-title">${esc(g.nom)}</p>
-          ${g.livres.map(carte).join("")}
+          <div class="book-grille">${g.livres.map(carte).join("")}</div>
           ${g.sous.map(s => `
             <div class="bib-sous-section">
               <p class="bib-sous-titre">${esc(s.nom)}</p>
-              ${s.livres.map(carte).join("")}
+              <div class="book-grille">${s.livres.map(carte).join("")}</div>
             </div>`).join("")}
         </div>
       `).join("");
@@ -358,6 +366,7 @@
     if (isOpen) {
       viewer.style.display = "none";
       viewer.innerHTML = "";
+      btn.closest(".book-item").classList.remove("ouvert");
       btn.textContent = "Consulter";
       return;
     }
@@ -380,6 +389,7 @@
       return;
     }
 
+    btn.closest(".book-item").classList.add("ouvert");
     lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note");
     btn.textContent = "Fermer";
   }
