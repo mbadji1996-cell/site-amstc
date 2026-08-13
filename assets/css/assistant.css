@@ -2,9 +2,14 @@
    Les couleurs passent par les variables du thème : la page peut être
    claire ou sombre, l'assistant suit sans réglage supplémentaire. */
 
+/* A GAUCHE, et non a droite : le bas-droit est occupe par la bascule de
+   theme (dark-mode.css), les deux boutons se chevauchaient. Le bas-gauche
+   n'est pris que par le garde WhatsApp de garde-whatsapp.js, present
+   uniquement sur les ecrans d'administration - lesquels ne portent pas
+   l'assistant. */
 .assistant-bouton {
   position: fixed;
-  right: 18px;
+  left: 18px;
   bottom: 18px;
   z-index: 900;
   display: inline-flex;
@@ -33,7 +38,7 @@
 
 .assistant-panneau {
   position: fixed;
-  right: 18px;
+  left: 18px;
   bottom: 74px;
   z-index: 901;
   width: 340px;
@@ -129,8 +134,8 @@
 /* Sous 480px le panneau occupe la largeur, le bouton se resserre : à
    340px de large il masquerait une partie du contenu de la page. */
 @media (max-width: 480px) {
-  .assistant-panneau { right: 10px; left: 10px; width: auto; bottom: 68px; }
-  .assistant-bouton { right: 12px; bottom: 12px; padding: 11px 16px; font-size: 0.82rem; }
+  .assistant-panneau { left: 10px; right: 10px; width: auto; bottom: 68px; }
+  .assistant-bouton { left: 12px; bottom: 12px; padding: 11px 16px; font-size: 0.82rem; }
 }
 
 @media print {
