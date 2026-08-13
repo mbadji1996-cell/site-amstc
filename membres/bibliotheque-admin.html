@@ -78,13 +78,20 @@
   .item-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .item-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:4px;}
   .category-tag{font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; background:var(--paper-alt); color:var(--text-heading); padding:3px 9px; border-radius:999px;}
-  .dossier-ajout{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
-  .dossier-ajout input{flex:1; min-width:200px; margin:0;}
-  .dossier-ligne{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0; border-bottom:1px solid var(--paper-alt);}
+  .dossier-bloc{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-top:14px;}
+  .dossier-bloc-titre{font-family:var(--display); font-weight:600; font-size:0.95rem; color:var(--text-heading);}
+  .dossier-ligne{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:12px 0; border-bottom:1px solid var(--paper-alt);}
   .dossier-ligne:last-child{border-bottom:none;}
-  .dossier-ligne input[type="text"]{flex:1; min-width:160px; margin:0;}
+  .dossier-ligne input, .dossier-ligne select{margin:0;}
+  .dossier-ligne .champ-nom{flex:1; min-width:150px;}
+  .dossier-ligne .champ-parent{width:190px;}
+  .dossier-ligne .champ-ordre{width:74px;}
+  /* Le décalage rend la hiérarchie visible d'un coup d'œil : sans lui,
+     rien ne distingue un sous-dossier d'un dossier principal. */
+  .dossier-ligne.enfant{padding-left:26px; border-left:2px solid var(--paper-alt); margin-left:6px;}
   .dossier-compte{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); white-space:nowrap;}
   .dossier-vide{color:var(--text-muted); font-size:0.86rem; font-style:italic;}
+  .btn-mini{font-weight:600; font-size:0.8rem; padding:8px 14px; border-radius:999px; border:none; cursor:pointer;}
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
@@ -112,11 +119,25 @@
 
   <details class="card" id="dossiersCard">
     <summary><span class="card-summary-icon">+</span> Dossiers de la bibliothèque</summary>
-    <div class="dossier-ajout">
-      <input type="text" id="nouveauDossier" placeholder="Nom du nouveau dossier" maxlength="80">
-      <button type="button" class="btn btn-primary" id="ajouterDossierBtn">Créer le dossier</button>
+    <p class="field-hint">Un dossier peut contenir des <strong>sous-dossiers</strong> - deux niveaux au maximum,
+      pour que la bibliothèque reste lisible. Chaque document se range ensuite dans un dossier ou dans un sous-dossier,
+      au moyen du champ « Dossier » du formulaire de publication.</p>
+
+    <div class="dossier-bloc">
+      <p class="dossier-bloc-titre">Créer un dossier</p>
+      <label for="nouveauDossier">Nom</label>
+      <input type="text" id="nouveauDossier" placeholder="Ex. Normes et protocoles" maxlength="80">
+      <label for="nouveauParent">Le ranger dans</label>
+      <select id="nouveauParent"></select>
+      <button type="button" class="btn btn-primary" id="ajouterDossierBtn" style="margin-top:14px;">Créer le dossier</button>
     </div>
+
     <p class="form-message" id="dossierMessage"></p>
+
+    <p class="dossier-bloc-titre" style="margin-top:22px;">Dossiers existants</p>
+    <p class="field-hint">Sur chaque ligne : le <strong>nom</strong>, le dossier dans lequel il est <strong>rangé</strong>,
+      et son <strong>ordre d'affichage</strong> (les petits nombres passent en premier chez les membres).
+      Modifiez ce que vous voulez, puis « Enregistrer » sur cette ligne.</p>
     <div id="dossiersListe"><p class="loading">Chargement…</p></div>
   </details>
 
@@ -263,6 +284,24 @@
     afficherDossiers();
   }
 
+  // Les dossiers, remis dans l'ordre d'affichage : chaque racine suivie
+  // de ses sous-dossiers. C'est cet ordre que voient les membres.
+  function arborescence() {
+    const racines = dossiers.filter(d => !d.parent_id);
+    const sortie = [];
+    racines.forEach(r => {
+      sortie.push({ d: r, enfant: false });
+      dossiers.filter(s => s.parent_id === r.id)
+              .forEach(s => sortie.push({ d: s, enfant: true }));
+    });
+    // Un sous-dossier dont le parent a disparu de la liste ne doit pas
+    // s'évanouir de l'écran : on le montre au premier niveau.
+    dossiers.filter(d => d.parent_id && !racines.some(r => r.id === d.parent_id)
+                         && !sortie.some(x => x.d.id === d.id))
+            .forEach(d => sortie.push({ d, enfant: false }));
+    return sortie;
+  }
+
   // La valeur en cours est conservée : le sélecteur est reconstruit à
   // chaque changement de dossier, y compris pendant qu'un document est en
   // cours de modification.
@@ -270,8 +309,35 @@
     const sel = document.getElementById("dossier_id");
     const actuel = sel.value;
     sel.innerHTML = '<option value="" disabled>Choisir...</option>'
-      + dossiers.map(d => `<option value="${esc(d.id)}">${esc(d.nom)}</option>`).join("");
+      + arborescence().map(({ d, enfant }) =>
+          `<option value="${esc(d.id)}">${enfant ? "&nbsp;&nbsp;&nbsp;&rsaquo; " : ""}${esc(d.nom)}</option>`
+        ).join("");
     sel.value = dossiers.some(d => d.id === actuel) ? actuel : "";
+
+    // Choix du parent : seuls les dossiers PRINCIPAUX peuvent en accueillir
+    // - un sous-dossier n'en contient pas d'autres, la base le refuserait.
+    const parent = document.getElementById("nouveauParent");
+    const parentActuel = parent.value;
+    parent.innerHTML = '<option value="">Aucun - ce sera un dossier principal</option>'
+      + dossiers.filter(d => !d.parent_id)
+                .map(d => `<option value="${esc(d.id)}">${esc(d.nom)}</option>`).join("");
+    parent.value = dossiers.some(d => d.id === parentActuel && !d.parent_id) ? parentActuel : "";
+  }
+
+  // Liste des parents possibles pour un dossier donné : les autres
+  // dossiers principaux, et jamais lui-même. Un dossier qui contient déjà
+  // des sous-dossiers ne peut pas être déplacé - il créerait un troisième
+  // niveau -, le sélecteur est alors désactivé et le dit.
+  function optionsParent(d) {
+    const aDesEnfants = dossiers.some(x => x.parent_id === d.id);
+    if (aDesEnfants) {
+      return { desactive: true, html: '<option value="">Contient des sous-dossiers</option>' };
+    }
+    const html = '<option value="">Dossier principal</option>'
+      + dossiers.filter(x => !x.parent_id && x.id !== d.id)
+                .map(x => `<option value="${esc(x.id)}"${d.parent_id === x.id ? " selected" : ""}>Dans ${esc(x.nom)}</option>`)
+                .join("");
+    return { desactive: false, html };
   }
 
   function afficherDossiers() {
@@ -280,14 +346,16 @@
       el.innerHTML = '<p class="dossier-vide">Aucun dossier pour l\'instant. Créez-en un ci-dessus.</p>';
       return;
     }
-    el.innerHTML = dossiers.map(d => {
+    el.innerHTML = arborescence().map(({ d, enfant }) => {
       const n = comptesParDossier[d.id] || 0;
-      return `<div class="dossier-ligne">
-        <input type="text" id="nom-${esc(d.id)}" value="${esc(d.nom)}" maxlength="80">
-        <input type="number" id="ordre-${esc(d.id)}" value="${d.ordre}" title="Ordre d'affichage" style="width:80px;margin:0;">
-        <span class="dossier-compte">${n} document${n > 1 ? "s" : ""}</span>
-        <button type="button" class="btn btn-primary" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
-        <button type="button" class="btn btn-cancel" onclick="supprimerDossier('${esc(d.id)}')">Supprimer</button>
+      const p = optionsParent(d);
+      return `<div class="dossier-ligne${enfant ? " enfant" : ""}">
+        <input class="champ-nom" type="text" id="nom-${esc(d.id)}" value="${esc(d.nom)}" maxlength="80" title="Nom du dossier">
+        <select class="champ-parent" id="parent-${esc(d.id)}" title="Dossier dans lequel celui-ci est rangé"${p.desactive ? " disabled" : ""}>${p.html}</select>
+        <input class="champ-ordre" type="number" id="ordre-${esc(d.id)}" value="${d.ordre}" title="Ordre d'affichage">
+        <span class="dossier-compte">${n} doc.</span>
+        <button type="button" class="btn-mini btn-edit" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
+        <button type="button" class="btn-mini btn-delete" onclick="supprimerDossier('${esc(d.id)}')">Supprimer</button>
       </div>`;
     }).join("");
   }
@@ -303,15 +371,18 @@
     const nom = champ.value.trim();
     if (!nom) { messageDossier("Donnez un nom au dossier.", "error"); return; }
 
-    // Le nouveau dossier passe en dernier : un ordre calculé depuis le
-    // plus grand existant évite de bousculer un classement déjà en place.
-    const ordre = dossiers.length ? Math.max(...dossiers.map(d => d.ordre)) + 10 : 10;
+    const parent_id = document.getElementById("nouveauParent").value || null;
+    // L'ordre est calculé parmi les FRÈRES : un sous-dossier se classe
+    // entre sous-dossiers, un dossier principal entre dossiers principaux.
+    const freres = dossiers.filter(d => (d.parent_id || null) === parent_id);
+    const ordre = freres.length ? Math.max(...freres.map(d => d.ordre)) + 10 : 10;
+
     const { error } = await supabaseClient
-      .from("bibliotheque_dossiers").insert({ nom, ordre });
+      .from("bibliotheque_dossiers").insert({ nom, ordre, parent_id });
 
     if (error) {
       messageDossier(error.code === "23505"
-        ? "Un dossier porte déjà ce nom."
+        ? "Un dossier porte déjà ce nom au même endroit."
         : "Erreur : " + error.message, "error");
       return;
     }
@@ -325,12 +396,22 @@
     const ordre = parseInt(document.getElementById("ordre-" + id).value, 10) || 0;
     if (!nom) { messageDossier("Le nom du dossier ne peut pas être vide.", "error"); return; }
 
+    // Le sélecteur est désactivé quand le dossier contient des
+    // sous-dossiers : sa valeur vide ne doit pas être prise pour un
+    // déplacement à la racine.
+    const selParent = document.getElementById("parent-" + id);
+    const majParent = selParent.disabled ? {} : { parent_id: selParent.value || null };
+
     const { error } = await supabaseClient
-      .from("bibliotheque_dossiers").update({ nom, ordre }).eq("id", id);
+      .from("bibliotheque_dossiers")
+      .update(Object.assign({ nom, ordre }, majParent)).eq("id", id);
 
     if (error) {
       messageDossier(error.code === "23505"
-        ? "Un dossier porte déjà ce nom."
+        ? "Un dossier porte déjà ce nom au même endroit."
+        // Le déclencheur de phase74 renvoie un texte déjà lisible : on le
+        // montre tel quel plutôt qu'un message générique qui n'expliquerait
+        // pas pourquoi le déplacement est refusé.
         : "Erreur : " + error.message, "error");
       return;
     }
@@ -340,13 +421,21 @@
   }
 
   async function supprimerDossier(id) {
-    const n = comptesParDossier[id] || 0;
-    // Le nombre de documents concernés est annoncé AVANT : supprimer un
-    // dossier plein sans le savoir laisserait ses documents introuvables
-    // dans la liste, alors qu'ils sont toujours là.
-    const avertissement = n
-      ? `Supprimer le dossier « ${nomDuDossier(id)} » ?\n\nSes ${n} document(s) ne seront PAS supprimés : ils passeront « sans dossier » et resteront consultables. Vous pourrez les reclasser ensuite.`
-      : `Supprimer le dossier « ${nomDuDossier(id)} » ?`;
+    const enfants = dossiers.filter(d => d.parent_id === id);
+    // Les documents des SOUS-DOSSIERS partent aussi : les compter avec
+    // ceux du dossier, sinon l'avertissement annoncerait moins de
+    // documents concernés qu'il n'y en a réellement.
+    const n = (comptesParDossier[id] || 0)
+            + enfants.reduce((s, e) => s + (comptesParDossier[e.id] || 0), 0);
+
+    let avertissement = `Supprimer le dossier « ${nomDuDossier(id)} » ?`;
+    if (enfants.length) {
+      avertissement += `\n\nSes ${enfants.length} sous-dossier(s) seront supprimés avec lui : `
+        + enfants.map(e => e.nom).join(", ") + ".";
+    }
+    if (n) {
+      avertissement += `\n\nLes ${n} document(s) concerné(s) ne seront PAS supprimés : ils passeront « sans dossier » et resteront consultables. Vous pourrez les reclasser ensuite.`;
+    }
     if (!confirm(avertissement)) return;
 
     const { error } = await supabaseClient

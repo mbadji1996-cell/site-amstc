@@ -46,6 +46,10 @@
   .bib-section:first-child{padding-top:0;}
   .bib-section-title{font-family:var(--display);font-size:1.15rem;font-weight:700;color:var(--text-heading);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
   .bib-section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+  /* Le sous-dossier se distingue du dossier par un décalage et un titre
+     plus discret : la hiérarchie se lit sans avoir à la deviner. */
+  .bib-sous-section{padding-left:16px; border-left:2px solid var(--paper-alt); margin:6px 0 14px;}
+  .bib-sous-titre{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:10px;}
   .book-item{margin-bottom:14px;}
   .book-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 24px;
@@ -124,7 +128,7 @@
   async function chargerDossiers() {
     const { data, error } = await supabaseClient
       .from("bibliotheque_dossiers")
-      .select("id, nom, ordre")
+      .select("id, nom, ordre, parent_id")
       .order("ordre", { ascending: true })
       .order("nom", { ascending: true });
     // Sans dossiers - table absente, ou aucun créé - la bibliothèque
@@ -186,21 +190,31 @@
       (parDossier[cle] = parDossier[cle] || []).push(book);
     });
 
+    const livresDe = (id) => parDossier[id] || [];
+    const sousDossiersDe = (id) => dossiers.filter(d => d.parent_id === id);
+
+    // Un dossier principal est affiché s'il contient des documents OU si
+    // l'un de ses sous-dossiers en contient : le masquer priverait ses
+    // sous-dossiers de titre.
+    const groupes = dossiers
+      .filter(d => !d.parent_id)
+      .map(d => ({
+        nom: d.nom,
+        livres: livresDe(d.id),
+        sous: sousDossiersDe(d.id)
+                .map(s => ({ nom: s.nom, livres: livresDe(s.id) }))
+                .filter(s => s.livres.length),
+      }))
+      .filter(g => g.livres.length || g.sous.length);
+
     // Un document sans dossier reste visible, rangé en fin de page : le
     // taire reviendrait à le faire disparaître de la bibliothèque parce
     // que son dossier a été supprimé.
-    const groupes = dossiers
-      .filter(d => parDossier[d.id] && parDossier[d.id].length)
-      .map(d => ({ nom: d.nom, livres: parDossier[d.id] }));
-    if (parDossier[""] && parDossier[""].length) {
-      groupes.push({ nom: "Autres documents", livres: parDossier[""] });
+    if (livresDe("").length) {
+      groupes.push({ nom: "Autres documents", livres: livresDe(""), sous: [] });
     }
 
-    listEl.innerHTML = groupes
-      .map(s => `
-        <div class="bib-section">
-          <p class="bib-section-title">${esc(s.nom)}</p>
-          ${s.livres.map(book => `
+    const carte = (book) => `
             <div class="book-item" data-id="${esc(book.id)}">
               <div class="book-row">
                 <div class="book-main">
@@ -217,7 +231,17 @@
               </div>
               <div class="book-viewer" id="viewer-${esc(book.id)}" style="display:none;"></div>
             </div>
-          `).join("")}
+          `;
+
+    listEl.innerHTML = groupes.map(g => `
+        <div class="bib-section">
+          <p class="bib-section-title">${esc(g.nom)}</p>
+          ${g.livres.map(carte).join("")}
+          ${g.sous.map(s => `
+            <div class="bib-sous-section">
+              <p class="bib-sous-titre">${esc(s.nom)}</p>
+              ${s.livres.map(carte).join("")}
+            </div>`).join("")}
         </div>
       `).join("");
 
