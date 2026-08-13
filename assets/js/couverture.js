@@ -146,6 +146,41 @@ function couvertureInit(champId) {
     apercu.src = v;
   }
 
+  // ===== Garder l'aperçu en accord avec le champ =====
+  //
+  // LE PROBLÈME. Les écrans d'administration remplissent ce champ EN
+  // CODE quand on ouvre un document (« .value = ... »), et le vident par
+  // form.reset(). Or aucune de ces deux voies ne déclenche l'événement
+  // « change » : l'aperçu gardait la couverture du document précédent,
+  // et l'on croyait la nouvelle fiche déjà illustrée.
+  //
+  // On intercepte donc l'écriture de « value » sur CE champ, en
+  // déléguant au comportement natif. Corriger ici plutôt que dans les
+  // quatre écrans évite que le défaut ne revienne au prochain écran qui
+  // réutilisera le module.
+  var descripteur = Object.getOwnPropertyDescriptor(
+    Object.getPrototypeOf(champ), 'value');
+  if (descripteur && descripteur.get && descripteur.set) {
+    Object.defineProperty(champ, 'value', {
+      configurable: true,
+      get: function () { return descripteur.get.call(this); },
+      set: function (v) {
+        descripteur.set.call(this, v);
+        etat.textContent = '';
+        afficherApercu();
+      },
+    });
+  }
+
+  // form.reset() ne passe pas par le descripteur : il rétablit la valeur
+  // par défaut. L'événement précède la remise à zéro, d'où l'attente.
+  var formulaire = champ.closest('form');
+  if (formulaire) {
+    formulaire.addEventListener('reset', function () {
+      setTimeout(function () { etat.textContent = ''; afficherApercu(); }, 0);
+    });
+  }
+
   champ.addEventListener('change', function () {
     var n = couvertureNormaliserUrl(champ.value);
     if (n.converti) champ.value = n.url;
