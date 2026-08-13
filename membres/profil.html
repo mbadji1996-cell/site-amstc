@@ -46,7 +46,7 @@
   .page-title{font-family:var(--display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:600;color:var(--text-heading);}
 
   /* ===== CARTE MEMBRE (template officiel, dessinée sur canvas) ===== */
-  .member-card-neo{margin-bottom:20px;}
+  .member-card-neo{margin-bottom:20px; max-width:540px;}
   #mcCarteImg{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 12px 40px rgba(6,68,28,0.22);background:var(--surface);}
   .mc-sous-carte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;padding:0 4px;}
   .mc-sous-info{font-size:0.82rem;color:var(--text-muted);}
@@ -209,7 +209,7 @@
       </div>
     </div>
 
-    <button class="btn btn-ghost" id="downloadCardBtn" onclick="downloadCardPdf()" style="width:100%;margin-bottom:20px;">
+    <button class="btn btn-ghost" id="downloadCardBtn" onclick="downloadCardPdf()" style="width:100%;max-width:540px;margin-bottom:20px;">
       <i class="ti ti-download"></i> Télécharger ma carte (PDF)
     </button>
 

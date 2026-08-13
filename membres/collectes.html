@@ -70,13 +70,21 @@
   .form-msg.error{color:#B23B3B;}
   .form-msg.ok{color:#3B6D11;}
 
-  .item-ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
-  .item-ligne:last-child{border-bottom:none;}
-  .item-libelle{font-size:0.9rem;color:var(--text-heading);font-weight:600;}
+  /* Un item par encart : jusqu'a quatre par rangee sur grand ecran, moins
+     a mesure que la place manque. En liste, chaque item occupait toute la
+     largeur et il fallait derouler longuement pour tous les voir. */
+  .items-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:12px;}
+  .item-ligne{display:flex;flex-direction:column;justify-content:space-between;gap:12px;
+    padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);}
+  /* Le formulaire de paiement ouvert prend TOUTE la largeur de la rangee :
+     dans une colonne de 240 px, ses champs seraient inutilisables. */
+  .item-ligne.ouvert{grid-column:1 / -1;}
+  .item-libelle{font-size:0.9rem;color:var(--text-heading);font-weight:600;overflow-wrap:anywhere;}
   .item-montant{font-family:var(--mono);font-size:0.82rem;color:var(--text-muted);}
   .item-reste{font-family:var(--mono);font-size:0.7rem;color:#8A9E8F;}
   .item-epuise{font-family:var(--mono);font-size:0.72rem;color:#B23B3B;}
-  .item-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .item-actions{display:flex;flex-direction:column;gap:8px;}
+  .item-actions .btn{width:100%;}
   .empty{color:var(--text-muted);font-style:italic;font-size:0.9rem;padding:20px 0;}
   .loading{font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);padding:40px 0;text-align:center;}
   footer{padding:40px 0;text-align:center;}
@@ -247,7 +255,7 @@
       <div class="participer-bloc">
         <h3><i class="ti ti-gift"></i> Dons en nature</h3>
         <p style="font-size:0.8rem;color:var(--text-muted);">Choisissez un item : payez son montant, ou apportez l'objet vous-même.</p>
-        ${itemsC.map(i => renduItem(c, i)).join('')}
+        <div class="items-grille">${itemsC.map(i => renduItem(c, i)).join('')}</div>
       </div>` : ''}
     </div>`;
   }
@@ -260,7 +268,7 @@
     const dejaPris = mesParts.some(p => p.item_id === i.id && p.status !== 'rejected');
 
     return `
-    <div class="item-ligne">
+    <div class="item-ligne${ouvert && formulaireOuvert.mode === 'espece' ? ' ouvert' : ''}">
       <div>
         <p class="item-libelle">${esc(i.libelle)}</p>
         <p class="item-montant">${fcfa(i.montant_fcfa)}${i.quantite > 1 ? ` <span class="item-reste">· ${i.quantite} part(s) proposée(s)</span>` : ''}</p>
@@ -270,7 +278,7 @@
         <button class="btn-sm btn-primary btn" style="padding:7px 14px;font-size:0.8rem;" onclick="ouvrirFormulaire('${esc(c.id)}', '${esc(i.id)}', 'espece')">Payer ${fcfa(i.montant_fcfa)}</button>
         <button class="btn-sm btn-outline btn" style="padding:7px 14px;font-size:0.8rem;" onclick="donnerEnNature('${esc(c.id)}', '${esc(i.id)}')">Donner en nature</button>`}
       </div>
-      ${ouvert && formulaireOuvert.mode === 'espece' ? `<div style="flex-basis:100%;">${formulairePaiement(c.id, i.id, i.montant_fcfa, 'Payer ' + fcfa(i.montant_fcfa))}</div>` : ''}
+      ${ouvert && formulaireOuvert.mode === 'espece' ? formulairePaiement(c.id, i.id, i.montant_fcfa, 'Payer ' + fcfa(i.montant_fcfa)) : ''}
     </div>`;
   }
 
