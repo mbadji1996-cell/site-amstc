@@ -565,6 +565,7 @@
 
     await chargerDossiers();
     await loadItems();
+    if (etat.publies) partageDeclencherConstruction();
   }
 
   async function enregistrerDossier(id) {
@@ -981,6 +982,7 @@
     }
 
     await loadItems();
+    if (reussis) partageDeclencherConstruction();
   }
 
   async function loadItems() {
@@ -1097,7 +1099,15 @@
    * document s'ouvre.
    */
   async function partagerDocument(btn, item) {
-    const adresse = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(item.id);
+    const direct = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(item.id);
+    // La page d'apercu (/b/) porte le titre et la couverture dans les
+    // messageries. Absente - document tout juste publie - on lance sa
+    // construction (~1 minute) et le lien DIRECT part tout de suite :
+    // il fonctionne dans tous les cas.
+    const apercu = location.origin + "/b/" + encodeURIComponent(item.id) + ".html";
+    let adresse = direct;
+    if (await partageDisponible(apercu)) adresse = apercu;
+    else partageDeclencherConstruction();
     const etat = await partagerAdresse(adresse, item.title);
     if (etat === "partage" || etat === "annule") return;
     if (etat === "copie") {
@@ -1225,6 +1235,7 @@
 
     messageEl.textContent = id ? "Contenu mis à jour." : "Contenu publié.";
     messageEl.className = "form-message success";
+    partageDeclencherConstruction();
     resetForm();
     loadItems();
   });

@@ -399,7 +399,13 @@
    * l'espace membres ; le destinataire se connecte, le document s'ouvre.
    */
   async function partagerLivre(btn) {
-    const adresse = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(btn.dataset.id);
+    const direct = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(btn.dataset.id);
+    // La page d'apercu (/b/) porte le titre et la couverture dans les
+    // messageries. Pas encore generee - document tout juste publie - ou
+    // script phase76 pas execute : le lien direct part a la place, il
+    // fonctionne dans tous les cas.
+    const apercu = location.origin + "/b/" + encodeURIComponent(btn.dataset.id) + ".html";
+    const adresse = (await partageDisponible(apercu)) ? apercu : direct;
     const etat = await partagerAdresse(adresse, btn.dataset.titre);
     if (etat === "partage" || etat === "annule") return;
     if (etat === "copie") {

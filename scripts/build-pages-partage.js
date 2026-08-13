@@ -238,6 +238,46 @@ async function genererCours() {
   return cours.length;
 }
 
+// ===== Bibliothèque : titres et couvertures vivent dans Supabase =====
+// Même montage que les cours (phase76) : la fonction n'expose que ce qui
+// figure dans l'aperçu - identifiant, titre, résumé, couverture - jamais
+// le fichier, qui reste réservé aux membres.
+async function genererBibliotheque() {
+  let docs;
+  try {
+    docs = await appelRpc(lireConfigSupabase(), 'bibliotheque_metadonnees_publiques');
+  } catch (e) {
+    console.warn('  b    : bibliothèque ignorée (' + e.message + ')');
+    return 0;
+  }
+  // Même précaution que les cours : une réponse vide alors que des pages
+  // existent ressemble plus à un incident qu'à un retrait volontaire de
+  // TOUS les documents.
+  const dossierB = path.join(ROOT, 'b');
+  const existantes = fs.existsSync(dossierB)
+    ? fs.readdirSync(dossierB).filter((f) => f.endsWith('.html')).length : 0;
+  if (docs.length === 0 && existantes > 0) {
+    console.warn(`  b    : aucun document renvoyé alors que ${existantes} page(s) existent - conservées par précaution.`);
+    return 0;
+  }
+
+  const gardes = new Set();
+  for (const d of docs) {
+    if (!d.id) continue;
+    gardes.add(d.id);
+    ecrire('b', d.id, pagePartage({
+      titre: d.title,
+      description: resume(d.excerpt, 200) || 'Bibliothèque des membres de l\'AMSTC.',
+      image: d.cover_image,
+      destination: `membres/bibliotheque.html?doc=${encodeURIComponent(d.id)}`,
+      adressePartage: `/b/${encodeURIComponent(d.id)}.html`,
+    }));
+  }
+  const supprimes = purger('b', gardes);
+  console.log(`  b    : ${docs.length} page(s)` + (supprimes ? `, ${supprimes} obsolète(s) supprimée(s)` : ''));
+  return docs.length;
+}
+
 (async () => {
   console.log('Pages d\'aperçu de partage :');
   let total = 0;
@@ -246,5 +286,6 @@ async function genererCours() {
   total += genererDepuisIndex('projets', 'p', 'projet.html', 'slug');
   total += genererDepuisIndex('etapes', 'e', 'etape.html', 'slug');
   total += await genererCours();
+  total += await genererBibliotheque();
   console.log('Total : ' + total + ' page(s).');
 })();
