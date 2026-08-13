@@ -54,10 +54,16 @@
   #list > p{grid-column:1 / -1;}
   /* Le document ouvert prend TOUTE la largeur : un PDF dans une colonne
      de 300 px serait illisible. */
-  .doc-item.ouvert{grid-column:1 / -1;}
-  /* Meme parade que la bibliotheque : height:100% sur la carte etalee
-     ferait deborder le visionneur sous les cartes suivantes. */
-  .doc-item.ouvert .doc-row{height:auto;}
+  /* Le document ouvert occupe TOUTE la page, comme a la bibliotheque. */
+  .doc-viewer.plein{position:fixed; inset:0; z-index:1200; background:var(--paper);
+    display:flex; flex-direction:column; border:none; border-radius:0; margin:0; padding:0;}
+  .doc-viewer.plein iframe{flex:1; height:auto; min-height:0;}
+  .lecteur-barre{display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:10px 16px; background:var(--green-deep); flex-shrink:0;}
+  .lecteur-barre-titre{color:#fff; font-family:var(--display); font-weight:600;
+    font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lecteur-barre .btn-view{padding:8px 20px; flex-shrink:0;}
+  body.lecture-ouverte{overflow:hidden;}
   .doc-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px;
     display:flex; flex-direction:column; align-items:flex-start; gap:14px; height:100%;
@@ -213,7 +219,8 @@
     if (isOpen) {
       viewer.style.display = "none";
       viewer.innerHTML = "";
-      btn.closest(".doc-item").classList.remove("ouvert");
+      viewer.classList.remove("plein");
+      document.body.classList.remove("lecture-ouverte");
       btn.textContent = "Consulter";
       return;
     }
@@ -236,8 +243,14 @@
       return;
     }
 
-    btn.closest(".doc-item").classList.add("ouvert");
     lecteurAfficherPdf(viewer, data.signedUrl, onglet, "doc-viewer-note");
+    viewer.classList.add("plein");
+    document.body.classList.add("lecture-ouverte");
+    const titreDoc = btn.closest(".doc-item").querySelector(".doc-title").textContent;
+    viewer.insertAdjacentHTML("afterbegin",
+      `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titreDoc)}</span>`
+      + `<button type="button" class="btn-view lecteur-fermer">Fermer</button></div>`);
+    viewer.querySelector(".lecteur-fermer").addEventListener("click", () => toggleViewer(btn));
     btn.textContent = "Fermer";
   }
 
@@ -253,6 +266,12 @@
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
     window.location.href = "connexion.html";
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const fermer = document.querySelector(".lecteur-fermer");
+    if (fermer) fermer.click();
   });
 </script>
 

@@ -66,12 +66,21 @@
   .book-item{margin-bottom:0;}
   /* Le visionneur ouvert prend TOUTE la largeur de la grille : un PDF
      dans une colonne de 260 px serait illisible. */
-  .book-item.ouvert{grid-column:1 / -1;}
-  /* La carte ouverte reprend une hauteur libre : height:100% egalise
-     les cartes fermees, mais sur la carte etalee il se resout contre
-     la hauteur de rangee deja calculee et le visionneur DEBORDAIT
-     sous les cartes suivantes au lieu de les repousser. */
-  .book-item.ouvert .book-row{height:auto;}
+  /* Le document ouvert occupe TOUTE la page : le visionneur passe en
+     plein ecran par-dessus la liste, avec une barre de fermeture. Pour
+     voir un autre document, on ferme d'abord - lire au milieu des
+     cartes voisines genait la lecture. */
+  .book-viewer.plein{position:fixed; inset:0; z-index:1200; background:var(--paper);
+    display:flex; flex-direction:column; border:none; border-radius:0; margin:0; padding:0;}
+  .book-viewer.plein iframe{flex:1; height:auto; min-height:0;}
+  .lecteur-barre{display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:10px 16px; background:var(--green-deep); flex-shrink:0;}
+  .lecteur-barre-titre{color:#fff; font-family:var(--display); font-weight:600;
+    font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lecteur-barre .btn-view{padding:8px 20px; flex-shrink:0;}
+  /* La page derriere ne defile plus : seul le document repond au doigt
+     ou a la molette. */
+  body.lecture-ouverte{overflow:hidden;}
   .book-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
     display:flex; flex-direction:column; gap:14px; height:100%;
@@ -371,7 +380,8 @@
     if (isOpen) {
       viewer.style.display = "none";
       viewer.innerHTML = "";
-      btn.closest(".book-item").classList.remove("ouvert");
+      viewer.classList.remove("plein");
+      document.body.classList.remove("lecture-ouverte");
       btn.textContent = "Consulter";
       return;
     }
@@ -394,8 +404,16 @@
       return;
     }
 
-    btn.closest(".book-item").classList.add("ouvert");
     lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note");
+    viewer.classList.add("plein");
+    document.body.classList.add("lecture-ouverte");
+    // La barre porte le titre et le seul moyen evident de revenir : en
+    // plein ecran, le bouton de la carte n'est plus accessible.
+    const titreDoc = btn.closest(".book-item").querySelector(".book-title").textContent;
+    viewer.insertAdjacentHTML("afterbegin",
+      `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titreDoc)}</span>`
+      + `<button type="button" class="btn-view lecteur-fermer">Fermer</button></div>`);
+    viewer.querySelector(".lecteur-fermer").addEventListener("click", () => toggleViewer(btn));
     btn.textContent = "Fermer";
   }
 
@@ -419,6 +437,14 @@
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
     window.location.href = "connexion.html";
+  });
+
+  // Echap ferme le document en lecture, comme on l'attend d'un plein
+  // ecran.
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const fermer = document.querySelector(".lecteur-fermer");
+    if (fermer) fermer.click();
   });
 </script>
 
