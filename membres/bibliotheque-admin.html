@@ -59,6 +59,15 @@
   textarea{min-height:160px; resize:vertical; font-family:var(--mono); font-size:0.88rem;}
   input:focus, textarea:focus, select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
   .field-hint{font-size:0.78rem; color:var(--text-muted); margin-top:4px;}
+  /* Champ replie par defaut : l'editeur de description occupait un grand
+     tiers de l'ecran pour un champ facultatif. */
+  .champ-avance{margin-top:16px;}
+  .champ-avance > summary{list-style:none; cursor:pointer; font-size:0.85rem;
+    font-weight:600; color:var(--text-heading); display:flex; align-items:center; gap:8px;}
+  .champ-avance > summary::-webkit-details-marker{display:none;}
+  .champ-avance > summary::after{content:"BE"; color:var(--text-accent); transition:transform .15s;}
+  .champ-avance[open] > summary::after{transform:rotate(180deg);}
+  .champ-avance > div{margin-top:10px;}
   .field-hint.warning{color:var(--text-accent); font-weight:600;}
   .form-actions{display:flex; gap:12px; margin-top:24px;}
   .btn{
@@ -139,6 +148,7 @@
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
+<script src="../assets/js/retour.js" defer></script>
 </head>
 <body>
 
@@ -240,8 +250,10 @@
       <input type="file" id="document_file" accept="application/pdf">
       <p class="field-hint" id="currentFileHint"></p>
 
-      <label for="content">Description (facultative, visible des membres uniquement)</label>
-      <div id="content"></div>
+      <details class="champ-avance" id="descriptionBloc">
+        <summary>Description (facultative, visible des membres uniquement)</summary>
+        <div id="content"></div>
+      </details>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" id="submitBtn">Publier</button>
@@ -278,6 +290,22 @@
 <script>
   let currentUserId = null;
   let contentEditor = null;
+  // Texte en attente tant que l'editeur n'existe pas : il n'est cree
+  // qu'a la premiere ouverture du bloc, un editeur construit dans un
+  // conteneur masque calculant mal ses hauteurs.
+  let descriptionEnAttente = "";
+
+  function definirDescription(md) {
+    descriptionEnAttente = md || "";
+    if (contentEditor) contentEditor.setMarkdown(descriptionEnAttente);
+    // Une description existante se montre d'office : replier un champ
+    // REMPLI laisserait croire qu'il est vide.
+    document.getElementById("descriptionBloc").open = !!descriptionEnAttente.trim();
+  }
+
+  function lireDescription() {
+    return contentEditor ? contentEditor.getMarkdown() : descriptionEnAttente;
+  }
 
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
@@ -339,7 +367,7 @@
     submitBtn.textContent = "Publier";
     cancelBtn.style.display = "none";
     messageEl.className = "form-message";
-    contentEditor.setMarkdown("");
+    definirDescription("");
     formSummaryLabel.textContent = "Nouveau livre";
     formCard.open = false;
   }
@@ -1063,7 +1091,7 @@
     document.getElementById("excerpt").value = item.excerpt || "";
     document.getElementById("dossier_id").value = item.dossier_id || "";
     document.getElementById("cover_image").value = item.cover_image || "";
-    contentEditor.setMarkdown(item.content || "");
+    definirDescription(item.content || "");
     document.getElementById("document_file").value = "";
     currentFileHint.textContent = item.file_path
       ? "Fichier déjà envoyé. Choisissez un nouveau fichier uniquement pour le remplacer."
@@ -1072,7 +1100,10 @@
     cancelBtn.style.display = "";
     formSummaryLabel.textContent = "Modifier : " + (item.title || "");
     formCard.open = true;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Vers le FORMULAIRE, pas en haut de page : d'autres encadres vivent
+    // au-dessus et le formulaire restait hors de vue - il fallait
+    // redescendre a la main.
+    formCard.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function handleDelete(id, item) {
@@ -1124,7 +1155,7 @@
       dossier_id: document.getElementById("dossier_id").value || null,
       cover_image: document.getElementById("cover_image").value.trim() || null,
       video_url: null,
-      content: contentEditor.getMarkdown(),
+      content: lireDescription(),
     };
 
     if (newFile) {
@@ -1180,7 +1211,11 @@
     document.getElementById("loadingMsg").style.display = "none";
     document.getElementById("pageContent").style.display = "";
     document.getElementById("signoutBtn").style.display = "";
-    contentEditor = createRichEditor("content", { placeholder: "Description…" });
+    document.getElementById("descriptionBloc").addEventListener("toggle", function () {
+      if (!this.open || contentEditor) return;
+      contentEditor = createRichEditor("content", { placeholder: "Description…" });
+      contentEditor.setMarkdown(descriptionEnAttente);
+    });
     // Les dossiers d'abord : la liste des documents affiche leur nom, et
     // le sélecteur du formulaire doit être garni avant toute modification.
     await chargerDossiers();

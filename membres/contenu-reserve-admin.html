@@ -87,6 +87,7 @@
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 </style>
+<script src="../assets/js/retour.js" defer></script>
 </head>
 <body>
 
@@ -305,7 +306,9 @@
     cancelBtn.style.display = "";
     formSummaryLabel.textContent = "Modifier : " + (item.title || "");
     formCard.open = true;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Vers le formulaire, pas en haut de page (meme raison que la
+    // bibliotheque : des encadres vivent au-dessus).
+    formCard.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function handleDelete(id, item) {

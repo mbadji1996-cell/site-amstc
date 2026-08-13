@@ -95,6 +95,7 @@
   .empty-note{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.85rem;padding:40px 0;}
   .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 </style>
+<script src="../assets/js/retour.js" defer></script>
 </head>
 <body>
 
@@ -306,7 +307,8 @@
     document.getElementById('cancelBtn').style.display = '';
     selectedImageFile = null;
     setImagePreview(a.image_path ? thumbUrlMap[a.image_path] : null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Vers le formulaire, pas en haut de page.
+    document.getElementById('composeLabel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function resetForm() {
