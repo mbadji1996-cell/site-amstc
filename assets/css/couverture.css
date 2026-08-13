@@ -1,0 +1,64 @@
+/* Champ « image de couverture » (assets/js/couverture.js).
+   Les couleurs passent par les variables du thème : les écrans
+   d'administration existent en clair comme en sombre. */
+
+.couverture-bloc { margin-top: 8px; }
+
+.couverture-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.couverture-btn,
+.couverture-retirer {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.5px solid var(--line, rgba(6, 68, 28, 0.14));
+}
+.couverture-btn {
+  background: var(--paper-alt, #ECEFE3);
+  color: var(--text-heading, #0B2E17);
+}
+.couverture-btn:hover:not(:disabled) { border-color: var(--green, #17763B); }
+.couverture-btn:disabled { opacity: 0.6; cursor: wait; }
+.couverture-retirer {
+  background: none;
+  color: var(--text-muted, #5B6E60);
+}
+.couverture-retirer:hover { border-color: #B23B3B; color: #B23B3B; }
+
+.couverture-etat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted, #5B6E60);
+}
+
+/* L'aperçu est bordé et sur fond neutre : une image à fond blanc ou
+   transparent doit rester visible, sinon on ne sait pas si elle s'est
+   chargée. */
+.couverture-apercu {
+  display: block;
+  margin-top: 10px;
+  max-width: 190px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 1px solid var(--line, rgba(6, 68, 28, 0.14));
+  background: var(--paper-alt, #ECEFE3);
+  object-fit: contain;
+}
+
+.couverture-note {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted, #5B6E60);
+  margin-top: 8px;
+}
+.couverture-note:empty { margin-top: 0; }
+.couverture-note.alerte { color: #B23B3B; }
+.couverture-note.conversion { color: var(--gold-deep, #AA7B11); }

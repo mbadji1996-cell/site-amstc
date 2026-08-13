@@ -315,6 +315,8 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="../assets/css/couverture.css">
+<script src="../assets/js/couverture.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <!-- Import / modèle Excel des questions de quiz -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -360,6 +362,8 @@
   (async () => {
     const profile = await requireAdmin('connexion.html');
     if (!profile) return;
+    // Champ de couverture : envoi direct + apercu (couverture.js).
+    couvertureInit('l-cover');
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';

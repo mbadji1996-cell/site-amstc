@@ -164,6 +164,8 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="../assets/css/couverture.css">
+<script src="../assets/js/couverture.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
@@ -392,6 +394,8 @@
   (async () => {
     const profile = await requireAdmin("connexion.html");
     if (!profile) return;
+    // Champ de couverture : envoi direct + apercu (couverture.js).
+    couvertureInit('cover_image');
     currentUserId = profile.id;
 
     document.getElementById("loadingMsg").style.display = "none";
