@@ -153,7 +153,7 @@
   <a class="back" href="admin.html">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
   <h1>Bibliothèque</h1>
-  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Chaque contenu est classé dans un dossier thématique.</p>
+  <p class="intro">Livres et documents PDF réservés aux membres, consultables en ligne. Chaque contenu est classé dans un dossier thématique.</p>
 
   <details class="card" id="dossiersCard">
     <summary><span class="card-summary-icon">+</span> Dossiers de la bibliothèque</summary>
@@ -183,9 +183,8 @@
   <details class="card" id="importCard">
     <summary><span class="card-summary-icon">+</span> Importer un dossier entier</summary>
     <p class="field-hint">Le dossier de votre ordinateur devient un dossier de la bibliothèque, ses
-      sous-dossiers deviennent des sous-dossiers, et tous les documents qu'ils contiennent sont
-      publiés. Formats acceptés : PDF, Word, Excel, PowerPoint, texte, ePub et images ; le reste
-      est laissé de côté et le journal le dit.
+      sous-dossiers deviennent des sous-dossiers, et tous les PDF qu'ils contiennent sont publiés.
+      Seul le format PDF est accepté : le reste est laissé de côté et le journal le dit.
       Un dossier portant déjà le même nom est <strong>réutilisé</strong>, jamais dupliqué.</p>
 
     <div class="zone-depot" id="zoneDepot">
@@ -208,8 +207,8 @@
     <label for="lotDossier">Ranger dans</label>
     <select id="lotDossier"></select>
 
-    <label for="lotFichiers">Fichiers</label>
-    <input type="file" id="lotFichiers" accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.md,.xls,.xlsx,.ods,.csv,.ppt,.pptx,.odp,.epub,.jpg,.jpeg,.png,.gif,.webp,.avif" multiple>
+    <label for="lotFichiers">Fichiers PDF</label>
+    <input type="file" id="lotFichiers" accept="application/pdf" multiple>
     <p class="field-hint" id="lotResume"></p>
 
     <button type="button" class="btn btn-primary" id="lotEnvoyerBtn" style="margin-top:16px;">Envoyer les fichiers</button>
@@ -237,8 +236,8 @@
       <input type="url" id="cover_image" placeholder="https://...">
       <p class="field-hint">Pas d'envoi de fichier ici : collez l'URL d'une image déjà en ligne (ex. une couverture de livre hébergée ailleurs).</p>
 
-      <label for="document_file">Fichier (facultatif si vous en avez déjà envoyé un)</label>
-      <input type="file" id="document_file" accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.md,.xls,.xlsx,.ods,.csv,.ppt,.pptx,.odp,.epub,.jpg,.jpeg,.png,.gif,.webp,.avif">
+      <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
+      <input type="file" id="document_file" accept="application/pdf">
       <p class="field-hint" id="currentFileHint"></p>
 
       <label for="content">Description (facultative, visible des membres uniquement)</label>
@@ -594,37 +593,13 @@
 
   // ===== Import d'un dossier entier =====
 
-  /**
-   * Formats acceptés dans la bibliothèque.
-   *
-   * Le PDF s'affiche dans la page ; les autres s'ouvrent dans
-   * l'application de l'appareil (voir lecteur-pdf.js). Les refuser
-   * revenait à laisser une partie des dossiers importés VIDE, sans
-   * que rien ne le dise - c'est ce qui a été signalé.
-   *
-   * La liste reste FERMÉE : un exécutable ou une archive n'a rien à
-   * faire dans une bibliothèque de documents, et le stockage les
-   * servirait tels quels aux membres.
-   */
-  const EXTENSIONS_ADMISES = [
-    "pdf",
-    "doc", "docx", "odt", "rtf", "txt", "md",
-    "xls", "xlsx", "ods", "csv",
-    "ppt", "pptx", "odp",
-    "epub",
-    "jpg", "jpeg", "png", "gif", "webp", "avif",
-  ];
-
-  function extensionDe(nom) {
-    const point = String(nom == null ? "" : nom).lastIndexOf(".");
-    return point === -1 ? "" : nom.slice(point + 1).toLowerCase();
-  }
-
-  // Le type MIME est parfois vide selon le système : l'extension fait
-  // foi, sans quoi des fichiers parfaitement valables seraient ignorés
-  // sans explication.
+  // La bibliothèque n'accueille QUE des PDF : c'est le seul format que
+  // l'aperçu intégré sait afficher sur tous les appareils. Le type MIME
+  // est parfois vide selon le système, l'extension fait donc foi. Ce qui
+  // est écarté est DIT dans le journal d'import - un fichier ignoré en
+  // silence laissait des dossiers vides inexpliqués.
   function estDocument(f) {
-    return EXTENSIONS_ADMISES.indexOf(extensionDe(f.name)) !== -1;
+    return f.type === "application/pdf" || /\.pdf$/i.test(f.name);
   }
 
   // --- Lecture d'un dossier déposé (glisser-déposer) ---
@@ -812,15 +787,15 @@
     // sous les yeux plutôt que devinée.
     const refuses = [].concat(...arbres.map(listerRefuses));
     if (refuses.length) {
-      journalImport(`${refuses.length} fichier(s) d'un format non accepté, laissé(s) de côté : `
+      journalImport(`${refuses.length} fichier(s) non PDF laissé(s) de côté : `
         + `${refuses.slice(0, 6).join(", ")}${refuses.length > 6 ? "…" : ""}`, "attente");
     }
 
     const utiles = arbres.filter(a => compterFichiers(a) > 0);
     if (!utiles.length) {
       msg.textContent = refuses.length
-        ? `Aucun document importable : les ${refuses.length} fichier(s) trouvé(s) ne sont pas d'un format accepté.`
-        : "Aucun document trouvé dans ce qui a été déposé.";
+        ? `Aucun PDF : les ${refuses.length} fichier(s) trouvé(s) ne sont pas des PDF, seuls les PDF sont importés.`
+        : "Aucun PDF trouvé dans ce qui a été déposé.";
       msg.className = "form-message error";
       return;
     }
@@ -839,7 +814,7 @@
     // Le bilan sépare toujours réussites et échecs : un total unique
     // laisserait croire que tout est passé.
     msg.textContent = `Import terminé : ${etat.publies} document(s) publié(s), ${etat.dossiers} dossier(s) créé(s) ou complété(s).`
-      + (refuses.length ? ` ${refuses.length} fichier(s) écarté(s) (format non accepté).` : "")
+      + (refuses.length ? ` ${refuses.length} fichier(s) non PDF écarté(s).` : "")
       + (etat.echecs.length ? ` ${etat.echecs.length} fichier(s) en échec : ${etat.echecs.slice(0, 5).join(", ")}${etat.echecs.length > 5 ? "…" : ""}` : "");
     msg.className = etat.echecs.length ? "form-message error" : "form-message success";
 
@@ -1123,7 +1098,7 @@
     const newFile = fileInput.files[0];
 
     if (!newFile && !existingFilePath) {
-      messageEl.textContent = "Veuillez choisir un fichier.";
+      messageEl.textContent = "Veuillez choisir un fichier PDF.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;
       return;
@@ -1240,7 +1215,7 @@
     e.target.value = "";
     if (!arbre.nom) {
       const msg = document.getElementById("importMessage");
-      msg.textContent = "Aucun fichier trouvé dans ce dossier.";
+      msg.textContent = "Aucun PDF trouvé dans ce dossier.";
       msg.className = "form-message error";
       return;
     }

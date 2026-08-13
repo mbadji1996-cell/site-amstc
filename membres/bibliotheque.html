@@ -67,6 +67,11 @@
   /* Le visionneur ouvert prend TOUTE la largeur de la grille : un PDF
      dans une colonne de 260 px serait illisible. */
   .book-item.ouvert{grid-column:1 / -1;}
+  /* La carte ouverte reprend une hauteur libre : height:100% egalise
+     les cartes fermees, mais sur la carte etalee il se resout contre
+     la hauteur de rangee deja calculee et le visionneur DEBORDAIT
+     sous les cartes suivantes au lieu de les repousser. */
+  .book-item.ouvert .book-row{height:auto;}
   .book-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
     display:flex; flex-direction:column; gap:14px; height:100%;
@@ -121,7 +126,7 @@
   <a class="back" href="formations.html">← Formations</a>
   <p class="eyebrow">Espace Membres - Formations & Daara</p>
   <h1><i class="ti ti-books"></i> Bibliothèque</h1>
-  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Merci de ne pas les diffuser hors de l'association.</p>
+  <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Ce contenu n'est pas téléchargeable.</p>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <div class="bib-filtres" id="bibFiltres" style="display:none;">
@@ -390,7 +395,7 @@
     }
 
     btn.closest(".book-item").classList.add("ouvert");
-    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note", path);
+    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "book-viewer-note");
     btn.textContent = "Fermer";
   }
 

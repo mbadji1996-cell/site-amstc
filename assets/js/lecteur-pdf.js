@@ -40,72 +40,17 @@ function lecteurEchapper(s) {
     .replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// La bibliothèque n'accueille plus seulement des PDF : un Word, un
-// tableur ou une image doivent s'ouvrir eux aussi. L'extension du chemin
-// stocké suffit à décider - le type MIME renvoyé par le stockage est
-// souvent « application/octet-stream » et ne dirait rien.
-function lecteurExtension(chemin) {
-  const nom = String(chemin == null ? '' : chemin).split(/[?#]/)[0];
-  const point = nom.lastIndexOf('.');
-  return point === -1 ? '' : nom.slice(point + 1).toLowerCase();
-}
-
-function lecteurEstImage(chemin) {
-  return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'].indexOf(lecteurExtension(chemin)) !== -1;
-}
-
-/**
- * Formats qu'aucun navigateur ne sait afficher.
- *
- * La liste est POSITIVE, et non « tout ce qui n'est pas un PDF » : un
- * chemin d'origine inconnue - extension absente, format inattendu -
- * garde ainsi l'aperçu intégré, le comportement qui existait avant
- * l'ouverture aux autres formats. Se tromper doit ramener à l'ancien
- * fonctionnement, jamais en dévier.
- */
-function lecteurSansApercu(chemin) {
-  return ['doc', 'docx', 'odt', 'rtf',
-          'xls', 'xlsx', 'ods', 'csv',
-          'ppt', 'pptx', 'odp',
-          'epub'].indexOf(lecteurExtension(chemin)) !== -1;
-}
-
 /**
  * Remplit la zone d'affichage d'un document.
  *
  * @param viewer      l'élément qui reçoit l'aperçu
- * @param url         l'adresse signée du document
+ * @param url         l'adresse signée du PDF
  * @param onglet      l'onglet réservé par lecteurPreouvrirOnglet(), ou null
  * @param classeNote  la classe CSS du texte sous l'aperçu
- * @param chemin      le chemin du fichier, pour reconnaître son format
  */
-function lecteurAfficherPdf(viewer, url, onglet, classeNote, chemin) {
+function lecteurAfficherPdf(viewer, url, onglet, classeNote) {
   const u = lecteurEchapper(url);
   const note = classeNote || 'lecteur-note';
-
-  // Une image s'affiche telle quelle : la passer par un <iframe> la
-  // montrerait sur fond blanc, sans mise à l'échelle.
-  if (lecteurEstImage(chemin)) {
-    if (onglet) onglet.close();
-    viewer.innerHTML = `
-      <img src="${u}" alt="" style="width:100%;height:auto;display:block;">
-      <p class="${note}"><a href="${u}" target="_blank" rel="noopener">ouvrir dans un onglet</a></p>`;
-    viewer.style.display = '';
-    return;
-  }
-
-  // Un Word, un tableur ou une présentation ne s'affiche dans aucun
-  // navigateur : proposer un aperçu vide ferait croire à une panne. On
-  // donne le lien, qui ouvre ou télécharge selon l'appareil.
-  if (lecteurSansApercu(chemin)) {
-    if (onglet) { onglet.location = url; }
-    viewer.innerHTML = `<p class="${note}">
-      <a href="${u}" target="_blank" rel="noopener"><strong>Ouvrir le document</strong></a><br>
-      Ce format ne s'affiche pas dans le navigateur : il s'ouvre dans l'application
-      de votre appareil.</p>`;
-    viewer.style.display = '';
-    return;
-  }
 
   if (lecteurSurIOS()) {
     if (onglet) {

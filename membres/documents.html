@@ -55,6 +55,9 @@
   /* Le document ouvert prend TOUTE la largeur : un PDF dans une colonne
      de 300 px serait illisible. */
   .doc-item.ouvert{grid-column:1 / -1;}
+  /* Meme parade que la bibliotheque : height:100% sur la carte etalee
+     ferait deborder le visionneur sous les cartes suivantes. */
+  .doc-item.ouvert .doc-row{height:auto;}
   .doc-row{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px;
     display:flex; flex-direction:column; align-items:flex-start; gap:14px; height:100%;
@@ -234,7 +237,7 @@
     }
 
     btn.closest(".doc-item").classList.add("ouvert");
-    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "doc-viewer-note", path);
+    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "doc-viewer-note");
     btn.textContent = "Fermer";
   }
 
