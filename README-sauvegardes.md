@@ -43,7 +43,7 @@ Sur le VPS, connecté en SSH :
 curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/sauvegarde-vps.sh -o /root/sauvegarde-amstc.sh && chmod +x /root/sauvegarde-amstc.sh && wc -l /root/sauvegarde-amstc.sh
 ```
 
-Le compte doit afficher **222** lignes.
+Le compte doit afficher **245** lignes.
 
 ## 2. Vérifier à blanc (aucun fichier écrit)
 
@@ -122,10 +122,24 @@ Vous devez avoir **six** fichiers : quatre `_base.sql.gz` et deux
 (crontab -l 2>/dev/null; echo '0 3 * * * AMSTC_BACKUP_REMOTE="u123456@u123456.your-storagebox.de:amstc/" /bin/bash /root/sauvegarde-amstc.sh') | crontab - && crontab -l
 ```
 
-Si vous n'avez pas encore de Storage Box, installez quand même la tâche
+Si vous n'avez pas encore de Storage Box, installez quand meme la tache
 sans la variable `AMSTC_BACKUP_REMOTE` : vous aurez au moins une
-sauvegarde locale, qui protège des erreurs de manipulation (mais pas
+sauvegarde locale, qui protege des erreurs de manipulation (mais pas
 d'une panne du serveur).
+
+**N'INSTALLEZ LA TACHE QU'UNE FOIS.** La commande ci-dessus AJOUTE une
+ligne : la relancer en cree une seconde, et deux sauvegardes partiraient
+en meme temps a 3 h. Verifiez avec `crontab -l`, et si une ligne apparait
+en double :
+
+```bash
+crontab -l | awk '!seen[$0]++' | crontab - && crontab -l
+```
+
+Le script se protege desormais lui-meme par un verrou : un second
+exemplaire renonce au lieu d'ecrire dans les memes fichiers que le
+premier. Mais une ligne en double reste a nettoyer - autant qu'une seule
+tache s'execute.
 
 ## 6. Tester une restauration - indispensable
 

@@ -1067,7 +1067,7 @@ D=/data/coolify/services/rffqs8ck1ckdixkuu2xjo5sc/volumes/functions/declencher-a
 mkdir -p $D && curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/declencher-apercus/index.ts -o $D/index.ts && wc -l $D/index.ts
 ```
 
-Le compte doit afficher 124 lignes.
+Le compte doit afficher 123 lignes.
 
 ### 4. Vérifier
 

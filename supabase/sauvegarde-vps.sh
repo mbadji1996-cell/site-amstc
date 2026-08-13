@@ -40,6 +40,29 @@ MODE_TEST=0
 
 dire() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
+# ---------- Un seul exemplaire à la fois ----------
+# Le nom des archives ne porte que la date à la minute près : deux
+# exécutions simultanées écriraient DANS LES MÊMES FICHIERS, et les deux
+# archives seraient corrompues. Le cas est arrivé - une tâche cron
+# installée deux fois - et rien ne l'aurait signalé : les fichiers
+# existaient, avec la bonne taille apparente.
+#
+# Le mode test n'est pas concerné : il n'écrit rien.
+#
+# L'ABSENCE DE flock NE DOIT PAS EMPÊCHER LA SAUVEGARDE. Sans le test
+# « command -v », un système dépourvu de flock voyait la commande échouer,
+# donc le verrou paraître déjà pris, et le script renoncer chaque nuit
+# sans rien sauvegarder - en annonçant tranquillement qu'une sauvegarde
+# était en cours. Perdre la protection contre les doublons est infiniment
+# moins grave que perdre la sauvegarde elle-même.
+if [ "$MODE_TEST" -eq 0 ] && command -v flock >/dev/null 2>&1; then
+  exec 9>/var/lock/sauvegarde-amstc.lock
+  if ! flock -n 9; then
+    dire "Une sauvegarde est déjà en cours : celle-ci s'arrête."
+    exit 0
+  fi
+fi
+
 # Toute la sortie part aussi dans le journal (sauf en mode test, où on
 # veut simplement lire le résultat à l'écran).
 if [ "$MODE_TEST" -eq 0 ]; then
