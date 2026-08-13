@@ -21,6 +21,13 @@ function lecteurSurIOS() {
     || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 }
 
+// Android Chrome ne rend pas non plus le PDF dans le cadre : il affiche
+// un bouton « Ouvrir » qui imposait un DEUXIÈME clic avant la lecture -
+// constaté sur le site. Même parade que pour iOS : l'onglet.
+function lecteurSansApercuIntegre() {
+  return lecteurSurIOS() || /Android/i.test(navigator.userAgent);
+}
+
 /**
  * Ouvre un onglet vide AVANT l'appel réseau, quand l'appareil en aura
  * besoin.
@@ -31,7 +38,7 @@ function lecteurSurIOS() {
  * et on l'envoie sur le document une fois l'adresse obtenue.
  */
 function lecteurPreouvrirOnglet() {
-  return lecteurSurIOS() ? window.open('', '_blank') : null;
+  return lecteurSansApercuIntegre() ? window.open('', '_blank') : null;
 }
 
 function lecteurEchapper(s) {
@@ -52,17 +59,17 @@ function lecteurAfficherPdf(viewer, url, onglet, classeNote) {
   const u = lecteurEchapper(url);
   const note = classeNote || 'lecteur-note';
 
-  if (lecteurSurIOS()) {
+  if (lecteurSansApercuIntegre()) {
     if (onglet) {
       onglet.location = url;
       viewer.innerHTML = `<p class="${note}">Le document s'ouvre dans un nouvel onglet.
-        Sur iPhone et iPad, un aperçu intégré n'afficherait que la première page.</p>`;
+        Sur téléphone et tablette, il se lit dans le lecteur de l'appareil.</p>`;
     } else {
       // Onglet bloqué malgré la réservation : on donne le lien à toucher
       // plutôt que de laisser la personne devant une zone vide.
       viewer.innerHTML = `<p class="${note}">
         <a href="${u}" target="_blank" rel="noopener"><strong>Ouvrir le document</strong></a><br>
-        Sur iPhone et iPad, un aperçu intégré n'afficherait que la première page.</p>`;
+        Sur téléphone et tablette, le document se lit dans le lecteur de l'appareil.</p>`;
     }
     viewer.style.display = '';
     return;
