@@ -142,6 +142,8 @@
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
+  .btn-share{background:var(--surface); color:var(--green); border:1.5px solid var(--line);}
+  .btn-share:hover{border-color:var(--green);}
   .btn-edit{background:var(--paper-alt); color:var(--text-heading);}
   .btn-delete{background:#FDEEEE; color:#B23B3B;}
   .empty, .loading{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
@@ -284,6 +286,7 @@
 <link rel="stylesheet" href="../assets/css/couverture.css">
 <script src="../assets/js/couverture.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/partage.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
@@ -1069,6 +1072,7 @@
             <div class="item-date">${formatDate(item.created_at)}</div>
           </div>
           <div class="item-actions">
+            <button class="btn-sm btn-share" data-action="share" data-id="${esc(item.id)}">Partager</button>
             <button class="btn-sm btn-edit" data-action="edit" data-id="${esc(item.id)}">Modifier</button>
             <button class="btn-sm btn-delete" data-action="delete" data-id="${esc(item.id)}">Supprimer</button>
           </div>
@@ -1079,9 +1083,33 @@
       const item = data.find(d => d.id === btn.dataset.id);
       btn.addEventListener("click", () => {
         if (btn.dataset.action === "edit") startEdit(item);
+        else if (btn.dataset.action === "share") partagerDocument(btn, item);
         else handleDelete(item.id, item);
       });
     });
+  }
+
+  /**
+   * Partage le lien d'un document : la bibliotheque avec ouverture
+   * automatique de ce document. Le contenu etant reserve aux membres,
+   * on ne fabrique PAS de page d'apercu publique - elle exposerait le
+   * titre hors de l'espace membres ; le destinataire se connecte, et le
+   * document s'ouvre.
+   */
+  async function partagerDocument(btn, item) {
+    const adresse = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(item.id);
+    const etat = await partagerAdresse(adresse, item.title);
+    if (etat === "partage" || etat === "annule") return;
+    if (etat === "copie") {
+      const repos = btn.textContent;
+      btn.textContent = "Lien copié";
+      btn.disabled = true;
+      setTimeout(() => { btn.textContent = repos; btn.disabled = false; }, 2500);
+      return;
+    }
+    // Ni menu natif ni presse-papiers : la boite de saisie permet au
+    // moins de copier l'adresse a la main.
+    window.prompt("Copiez le lien :", adresse);
   }
 
   function startEdit(item) {
