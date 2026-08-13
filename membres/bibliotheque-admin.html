@@ -96,6 +96,16 @@
   .dossier-compte{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); white-space:nowrap;}
   .dossier-vide{color:var(--text-muted); font-size:0.86rem; font-style:italic;}
   .btn-mini{font-weight:600; font-size:0.8rem; padding:8px 14px; border-radius:999px; border:none; cursor:pointer;}
+  /* Journal d'envoi : une ligne par fichier, pour que l'echec de l'un se
+     voie sans masquer la reussite des autres. */
+  .lot-ligne{display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--paper-alt); font-size:0.86rem;}
+  .lot-ligne:last-child{border-bottom:none;}
+  .lot-nom{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-heading);}
+  .lot-etat{font-family:var(--mono); font-size:0.72rem; white-space:nowrap;}
+  .lot-etat.attente{color:var(--text-muted);}
+  .lot-etat.encours{color:var(--gold-deep);}
+  .lot-etat.ok{color:#3B6D11;}
+  .lot-etat.echec{color:#B23B3B;}
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
@@ -144,6 +154,24 @@
       Pour changer le <strong>nom</strong> ou le dossier dans lequel il est <strong>rangé</strong>,
       modifiez le champ puis « Enregistrer » sur cette ligne.</p>
     <div id="dossiersListe"><p class="loading">Chargement…</p></div>
+  </details>
+
+  <details class="card" id="lotCard">
+    <summary><span class="card-summary-icon">+</span> Envoyer plusieurs fichiers d'un coup</summary>
+    <p class="field-hint">Pour garnir un dossier rapidement. Chaque fichier devient un document dont
+      le <strong>titre reprend le nom du fichier</strong> - vous les modifiez ensuite un par un
+      dans la liste ci-dessous, pour ajouter un résumé ou une couverture.</p>
+
+    <label for="lotDossier">Ranger dans</label>
+    <select id="lotDossier"></select>
+
+    <label for="lotFichiers">Fichiers PDF</label>
+    <input type="file" id="lotFichiers" accept="application/pdf" multiple>
+    <p class="field-hint" id="lotResume"></p>
+
+    <button type="button" class="btn btn-primary" id="lotEnvoyerBtn" style="margin-top:16px;">Envoyer les fichiers</button>
+    <div class="form-message" id="lotMessage"></div>
+    <div id="lotJournal"></div>
   </details>
 
   <details class="card" id="formCard">
@@ -321,6 +349,16 @@
 
     // Choix du parent : seuls les dossiers PRINCIPAUX peuvent en accueillir
     // - un sous-dossier n'en contient pas d'autres, la base le refuserait.
+    // Même arborescence pour l'envoi groupé, avec « Sans dossier » en tête :
+    // envoyer un lot sans avoir encore créé de dossier doit rester possible.
+    const lot = document.getElementById("lotDossier");
+    const lotActuel = lot.value;
+    lot.innerHTML = '<option value="">Sans dossier</option>'
+      + arborescence().map(({ d, enfant }) =>
+          `<option value="${esc(d.id)}">${enfant ? "&nbsp;&nbsp;&nbsp;&rsaquo; " : ""}${esc(d.nom)}</option>`
+        ).join("");
+    lot.value = dossiers.some(d => d.id === lotActuel) ? lotActuel : "";
+
     const parent = document.getElementById("nouveauParent");
     const parentActuel = parent.value;
     parent.innerHTML = '<option value="">Aucun - ce sera un dossier principal</option>'
@@ -501,6 +539,136 @@
     await loadItems();
   }
 
+  // ===== Envoi groupé =====
+
+  /**
+   * Titre proposé à partir du nom de fichier : extension retirée,
+   * séparateurs techniques remplacés par des espaces.
+   *
+   * La CASSE EST LAISSÉE TELLE QUELLE, volontairement. « GUIDE ETP MNT »
+   * deviendrait « Guide Etp Mnt » si on lui appliquait la casse titre,
+   * ce qui abîme les sigles. L'administration corrige à la main les
+   * quelques titres qui le méritent - c'est moins de travail que de
+   * réparer des sigles cassés.
+   */
+  function titreDepuisNomFichier(nom) {
+    const point = nom.lastIndexOf(".");
+    const base = point > 0 ? nom.slice(0, point) : nom;
+    return base
+      // Numéro de classement en tête (« 05.LA PATIENCE » -> « LA
+      // PATIENCE »). Borné à deux chiffres suivis d'un point : « 2026
+      // rapport » garderait sinon un titre amputé de son année.
+      .replace(/^\d{1,2}\.\s*/, "")
+      // Le tiret bas est un séparateur technique ; le tiret ordinaire,
+      // non - « AL-SABR » et « Joal-Fadiouth » doivent le conserver.
+      .replace(/_+/g, " ")
+      .replace(/\s+/g, " ").trim() || nom;
+  }
+
+  function majResumeLot() {
+    const fichiers = [...document.getElementById("lotFichiers").files];
+    const el = document.getElementById("lotResume");
+    if (!fichiers.length) { el.textContent = ""; return; }
+    const total = fichiers.reduce((s, f) => s + f.size, 0);
+    el.textContent = `${fichiers.length} fichier(s) sélectionné(s), ${(total / (1024 * 1024)).toFixed(1)} Mo au total.`;
+  }
+
+  async function envoyerLot() {
+    const bouton = document.getElementById("lotEnvoyerBtn");
+    const msg = document.getElementById("lotMessage");
+    const journal = document.getElementById("lotJournal");
+    const fichiers = [...document.getElementById("lotFichiers").files];
+    const dossier_id = document.getElementById("lotDossier").value || null;
+
+    msg.className = "form-message";
+    if (!fichiers.length) {
+      msg.textContent = "Choisissez au moins un fichier.";
+      msg.className = "form-message error";
+      return;
+    }
+
+    // Une ligne par fichier, affichée AVANT de commencer : sur un envoi
+    // long, l'administration voit où en est le traitement au lieu d'un
+    // écran figé.
+    journal.innerHTML = fichiers.map((f, i) => `
+      <div class="lot-ligne">
+        <span class="lot-nom" title="${esc(f.name)}">${esc(f.name)}</span>
+        <span class="lot-etat attente" id="lot-etat-${i}">en attente</span>
+      </div>`).join("");
+
+    bouton.disabled = true;
+    let reussis = 0;
+    const echecs = [];
+
+    // Envoi SÉQUENTIEL : les fichiers peuvent atteindre 200 Mo, et les
+    // lancer en parallèle saturerait la connexion - souvent modeste - au
+    // point de les faire tous échouer plutôt qu'un seul.
+    for (let i = 0; i < fichiers.length; i++) {
+      const f = fichiers[i];
+      const etat = document.getElementById("lot-etat-" + i);
+      etat.textContent = `envoi ${i + 1}/${fichiers.length}…`;
+      etat.className = "lot-etat encours";
+
+      // L'horodatage et le rang rendent le chemin unique : deux fichiers
+      // du même nom envoyés dans la même seconde s'écraseraient sinon.
+      const path = `${Date.now()}-${i}-${sanitizeFileName(f.name)}`;
+      const { error: errEnvoi } = await supabaseClient.storage
+        .from(DOCUMENTS_BUCKET).upload(path, f);
+
+      if (errEnvoi) {
+        etat.textContent = "échec : " + errEnvoi.message;
+        etat.className = "lot-etat echec";
+        echecs.push(f.name);
+        continue;
+      }
+
+      const { error: errFiche } = await supabaseClient.from("restricted_articles").insert({
+        category: "bibliotheque",
+        title: titreDepuisNomFichier(f.name),
+        excerpt: "",
+        dossier_id,
+        cover_image: null,
+        video_url: null,
+        content: "",
+        file_path: path,
+        created_by: currentUserId,
+      });
+
+      if (errFiche) {
+        // Le fichier est déjà en ligne mais sans fiche : le retirer évite
+        // de laisser un orphelin invisible qui occupe l'espace de stockage
+        // sans jamais apparaître nulle part.
+        await supabaseClient.storage.from(DOCUMENTS_BUCKET).remove([path]);
+        etat.textContent = "échec : " + errFiche.message;
+        etat.className = "lot-etat echec";
+        echecs.push(f.name);
+        continue;
+      }
+
+      etat.textContent = "publié";
+      etat.className = "lot-etat ok";
+      reussis++;
+    }
+
+    bouton.disabled = false;
+    document.getElementById("lotFichiers").value = "";
+    majResumeLot();
+
+    // Le bilan distingue toujours les deux nombres : « 8 sur 10 » est une
+    // information utile, « erreur » ne l'est pas.
+    if (echecs.length) {
+      msg.textContent = `${reussis} document(s) publié(s), ${echecs.length} en échec. `
+        + "Les fichiers en échec n'ont rien laissé derrière eux : vous pouvez les renvoyer.";
+      msg.className = "form-message error";
+    } else {
+      msg.textContent = `${reussis} document(s) publié(s) dans « ${dossier_id ? nomDuDossier(dossier_id) : "Sans dossier"} ». `
+        + "Modifiez-les ci-dessous pour ajouter un résumé ou une couverture.";
+      msg.className = "form-message success";
+    }
+
+    await loadItems();
+  }
+
   async function loadItems() {
     const listEl = document.getElementById("itemsList");
     const { data, error } = await supabaseClient
@@ -658,6 +826,9 @@
     await chargerDossiers();
     loadItems();
   })();
+
+  document.getElementById("lotEnvoyerBtn").addEventListener("click", envoyerLot);
+  document.getElementById("lotFichiers").addEventListener("change", majResumeLot);
 
   document.getElementById("ajouterDossierBtn").addEventListener("click", ajouterDossier);
   document.getElementById("nouveauDossier").addEventListener("keydown", (e) => {
