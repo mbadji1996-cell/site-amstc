@@ -117,16 +117,20 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const DOCUMENTS_BUCKET = "documents-reserves";
-  const BIB_SECTIONS = [
-    { slug: "islam", label: "Islam" },
-    { slug: "medecine", label: "Médecine" },
-    { slug: "pharmacie", label: "Pharmacie" },
-    { slug: "odontologie", label: "Odontologie" },
-    { slug: "soins-infirmiers-obstetricaux", label: "Soins infirmiers et obstétricaux" },
-    { slug: "entrepreneuriat", label: "Entrepreneuriat" },
-    { slug: "developpement-personnel", label: "Développement personnel" },
-    { slug: "autres", label: "Autres" },
-  ];
+  // Chargés depuis la base : l'association crée et renomme ses dossiers
+  // depuis l'écran d'administration.
+  let dossiers = [];
+
+  async function chargerDossiers() {
+    const { data, error } = await supabaseClient
+      .from("bibliotheque_dossiers")
+      .select("id, nom, ordre")
+      .order("ordre", { ascending: true })
+      .order("nom", { ascending: true });
+    // Sans dossiers - table absente, ou aucun créé - la bibliothèque
+    // s'affiche quand même : tous les documents sous « Autres documents ».
+    dossiers = error ? [] : (data || []);
+  }
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -168,18 +172,35 @@
       return;
     }
 
-    const bySection = {};
+    // Les dossiers sont créés par l'administration (phase73) : leur nom et
+    // leur ordre viennent de la base, plus d'une liste écrite en dur.
+    // Un document dont le dossier est INCONNU de la liste chargée est
+    // rangé avec les sans-dossier, jamais ignoré : sans ce filet, une
+    // liste de dossiers incomplète - requête en échec, dossier supprimé
+    // entre deux chargements - le ferait disparaître de la bibliothèque
+    // alors qu'il est toujours là.
+    const connus = new Set(dossiers.map(d => d.id));
+    const parDossier = {};
     data.forEach(book => {
-      const slug = BIB_SECTIONS.some(s => s.slug === book.bib_section) ? book.bib_section : "autres";
-      (bySection[slug] = bySection[slug] || []).push(book);
+      const cle = connus.has(book.dossier_id) ? book.dossier_id : "";
+      (parDossier[cle] = parDossier[cle] || []).push(book);
     });
 
-    listEl.innerHTML = BIB_SECTIONS
-      .filter(s => bySection[s.slug] && bySection[s.slug].length > 0)
+    // Un document sans dossier reste visible, rangé en fin de page : le
+    // taire reviendrait à le faire disparaître de la bibliothèque parce
+    // que son dossier a été supprimé.
+    const groupes = dossiers
+      .filter(d => parDossier[d.id] && parDossier[d.id].length)
+      .map(d => ({ nom: d.nom, livres: parDossier[d.id] }));
+    if (parDossier[""] && parDossier[""].length) {
+      groupes.push({ nom: "Autres documents", livres: parDossier[""] });
+    }
+
+    listEl.innerHTML = groupes
       .map(s => `
         <div class="bib-section">
-          <p class="bib-section-title">${esc(s.label)}</p>
-          ${bySection[s.slug].map(book => `
+          <p class="bib-section-title">${esc(s.nom)}</p>
+          ${s.livres.map(book => `
             <div class="book-item" data-id="${esc(book.id)}">
               <div class="book-row">
                 <div class="book-main">
@@ -246,6 +267,9 @@
     document.getElementById("signoutBtn").style.display = "";
     document.getElementById("loadingMsg").style.display = "none";
     renderCardStatusBanner(result.state);
+    // Les dossiers d'abord : le rendu des livres s'appuie sur leur nom et
+    // leur ordre.
+    await chargerDossiers();
     loadBooks(result.state === "blocked");
   })();
 

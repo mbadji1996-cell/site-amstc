@@ -78,6 +78,13 @@
   .item-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .item-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:4px;}
   .category-tag{font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; background:var(--paper-alt); color:var(--text-heading); padding:3px 9px; border-radius:999px;}
+  .dossier-ajout{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .dossier-ajout input{flex:1; min-width:200px; margin:0;}
+  .dossier-ligne{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0; border-bottom:1px solid var(--paper-alt);}
+  .dossier-ligne:last-child{border-bottom:none;}
+  .dossier-ligne input[type="text"]{flex:1; min-width:160px; margin:0;}
+  .dossier-compte{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); white-space:nowrap;}
+  .dossier-vide{color:var(--text-muted); font-size:0.86rem; font-style:italic;}
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
@@ -103,6 +110,16 @@
   <h1>Bibliothèque</h1>
   <p class="intro">Livres et documents PDF réservés aux membres, consultables en ligne mais non téléchargeables. Chaque contenu est classé dans une section thématique.</p>
 
+  <details class="card" id="dossiersCard">
+    <summary><span class="card-summary-icon">+</span> Dossiers de la bibliothèque</summary>
+    <div class="dossier-ajout">
+      <input type="text" id="nouveauDossier" placeholder="Nom du nouveau dossier" maxlength="80">
+      <button type="button" class="btn btn-primary" id="ajouterDossierBtn">Créer le dossier</button>
+    </div>
+    <p class="form-message" id="dossierMessage"></p>
+    <div id="dossiersListe"><p class="loading">Chargement…</p></div>
+  </details>
+
   <details class="card" id="formCard">
     <summary><span class="card-summary-icon">+</span> <span id="formSummaryLabel">Nouveau livre</span></summary>
     <form id="itemForm">
@@ -115,18 +132,9 @@
       <label for="excerpt">Résumé court (visible de tous, sert d'accroche)</label>
       <input type="text" id="excerpt" maxlength="200">
 
-      <label for="bib_section">Section</label>
-      <select id="bib_section" required>
-        <option value="" disabled selected>Choisir...</option>
-        <option value="islam">Islam</option>
-        <option value="medecine">Médecine</option>
-        <option value="pharmacie">Pharmacie</option>
-        <option value="odontologie">Odontologie</option>
-        <option value="soins-infirmiers-obstetricaux">Soins infirmiers et obstétricaux</option>
-        <option value="entrepreneuriat">Entrepreneuriat</option>
-        <option value="developpement-personnel">Développement personnel</option>
-        <option value="autres">Autres</option>
-      </select>
+      <label for="dossier_id">Dossier</label>
+      <select id="dossier_id" required></select>
+      <p class="field-hint">Les dossiers se créent et se renomment dans « Dossiers de la bibliothèque », juste au-dessus.</p>
 
       <label for="cover_image">Image de couverture (URL, facultatif)</label>
       <input type="url" id="cover_image" placeholder="https://...">
@@ -173,17 +181,16 @@
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   }
 
-  const BIB_SECTION_LABELS = {
-    islam: "Islam",
-    medecine: "Médecine",
-    pharmacie: "Pharmacie",
-    odontologie: "Odontologie",
-    "soins-infirmiers-obstetricaux": "Soins infirmiers et obstétricaux",
-    entrepreneuriat: "Entrepreneuriat",
-    "developpement-personnel": "Développement personnel",
-    autres: "Autres",
-  };
-  function bibSectionLabel(s){ return BIB_SECTION_LABELS[s] || ""; }
+  // Les dossiers viennent de la base (phase73) : l'association les crée
+  // elle-même. La liste figée d'autrefois obligeait à modifier trois
+  // fichiers et à exécuter un script pour ajouter une rubrique.
+  let dossiers = [];
+  let comptesParDossier = {};
+
+  function nomDuDossier(id){
+    const d = dossiers.find(x => x.id === id);
+    return d ? d.nom : "";
+  }
 
   function stripDiacritics(s) {
     let out = '';
@@ -233,6 +240,124 @@
     formCard.open = false;
   }
 
+  // ===== Dossiers (phase73) =====
+
+  async function chargerDossiers() {
+    const { data, error } = await supabaseClient
+      .from("bibliotheque_dossiers")
+      .select("*")
+      .order("ordre", { ascending: true })
+      .order("nom", { ascending: true });
+
+    if (error) {
+      dossiers = [];
+      document.getElementById("dossiersListe").innerHTML =
+        `<p class="empty">${error.code === "42P01"
+          ? "Le script supabase/phase73-bibliotheque-dossiers.sql n'a pas encore été exécuté."
+          : "Impossible de charger les dossiers."}</p>`;
+      remplirSelectDossiers();
+      return;
+    }
+    dossiers = data || [];
+    remplirSelectDossiers();
+    afficherDossiers();
+  }
+
+  // La valeur en cours est conservée : le sélecteur est reconstruit à
+  // chaque changement de dossier, y compris pendant qu'un document est en
+  // cours de modification.
+  function remplirSelectDossiers() {
+    const sel = document.getElementById("dossier_id");
+    const actuel = sel.value;
+    sel.innerHTML = '<option value="" disabled>Choisir...</option>'
+      + dossiers.map(d => `<option value="${esc(d.id)}">${esc(d.nom)}</option>`).join("");
+    sel.value = dossiers.some(d => d.id === actuel) ? actuel : "";
+  }
+
+  function afficherDossiers() {
+    const el = document.getElementById("dossiersListe");
+    if (!dossiers.length) {
+      el.innerHTML = '<p class="dossier-vide">Aucun dossier pour l\'instant. Créez-en un ci-dessus.</p>';
+      return;
+    }
+    el.innerHTML = dossiers.map(d => {
+      const n = comptesParDossier[d.id] || 0;
+      return `<div class="dossier-ligne">
+        <input type="text" id="nom-${esc(d.id)}" value="${esc(d.nom)}" maxlength="80">
+        <input type="number" id="ordre-${esc(d.id)}" value="${d.ordre}" title="Ordre d'affichage" style="width:80px;margin:0;">
+        <span class="dossier-compte">${n} document${n > 1 ? "s" : ""}</span>
+        <button type="button" class="btn btn-primary" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
+        <button type="button" class="btn btn-cancel" onclick="supprimerDossier('${esc(d.id)}')">Supprimer</button>
+      </div>`;
+    }).join("");
+  }
+
+  function messageDossier(texte, type) {
+    const el = document.getElementById("dossierMessage");
+    el.textContent = texte;
+    el.className = "form-message" + (type ? " " + type : "");
+  }
+
+  async function ajouterDossier() {
+    const champ = document.getElementById("nouveauDossier");
+    const nom = champ.value.trim();
+    if (!nom) { messageDossier("Donnez un nom au dossier.", "error"); return; }
+
+    // Le nouveau dossier passe en dernier : un ordre calculé depuis le
+    // plus grand existant évite de bousculer un classement déjà en place.
+    const ordre = dossiers.length ? Math.max(...dossiers.map(d => d.ordre)) + 10 : 10;
+    const { error } = await supabaseClient
+      .from("bibliotheque_dossiers").insert({ nom, ordre });
+
+    if (error) {
+      messageDossier(error.code === "23505"
+        ? "Un dossier porte déjà ce nom."
+        : "Erreur : " + error.message, "error");
+      return;
+    }
+    champ.value = "";
+    messageDossier("Dossier créé.", "success");
+    await chargerDossiers();
+  }
+
+  async function enregistrerDossier(id) {
+    const nom = document.getElementById("nom-" + id).value.trim();
+    const ordre = parseInt(document.getElementById("ordre-" + id).value, 10) || 0;
+    if (!nom) { messageDossier("Le nom du dossier ne peut pas être vide.", "error"); return; }
+
+    const { error } = await supabaseClient
+      .from("bibliotheque_dossiers").update({ nom, ordre }).eq("id", id);
+
+    if (error) {
+      messageDossier(error.code === "23505"
+        ? "Un dossier porte déjà ce nom."
+        : "Erreur : " + error.message, "error");
+      return;
+    }
+    messageDossier("Dossier enregistré.", "success");
+    await chargerDossiers();
+    await loadItems();
+  }
+
+  async function supprimerDossier(id) {
+    const n = comptesParDossier[id] || 0;
+    // Le nombre de documents concernés est annoncé AVANT : supprimer un
+    // dossier plein sans le savoir laisserait ses documents introuvables
+    // dans la liste, alors qu'ils sont toujours là.
+    const avertissement = n
+      ? `Supprimer le dossier « ${nomDuDossier(id)} » ?\n\nSes ${n} document(s) ne seront PAS supprimés : ils passeront « sans dossier » et resteront consultables. Vous pourrez les reclasser ensuite.`
+      : `Supprimer le dossier « ${nomDuDossier(id)} » ?`;
+    if (!confirm(avertissement)) return;
+
+    const { error } = await supabaseClient
+      .from("bibliotheque_dossiers").delete().eq("id", id);
+    if (error) { messageDossier("Erreur : " + error.message, "error"); return; }
+
+    messageDossier("Dossier supprimé.", "success");
+    await chargerDossiers();
+    await loadItems();
+  }
+
   async function loadItems() {
     const listEl = document.getElementById("itemsList");
     const { data, error } = await supabaseClient
@@ -246,12 +371,20 @@
       return;
     }
 
+    // Le compte par dossier alimente la liste des dossiers : il doit être
+    // recalculé ici, seul endroit où les documents sont chargés.
+    comptesParDossier = {};
+    (data || []).forEach(item => {
+      if (item.dossier_id) comptesParDossier[item.dossier_id] = (comptesParDossier[item.dossier_id] || 0) + 1;
+    });
+    if (dossiers.length) afficherDossiers();
+
     listEl.innerHTML = data.length === 0
       ? '<p class="empty">Aucun livre ou document publié pour le moment.</p>'
       : data.map(item => `
         <div class="item-row">
           <div>
-            <div class="item-title">${esc(item.title)}${item.bib_section ? ` <span class="category-tag">${esc(bibSectionLabel(item.bib_section))}</span>` : ''}${item.file_path ? ' 📎' : ''}</div>
+            <div class="item-title">${esc(item.title)}<span class="category-tag">${esc(nomDuDossier(item.dossier_id) || "Sans dossier")}</span>${item.file_path ? ' 📎' : ''}</div>
             <div class="item-date">${formatDate(item.created_at)}</div>
           </div>
           <div class="item-actions">
@@ -275,7 +408,7 @@
     document.getElementById("existingFilePath").value = item.file_path || "";
     document.getElementById("title").value = item.title || "";
     document.getElementById("excerpt").value = item.excerpt || "";
-    document.getElementById("bib_section").value = item.bib_section || "";
+    document.getElementById("dossier_id").value = item.dossier_id || "";
     document.getElementById("cover_image").value = item.cover_image || "";
     contentEditor.setMarkdown(item.content || "");
     document.getElementById("document_file").value = "";
@@ -322,7 +455,7 @@
       category: "bibliotheque",
       title: document.getElementById("title").value.trim(),
       excerpt: document.getElementById("excerpt").value.trim(),
-      bib_section: document.getElementById("bib_section").value,
+      dossier_id: document.getElementById("dossier_id").value || null,
       cover_image: document.getElementById("cover_image").value.trim() || null,
       video_url: null,
       content: contentEditor.getMarkdown(),
@@ -377,8 +510,18 @@
     document.getElementById("pageContent").style.display = "";
     document.getElementById("signoutBtn").style.display = "";
     contentEditor = createRichEditor("content", { placeholder: "Description…" });
+    // Les dossiers d'abord : la liste des documents affiche leur nom, et
+    // le sélecteur du formulaire doit être garni avant toute modification.
+    await chargerDossiers();
     loadItems();
   })();
+
+  document.getElementById("ajouterDossierBtn").addEventListener("click", ajouterDossier);
+  document.getElementById("nouveauDossier").addEventListener("keydown", (e) => {
+    // Entrée dans un champ isolé ne soumet rien : sans cela, la touche la
+    // plus naturelle après avoir tapé un nom ne ferait rien.
+    if (e.key === "Enter") { e.preventDefault(); ajouterDossier(); }
+  });
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
