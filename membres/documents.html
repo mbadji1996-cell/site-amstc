@@ -70,6 +70,9 @@
   .doc-viewer-note{
     font-family:var(--mono); font-size:0.72rem; color:var(--text-muted); text-align:center; padding:8px 0;
   }
+  /* Le lien doit se voir : la regle globale a{color:inherit} le
+     rendrait indistinct du texte de la note. */
+  .doc-viewer-note a{color:var(--text-accent); text-decoration:underline;}
   .empty, .error, .loading{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
@@ -123,6 +126,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/lecteur-pdf.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const DOCUMENTS_BUCKET = "documents-reserves";
@@ -200,6 +204,10 @@
       return;
     }
 
+    // L'onglet est réservé AVANT l'appel réseau, sur les appareils qui en
+    // ont besoin : ouvert après, Safari le bloquerait comme intempestif.
+    const onglet = lecteurPreouvrirOnglet();
+
     btn.disabled = true;
     btn.textContent = "Préparation…";
     const { data, error } = await supabaseClient.storage
@@ -208,16 +216,13 @@
     btn.disabled = false;
 
     if (error || !data) {
+      if (onglet) onglet.close();
       btn.textContent = "Consulter";
       alert("Impossible d'afficher ce document.");
       return;
     }
 
-    viewer.innerHTML = `
-      <iframe src="${data.signedUrl}#toolbar=0&navpanes=0" title="Document"></iframe>
-      <p class="doc-viewer-note">Aperçu en lecture seule</p>
-    `;
-    viewer.style.display = "";
+    lecteurAfficherPdf(viewer, data.signedUrl, onglet, "doc-viewer-note");
     btn.textContent = "Fermer";
   }
 
