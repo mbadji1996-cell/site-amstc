@@ -106,6 +106,9 @@
   .lot-etat.encours{color:var(--gold-deep);}
   .lot-etat.ok{color:#3B6D11;}
   .lot-etat.echec{color:#B23B3B;}
+  .zone-depot{border:2px dashed var(--line); border-radius:12px; padding:26px 18px; text-align:center; margin-top:14px; transition:border-color .15s, background .15s;}
+  .zone-depot.survol{border-color:var(--green); background:var(--paper-alt);}
+  .zone-depot-texte{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.98rem; margin-bottom:6px;}
   .item-actions{display:flex; gap:10px; flex-shrink:0;}
   .btn-sm{font-weight:600; font-size:0.85rem; padding:9px 18px; border-radius:999px; border:none; cursor:pointer;}
   .btn-sm:hover{opacity:0.85;}
@@ -154,6 +157,23 @@
       Pour changer le <strong>nom</strong> ou le dossier dans lequel il est <strong>rangé</strong>,
       modifiez le champ puis « Enregistrer » sur cette ligne.</p>
     <div id="dossiersListe"><p class="loading">Chargement…</p></div>
+  </details>
+
+  <details class="card" id="importCard">
+    <summary><span class="card-summary-icon">+</span> Importer un dossier entier</summary>
+    <p class="field-hint">Le dossier de votre ordinateur devient un dossier de la bibliothèque, ses
+      sous-dossiers deviennent des sous-dossiers, et tous les PDF qu'ils contiennent sont publiés.
+      Un dossier portant déjà le même nom est <strong>réutilisé</strong>, jamais dupliqué.</p>
+
+    <div class="zone-depot" id="zoneDepot">
+      <p class="zone-depot-texte">Glissez ici un ou plusieurs dossiers</p>
+      <p class="field-hint">ou</p>
+      <button type="button" class="btn btn-cancel" id="choisirDossierBtn">Choisir un dossier</button>
+      <input type="file" id="dossierInput" webkitdirectory multiple style="display:none;">
+    </div>
+
+    <div class="form-message" id="importMessage"></div>
+    <div id="importJournal"></div>
   </details>
 
   <details class="card" id="lotCard">
@@ -539,6 +559,204 @@
     await loadItems();
   }
 
+  // ===== Import d'un dossier entier =====
+
+  // Le type MIME est parfois vide selon le système : l'extension sert de
+  // second recours, sans quoi des PDF parfaitement valables seraient
+  // ignorés sans explication.
+  function estPdf(f) {
+    return f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+  }
+
+  // --- Lecture d'un dossier déposé (glisser-déposer) ---
+  // Un lecteur de répertoire ne renvoie qu'un lot à la fois : il faut le
+  // rappeler jusqu'au lot vide, sinon les grands dossiers sont tronqués
+  // sans le moindre signe.
+  function lireTousLesLots(lecteur) {
+    return new Promise((resolve, reject) => {
+      let tout = [];
+      (function suivant() {
+        lecteur.readEntries(lot => {
+          if (!lot.length) { resolve(tout); return; }
+          tout = tout.concat(lot);
+          suivant();
+        }, reject);
+      })();
+    });
+  }
+
+  async function lireArborescence(entree) {
+    const fichiers = [];
+    const sous = {};
+    for (const e of await lireTousLesLots(entree.createReader())) {
+      if (e.isFile) {
+        const f = await new Promise((res, rej) => e.file(res, rej));
+        if (estPdf(f)) fichiers.push(f);
+      } else if (e.isDirectory) {
+        sous[e.name] = await lireArborescence(e);
+      }
+    }
+    return { fichiers, sous };
+  }
+
+  // --- Lecture d'un dossier choisi par le bouton ---
+  // webkitRelativePath donne le chemin complet de chaque fichier
+  // (« Médecine/Cardiologie/ecg.pdf ») : on reconstruit l'arbre à partir
+  // de là, la boîte de dialogue native ne donnant pas la structure.
+  function arborescenceDepuisFichiers(fichiers) {
+    const racine = { nom: null, fichiers: [], sous: {} };
+    for (const f of fichiers) {
+      if (!estPdf(f)) continue;
+      const morceaux = (f.webkitRelativePath || f.name).split("/");
+      const nomFichier = morceaux.pop();
+      if (!racine.nom && morceaux.length) racine.nom = morceaux[0];
+      let noeud = racine;
+      morceaux.slice(1).forEach(nom => {
+        noeud.sous[nom] = noeud.sous[nom] || { fichiers: [], sous: {} };
+        noeud = noeud.sous[nom];
+      });
+      noeud.fichiers.push(f);
+    }
+    return racine;
+  }
+
+  function journalImport(texte, classe) {
+    const el = document.getElementById("importJournal");
+    const ligne = document.createElement("div");
+    ligne.className = "lot-ligne";
+    ligne.innerHTML = `<span class="lot-nom">${esc(texte)}</span>`
+      + (classe ? `<span class="lot-etat ${classe}">${classe === "ok" ? "ok" : "ignoré"}</span>` : "");
+    el.appendChild(ligne);
+  }
+
+  /**
+   * Retrouve un dossier par son nom au bon niveau, ou le crée.
+   *
+   * La recherche est INDISPENSABLE : l'unicité du nom par parent
+   * (phase74) ferait échouer une création en doublon, et l'import
+   * s'arrêterait là. Réimporter un dossier enrichi doit au contraire
+   * compléter l'existant.
+   */
+  async function trouverOuCreerDossier(nom, parentId) {
+    const propre = String(nom).trim();
+    const existant = dossiers.find(d =>
+      (d.parent_id || null) === (parentId || null)
+      && d.nom.trim().toLowerCase() === propre.toLowerCase());
+    if (existant) return existant.id;
+
+    const freres = dossiers.filter(d => (d.parent_id || null) === (parentId || null));
+    const ordre = freres.length ? Math.max(...freres.map(d => d.ordre)) + 10 : 10;
+
+    const { data, error } = await supabaseClient
+      .from("bibliotheque_dossiers")
+      .insert({ nom: propre, ordre, parent_id: parentId || null })
+      .select().single();
+    if (error) return null;
+
+    dossiers.push(data);
+    return data.id;
+  }
+
+  async function publierFichier(f, dossierId, etat) {
+    const chemin = `${Date.now()}-${etat.total}-${sanitizeFileName(f.name)}`;
+    const { error: errEnvoi } = await supabaseClient.storage
+      .from(DOCUMENTS_BUCKET).upload(chemin, f);
+    if (errEnvoi) { etat.echecs.push(f.name); return; }
+
+    const { error: errFiche } = await supabaseClient.from("restricted_articles").insert({
+      category: "bibliotheque",
+      title: titreDepuisNomFichier(f.name),
+      excerpt: "", dossier_id: dossierId, cover_image: null, video_url: null,
+      content: "", file_path: chemin, created_by: currentUserId,
+    });
+    if (errFiche) {
+      // Fichier en ligne sans fiche : on le retire pour ne pas laisser
+      // d'orphelin invisible occupant le stockage.
+      await supabaseClient.storage.from(DOCUMENTS_BUCKET).remove([chemin]);
+      etat.echecs.push(f.name);
+      return;
+    }
+    etat.publies++;
+  }
+
+  /**
+   * Importe un arbre dans un dossier de la bibliothèque.
+   *
+   * LA BIBLIOTHÈQUE NE COMPTE QUE DEUX NIVEAUX (phase74). Un arbre plus
+   * profond n'est pas refusé - ce serait renvoyer l'administration à un
+   * réaménagement manuel de ses dossiers - mais APLATI : les PDF des
+   * niveaux inférieurs rejoignent le sous-dossier le plus proche, et le
+   * journal le dit pour que personne ne cherche en vain un sous-sous-
+   * dossier qui n'existera pas.
+   */
+  async function importerArbre(arbre, dossierId, niveau, etat) {
+    for (const f of arbre.fichiers) {
+      etat.total++;
+      majProgressionImport(etat);
+      await publierFichier(f, dossierId, etat);
+    }
+
+    for (const [nom, sous] of Object.entries(arbre.sous)) {
+      if (niveau >= 2) {
+        // Trop profond : le contenu remonte dans le dossier courant.
+        const compte = compterFichiers(sous);
+        if (compte) {
+          journalImport(`« ${nom} » : ${compte} fichier(s) rattaché(s) au niveau supérieur (deux niveaux au maximum).`, "attente");
+        }
+        await importerArbre(sous, dossierId, niveau, etat);
+        continue;
+      }
+      const sousId = await trouverOuCreerDossier(nom, dossierId);
+      if (!sousId) { journalImport(`Dossier « ${nom} » : création impossible, contenu ignoré.`, "echec"); continue; }
+      etat.dossiers++;
+      majProgressionImport(etat);
+      await importerArbre(sous, sousId, niveau + 1, etat);
+    }
+  }
+
+  function compterFichiers(arbre) {
+    return arbre.fichiers.length
+      + Object.values(arbre.sous).reduce((s, a) => s + compterFichiers(a), 0);
+  }
+
+  function majProgressionImport(etat) {
+    const msg = document.getElementById("importMessage");
+    msg.className = "form-message success";
+    msg.textContent = `Import en cours… ${etat.publies} document(s) publié(s), ${etat.dossiers} dossier(s) créé(s).`;
+  }
+
+  async function importerDossiers(arbres) {
+    const msg = document.getElementById("importMessage");
+    document.getElementById("importJournal").innerHTML = "";
+
+    const utiles = arbres.filter(a => compterFichiers(a) > 0);
+    if (!utiles.length) {
+      msg.textContent = "Aucun PDF trouvé dans ce qui a été déposé.";
+      msg.className = "form-message error";
+      return;
+    }
+
+    const etat = { publies: 0, dossiers: 0, total: 0, echecs: [] };
+    majProgressionImport(etat);
+
+    for (const arbre of utiles) {
+      const racineId = await trouverOuCreerDossier(arbre.nom, null);
+      if (!racineId) { journalImport(`Dossier « ${arbre.nom} » : création impossible.`, "echec"); continue; }
+      etat.dossiers++;
+      journalImport(`Dossier « ${arbre.nom} »`, "ok");
+      await importerArbre(arbre, racineId, 1, etat);
+    }
+
+    // Le bilan sépare toujours réussites et échecs : un total unique
+    // laisserait croire que tout est passé.
+    msg.textContent = `Import terminé : ${etat.publies} document(s) publié(s), ${etat.dossiers} dossier(s) créé(s) ou complété(s).`
+      + (etat.echecs.length ? ` ${etat.echecs.length} fichier(s) en échec : ${etat.echecs.slice(0, 5).join(", ")}${etat.echecs.length > 5 ? "…" : ""}` : "");
+    msg.className = etat.echecs.length ? "form-message error" : "form-message success";
+
+    await chargerDossiers();
+    await loadItems();
+  }
+
   // ===== Envoi groupé =====
 
   /**
@@ -826,6 +1044,57 @@
     await chargerDossiers();
     loadItems();
   })();
+
+  // --- Import d'un dossier : dépôt et bouton ---
+  const zone = document.getElementById("zoneDepot");
+  ["dragenter", "dragover"].forEach(ev => zone.addEventListener(ev, (e) => {
+    e.preventDefault(); zone.classList.add("survol");
+  }));
+  ["dragleave", "drop"].forEach(ev => zone.addEventListener(ev, (e) => {
+    e.preventDefault(); zone.classList.remove("survol");
+  }));
+
+  zone.addEventListener("drop", async (e) => {
+    const items = e.dataTransfer && e.dataTransfer.items;
+    if (!items) return;
+    // webkitGetAsEntry est lu AVANT tout await : la liste des éléments
+    // déposés est vidée dès la fin du gestionnaire, et les entrées
+    // seraient nulles au moment de les parcourir.
+    const entrees = [];
+    for (const it of items) {
+      const entree = typeof it.webkitGetAsEntry === "function" ? it.webkitGetAsEntry() : null;
+      if (entree) entrees.push(entree);
+    }
+
+    const arbres = [];
+    for (const entree of entrees) {
+      if (!entree.isDirectory) continue;
+      const arbre = await lireArborescence(entree);
+      arbres.push({ nom: entree.name, fichiers: arbre.fichiers, sous: arbre.sous });
+    }
+    if (!arbres.length) {
+      const msg = document.getElementById("importMessage");
+      msg.textContent = "Déposez un DOSSIER, pas des fichiers isolés. Pour des fichiers, utilisez « Envoyer plusieurs fichiers d'un coup ».";
+      msg.className = "form-message error";
+      return;
+    }
+    await importerDossiers(arbres);
+  });
+
+  document.getElementById("choisirDossierBtn").addEventListener("click", () => {
+    document.getElementById("dossierInput").click();
+  });
+  document.getElementById("dossierInput").addEventListener("change", async (e) => {
+    const arbre = arborescenceDepuisFichiers([...e.target.files]);
+    e.target.value = "";
+    if (!arbre.nom) {
+      const msg = document.getElementById("importMessage");
+      msg.textContent = "Aucun PDF trouvé dans ce dossier.";
+      msg.className = "form-message error";
+      return;
+    }
+    await importerDossiers([arbre]);
+  });
 
   document.getElementById("lotEnvoyerBtn").addEventListener("click", envoyerLot);
   document.getElementById("lotFichiers").addEventListener("change", majResumeLot);
