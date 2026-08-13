@@ -85,6 +85,13 @@
   .dossier-ligne input, .dossier-ligne select{margin:0;}
   .dossier-ligne .champ-nom{flex:1; min-width:150px;}
   .dossier-ligne .champ-parent{width:190px;}
+  /* Les deux actions restent SOLIDAIRES et calees a droite. Auparavant
+     elles flottaient avec le reste : la ligne s'etant chargee (fleches,
+     nom, dossier parent, compte), « Supprimer » se retrouvait rejete
+     seul a la ligne suivante et passait inapercu. */
+  .dossier-actions{display:flex; gap:8px; margin-left:auto; flex-shrink:0;}
+  .btn-delete{background:#FDEEEE; color:#B23B3B;}
+  .btn-delete:hover{background:#f5c0c0;}
   .dossier-fleches{display:flex; flex-direction:column; gap:2px;}
   .btn-fleche{width:26px; height:20px; line-height:1; padding:0; border:1px solid var(--line);
     background:var(--surface); color:var(--text-heading); border-radius:5px; cursor:pointer; font-size:11px;}
@@ -95,6 +102,15 @@
   .dossier-ligne.enfant{padding-left:26px; border-left:2px solid var(--paper-alt); margin-left:6px;}
   .dossier-compte{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); white-space:nowrap;}
   .dossier-vide{color:var(--text-muted); font-size:0.86rem; font-style:italic;}
+  @media(max-width:620px){
+    .dossier-ligne{align-items:stretch; flex-direction:column;}
+    .dossier-ligne .champ-parent{width:100%;}
+    .dossier-fleches{flex-direction:row;}
+    .btn-fleche{width:44px; height:30px;}
+    .dossier-actions{margin-left:0;}
+  }
+  /* Posee APRES les regles de base : a specificite egale, c'est
+     l'ordre qui tranche, et placee avant elle n'aurait rien surcharge. */
   .bib-filtres{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;}
   .bib-filtres input, .bib-filtres select{margin:0;}
   .bib-filtres input{flex:1; min-width:190px;}
@@ -441,8 +457,10 @@
         <input class="champ-nom" type="text" id="nom-${esc(d.id)}" value="${esc(d.nom)}" maxlength="80" title="Nom du dossier">
         <select class="champ-parent" id="parent-${esc(d.id)}" title="Dossier dans lequel celui-ci est rangé"${p.desactive ? " disabled" : ""}>${p.html}</select>
         <span class="dossier-compte">${n} doc.</span>
-        <button type="button" class="btn-mini btn-edit" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
-        <button type="button" class="btn-mini btn-delete" onclick="supprimerDossier('${esc(d.id)}')">Supprimer</button>
+        <span class="dossier-actions">
+          <button type="button" class="btn-mini btn-edit" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
+          <button type="button" class="btn-mini btn-delete" onclick="supprimerDossier('${esc(d.id)}')" title="Supprimer ce dossier">&#128465; Supprimer</button>
+        </span>
       </div>`;
     }).join("");
   }
