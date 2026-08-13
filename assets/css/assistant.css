@@ -1,0 +1,138 @@
+/* Assistant de l'espace membres (assets/js/assistant.js).
+   Les couleurs passent par les variables du thème : la page peut être
+   claire ou sombre, l'assistant suit sans réglage supplémentaire. */
+
+.assistant-bouton {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--gold, #F8B718);
+  color: var(--green-deep, #06441C);
+  box-shadow: 0 6px 20px rgba(6, 68, 28, 0.22);
+}
+.assistant-bouton:hover { opacity: 0.9; }
+.assistant-bouton span {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--green-deep, #06441C);
+  color: var(--gold, #F8B718);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+}
+
+.assistant-panneau {
+  position: fixed;
+  right: 18px;
+  bottom: 74px;
+  z-index: 901;
+  width: 340px;
+  max-width: calc(100vw - 36px);
+  /* Hauteur bornée à la fenêtre : sur un petit écran, un panneau plus
+     haut que l'écran deviendrait impossible à fermer. */
+  max-height: min(70vh, 520px);
+  display: none;
+  flex-direction: column;
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--line, rgba(6, 68, 28, 0.14));
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(6, 68, 28, 0.20);
+  overflow: hidden;
+}
+.assistant-panneau.ouvert { display: flex; }
+
+.assistant-entete {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--green-deep, #06441C);
+  color: #FFFFFF;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.assistant-fermer {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.4rem; line-height: 1; padding: 0 4px;
+}
+.assistant-fermer:hover { color: #FFFFFF; }
+
+.assistant-corps { padding: 14px 16px 18px; overflow-y: auto; }
+
+.assistant-champ {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line, rgba(6, 68, 28, 0.14));
+  border-radius: 10px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 0.9rem;
+  background: var(--paper, #F6F7F1);
+  color: var(--ink, #0B2E17);
+  margin-bottom: 12px;
+}
+.assistant-champ:focus {
+  outline: 2px solid var(--green, #17763B);
+  outline-offset: 1px;
+  border-color: var(--green, #17763B);
+}
+
+.assistant-question {
+  display: block; width: 100%; text-align: left;
+  background: var(--paper, #F6F7F1);
+  border: 1px solid var(--line, rgba(6, 68, 28, 0.14));
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin-bottom: 7px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 0.86rem;
+  color: var(--text-heading, #0B2E17);
+  cursor: pointer;
+}
+.assistant-question:hover { border-color: var(--green, #17763B); }
+
+.assistant-reponse {
+  background: var(--paper-alt, #ECEFE3);
+  border-radius: 10px;
+  padding: 13px 15px;
+  margin-bottom: 14px;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-muted, #5B6E60);
+}
+.assistant-titre {
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-heading, #0B2E17);
+  margin-bottom: 6px;
+}
+/* Les liens doivent se voir : la règle a{color:inherit} des pages
+   membres les rendrait indistincts du texte de la réponse. */
+.assistant-reponse a {
+  color: var(--green, #17763B);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.assistant-vide { font-size: 0.86rem; color: var(--text-muted, #5B6E60); }
+
+/* Sous 480px le panneau occupe la largeur, le bouton se resserre : à
+   340px de large il masquerait une partie du contenu de la page. */
+@media (max-width: 480px) {
+  .assistant-panneau { right: 10px; left: 10px; width: auto; bottom: 68px; }
+  .assistant-bouton { right: 12px; bottom: 12px; padding: 11px 16px; font-size: 0.82rem; }
+}
+
+@media print {
+  .assistant-bouton, .assistant-panneau { display: none !important; }
+}
