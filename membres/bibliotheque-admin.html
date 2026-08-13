@@ -85,7 +85,11 @@
   .dossier-ligne input, .dossier-ligne select{margin:0;}
   .dossier-ligne .champ-nom{flex:1; min-width:150px;}
   .dossier-ligne .champ-parent{width:190px;}
-  .dossier-ligne .champ-ordre{width:74px;}
+  .dossier-fleches{display:flex; flex-direction:column; gap:2px;}
+  .btn-fleche{width:26px; height:20px; line-height:1; padding:0; border:1px solid var(--line);
+    background:var(--surface); color:var(--text-heading); border-radius:5px; cursor:pointer; font-size:11px;}
+  .btn-fleche:hover:not(:disabled){border-color:var(--green); background:var(--paper-alt);}
+  .btn-fleche:disabled{opacity:0.3; cursor:default;}
   /* Le décalage rend la hiérarchie visible d'un coup d'œil : sans lui,
      rien ne distingue un sous-dossier d'un dossier principal. */
   .dossier-ligne.enfant{padding-left:26px; border-left:2px solid var(--paper-alt); margin-left:6px;}
@@ -135,9 +139,10 @@
     <p class="form-message" id="dossierMessage"></p>
 
     <p class="dossier-bloc-titre" style="margin-top:22px;">Dossiers existants</p>
-    <p class="field-hint">Sur chaque ligne : le <strong>nom</strong>, le dossier dans lequel il est <strong>rangé</strong>,
-      et son <strong>ordre d'affichage</strong> (les petits nombres passent en premier chez les membres).
-      Modifiez ce que vous voulez, puis « Enregistrer » sur cette ligne.</p>
+    <p class="field-hint">Les <strong>flèches</strong> montent ou descendent un dossier : l'ordre obtenu ici est
+      celui que verront les membres, et il s'applique immédiatement.
+      Pour changer le <strong>nom</strong> ou le dossier dans lequel il est <strong>rangé</strong>,
+      modifiez le champ puis « Enregistrer » sur cette ligne.</p>
     <div id="dossiersListe"><p class="loading">Chargement…</p></div>
   </details>
 
@@ -349,10 +354,21 @@
     el.innerHTML = arborescence().map(({ d, enfant }) => {
       const n = comptesParDossier[d.id] || 0;
       const p = optionsParent(d);
+      // Les flèches remplacent le champ « ordre » : demander un nombre
+      // obligeait à un calcul mental pour un geste qui doit être évident.
+      // Elles sont désactivées aux extrémités plutôt que masquées, pour
+      // que les lignes restent alignées.
+      const freres = dossiers.filter(x => (x.parent_id || null) === (d.parent_id || null));
+      const rang = freres.findIndex(x => x.id === d.id);
       return `<div class="dossier-ligne${enfant ? " enfant" : ""}">
+        <span class="dossier-fleches">
+          <button type="button" class="btn-fleche" title="Monter"
+            onclick="deplacerDossier('${esc(d.id)}', -1)"${rang <= 0 ? " disabled" : ""}>&uarr;</button>
+          <button type="button" class="btn-fleche" title="Descendre"
+            onclick="deplacerDossier('${esc(d.id)}', 1)"${rang >= freres.length - 1 ? " disabled" : ""}>&darr;</button>
+        </span>
         <input class="champ-nom" type="text" id="nom-${esc(d.id)}" value="${esc(d.nom)}" maxlength="80" title="Nom du dossier">
         <select class="champ-parent" id="parent-${esc(d.id)}" title="Dossier dans lequel celui-ci est rangé"${p.desactive ? " disabled" : ""}>${p.html}</select>
-        <input class="champ-ordre" type="number" id="ordre-${esc(d.id)}" value="${d.ordre}" title="Ordre d'affichage">
         <span class="dossier-compte">${n} doc.</span>
         <button type="button" class="btn-mini btn-edit" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
         <button type="button" class="btn-mini btn-delete" onclick="supprimerDossier('${esc(d.id)}')">Supprimer</button>
@@ -391,9 +407,47 @@
     await chargerDossiers();
   }
 
+  /**
+   * Monte ou descend un dossier parmi ses frères.
+   *
+   * Les positions sont ENTIÈREMENT RENUMÉROTÉES (10, 20, 30…) plutôt que
+   * simplement échangées : deux dossiers ayant par accident le même
+   * numéro - un import, une reprise - resteraient sinon bloqués l'un sur
+   * l'autre, la flèche ne produisant aucun effet visible.
+   */
+  async function deplacerDossier(id, sens) {
+    const d = dossiers.find(x => x.id === id);
+    if (!d) return;
+
+    // « dossiers » arrive déjà trié par ordre puis par nom : les frères
+    // sont donc dans l'ordre où l'écran les montre.
+    const freres = dossiers.filter(x => (x.parent_id || null) === (d.parent_id || null));
+    const i = freres.findIndex(x => x.id === id);
+    const j = i + sens;
+    if (i < 0 || j < 0 || j >= freres.length) return;
+
+    const ordonne = freres.slice();
+    ordonne[i] = freres[j];
+    ordonne[j] = freres[i];
+
+    const aEcrire = [];
+    ordonne.forEach((f, k) => {
+      const nouvel = (k + 1) * 10;
+      if (f.ordre !== nouvel) aEcrire.push({ id: f.id, ordre: nouvel });
+    });
+
+    for (const m of aEcrire) {
+      const { error } = await supabaseClient
+        .from("bibliotheque_dossiers").update({ ordre: m.ordre }).eq("id", m.id);
+      if (error) { messageDossier("Erreur : " + error.message, "error"); return; }
+    }
+
+    await chargerDossiers();
+    await loadItems();
+  }
+
   async function enregistrerDossier(id) {
     const nom = document.getElementById("nom-" + id).value.trim();
-    const ordre = parseInt(document.getElementById("ordre-" + id).value, 10) || 0;
     if (!nom) { messageDossier("Le nom du dossier ne peut pas être vide.", "error"); return; }
 
     // Le sélecteur est désactivé quand le dossier contient des
