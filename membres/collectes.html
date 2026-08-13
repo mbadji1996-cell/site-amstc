@@ -275,10 +275,10 @@
       </div>
       <div class="item-actions">
         ${dejaPris ? '<span class="item-reste">Vous avez pris cet item</span>' : `
-        <button class="btn-sm btn-primary btn" style="padding:7px 14px;font-size:0.8rem;" onclick="ouvrirFormulaire('${esc(c.id)}', '${esc(i.id)}', 'espece')">Payer ${fcfa(i.montant_fcfa)}</button>
+        <button class="btn-sm btn-primary btn" style="padding:7px 14px;font-size:0.8rem;" onclick="ouvrirFormulaire('${esc(c.id)}', '${esc(i.id)}', 'espece')">Donner ${fcfa(i.montant_fcfa)}</button>
         <button class="btn-sm btn-outline btn" style="padding:7px 14px;font-size:0.8rem;" onclick="donnerEnNature('${esc(c.id)}', '${esc(i.id)}')">Donner en nature</button>`}
       </div>
-      ${ouvert && formulaireOuvert.mode === 'espece' ? formulairePaiement(c.id, i.id, i.montant_fcfa, 'Payer ' + fcfa(i.montant_fcfa)) : ''}
+      ${ouvert && formulaireOuvert.mode === 'espece' ? formulairePaiement(c.id, i.id, i.montant_fcfa, 'Déclarer mon don de ' + fcfa(i.montant_fcfa)) : ''}
     </div>`;
   }
 
