@@ -71,6 +71,11 @@
         <p class="carte-resume-detail" id="cDetail">-</p>
       </div>
 
+      <label for="cAnnee">Votre année d'adhésion à l'AMSTC</label>
+      <input type="number" id="cAnnee" min="1990" placeholder="Ex : 2023">
+      <p class="hint">Vérifiez-la : si elle est inexacte, corrigez-la ici - votre carte et votre
+        fiche seront mises à jour, et le numéro de carte suivra.</p>
+
       <label for="cEmail">Votre adresse e-mail *</label>
       <input type="email" id="cEmail" autocomplete="email" placeholder="vous@exemple.com">
       <p class="hint">Elle vous servira à vous connecter et à recevoir les informations de l'association.</p>
@@ -137,8 +142,15 @@
     btn.disabled = true;
     message("Création de votre compte…", "info");
 
-    // Le nom et l'année d'adhésion viennent de la carte : le membre n'a
-    // pas à les ressaisir, et ne peut pas les contredire.
+    // L'année saisie n'est retenue que si elle est plausible et si elle
+    // change quelque chose : sinon, celle de la carte reste la référence.
+    const anneeSaisie = parseInt(document.getElementById("cAnnee").value, 10);
+    const anneeCorrigee = (anneeSaisie >= 1990 && anneeSaisie <= new Date().getFullYear()
+      && anneeSaisie !== carte.member_since) ? anneeSaisie : null;
+
+    // Le nom vient de la carte : le membre n'a pas à le ressaisir, et ne
+    // peut pas le contredire. L'année d'adhésion, elle, est corrigeable
+    // (choix du 14/08/2026) : la carte suivra via utiliser_invitation.
     //
     // Le découpage suit les capitales du nom de famille. La règle
     // précédente - premier mot = prénom, tout le reste = nom - fabriquait
@@ -154,7 +166,7 @@
         first_name: decoupe.prenom || null,
         last_name: decoupe.nom || null,
         city: carte.city || null,
-        member_since: carte.member_since || null,
+        member_since: anneeCorrigee || carte.member_since || null,
         applicant_type: "membre_existant",
       } },
     });
@@ -176,14 +188,23 @@
       // jeton de côté pour que la page de connexion rattache la carte
       // toute seule à la première connexion - sans quoi le membre devrait
       // penser à rouvrir ce lien, ce que personne ne fait.
-      try { localStorage.setItem("amstc-invitation", jeton); } catch (e) { /* stockage indisponible */ }
+      try {
+        localStorage.setItem("amstc-invitation", jeton);
+        if (anneeCorrigee) localStorage.setItem("amstc-invitation-annee", String(anneeCorrigee));
+      } catch (e) { /* stockage indisponible */ }
       message("Compte créé. Confirmez votre adresse e-mail (vérifiez vos indésirables), "
         + "puis connectez-vous : votre carte sera rattachée automatiquement.", "ok");
       btn.disabled = false;
       return;
     }
 
-    const { error: errLien } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton });
+    let { error: errLien } = await supabaseClient.rpc("utiliser_invitation",
+      anneeCorrigee ? { p_jeton: jeton, p_member_since: anneeCorrigee } : { p_jeton: jeton });
+    if (errLien && errLien.code === "PGRST202" && anneeCorrigee) {
+      // Phase 77 non executee : le lien se consomme sans la correction
+      // d'annee, qui devra passer par l'administration.
+      ({ error: errLien } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton }));
+    }
     if (errLien) {
       message("Compte créé, mais la carte n'a pas pu être rattachée : " + errLien.message
         + " Connectez-vous et contactez l'administration.", "error");
@@ -218,6 +239,7 @@
     document.getElementById("cDetail").textContent =
       [carte.card_number, carte.member_since ? "Membre depuis " + carte.member_since : null, carte.city]
         .filter(Boolean).join(" · ");
+    if (carte.member_since) document.getElementById("cAnnee").value = carte.member_since;
     document.getElementById("chargement").style.display = "none";
     document.getElementById("contenu").style.display = "";
   })();

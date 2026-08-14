@@ -110,6 +110,17 @@
   .assign-inline input{width:90px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:0.86rem;background:var(--surface);color:var(--ink);}
   .btn-delete{background:#FDEEEE;color:#B23B3B;}
   .btn-delete:hover{background:#f5c0c0;}
+  .mois-cases{display:inline-flex; gap:4px; flex-wrap:wrap; align-items:center;}
+  .mois-case{display:inline-flex; align-items:center; justify-content:center; cursor:pointer;}
+  .mois-case input{position:absolute; opacity:0; pointer-events:none;}
+  .mois-case span{width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    border:1.5px solid var(--line); border-radius:7px; font-family:var(--mono); font-size:0.7rem;
+    color:var(--text-muted); background:var(--surface); transition:all .12s;}
+  .mois-case input:checked + span{background:var(--green); border-color:var(--green); color:#fff;}
+  .mois-compte{font-family:var(--mono); font-size:0.75rem; color:var(--text-accent); font-weight:700; margin-left:6px;}
+  .edit-libelle{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--text-muted); white-space:nowrap;}
+  .edit-annee{max-width:110px;}
   .assign-msg{font-size:0.85rem;}
   .assign-msg.error{color:#B23B3B;}
   .assign-msg.ok{color:#3B6D11;}
@@ -681,18 +692,49 @@
   // pendant qu'une demande dort ailleurs produirait deux décisions
   // contradictoires. L'admin doit la voir ici.
   let yearRequestsByUser = {};
+  let cotisParMembre = {};
+
+  // Validite et mois de cotisation d'une carte. Carte attribuee : la
+  // FICHE du membre fait foi (profiles.card_valid_until, table
+  // cotisations) ; sinon les valeurs notees sur la carte elle-meme.
+  function validiteDe(c) {
+    if (c.claim_status === 'confirmed' && c.profiles && c.profiles.card_valid_until) {
+      return c.profiles.card_valid_until;
+    }
+    return c.expiry_hint || null;
+  }
+  function moisDe(c, annee) {
+    if (c.claim_status === 'confirmed' && c.claimed_by
+        && cotisParMembre[c.claimed_by] && cotisParMembre[c.claimed_by][annee]) {
+      return cotisParMembre[c.claimed_by][annee];
+    }
+    const hint = c.cotisations_hint || {};
+    return Array.isArray(hint[annee]) ? hint[annee] : [];
+  }
 
   async function loadAssignData() {
-    const [cardsRes, membersRes, yearReqRes] = await Promise.all([
+    const [cardsRes, membersRes, yearReqRes, cotisRes] = await Promise.all([
       supabaseClient
         .from('member_cards')
-        .select('id, full_name, phone, city, region, member_since, card_number, claim_status, claimed_by, profiles:claimed_by(full_name, email)')
+        .select('id, full_name, phone, city, region, member_since, card_number, claim_status, claimed_by, expiry_hint, cotisations_hint, profiles:claimed_by(full_name, email, card_valid_until)')
         .order('full_name'),
       supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
       supabaseClient.rpc('member_since_requests_pending'),
+      // Mois de cotisation des membres : la fiche fait foi pour les
+      // cartes attribuees. Lecture reservee aux admins par la RLS.
+      supabaseClient.from('cotisations').select('user_id, year, months_paid'),
     ]);
     allCards = cardsRes.data || [];
     assignMembers = membersRes.data || [];
+
+    // user_id -> annee -> mois payes. Colonne ou table absente (phase77
+    // non executee) : l'ecran continue sans ces reperes.
+    cotisParMembre = {};
+    if (!cotisRes.error && Array.isArray(cotisRes.data)) {
+      for (const c of cotisRes.data) {
+        (cotisParMembre[c.user_id] = cotisParMembre[c.user_id] || {})[c.year] = c.months_paid || [];
+      }
+    }
 
     // Fonction absente (script SQL pas encore exécuté) : on continue sans
     // les repères plutôt que de casser l'écran des cartes.
@@ -773,7 +815,11 @@
     }
 
     tbody.innerHTML = rows.map(c => {
-      const meta = [c.phone, c.member_since ? 'Depuis ' + c.member_since : null, c.city].filter(Boolean).join(' · ');
+      const anneeCotis = new Date().getFullYear();
+      const nbMois = moisDe(c, anneeCotis).length;
+      const meta = [c.phone, c.member_since ? 'Depuis ' + c.member_since : null, c.city,
+        validiteDe(c) ? 'Valide → ' + validiteDe(c) : null,
+        'Cotis. ' + anneeCotis + ' : ' + nbMois + '/12'].filter(Boolean).join(' · ');
       const claimant = c.profiles || null;
       const memberCell = claimant
         ? `<p class="claimant">${escHtml(claimant.full_name || '-')}</p><p class="claimant-email">${escHtml(claimant.email || '')}</p>`
@@ -806,6 +852,16 @@
                   <input type="number" id="editSince-${c.id}" value="${c.member_since || ''}" placeholder="Depuis" title="Année d'adhésion">
                   <input type="text" id="editCity-${c.id}" value="${escHtml(c.city || '')}" placeholder="Localité">
                   <select id="editRegion-${c.id}" title="Région"></select>
+                </div>
+                <div class="assign-inline-row">
+                  <label class="edit-libelle" for="editExpiry-${c.id}">Fin de validité</label>
+                  <input type="number" id="editExpiry-${c.id}" class="edit-annee" value="${validiteDe(c) || ''}" placeholder="Ex : 2026" title="Année de fin de validité de la carte">
+                  <label class="edit-libelle" for="editCotisAnnee-${c.id}">Cotisations</label>
+                  <select id="editCotisAnnee-${c.id}" class="edit-annee" onchange="remplirMoisEdit('${c.id}')" title="Année des cotisations"></select>
+                  <span class="mois-cases" id="editMois-${c.id}"></span>
+                  <span class="mois-compte" id="editCompte-${c.id}"></span>
+                </div>
+                <div class="assign-inline-row">
                   <button class="btn btn-confirm" onclick="saveCardEdit('${c.id}')"><i class="ti ti-check"></i> Enregistrer</button>
                   <button class="btn btn-reject" onclick="toggleEditRow('${c.id}')">Annuler</button>
                 </div>
@@ -876,7 +932,41 @@
       const carte = allCards.find(c => c.id === expandedEditId);
       remplirSelectRegions(document.getElementById('editRegion-' + expandedEditId),
                            carte ? (carte.region || '') : '');
+      // Annees proposees : de deux ans en arriere a l'an prochain, comme
+      // sur la fiche membre.
+      const selAnnee = document.getElementById('editCotisAnnee-' + expandedEditId);
+      const enCours = new Date().getFullYear();
+      selAnnee.innerHTML = [enCours - 2, enCours - 1, enCours, enCours + 1]
+        .map(a2 => `<option value="${a2}"${a2 === enCours ? ' selected' : ''}>${a2}</option>`).join('');
+      remplirMoisEdit(expandedEditId);
     }
+  }
+
+  // Cases des 12 mois, garnies pour l'annee choisie. Chaque changement
+  // de coche met le compte « x/12 » a jour.
+  const LETTRES_MOIS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+  function remplirMoisEdit(id) {
+    const carte = allCards.find(c => c.id === id);
+    if (!carte) return;
+    const annee = parseInt(document.getElementById('editCotisAnnee-' + id).value, 10);
+    const coches = moisDe(carte, annee);
+    const zone = document.getElementById('editMois-' + id);
+    zone.innerHTML = LETTRES_MOIS.map((l, i) => `
+      <label class="mois-case" title="${['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'][i]}">
+        <input type="checkbox" value="${i + 1}"${coches.indexOf(i + 1) !== -1 ? ' checked' : ''}
+               onchange="majCompteMois('${id}')"><span>${l}</span>
+      </label>`).join('');
+    majCompteMois(id);
+  }
+
+  function moisCochesEdit(id) {
+    return [...document.querySelectorAll('#editMois-' + CSS.escape(id) + ' input:checked')]
+      .map(x => parseInt(x.value, 10));
+  }
+
+  function majCompteMois(id) {
+    document.getElementById('editCompte-' + id).textContent =
+      moisCochesEdit(id).length + '/12';
   }
 
   /**
@@ -1053,16 +1143,32 @@
     const msg = document.getElementById('editRowMsg-' + id);
     const since = document.getElementById('editSince-' + id).value.trim();
 
-    // Renvoie le nouveau numéro quand le changement d'année a déclenché une
-    // renumérotation (phase44), sinon null.
-    const { data: nouveauNumero, error } = await supabaseClient.rpc('update_member_card', {
+    const base = {
       card_id: id,
       new_full_name: document.getElementById('editName-' + id).value,
       new_phone: document.getElementById('editPhone-' + id).value,
       new_card_number: document.getElementById('editNumber-' + id).value,
       new_member_since: since ? parseInt(since, 10) : null,
       new_city: localiteLibelle(document.getElementById('editCity-' + id).value),
+    };
+    const expiry = document.getElementById('editExpiry-' + id).value.trim();
+    const complet = Object.assign({}, base, {
+      new_region: document.getElementById('editRegion-' + id).value || '',
+      new_expiry: expiry ? parseInt(expiry, 10) : null,
+      new_cotis_annee: parseInt(document.getElementById('editCotisAnnee-' + id).value, 10),
+      new_cotis_mois: moisCochesEdit(id),
     });
+
+    // Renvoie le nouveau numéro quand le changement d'année a déclenché
+    // une renumérotation (phase44), sinon null. Si la phase 77 n'est pas
+    // encore exécutée (fonction à 6 paramètres), on retombe sur l'ancien
+    // appel : les champs de base sont enregistrés, et l'écart est DIT.
+    let phase77Absente = false;
+    let { data: nouveauNumero, error } = await supabaseClient.rpc('update_member_card', complet);
+    if (error && error.code === 'PGRST202') {
+      phase77Absente = true;
+      ({ data: nouveauNumero, error } = await supabaseClient.rpc('update_member_card', base));
+    }
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;
@@ -1070,22 +1176,15 @@
       return;
     }
 
-    // La région part par une écriture directe, autorisée aux admins par
-    // la politique RLS des cartes. Elle n'est pas passée à
-    // update_member_card : cette fonction porte la renumérotation
-    // automatique (phase44), et lui ajouter un paramètre obligerait à
-    // reproduire tout son corps - un risque sans rapport avec la région.
-    const selRegion = document.getElementById('editRegion-' + id);
-    if (selRegion) {
-      const { error: errRegion } = await supabaseClient.from('member_cards')
-        .update({ region: selRegion.value || null }).eq('id', id);
-      // Colonne absente (phase68 non exécutée) : le reste est déjà
-      // enregistré, on ne transforme pas cela en échec.
-      if (errRegion && !/region/i.test(errRegion.message || '')) {
-        msg.textContent = 'Erreur : ' + errRegion.message;
-        msg.className = 'assign-msg error';
-        return;
-      }
+    if (phase77Absente) {
+      // L'ancienne fonction ne porte pas la région : écriture directe,
+      // comme avant la phase 77.
+      await supabaseClient.from('member_cards')
+        .update({ region: document.getElementById('editRegion-' + id).value || null }).eq('id', id);
+      msg.textContent = 'Identité enregistrée, mais validité et cotisations IGNORÉES : '
+        + 'exécutez supabase/phase77-carte-validite-cotisations.sql.';
+      msg.className = 'assign-msg error';
+      return;
     }
 
     if (nouveauNumero) {

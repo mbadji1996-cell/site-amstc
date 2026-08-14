@@ -236,15 +236,28 @@
    * empêcher une connexion par ailleurs valide.
    */
   async function rattacherCarteEnAttente() {
-    let jeton = null;
-    try { jeton = localStorage.getItem("amstc-invitation"); } catch (e) { return; }
+    let jeton = null, annee = null;
+    try {
+      jeton = localStorage.getItem("amstc-invitation");
+      annee = parseInt(localStorage.getItem("amstc-invitation-annee") || "", 10) || null;
+    } catch (e) { return; }
     if (!jeton) return;
     try {
-      const { error } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton });
+      // L'annee corrigee sur la page d'invitation accompagne le jeton ;
+      // phase 77 non executee, on consomme sans elle plutot que de
+      // bloquer le rattachement.
+      let { error } = await supabaseClient.rpc("utiliser_invitation",
+        annee ? { p_jeton: jeton, p_member_since: annee } : { p_jeton: jeton });
+      if (error && error.code === "PGRST202" && annee) {
+        ({ error } = await supabaseClient.rpc("utiliser_invitation", { p_jeton: jeton }));
+      }
       // Le jeton n'est retiré que s'il a servi ou qu'il ne servira plus :
       // une panne réseau doit laisser une nouvelle chance à la prochaine
       // connexion.
-      if (!error || error.code === "P0001") localStorage.removeItem("amstc-invitation");
+      if (!error || error.code === "P0001") {
+        localStorage.removeItem("amstc-invitation");
+        localStorage.removeItem("amstc-invitation-annee");
+      }
     } catch (e) { /* réessai à la prochaine connexion */ }
   }
 
