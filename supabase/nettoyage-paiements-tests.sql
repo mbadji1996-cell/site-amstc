@@ -49,13 +49,36 @@ select email, card_valid_until, legacy_card_number
 --    where email = 'drmouhamedbadji@gmail.com';
 
 -- ===== 5. La ligne « zgfezgege » : un test aussi, confirmé =====
--- 5 000 F, 5 ans, rattachée à un compte supprimé (aucun profil ne la
--- porte plus, d'où le « - » à l'écran). Son effet sur card_valid_until a
--- disparu avec le compte ; ne restait que le montant dans les
--- statistiques. La condition user_id is null protège toute ligne du même
--- libellé qu'un membre réel porterait encore.
+-- CORRECTION DU 14/08/2026. La première version supprimait « où
+-- user_id is null » : condition IMPOSSIBLE, la colonne est non nulle
+-- par construction (et la suppression d'un profil emporte ses
+-- paiements en cascade). Le « - » à l'écran vient d'une fiche liée
+-- sans nom, pas d'une fiche absente - la ligne n'était donc jamais
+-- supprimée, comme constaté.
+
+-- 5a. Identifier le PORTEUR réel avant de toucher quoi que ce soit :
+--     notez user_id, email et card_valid_until pour l'étape 5c.
+select v.id, v.user_id, p.email, p.full_name, p.status, p.card_valid_until
+  from public.card_validity_payments v
+  left join public.profiles p on p.id = v.user_id
+ where v.payment_reference = 'zgfezgege';
+
+-- 5b. Supprimer la ligne de test, ciblée par sa référence ET son
+--     contenu exact (5 ans, 5 000 F) pour ne pas emporter un éventuel
+--     homonyme légitime.
 delete from public.card_validity_payments
- where payment_reference = 'zgfezgege' and user_id is null;
+ where payment_reference = 'zgfezgege'
+   and years_requested = 5
+   and amount_fcfa = 5000;
+
+-- 5c. (COMMENTÉ - à décider au vu de 5a) Ce paiement étant CONFIRMÉ,
+--     il a étendu card_valid_until du porteur de 5 ans. Si la fiche vue
+--     en 5a existe encore et que sa validité n'a pas été corrigée à la
+--     main depuis, retirez ces 5 ans en remplaçant l'identifiant :
+--
+--   update public.profiles
+--      set card_valid_until = card_valid_until - 5
+--    where id = '<user_id vu en 5a>';
 
 -- ===== 6. Contrôle : les encaissements 2026 recalculés =====
 select count(*) as paiements_confirmes,
