@@ -22,6 +22,10 @@
  *   3. En base, action_telegram() n'est exécutable que par le rôle de
  *      service. Un membre connecté au site ne peut pas l'appeler.
  *
+ * ATTENTION : le setWebhook doit autoriser « message » EN PLUS de
+ * « callback_query », faute de quoi Telegram ne transmettra jamais les
+ * messages des membres et le rattachement restera sans effet.
+ *
  * Secrets requis :
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  - fournis automatiquement
  *   TELEGRAM_BOT_TOKEN                       - le jeton du bot
@@ -57,6 +61,62 @@ async function telegram(methode: string, corps: Record<string, unknown>): Promis
   }
 }
 
+async function rpc(fonction: string, corps: Record<string, unknown>): Promise<string> {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fonction}`, {
+      method: "POST",
+      headers: {
+        apikey: SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(corps),
+    });
+    const texte = await r.text();
+    return r.ok ? String(JSON.parse(texte) ?? "") : `Échec (${r.status}).`;
+  } catch (e) {
+    return "Échec : " + String(e).slice(0, 120);
+  }
+}
+
+/**
+ * Répond à un membre qui écrit au bot.
+ *
+ * Le rattachement passe par « /start <jeton> » : le jeton vient du
+ * profil du membre, déjà authentifié sur le site. Sans lui, on ne
+ * saurait pas à quel compte relier la conversation.
+ *
+ * Les autres messages sont interprétés très largement - « ma carte »,
+ * « CARTE », « cotisation » -, personne n'écrivant à un bot avec la
+ * rigueur d'une ligne de commande.
+ */
+async function traiterMessage(msg: any): Promise<void> {
+  const salon = msg.chat?.id;
+  if (!salon) return;
+  // Les groupes sont ignorés : ce bot répond à des questions
+  // personnelles, qui n'ont rien à faire dans une conversation à
+  // plusieurs.
+  if (msg.chat?.type && msg.chat.type !== "private") return;
+
+  const texte = String(msg.text ?? "").trim();
+  let reponse: string;
+
+  const start = texte.match(/^\/start\s+(\S+)/);
+  if (start) {
+    reponse = await rpc("lier_telegram", { p_jeton: start[1], p_chat_id: salon });
+  } else if (/^\/start/.test(texte)) {
+    reponse = "Bonjour ! Pour rattacher votre compte AMSTC, connectez-vous sur amstc.org, "
+      + "onglet « Carte de membre et Cotisations », puis touchez "
+      + "« Recevoir mes rappels sur Telegram ».";
+  } else {
+    const t = texte.toLowerCase();
+    const quoi = /cotis/.test(t) ? "cotisations" : /carte/.test(t) ? "carte" : "aide";
+    reponse = await rpc("infos_membre_telegram", { p_chat_id: salon, p_quoi: quoi });
+  }
+
+  await telegram("sendMessage", { chat_id: salon, text: reponse });
+}
+
 Deno.serve(async (req: Request) => {
   // Telegram n'envoie que des POST. Tout le reste est refusé sans
   // détailler pourquoi : cette adresse est publique.
@@ -77,10 +137,18 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { status: 200 });
   }
 
+  // ===== Messages des MEMBRES =====
+  // Contrairement aux clics, ils viennent de n'importe qui : c'est la
+  // conversation elle-même qui identifie le membre, jamais un nom saisi.
+  if (maj.message) {
+    await traiterMessage(maj.message);
+    return new Response("ok", { status: 200 });
+  }
+
   const clic = maj.callback_query;
-  // Tout autre type de mise à jour (message ordinaire, ajout à un
-  // groupe…) est acquitté sans rien faire : répondre autre chose que 200
-  // ferait réessayer Telegram indéfiniment.
+  // Tout autre type de mise à jour (ajout à un groupe, modification…)
+  // est acquitté sans rien faire : répondre autre chose que 200 ferait
+  // réessayer Telegram indéfiniment.
   if (!clic) return new Response("ok", { status: 200 });
 
   const salon = String(clic.message?.chat?.id ?? "");

@@ -219,6 +219,13 @@
       <a class="btn-claim-link" href="reclamer-carte.html">Réclamer ma carte →</a>
     </div>
 
+    <!-- Rattachement Telegram : facultatif, et réversible d'un clic. -->
+    <div class="claim-banner" id="telegramBloc" style="display:none;">
+      <p class="claim-banner-text" id="telegramTexte"></p>
+      <button type="button" class="btn-claim-link" id="telegramBtn"
+              style="border:none;cursor:pointer;font-family:inherit;"></button>
+    </div>
+
     <!-- Informations personnelles -->
     <div class="section-card">
       <button class="accordion-header" onclick="toggleAccordion('info')">
@@ -476,6 +483,7 @@
     renderProfile(profile);
     afficherAnneeAdhesion();
     await loadClaimStatus(profile.id);
+    afficherTelegram();
     await loadValidity(profile.id);
     await loadCotisations(profile.id);
 
@@ -966,6 +974,67 @@
     document.getElementById('claimBanner').style.display = (data && data.length > 0) ? 'none' : '';
   }
 
+  /* ===== Rattachement Telegram ===== */
+  //
+  // Un bot Telegram ne peut pas écrire le premier : c'est le membre qui
+  // doit le démarrer. Et une fois démarré, encore faut-il savoir QUI il
+  // est - Telegram ne transmet qu'un identifiant de conversation.
+  //
+  // D'où le jeton à usage unique : demandé ici par un membre déjà
+  // authentifié, il voyage dans le lien « ?start=… » et permet au bot de
+  // relier la conversation au bon compte. Il vaut 30 minutes.
+
+  const TELEGRAM_BOT = 'amstc_notifs_bot';
+
+  function afficherTelegram() {
+    const bloc = document.getElementById('telegramBloc');
+    const texte = document.getElementById('telegramTexte');
+    const bouton = document.getElementById('telegramBtn');
+    const rattache = !!currentProfile.telegram_chat_id;
+
+    texte.innerHTML = rattache
+      ? '<strong>Telegram rattaché.</strong> Vous y recevez vos rappels de cotisation, '
+        + 'et pouvez écrire « carte » ou « cotisations » au bot à tout moment.'
+      : '<strong>Recevez vos rappels sur Telegram.</strong> Vous pourrez aussi y consulter '
+        + 'votre carte et vos cotisations, sans vous connecter.';
+    bouton.textContent = rattache ? 'Détacher' : 'Rattacher mon Telegram →';
+    bloc.style.display = '';
+  }
+
+  async function basculerTelegram() {
+    const bouton = document.getElementById('telegramBtn');
+    const texte = document.getElementById('telegramTexte');
+    bouton.disabled = true;
+
+    if (currentProfile.telegram_chat_id) {
+      const { error } = await supabaseClient.rpc('delier_telegram');
+      bouton.disabled = false;
+      if (error) { texte.textContent = 'Erreur : ' + error.message; return; }
+      currentProfile.telegram_chat_id = null;
+      afficherTelegram();
+      return;
+    }
+
+    // L'onglet est ouvert AVANT l'appel réseau : ouvert après, Safari le
+    // bloquerait comme intempestif - même parade que pour les PDF.
+    const onglet = window.open('', '_blank');
+    const { data: jeton, error } = await supabaseClient.rpc('creer_lien_telegram');
+    bouton.disabled = false;
+
+    if (error || !jeton) {
+      if (onglet) onglet.close();
+      texte.textContent = error && error.code === 'PGRST202'
+        ? "Le rattachement Telegram n'est pas encore activé sur cette instance."
+        : 'Erreur : ' + ((error && error.message) || 'jeton non délivré');
+      return;
+    }
+
+    const lien = 'https://t.me/' + TELEGRAM_BOT + '?start=' + encodeURIComponent(jeton);
+    if (onglet) onglet.location = lien; else window.location.href = lien;
+    texte.innerHTML = '<strong>Touchez « Démarrer » dans Telegram</strong> pour terminer le '
+      + 'rattachement, puis revenez ici et rechargez la page. Le lien vaut 30 minutes.';
+  }
+
   /* ===== Validité de la carte ===== */
 
   function updateValidityTotal() {
@@ -1240,6 +1309,8 @@
   }
 
   function escHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  document.getElementById('telegramBtn').addEventListener('click', basculerTelegram);
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut(); window.location.href = 'connexion.html';

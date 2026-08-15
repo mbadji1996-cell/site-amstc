@@ -376,6 +376,37 @@ async function envoyerChaine(titre: string, texte: string, lien?: string | null)
 }
 
 /**
+ * Message à un membre, dans SA conversation avec le bot.
+ *
+ * Le destinataire n'est pas TELEGRAM_CHAT_ID mais un identifiant fourni
+ * par l'appelant : c'est la seule fonction de ce fichier dans ce cas.
+ * Elle sert aux rappels de cotisation (phase 85), envoyés uniquement aux
+ * membres qui ont RATTACHÉ leur Telegram de leur plein gré.
+ *
+ * Pas de mise en forme HTML : ces textes sont produits en SQL et
+ * pourraient contenir des chevrons dans un nom. En texte brut, aucun
+ * risque d'affichage cassé.
+ */
+async function envoyerTelegramA(chatId: unknown, texte: string): Promise<boolean> {
+  if (!TELEGRAM_BOT_TOKEN || !chatId || !texte) return false;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: texte, disable_web_page_preview: true }),
+    });
+    if (!res.ok) {
+      console.error("notify-admin: échec message membre", res.status, (await res.text()).slice(0, 200));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error("notify-admin: échec message membre", String(e).slice(0, 200));
+    return false;
+  }
+}
+
+/**
  * Notification Telegram à l'administration - OPTIONNELLE et GRATUITE.
  *
  * Contrairement à WhatsApp, Telegram ne facture rien et n'impose aucun
@@ -491,6 +522,17 @@ Deno.serve(async (req: Request) => {
     // ni WhatsApp, ni notification à l'administration - le message est
     // destiné au public, et l'administration le verra sur la chaîne
     // comme tout le monde.
+    // Message à UN MEMBRE, dans sa conversation privée avec le bot.
+    // Chemin séparé lui aussi : ni e-mail, ni chaîne, ni notification à
+    // l'administration - c'est le membre qui est destinataire, et lui
+    // seul. Le chat_id vient de profiles.telegram_chat_id, renseigné par
+    // le rattachement volontaire du membre (phase 85).
+    if (event_type === "message_telegram") {
+      const ok = await envoyerTelegramA(data.chat_id, data.texte);
+      return new Response(JSON.stringify({ ok, canal: "membre" }),
+                          { status: ok ? 200 : 503 });
+    }
+
     if (event_type === "publication_chaine") {
       const publie = await envoyerChaine(data.titre, data.texte, data.lien);
       return new Response(
