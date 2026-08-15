@@ -34,6 +34,12 @@
 //   TELEGRAM_CHAT_ID          - identifiant du salon à prévenir
 //                               SANS LES DEUX, aucun Telegram n'est envoyé.
 //
+// Secret OPTIONNEL - publication sur la CHAÎNE publique :
+//   TELEGRAM_CHANNEL_ID       - identifiant de la chaîne (négatif, -100…)
+//                               Utilisé UNIQUEMENT par l'événement
+//                               « publication_chaine ». Les notifications
+//                               d'administration n'y vont jamais.
+//
 // IMPORTANT - Resend exige un domaine d'expédition vérifié pour envoyer
 // depuis une adresse @amstc.org. Tant qu'amstc.org n'est pas vérifié dans
 // Resend, seule l'adresse de test "onboarding@resend.dev" fonctionne, et
@@ -51,6 +57,7 @@ const META_TEMPLATE_NAME_ADMIN = Deno.env.get("META_TEMPLATE_NAME_ADMIN") || "ra
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
 const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
+const TELEGRAM_CHANNEL_ID = Deno.env.get("TELEGRAM_CHANNEL_ID");
 
 function esc(v: unknown): string {
   return String(v ?? "-").replace(
@@ -317,6 +324,58 @@ async function envoyerWhatsApp(texte: string): Promise<void> {
 }
 
 /**
+ * Publication sur la CHAÎNE Telegram - à ne pas confondre avec la
+ * notification à l'administration.
+ *
+ * La chaîne est PUBLIQUE : ce qui part ici est lu par tous ses abonnés
+ * et par quiconque l'ouvre. Elle ne reçoit donc jamais les
+ * notifications d'administration (noms, montants, références de
+ * paiement) - seulement ce qui a été écrit pour être diffusé.
+ *
+ * L'aperçu de lien est VOLONTAIREMENT laissé actif, contrairement aux
+ * notifications : les pages /c/ et /b/ générées pour le partage
+ * donnent une belle carte avec titre et couverture.
+ *
+ * Sans TELEGRAM_CHANNEL_ID, rien n'est publié.
+ */
+async function envoyerChaine(titre: string, texte: string, lien?: string | null): Promise<boolean> {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHANNEL_ID) return false;
+  // Le titre n'est mis en gras QUE s'il existe : `<b></b>` est une
+  // chaîne non vide, et un filtre naïf laisserait publier un message
+  // creux sur une chaîne publique. La fonction SQL refuse déjà un titre
+  // vide - on ne s'y fie pas, cette fonction est aussi appelable
+  // directement.
+  const corps = [
+    titre && titre.trim() ? `<b>${esc(titre)}</b>` : "",
+    texte && texte.trim() ? esc(texte) : "",
+    lien && lien.trim() ? esc(lien) : "",
+  ].filter(Boolean).join("\n\n");
+  if (!corps) {
+    console.error("notify-admin: publication vide refusée");
+    return false;
+  }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHANNEL_ID,
+        text: corps,
+        parse_mode: "HTML",
+      }),
+    });
+    if (!res.ok) {
+      console.error("notify-admin: échec publication chaîne", res.status, (await res.text()).slice(0, 200));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error("notify-admin: échec publication chaîne", String(e).slice(0, 200));
+    return false;
+  }
+}
+
+/**
  * Notification Telegram à l'administration - OPTIONNELLE et GRATUITE.
  *
  * Contrairement à WhatsApp, Telegram ne facture rien et n'impose aucun
@@ -395,6 +454,18 @@ Deno.serve(async (req: Request) => {
     }
 
     const { event_type, ...data } = payload;
+
+    // Publication sur la chaîne : chemin totalement séparé. Ni e-mail,
+    // ni WhatsApp, ni notification à l'administration - le message est
+    // destiné au public, et l'administration le verra sur la chaîne
+    // comme tout le monde.
+    if (event_type === "publication_chaine") {
+      const publie = await envoyerChaine(data.titre, data.texte, data.lien);
+      return new Response(
+        JSON.stringify({ ok: publie, canal: "chaine",
+                         detail: publie ? undefined : "TELEGRAM_CHANNEL_ID absent ou envoi refusé" }),
+        { status: publie ? 200 : 503 });
+    }
 
     // Type d'événement inconnu : on ne le REJETTE PAS. Auparavant la
     // fonction répondait 400 et l'alerte était perdue en silence - or un
