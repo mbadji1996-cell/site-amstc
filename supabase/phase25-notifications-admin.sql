@@ -48,7 +48,10 @@ begin
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       -- ⚠️ Ceci N'EST PAS la clé "anon" (publique) : c'est un jeton dédié,
-      -- à générer vous-même (ex. select encode(gen_random_bytes(24), 'hex');)
+      -- à générer vous-même. PAS avec gen_random_bytes() : il vient de
+      -- pgcrypto, absent de cette instance. Utilisez plutôt
+      --   select replace(gen_random_uuid()::text, '-', '');
+      -- ou, hors base, « openssl rand -hex 24 ».
       -- et à saisir aussi comme secret NOTIFY_ADMIN_SECRET de la fonction
       -- Edge. Si vous préférez la configuration minimale sans ce contrôle,
       -- laissez cette valeur telle quelle et ne définissez simplement pas

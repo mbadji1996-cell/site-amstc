@@ -73,7 +73,17 @@ begin
   delete from public.telegram_liaisons
    where user_id = auth.uid() and used_at is null;
 
-  v_jeton := encode(gen_random_bytes(16), 'hex');
+  -- Un UUID sans tirets : 32 caractères, 122 bits d'aléa - largement
+  -- assez pour un jeton à usage unique valable 30 minutes, et sous la
+  -- limite de 64 caractères que Telegram impose au paramètre « start ».
+  --
+  -- gen_random_uuid() est natif à PostgreSQL et donc toujours visible.
+  -- gen_random_bytes() vient de pgcrypto et vit dans le schéma
+  -- « extensions » : avec le search_path fixé à public - indispensable
+  -- pour une fonction SECURITY DEFINER - il est introuvable. C'est
+  -- exactement l'erreur rencontrée le 15/08/2026, et déjà consignée
+  -- dans phase59.
+  v_jeton := replace(gen_random_uuid()::text, '-', '');
   insert into public.telegram_liaisons (jeton, user_id) values (v_jeton, auth.uid());
   return v_jeton;
 end;
