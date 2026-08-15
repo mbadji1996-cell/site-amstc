@@ -559,6 +559,66 @@ la liste complète.
    domaine doivent fonctionner, et aucun champ sensible (e-mail) ne doit
    apparaître.
 
+## 4undevicies bis. Notifications d'administration : paiements, WhatsApp et Telegram
+
+**Le constat du 14/08/2026** : seules les inscriptions arrivaient. Ce
+n'était pas un réglage - la phase 25 n'avait posé de déclencheur que sur
+cinq événements, et **les paiements n'en avaient aucun**. Rien ne partait,
+quel que soit l'état de Resend.
+
+`supabase/phase79-notifications-paiements.sql` ajoute les trois manquants,
+déclenchés **à la déclaration** du paiement (le moment où l'administration
+doit agir, pas à la confirmation qu'elle fait elle-même) : validité de
+carte, cotisations, participation à une collecte.
+
+**Deux étapes, dans cet ordre** :
+
+1. Exécuter `supabase/phase79-notifications-paiements.sql` (SQL Editor).
+2. **Redéployer la fonction Edge `notify-admin`** - sans cela l'appel part
+   mais l'e-mail n'est pas construit, la fonction ne connaissant pas les
+   nouveaux types.
+
+### Recevoir aussi sur WhatsApp (payant, quelques messages par mois)
+
+Un seul secret à ajouter, les autres étant **déjà en place** pour les
+rappels aux membres (§ 4undevicies) :
+
+- `ADMIN_NOTIFY_WHATSAPP` - votre numéro, chiffres seuls avec l'indicatif
+  (ex. `221771234567`).
+
+Le modèle Utilitaire `rappel_compte` déjà approuvé est réutilisé : **rien
+de nouveau à faire approuver chez Meta**. Meta facture au message depuis
+2025 (le « quota généreux » mentionné plus haut date d'avant ce
+changement) ; ces notifications visant un seul numéro, le volume reste de
+quelques dizaines de messages par mois. Vérifiez votre tarif réel dans
+**Meta Business Manager → Facturation**.
+
+### Recevoir sur Telegram (GRATUIT, sans modèle à faire approuver)
+
+Telegram ne facture rien et n'impose aucune validation préalable. Trois
+minutes de mise en place :
+
+1. Dans Telegram, écrivez à **@BotFather**, envoyez `/newbot`, choisissez
+   un nom et un identifiant. BotFather répond avec un **jeton** de la forme
+   `123456789:AAE...`.
+2. **Écrivez un message quelconque à votre nouveau bot** (il ne peut pas
+   vous parler le premier), puis ouvrez dans un navigateur :
+   `https://api.telegram.org/bot<VOTRE_JETON>/getUpdates`
+   Relevez-y le `"chat":{"id":123456789` - c'est votre identifiant de salon.
+   Pour prévenir plusieurs personnes, créez un groupe, ajoutez-y le bot, et
+   utilisez l'identifiant du groupe (il commence par `-`).
+3. Ajouter les deux variables d'environnement Coolify :
+   - `TELEGRAM_BOT_TOKEN` - le jeton de l'étape 1
+   - `TELEGRAM_CHAT_ID` - l'identifiant de l'étape 2
+
+   Puis **Redeploy** (voir l'encadré du § 4quaterdecies : un simple restart
+   ne suffit pas, et l'échec est silencieux).
+
+**Les trois canaux sont indépendants et cumulables.** L'e-mail part
+toujours ; WhatsApp et Telegram ne sont tentés que si leurs secrets sont
+présents, et leur échec ne compromet jamais l'e-mail. Sans aucun de ces
+secrets, le comportement reste exactement celui d'aujourd'hui.
+
 ## 4duodevicies. Ajoute le téléphone à l'annuaire (lien WhatsApp)
 
 **Décision de l'association** : l'annuaire reste réservé à l'espace

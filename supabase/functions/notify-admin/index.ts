@@ -28,6 +28,12 @@
 //                               membres, à paramètre nommé "message".
 //   META_TEMPLATE_LANG        - optionnel, défaut "fr"
 //
+// Secrets OPTIONNELS - notification Telegram (GRATUITE, sans modèle à
+// faire approuver ; à préférer si le coût compte) :
+//   TELEGRAM_BOT_TOKEN        - jeton donné par @BotFather
+//   TELEGRAM_CHAT_ID          - identifiant du salon à prévenir
+//                               SANS LES DEUX, aucun Telegram n'est envoyé.
+//
 // IMPORTANT - Resend exige un domaine d'expédition vérifié pour envoyer
 // depuis une adresse @amstc.org. Tant qu'amstc.org n'est pas vérifié dans
 // Resend, seule l'adresse de test "onboarding@resend.dev" fonctionne, et
@@ -43,6 +49,8 @@ const META_WHATSAPP_TOKEN = Deno.env.get("META_WHATSAPP_TOKEN");
 const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
 const META_TEMPLATE_NAME_ADMIN = Deno.env.get("META_TEMPLATE_NAME_ADMIN") || "rappel_compte";
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
+const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
+const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 
 function esc(v: unknown): string {
   return String(v ?? "-").replace(
@@ -200,10 +208,11 @@ function buildEmail(
 }
 
 /**
- * Résumé d'une ligne pour WhatsApp : le modèle Meta n'accepte qu'un
- * paramètre texte, sans mise en forme ni retour à la ligne.
+ * Résumé d'une ligne, partagé par WhatsApp et Telegram : le modèle Meta
+ * n'accepte qu'un paramètre texte, sans mise en forme ni retour à la
+ * ligne, et cette contrainte convient aussi bien à Telegram.
  */
-function buildWhatsApp(eventType: string, data: Record<string, any>): string | null {
+function buildTexteCourt(eventType: string, data: Record<string, any>): string | null {
   switch (eventType) {
     case "inscription":
       return `Nouvelle inscription : ${data.full_name} (${data.phone || "sans téléphone"}). À valider dans l'espace administration.`;
@@ -274,6 +283,46 @@ async function envoyerWhatsApp(texte: string): Promise<void> {
   }
 }
 
+/**
+ * Notification Telegram à l'administration - OPTIONNELLE et GRATUITE.
+ *
+ * Contrairement à WhatsApp, Telegram ne facture rien et n'impose aucun
+ * modèle à faire approuver : un bot créé en deux minutes auprès de
+ * @BotFather suffit. C'est le canal à préférer quand le coût compte.
+ *
+ * Deux secrets, tous deux nécessaires : TELEGRAM_BOT_TOKEN (donné par
+ * BotFather) et TELEGRAM_CHAT_ID (le salon à prévenir - votre
+ * conversation privée avec le bot, ou un groupe). Sans eux, rien n'est
+ * envoyé.
+ *
+ * parse_mode HTML : esc() échappe déjà &, < et >, exactement les trois
+ * caractères que Telegram réclame dans ce mode.
+ *
+ * Un échec n'est jamais fatal : l'e-mail reste la voie principale.
+ */
+async function envoyerTelegram(titre: string, texte: string): Promise<void> {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: `<b>${esc(titre)}</b>
+
+${esc(texte)}`,
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+      }),
+    });
+    if (!res.ok) {
+      console.error("notify-admin: échec Telegram", res.status, (await res.text()).slice(0, 200));
+    }
+  } catch (e) {
+    console.error("notify-admin: échec Telegram", String(e).slice(0, 200));
+  }
+}
+
 Deno.serve(async (req: Request) => {
   try {
     if (req.method !== "POST") {
@@ -335,8 +384,11 @@ Deno.serve(async (req: Request) => {
     // WhatsApp en plus de l'e-mail, si configuré. Lancé APRÈS l'e-mail
     // et attendu : sur Deno Deploy, une promesse laissée en suspens est
     // abandonnée dès la réponse renvoyée.
-    const texteWa = buildWhatsApp(event_type, data);
-    if (texteWa) await envoyerWhatsApp(texteWa);
+    const texteCourt = buildTexteCourt(event_type, data);
+    if (texteCourt) {
+      await envoyerWhatsApp(texteCourt);
+      await envoyerTelegram(email.subject, texteCourt);
+    }
 
     if (!resendRes.ok) {
       const errText = await resendRes.text();
