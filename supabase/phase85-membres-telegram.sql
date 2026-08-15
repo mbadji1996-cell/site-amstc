@@ -194,8 +194,14 @@ begin
     v_nb := array_length(v_mois, 1);
     v_nb := coalesce(v_nb, 0);
 
-    select string_agg(to_char(to_date(m::text, 'MM'), 'TMMonth'), ', ' order by m)
-      into v_libel from unnest(v_mois) m;
+    -- Noms des mois écrits en dur : to_char suit la locale de la session
+    -- de base, anglaise sur cette instance - le membre recevait
+    -- « January, February… ». Constaté au premier essai réel.
+    select string_agg(
+             (array['janvier','février','mars','avril','mai','juin','juillet',
+                    'août','septembre','octobre','novembre','décembre'])[m],
+             ', ' order by m)
+      into v_libel from unnest(v_mois) m where m between 1 and 12;
 
     return 'Cotisations ' || v_annee || ' : ' || v_nb || '/12' || chr(10)
         || case when v_nb = 0 then 'Aucun mois réglé cette année.'
@@ -260,7 +266,9 @@ begin
       perform public.notify_admin('message_telegram', jsonb_build_object(
         'chat_id', v_membre.telegram_chat_id,
         'texte', 'Bonjour ' || v_membre.nom || ', votre cotisation de '
-              || to_char(to_date(v_m::text, 'MM'), 'TMMonth') || ' ' || v_a
+              || (array['janvier','février','mars','avril','mai','juin','juillet',
+                        'août','septembre','octobre','novembre','décembre'])[v_m]
+              || ' ' || v_a
               || ' (1 000 F) n''est pas encore enregistrée. '
               || 'Déclarez votre paiement sur amstc.org, onglet Carte de membre et Cotisations. Merci !'));
       insert into public.rappels_cotisation_envoyes (user_id, annee, mois)

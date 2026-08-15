@@ -110,7 +110,12 @@ async function traiterMessage(msg: any): Promise<void> {
       + "« Recevoir mes rappels sur Telegram ».";
   } else {
     const t = texte.toLowerCase();
-    const quoi = /cotis/.test(t) ? "cotisations" : /carte/.test(t) ? "carte" : "aide";
+    // Un numéro de carte tapé tel quel (« AMSTC-2016-001 ») vaut demande
+    // de carte : c'est le premier réflexe observé au test réel. La
+    // réponse porte toujours sur la conversation, jamais sur le numéro
+    // saisi - on ne consulte pas la carte d'un autre en tapant son numéro.
+    const quoi = /cotis/.test(t) ? "cotisations"
+      : (/carte/.test(t) || /amstc-\d{4}-\d+/.test(t)) ? "carte" : "aide";
     reponse = await rpc("infos_membre_telegram", { p_chat_id: salon, p_quoi: quoi });
   }
 
