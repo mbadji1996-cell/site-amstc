@@ -207,7 +207,11 @@ create table if not exists public.products (
 
 create table if not exists public.orders (
   id                 uuid primary key default gen_random_uuid(),
-  user_id            uuid not null references auth.users(id) on delete set null,
+  -- PAS de « not null » : il contredirait « on delete set null », et
+  -- c'est la suppression du COMPTE qui echouerait (voir phase80).
+  -- Une commande est une piece comptable : elle survit au depart de
+  -- son auteur, detachee de lui.
+  user_id            uuid references auth.users(id) on delete set null,
   status             text not null default 'pending'
                      check (status in ('pending', 'paid', 'processing', 'shipped', 'cancelled')),
   payment_method     text check (payment_method in ('wave', 'orange_money')),
