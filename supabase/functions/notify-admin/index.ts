@@ -79,6 +79,9 @@ function buildEmail(
             <li><strong>Spécialité :</strong> ${esc(data.specialty)}</li>
             <li><strong>Ville :</strong> ${esc(data.city)}</li>
           </ul>
+          ${data.doublon ? `<p style="background:#FDEEEE;border-left:3px solid #C0392B;padding:10px 14px;color:#8A2C2C;">
+            <strong>Doublon probable</strong> - ${esc(data.doublon)}. Vérifiez avant d'approuver : s'il s'agit
+            de la même personne, refusez cette inscription et invitez-la à se connecter avec son compte existant.</p>` : ""}
           <p>À valider dans membres/validation.html.</p>
         `,
       };
@@ -181,6 +184,28 @@ function buildEmail(
         `,
       };
     }
+    // Bilan quotidien de ce qui attend l'administration. « lignes » est
+    // un tableau de { libelle, nombre } construit en SQL : la fonction
+    // Edge n'a pas a connaitre le detail de chaque compteur, ce qui
+    // permet d'en ajouter sans la redeployer.
+    case "rapport_matinal": {
+      const lignes: any[] = Array.isArray(data.lignes) ? data.lignes : [];
+      const total = lignes.reduce((n, l) => n + (Number(l.nombre) || 0), 0);
+      return {
+        subject: total > 0
+          ? `AMSTC - ${total} chose(s) à traiter aujourd'hui`
+          : `AMSTC - rien en attente aujourd'hui`,
+        html: `
+          <h2>Point du jour - espace membres AMSTC</h2>
+          ${total === 0 ? "<p>Rien n'attend votre validation. Bonne journée.</p>" : `
+          <ul>
+            ${lignes.filter((l) => Number(l.nombre) > 0)
+              .map((l) => `<li><strong>${esc(l.nombre)}</strong> ${esc(l.libelle)}</li>`).join("")}
+          </ul>
+          <p>Tout se traite depuis le Centre d'administration.</p>`}
+        `,
+      };
+    }
     case "participation_collecte": {
       const enNature = data.mode === "nature";
       return {
@@ -215,7 +240,9 @@ function buildEmail(
 function buildTexteCourt(eventType: string, data: Record<string, any>): string | null {
   switch (eventType) {
     case "inscription":
-      return `Nouvelle inscription : ${data.full_name} (${data.phone || "sans téléphone"}). À valider dans l'espace administration.`;
+      return `Nouvelle inscription : ${data.full_name} (${data.phone || "sans téléphone"}).`
+        + (data.doublon ? ` ⚠ DOUBLON PROBABLE - ${data.doublon}.` : "")
+        + ` À valider dans l'espace administration.`;
     case "reclamation_carte":
       return `Réclamation de carte : ${data.claimant_name} demande la carte ${data.card_number}. À confirmer.`;
     case "achat_boutique":
@@ -228,6 +255,12 @@ function buildTexteCourt(eventType: string, data: Record<string, any>): string |
       return `Paiement validité : ${data.member_name}, ${data.amount_fcfa} FCFA pour ${data.years} an(s), réf. ${data.payment_reference}. À confirmer.`;
     case "paiement_cotisation":
       return `Paiement cotisations : ${data.member_name}, ${data.amount_fcfa} FCFA pour ${data.months} mois de ${data.year}, réf. ${data.payment_reference}. À confirmer.`;
+    case "rapport_matinal": {
+      const lignes: any[] = Array.isArray(data.lignes) ? data.lignes : [];
+      const aTraiter = lignes.filter((l) => Number(l.nombre) > 0);
+      if (!aTraiter.length) return "Point du jour : rien n'attend votre validation.";
+      return "Point du jour - " + aTraiter.map((l) => `${l.nombre} ${l.libelle}`).join(", ") + ".";
+    }
     case "participation_collecte":
       return data.mode === "nature"
         ? `Don en nature : ${data.member_name} s'engage à remettre « ${data.item} » (${data.collecte}).`
