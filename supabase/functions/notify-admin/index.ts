@@ -392,7 +392,38 @@ async function envoyerChaine(titre: string, texte: string, lien?: string | null)
  *
  * Un échec n'est jamais fatal : l'e-mail reste la voie principale.
  */
-async function envoyerTelegram(titre: string, texte: string): Promise<void> {
+/**
+ * Boutons d'action sous la notification, quand l'événement s'y prête.
+ *
+ * Ils ne sont proposés QUE si la charge utile porte l'identifiant de la
+ * ligne concernée (ajouté par la phase 84) : sans lui, le bouton ne
+ * saurait sur quoi agir, et mieux vaut aucun bouton qu'un bouton mort.
+ *
+ * « callback_data » est plafonné à 64 octets par Telegram - d'où ce
+ * format compact : « type:verdict:uuid » fait 43 octets.
+ */
+function boutons(eventType: string, data: Record<string, any>): unknown {
+  const id = data.id;
+  if (!id) return undefined;
+  const paire = (prefixe: string, oui: string, non: string) => ({
+    inline_keyboard: [[
+      { text: oui, callback_data: `${prefixe}:ok:${id}` },
+      { text: non, callback_data: `${prefixe}:no:${id}` },
+    ]],
+  });
+  switch (eventType) {
+    case "inscription":         return paire("ins", "✅ Approuver", "✖️ Refuser");
+    case "paiement_validite":   return paire("val", "✅ Confirmer", "✖️ Refuser");
+    case "paiement_cotisation": return paire("cot", "✅ Confirmer", "✖️ Refuser");
+    default:                    return undefined;
+  }
+}
+
+async function envoyerTelegram(
+  titre: string,
+  texte: string,
+  clavier?: unknown,
+): Promise<void> {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
   try {
     const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -405,6 +436,7 @@ async function envoyerTelegram(titre: string, texte: string): Promise<void> {
 ${esc(texte)}`,
         parse_mode: "HTML",
         disable_web_page_preview: true,
+        ...(clavier ? { reply_markup: clavier } : {}),
       }),
     });
     if (!res.ok) {
@@ -512,7 +544,8 @@ Deno.serve(async (req: Request) => {
     // oublié ici), le sujet de l'e-mail fait l'affaire : mieux vaut une
     // notification sommaire que pas de notification du tout. Gratuit,
     // donc rien ne justifie de s'en priver.
-    await envoyerTelegram(email.subject, texteCourt || email.subject);
+    await envoyerTelegram(email.subject, texteCourt || email.subject,
+                          boutons(event_type, data));
 
     if (!resendRes.ok) {
       const errText = await resendRes.text();
