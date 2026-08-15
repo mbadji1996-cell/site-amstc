@@ -1,8 +1,10 @@
 // supabase/functions/notify-admin/index.ts
 //
-// Fonction Edge partagée qui envoie un e-mail de notification à l'admin de
-// l'AMSTC pour 5 événements : inscription, réclamation de carte, achat
-// boutique, nouveau sujet de forum, demande de campagne/activité locale.
+// Fonction Edge partagée qui notifie l'administration de l'AMSTC pour
+// 8 événements : inscription, réclamation de carte, achat boutique,
+// nouveau sujet de forum, demande de campagne/activité locale, et depuis
+// la phase 79 les trois paiements - validité de carte, cotisations,
+// participation à une collecte.
 // Appelée UNIQUEMENT côté serveur par les triggers Postgres (voir
 // supabase/phase25-notifications-admin.sql et phase33-demandes-campagnes.sql)
 // via pg_net - jamais directement par le navigateur, donc aucune gestion
@@ -15,6 +17,17 @@
 //                         lui, la fonction refuse toute requête (fail-closed)
 //   NOTIFY_FROM_EMAIL   - optionnel, adresse d'expédition (voir note ci-dessous)
 //
+// Secrets OPTIONNELS - notification WhatsApp en plus de l'e-mail :
+//   ADMIN_NOTIFY_WHATSAPP     - numéro à prévenir, chiffres seuls avec
+//                               indicatif (ex. 221771234567). SANS LUI,
+//                               aucun WhatsApp n'est envoyé.
+//   META_WHATSAPP_TOKEN       - déjà configuré pour notify-members-whatsapp
+//   META_PHONE_NUMBER_ID      - idem
+//   META_TEMPLATE_NAME_ADMIN  - optionnel, défaut "rappel_compte" : le même
+//                               modèle Utilitaire que les rappels aux
+//                               membres, à paramètre nommé "message".
+//   META_TEMPLATE_LANG        - optionnel, défaut "fr"
+//
 // IMPORTANT - Resend exige un domaine d'expédition vérifié pour envoyer
 // depuis une adresse @amstc.org. Tant qu'amstc.org n'est pas vérifié dans
 // Resend, seule l'adresse de test "onboarding@resend.dev" fonctionne, et
@@ -25,6 +38,11 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const ADMIN_NOTIFY_EMAIL = Deno.env.get("ADMIN_NOTIFY_EMAIL");
 const NOTIFY_ADMIN_SECRET = Deno.env.get("NOTIFY_ADMIN_SECRET");
 const FROM_EMAIL = Deno.env.get("NOTIFY_FROM_EMAIL") || "AMSTC <onboarding@resend.dev>";
+const ADMIN_NOTIFY_WHATSAPP = Deno.env.get("ADMIN_NOTIFY_WHATSAPP");
+const META_WHATSAPP_TOKEN = Deno.env.get("META_WHATSAPP_TOKEN");
+const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
+const META_TEMPLATE_NAME_ADMIN = Deno.env.get("META_TEMPLATE_NAME_ADMIN") || "rappel_compte";
+const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
 
 function esc(v: unknown): string {
   return String(v ?? "-").replace(
@@ -124,8 +142,135 @@ function buildEmail(
         `,
       };
     }
+    case "paiement_validite": {
+      return {
+        subject: `Paiement validité de carte - ${esc(data.member_name)} - ${esc(data.amount_fcfa)} F`,
+        html: `
+          <h2>Paiement de validité de carte déclaré</h2>
+          <ul>
+            <li><strong>Membre :</strong> ${esc(data.member_name)} (${esc(data.member_email)})</li>
+            <li><strong>Années demandées :</strong> ${esc(data.years)}</li>
+            <li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
+            <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>
+          </ul>
+          <p>À vérifier puis confirmer dans membres/validation.html &rsaquo; Validité de carte.</p>
+        `,
+      };
+    }
+    case "paiement_cotisation": {
+      return {
+        subject: `Paiement cotisations - ${esc(data.member_name)} - ${esc(data.amount_fcfa)} F`,
+        html: `
+          <h2>Paiement de cotisations déclaré</h2>
+          <ul>
+            <li><strong>Membre :</strong> ${esc(data.member_name)} (${esc(data.member_email)})</li>
+            <li><strong>Année :</strong> ${esc(data.year)}</li>
+            <li><strong>Mois demandés :</strong> ${esc(data.months)}</li>
+            <li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
+            <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>
+          </ul>
+          <p>À vérifier puis confirmer dans membres/validation.html &rsaquo; Cotisations.</p>
+        `,
+      };
+    }
+    case "participation_collecte": {
+      const enNature = data.mode === "nature";
+      return {
+        subject: enNature
+          ? `Don en nature - ${esc(data.member_name)} - ${esc(data.item)}`
+          : `Participation collecte - ${esc(data.member_name)} - ${esc(data.amount_fcfa)} F`,
+        html: `
+          <h2>${enNature ? "Promesse de don en nature" : "Participation à une collecte"}</h2>
+          <ul>
+            <li><strong>Membre :</strong> ${esc(data.member_name)} (${esc(data.member_email)})</li>
+            <li><strong>Collecte :</strong> ${esc(data.collecte)}</li>
+            <li><strong>Item :</strong> ${esc(data.item)}</li>
+            ${enNature
+              ? "<li><strong>Mode :</strong> don en nature (objet à remettre)</li>"
+              : `<li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
+                 <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>`}
+          </ul>
+          <p>À traiter dans membres/collectes-admin.html.</p>
+        `,
+      };
+    }
     default:
       return null;
+  }
+}
+
+/**
+ * Résumé d'une ligne pour WhatsApp : le modèle Meta n'accepte qu'un
+ * paramètre texte, sans mise en forme ni retour à la ligne.
+ */
+function buildWhatsApp(eventType: string, data: Record<string, any>): string | null {
+  switch (eventType) {
+    case "inscription":
+      return `Nouvelle inscription : ${data.full_name} (${data.phone || "sans téléphone"}). À valider dans l'espace administration.`;
+    case "reclamation_carte":
+      return `Réclamation de carte : ${data.claimant_name} demande la carte ${data.card_number}. À confirmer.`;
+    case "achat_boutique":
+      return `Commande boutique : ${data.buyer_name}, ${data.total_fcfa} FCFA (${data.payment_method}). À traiter.`;
+    case "demande_campagne":
+      return `Demande de campagne : ${data.full_name} pour ${data.locality}. À étudier.`;
+    case "nouveau_sujet_forum":
+      return `Nouveau sujet forum de ${data.author_name} : ${data.title}`;
+    case "paiement_validite":
+      return `Paiement validité : ${data.member_name}, ${data.amount_fcfa} FCFA pour ${data.years} an(s), réf. ${data.payment_reference}. À confirmer.`;
+    case "paiement_cotisation":
+      return `Paiement cotisations : ${data.member_name}, ${data.amount_fcfa} FCFA pour ${data.months} mois de ${data.year}, réf. ${data.payment_reference}. À confirmer.`;
+    case "participation_collecte":
+      return data.mode === "nature"
+        ? `Don en nature : ${data.member_name} s'engage à remettre « ${data.item} » (${data.collecte}).`
+        : `Participation collecte : ${data.member_name}, ${data.amount_fcfa} FCFA pour « ${data.item} » (${data.collecte}). À confirmer.`;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Notification WhatsApp à l'administration - OPTIONNELLE.
+ *
+ * Elle n'est tentée que si les trois secrets sont présents :
+ * ADMIN_NOTIFY_WHATSAPP (le numéro à prévenir, chiffres seuls avec
+ * l'indicatif, ex. 221771234567), META_WHATSAPP_TOKEN et
+ * META_PHONE_NUMBER_ID - les deux derniers étant DÉJÀ configurés pour
+ * les rappels aux membres (notify-members-whatsapp).
+ *
+ * Elle utilise le même modèle « Utilitaire » à paramètre nommé
+ * « message » que les rappels : rien de nouveau à faire approuver chez
+ * Meta.
+ *
+ * Un échec n'est jamais fatal : l'e-mail reste la voie principale, et
+ * pg_net ne relit pas notre réponse de toute façon.
+ */
+async function envoyerWhatsApp(texte: string): Promise<void> {
+  if (!ADMIN_NOTIFY_WHATSAPP || !META_WHATSAPP_TOKEN || !META_PHONE_NUMBER_ID) return;
+  try {
+    const res = await fetch(`https://graph.facebook.com/v20.0/${META_PHONE_NUMBER_ID}/messages`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${META_WHATSAPP_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: String(ADMIN_NOTIFY_WHATSAPP).replace(/[^0-9]/g, ""),
+        type: "template",
+        template: {
+          name: META_TEMPLATE_NAME_ADMIN,
+          language: { code: META_TEMPLATE_LANG },
+          components: [
+            { type: "body", parameters: [{ type: "text", parameter_name: "message", text: texte }] },
+          ],
+        },
+      }),
+    });
+    if (!res.ok) {
+      console.error("notify-admin: échec WhatsApp", res.status, (await res.text()).slice(0, 200));
+    }
+  } catch (e) {
+    console.error("notify-admin: échec WhatsApp", String(e).slice(0, 200));
   }
 }
 
@@ -186,6 +331,12 @@ Deno.serve(async (req: Request) => {
         html: email.html,
       }),
     });
+
+    // WhatsApp en plus de l'e-mail, si configuré. Lancé APRÈS l'e-mail
+    // et attendu : sur Deno Deploy, une promesse laissée en suspens est
+    // abandonnée dès la réponse renvoyée.
+    const texteWa = buildWhatsApp(event_type, data);
+    if (texteWa) await envoyerWhatsApp(texteWa);
 
     if (!resendRes.ok) {
       const errText = await resendRes.text();
