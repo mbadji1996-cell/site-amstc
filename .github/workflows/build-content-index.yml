@@ -37,11 +37,25 @@ jobs:
       - name: Build partage preview pages
         run: node scripts/build-pages-partage.js
 
+      # Annonce les nouveautes sur la chaine Telegram. Placee APRES les
+      # pages d'apercu : le lien annonce doit deja exister, sinon Telegram
+      # afficherait une carte vide. Sans les secrets, le script ne fait
+      # rien et sort en succes - la construction du site ne depend pas de
+      # Telegram.
+      - name: Annoncer sur la chaine Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: node scripts/publier-chaine.js
+
       - name: Commit index files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json sitemap.xml
+          # L'etat des annonces deja diffusees : sans ce commit, chaque
+          # passage repartirait de zero et reannoncerait tout.
+          [ -f content/.chaine-publiees.json ] && git add -f content/.chaine-publiees.json
           # Un « git add » sur un dossier absent interrompt tout le job : c'est
           # ce qui a fait échouer la première construction, avant que les
           # pages de cours n'existent. On n'ajoute que ce qui est là.
