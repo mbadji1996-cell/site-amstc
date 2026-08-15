@@ -142,6 +142,20 @@
     btn.disabled = true;
     message("Création de votre compte…", "info");
 
+    // Adresse déjà inscrite : le dire AVANT signUp. Avec la confirmation
+    // d'e-mail activée, Supabase répond en silence sur une adresse
+    // existante et l'on croirait le compte créé. Fonction absente
+    // (phase78) : on continue, signUp tranchera.
+    try {
+      const r = await supabaseClient.rpc("verifier_doublon_inscription", { p_email: email });
+      if (!r.error && r.data && r.data.email_pris) {
+        message("Cette adresse a déjà un compte. Connectez-vous avec, puis réclamez votre carte "
+          + "depuis votre profil - ou écrivez à contact@amstc.org.", "error");
+        btn.disabled = false;
+        return;
+      }
+    } catch (e) { /* on laisse signUp trancher */ }
+
     // L'année saisie n'est retenue que si elle est plausible et si elle
     // change quelque chose : sinon, celle de la carte reste la référence.
     const anneeSaisie = parseInt(document.getElementById("cAnnee").value, 10);

@@ -77,6 +77,8 @@
   .member-email{font-size:0.88rem; color:var(--text-muted); margin-top:2px;}
   .member-wa{display:inline-flex;align-items:center;gap:5px;font-size:0.85rem;font-weight:600;color:#1B8A4C;margin-top:3px;text-decoration:none;}
   .member-wa:hover{text-decoration:underline;}
+  .doublon-alerte{margin-top:8px; padding:8px 12px; border-radius:8px; font-size:0.82rem;
+    background:#FDEEEE; color:#8A2C2C; border-left:3px solid #C0392B; line-height:1.5;}
   .member-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:4px;}
   .member-actions{display:flex; gap:10px; flex-wrap:wrap; min-width:0;}
   .btn-sm{
@@ -944,16 +946,30 @@
     }
   }
 
+  let doublonsParAttente = {};
+
   async function loadLists() {
     const pendingEl = document.getElementById("pendingList");
     const rejectedEl = document.getElementById("rejectedList");
 
-    const [{ data, error }, unclaimedRes, yearReqRes] = await Promise.all([
+    const [{ data, error }, unclaimedRes, yearReqRes, doublonsRes] = await Promise.all([
       supabaseClient.from("profiles").select("*").order("created_at", { ascending: false }),
       supabaseClient.from("member_cards_unclaimed").select("*").order("full_name"),
       supabaseClient.rpc("member_since_requests_pending"),
+      // Inscriptions en attente qui ressemblent a un compte existant
+      // (meme telephone ou meme nom). Fonction absente (phase78 non
+      // executee) : la liste s'affiche sans ces reperes.
+      supabaseClient.rpc("doublons_probables_en_attente"),
     ]);
     unclaimedCards = unclaimedRes.data || [];
+
+    // attente_id -> [{ existant_nom, existant_email, motif }]
+    doublonsParAttente = {};
+    if (!doublonsRes.error && Array.isArray(doublonsRes.data)) {
+      for (const d of doublonsRes.data) {
+        (doublonsParAttente[d.attente_id] = doublonsParAttente[d.attente_id] || []).push(d);
+      }
+    }
 
     // Isolé : cette section est secondaire, et une erreur de rendu ici a
     // déjà fait disparaître la liste des membres - ce qui rendait la page
@@ -989,6 +1005,11 @@
             </div>
             ${coordonneesHtml(p)}
             <div class="member-date">Inscrit le ${formatDate(p.created_at)}</div>
+            ${(doublonsParAttente[p.id] || []).map(d => `
+            <div class="doublon-alerte">Doublon probable - ${esc(d.motif)} que
+              <strong>${esc(d.existant_nom || '(sans nom)')}</strong> (${esc(d.existant_email || '')}),
+              déjà membre. Vérifiez avant d'approuver : s'il s'agit de la même personne, refusez cette
+              inscription et invitez-la à se connecter avec son compte existant.</div>`).join('')}
           </div>
           <div class="member-actions">
             ${p.applicant_type === 'nouvel_adherent' ? `

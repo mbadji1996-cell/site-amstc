@@ -777,6 +777,42 @@
     const region = document.getElementById("region").value || null;
     const password = document.getElementById("password").value;
 
+    // ===== Garde-fou contre les doubles inscriptions =====
+    //
+    // Supabase Auth refuse déjà une adresse identique - mais, quand la
+    // confirmation d'e-mail est activée, il le fait EN SILENCE (protection
+    // contre l'énumération) : le formulaire croirait avoir réussi. On
+    // vérifie donc avant. Le téléphone et le nom ne sont que des alertes,
+    // homonymes et téléphones partagés existant.
+    //
+    // Fonction absente (phase78 non exécutée) ou réseau : on ne bloque
+    // pas l'inscription pour autant.
+    let doublon = null;
+    try {
+      const r = await supabaseClient.rpc("verifier_doublon_inscription",
+        { p_email: email, p_telephone: phone, p_nom: fullName });
+      if (!r.error) doublon = r.data;
+    } catch (e) { doublon = null; }
+
+    if (doublon && doublon.email_pris) {
+      showMessage("Cette adresse e-mail a déjà un compte à l'AMSTC. Connectez-vous, ou utilisez "
+        + "« Mot de passe oublié » si vous ne vous souvenez plus de votre mot de passe. "
+        + "Si vous n'y arrivez pas, écrivez à contact@amstc.org : ne créez pas de second compte.", "error");
+      submitBtn.disabled = false;
+      return;
+    }
+    if (doublon && (doublon.telephone_pris || doublon.nom_pris) && !window.__doublonConfirme) {
+      // Une seule confirmation : au second envoi, on laisse passer.
+      window.__doublonConfirme = true;
+      showMessage((doublon.telephone_pris
+        ? "Ce numéro de téléphone est déjà associé à un compte."
+        : "Un membre porte déjà exactement ce nom.")
+        + " Si vous avez déjà un compte, ne vous réinscrivez pas : connectez-vous ou utilisez "
+        + "« Mot de passe oublié ». Sinon, cliquez à nouveau sur le bouton pour confirmer votre inscription.", "error");
+      submitBtn.disabled = false;
+      return;
+    }
+
     const { error } = await supabaseClient.auth.signUp({
       email,
       password,
