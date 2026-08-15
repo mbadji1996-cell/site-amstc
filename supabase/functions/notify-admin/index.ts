@@ -362,10 +362,22 @@ Deno.serve(async (req: Request) => {
     }
 
     const { event_type, ...data } = payload;
-    const email = buildEmail(event_type, data);
-    if (!email) {
-      return new Response(JSON.stringify({ error: `event_type inconnu: ${event_type}` }), { status: 400 });
-    }
+
+    // Type d'événement inconnu : on ne le REJETTE PAS. Auparavant la
+    // fonction répondait 400 et l'alerte était perdue en silence - or un
+    // type inconnu signifie presque toujours qu'un déclencheur SQL a été
+    // ajouté sans mettre cette fonction à jour, c'est-à-dire justement un
+    // événement dont l'administration voulait être prévenue. On envoie
+    // donc un message générique portant les données brutes : sommaire,
+    // mais jamais muet.
+    const email = buildEmail(event_type, data) || {
+      subject: `Événement AMSTC : ${event_type}`,
+      html: `<p>Un événement de type <strong>${esc(event_type)}</strong> a été signalé, `
+        + `mais cette fonction ne sait pas encore le mettre en forme.</p>`
+        + `<p>Données reçues :</p><pre>${esc(JSON.stringify(data, null, 2))}</pre>`
+        + `<p style="color:#8A6D1B">Ajoutez ce type dans supabase/functions/notify-admin/index.ts `
+        + `pour un message lisible.</p>`,
+    };
 
     const resendRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -381,14 +393,22 @@ Deno.serve(async (req: Request) => {
       }),
     });
 
-    // WhatsApp en plus de l'e-mail, si configuré. Lancé APRÈS l'e-mail
-    // et attendu : sur Deno Deploy, une promesse laissée en suspens est
-    // abandonnée dès la réponse renvoyée.
+    // WhatsApp et Telegram en plus de l'e-mail, si configurés. Lancés
+    // APRÈS l'e-mail et attendus : sur Deno Deploy, une promesse laissée
+    // en suspens est abandonnée dès la réponse renvoyée.
     const texteCourt = buildTexteCourt(event_type, data);
-    if (texteCourt) {
-      await envoyerWhatsApp(texteCourt);
-      await envoyerTelegram(email.subject, texteCourt);
-    }
+
+    // WhatsApp : seulement pour les événements dont on sait rédiger une
+    // phrase. Chaque message est facturé, on n'en envoie pas au hasard.
+    if (texteCourt) await envoyerWhatsApp(texteCourt);
+
+    // Telegram : TOUJOURS, quel que soit l'événement. C'est le canal
+    // fourre-tout voulu par l'administration - « peu importe l'onglet ».
+    // À défaut de phase courte (type d'événement ajouté plus tard et
+    // oublié ici), le sujet de l'e-mail fait l'affaire : mieux vaut une
+    // notification sommaire que pas de notification du tout. Gratuit,
+    // donc rien ne justifie de s'en priver.
+    await envoyerTelegram(email.subject, texteCourt || email.subject);
 
     if (!resendRes.ok) {
       const errText = await resendRes.text();
