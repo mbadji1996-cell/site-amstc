@@ -26,6 +26,14 @@
 -- nouveaux types (voir supabase/functions/notify-admin/index.ts).
 -- Sans redéploiement, l'appel part mais l'e-mail n'est pas construit.
 --
+--
+-- GARDE-FOU IMPORTANT : chaque envoi est enveloppe d'un « exception when
+-- others then null ». Un declencheur AFTER INSERT s'execute dans la
+-- transaction du membre : sans cette enveloppe, une notification en
+-- panne - extension pg_net absente, file saturee, fonction Edge
+-- injoignable - ferait ECHOUER la declaration de paiement elle-meme. La
+-- notification est utile ; le paiement est essentiel.
+--
 -- À exécuter : Studio (instance amstc) > SQL Editor > Run.
 -- Ré-exécutable sans danger.
 -- ============================================================
@@ -44,14 +52,18 @@ begin
   select full_name, email into v_nom, v_email
     from public.profiles where id = new.user_id;
 
-  perform public.notify_admin('paiement_validite', jsonb_build_object(
-    'member_name', coalesce(v_nom, '(sans nom)'),
-    'member_email', coalesce(v_email, '-'),
-    'years', new.years_requested,
-    'amount_fcfa', new.amount_fcfa,
-    'payment_method', new.payment_method,
-    'payment_reference', new.payment_reference
-  ));
+  begin
+    perform public.notify_admin('paiement_validite', jsonb_build_object(
+      'member_name', coalesce(v_nom, '(sans nom)'),
+      'member_email', coalesce(v_email, '-'),
+      'years', new.years_requested,
+      'amount_fcfa', new.amount_fcfa,
+      'payment_method', new.payment_method,
+      'payment_reference', new.payment_reference
+    ));
+  exception when others then
+    raise warning 'notify_admin(paiement_validite) a échoué : %', sqlerrm;
+  end;
   return new;
 end;
 $$;
@@ -75,15 +87,19 @@ begin
   select full_name, email into v_nom, v_email
     from public.profiles where id = new.user_id;
 
-  perform public.notify_admin('paiement_cotisation', jsonb_build_object(
-    'member_name', coalesce(v_nom, '(sans nom)'),
-    'member_email', coalesce(v_email, '-'),
-    'year', new.year,
-    'months', new.months_requested,
-    'amount_fcfa', new.amount_fcfa,
-    'payment_method', new.payment_method,
-    'payment_reference', new.payment_reference
-  ));
+  begin
+    perform public.notify_admin('paiement_cotisation', jsonb_build_object(
+      'member_name', coalesce(v_nom, '(sans nom)'),
+      'member_email', coalesce(v_email, '-'),
+      'year', new.year,
+      'months', new.months_requested,
+      'amount_fcfa', new.amount_fcfa,
+      'payment_method', new.payment_method,
+      'payment_reference', new.payment_reference
+    ));
+  exception when others then
+    raise warning 'notify_admin(paiement_cotisation) a échoué : %', sqlerrm;
+  end;
   return new;
 end;
 $$;
@@ -125,16 +141,20 @@ begin
           from public.collecte_items where id = new.item_id;
       end if;
 
-      perform public.notify_admin('participation_collecte', jsonb_build_object(
-        'member_name', coalesce(v_nom, '(sans nom)'),
-        'member_email', coalesce(v_email, '-'),
-        'collecte', coalesce(v_collecte, '-'),
-        'item', coalesce(v_item, '-'),
-        'mode', new.mode,
-        'amount_fcfa', coalesce(new.montant_fcfa, 0),
-        'payment_method', coalesce(new.payment_method, '-'),
-        'payment_reference', coalesce(new.payment_reference, '-')
-      ));
+      begin
+        perform public.notify_admin('participation_collecte', jsonb_build_object(
+          'member_name', coalesce(v_nom, '(sans nom)'),
+          'member_email', coalesce(v_email, '-'),
+          'collecte', coalesce(v_collecte, '-'),
+          'item', coalesce(v_item, '-'),
+          'mode', new.mode,
+          'amount_fcfa', coalesce(new.montant_fcfa, 0),
+          'payment_method', coalesce(new.payment_method, '-'),
+          'payment_reference', coalesce(new.payment_reference, '-')
+        ));
+      exception when others then
+        raise warning 'notify_admin(participation_collecte) a échoué : %', sqlerrm;
+      end;
       return new;
     end;
     $body$;
