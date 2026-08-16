@@ -1,11 +1,18 @@
 /**
- * Reçoit les clics sur les boutons des notifications Telegram.
+ * Reçoit les clics sur les boutons des notifications Telegram, et les
+ * messages écrits au bot.
  *
  * CE QU'ELLE FAIT. Vous touchez « Approuver » sous une notification :
  * Telegram appelle cette fonction, qui exécute l'action en base et
  * réécrit le message pour dire ce qui s'est passé - les boutons
  * disparaissent, remplacés par le résultat. Plus besoin d'ouvrir le
  * site pour valider une inscription ou confirmer un paiement.
+ *
+ * « Prévenir le membre » ouvre un MENU des six messages que propose
+ * l'écran Validation du site (phase 89). Le message choisi revient sous
+ * forme de LIEN WhatsApp pré-rempli : un serveur ne peut pas envoyer de
+ * WhatsApp libre, seul le téléphone de l'administrateur le peut.
+ * Telegram et l'e-mail ne servent qu'aux membres sans numéro.
  *
  * ELLE EST PUBLIQUEMENT ACCESSIBLE, contrairement aux autres fonctions
  * du projet : Telegram doit pouvoir l'appeler sans clé. Trois barrières
@@ -44,9 +51,25 @@ const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 const WEBHOOK_SECRET = Deno.env.get("TELEGRAM_WEBHOOK_SECRET");
 
+const SITE = "https://amstc.org";
+const FICHE_MEMBRE = { text: "🔎 Voir la fiche", url: SITE + "/membres/validation.html" };
+
 function esc(v: unknown): string {
   return String(v ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/**
+ * Le texte d'origine d'une notification, sans les verdicts déjà ajoutés.
+ *
+ * Chaque action réécrit le message en ajoutant « ➤ … » à la fin. Sans
+ * cette coupe, ouvrir le menu puis choisir un message empilerait trois
+ * verdicts sous la notification, et l'on ne saurait plus lequel compte.
+ */
+function baseTexte(t: unknown): string {
+  const s = String(t ?? "");
+  const i = s.indexOf("\n\n➤ ");
+  return i === -1 ? s : s.slice(0, i);
 }
 
 async function telegram(methode: string, corps: Record<string, unknown>): Promise<void> {
@@ -84,6 +107,120 @@ async function rpc(fonction: string, corps: Record<string, unknown>): Promise<st
   } catch (e) {
     return "Échec : " + String(e).slice(0, 120);
   }
+}
+
+/**
+ * Les six messages du menu « Prévenir », dans l'ordre et sous les
+ * intitulés de l'écran Validation du site : quelqu'un qui connaît l'un
+ * retrouve l'autre sans réfléchir.
+ *
+ * Le code tient en cinq octets (« m:exp ») : Telegram plafonne
+ * callback_data à 64 octets, et l'identifiant du membre en occupe 36.
+ */
+const MESSAGES: Record<string, { type: string; libelle: string; bouton: string }> = {
+  "m:exp": { type: "carte_expiree",        libelle: "Carte expirée",              bouton: "📇 Carte expirée" },
+  "m:ren": { type: "carte_expire_bientot", libelle: "Carte à renouveler",         bouton: "🔄 Carte à renouveler bientôt" },
+  "m:cot": { type: "cotisation_retard",    libelle: "Cotisations en retard",      bouton: "💰 Cotisations en retard" },
+  "m:act": { type: "compte_active",        libelle: "Compte activé",              bouton: "✅ Compte activé - se connecter" },
+  "m:pay": { type: "rappel_paiement",      libelle: "Rappel de paiement",         bouton: "💳 Rappel de paiement" },
+  "m:lib": { type: "libre",                libelle: "Message libre",              bouton: "✍️ Message libre" },
+};
+
+/**
+ * Prépare le message et répond par un lien WhatsApp pré-rempli.
+ *
+ * Deux points d'entrée : un clic sur le menu, ou la réponse écrite de
+ * l'administrateur pour un message libre. Le résultat est le même, seul
+ * l'endroit où il s'affiche change - d'où « msgId » facultatif : avec,
+ * on réécrit la notification ; sans, on envoie un nouveau message.
+ */
+async function proposerEnvoi(opts: {
+  salon: string | number;
+  id: string;
+  code: string;
+  message?: string | null;
+  qui: string;
+  msgId?: number | null;
+  texteBase?: string;
+  callbackId?: string;
+}): Promise<void> {
+  const def = MESSAGES[opts.code];
+  if (!def) return;
+
+  const brut = await rpc("preparer_prevenir_membre", {
+    p_user_id: opts.id, p_type: def.type, p_message: opts.message ?? null,
+  });
+  let prep: any = null;
+  try { prep = JSON.parse(brut); } catch { prep = null; }
+
+  const alerter = async (texte: string) => {
+    if (opts.callbackId) {
+      await telegram("answerCallbackQuery", {
+        callback_query_id: opts.callbackId, text: texte.slice(0, 190), show_alert: true,
+      });
+    } else {
+      await telegram("sendMessage", { chat_id: opts.salon, text: texte });
+    }
+  };
+
+  if (!prep || !prep.ok) {
+    await alerter((prep && prep.motif) || brut.slice(0, 190));
+    return;
+  }
+
+  let verdict: string;
+  let clavier: any[][];
+
+  if (prep.whatsapp) {
+    const lien = `https://wa.me/${prep.whatsapp}?text=${encodeURIComponent(prep.texte)}`;
+    // Le journal enregistre l'intention, comme sur le site : le serveur
+    // ne peut pas constater l'envoi lui-même.
+    await rpc("tracer_whatsapp_telegram", {
+      p_user_id: opts.id, p_type: def.type, p_qui: opts.qui || null,
+    });
+    if (opts.callbackId) {
+      await telegram("answerCallbackQuery", {
+        callback_query_id: opts.callbackId,
+        text: "Touchez le bouton vert : WhatsApp s'ouvre avec le message prêt.",
+      });
+    }
+    verdict = `${def.libelle} - prêt pour ${prep.nom}`;
+    clavier = [
+      [{ text: `💬 Envoyer sur WhatsApp à ${prep.nom}`.slice(0, 60), url: lien }],
+      [FICHE_MEMBRE],
+    ];
+  } else {
+    // Pas de numéro : repli Telegram puis e-mail, côté serveur.
+    const res = await rpc("prevenir_membre_repli", {
+      p_user_id: opts.id, p_type: def.type, p_message: opts.message ?? null,
+    });
+    if (opts.callbackId) {
+      await telegram("answerCallbackQuery", {
+        callback_query_id: opts.callbackId, text: res.slice(0, 190),
+      });
+    }
+    verdict = res;
+    clavier = [[FICHE_MEMBRE]];
+  }
+
+  const corps = `${esc(opts.texteBase ?? "")}${opts.texteBase ? "\n\n" : ""}➤ <b>${esc(verdict)}</b>`;
+  if (opts.msgId) {
+    await telegram("editMessageText", {
+      chat_id: opts.salon, message_id: opts.msgId, text: corps,
+      parse_mode: "HTML", reply_markup: { inline_keyboard: clavier },
+    });
+  } else {
+    await telegram("sendMessage", {
+      chat_id: opts.salon, text: corps, parse_mode: "HTML",
+      disable_web_page_preview: true, reply_markup: { inline_keyboard: clavier },
+    });
+  }
+}
+
+/** Le nom de celui qui agit, tel que Telegram le transmet. */
+function quiEst(from: any): string {
+  return [from?.first_name, from?.last_name].filter(Boolean).join(" ")
+    + (from?.username ? ` (@${from.username})` : "");
 }
 
 /**
@@ -136,6 +273,41 @@ async function traiterMessage(msg: any): Promise<void> {
   await telegram("sendMessage", { chat_id: salon, text: reponse });
 }
 
+/**
+ * Messages écrits dans le salon d'administration.
+ *
+ * Un seul cas pour l'instant : la RÉPONSE à la demande de message libre.
+ * Le bot a posé une question portant l'identifiant du membre entre
+ * crochets ; l'administrateur y répond, et son texte devient le message.
+ * Passer par une réponse plutôt que par une commande évite de tenir un
+ * état entre deux appels - Telegram nous rend lui-même la question.
+ *
+ * Renvoie true si le message a été traité ici.
+ */
+async function traiterMessageAdmin(msg: any): Promise<boolean> {
+  const repondA = msg.reply_to_message;
+  if (!repondA) return false;
+  const marque = /\[#([0-9a-fA-F-]{36})\]/.exec(String(repondA.text ?? ""));
+  if (!marque) return false;
+
+  const texte = String(msg.text ?? "").trim();
+  if (!texte) {
+    await telegram("sendMessage", {
+      chat_id: msg.chat.id, text: "Message vide : rien n'a été préparé.",
+    });
+    return true;
+  }
+
+  await proposerEnvoi({
+    salon: msg.chat.id,
+    id: marque[1],
+    code: "m:lib",
+    message: texte,
+    qui: quiEst(msg.from),
+  });
+  return true;
+}
+
 Deno.serve(async (req: Request) => {
   // Telegram n'envoie que des POST. Tout le reste est refusé sans
   // détailler pourquoi : cette adresse est publique.
@@ -156,10 +328,17 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { status: 200 });
   }
 
-  // ===== Messages des MEMBRES =====
-  // Contrairement aux clics, ils viennent de n'importe qui : c'est la
-  // conversation elle-même qui identifie le membre, jamais un nom saisi.
+  // ===== Messages =====
+  // Ceux du salon d'administration passent d'abord par le traitement
+  // administrateur ; s'il n'y reconnaît rien, le message suit la voie
+  // ordinaire - le salon peut être la conversation privée de
+  // l'administrateur, qui reste un membre comme un autre.
   if (maj.message) {
+    const salon = String(maj.message.chat?.id ?? "");
+    if (TELEGRAM_CHAT_ID && salon === String(TELEGRAM_CHAT_ID)
+        && await traiterMessageAdmin(maj.message)) {
+      return new Response("ok", { status: 200 });
+    }
     await traiterMessage(maj.message);
     return new Response("ok", { status: 200 });
   }
@@ -185,68 +364,60 @@ Deno.serve(async (req: Request) => {
   // d'administration (phase 86) - dans un groupe, chaque décision doit
   // avoir un auteur. Le nom d'affichage d'abord, l'identifiant @ ensuite
   // pour lever toute ambiguïté entre homonymes.
-  const qui = [clic.from?.first_name, clic.from?.last_name].filter(Boolean).join(" ")
-    + (clic.from?.username ? ` (@${clic.from.username})` : "");
+  const qui = quiEst(clic.from);
 
   // « type:verdict:uuid », par exemple « ins:ok:6f2c… »
   const donnee = String(clic.data ?? "");
   const sep = donnee.lastIndexOf(":");
   const action = sep === -1 ? "" : donnee.slice(0, sep);
   const id = sep === -1 ? "" : donnee.slice(sep + 1);
-  const avant = clic.message?.text ?? "";
+  const avant = baseTexte(clic.message?.text);
   const msgId = clic.message?.message_id;
 
-  // ===== Prévenir le membre : WhatsApp d'abord (phase 88) =====
-  //
-  // Un serveur ne peut pas envoyer de WhatsApp libre - seul le téléphone
-  // de l'administrateur le peut. Le bouton répond donc par un LIEN wa.me
-  // pré-rempli, exactement comme le site : WhatsApp s'ouvre sur le
-  // téléphone de celui qui a cliqué, message prêt, à envoyer d'un geste.
-  // Le lien est posé sur le message pour que l'administrateur le touche ;
-  // Telegram et l'e-mail ne servent qu'aux membres SANS numéro.
-  if ((action === "ins:msg" || action === "ins:pay") && id) {
-    const type = action === "ins:pay" ? "rappel_paiement" : "compte_active";
-    const brut = await rpc("preparer_prevenir_membre", { p_user_id: id, p_type: type });
-    let prep: any = null;
-    try { prep = JSON.parse(brut); } catch { prep = null; }
+  // ===== « Prévenir le membre » : le menu des six messages =====
+  if (action === "ins:msg" && id) {
+    const nom = await rpc("nom_membre", { p_user_id: id });
+    await telegram("answerCallbackQuery", { callback_query_id: clic.id });
+    await telegram("editMessageText", {
+      chat_id: salon, message_id: msgId,
+      text: `${esc(avant)}\n\n➤ <b>Quel message envoyer à ${esc(nom || "ce membre")} ?</b>`,
+      parse_mode: "HTML",
+      reply_markup: { inline_keyboard: [
+        ...Object.entries(MESSAGES).map(([code, d]) => [{ text: d.bouton, callback_data: `${code}:${id}` }]),
+        [FICHE_MEMBRE],
+      ] },
+    });
+    return new Response("ok", { status: 200 });
+  }
 
-    if (!prep || !prep.ok) {
-      await telegram("answerCallbackQuery", { callback_query_id: clic.id,
-        text: (prep && prep.motif) || brut.slice(0, 190), show_alert: true });
-      return new Response("ok", { status: 200 });
-    }
-
-    const libelle = type === "rappel_paiement" ? "Rappel de paiement" : "Compte activé";
-    if (prep.whatsapp) {
-      const lien = `https://wa.me/${prep.whatsapp}?text=${encodeURIComponent(prep.texte)}`;
-      // Le journal enregistre l'intention, comme sur le site : le serveur
-      // ne peut pas constater l'envoi lui-même.
-      await rpc("tracer_whatsapp_telegram", { p_user_id: id, p_type: type, p_qui: qui || null });
-      await telegram("answerCallbackQuery", { callback_query_id: clic.id,
-        text: "Touchez le bouton vert : WhatsApp s'ouvre avec le message prêt." });
-      // Le lien REMPLACE les boutons d'action ; « Voir la fiche » reste.
-      await telegram("editMessageText", {
-        chat_id: salon, message_id: msgId,
-        text: `${esc(avant)}\n\n➤ <b>${esc(libelle)} - prêt pour ${esc(prep.nom)}</b>`,
-        parse_mode: "HTML",
-        reply_markup: { inline_keyboard: [
-          [{ text: `💬 Envoyer sur WhatsApp à ${prep.nom}`.slice(0, 60), url: lien }],
-          [{ text: "🔎 Voir la fiche", url: "https://amstc.org/membres/validation.html" }],
-        ] },
+  // ===== Un message choisi dans le menu =====
+  // « ins:pay » reste accepté : les notifications déjà affichées dans le
+  // groupe portent encore ce code, et un bouton qui ne répond plus est
+  // pire qu'un bouton absent.
+  const code = action === "ins:pay" ? "m:pay" : action;
+  if (MESSAGES[code] && id) {
+    // Le message libre demande d'abord son texte. Telegram ouvre le
+    // clavier sur une réponse ; l'identifiant voyage dans la question.
+    if (code === "m:lib") {
+      const nom = await rpc("nom_membre", { p_user_id: id });
+      await telegram("answerCallbackQuery", {
+        callback_query_id: clic.id, text: "Répondez au message du bot avec votre texte.",
+      });
+      await telegram("sendMessage", {
+        chat_id: salon,
+        text: `✍️ Message libre pour ${nom || "ce membre"}.\n`
+            + `Répondez à CE message avec le texte à lui envoyer.\n`
+            + `[#${id}]`,
+        reply_markup: {
+          force_reply: true,
+          input_field_placeholder: `Message pour ${nom || "le membre"}`.slice(0, 64),
+        },
       });
       return new Response("ok", { status: 200 });
     }
 
-    // Pas de numéro : repli Telegram puis e-mail, côté serveur.
-    const res = await rpc("prevenir_membre_repli", { p_user_id: id, p_type: type });
-    await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: res.slice(0, 190) });
-    await telegram("editMessageText", {
-      chat_id: salon, message_id: msgId,
-      text: `${esc(avant)}\n\n➤ <b>${esc(res)}</b>`,
-      parse_mode: "HTML",
-      reply_markup: { inline_keyboard: [
-        [{ text: "🔎 Voir la fiche", url: "https://amstc.org/membres/validation.html" }],
-      ] },
+    await proposerEnvoi({
+      salon, id, code, qui, msgId, texteBase: avant, callbackId: clic.id,
     });
     return new Response("ok", { status: 200 });
   }
@@ -281,23 +452,12 @@ Deno.serve(async (req: Request) => {
   // l'action a vraiment eu lieu. « Voir la fiche » reste toujours.
   //
   // Une inscription qui vient d'être APPROUVÉE garde « Prévenir » - le
-  // geste qui suit naturellement - et, pour un nouvel adhérent, « Rappel
-  // paiement » : les deux messages que le site propose. Savoir s'il est
-  // nouvel adhérent demande de relire la fiche.
+  // geste qui suit naturellement.
   const approuve = action === "ins:ok" && /approuvée/.test(resultat);
   const rangees: any[][] = [];
-  if (approuve) {
-    let nouvel = false;
-    try {
-      const p = JSON.parse(await rpc("preparer_prevenir_membre", { p_user_id: id, p_type: "compte_active" }));
-      nouvel = !!(p && p.nouvel_adherent);
-    } catch { nouvel = false; }
-    const ligne = [{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }];
-    if (nouvel) ligne.push({ text: "💳 Rappel paiement", callback_data: `ins:pay:${id}` });
-    rangees.push(ligne);
-  }
+  if (approuve) rangees.push([{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }]);
   const ecranFiche = action.startsWith("ins") ? "/membres/validation.html" : "/membres/verification-admin.html";
-  rangees.push([{ text: "🔎 Voir la fiche", url: "https://amstc.org" + ecranFiche }]);
+  rangees.push([{ text: "🔎 Voir la fiche", url: SITE + ecranFiche }]);
 
   await telegram("editMessageText", {
     chat_id: salon,

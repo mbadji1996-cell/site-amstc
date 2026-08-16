@@ -213,6 +213,44 @@ function buildEmail(
         `,
       };
     }
+    // Ce qui TRAÎNE, par opposition au rapport matinal qui dit ce qui
+    // attend. Même forme de « lignes » que lui, pour la même raison :
+    // ajouter un compteur en SQL ne doit pas obliger à redéployer ici.
+    case "dossiers_oublies": {
+      const lignes: any[] = Array.isArray(data.lignes) ? data.lignes : [];
+      const total = lignes.reduce((n, l) => n + (Number(l.nombre) || 0), 0);
+      const heures = Number(data.heures) || 48;
+      return {
+        subject: `AMSTC - ${total} dossier(s) en attente depuis plus de ${heures} h`,
+        html: `
+          <h2>Dossiers oubliés - espace membres AMSTC</h2>
+          <p>Ceci attend une décision depuis plus de <strong>${esc(heures)} heures</strong> :</p>
+          <ul>
+            ${lignes.filter((l) => Number(l.nombre) > 0)
+              .map((l) => `<li><strong>${esc(l.nombre)}</strong> ${esc(l.libelle)}</li>`).join("")}
+          </ul>
+          <p>Tout se traite depuis le Centre d'administration.</p>
+        `,
+      };
+    }
+    case "cartes_echeance": {
+      const prevenus = Number(data.prevenus) || 0;
+      const aRelancer = Number(data.a_relancer) || 0;
+      return {
+        subject: `AMSTC - cartes de membre à renouveler (${prevenus + aRelancer})`,
+        html: `
+          <h2>Échéance des cartes de membre - ${esc(data.annee)}</h2>
+          <ul>
+            <li><strong>${esc(prevenus)}</strong> membre(s) prévenu(s) automatiquement sur Telegram</li>
+            <li><strong>${esc(aRelancer)}</strong> membre(s) à relancer à la main : ils n'ont pas rattaché Telegram</li>
+          </ul>
+          ${aRelancer > 0
+            ? `<p>Depuis membres/validation.html, le bouton « Prévenir » propose « Carte expirée »
+                 et « Carte à renouveler bientôt » par WhatsApp.</p>`
+            : "<p>Rien à faire à la main.</p>"}
+        `,
+      };
+    }
     case "participation_collecte": {
       const enNature = data.mode === "nature";
       return {
@@ -267,6 +305,19 @@ function buildTexteCourt(eventType: string, data: Record<string, any>): string |
       const aTraiter = lignes.filter((l) => Number(l.nombre) > 0);
       if (!aTraiter.length) return "Point du jour : rien n'attend votre validation.";
       return "Point du jour - " + aTraiter.map((l) => `${l.nombre} ${l.libelle}`).join(", ") + ".";
+    }
+    case "dossiers_oublies": {
+      const lignes: any[] = Array.isArray(data.lignes) ? data.lignes : [];
+      const aTraiter = lignes.filter((l) => Number(l.nombre) > 0);
+      if (!aTraiter.length) return null;
+      return `En attente depuis plus de ${Number(data.heures) || 48} h - `
+        + aTraiter.map((l) => `${l.nombre} ${l.libelle}`).join(", ") + ".";
+    }
+    case "cartes_echeance": {
+      const prevenus = Number(data.prevenus) || 0;
+      const aRelancer = Number(data.a_relancer) || 0;
+      return `Cartes ${data.annee} : ${prevenus} membre(s) prévenu(s) sur Telegram, `
+        + `${aRelancer} à relancer à la main.`;
     }
     case "participation_collecte":
       return data.mode === "nature"
@@ -447,6 +498,8 @@ const ECRAN_ADMIN: Record<string, string> = {
   paiement_cotisation:    "/membres/verification-admin.html",
   participation_collecte: "/membres/collectes-admin.html",
   rapport_matinal:        "/membres/admin.html",
+  dossiers_oublies:       "/membres/admin.html",
+  cartes_echeance:        "/membres/validation.html",
 };
 
 function boutons(eventType: string, data: Record<string, any>): unknown {
