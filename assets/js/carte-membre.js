@@ -21,8 +21,13 @@ const CARTE_DOMAINES = {
 };
 
 function carteNumeroPour(p) {
-  return p.legacy_card_number
-    || ('AMSTC-' + String(p.member_since || new Date().getFullYear()) + '-' + p.id.slice(0, 4).toUpperCase());
+  if (p && p.legacy_card_number) return p.legacy_card_number;
+  // Numéro provisoire à partir de l'identifiant du compte. L'identifiant
+  // peut manquer selon l'écran appelant (fiche partielle, aperçu) : sans
+  // cette garde, tout le dessin de la carte échouait sur un « slice »
+  // d'indéfini - repéré par la revue du 16/08/2026.
+  const suffixe = p && p.id ? String(p.id).replace(/-/g, '').slice(0, 4).toUpperCase() : '0000';
+  return 'AMSTC-' + String((p && p.member_since) || new Date().getFullYear()) + '-' + suffixe;
 }
 
 // Seuls Dr et Pr précèdent le nom (même règle que l'affichage du site).
