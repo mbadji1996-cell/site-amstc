@@ -14,6 +14,19 @@
  * WhatsApp libre, seul le téléphone de l'administrateur le peut.
  * Telegram et l'e-mail ne servent qu'aux membres sans numéro.
  *
+ * ELLE FAIT AUSSI, depuis les phases 90 et 91 :
+ *   - « /membre <nom> » et « /diffusion <texte> » dans le salon
+ *     d'administration ;
+ *   - « Publier sur la chaîne » sur les nouveautés du site public ;
+ *   - la RÉCEPTION DES JUSTIFICATIFS : une capture de paiement envoyée
+ *     au bot par un membre rattaché est archivée, puis reposée dans le
+ *     salon avec sa fiche et les boutons de confirmation de sa
+ *     déclaration en attente, s'il en a une.
+ *
+ * ATTENTION AUX MESSAGES-PHOTO : un justificatif se réécrit par
+ * editMessageCaption, jamais par editMessageText. Tout passe donc par
+ * reecrire().
+ *
  * ELLE EST PUBLIQUEMENT ACCESSIBLE, contrairement aux autres fonctions
  * du projet : Telegram doit pouvoir l'appeler sans clé. Trois barrières
  * la protègent, et TOUTES sont nécessaires :
@@ -101,6 +114,33 @@ async function telegram(methode: string, corps: Record<string, unknown>): Promis
   }
 }
 
+/**
+ * Réécrit un message, qu'il soit texte ou photo.
+ *
+ * Telegram impose deux méthodes différentes : editMessageText échoue sur
+ * un message-photo, dont il faut modifier la LÉGENDE. Un justificatif
+ * arrivant en photo, tout ce qui réécrit un message doit passer par ici.
+ *
+ * La légende est plafonnée par Telegram à 1024 caractères : on tranche
+ * avant lui, sans quoi la réécriture échouerait en silence et le bouton
+ * resterait affiché comme si rien ne s'était passé.
+ */
+async function reecrire(
+  salon: string | number, msgId: number | null | undefined, estPhoto: boolean,
+  corps: string, clavier?: any[][] | null,
+): Promise<void> {
+  if (!msgId) return;
+  await telegram(estPhoto ? "editMessageCaption" : "editMessageText", {
+    chat_id: salon,
+    message_id: msgId,
+    ...(estPhoto
+      ? { caption: corps.length > 1020 ? corps.slice(0, 1017) + "…" : corps }
+      : { text: corps, disable_web_page_preview: true }),
+    parse_mode: "HTML",
+    ...(clavier ? { reply_markup: { inline_keyboard: clavier } } : {}),
+  });
+}
+
 async function rpc(fonction: string, corps: Record<string, unknown>): Promise<string> {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fonction}`, {
@@ -158,6 +198,9 @@ async function proposerEnvoi(opts: {
   msgId?: number | null;
   texteBase?: string;
   callbackId?: string;
+  // Un justificatif arrive en photo : sa légende se modifie autrement
+  // qu'un texte, et l'oublier ferait échouer la réécriture en silence.
+  estPhoto?: boolean;
 }): Promise<void> {
   const def = MESSAGES[opts.code];
   if (!def) return;
@@ -220,16 +263,154 @@ async function proposerEnvoi(opts: {
 
   const corps = `${esc(opts.texteBase ?? "")}${opts.texteBase ? "\n\n" : ""}➤ <b>${esc(verdict)}</b>`;
   if (opts.msgId) {
-    await telegram("editMessageText", {
-      chat_id: opts.salon, message_id: opts.msgId, text: corps,
-      parse_mode: "HTML", reply_markup: { inline_keyboard: clavier },
-    });
+    await reecrire(opts.salon, opts.msgId, !!opts.estPhoto, corps, clavier);
   } else {
     await telegram("sendMessage", {
       chat_id: opts.salon, text: corps, parse_mode: "HTML",
       disable_web_page_preview: true, reply_markup: { inline_keyboard: clavier },
     });
   }
+}
+
+/**
+ * Archive une image de Telegram dans le bucket privé « justificatifs ».
+ *
+ * Telegram ne conserve pas les fichiers indéfiniment et son file_id ne
+ * vaut que pour ce bot : une capture de paiement doit vivre chez nous.
+ * Le téléchargement passe par getFile puis l'adresse de fichier, et le
+ * dépôt par l'API Storage avec la clé de service.
+ *
+ * Renvoie le chemin dans le bucket, ou null : un archivage raté ne doit
+ * pas empêcher le justificatif d'arriver au salon d'administration.
+ * Mieux vaut une capture vue et non conservée qu'une capture perdue.
+ */
+async function archiverJustificatif(fileId: string): Promise<string | null> {
+  if (!TELEGRAM_BOT_TOKEN) return null;
+  try {
+    const info = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getFile?file_id=${encodeURIComponent(fileId)}`);
+    if (!info.ok) return null;
+    const j = await info.json();
+    const chemin = j?.result?.file_path;
+    if (!chemin) return null;
+    // Le bucket plafonne à 10 Mo : inutile de télécharger au-delà.
+    if (Number(j.result.file_size) > 10 * 1024 * 1024) {
+      console.error("telegram-webhook: justificatif trop volumineux", j.result.file_size);
+      return null;
+    }
+
+    const bin = await fetch(`https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${chemin}`);
+    if (!bin.ok) return null;
+    const octets = new Uint8Array(await bin.arrayBuffer());
+
+    const d = new Date();
+    const ext = (/\.[A-Za-z0-9]{1,5}$/.exec(chemin) || [".jpg"])[0].toLowerCase();
+    // Rangé par mois : au bout d'un an, un dossier unique deviendrait
+    // impraticable à parcourir.
+    const nom = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}/`
+      + `${d.toISOString().replace(/[:.]/g, "-")}-${fileId.slice(-10)}${ext}`;
+
+    const up = await fetch(`${SUPABASE_URL}/storage/v1/object/justificatifs/${nom}`, {
+      method: "POST",
+      headers: {
+        apikey: SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        "Content-Type": bin.headers.get("content-type") || "application/octet-stream",
+      },
+      body: octets,
+    });
+    if (!up.ok) {
+      console.error("telegram-webhook: dépôt justificatif", up.status, (await up.text()).slice(0, 200));
+      return null;
+    }
+    return nom;
+  } catch (e) {
+    console.error("telegram-webhook: archivage justificatif", String(e).slice(0, 200));
+    return null;
+  }
+}
+
+/**
+ * Une capture de paiement envoyée par un membre.
+ *
+ * Elle est archivée, enregistrée, puis reposée dans le salon
+ * d'administration - par son identifiant Telegram, sans retéléchargement
+ * - avec la fiche du membre et, S'IL A DÉJÀ DÉCLARÉ SON PAIEMENT sur le
+ * site, les boutons de confirmation de cette déclaration précise. C'est
+ * ce rapprochement qui fait tout l'intérêt du dispositif : la capture
+ * n'arrive plus détachée de ce à quoi elle se rapporte.
+ *
+ * Renvoie true si le message était bien une image.
+ */
+async function traiterJustificatif(msg: any): Promise<boolean> {
+  // Telegram envoie plusieurs tailles ; la dernière est la plus grande,
+  // et c'est la seule lisible quand la capture porte des chiffres.
+  const photos = Array.isArray(msg.photo) ? msg.photo : null;
+  const doc = msg.document;
+  const estImageDoc = doc && (/^image\//.test(String(doc.mime_type ?? ""))
+    || String(doc.mime_type ?? "") === "application/pdf");
+  if (!photos?.length && !estImageDoc) return false;
+
+  const salon = msg.chat?.id;
+  const fileId = photos?.length ? photos[photos.length - 1].file_id : doc.file_id;
+
+  const chemin = await archiverJustificatif(fileId);
+  let r: any = null;
+  try {
+    r = JSON.parse(await rpc("enregistrer_justificatif", {
+      p_chat_id: salon, p_file_id: fileId, p_chemin: chemin,
+      p_legende: msg.caption ?? null,
+    }));
+  } catch { r = null; }
+
+  if (!r || !r.ok) {
+    await telegram("sendMessage", {
+      chat_id: salon,
+      text: (r && r.motif) || "Votre justificatif n'a pas pu être enregistré. Réessayez.",
+    });
+    return true;
+  }
+
+  // Accusé de réception au membre. Il doit savoir que ce n'est pas
+  // encore validé : sans cela, il croira son paiement confirmé.
+  await telegram("sendMessage", {
+    chat_id: salon,
+    text: `Merci ${r.prenom || ""} ! Votre justificatif est bien arrivé.\n`
+        + `Il sera vérifié par la Commission finances, et votre paiement `
+        + `apparaîtra sur votre espace membre une fois confirmé.`.trim(),
+  });
+
+  if (!TELEGRAM_CHAT_ID) return true;
+
+  const attente: any[] = Array.isArray(r.attente) ? r.attente : [];
+  const rangees: any[][] = attente.map((d) => [{
+    text: `✅ Confirmer : ${d.libelle}`.slice(0, 60),
+    callback_data: `${d.code}:ok:${d.id}`,
+  }]);
+  rangees.push([
+    { text: "📁 Classer traité", callback_data: `jt:ok:${r.justificatif_id}` },
+    { text: "✖️ Écarter", callback_data: `jt:no:${r.justificatif_id}` },
+  ]);
+  rangees.push([{ text: "🔎 Écran de vérification", url: SITE + "/membres/verification-admin.html" }]);
+
+  const legende = `💳 <b>Justificatif reçu</b>\n${esc(r.fiche)}`
+    + (r.legende ? `\n\nMot du membre : ${esc(r.legende)}` : "")
+    + (attente.length ? "" : "\n\n⚠ Aucune déclaration en attente sur le site : "
+        + "ce paiement n'a pas été déclaré, ou l'a déjà été et confirmé.")
+    + (chemin ? "" : "\n\n⚠ Archivage impossible : enregistrez l'image à la main.");
+
+  // Une photo se repose par sendPhoto, un PDF par sendDocument : croiser
+  // les deux fait échouer l'envoi, et le justificatif n'arriverait
+  // jamais au groupe.
+  const enPhoto = !!photos?.length;
+  await telegram(enPhoto ? "sendPhoto" : "sendDocument", {
+    chat_id: TELEGRAM_CHAT_ID,
+    ...(enPhoto ? { photo: fileId } : { document: fileId }),
+    caption: legende.length > 1020 ? legende.slice(0, 1017) + "…" : legende,
+    parse_mode: "HTML",
+    reply_markup: { inline_keyboard: rangees },
+  });
+  return true;
 }
 
 /** Le nom de celui qui agit, tel que Telegram le transmet. */
@@ -263,6 +444,10 @@ async function traiterMessage(msg: any): Promise<void> {
       + `« ${String(msg.chat.title ?? "").slice(0, 60)} » (${msg.chat.type})`);
     return;
   }
+
+  // Une image ou un PDF vaut justificatif de paiement : c'est le geste
+  // que les membres font déjà sur WhatsApp, et il n'a pas à s'apprendre.
+  if (await traiterJustificatif(msg)) return;
 
   const texte = String(msg.text ?? "").trim();
   let reponse: string;
@@ -492,7 +677,10 @@ Deno.serve(async (req: Request) => {
   const sep = donnee.lastIndexOf(":");
   const action = sep === -1 ? "" : donnee.slice(0, sep);
   const id = sep === -1 ? "" : donnee.slice(sep + 1);
-  const avant = baseTexte(clic.message?.text);
+  // Un justificatif arrive en PHOTO : son texte est une légende, et se
+  // réécrit par une autre méthode. Tout ce qui suit s'y adapte.
+  const estPhoto = Array.isArray(clic.message?.photo) && clic.message.photo.length > 0;
+  const avant = baseTexte(clic.message?.caption ?? clic.message?.text);
   const msgId = clic.message?.message_id;
 
   // ===== Publier - ou non - une nouveauté sur la chaîne publique =====
@@ -513,11 +701,8 @@ Deno.serve(async (req: Request) => {
 
     if (action === "pub:no") {
       await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: "Non publié." });
-      await telegram("editMessageText", {
-        chat_id: salon, message_id: msgId,
-        text: `${esc(complet)}\n\n➤ <b>Non publié${qui ? " - décision de " + esc(qui) : ""}.</b>`,
-        parse_mode: "HTML", disable_web_page_preview: true,
-      });
+      await reecrire(salon, msgId, estPhoto,
+        `${esc(complet)}\n\n➤ <b>Non publié${qui ? " - décision de " + esc(qui) : ""}.</b>`);
       return new Response("ok", { status: 200 });
     }
 
@@ -556,17 +741,29 @@ Deno.serve(async (req: Request) => {
     });
     // Les boutons ne sont retirés QUE si la publication a réussi : après
     // un échec, il faut pouvoir réessayer.
-    await telegram("editMessageText", {
-      chat_id: salon, message_id: msgId,
-      text: `${esc(complet)}\n\n➤ <b>${publie
+    await reecrire(salon, msgId, estPhoto,
+      `${esc(complet)}\n\n➤ <b>${publie
         ? `Publié sur la chaîne${qui ? " par " + esc(qui) : ""}.`
         : "Échec de la publication - réessayez."}</b>`,
-      parse_mode: "HTML", disable_web_page_preview: true,
-      ...(publie ? {} : { reply_markup: { inline_keyboard: [[
+      publie ? null : [[
         { text: "📣 Publier sur la chaîne", callback_data: "pub:go:x" },
         { text: "✖️ Ne pas publier", callback_data: "pub:no:x" },
-      ]] } }),
+      ]]);
+    return new Response("ok", { status: 200 });
+  }
+
+  // ===== Classer un justificatif reçu par le bot =====
+  // Le classer n'est pas confirmer le paiement : ce sont deux gestes,
+  // et les confondre ferait disparaître de la file un justificatif dont
+  // le paiement n'a jamais été validé. Les boutons « Confirmer » posés
+  // au-dessus s'en chargent, par la voie ordinaire.
+  if ((action === "jt:ok" || action === "jt:no") && id) {
+    const res = await rpc("statuer_justificatif", {
+      p_id: id, p_statut: action === "jt:ok" ? "traite" : "ecarte", p_qui: qui || null,
     });
+    await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: res.slice(0, 190) });
+    await reecrire(salon, msgId, estPhoto, `${esc(avant)}\n\n➤ <b>${esc(res)}</b>`,
+      [[{ text: "🔎 Écran de vérification", url: SITE + "/membres/verification-admin.html" }]]);
     return new Response("ok", { status: 200 });
   }
 
@@ -587,12 +784,7 @@ Deno.serve(async (req: Request) => {
     await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: res.slice(0, 190) });
     // Les boutons partent : recliquer « Envoyer » sur une annonce déjà
     // diffusée est le geste qu'on veut rendre impossible.
-    await telegram("editMessageText", {
-      chat_id: salon, message_id: msgId,
-      text: `${esc(clic.message?.text ?? "")}\n\n➤ <b>${esc(res)}</b>`,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    });
+    await reecrire(salon, msgId, estPhoto, `${esc(avant)}\n\n➤ <b>${esc(res)}</b>`);
     return new Response("ok", { status: 200 });
   }
 
@@ -600,15 +792,12 @@ Deno.serve(async (req: Request) => {
   if (action === "ins:msg" && id) {
     const nom = await rpc("nom_membre", { p_user_id: id });
     await telegram("answerCallbackQuery", { callback_query_id: clic.id });
-    await telegram("editMessageText", {
-      chat_id: salon, message_id: msgId,
-      text: `${esc(avant)}\n\n➤ <b>Quel message envoyer à ${esc(nom || "ce membre")} ?</b>`,
-      parse_mode: "HTML",
-      reply_markup: { inline_keyboard: [
+    await reecrire(salon, msgId, estPhoto,
+      `${esc(avant)}\n\n➤ <b>Quel message envoyer à ${esc(nom || "ce membre")} ?</b>`,
+      [
         ...Object.entries(MESSAGES).map(([code, d]) => [{ text: d.bouton, callback_data: `${code}:${id}` }]),
         [FICHE_MEMBRE],
-      ] },
-    });
+      ]);
     return new Response("ok", { status: 200 });
   }
 
@@ -639,7 +828,7 @@ Deno.serve(async (req: Request) => {
     }
 
     await proposerEnvoi({
-      salon, id, code, qui, msgId, texteBase: avant, callbackId: clic.id,
+      salon, id, code, qui, msgId, texteBase: avant, callbackId: clic.id, estPhoto,
     });
     return new Response("ok", { status: 200 });
   }
@@ -678,16 +867,22 @@ Deno.serve(async (req: Request) => {
   const approuve = action === "ins:ok" && /approuvée/.test(resultat);
   const rangees: any[][] = [];
   if (approuve) rangees.push([{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }]);
+
+  // Confirmer le paiement d'un justificatif ne classe pas le
+  // justificatif lui-même : on garde ses boutons, sans quoi il resterait
+  // « reçu » pour toujours et gonflerait le point du jour. Leur
+  // identifiant ne tiendrait pas dans le callback_data de l'action ; il
+  // est donc repris du clavier déjà affiché.
+  const clavierActuel: any[][] = clic.message?.reply_markup?.inline_keyboard ?? [];
+  const classement = clavierActuel
+    .map((ligne) => ligne.filter((b: any) => String(b.callback_data ?? "").startsWith("jt:")))
+    .filter((ligne) => ligne.length);
+  rangees.push(...classement);
+
   const ecranFiche = action.startsWith("ins") ? "/membres/validation.html" : "/membres/verification-admin.html";
   rangees.push([{ text: "🔎 Voir la fiche", url: SITE + ecranFiche }]);
 
-  await telegram("editMessageText", {
-    chat_id: salon,
-    message_id: msgId,
-    text: `${esc(avant)}\n\n➤ <b>${esc(resultat)}</b>`,
-    parse_mode: "HTML",
-    reply_markup: { inline_keyboard: rangees },
-  });
+  await reecrire(salon, msgId, estPhoto, `${esc(avant)}\n\n➤ <b>${esc(resultat)}</b>`, rangees);
 
   return new Response("ok", { status: 200 });
 });
