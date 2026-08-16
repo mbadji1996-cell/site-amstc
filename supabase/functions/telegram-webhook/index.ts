@@ -251,6 +251,7 @@ async function traiterMessage(msg: any): Promise<void> {
 
   const texte = String(msg.text ?? "").trim();
   let reponse: string;
+  let clavier: unknown = undefined;
 
   const start = texte.match(/^\/start\s+(\S+)/);
   if (start) {
@@ -268,44 +269,149 @@ async function traiterMessage(msg: any): Promise<void> {
     const quoi = /cotis/.test(t) ? "cotisations"
       : (/carte/.test(t) || /amstc-\d{4}-\d+/.test(t)) ? "carte" : "aide";
     reponse = await rpc("infos_membre_telegram", { p_chat_id: salon, p_quoi: quoi });
+    // Le geste qui suit la lecture : renouveler, ou déclarer un
+    // paiement. Le bouton n'est proposé qu'au membre RATTACHÉ - à un
+    // inconnu, la réponse explique déjà quoi faire, et un lien vers son
+    // profil n'aurait pas de sens.
+    if ((quoi === "carte" || quoi === "cotisations") && !/rattaché à aucun compte/.test(reponse)) {
+      clavier = { inline_keyboard: [[{
+        text: quoi === "carte" ? "📇 Ma carte sur amstc.org" : "💰 Déclarer un paiement",
+        url: SITE + (quoi === "carte"
+          ? "/membres/profil.html?open=validity"
+          : "/membres/profil.html?open=cotis"),
+      }]] };
+    }
   }
 
-  await telegram("sendMessage", { chat_id: salon, text: reponse });
+  await telegram("sendMessage", {
+    chat_id: salon, text: reponse, disable_web_page_preview: true,
+    ...(clavier ? { reply_markup: clavier } : {}),
+  });
+}
+
+/** La fiche d'un membre, avec ce qu'on fait juste après l'avoir lue. */
+async function envoyerFiche(salon: string | number, id: string): Promise<void> {
+  const fiche = await rpc("fiche_membre_telegram", { p_user_id: id });
+  await telegram("sendMessage", {
+    chat_id: salon, text: fiche, disable_web_page_preview: true,
+    reply_markup: { inline_keyboard: [
+      [{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }],
+      [FICHE_MEMBRE],
+    ] },
+  });
 }
 
 /**
  * Messages écrits dans le salon d'administration.
  *
- * Un seul cas pour l'instant : la RÉPONSE à la demande de message libre.
- * Le bot a posé une question portant l'identifiant du membre entre
- * crochets ; l'administrateur y répond, et son texte devient le message.
- * Passer par une réponse plutôt que par une commande évite de tenir un
- * état entre deux appels - Telegram nous rend lui-même la question.
+ * Trois cas, et rien d'autre - tout le reste retombe sur le traitement
+ * ordinaire, le salon pouvant être la conversation privée de
+ * l'administrateur, qui reste un membre comme un autre :
+ *
+ *   - la RÉPONSE à la demande de message libre. Le bot a posé une
+ *     question portant l'identifiant du membre entre crochets ;
+ *     l'administrateur y répond, et son texte devient le message.
+ *     Passer par une réponse plutôt que par un état gardé en mémoire
+ *     évite de tenir quoi que ce soit entre deux appels - Telegram nous
+ *     rend lui-même la question ;
+ *   - « /membre <nom> », qui cherche et affiche une fiche ;
+ *   - « /diffusion <texte> », qui PRÉPARE une annonce sans l'envoyer.
+ *
+ * Dans un groupe, Telegram accole le nom du bot aux commandes
+ * (« /membre@amstc_notifs_bot ») : les motifs l'acceptent.
  *
  * Renvoie true si le message a été traité ici.
  */
 async function traiterMessageAdmin(msg: any): Promise<boolean> {
-  const repondA = msg.reply_to_message;
-  if (!repondA) return false;
-  const marque = /\[#([0-9a-fA-F-]{36})\]/.exec(String(repondA.text ?? ""));
-  if (!marque) return false;
-
+  const salon = msg.chat?.id;
   const texte = String(msg.text ?? "").trim();
-  if (!texte) {
+
+  // 1. Réponse à la demande de message libre.
+  const repondA = msg.reply_to_message;
+  const marque = repondA ? /\[#([0-9a-fA-F-]{36})\]/.exec(String(repondA.text ?? "")) : null;
+  if (marque) {
+    if (!texte) {
+      await telegram("sendMessage", { chat_id: salon, text: "Message vide : rien n'a été préparé." });
+      return true;
+    }
+    await proposerEnvoi({ salon, id: marque[1], code: "m:lib", message: texte, qui: quiEst(msg.from) });
+    return true;
+  }
+
+  // 2. « /membre <recherche> »
+  const cherche = /^\/membres?(?:@\S+)?(?:\s+([\s\S]+))?$/i.exec(texte);
+  if (cherche) {
+    const q = (cherche[1] ?? "").trim();
+    if (!q) {
+      await telegram("sendMessage", { chat_id: salon,
+        text: "Écrivez ce que vous cherchez : /membre habib\n"
+            + "Un nom, un e-mail, un téléphone ou un numéro de carte font l'affaire." });
+      return true;
+    }
+    let r: any = null;
+    try { r = JSON.parse(await rpc("chercher_membres_telegram", { p_recherche: q })); } catch { r = null; }
+    if (!r || r.ok === false) {
+      await telegram("sendMessage", { chat_id: salon, text: (r && r.motif) || "Recherche impossible." });
+      return true;
+    }
+    const membres: any[] = Array.isArray(r.membres) ? r.membres : [];
+    if (!membres.length) {
+      await telegram("sendMessage", { chat_id: salon, text: `Aucun membre ne correspond à « ${q} ».` });
+      return true;
+    }
+    // Un seul résultat : on va droit à la fiche, le choix serait une
+    // question posée pour rien.
+    if (membres.length === 1) {
+      await envoyerFiche(salon, membres[0].id);
+      return true;
+    }
     await telegram("sendMessage", {
-      chat_id: msg.chat.id, text: "Message vide : rien n'a été préparé.",
+      chat_id: salon,
+      text: `${r.nombre} membre(s) correspondent à « ${q} »`
+          + (r.tronque ? `, voici les ${membres.length} premiers. Précisez pour en voir d'autres.` : " :"),
+      reply_markup: { inline_keyboard: membres.map((m) => [{
+        text: `${m.nom}${m.statut && m.statut !== "approved" ? ` (${m.statut})` : ""}`.slice(0, 60),
+        callback_data: `mf:${m.id}`,
+      }]) },
     });
     return true;
   }
 
-  await proposerEnvoi({
-    salon: msg.chat.id,
-    id: marque[1],
-    code: "m:lib",
-    message: texte,
-    qui: quiEst(msg.from),
-  });
-  return true;
+  // 3. « /diffusion <texte> » - préparée, jamais envoyée d'emblée.
+  const diff = /^\/diffusion(?:@\S+)?(?:\s+([\s\S]+))?$/i.exec(texte);
+  if (diff) {
+    const annonce = (diff[1] ?? "").trim();
+    if (!annonce) {
+      await telegram("sendMessage", { chat_id: salon,
+        text: "Écrivez l'annonce après la commande :\n"
+            + "/diffusion Assemblée générale samedi 10 h au siège.\n\n"
+            + "Rien ne part avant votre confirmation." });
+      return true;
+    }
+    let p: any = null;
+    try {
+      p = JSON.parse(await rpc("preparer_diffusion", { p_texte: annonce, p_qui: quiEst(msg.from) }));
+    } catch { p = null; }
+    if (!p || !p.ok) {
+      await telegram("sendMessage", { chat_id: salon, text: (p && p.motif) || "Préparation impossible." });
+      return true;
+    }
+    await telegram("sendMessage", {
+      chat_id: salon,
+      text: `📣 <b>Annonce à ${esc(p.nb)} membre(s) rattaché(s)</b>\n`
+          + `Relisez-la : un message parti ne se rattrape pas.\n\n`
+          + `<i>${esc(p.texte)}</i>`,
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+      reply_markup: { inline_keyboard: [[
+        { text: `📣 Envoyer à ${p.nb} membre(s)`.slice(0, 60), callback_data: `dif:ok:${p.id}` },
+        { text: "✖️ Annuler", callback_data: `dif:no:${p.id}` },
+      ]] },
+    });
+    return true;
+  }
+
+  return false;
 }
 
 Deno.serve(async (req: Request) => {
@@ -373,6 +479,32 @@ Deno.serve(async (req: Request) => {
   const id = sep === -1 ? "" : donnee.slice(sep + 1);
   const avant = baseTexte(clic.message?.text);
   const msgId = clic.message?.message_id;
+
+  // ===== Une fiche choisie dans une liste de résultats =====
+  // La liste reste affichée : on cherche souvent deux homonymes coup
+  // sur coup, et la réécrire obligerait à relancer la recherche.
+  if (action === "mf" && id) {
+    await telegram("answerCallbackQuery", { callback_query_id: clic.id });
+    await envoyerFiche(salon, id);
+    return new Response("ok", { status: 200 });
+  }
+
+  // ===== Confirmation ou annulation d'une diffusion =====
+  if ((action === "dif:ok" || action === "dif:no") && id) {
+    const res = action === "dif:ok"
+      ? await rpc("envoyer_diffusion", { p_id: id, p_qui: qui || null })
+      : await rpc("annuler_diffusion", { p_id: id });
+    await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: res.slice(0, 190) });
+    // Les boutons partent : recliquer « Envoyer » sur une annonce déjà
+    // diffusée est le geste qu'on veut rendre impossible.
+    await telegram("editMessageText", {
+      chat_id: salon, message_id: msgId,
+      text: `${esc(clic.message?.text ?? "")}\n\n➤ <b>${esc(res)}</b>`,
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    });
+    return new Response("ok", { status: 200 });
+  }
 
   // ===== « Prévenir le membre » : le menu des six messages =====
   if (action === "ins:msg" && id) {
