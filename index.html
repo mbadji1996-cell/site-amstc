@@ -445,8 +445,14 @@
   /* Sur PC (souris/trackpad), Pionniers et Présidents s'affichent en
      carrousel en éventail plutôt qu'en bande défilante - le glisser tactile
      n'étant pas un geste évident à la souris. La bande scrollable reste
-     l'expérience tactile (mobile/tablette), où le balayage est naturel. */
-  @media (hover:hover) and (pointer:fine){
+     l'expérience tactile (mobile/tablette), où le balayage est naturel.
+
+     La condition de LARGEUR est indispensable : l'éventail s'étale sur
+     près de 1 000 px et débordait de l'écran dans une fenêtre réduite ou
+     sur une tablette à souris - la page entière défilait alors
+     horizontalement (constaté à 375 px : 548 px de large). En dessous de
+     900 px, la bande défilante sert à tout le monde. */
+  @media (hover:hover) and (pointer:fine) and (min-width:900px){
     .pio-marquee, .pres-marquee{ display:none; }
     .fan-wrap{ display:flex; }
   }
