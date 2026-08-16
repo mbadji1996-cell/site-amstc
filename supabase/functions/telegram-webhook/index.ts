@@ -16,9 +16,11 @@
  *      setWebhook et n'est connu que de Telegram et de nous. Sans lui,
  *      n'importe qui pourrait appeler cette adresse et approuver des
  *      inscriptions.
- *   2. L'identité du salon : seul TELEGRAM_CHAT_ID - votre conversation
- *      privée - peut agir. Un clic venant d'ailleurs est refusé, ce qui
- *      couvre le cas où le bot serait ajouté à un groupe.
+ *   2. L'identité du salon : seul TELEGRAM_CHAT_ID peut agir - votre
+ *      conversation privée, ou un GROUPE d'administrateurs si vous y
+ *      mettez son identifiant. Un clic venant de tout autre salon est
+ *      refusé. Dans un groupe, le nom Telegram de celui qui clique est
+ *      transmis au journal d'administration (phase 86).
  *   3. En base, action_telegram() n'est exécutable que par le rôle de
  *      service. Un membre connecté au site ne peut pas l'appeler.
  *
@@ -166,6 +168,14 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { status: 200 });
   }
 
+  // QUI a cliqué : les champs que Telegram joint à chaque clic. Ils
+  // viennent de Telegram, pas d'une saisie, et servent au journal
+  // d'administration (phase 86) - dans un groupe, chaque décision doit
+  // avoir un auteur. Le nom d'affichage d'abord, l'identifiant @ ensuite
+  // pour lever toute ambiguïté entre homonymes.
+  const qui = [clic.from?.first_name, clic.from?.last_name].filter(Boolean).join(" ")
+    + (clic.from?.username ? ` (@${clic.from.username})` : "");
+
   // « type:verdict:uuid », par exemple « ins:ok:6f2c… »
   const donnee = String(clic.data ?? "");
   const sep = donnee.lastIndexOf(":");
@@ -182,7 +192,7 @@ Deno.serve(async (req: Request) => {
           Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ p_action: action, p_id: id }),
+        body: JSON.stringify({ p_action: action, p_id: id, p_qui: qui || null }),
       });
       const texte = await r.text();
       resultat = r.ok
