@@ -2,10 +2,10 @@
   "duree_secondes": 30,
   "cta_url": "https://whatsapp.com/channel/0029Vb2VigAKLaHesPwMtb30/210",
   "cta_label": "Télécharger",
-  "active": false,
-  "message": "Du 07 au 13 Août 2026",
+  "active": true,
+  "message": "✨Parce que notre amour pour le Prophète ﷺ ne doit pas se limiter aux paroles, mais se refléter dans chacun de nos actes : suivre sa Sunnah, adopter son comportement et faire vivre son message au quotidien.\n\nAinsi, l’AMSTC, à travers sa Commission Presse et Informations, vous invite à découvrir une série de vidéos qui vous offriront, inchaAllah, des enseignements et des rappels autour de ce sujet.\n\nAs salamou anleykoum warahmatoulah ✨",
   "plein_ecran": true,
-  "titre": "Heures de prières",
+  "titre": "Bourde",
   "texte_fermeture": "OK",
-  "image": "/assets/uploads/00.heures-de-prières-1447h.jpg"
+  "image": "/assets/uploads/burd.jpeg"
 }
