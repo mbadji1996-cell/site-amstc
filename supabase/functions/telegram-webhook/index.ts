@@ -41,6 +41,14 @@
  *   TELEGRAM_CHAT_ID                         - le seul salon autorisé
  *   TELEGRAM_WEBHOOK_SECRET                  - jeton partagé avec Telegram
  *
+ * Secret OPTIONNEL :
+ *   TELEGRAM_CHANNEL_ID                      - la chaîne publique, où
+ *                                              part ce qu'on publie d'un
+ *                                              clic. Sans lui, le bouton
+ *                                              « Publier sur la chaîne »
+ *                                              le dit au lieu d'échouer
+ *                                              en silence.
+ *
  * Sans TELEGRAM_WEBHOOK_SECRET, la fonction REFUSE tout : mieux vaut des
  * boutons inertes qu'une porte ouverte.
  */
@@ -49,9 +57,16 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
+const TELEGRAM_CHANNEL_ID = Deno.env.get("TELEGRAM_CHANNEL_ID");
 const WEBHOOK_SECRET = Deno.env.get("TELEGRAM_WEBHOOK_SECRET");
 
 const SITE = "https://amstc.org";
+
+// La ligne qui sépare l'en-tête d'une proposition de publication du
+// texte à publier. Écrite par scripts/publier-chaine.js : si elle change
+// là-bas, elle doit changer ici. Le texte de la proposition EST la
+// charge utile - rien n'est stocké entre la proposition et le clic.
+const SEPARATEUR = "──────";
 const FICHE_MEMBRE = { text: "🔎 Voir la fiche", url: SITE + "/membres/validation.html" };
 
 function esc(v: unknown): string {
@@ -479,6 +494,81 @@ Deno.serve(async (req: Request) => {
   const id = sep === -1 ? "" : donnee.slice(sep + 1);
   const avant = baseTexte(clic.message?.text);
   const msgId = clic.message?.message_id;
+
+  // ===== Publier - ou non - une nouveauté sur la chaîne publique =====
+  //
+  // Le message de proposition porte lui-même ce qu'il faut publier :
+  // rien n'a été gardé en base entre les deux, et un bouton reste donc
+  // valable aussi longtemps que son message existe.
+  //
+  // Telegram rend le texte SANS mise en forme : le gras du titre est
+  // refait ici, la première ligne étant toujours le titre.
+  if (action === "pub:go" || action === "pub:no") {
+    // baseTexte, et non le texte brut : après un échec le message porte
+    // déjà « ➤ Échec… », et le republier reviendrait à envoyer cette
+    // ligne aux abonnés.
+    const complet = avant;
+    const coupe = complet.indexOf(SEPARATEUR);
+    const annonce = coupe === -1 ? "" : complet.slice(coupe + SEPARATEUR.length).replace(/^\n+/, "");
+
+    if (action === "pub:no") {
+      await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: "Non publié." });
+      await telegram("editMessageText", {
+        chat_id: salon, message_id: msgId,
+        text: `${esc(complet)}\n\n➤ <b>Non publié${qui ? " - décision de " + esc(qui) : ""}.</b>`,
+        parse_mode: "HTML", disable_web_page_preview: true,
+      });
+      return new Response("ok", { status: 200 });
+    }
+
+    if (!annonce.trim() || !TELEGRAM_CHANNEL_ID) {
+      await telegram("answerCallbackQuery", {
+        callback_query_id: clic.id, show_alert: true,
+        text: !TELEGRAM_CHANNEL_ID
+          ? "TELEGRAM_CHANNEL_ID n'est pas configuré : impossible de publier."
+          : "Ce message ne contient pas d'annonce à publier.",
+      });
+      return new Response("ok", { status: 200 });
+    }
+
+    const lignes = annonce.split("\n");
+    // L'aperçu de lien est laissé ACTIF, contrairement aux
+    // notifications : les pages de partage donnent une belle carte avec
+    // titre et couverture, et c'est tout l'intérêt sur une chaîne.
+    const corps = `<b>${esc(lignes[0])}</b>` + (lignes.length > 1 ? "\n" + esc(lignes.slice(1).join("\n")) : "");
+    let publie = false;
+    try {
+      const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: TELEGRAM_CHANNEL_ID, text: corps, parse_mode: "HTML" }),
+      });
+      publie = r.ok;
+      if (!r.ok) console.error("telegram-webhook: publication chaîne", r.status, (await r.text()).slice(0, 200));
+    } catch (e) {
+      console.error("telegram-webhook: publication chaîne", String(e).slice(0, 200));
+    }
+
+    await telegram("answerCallbackQuery", {
+      callback_query_id: clic.id,
+      text: publie ? "Publié sur la chaîne." : "Échec de la publication.",
+      ...(publie ? {} : { show_alert: true }),
+    });
+    // Les boutons ne sont retirés QUE si la publication a réussi : après
+    // un échec, il faut pouvoir réessayer.
+    await telegram("editMessageText", {
+      chat_id: salon, message_id: msgId,
+      text: `${esc(complet)}\n\n➤ <b>${publie
+        ? `Publié sur la chaîne${qui ? " par " + esc(qui) : ""}.`
+        : "Échec de la publication - réessayez."}</b>`,
+      parse_mode: "HTML", disable_web_page_preview: true,
+      ...(publie ? {} : { reply_markup: { inline_keyboard: [[
+        { text: "📣 Publier sur la chaîne", callback_data: "pub:go:x" },
+        { text: "✖️ Ne pas publier", callback_data: "pub:no:x" },
+      ]] } }),
+    });
+    return new Response("ok", { status: 200 });
+  }
 
   // ===== Une fiche choisie dans une liste de résultats =====
   // La liste reste affichée : on cherche souvent deux homonymes coup

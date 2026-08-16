@@ -37,15 +37,21 @@ jobs:
       - name: Build partage preview pages
         run: node scripts/build-pages-partage.js
 
-      # Annonce les nouveautes sur la chaine Telegram. Placee APRES les
+      # Signale les nouveautes pour la chaine Telegram. Placee APRES les
       # pages d'apercu : le lien annonce doit deja exister, sinon Telegram
       # afficherait une carte vide. Sans les secrets, le script ne fait
       # rien et sort en succes - la construction du site ne depend pas de
       # Telegram.
+      #
+      # TELEGRAM_CHAT_ID est le salon d'administration : avec lui, chaque
+      # nouveaute y est PROPOSEE avec un bouton « Publier sur la chaine »
+      # au lieu de partir directement aux abonnes. Sans lui, l'ancien
+      # comportement s'applique - publication immediate sur la chaine.
       - name: Annoncer sur la chaine Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node scripts/publier-chaine.js
 
       - name: Commit index files

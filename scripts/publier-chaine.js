@@ -1,5 +1,5 @@
 /**
- * Annonce sur la chaîne Telegram les nouveaux contenus PUBLICS du site.
+ * Signale les nouveaux contenus PUBLICS du site pour la chaîne Telegram.
  *
  * POURQUOI UN SCRIPT PLUTÔT QU'UN DÉCLENCHEUR SQL. Les actualités,
  * formations, projets, étapes et événements du site public ne vivent pas
@@ -7,21 +7,40 @@
  * scripts/build-content-index.js. Aucune base ne peut donc les voir
  * apparaître - c'est la construction qui doit le signaler.
  *
+ * ON PROPOSE, ON NE PUBLIE PAS. Chaque nouveauté part d'abord dans le
+ * SALON D'ADMINISTRATION, telle qu'elle paraîtrait, avec deux boutons :
+ * « Publier sur la chaîne » ou « Ne pas publier ». C'est la fonction
+ * Edge telegram-webhook qui publie, au clic. Un contenu mis en ligne
+ * pour le site ne mérite pas toujours une annonce à tous les abonnés, et
+ * une annonce partie ne se rattrape pas.
+ *
+ * Sans TELEGRAM_CHAT_ID, le script retombe sur l'ancien comportement -
+ * publication directe sur la chaîne : mieux vaut annoncer sans
+ * validation que ne rien annoncer du tout.
+ *
  * LE PIÈGE DU PREMIER PASSAGE. Sans précaution, la première exécution
- * annoncerait les QUATRE-VINGT-DIX contenus déjà en ligne, d'un coup, à
- * tous les abonnés. Le premier passage se contente donc de MÉMORISER
- * l'existant sans rien envoyer ; seuls les ajouts ultérieurs sont
- * annoncés. Un garde-fou supplémentaire plafonne chaque passage à
- * MAX_PAR_PASSAGE annonces, au cas où l'état serait perdu.
+ * signalerait les QUATRE-VINGT-DIX contenus déjà en ligne, d'un coup. Le
+ * premier passage se contente donc de MÉMORISER l'existant sans rien
+ * envoyer ; seuls les ajouts ultérieurs sont signalés. Un garde-fou
+ * supplémentaire plafonne chaque passage à MAX_PAR_PASSAGE envois, au
+ * cas où l'état serait perdu.
+ *
+ * CE QUE MÉMORISE L'ÉTAT : ce qui a été SOUMIS, non ce qui a été publié.
+ * Un contenu écarté d'un clic ne doit pas revenir toutes les heures : le
+ * refus est une décision, pas un échec.
  *
  * L'état vit dans content/.chaine-publiees.json, commité par le workflow
  * au même titre que les index : c'est ce qui rend le script idempotent
  * d'une exécution à l'autre.
  *
  * Secrets attendus (variables d'environnement) :
- *   TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID
- * Sans eux, le script ne fait rien et sort en succès - la construction
- * du site ne doit pas dépendre de Telegram.
+ *   TELEGRAM_BOT_TOKEN   - le jeton du bot
+ *   TELEGRAM_CHAT_ID     - le salon d'administration, qui reçoit les
+ *                          propositions
+ *   TELEGRAM_CHANNEL_ID  - la chaîne publique ; sert au repli quand
+ *                          TELEGRAM_CHAT_ID est absent
+ * Sans jeton ni destinataire, le script ne fait rien et sort en succès -
+ * la construction du site ne doit pas dépendre de Telegram.
  */
 
 const fs = require('fs');
@@ -38,6 +57,12 @@ const MAX_PAR_PASSAGE = 5;
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHANNEL = process.env.TELEGRAM_CHANNEL_ID;
+const ADMIN = process.env.TELEGRAM_CHAT_ID;
+
+// La ligne qui sépare l'en-tête de la proposition du texte à publier.
+// telegram-webhook coupe dessus : ce qui suit part sur la chaîne, mot
+// pour mot. Si vous la changez ici, changez-la LÀ-BAS aussi.
+const SEPARATEUR = '──────';
 
 // index, préfixe de page d'aperçu, intitulé
 const SOURCES = [
@@ -89,11 +114,31 @@ function esc(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * Envoie soit la PROPOSITION au salon d'administration, soit - à défaut
+ * de salon - l'annonce directement sur la chaîne.
+ *
+ * Le texte à publier est écrit à l'identique dans les deux cas : ce que
+ * l'administration relit est exactement ce que les abonnés liront.
+ */
 function envoyer(titre, texte, lien) {
-  const corps = [`<b>${esc(titre)}</b>`, texte ? esc(texte) : '', lien ? esc(lien) : '']
+  const annonce = [`<b>${esc(titre)}</b>`, texte ? esc(texte) : '', lien ? esc(lien) : '']
     .filter(Boolean).join('\n\n');
+
+  const corps = ADMIN
+    ? `📣 <b>À publier sur la chaîne ?</b>\n${SEPARATEUR}\n${annonce}`
+    : annonce;
   const payload = JSON.stringify({
-    chat_id: CHANNEL, text: corps, parse_mode: 'HTML',
+    chat_id: ADMIN || CHANNEL,
+    text: corps,
+    parse_mode: 'HTML',
+    ...(ADMIN ? {
+      disable_web_page_preview: true,
+      reply_markup: { inline_keyboard: [[
+        { text: '📣 Publier sur la chaîne', callback_data: 'pub:go:x' },
+        { text: '✖️ Ne pas publier', callback_data: 'pub:no:x' },
+      ]] },
+    } : {}),
   });
   return new Promise((resolve) => {
     const req = https.request(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
@@ -118,10 +163,13 @@ function envoyer(titre, texte, lien) {
 }
 
 (async () => {
-  if (!TOKEN || !CHANNEL) {
+  if (!TOKEN || (!ADMIN && !CHANNEL)) {
     console.log('Chaîne Telegram : secrets absents, rien à faire.');
     return;
   }
+  console.log(ADMIN
+    ? 'Chaîne Telegram : les nouveautés sont PROPOSÉES au salon d\'administration.'
+    : 'Chaîne Telegram : TELEGRAM_CHAT_ID absent, publication directe sur la chaîne.');
 
   // Tout le contenu actuel, sous forme de clés stables.
   const actuels = [];
@@ -147,7 +195,7 @@ function envoyer(titre, texte, lien) {
   if (connues === null) {
     ecrireEtat(actuels.map((a) => a.cle));
     console.log(`Chaîne Telegram : premier passage, ${actuels.length} contenu(s) `
-      + `mémorisé(s) sans annonce. Les prochains ajouts seront diffusés.`);
+      + `mémorisé(s) sans annonce. Les prochains ajouts seront signalés.`);
     return;
   }
 
@@ -165,12 +213,13 @@ function envoyer(titre, texte, lien) {
 
   for (const n of aEnvoyer) {
     const ok = await envoyer(n.titre, n.texte, n.lien);
-    console.log(`  ${ok ? 'annoncé' : 'ÉCHEC  '} : ${n.cle}`);
+    console.log(`  ${ok ? (ADMIN ? 'proposé' : 'annoncé') : 'ÉCHEC  '} : ${n.cle}`);
     // Seul ce qui est réellement parti est mémorisé : un échec sera
-    // réessayé au passage suivant plutôt que perdu en silence.
+    // réessayé au passage suivant plutôt que perdu en silence. Un refus,
+    // lui, ne repassera pas : c'est une décision, pas un échec.
     if (ok) connues.add(n.cle);
   }
 
   ecrireEtat(connues);
-  console.log(`Chaîne Telegram : ${aEnvoyer.length} annonce(s) traitée(s).`);
+  console.log(`Chaîne Telegram : ${aEnvoyer.length} contenu(s) traité(s).`);
 })();
