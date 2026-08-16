@@ -97,8 +97,15 @@ async function traiterMessage(msg: any): Promise<void> {
   if (!salon) return;
   // Les groupes sont ignorés : ce bot répond à des questions
   // personnelles, qui n'ont rien à faire dans une conversation à
-  // plusieurs.
-  if (msg.chat?.type && msg.chat.type !== "private") return;
+  // plusieurs. Mais leur identifiant est JOURNALISÉ : c'est le moyen le
+  // plus simple de le connaître quand on veut faire d'un groupe le salon
+  // d'administration - le webhook consomme les mises à jour, getUpdates
+  // ne montre donc plus rien une fois posé.
+  if (msg.chat?.type && msg.chat.type !== "private") {
+    console.log(`telegram-webhook: message reçu du groupe ${salon} `
+      + `« ${String(msg.chat.title ?? "").slice(0, 60)} » (${msg.chat.type})`);
+    return;
+  }
 
   const texte = String(msg.text ?? "").trim();
   let reponse: string;
