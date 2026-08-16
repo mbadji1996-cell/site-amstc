@@ -433,21 +433,45 @@ async function envoyerTelegramA(chatId: unknown, texte: string): Promise<boolean
  * « callback_data » est plafonné à 64 octets par Telegram - d'où ce
  * format compact : « type:verdict:uuid » fait 43 octets.
  */
+const SITE = "https://amstc.org";
+
+// Écran d'administration où traiter chaque type d'événement. Le lien
+// « Voir la fiche » y mène, pour les cas où un clic ne suffit pas.
+const ECRAN_ADMIN: Record<string, string> = {
+  inscription:            "/membres/validation.html",
+  reclamation_carte:      "/membres/cartes-admin.html",
+  achat_boutique:         "/membres/boutique-admin.html",
+  demande_campagne:       "/membres/demandes-campagnes-admin.html",
+  nouveau_sujet_forum:    "/membres/forum.html",
+  paiement_validite:      "/membres/verification-admin.html",
+  paiement_cotisation:    "/membres/verification-admin.html",
+  participation_collecte: "/membres/collectes-admin.html",
+  rapport_matinal:        "/membres/admin.html",
+};
+
 function boutons(eventType: string, data: Record<string, any>): unknown {
   const id = data.id;
-  if (!id) return undefined;
-  const paire = (prefixe: string, oui: string, non: string) => ({
-    inline_keyboard: [[
+  const rangees: any[][] = [];
+
+  // Les actions, seulement si la charge utile porte l'identifiant.
+  if (id) {
+    const paire = (prefixe: string, oui: string, non: string) => [
       { text: oui, callback_data: `${prefixe}:ok:${id}` },
       { text: non, callback_data: `${prefixe}:no:${id}` },
-    ]],
-  });
-  switch (eventType) {
-    case "inscription":         return paire("ins", "✅ Approuver", "✖️ Refuser");
-    case "paiement_validite":   return paire("val", "✅ Confirmer", "✖️ Refuser");
-    case "paiement_cotisation": return paire("cot", "✅ Confirmer", "✖️ Refuser");
-    default:                    return undefined;
+    ];
+    switch (eventType) {
+      case "inscription":         rangees.push(paire("ins", "✅ Approuver", "✖️ Refuser")); break;
+      case "paiement_validite":   rangees.push(paire("val", "✅ Confirmer", "✖️ Refuser")); break;
+      case "paiement_cotisation": rangees.push(paire("cot", "✅ Confirmer", "✖️ Refuser")); break;
+    }
   }
+
+  // « Voir la fiche » : sur toute notification qui a un écran, avec ou
+  // sans identifiant. Un lien, pas une action : rien à journaliser.
+  const ecran = ECRAN_ADMIN[eventType];
+  if (ecran) rangees.push([{ text: "🔎 Voir la fiche", url: SITE + ecran }]);
+
+  return rangees.length ? { inline_keyboard: rangees } : undefined;
 }
 
 async function envoyerTelegram(

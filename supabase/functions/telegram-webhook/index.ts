@@ -75,7 +75,12 @@ async function rpc(fonction: string, corps: Record<string, unknown>): Promise<st
       body: JSON.stringify(corps),
     });
     const texte = await r.text();
-    return r.ok ? String(JSON.parse(texte) ?? "") : `Échec (${r.status}).`;
+    if (!r.ok) return `Échec (${r.status}).`;
+    const val = JSON.parse(texte);
+    // Une fonction qui renvoie un OBJET (preparer_prevenir_membre) doit
+    // arriver intact : String() en aurait fait « [object Object] ». Une
+    // fonction qui renvoie du texte arrive tel quel.
+    return typeof val === "string" ? val : (val == null ? "" : JSON.stringify(val));
   } catch (e) {
     return "Échec : " + String(e).slice(0, 120);
   }
@@ -188,7 +193,65 @@ Deno.serve(async (req: Request) => {
   const sep = donnee.lastIndexOf(":");
   const action = sep === -1 ? "" : donnee.slice(0, sep);
   const id = sep === -1 ? "" : donnee.slice(sep + 1);
+  const avant = clic.message?.text ?? "";
+  const msgId = clic.message?.message_id;
 
+  // ===== Prévenir le membre : WhatsApp d'abord (phase 88) =====
+  //
+  // Un serveur ne peut pas envoyer de WhatsApp libre - seul le téléphone
+  // de l'administrateur le peut. Le bouton répond donc par un LIEN wa.me
+  // pré-rempli, exactement comme le site : WhatsApp s'ouvre sur le
+  // téléphone de celui qui a cliqué, message prêt, à envoyer d'un geste.
+  // Le lien est posé sur le message pour que l'administrateur le touche ;
+  // Telegram et l'e-mail ne servent qu'aux membres SANS numéro.
+  if ((action === "ins:msg" || action === "ins:pay") && id) {
+    const type = action === "ins:pay" ? "rappel_paiement" : "compte_active";
+    const brut = await rpc("preparer_prevenir_membre", { p_user_id: id, p_type: type });
+    let prep: any = null;
+    try { prep = JSON.parse(brut); } catch { prep = null; }
+
+    if (!prep || !prep.ok) {
+      await telegram("answerCallbackQuery", { callback_query_id: clic.id,
+        text: (prep && prep.motif) || brut.slice(0, 190), show_alert: true });
+      return new Response("ok", { status: 200 });
+    }
+
+    const libelle = type === "rappel_paiement" ? "Rappel de paiement" : "Compte activé";
+    if (prep.whatsapp) {
+      const lien = `https://wa.me/${prep.whatsapp}?text=${encodeURIComponent(prep.texte)}`;
+      // Le journal enregistre l'intention, comme sur le site : le serveur
+      // ne peut pas constater l'envoi lui-même.
+      await rpc("tracer_whatsapp_telegram", { p_user_id: id, p_type: type, p_qui: qui || null });
+      await telegram("answerCallbackQuery", { callback_query_id: clic.id,
+        text: "Touchez le bouton vert : WhatsApp s'ouvre avec le message prêt." });
+      // Le lien REMPLACE les boutons d'action ; « Voir la fiche » reste.
+      await telegram("editMessageText", {
+        chat_id: salon, message_id: msgId,
+        text: `${esc(avant)}\n\n➤ <b>${esc(libelle)} - prêt pour ${esc(prep.nom)}</b>`,
+        parse_mode: "HTML",
+        reply_markup: { inline_keyboard: [
+          [{ text: `💬 Envoyer sur WhatsApp à ${prep.nom}`.slice(0, 60), url: lien }],
+          [{ text: "🔎 Voir la fiche", url: "https://amstc.org/membres/validation.html" }],
+        ] },
+      });
+      return new Response("ok", { status: 200 });
+    }
+
+    // Pas de numéro : repli Telegram puis e-mail, côté serveur.
+    const res = await rpc("prevenir_membre_repli", { p_user_id: id, p_type: type });
+    await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: res.slice(0, 190) });
+    await telegram("editMessageText", {
+      chat_id: salon, message_id: msgId,
+      text: `${esc(avant)}\n\n➤ <b>${esc(res)}</b>`,
+      parse_mode: "HTML",
+      reply_markup: { inline_keyboard: [
+        [{ text: "🔎 Voir la fiche", url: "https://amstc.org/membres/validation.html" }],
+      ] },
+    });
+    return new Response("ok", { status: 200 });
+  }
+
+  // ===== Les actions en base (approuver, confirmer, refuser) =====
   let resultat = "Action illisible.";
   if (action && id) {
     try {
@@ -213,25 +276,35 @@ Deno.serve(async (req: Request) => {
   // La petite bulle de confirmation en haut de l'écran.
   await telegram("answerCallbackQuery", { callback_query_id: clic.id, text: resultat.slice(0, 190) });
 
-  // Le message est réécrit avec le verdict, et SES BOUTONS RETIRÉS : sans
-  // cela, on peut recliquer indéfiniment et se demander si l'action a
-  // vraiment eu lieu.
+  // Le message est réécrit avec le verdict, et SES BOUTONS D'ACTION
+  // RETIRÉS : sans cela, on peut recliquer indéfiniment et se demander si
+  // l'action a vraiment eu lieu. « Voir la fiche » reste toujours.
   //
-  // Une exception : une inscription qui vient d'être APPROUVÉE garde un
-  // bouton « Prévenir le membre », le geste qui suit naturellement - il
-  // fallait sinon ouvrir le site pour l'accomplir (phase 87). Le bouton
-  // disparaît à son tour une fois utilisé.
-  const avant = clic.message?.text ?? "";
+  // Une inscription qui vient d'être APPROUVÉE garde « Prévenir » - le
+  // geste qui suit naturellement - et, pour un nouvel adhérent, « Rappel
+  // paiement » : les deux messages que le site propose. Savoir s'il est
+  // nouvel adhérent demande de relire la fiche.
   const approuve = action === "ins:ok" && /approuvée/.test(resultat);
-  const boutons = approuve
-    ? [[{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }]]
-    : [];
+  const rangees: any[][] = [];
+  if (approuve) {
+    let nouvel = false;
+    try {
+      const p = JSON.parse(await rpc("preparer_prevenir_membre", { p_user_id: id, p_type: "compte_active" }));
+      nouvel = !!(p && p.nouvel_adherent);
+    } catch { nouvel = false; }
+    const ligne = [{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }];
+    if (nouvel) ligne.push({ text: "💳 Rappel paiement", callback_data: `ins:pay:${id}` });
+    rangees.push(ligne);
+  }
+  const ecranFiche = action.startsWith("ins") ? "/membres/validation.html" : "/membres/verification-admin.html";
+  rangees.push([{ text: "🔎 Voir la fiche", url: "https://amstc.org" + ecranFiche }]);
+
   await telegram("editMessageText", {
     chat_id: salon,
-    message_id: clic.message?.message_id,
+    message_id: msgId,
     text: `${esc(avant)}\n\n➤ <b>${esc(resultat)}</b>`,
     parse_mode: "HTML",
-    reply_markup: { inline_keyboard: boutons },
+    reply_markup: { inline_keyboard: rangees },
   });
 
   return new Response("ok", { status: 200 });
