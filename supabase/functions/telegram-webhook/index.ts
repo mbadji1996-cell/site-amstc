@@ -216,13 +216,22 @@ Deno.serve(async (req: Request) => {
   // Le message est réécrit avec le verdict, et SES BOUTONS RETIRÉS : sans
   // cela, on peut recliquer indéfiniment et se demander si l'action a
   // vraiment eu lieu.
+  //
+  // Une exception : une inscription qui vient d'être APPROUVÉE garde un
+  // bouton « Prévenir le membre », le geste qui suit naturellement - il
+  // fallait sinon ouvrir le site pour l'accomplir (phase 87). Le bouton
+  // disparaît à son tour une fois utilisé.
   const avant = clic.message?.text ?? "";
+  const approuve = action === "ins:ok" && /approuvée/.test(resultat);
+  const boutons = approuve
+    ? [[{ text: "✉️ Prévenir le membre", callback_data: `ins:msg:${id}` }]]
+    : [];
   await telegram("editMessageText", {
     chat_id: salon,
     message_id: clic.message?.message_id,
     text: `${esc(avant)}\n\n➤ <b>${esc(resultat)}</b>`,
     parse_mode: "HTML",
-    reply_markup: { inline_keyboard: [] },
+    reply_markup: { inline_keyboard: boutons },
   });
 
   return new Response("ok", { status: 200 });
