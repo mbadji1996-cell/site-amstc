@@ -206,6 +206,12 @@ grant execute on function public.action_telegram(text, uuid, text) to service_ro
 
 notify pgrst, 'reload schema';
 
--- Contrôle : la fonction est en place et le texte se construit.
-select titre from public.texte_rappel_membre(
-  (select id from public.profiles where status = 'approved' limit 1), 'compte_active', null);
+-- Contrôle : les deux fonctions sont en place, avec la bonne signature.
+-- (On n'appelle PAS texte_rappel_membre ici : elle exige un administrateur
+-- connecté, ce que le SQL Editor n'est pas - elle répondrait « Accès
+-- refusé ». Au clic réel, action_telegram fixe cette identité avant de
+-- l'appeler : le contexte y est correct.)
+select proname, pg_get_function_arguments(oid) as arguments
+  from pg_proc
+ where proname in ('prevenir_membre_auto', 'action_telegram')
+ order by proname;
