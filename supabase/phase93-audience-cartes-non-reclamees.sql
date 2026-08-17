@@ -85,10 +85,19 @@ begin
         );
 
   -- NOUVEAU (phase 93) : le registre, pas les profils.
+  --
+  -- ATTENTION AUX NOMS DE COLONNES. « returns table(id, phone,
+  -- full_name) » déclare ces trois noms comme VARIABLES de la fonction :
+  -- une colonne intermédiaire qui s'appellerait pareil rendrait la
+  -- requête ambiguë et la fonction échouerait à l'exécution. Les autres
+  -- branches y échappent en écrivant toujours « p.quelque_chose » ; ici
+  -- les colonnes intermédiaires portent d'autres noms (carte_id, nom),
+  -- ce qui écarte le problème plutôt que de l'éviter de justesse.
   elsif p_audience = 'carte_jamais_reclamee' then
     return query
       with cartes as (
-        select mc.id, mc.full_name, public.telephone_cle(mc.phone) as cle
+        select mc.id as carte_id, mc.full_name as nom,
+               public.telephone_cle(mc.phone) as cle
           from public.member_cards mc
          where mc.claim_status = 'unclaimed'
       ),
@@ -96,12 +105,14 @@ begin
       -- année d'adhésion, selon les imports) : sans ce regroupement, la
       -- personne recevrait le message deux ou trois fois.
       uniques as (
-        select min(id::text)::uuid as id, min(full_name) as full_name, cle
-          from cartes
-         where cle is not null and length(cle) = 9
-         group by cle
+        select min(c.carte_id::text)::uuid as carte_id,
+               min(c.nom) as nom,
+               c.cle as cle
+          from cartes c
+         where c.cle is not null and length(c.cle) = 9
+         group by c.cle
       )
-      select u.id, '221' || u.cle, u.full_name
+      select u.carte_id, '221' || u.cle, u.nom
         from uniques u
        where not exists (
          select 1 from public.profiles p
