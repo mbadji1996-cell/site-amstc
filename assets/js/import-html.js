@@ -102,7 +102,35 @@
               if (x.startsWith(conteneur)) return x;
               return conteneur + " " + x;
             }).join(", ");
-            s += sel + "{" + r.style.cssText + "}\n";
+            // La LARGEUR est décidée par le site, pas par le fichier. Un
+            // fichier autonome fixe presque toujours « .page{max-width:980px;
+            // margin:0 auto} » pour se centrer dans un navigateur ; confiné
+            // dans une page qui fait déjà 1400, cette limite laisse un vide
+            // de chaque côté - constaté sur le Mukhtasar. On retire
+            // max-width et width des règles qui visent le conteneur
+            // lui-même ou un bloc racine (.page, .container, .wrap, main),
+            // et on garde tout le reste tel quel : les colonnes internes
+            // ont le droit à leur largeur.
+            let decl = r.style.cssText;
+            const st = r.style;
+            // Une COLONNE DE LECTURE se reconnaît à son centrage : max-width
+            // + margin auto à gauche et à droite. C'est elle qui bride le
+            // texte (« .corps{max-width:34rem;margin:0 auto} » sur le
+            // Mukhtasar) ; on lève sa largeur. Un bloc racine nommé
+            // (.page, .container…) aussi. Le reste - vignettes, encadrés,
+            // colonnes latérales - garde sa largeur : elle a un sens.
+            const centre = st.maxWidth && st.marginLeft === "auto" && st.marginRight === "auto";
+            const racine = sel === conteneur
+              || /^\S+ (\.(page|container|wrap|wrapper|content|main|site|corps|conteneur|shell)|main|article)$/i.test(sel);
+            if (racine || centre) {
+              decl = decl.replace(/(^|;)\s*(max-width|width|min-width)\s*:[^;]*;?/gi, "$1");
+            }
+            // position:fixed s'ancre sur la fenêtre, donc SORT du bloc
+            // importé - un sommaire ou une barre du fichier viendrait se
+            // coller par-dessus la barre du site. Rendu absolu, il reste
+            // dans le conteneur (position:relative).
+            decl = decl.replace(/position\s*:\s*fixed/gi, "position: absolute");
+            s += sel + "{" + decl + "}\n";
           } else if (r.type === CSSRule.MEDIA_RULE || r.type === CSSRule.SUPPORTS_RULE) {
             const cond = r.type === CSSRule.MEDIA_RULE ? "@media " + r.conditionText : "@supports " + r.conditionText;
             s += cond + "{\n" + marcher(r.cssRules) + "}\n";
