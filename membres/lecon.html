@@ -249,6 +249,10 @@
     }
 
     document.getElementById('lessonContent').innerHTML = renderContent(lesson.content || '');
+    // Sur telephone, le sommaire d'un contenu importe devient un depliant
+    // (assets/js/import-html.js) : le fichier le glissait hors ecran et
+    // l'import a retire le script qui l'ouvrait.
+    if (typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('lessonContent'));
     partageInit({ conteneur: 'partageZone', prefixe: 'c', cle: 'id' });
     document.getElementById('lessonContent').insertAdjacentHTML('beforebegin', cardStatusBannerHtml(result.state));
 

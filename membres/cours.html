@@ -296,6 +296,10 @@
     // Rendu du contenu (markdown simple ou HTML)
     const content = course.content || '<p><em>Contenu à venir.</em></p>';
     document.getElementById('courseContent').innerHTML = renderContent(content);
+    // Sur telephone, le sommaire d'un contenu importe devient un depliant
+    // (assets/js/import-html.js) : le fichier le glissait hors ecran et
+    // l'import a retire le script qui l'ouvrait.
+    if (typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('courseContent'));
     partageInit({ conteneur: 'partageZone', prefixe: 'c', cle: 'id' });
   }
 

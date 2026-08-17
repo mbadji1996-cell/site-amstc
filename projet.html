@@ -109,6 +109,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script src="assets/js/import-html.js"></script>
+<link rel="stylesheet" href="assets/css/sommaire-mobile.css">
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
   const FOLDER = "content/projets";
@@ -223,6 +224,7 @@
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
         <div id="body">${rendreCorps(body)}</div>
       `;
+      if (typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('body'));
       loadEtapes(slug);
     } catch (e) {
       content.innerHTML = "<p>Impossible de charger ce projet.</p>";

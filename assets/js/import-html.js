@@ -269,7 +269,68 @@
       + (doc.body ? doc.body.innerHTML : h) + "\n</div>";
   }
 
+  /**
+   * Un SOMMAIRE importé, sur téléphone, devient un dépliant.
+   *
+   * Un fichier autonome range souvent son sommaire dans une colonne
+   * latérale et, sous une certaine largeur, le glisse hors écran pour le
+   * rouvrir par un bouton et un script. L'import retire les scripts : le
+   * sommaire reste là, invisible, sans rien pour l'ouvrir - constaté sur
+   * le Mukhtasar. Le CSS confiné garde d'ailleurs ce « position:fixed »
+   * devenu absolu et le « translateX(-101%) ».
+   *
+   * Cette fonction s'applique APRÈS le rendu, sur le bloc affiché : elle
+   * repère la <nav> qui porte des liens d'ancre, la sort de son
+   * positionnement, et la met dans un <details> replié en tête du
+   * contenu. Un clic sur une entrée referme le dépliant et défile.
+   * Sur grand écran, rien ne change : la colonne du fichier reste.
+   *
+   * À appeler par la page qui affiche : rendreSommaireDepliant(conteneur).
+   */
+  function rendreSommaireDepliant(racine, seuilPx) {
+    const seuil = seuilPx || 1100;
+    if (!racine || window.innerWidth >= seuil) return false;
+    const bloc = racine.querySelector(".html-importe") || racine;
+    // La nav « sommaire » : la première nav qui contient au moins trois
+    // liens vers des ancres du même document.
+    const navs = [...bloc.querySelectorAll("nav, aside, .toc, .sommaire, #sommaire")];
+    const nav = navs.find((n) => n.querySelectorAll('a[href^="#"]').length >= 3);
+    if (!nav || nav.closest("details.sommaire-mobile")) return false;
+
+    const details = document.createElement("details");
+    details.className = "sommaire-mobile";
+    const summary = document.createElement("summary");
+    const titre = nav.querySelector("h1, h2, h3, .toc-titre");
+    summary.textContent = (titre && titre.textContent.trim()) || "Sommaire";
+    details.appendChild(summary);
+
+    // On déplace la nav telle quelle (ses styles internes servent encore
+    // pour la liste), mais on annule tout ce qui la cachait ou la fixait.
+    nav.style.cssText = "position:static !important; transform:none !important; display:block !important; width:auto !important; max-width:none !important; height:auto !important; max-height:none !important; overflow:visible !important; box-shadow:none !important; top:auto !important; left:auto !important; bottom:auto !important; flex:none !important; margin:0 !important; padding:8px 0 !important; background:transparent !important; z-index:auto !important;";
+    if (titre) titre.style.display = "none";
+    details.appendChild(nav);
+    bloc.insertBefore(details, bloc.firstChild);
+
+    // Un clic sur une entrée : on referme, et l'ancre fait le reste. Le
+    // défilement doux est ajouté quand la cible existe.
+    details.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const cible = bloc.querySelector(a.getAttribute("href")) || document.getElementById(a.getAttribute("href").slice(1));
+      if (cible) {
+        e.preventDefault();
+        details.open = false;
+        cible.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", a.getAttribute("href"));
+      }
+    });
+    // Le voile du fichier (fond sombre derrière le panneau) n'a plus lieu d'être.
+    bloc.querySelectorAll(".voile, .overlay, .backdrop").forEach((v) => v.remove());
+    return true;
+  }
+
   window.importerHtml = importerHtml;
   window.optionsPurifyImport = optionsPurifyImport;
   window.confinerHtmlBrut = confinerHtmlBrut;
+  window.rendreSommaireDepliant = rendreSommaireDepliant;
 })();

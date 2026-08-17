@@ -69,3 +69,24 @@
   .member-nav-panel a.active{color:#F8B718; background:rgba(248,183,24,0.1);}
   .member-nav-panel a:hover, .member-nav-panel a:focus{color:#FFFFFF; background:rgba(255,255,255,0.06);}
 }
+
+/* ===== Sommaire d'un contenu importé, replié sur téléphone =====
+   Pose par assets/js/import-html.js (rendreSommaireDepliant) sous 1100 px :
+   la colonne laterale du fichier devient un depliant en tete du contenu. */
+.sommaire-mobile{border:1.5px solid rgba(6,68,28,0.14);border-radius:12px;background:#F6F7F1;margin:0 0 18px;overflow:hidden;}
+.sommaire-mobile>summary{list-style:none;cursor:pointer;user-select:none;padding:13px 16px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:#AA7B11;display:flex;align-items:center;gap:10px;}
+.sommaire-mobile>summary::-webkit-details-marker{display:none;}
+.sommaire-mobile>summary::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .18s;flex:none;}
+.sommaire-mobile[open]>summary::before{transform:rotate(45deg);}
+.sommaire-mobile>summary::after{content:"Toucher pour ouvrir";margin-left:auto;font-size:0.62rem;letter-spacing:0.04em;color:rgba(6,68,28,0.5);text-transform:none;}
+.sommaire-mobile[open]>summary::after{content:"Fermer";}
+.sommaire-mobile nav{padding:0 12px 12px !important;}
+.sommaire-mobile nav ol,.sommaire-mobile nav ul{list-style:none;margin:0;padding:0;}
+.sommaire-mobile nav li{margin:0;}
+.sommaire-mobile nav a{display:block;padding:9px 8px;border-radius:8px;text-decoration:none;color:#0B2E17;font-size:0.9rem;line-height:1.35;}
+.sommaire-mobile nav a:active,.sommaire-mobile nav a:hover{background:#ECEFE3;}
+:root[data-theme="dark"] .sommaire-mobile{background:#182019;border-color:rgba(255,255,255,0.14);}
+:root[data-theme="dark"] .sommaire-mobile>summary{color:#F0C955;}
+:root[data-theme="dark"] .sommaire-mobile>summary::after{color:rgba(255,255,255,0.5);}
+:root[data-theme="dark"] .sommaire-mobile nav a{color:#E8F1EC;}
+:root[data-theme="dark"] .sommaire-mobile nav a:hover{background:#17211A;}
