@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Importer un fichier HTML - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo-horizontal-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);}
+  .header-inner{max-width:900px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+  .auth-warning{background:#FDEEEE;border:1.5px solid #f5c0c0;border-radius:var(--radius);padding:20px 22px;margin-bottom:28px;font-size:0.9rem;color:#8a2b2b;display:flex;gap:12px;align-items:flex-start;}
+  .auth-warning i{font-size:20px;flex-shrink:0;margin-top:1px;}
+  .auth-warning a{text-decoration:underline;font-weight:600;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:22px;}
+  .card h2{font-family:var(--display);font-size:1.05rem;font-weight:600;color:var(--text-heading);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid .full{grid-column:1 / -1;}
+  label.field-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:block;margin-bottom:6px;}
+  input[type=text],input[type=date],select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.9rem;background:var(--paper);color:var(--ink);}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);}
+  textarea{min-height:70px;resize:vertical;}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:var(--paper);}
+  .drop:hover,.drop.actif{border-color:var(--green);background:var(--paper-alt);}
+  .drop i{font-size:30px;color:var(--text-accent);display:block;margin-bottom:8px;}
+  .drop strong{color:var(--text-heading);}
+  .drop input{display:none;}
+  .hint{font-size:0.8rem;color:var(--text-muted);margin-top:8px;}
+  .avert{background:#FEF6E4;border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.84rem;color:#6d5310;margin-top:12px;}
+  .apercu-cadre{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;height:520px;}
+  .apercu-cadre iframe{width:100%;height:100%;border:0;}
+  .actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;font-family:var(--body);}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{background:var(--green-deep);}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-ghost{background:var(--paper-alt);color:var(--text-heading);}
+  .etat{font-family:var(--mono);font-size:0.8rem;color:var(--text-muted);}
+  .etat.ok{color:#2E7D32;}
+  .etat.err{color:#B23B3B;}
+  .resultat{background:#EAF3DE;border:1.5px solid #bcd6a0;border-radius:var(--radius);padding:18px 22px;font-size:0.9rem;color:#2c5010;margin-top:22px;display:none;}
+  .resultat a{text-decoration:underline;font-weight:600;}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);}
+  @media (max-width:640px){ .grid{grid-template-columns:1fr;} .apercu-cadre{height:380px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-header">
+    <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Administration du contenu</a>
+    <h1 class="page-title">Importer un fichier HTML</h1>
+    <p class="page-sub">Publiez un article, une formation, un projet ou une étape à partir d'une page HTML rédigée ailleurs - mise en page et images comprises. Le fichier est déposé dans le dépôt, exactement comme une fiche créée dans l'administration.</p>
+  </div>
+
+  <div class="auth-warning" id="authWarning" style="display:none;">
+    <i class="ti ti-lock"></i>
+    <div>Vous n'êtes pas connecté à l'administration. <a href="index.html">Connectez-vous d'abord</a>, puis revenez sur cette page - elle utilise la même session.</div>
+  </div>
+
+  <div id="outil" style="display:none;">
+
+    <div class="card">
+      <h2><i class="ti ti-file-upload"></i> 1. Le fichier</h2>
+      <label class="drop" id="zoneDepot">
+        <input type="file" id="fichier" accept=".html,.htm,text/html">
+        <i class="ti ti-file-type-html"></i>
+        <strong>Choisir un fichier HTML</strong> ou le déposer ici
+        <p class="hint">Un fichier .html complet, avec son style et ses images encodées. Les scripts et les polices externes sont écartés.</p>
+      </label>
+      <p class="etat" id="etatLecture"></p>
+      <div id="avertissements"></div>
+    </div>
+
+    <div class="card" id="carteFiche" style="display:none;">
+      <h2><i class="ti ti-forms"></i> 2. La fiche</h2>
+      <div class="grid">
+        <div>
+          <label class="field-label" for="type">Publier comme</label>
+          <select id="type">
+            <option value="actualites">Réalisation (article)</option>
+            <option value="formations">Formation</option>
+            <option value="projets">Projet</option>
+            <option value="etapes">Étape de projet</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="date">Date</label>
+          <input type="date" id="date">
+        </div>
+        <div class="full">
+          <label class="field-label" for="titre">Titre</label>
+          <input type="text" id="titre" placeholder="Titre de la fiche">
+        </div>
+        <div class="full">
+          <label class="field-label" for="resume">Résumé (affiché dans la liste)</label>
+          <textarea id="resume" placeholder="Une ou deux phrases"></textarea>
+        </div>
+        <div id="champStatut" style="display:none;">
+          <label class="field-label" for="statut">Statut du projet</label>
+          <select id="statut"><option>À venir</option><option selected>En cours</option><option>Terminé</option></select>
+        </div>
+        <div id="champProjet" style="display:none;">
+          <label class="field-label" for="projet">Projet associé</label>
+          <select id="projet"></select>
+        </div>
+        <div class="full">
+          <label class="field-label">Image de couverture</label>
+          <label class="toggle"><input type="checkbox" id="premiereImage" checked> Utiliser la première image du fichier comme couverture</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="carteApercu" style="display:none;">
+      <h2><i class="ti ti-eye"></i> 3. Aperçu tel qu'il paraîtra</h2>
+      <div class="apercu-cadre"><iframe id="apercu" title="Aperçu"></iframe></div>
+      <p class="hint">Le style du fichier est confiné au contenu : la barre du site et le pied de page ne sont pas touchés.</p>
+      <div class="actions">
+        <button class="btn btn-primary" id="btnPublier"><i class="ti ti-send"></i> Publier</button>
+        <span class="etat" id="etatPublication"></span>
+      </div>
+      <div class="resultat" id="resultat"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<script src="../assets/js/import-html.js"></script>
+<script>
+  const REPO = 'mbadji1996-cell/site-amstc';
+  const DOSSIERS = { actualites: 'content/actualites', formations: 'content/formations', projets: 'content/projets', etapes: 'content/etapes' };
+  const PAGES = { actualites: 'article.html', formations: 'formation.html', projets: 'projet.html', etapes: 'etape.html' };
+
+  function ghToken() {
+    try { const p = JSON.parse(localStorage.getItem('decap-cms-user') || 'null'); return p && p.token ? p.token : null; }
+    catch (e) { return null; }
+  }
+  async function ghApi(path, opts = {}) {
+    const res = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+      ...opts,
+      headers: { 'Authorization': `Bearer ${ghToken()}`, 'Accept': 'application/vnd.github+json', ...(opts.headers || {}) },
+    });
+    if (!res.ok) throw new Error(`GitHub ${res.status} : ${(await res.text().catch(() => '')).slice(0, 160)}`);
+    return res.json();
+  }
+  // Un fichier binaire est envoyé en base64 : on passe par un lecteur
+  // plutôt que par btoa, qui ne connaît pas les octets au-delà de 255.
+  function blobVersBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(',')[1]);
+      r.onerror = () => reject(new Error('Lecture image impossible'));
+      r.readAsDataURL(blob);
+    });
+  }
+  async function deposerFichier(chemin, base64, message) {
+    // « PUT contents » crée le fichier ; s'il existe déjà il faut son sha.
+    let sha;
+    try { const ex = await ghApi(`/contents/${chemin}`); sha = ex.sha; } catch (e) { sha = undefined; }
+    return ghApi(`/contents/${chemin}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content: base64, branch: 'main', ...(sha ? { sha } : {}) }),
+    });
+  }
+
+  function slugifier(t) {
+    // Plage ÉCHAPPÉE, jamais les caractères combinants eux-mêmes :
+    // invisibles à la lecture, ils se perdent au moindre copier-coller.
+    return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'contenu';
+  }
+  function yamlChaine(s) {
+    // Guillemets doubles avec échappement : sûr pour toute valeur.
+    return '"' + String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
+  }
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---- État de l'import ----
+  let importe = null;          // résultat d'importerHtml
+  let imagesEnAttente = [];    // { blob, nom, marqueur } à déposer à la publication
+  let premiereImageMarqueur = null;
+
+  // Le dépôt des images est DIFFÉRÉ à la publication : les extraire au
+  // moment de la lecture les enverrait sur GitHub avant même qu'on
+  // décide de publier. À la lecture on remplace donc chaque image par un
+  // marqueur unique ; à la publication on dépose et on substitue l'URL.
+  async function lireFichier(fichier) {
+    const etat = document.getElementById('etatLecture');
+    etat.textContent = 'Lecture…'; etat.className = 'etat';
+    imagesEnAttente = []; premiereImageMarqueur = null;
+    try {
+      importe = await importerHtml(fichier, {
+        deposerImage: async (blob, nom) => {
+          const marqueur = '__IMG_' + imagesEnAttente.length + '__';
+          imagesEnAttente.push({ blob, nom, marqueur });
+          if (!premiereImageMarqueur) premiereImageMarqueur = marqueur;
+          return marqueur;
+        },
+      });
+    } catch (e) {
+      etat.textContent = 'Échec : ' + (e.message || e); etat.className = 'etat err'; return;
+    }
+    etat.textContent = `Lu : ${importe.images} image(s), ${imagesEnAttente.length} à déposer.`; etat.className = 'etat ok';
+    document.getElementById('avertissements').innerHTML = importe.avertissements.map(a => `<div class="avert">${esc(a)}</div>`).join('');
+
+    if (!document.getElementById('titre').value.trim()) document.getElementById('titre').value = importe.titre;
+    if (!document.getElementById('resume').value.trim()) document.getElementById('resume').value = importe.resume;
+    if (!document.getElementById('date').value) document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('premiereImage').disabled = !premiereImageMarqueur;
+    if (!premiereImageMarqueur) document.getElementById('premiereImage').checked = false;
+
+    document.getElementById('carteFiche').style.display = '';
+    document.getElementById('carteApercu').style.display = '';
+    montrerApercu();
+  }
+
+  function montrerApercu() {
+    if (!importe) return;
+    // Pour l'aperçu, les marqueurs sont remplacés par les images encodées.
+    // La purification d'abord, avec les marqueurs encore en place ; les
+    // URL blob: sont substituées APRÈS - DOMPurify les retirerait, et
+    // l'aperçu montrerait des images vides alors que la page publiée les
+    // aura (elle reçoit des chemins /assets/…, acceptés).
+    let html = DOMPurify.sanitize(importe.html, optionsPurifyImport());
+    for (const im of imagesEnAttente) {
+      const url = URL.createObjectURL(im.blob);
+      html = html.split(im.marqueur).join(url);
+    }
+    const doc = `<!doctype html><html><head><meta charset="utf-8">
+      <link rel="stylesheet" href="../assets/css/main.css">
+      <style>body{margin:0;padding:24px;font-family:Inter,sans-serif;background:#fff;color:#0B2E17}
+      .art-body img{max-width:100%;height:auto}</style></head>
+      <body><div class="art-body">${html}</div></body></html>`;
+    const f = document.getElementById('apercu');
+    f.srcdoc = doc;
+  }
+
+  async function chargerProjets() {
+    try {
+      const d = await (await fetch('../content/projets-index.json?t=' + Date.now())).json();
+      const liste = Array.isArray(d) ? d : (d.items || []);
+      document.getElementById('projet').innerHTML = liste.map(p => `<option value="${esc(p.slug || p.id)}">${esc(p.title)}</option>`).join('');
+    } catch (e) { document.getElementById('projet').innerHTML = '<option value="">(liste indisponible)</option>'; }
+  }
+
+  async function publier() {
+    const btn = document.getElementById('btnPublier'), etat = document.getElementById('etatPublication');
+    const type = document.getElementById('type').value;
+    const titre = document.getElementById('titre').value.trim();
+    const date = document.getElementById('date').value;
+    if (!importe) { etat.textContent = 'Choisissez d\'abord un fichier.'; etat.className = 'etat err'; return; }
+    if (!titre) { etat.textContent = 'Le titre est obligatoire.'; etat.className = 'etat err'; return; }
+    if (!date) { etat.textContent = 'La date est obligatoire.'; etat.className = 'etat err'; return; }
+    btn.disabled = true; etat.className = 'etat';
+
+    const slug = `${date}-${slugifier(titre)}`;
+    const dossierImages = `assets/uploads/importes/${slug}`;
+    let html = importe.html;
+    let couverture = '';
+    try {
+      // 1. Les images, une par une. Le dépôt GitHub n'a pas d'envoi
+      //    groupé par ce chemin : on accepte plusieurs commits.
+      for (let i = 0; i < imagesEnAttente.length; i++) {
+        const im = imagesEnAttente[i];
+        etat.textContent = `Dépôt de l'image ${i + 1}/${imagesEnAttente.length}…`;
+        const chemin = `${dossierImages}/${im.nom}`;
+        await deposerFichier(chemin, await blobVersBase64(im.blob), `Import HTML : image ${im.nom} pour ${slug}`);
+        const url = '/' + chemin;
+        html = html.split(im.marqueur).join(url);
+        if (document.getElementById('premiereImage').checked && im.marqueur === premiereImageMarqueur) couverture = url;
+      }
+
+      // 2. La fiche Markdown. Le corps est du HTML : marked le laisse
+      //    passer, et article.html reconnaît le marqueur html-importe.
+      const lignes = ['---', `title: ${yamlChaine(titre)}`, `date: ${date}`];
+      const resume = document.getElementById('resume').value.trim();
+      if (resume) lignes.push(`excerpt: ${yamlChaine(resume)}`);
+      if (couverture) lignes.push(`image: ${couverture}`);
+      if (type === 'projets') lignes.push(`statut: ${yamlChaine(document.getElementById('statut').value)}`);
+      if (type === 'etapes') { lignes.push(`projet: ${yamlChaine(document.getElementById('projet').value)}`); lignes.push('ordre: 1'); }
+      lignes.push('---', '', html, '');
+      const md = lignes.join('\n');
+      const cheminMd = `${DOSSIERS[type]}/${slug}.md`;
+      etat.textContent = 'Dépôt de la fiche…';
+      await deposerFichier(cheminMd, await blobVersBase64(new Blob([md], { type: 'text/markdown' })), `Import HTML : ${titre}`);
+
+      etat.textContent = 'Publié.'; etat.className = 'etat ok';
+      const r = document.getElementById('resultat');
+      r.style.display = '';
+      r.innerHTML = `<strong>Fiche déposée dans le dépôt.</strong> Le site se met à jour dans les minutes qui suivent (construction automatique).<br>
+        Elle paraîtra ici : <a href="../${PAGES[type]}?slug=${encodeURIComponent(slug)}" target="_blank">${esc(PAGES[type])}?slug=${esc(slug)}</a><br>
+        Pour la retoucher ensuite : <a href="index.html" target="_blank">Administration du contenu</a>, rubrique correspondante.`;
+    } catch (e) {
+      etat.textContent = 'Échec : ' + (e.message || e); etat.className = 'etat err';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ---- Mise en place ----
+  (async () => {
+    if (!ghToken()) { document.getElementById('authWarning').style.display = ''; return; }
+    document.getElementById('outil').style.display = '';
+    await chargerProjets();
+    const zone = document.getElementById('zoneDepot');
+    document.getElementById('fichier').addEventListener('change', (e) => { if (e.target.files[0]) lireFichier(e.target.files[0]); });
+    ['dragenter', 'dragover'].forEach(ev => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('actif'); }));
+    ['dragleave', 'drop'].forEach(ev => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove('actif'); }));
+    zone.addEventListener('drop', (e) => { const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) lireFichier(f); });
+    document.getElementById('type').addEventListener('change', (e) => {
+      document.getElementById('champStatut').style.display = e.target.value === 'projets' ? '' : 'none';
+      document.getElementById('champProjet').style.display = e.target.value === 'etapes' ? '' : 'none';
+    });
+    document.getElementById('premiereImage').addEventListener('change', montrerApercu);
+    document.getElementById('btnPublier').addEventListener('click', publier);
+  })();
+</script>
+</body>
+</html>

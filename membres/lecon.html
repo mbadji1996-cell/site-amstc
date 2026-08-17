@@ -50,17 +50,20 @@
 
   /* Content area */
   .lesson-content{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px 36px;margin-bottom:28px;}
-  .lesson-content h2{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:28px 0 10px;}
-  .lesson-content h2:first-child{margin-top:0;}
-  .lesson-content h3{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--blue-dark);margin:20px 0 8px;}
-  .lesson-content p{color:var(--text-muted);margin-bottom:14px;}
-  .lesson-content ul,.lesson-content ol{color:var(--text-muted);padding-left:22px;margin-bottom:14px;}
-  .lesson-content li{margin-bottom:6px;}
-  .lesson-content strong{color:var(--text-heading);}
-  .lesson-content em{color:var(--text-muted);}
-  .lesson-content blockquote{border-left:3px solid var(--blue-dark);padding:12px 18px;background:var(--blue-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--blue-deeper);}
-  .lesson-content .arabic{font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--text-heading);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
-  .lesson-content hr{border:none;border-top:1px solid var(--paper-alt);margin:24px 0;}
+  /* Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+     apporte son propre style, confiné à .html-importe : les règles
+     ci-dessous ne doivent pas le recouvrir. */
+  .lesson-content h2:not(.html-importe *){font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:28px 0 10px;}
+  .lesson-content h2:first-child:not(.html-importe *){margin-top:0;}
+  .lesson-content h3:not(.html-importe *){font-family:var(--display);font-size:1rem;font-weight:600;color:var(--blue-dark);margin:20px 0 8px;}
+  .lesson-content p:not(.html-importe *){color:var(--text-muted);margin-bottom:14px;}
+  .lesson-content ul:not(.html-importe *), .lesson-content ol:not(.html-importe *){color:var(--text-muted);padding-left:22px;margin-bottom:14px;}
+  .lesson-content li:not(.html-importe *){margin-bottom:6px;}
+  .lesson-content strong:not(.html-importe *){color:var(--text-heading);}
+  .lesson-content em:not(.html-importe *){color:var(--text-muted);}
+  .lesson-content blockquote:not(.html-importe *){border-left:3px solid var(--blue-dark);padding:12px 18px;background:var(--blue-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--blue-deeper);}
+  .lesson-content .arabic:not(.html-importe *){font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--text-heading);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
+  .lesson-content hr:not(.html-importe *){border:none;border-top:1px solid var(--paper-alt);margin:24px 0;}
 
   /* Nav bottom */
   .lesson-nav{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
@@ -216,6 +219,13 @@
   }
 
   function renderContent(text) {
+    // Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+    // est déjà du HTML complet, style confiné compris : le passer dans le
+    // rendu Markdown ci-dessous casserait ses balises (« * » et « - » du
+    // CSS pris pour de l'italique ou des listes). Il est affiché tel quel
+    // - l'import a retiré scripts et gestionnaires, et seule
+    // l'administration écrit ce champ.
+    if (/^\s*(<style[\s>]|<div class="html-importe")/i.test(text || '')) return text;
     return text
       .replace(/^### (.+)$/gm, '<h3>$1</h3>')
       .replace(/^## (.+)$/gm, '<h2>$1</h2>')

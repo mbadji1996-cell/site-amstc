@@ -54,15 +54,18 @@
 
   /* Content */
   .course-content{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px 36px;margin-bottom:28px;}
-  .course-content h2{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:24px 0 10px;}
-  .course-content h2:first-child{margin-top:0;}
-  .course-content h3{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);margin:18px 0 8px;}
-  .course-content p{color:var(--text-muted);margin-bottom:14px;}
-  .course-content ul,.course-content ol{color:var(--text-muted);padding-left:22px;margin-bottom:14px;}
-  .course-content li{margin-bottom:6px;}
-  .course-content strong{color:var(--text-heading);}
-  .course-content blockquote{border-left:3px solid var(--teal);padding:12px 18px;background:var(--teal-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--teal-dark);}
-  .course-content .arabic{font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--text-heading);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
+  /* Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+     apporte son propre style, confiné à .html-importe : les règles
+     ci-dessous ne doivent pas le recouvrir. */
+  .course-content h2:not(.html-importe *){font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:24px 0 10px;}
+  .course-content h2:first-child:not(.html-importe *){margin-top:0;}
+  .course-content h3:not(.html-importe *){font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);margin:18px 0 8px;}
+  .course-content p:not(.html-importe *){color:var(--text-muted);margin-bottom:14px;}
+  .course-content ul:not(.html-importe *), .course-content ol:not(.html-importe *){color:var(--text-muted);padding-left:22px;margin-bottom:14px;}
+  .course-content li:not(.html-importe *){margin-bottom:6px;}
+  .course-content strong:not(.html-importe *){color:var(--text-heading);}
+  .course-content blockquote:not(.html-importe *){border-left:3px solid var(--teal);padding:12px 18px;background:var(--teal-light);border-radius:0 8px 8px 0;margin:16px 0;font-style:italic;color:var(--teal-dark);}
+  .course-content .arabic:not(.html-importe *){font-size:1.3rem;text-align:right;direction:rtl;font-weight:600;color:var(--text-heading);background:var(--paper-alt);padding:16px 20px;border-radius:8px;margin:16px 0;line-height:2;}
 
   /* Progress actions */
   .progress-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:40px;}
@@ -232,6 +235,13 @@
   }
 
   function renderContent(text) {
+    // Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+    // est déjà du HTML complet, style confiné compris : le passer dans le
+    // rendu Markdown ci-dessous casserait ses balises (« * » et « - » du
+    // CSS pris pour de l'italique ou des listes). Il est affiché tel quel
+    // - l'import a retiré scripts et gestionnaires, et seule
+    // l'administration écrit ce champ.
+    if (/^\s*(<style[\s>]|<div class="html-importe")/i.test(text || '')) return text;
     // Rendu Markdown basique (titres, gras, italique, listes, citations)
     return text
       .replace(/^### (.+)$/gm, '<h3>$1</h3>')

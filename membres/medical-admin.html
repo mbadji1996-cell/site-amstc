@@ -126,6 +126,9 @@
 
   .loading-msg{padding:80px 0;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
   @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.opts-grid{grid-template-columns:1fr;}}
+  .import-html-bloc{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;background:var(--paper-alt);}
+  .import-html-ligne{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .import-html-ligne input[type=file]{font-size:0.86rem;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 </head>
@@ -229,6 +232,14 @@
         <label>Contenu - basculez "Markdown" pour le texte arabe : [arabic]…[/arabic]</label>
         <div id="l-content"></div>
       </div>
+      <div class="form-group full import-html-bloc">
+        <label>Ou importer un fichier HTML</label>
+        <div class="import-html-ligne">
+          <input type="file" id="lImportHtml" accept=".html,.htm,text/html">
+          <span class="hint" id="lImportEtat"></span>
+        </div>
+        <p class="hint">Une leçon rédigée ailleurs, avec sa mise en page et ses images. Le style est conservé et confiné au contenu ; scripts et polices externes sont écartés.</p>
+      </div>
       <div class="form-group full">
         <label class="form-check">
           <input type="checkbox" id="l-published">
@@ -318,6 +329,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="../assets/css/couverture.css">
 <script src="../assets/js/couverture.js"></script>
+<script src="../assets/js/import-html.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <!-- Import / modèle Excel des questions de quiz -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -790,6 +802,42 @@
     document.getElementById(id).addEventListener('click', e => {
       if (e.target === document.getElementById(id)) closeModal(id);
     });
+  });
+
+  // ===== Import d'un fichier HTML complet (leçon) =====
+  // Voir assets/js/import-html.js. Le HTML confiné est posé dans
+  // l'éditeur en mode Markdown, qui accepte le HTML brut sans le
+  // retoucher ; les images encodées vont dans le bucket public des
+  // couvertures, sous importes/.
+  document.getElementById('lImportHtml').addEventListener('change', async (ev) => {
+    const fichier = ev.target.files && ev.target.files[0];
+    const etat = document.getElementById('lImportEtat');
+    if (!fichier) return;
+    etat.textContent = 'Lecture…';
+    try {
+      const r = await importerHtml(fichier, {
+        deposerImage: async (blob, nom) => {
+          const chemin = 'importes/' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '-' + nom;
+          const { error } = await supabaseClient.storage.from(COUVERTURES_BUCKET)
+            .upload(chemin, blob, { contentType: blob.type, upsert: false });
+          if (error) throw error;
+          return supabaseClient.storage.from(COUVERTURES_BUCKET).getPublicUrl(chemin).data.publicUrl;
+        },
+      });
+      const ed = getLessonContentEditor();
+      if (ed.changeMode) ed.changeMode('markdown', true);
+      ed.setMarkdown(r.html);
+      const t = document.getElementById('l-title');
+      if (!t.value.trim() && r.titre) t.value = r.titre;
+      const d = document.getElementById('l-desc');
+      if (d && !d.value.trim() && r.resume) d.value = r.resume;
+      etat.textContent = 'Importé : ' + r.images + ' image(s)' + (r.imagesExtraites ? ', ' + r.imagesExtraites + ' déposée(s)' : '')
+        + (r.avertissements.length ? '. ' + r.avertissements.join(' ') : '.');
+    } catch (e) {
+      etat.textContent = 'Échec : ' + (e.message || e);
+    } finally {
+      ev.target.value = '';
+    }
   });
 </script>
 

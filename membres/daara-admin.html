@@ -103,6 +103,9 @@
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
   @media(max-width:640px){.form-row{grid-template-columns:1fr;}.table-wrap{overflow-x:auto;}}
+  .import-html-bloc{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;margin-top:-6px;background:var(--paper-alt);}
+  .import-html-ligne{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .import-html-ligne input[type=file]{font-size:0.86rem;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 </head>
@@ -203,6 +206,18 @@
       <p class="hint">Basculez "Markdown" pour le texte arabe : [arabic]بسم الله[/arabic]</p>
     </div>
 
+    <!-- Import d'un fichier HTML complet (assets/js/import-html.js) : le
+         contenu remplace l'éditeur, le titre et le résumé sont proposés,
+         les images encodées sont déposées dans le bucket des couvertures. -->
+    <div class="form-group import-html-bloc">
+      <label>Ou importer un fichier HTML</label>
+      <div class="import-html-ligne">
+        <input type="file" id="fImportHtml" accept=".html,.htm,text/html">
+        <span class="hint" id="fImportEtat"></span>
+      </div>
+      <p class="hint">Un cours rédigé ailleurs, avec sa mise en page et ses images. Le style est conservé et confiné au contenu ; scripts et polices externes sont écartés.</p>
+    </div>
+
     <div class="form-group">
       <div class="toggle-row">
         <input type="checkbox" id="fPublished">
@@ -231,6 +246,7 @@
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
+<script src="../assets/js/import-html.js"></script>
 <script src="../assets/js/partage.js"></script>
 <script>
   let editingId = null;
@@ -406,6 +422,44 @@
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut();
     window.location.href = 'connexion.html';
+  });
+
+  // ===== Import d'un fichier HTML complet =====
+  // Le contenu importé est du HTML confiné, pas du Markdown : on le pose
+  // dans l'éditeur en mode Markdown (qui accepte le HTML brut) et on ne
+  // le retouche pas. Le titre et la description sont proposés s'ils sont
+  // vides. Les images encodées partent dans le bucket public des
+  // couvertures, sous importes/, pour ne pas alourdir la base.
+  document.getElementById('fImportHtml').addEventListener('change', async (ev) => {
+    const fichier = ev.target.files && ev.target.files[0];
+    const etat = document.getElementById('fImportEtat');
+    if (!fichier) return;
+    etat.textContent = 'Lecture…';
+    try {
+      const r = await importerHtml(fichier, {
+        deposerImage: async (blob, nom) => {
+          const chemin = 'importes/' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '-' + nom;
+          const { error } = await supabaseClient.storage.from(COUVERTURES_BUCKET)
+            .upload(chemin, blob, { contentType: blob.type, upsert: false });
+          if (error) throw error;
+          return supabaseClient.storage.from(COUVERTURES_BUCKET).getPublicUrl(chemin).data.publicUrl;
+        },
+      });
+      const ed = getContentEditor();
+      // Mode Markdown : le mode visuel réécrirait le HTML à sa façon.
+      if (ed.changeMode) ed.changeMode('markdown', true);
+      ed.setMarkdown(r.html);
+      const t = document.getElementById('fTitle');
+      if (!t.value.trim() && r.titre) t.value = r.titre;
+      const d = document.getElementById('fDesc');
+      if (d && !d.value.trim() && r.resume) d.value = r.resume;
+      etat.textContent = 'Importé : ' + r.images + ' image(s)' + (r.imagesExtraites ? ', ' + r.imagesExtraites + ' déposée(s)' : '')
+        + (r.avertissements.length ? '. ' + r.avertissements.join(' ') : '.');
+    } catch (e) {
+      etat.textContent = 'Échec : ' + (e.message || e);
+    } finally {
+      ev.target.value = '';
+    }
   });
 </script>
 

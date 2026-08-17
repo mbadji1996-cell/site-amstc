@@ -49,8 +49,12 @@
   .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:2rem; margin:10px 0 28px;}
   #cover{width:100%; border-radius:14px; margin-bottom:28px; display:none;}
-  #body p{color:var(--text-muted); margin-bottom:18px; font-size:1.02rem;}
-  #body h2,#body h3{font-family:var(--display); color:var(--text-heading); margin:28px 0 12px;}
+  /* Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+     apporte son propre style, confiné à .html-importe ; les règles de
+     la page ne doivent pas le recouvrir - #body h2 battrait
+     .html-importe h2 par spécificité. */
+  #body p:not(.html-importe *){color:var(--text-muted); margin-bottom:18px; font-size:1.02rem;}
+  #body h2:not(.html-importe *),#body h3:not(.html-importe *){font-family:var(--display); color:var(--text-heading); margin:28px 0 12px;}
   .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
   .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
 </style>
@@ -71,6 +75,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<script src="assets/js/import-html.js"></script>
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
   const FOLDER = "content/formations";
@@ -132,6 +137,19 @@
     document.head.appendChild(script);
   }
 
+  // Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
+  // arrive comme HTML complet, style compris, marqué par la classe
+  // html-importe. Il ne passe pas par marked - qui casserait le <style> -
+  // et DOMPurify reçoit les options qui laissent passer style et class.
+  // Tout autre corps reste du Markdown, rendu comme avant.
+  function rendreCorps(body) {
+    const b = body || '';
+    if (/^\s*(<style[\s>]|<div class="html-importe")/i.test(b) && typeof optionsPurifyImport === 'function') {
+      return DOMPurify.sanitize(b, optionsPurifyImport());
+    }
+    return DOMPurify.sanitize(marked.parse(b));
+  }
+
   async function loadArticle() {
     const slug = new URLSearchParams(window.location.search).get("slug");
     const content = document.getElementById("content");
@@ -170,7 +188,7 @@
         <div id="partageZone" class="partage-zone"></div>
         ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
         ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
-        <div id="body">${DOMPurify.sanitize(marked.parse(body || ''))}</div>
+        <div id="body">${rendreCorps(body)}</div>
       `;
       // Apres l'injection du contenu : le bouton a besoin de son conteneur.
       partageInit({ conteneur: 'partageZone', prefixe: 'f', cle: 'slug' });

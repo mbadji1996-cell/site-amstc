@@ -36,6 +36,29 @@
     CMS.init();
   </script>
   <script>
+    // ===== Bouton « Importer un fichier HTML » dans la barre de Decap =====
+    // Decap n'offre pas de crochet officiel pour ajouter un bouton à sa
+    // barre du haut : on l'insère nous-mêmes à côté du « Nouveau… », et
+    // on le repose si l'interface se redessine. Il mène à admin/importer.html,
+    // qui réutilise la même session GitHub.
+    new MutationObserver(function () {
+      if (document.getElementById('amstc-import-html')) return;
+      // La barre du haut de Decap : le premier <header>, ou à défaut le
+      // conteneur des liens « Contenus / Workflow / Médias ».
+      var barre = document.querySelector('header nav, header') || document.querySelector('[class*="AppHeader"]');
+      if (!barre) return;
+      var lien = document.createElement('a');
+      lien.id = 'amstc-import-html';
+      lien.href = 'importer.html';
+      lien.textContent = 'Importer un fichier HTML';
+      lien.title = 'Publier un article, une formation, un projet ou une étape à partir d\'une page HTML';
+      lien.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-left:12px;padding:6px 14px;'
+        + 'border-radius:6px;background:#17763B;color:#fff;font-weight:600;font-size:13px;text-decoration:none;'
+        + 'font-family:Inter,sans-serif;white-space:nowrap;';
+      barre.appendChild(lien);
+    }).observe(document.body, { childList: true, subtree: true });
+  </script>
+  <script>
     // ===== Bouton OK sur le calendrier des champs date/heure =====
     // Le sélecteur de date de Decap (bibliothèque MUI) se ferme uniquement en
     // cliquant à côté - déroutant : on ne sait pas si la date est validée.

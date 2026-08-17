@@ -61,6 +61,19 @@ Allez sur `https://amstc.org/admin`, cliquez **Login with GitHub**, autorisez l'
 - Les deux paragraphes de la section "Notre mission"
 - Publication/édition/suppression d'articles dans "Actualités", affichés automatiquement sur la page d'accueil (3 derniers) et sur `actualites.html`
 
+## Importer un fichier HTML complet
+
+Un article, une formation, un projet ou une étape peut être publié à partir d'une **page HTML rédigée ailleurs** - avec sa mise en page, ses encadrés, ses tableaux et ses images encodées. Ouvrez `admin/importer.html` (bouton « Importer un fichier HTML » dans la barre de Decap, ou lien depuis le Centre d'administration), déposez le fichier, vérifiez l'aperçu, publiez.
+
+Ce que fait l'import (`assets/js/import-html.js`) :
+
+- **titre et résumé** proposés depuis `<title>` et le premier paragraphe ;
+- **style conservé mais confiné** : les règles du fichier ne s'appliquent qu'au contenu importé, jamais à la barre du site ni au pied de page ; les polices externes (`@import`, `@font-face`) sont écartées ;
+- **scripts, iframes, formulaires et gestionnaires `on…` retirés** - rien du fichier n'est exécuté ;
+- **images encodées extraites** en fichiers dans `assets/uploads/importes/<slug>/`, la première pouvant servir de couverture. Les images en chemin relatif sont signalées : elles ne s'afficheraient pas.
+
+La fiche est déposée dans le dépôt comme n'importe quelle fiche Decap et se retouche ensuite dans l'administration (le corps y apparaît en HTML). Côté espace membres, les cours du Daara et les leçons médicales ont le même bouton dans leur formulaire, avec dépôt des images dans le bucket `couvertures/importes/`.
+
 ## Limite à connaître
 
 Les listes d'articles (page d'accueil + actualites.html) utilisent l'API publique de GitHub pour lister les fichiers, sans authentification. Elle est limitée à 60 requêtes/heure par visiteur - largement suffisant pour un site associatif, mais à garder en tête si le trafic grossit beaucoup. Si besoin plus tard, on pourra passer par une build statique (Eleventy/Hugo) qui génère les pages à l'avance.
