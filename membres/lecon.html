@@ -75,6 +75,24 @@
   .btn-primary{background:var(--blue-dark);color:var(--white);}
   .btn-primary:hover{background:var(--blue-deeper);}
   .btn-quiz{background:#EAF3DE;color:#3B6D11;border:1.5px solid #B2D98A;}
+  /* Progression MESUREE (assets/js/progression-lecture.js) : la lecture
+     donne jusqu'a 80 %, le quiz reussi les 20 derniers. */
+  .progress-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:24px;}
+  .progress-card-title{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:14px;}
+  .progress-lecture{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+  .progress-lecture .prog-bar-lg{flex:1;height:8px;background:var(--paper-alt);border-radius:999px;overflow:hidden;position:relative;}
+  .progress-lecture .prog-fill-lg{height:100%;background:var(--green);border-radius:999px;transition:width .4s;}
+  /* Le dernier cinquieme est celui du quiz : on le marque d'un trait. */
+  .progress-lecture .prog-bar-lg.avec-quiz::after{content:"";position:absolute;left:80%;top:-3px;bottom:-3px;width:2px;background:var(--line);}
+  .progress-lecture-val{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--green);min-width:36px;text-align:right;}
+  .progress-resume{font-size:0.86rem;color:var(--text-muted);}
+  .progress-resume strong{color:var(--text-heading);}
+  .reprise{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#EAF3DE;border:1px solid rgba(0,0,0,0.06);border-left:3px solid var(--green);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:0.88rem;color:#2c5010;}
+  .reprise-texte strong{color:var(--text-heading);}
+  .reprise-btn{background:var(--green);color:#fff;border:none;border-radius:999px;padding:8px 16px;font-weight:600;font-size:0.84rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+  .btn-done{background:var(--green);color:#fff;}
+  .save-msg{font-size:0.85rem;color:var(--green);margin-top:10px;display:none;}
+  .save-msg.show{display:block;}
   .btn-quiz:hover{background:#D0EDC0;}
 
   .loading-full{padding:80px 0;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
@@ -119,7 +137,21 @@
     <!-- En tête de fiche : on partage une leçon en arrivant dessus, pas
          après en avoir atteint la fin. -->
     <div id="partageZone" class="partage-zone"></div>
+    <div class="reprise" id="reprise"></div>
     <div class="lesson-content" id="lessonContent"></div>
+
+    <div class="progress-card" id="progressCard">
+      <p class="progress-card-title">Ma progression</p>
+      <div class="progress-lecture">
+        <div class="prog-bar-lg" id="progBarCadre"><div class="prog-fill-lg" id="progBarBas" style="width:0%"></div></div>
+        <span class="progress-lecture-val" id="progLabelBas">0%</span>
+      </div>
+      <p class="progress-resume" id="progResume">La progression avance en lisant.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn btn-done" id="doneBtn"><i class="ti ti-check"></i> Marquer comme terminée</button>
+      </div>
+      <p class="save-msg" id="saveMsg"></p>
+    </div>
 
     <div class="lesson-nav">
       <a class="btn btn-outline" href="medical.html"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
@@ -135,9 +167,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/partage.js"></script>
 <script src="../assets/js/import-html.js"></script>
+<script src="../assets/js/progression-lecture.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const params = new URLSearchParams(location.search);
+  let lecture = null;   // objet de progression-lecture.js
   const lessonId = params.get('id');
 
   function cardStatusBannerHtml(state) {
@@ -164,9 +198,13 @@
       return;
     }
 
-    const [lessonRes, quizRes] = await Promise.all([
+    const userId = result.profile.id;
+    const [lessonRes, quizRes, progRes] = await Promise.all([
       supabaseClient.from('medical_lessons').select('*').eq('id', lessonId).eq('is_published', true).single(),
-      supabaseClient.from('quizzes').select('id, title').eq('lesson_id', lessonId).eq('is_published', true).limit(1)
+      supabaseClient.from('quizzes').select('id, title').eq('lesson_id', lessonId).eq('is_published', true).limit(1),
+      // La table peut ne pas exister si la phase 94 n'a pas ete jouee :
+      // l'erreur est avalee, la lecture marche quand meme sans memoire.
+      supabaseClient.from('medical_progress').select('*').eq('user_id', userId).eq('lesson_id', lessonId).maybeSingle().then(r => r, () => ({ data: null })),
     ]);
 
     if (!lessonRes.data) { location.href = 'medical.html'; return; }
@@ -206,20 +244,57 @@
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
 
-    // Reading progress
-    updateProgress();
-    window.addEventListener('scroll', updateProgress);
-  })();
+    // La progression se MESURE en lisant (assets/js/progression-lecture.js).
+    // La lecture plafonne a 80 quand un quiz existe : les 20 derniers
+    // viennent de sa reussite (declencheur SQL, phase 94). Sans quiz, la
+    // lecture vaut 100.
+    const aQuiz = quizList.length > 0;
+    const prog = (progRes && progRes.data) || {};
+    const plafond = aQuiz ? 80 : 100;
+    if (aQuiz) document.getElementById('progBarCadre').classList.add('avec-quiz');
+    lecture = progressionLecture({
+      conteneur: document.getElementById('lessonContent'),
+      bandeau: document.getElementById('reprise'),
+      plafond,
+      initial: { pct: prog.progress_pct, derniere_section: prog.derniere_section, sections_lues: prog.sections_lues },
+      surChangement: (pct, lues, total) => {
+        // Le quiz deja reussi ajoute ses 20 points a l'affichage.
+        const affiche = Math.min(100, pct + (prog.quiz_reussi && pct < 100 ? 20 : 0));
+        document.getElementById('topBar').style.width = affiche + '%';
+        document.getElementById('progBarBas').style.width = affiche + '%';
+        document.getElementById('progLabelBas').textContent = affiche + '%';
+        let texte = total > 1 ? '<strong>' + lues + '</strong> section' + (lues > 1 ? 's' : '') + ' lue' + (lues > 1 ? 's' : '') + ' sur ' + total + '. ' : '';
+        if (affiche >= 100) texte += 'Leçon terminée.';
+        else if (aQuiz) texte += prog.quiz_reussi ? 'Quiz réussi.' : 'La lecture compte pour 80 %, le quiz réussi pour les 20 % restants.';
+        else texte += 'La progression avance en lisant.';
+        document.getElementById('progResume').innerHTML = texte;
+      },
+      enregistrer: async ({ pct, derniere_section, sections_lues }) => {
+        const total = Math.min(100, pct + (prog.quiz_reussi ? 20 : 0));
+        const { error } = await supabaseClient.from('medical_progress').upsert({
+          user_id: userId, lesson_id: lessonId,
+          progress_pct: total, derniere_section, sections_lues,
+          completed_at: total >= 100 ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id,lesson_id' });
+        if (error) throw error;
+      },
+    });
 
-  function updateProgress() {
-    const el = document.getElementById('lessonContent');
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const total = el.offsetHeight;
-    const scrolled = Math.max(0, -rect.top + window.innerHeight * 0.5);
-    const pct = Math.min(100, Math.round(scrolled / total * 100));
-    document.getElementById('topBar').style.width = pct + '%';
-  }
+    document.getElementById('doneBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('doneBtn'), msg = document.getElementById('saveMsg');
+      btn.disabled = true; msg.className = 'save-msg';
+      try {
+        // Terminer a la main vaut 100, quiz ou pas : c'est le choix du membre.
+        prog.quiz_reussi = true;
+        if (lecture) await lecture.terminer();
+        msg.textContent = 'Leçon marquée comme terminée !'; msg.style.color = 'var(--green)';
+      } catch (e) {
+        msg.textContent = 'Erreur lors de la sauvegarde. Réessayez.'; msg.style.color = '#B23B3B';
+      }
+      msg.className = 'save-msg show'; btn.disabled = false;
+    });
+  })();
 
   function renderContent(text) {
     // Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)

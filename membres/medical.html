@@ -55,6 +55,13 @@
   /* Quiz featured card */
   .quiz-section{margin-bottom:28px;}
   .section-label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin-bottom:12px;}
+  /* Progression de lecture sur les cartes (phase 94) : la lecon avancee
+     montre sa barre, la lecon finie son badge - comme les cours du Daara. */
+  .lesson-prog{display:flex;align-items:center;gap:8px;margin-top:6px;max-width:220px;}
+  .lesson-prog .prog-bar{flex:1;height:4px;background:var(--paper-alt);border-radius:2px;}
+  .lesson-prog .prog-fill{height:100%;border-radius:2px;background:var(--green);transition:width .4s ease;}
+  .lesson-prog .prog-lbl{font-family:var(--mono);font-size:0.7rem;color:var(--green);font-weight:600;min-width:28px;}
+  .lesson-done{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;margin-top:6px;}
   .quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;}
   .quiz-card{background:var(--blue-light);border:1px solid #B5D4F4;border-radius:var(--radius);padding:18px 20px;display:flex;flex-direction:column;gap:10px;}
   .quiz-tag{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--blue-dark);display:flex;align-items:center;gap:5px;}
@@ -156,7 +163,7 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/partage.js"></script>
 <script>
-  let allLessons = [], allQuizzes = [], myAttempts = {};
+  let allLessons = [], allQuizzes = [], myAttempts = {}, lessonProgress = {};
   let currentCat = 'medecine';
   let userId = null;
 
@@ -189,11 +196,15 @@
       return;
     }
 
-    const [lessRes, quizRes, attRes] = await Promise.all([
+    const [lessRes, quizRes, attRes, progRes] = await Promise.all([
       supabaseClient.rpc('published_medical_lessons'),
       supabaseClient.rpc('published_quizzes'),
-      supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId)
+      supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId),
+      // Progression de lecture (phase 94). Table absente = pas de barre,
+      // jamais une page en erreur.
+      supabaseClient.from('medical_progress').select('lesson_id, progress_pct').eq('user_id', userId).then(r => r, () => ({ data: [] })),
     ]);
+    (progRes && progRes.data || []).forEach(p => { lessonProgress[p.lesson_id] = p.progress_pct || 0; });
 
     const rpcError = lessRes.error || quizRes.error;
     if (rpcError) {
@@ -284,6 +295,11 @@
             <p class="lesson-title">${escHtml(l.title)}</p>
             <p class="lesson-desc">${escHtml(l.description || '')}</p>
             ${l.author ? `<p class="lesson-author"><i class="ti ti-user"></i> ${escHtml(l.author)}</p>` : ''}
+            ${(lessonProgress[l.id] || 0) >= 100
+              ? '<span class="lesson-done"><i class="ti ti-check"></i> Terminée</span>'
+              : (lessonProgress[l.id] || 0) > 0
+                ? `<div class="lesson-prog"><div class="prog-bar"><div class="prog-fill" style="width:${lessonProgress[l.id]}%"></div></div><span class="prog-lbl">${lessonProgress[l.id]}%</span></div>`
+                : ''}
           </div>
         </a>
         <button type="button" class="lesson-partage" onclick="partagerLecon('${l.id}', this)"

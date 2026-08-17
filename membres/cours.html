@@ -72,9 +72,20 @@
   /* Progress actions */
   .progress-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:40px;}
   .progress-card-title{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:14px;}
-  .progress-slider-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
-  .progress-slider-row input[type=range]{flex:1;accent-color:var(--teal);}
-  .progress-slider-val{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--teal-dark);min-width:36px;text-align:right;}
+  /* La progression se MESURE : plus de curseur a deplacer. Une barre
+     qui avance en lisant, un resume « 5 sections lues sur 18 », et le
+     bouton « terminer » pour ceux qui ont lu ailleurs. */
+  .progress-lecture{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .progress-lecture .prog-bar-lg{flex:1;height:8px;background:var(--paper-alt);border-radius:999px;overflow:hidden;}
+  .progress-lecture .prog-fill-lg{height:100%;background:var(--teal);border-radius:999px;transition:width .4s;}
+  .progress-lecture-val{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--teal-dark);min-width:36px;text-align:right;}
+  .progress-resume{font-size:0.86rem;color:var(--text-muted);margin-bottom:14px;}
+  .progress-resume strong{color:var(--text-heading);}
+  /* Bandeau de reprise : « Vous vous etiez arrete a … - Reprendre » */
+  .reprise{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--teal-light);border:1px solid rgba(0,0,0,0.06);border-left:3px solid var(--teal);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:0.88rem;color:var(--teal-dark);}
+  .reprise-texte strong{color:var(--text-heading);}
+  .reprise-btn{background:var(--teal);color:#fff;border:none;border-radius:999px;padding:8px 16px;font-weight:600;font-size:0.84rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+  .reprise-btn:hover{background:var(--teal-dark);}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:0.9rem;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
   .btn-primary{background:var(--teal);color:var(--white);}
   .btn-primary:hover{background:var(--teal-dark);}
@@ -136,18 +147,20 @@
          après en avoir atteint la fin. -->
     <div id="partageZone" class="partage-zone"></div>
 
+    <div class="reprise" id="reprise"></div>
+
     <div class="course-content" id="courseContent">
       <!-- contenu chargé dynamiquement -->
     </div>
 
     <div class="progress-card">
       <p class="progress-card-title">Ma progression</p>
-      <div class="progress-slider-row">
-        <input type="range" id="progressSlider" min="0" max="100" step="5" value="0">
-        <span class="progress-slider-val" id="sliderVal">0%</span>
+      <div class="progress-lecture">
+        <div class="prog-bar-lg"><div class="prog-fill-lg" id="progBarBas" style="width:0%"></div></div>
+        <span class="progress-lecture-val" id="progLabelBas">0%</span>
       </div>
+      <p class="progress-resume" id="progResume">La progression se mesure en lisant : chaque section restée à l'écran compte.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn btn-primary" id="saveBtn"><i class="ti ti-device-floppy"></i> Sauvegarder</button>
         <button class="btn btn-done" id="doneBtn"><i class="ti ti-check"></i> Marquer comme terminé</button>
       </div>
       <p class="save-msg" id="saveMsg"></p>
@@ -163,11 +176,13 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/partage.js"></script>
 <script src="../assets/js/import-html.js"></script>
+<script src="../assets/js/progression-lecture.js"></script>
 <script>
   const params = new URLSearchParams(location.search);
   const courseId = params.get('id');
   let currentUserId = null;
   let currentProgress = 0;
+  let lecture = null;   // objet de progression-lecture.js
 
   function cardStatusBannerHtml(state) {
     if (state === 'grace') {
@@ -204,14 +219,41 @@
     if (!courseRes.data) { location.href = 'daara.html'; return; }
 
     const course = courseRes.data;
-    currentProgress = progressRes.data ? progressRes.data.progress_pct : 0;
+    const prog = progressRes.data || {};
+    currentProgress = prog.progress_pct || 0;
 
     renderCourse(course);
-    setProgress(currentProgress, false);
     document.getElementById('courseContent').insertAdjacentHTML('beforebegin', cardStatusBannerHtml(result.state));
 
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+
+    // La progression se MESURE en lisant (assets/js/progression-lecture.js) :
+    // le cours est decoupe en sections, chacune compte quand elle est
+    // restee a l'ecran, et l'on enregistre ou le lecteur en est. Le curseur
+    // manuel d'avant restait a 0 % : personne ne le bougeait.
+    lecture = progressionLecture({
+      conteneur: document.getElementById('courseContent'),
+      barre: document.getElementById('topBar'),
+      bandeau: document.getElementById('reprise'),
+      initial: { pct: prog.progress_pct, derniere_section: prog.derniere_section, sections_lues: prog.sections_lues },
+      surChangement: (pct, lues, total) => {
+        setProgress(pct);
+        document.getElementById('progResume').innerHTML = total > 1
+          ? '<strong>' + lues + '</strong> section' + (lues > 1 ? 's' : '') + ' lue' + (lues > 1 ? 's' : '') + ' sur ' + total
+            + (pct >= 100 ? ' - cours terminé.' : '. La progression avance en lisant.')
+          : 'La progression avance en lisant.';
+      },
+      enregistrer: async ({ pct, derniere_section, sections_lues }) => {
+        const { error } = await supabaseClient.from('daara_progress').upsert({
+          user_id: currentUserId, course_id: courseId,
+          progress_pct: pct, derniere_section, sections_lues,
+          completed_at: pct >= 100 ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id,course_id' });
+        if (error) throw error;
+      },
+    });
   })();
 
   function renderCourse(course) {
@@ -266,58 +308,33 @@
       .join('\n');
   }
 
-  function setProgress(pct, updateSlider = true) {
+  function setProgress(pct) {
     currentProgress = pct;
-    if (updateSlider) {
-      document.getElementById('progressSlider').value = pct;
-      document.getElementById('sliderVal').textContent = pct + '%';
-    }
     document.getElementById('topBar').style.width = pct + '%';
     document.getElementById('progBarTop').style.width = pct + '%';
     document.getElementById('progLabelTop').textContent = pct + '%';
+    document.getElementById('progBarBas').style.width = pct + '%';
+    document.getElementById('progLabelBas').textContent = pct + '%';
   }
 
-  document.getElementById('progressSlider').addEventListener('input', function() {
-    document.getElementById('sliderVal').textContent = this.value + '%';
-    document.getElementById('topBar').style.width = this.value + '%';
-    document.getElementById('progBarTop').style.width = this.value + '%';
-    document.getElementById('progLabelTop').textContent = this.value + '%';
-  });
-
-  document.getElementById('saveBtn').addEventListener('click', () => saveProgress(
-    parseInt(document.getElementById('progressSlider').value)
-  ));
-
-  document.getElementById('doneBtn').addEventListener('click', () => saveProgress(100));
-
-  async function saveProgress(pct) {
-    const saveBtn = document.getElementById('saveBtn');
+  // « Marquer comme terminé » reste : pour qui a lu ailleurs, ou veut
+  // tourner la page. Il passe par le meme objet, qui enregistre 100.
+  document.getElementById('doneBtn').addEventListener('click', async () => {
     const doneBtn = document.getElementById('doneBtn');
     const msg = document.getElementById('saveMsg');
-    saveBtn.disabled = true;
     doneBtn.disabled = true;
     msg.className = 'save-msg';
-
-    const { error } = await supabaseClient.from('daara_progress').upsert({
-      user_id: currentUserId,
-      course_id: courseId,
-      progress_pct: pct,
-      completed_at: pct === 100 ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,course_id' });
-
-    if (error) {
+    try {
+      if (lecture) await lecture.terminer();
+      msg.textContent = 'Cours marqué comme terminé !';
+      msg.style.color = 'var(--teal-dark)';
+    } catch (e) {
       msg.textContent = 'Erreur lors de la sauvegarde. Réessayez.';
       msg.style.color = '#B23B3B';
-    } else {
-      setProgress(pct);
-      msg.textContent = pct === 100 ? 'Cours marqué comme terminé !' : 'Progression sauvegardée.';
-      msg.style.color = 'var(--teal-dark)';
     }
     msg.className = 'save-msg show';
-    saveBtn.disabled = false;
     doneBtn.disabled = false;
-  }
+  });
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut();
