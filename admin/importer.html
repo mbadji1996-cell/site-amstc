@@ -43,11 +43,34 @@
   input[type=text],input[type=date],select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.9rem;background:var(--paper);color:var(--ink);}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);}
   textarea{min-height:70px;resize:vertical;}
-  .drop{border:2px dashed var(--line);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:var(--paper);}
+  /* Choix du type : des cartes, pas un menu déroulant - on voit d'un
+     coup d'œil où ira le contenu, et les deux qui mènent ailleurs
+     (cours, leçons) le disent au lieu de laisser chercher. */
+  .types{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+  .type-opt{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;background:var(--paper);display:flex;flex-direction:column;gap:3px;transition:border-color .15s,background .15s;position:relative;}
+  .type-opt:hover{border-color:var(--green);}
+  .type-opt.selected{border-color:var(--green);background:var(--paper-alt);box-shadow:inset 0 0 0 1px var(--green);}
+  .type-opt input{position:absolute;opacity:0;pointer-events:none;}
+  .type-opt .t-titre{font-weight:600;font-size:0.88rem;color:var(--text-heading);display:flex;align-items:center;gap:7px;}
+  .type-opt .t-sub{font-size:0.74rem;color:var(--text-muted);}
+  .type-opt.ailleurs{border-style:dashed;cursor:default;}
+  .type-opt.ailleurs:hover{border-color:var(--line);}
+  .type-opt.ailleurs .t-titre{color:var(--text-muted);}
+  .type-opt.ailleurs .t-sub a{text-decoration:underline;color:var(--text-accent);}
+  /* Zone de dépôt : un bloc centré, icône, titre, bouton, sous-titre. Le
+     <label> porte le champ fichier caché - un clic n'importe où l'ouvre. */
+  .drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+        border:2px dashed var(--line);border-radius:12px;padding:34px 20px 28px;cursor:pointer;background:var(--paper);
+        transition:border-color .15s,background .15s;position:relative;}
   .drop:hover,.drop.actif{border-color:var(--green);background:var(--paper-alt);}
-  .drop i{font-size:30px;color:var(--text-accent);display:block;margin-bottom:8px;}
-  .drop strong{color:var(--text-heading);}
-  .drop input{display:none;}
+  .drop .drop-ico{width:56px;height:56px;border-radius:14px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
+  .drop .drop-ico i{font-size:30px;color:var(--text-accent);}
+  .drop .drop-titre{font-weight:600;color:var(--text-heading);font-size:0.98rem;}
+  .drop .drop-titre span{color:var(--text-muted);font-weight:400;}
+  .drop .drop-sub{font-size:0.8rem;color:var(--text-muted);max-width:52ch;}
+  .drop .drop-btn{margin-top:10px;display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:999px;background:var(--green);color:#fff;font-weight:600;font-size:0.86rem;}
+  .drop input{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
+  .drop .drop-nom{font-family:var(--mono);font-size:0.78rem;color:var(--text-heading);margin-top:8px;display:none;}
   .hint{font-size:0.8rem;color:var(--text-muted);margin-top:8px;}
   .avert{background:#FEF6E4;border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.84rem;color:#6d5310;margin-top:12px;}
   .apercu-cadre{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;height:520px;}
@@ -90,29 +113,57 @@
   <div id="outil" style="display:none;">
 
     <div class="card">
-      <h2><i class="ti ti-file-upload"></i> 1. Le fichier</h2>
+      <h2><i class="ti ti-category"></i> 1. Où va ce contenu ?</h2>
+      <div class="types" id="types">
+        <label class="type-opt selected" data-type="actualites">
+          <input type="radio" name="type" value="actualites" checked>
+          <span class="t-titre"><i class="ti ti-news"></i> Réalisation</span>
+          <span class="t-sub">Un article : campagne, événement, bilan</span>
+        </label>
+        <label class="type-opt" data-type="formations">
+          <input type="radio" name="type" value="formations">
+          <span class="t-titre"><i class="ti ti-school"></i> Formation</span>
+          <span class="t-sub">Rubrique Formation du site public</span>
+        </label>
+        <label class="type-opt" data-type="projets">
+          <input type="radio" name="type" value="projets">
+          <span class="t-titre"><i class="ti ti-target"></i> Projet</span>
+          <span class="t-sub">Un programme, avec son statut</span>
+        </label>
+        <label class="type-opt" data-type="etapes">
+          <input type="radio" name="type" value="etapes">
+          <span class="t-titre"><i class="ti ti-timeline"></i> Étape de projet</span>
+          <span class="t-sub">Rattachée à un projet existant</span>
+        </label>
+        <div class="type-opt ailleurs">
+          <span class="t-titre"><i class="ti ti-book"></i> Cours du Daara</span>
+          <span class="t-sub">Espace membres : <a href="../membres/daara-admin.html" target="_blank">Daara &rsaquo; Nouveau cours</a>, même bouton d'import dans le formulaire</span>
+        </div>
+        <div class="type-opt ailleurs">
+          <span class="t-titre"><i class="ti ti-stethoscope"></i> Leçon médicale</span>
+          <span class="t-sub">Espace membres : <a href="../membres/medical-admin.html" target="_blank">Médical &rsaquo; Nouvelle leçon</a>, même bouton d'import</span>
+        </div>
+      </div>
+      <p class="hint">Réalisation, formation, projet et étape sont publiés sur le site public, dans le dépôt. Les cours et leçons vivent dans l'espace membres : leur formulaire a le même bouton.</p>
+    </div>
+
+    <div class="card">
+      <h2><i class="ti ti-file-upload"></i> 2. Le fichier</h2>
       <label class="drop" id="zoneDepot">
         <input type="file" id="fichier" accept=".html,.htm,text/html">
-        <i class="ti ti-file-type-html"></i>
-        <strong>Choisir un fichier HTML</strong> ou le déposer ici
-        <p class="hint">Un fichier .html complet, avec son style et ses images encodées. Les scripts et les polices externes sont écartés.</p>
+        <div class="drop-ico"><i class="ti ti-file-type-html"></i></div>
+        <div class="drop-titre">Déposez votre fichier HTML ici <span>ou</span></div>
+        <div class="drop-btn"><i class="ti ti-folder-open"></i> Choisir un fichier</div>
+        <div class="drop-sub">Un fichier .html complet, avec son style et ses images encodées. Les scripts et les polices externes sont écartés.</div>
+        <div class="drop-nom" id="dropNom"></div>
       </label>
       <p class="etat" id="etatLecture"></p>
       <div id="avertissements"></div>
     </div>
 
     <div class="card" id="carteFiche" style="display:none;">
-      <h2><i class="ti ti-forms"></i> 2. La fiche</h2>
+      <h2><i class="ti ti-forms"></i> 3. La fiche</h2>
       <div class="grid">
-        <div>
-          <label class="field-label" for="type">Publier comme</label>
-          <select id="type">
-            <option value="actualites">Réalisation (article)</option>
-            <option value="formations">Formation</option>
-            <option value="projets">Projet</option>
-            <option value="etapes">Étape de projet</option>
-          </select>
-        </div>
         <div>
           <label class="field-label" for="date">Date</label>
           <input type="date" id="date">
@@ -141,7 +192,7 @@
     </div>
 
     <div class="card" id="carteApercu" style="display:none;">
-      <h2><i class="ti ti-eye"></i> 3. Aperçu tel qu'il paraîtra</h2>
+      <h2><i class="ti ti-eye"></i> 4. Aperçu tel qu'il paraîtra</h2>
       <div class="apercu-cadre"><iframe id="apercu" title="Aperçu"></iframe></div>
       <p class="hint">Le style du fichier est confiné au contenu : la barre du site et le pied de page ne sont pas touchés.</p>
       <div class="actions">
@@ -194,6 +245,15 @@
     });
   }
 
+  function typeChoisi() {
+    const r = document.querySelector('.type-opt input[name=type]:checked');
+    return r ? r.value : 'actualites';
+  }
+  function montrerChampsDuType() {
+    const t = typeChoisi();
+    document.getElementById('champStatut').style.display = t === 'projets' ? '' : 'none';
+    document.getElementById('champProjet').style.display = t === 'etapes' ? '' : 'none';
+  }
   function slugifier(t) {
     // Plage ÉCHAPPÉE, jamais les caractères combinants eux-mêmes :
     // invisibles à la lecture, ils se perdent au moindre copier-coller.
@@ -218,6 +278,7 @@
   async function lireFichier(fichier) {
     const etat = document.getElementById('etatLecture');
     etat.textContent = 'Lecture…'; etat.className = 'etat';
+    const nomEl = document.getElementById('dropNom'); nomEl.textContent = fichier.name + ' (' + Math.round(fichier.size / 1024) + ' Ko)'; nomEl.style.display = '';
     imagesEnAttente = []; premiereImageMarqueur = null;
     try {
       importe = await importerHtml(fichier, {
@@ -276,7 +337,7 @@
 
   async function publier() {
     const btn = document.getElementById('btnPublier'), etat = document.getElementById('etatPublication');
-    const type = document.getElementById('type').value;
+    const type = typeChoisi();
     const titre = document.getElementById('titre').value.trim();
     const date = document.getElementById('date').value;
     if (!importe) { etat.textContent = 'Choisissez d\'abord un fichier.'; etat.className = 'etat err'; return; }
@@ -338,10 +399,11 @@
     ['dragenter', 'dragover'].forEach(ev => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('actif'); }));
     ['dragleave', 'drop'].forEach(ev => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove('actif'); }));
     zone.addEventListener('drop', (e) => { const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) lireFichier(f); });
-    document.getElementById('type').addEventListener('change', (e) => {
-      document.getElementById('champStatut').style.display = e.target.value === 'projets' ? '' : 'none';
-      document.getElementById('champProjet').style.display = e.target.value === 'etapes' ? '' : 'none';
-    });
+    document.querySelectorAll('.type-opt input[name=type]').forEach((r) => r.addEventListener('change', () => {
+      document.querySelectorAll('.type-opt').forEach((o) => o.classList.toggle('selected', o.querySelector('input') === r));
+      montrerChampsDuType();
+    }));
+    montrerChampsDuType();
     document.getElementById('premiereImage').addEventListener('change', montrerApercu);
     document.getElementById('btnPublier').addEventListener('click', publier);
   })();
