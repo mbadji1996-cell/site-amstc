@@ -58,6 +58,24 @@
     --body:'Inter', -apple-system, sans-serif;
     --mono:'JetBrains Mono', monospace;
   }
+  /* Cette page définit ses propres variables, que dark-mode.css ne
+     connaît pas : en mode sombre le fond basculait mais les textes
+     gardaient leur gris de jour (#48594E sur #0E1712 : illisible,
+     ratio 2,4). Les valeurs sombres sont donc données ICI, dans le même
+     esprit que la palette de dark-mode.css. */
+  :root[data-theme="dark"]{
+    --paper-raised:#182019;
+    --ink-soft:#B7C6BC;
+    --ink-faint:#8A9E8F;
+    --line-strong:rgba(255,255,255,0.22);
+    --green-deep:#7FD9A0;
+    --slate:#AAB8D6;
+    --slate-bg:#1B2130;
+    --lock:#F08A8A;
+    --lock-bg:#3A1F1F;
+    --sidebar-bg:#0A1A10;
+    --shadow:0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
 
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}

@@ -137,9 +137,21 @@
     const content = document.getElementById("content");
     if (!slug) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
     try {
-      const raw = await (await fetch(
+      const res = await fetch(
         `https://raw.githubusercontent.com/${REPO}/main/${FOLDER}/${slug}.md`
-      )).text();
+      );
+      // Un slug inconnu renvoie 404 : sans ce test, le texte brut
+      // « 404: Not Found » de GitHub s'affichait comme s'il etait le
+      // contenu de la page. Le lecteur doit savoir que la page n'existe
+      // pas, et ou aller.
+      if (!res.ok) {
+        document.title = "Article introuvable - AMSTC";
+        content.innerHTML = `<h1>Cet article n'existe pas ou plus.</h1>
+          <p>Le lien est peut-être ancien, ou le contenu a été retiré.</p>
+          <p><a href="actualites.html">Toutes nos réalisations &rarr;</a></p>`;
+        return;
+      }
+      const raw = await res.text();
       const { data, body } = parseFrontMatter(raw);
       document.title = (data.title || "Article") + " - AMSTC";
       document.getElementById('canonical').setAttribute('href', window.location.href);
