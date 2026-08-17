@@ -42,7 +42,14 @@ const META_TEMPLATE_NAME = Deno.env.get("META_TEMPLATE_NAME") || "nouvelle_annon
 const META_TEMPLATE_NAME_RAPPEL = Deno.env.get("META_TEMPLATE_NAME_RAPPEL") || "rappel_compte";
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
 
-const REMINDER_AUDIENCES = ["carte_expiree", "carte_expire_bientot", "cotisation_impayee"];
+// Audiences servies par le modèle « rappel » plutôt que par le modèle
+// d'alerte générale. « carte_jamais_reclamee » (phase 93) vise le
+// REGISTRE et non les profils : des membres connus sur le papier qui
+// n'ont jamais créé de compte. Son ciblage est fait en SQL, qui rend
+// déjà le numéro au format international.
+const REMINDER_AUDIENCES = [
+  "carte_expiree", "carte_expire_bientot", "cotisation_impayee", "carte_jamais_reclamee",
+];
 
 function templateNameFor(audience: string): string {
   return REMINDER_AUDIENCES.includes(audience) ? META_TEMPLATE_NAME_RAPPEL : META_TEMPLATE_NAME;

@@ -138,6 +138,11 @@
         <span class="audience-option-title"><i class="ti ti-cash"></i> Cotisation du mois impayée</span>
         <span class="audience-option-sub">Carte valide, mois en cours non réglé</span>
       </label>
+      <label class="audience-option" data-audience="carte_jamais_reclamee">
+        <input type="radio" name="audience" value="carte_jamais_reclamee">
+        <span class="audience-option-title"><i class="ti ti-user-question"></i> Carte jamais réclamée</span>
+        <span class="audience-option-sub">Au registre mais sans compte sur le site - pour les inviter à l'activer</span>
+      </label>
     </div>
     <div class="recipients-hint">
       <i class="ti ti-users"></i>
@@ -180,6 +185,7 @@
     carte_expiree: 'Carte expirée',
     carte_expire_bientot: 'Carte à renouveler bientôt',
     cotisation_impayee: 'Cotisation impayée',
+    carte_jamais_reclamee: 'Carte jamais réclamée',
   };
 
   function selectedAudience() {
