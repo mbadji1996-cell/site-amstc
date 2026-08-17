@@ -193,8 +193,10 @@
 
     // ---- Corps ----
     const corps = doc.body ? doc.body.innerHTML.trim() : texte;
+    // position:relative + overflow:hidden : un élément absolu ou débordant
+    // du contenu reste dans son bloc au lieu de recouvrir la page.
     const html = (cssConfine ? "<style>\n" + cssConfine + "</style>\n" : "")
-      + '<div class="' + conteneur.replace(/^\./, "") + '">\n' + corps + "\n</div>";
+      + '<div class="' + conteneur.replace(/^\./, "") + '" style="position:relative;overflow:hidden">\n' + corps + "\n</div>";
 
     return { titre, resume, html, images: nbImages, imagesExtraites: nbExtraites, avertissements };
   }
@@ -213,6 +215,33 @@
     };
   }
 
+  /**
+   * Confine APRÈS COUP un HTML déjà en base qui porte un <style> non
+   * confiné - un contenu collé dans l'éditeur avant que l'import n'existe,
+   * ou écrit à la main. Sans cela son style repeint la page entière :
+   * c'est ce qui a mis le logo du Mukhtasar par-dessus la barre du site.
+   *
+   * Un contenu déjà confiné (classe html-importe) est rendu tel quel.
+   * Un contenu sans <style> aussi : il n'a rien à confiner.
+   */
+  function confinerHtmlBrut(html, conteneur) {
+    const c = conteneur || CONTENEUR_DEFAUT;
+    const h = String(html || "");
+    if (!/<style[\s>]/i.test(h) || h.indexOf('class="' + c.replace(/^\./, "") + '"') !== -1) return h;
+    const doc = new DOMParser().parseFromString(h, "text/html");
+    let css = "";
+    doc.querySelectorAll("style").forEach((s) => { css += s.textContent + "\n"; s.remove(); });
+    doc.querySelectorAll("script, iframe, object, embed, link").forEach((e) => e.remove());
+    const cssConfine = css.trim() ? confinerCss(css, c) : "";
+    // position:relative sur le conteneur : un élément du contenu en
+    // position:absolute se cale alors sur le bloc importé, pas sur la page
+    // - c'est ce qui posait un logo par-dessus la barre du site.
+    return (cssConfine ? "<style>\n" + cssConfine + "</style>\n" : "")
+      + '<div class="' + c.replace(/^\./, "") + '" style="position:relative;overflow:hidden">\n'
+      + (doc.body ? doc.body.innerHTML : h) + "\n</div>";
+  }
+
   window.importerHtml = importerHtml;
   window.optionsPurifyImport = optionsPurifyImport;
+  window.confinerHtmlBrut = confinerHtmlBrut;
 })();

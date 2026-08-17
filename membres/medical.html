@@ -29,7 +29,7 @@
   a{color:inherit;text-decoration:none;}
 
   header{background:var(--green-deep);}
-  .header-inner{max-width:1180px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
   .logo-img{height:38px;filter:brightness(0) invert(1);}
   .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
@@ -42,7 +42,7 @@
   .hero h1{font-family:var(--display);font-size:clamp(1.6rem,4vw,2rem);font-weight:600;color:var(--white);margin-bottom:6px;}
   .hero-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;}
 
-  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px;}
 
   /* Category tabs */
   .cat-tabs{display:flex;gap:10px;padding:24px 0 20px;flex-wrap:wrap;}
@@ -64,7 +64,9 @@
   .btn-quiz:hover{background:var(--blue-deeper);}
 
   /* Lessons list */
-  .lessons-grid{display:flex;flex-direction:column;gap:10px;padding-bottom:60px;}
+  /* Grille de cartes, comme le Daara : trois par rangee sur grand ecran. */
+  .lessons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:12px;padding-bottom:60px;}
+  @media (max-width:520px){ .lessons-grid{grid-template-columns:1fr;} }
   .lesson-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .18s,transform .18s;}
   .lesson-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.08);transform:translateY(-2px);}
   /* La carte n'est plus un lien unique : un bouton imbriqué dans un lien
