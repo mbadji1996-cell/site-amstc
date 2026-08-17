@@ -38,10 +38,9 @@
   .top-progress{position:sticky;top:0;z-index:100;height:4px;background:var(--paper-alt);}
   .top-progress-fill{height:100%;background:var(--teal);transition:width .5s ease;}
 
-  /* Largeur de LECTURE : 980 px, pas les 1400 de l'espace membres - un
-     texte sur toute la largeur d'un grand ecran ferait des lignes de 200
-     caracteres, illisibles. Le cadre (entete, pied) est lui a 1400. */
-  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+  /* Largeur unique de l'espace membres : 1400 px, entete comme contenu -
+     regle du site, y compris pour les pages de lecture. */
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px;}
 
   /* Course header */
   .course-header{padding:32px 0 28px;}
