@@ -42,14 +42,47 @@
   .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
   .intro{color:var(--text-muted); font-size:1.02rem; margin-bottom:32px;}
-  .bib-section{padding:28px 0 8px;}
-  .bib-section:first-child{padding-top:0;}
-  .bib-section-title{font-family:var(--display);font-size:1.15rem;font-weight:700;color:var(--text-heading);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-  .bib-section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+  /* Dossiers et sous-dossiers sont des DÉPLIANTS, repliés par défaut :
+     avec plusieurs dizaines de documents, une page qui affiche tout
+     oblige à faire défiler longtemps pour trouver le bon dossier. Le
+     titre reste visible, le contenu vient au clic. <details> le fait
+     nativement, clavier compris. */
+  .bib-section{padding:0; margin:0 0 10px; border:1.5px solid var(--line); border-radius:12px; background:var(--surface); overflow:hidden;}
+  .bib-section-title{
+    font-family:var(--display); font-size:1.08rem; font-weight:700; color:var(--text-heading);
+    margin:0; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer;
+    list-style:none; user-select:none;
+  }
+  .bib-section-title::-webkit-details-marker{display:none;}
+  .bib-section-title::before{
+    content:""; width:8px; height:8px; border-right:2px solid var(--text-accent); border-bottom:2px solid var(--text-accent);
+    transform:rotate(-45deg); transition:transform .18s; flex:none; margin-left:2px;
+  }
+  .bib-section[open] > .bib-section-title::before{transform:rotate(45deg);}
+  .bib-section-title:hover{background:var(--paper-alt);}
+  .bib-section-title:focus-visible{outline:2px solid var(--green); outline-offset:-2px;}
+  .bib-section-compte{margin-left:auto; font-family:var(--mono); font-size:0.72rem; color:var(--text-muted); font-weight:400; white-space:nowrap;}
+  .bib-section-corps{padding:4px 18px 18px;}
   /* Le sous-dossier se distingue du dossier par un décalage et un titre
      plus discret : la hiérarchie se lit sans avoir à la deviner. */
-  .bib-sous-section{padding-left:16px; border-left:2px solid var(--paper-alt); margin:6px 0 14px;}
-  .bib-sous-titre{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:10px;}
+  .bib-sous-section{padding:0; margin:10px 0 0; border-left:2px solid var(--paper-alt);}
+  .bib-sous-titre{
+    font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent);
+    margin:0; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; list-style:none; user-select:none;
+  }
+  .bib-sous-titre::-webkit-details-marker{display:none;}
+  .bib-sous-titre::before{
+    content:""; width:6px; height:6px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor;
+    transform:rotate(-45deg); transition:transform .18s; flex:none;
+  }
+  .bib-sous-section[open] > .bib-sous-titre::before{transform:rotate(45deg);}
+  .bib-sous-titre:hover{background:var(--paper-alt);}
+  .bib-sous-corps{padding:4px 14px 12px;}
+  /* Un dossier ouvert laisse un peu d'air avant le premier sous-dossier. */
+  .bib-section-corps > .book-grille + .bib-sous-section{margin-top:16px;}
+  .bib-tout{display:flex; gap:14px; margin:0 0 12px;}
+  .bib-tout button{background:none; border:0; padding:0; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); cursor:pointer;}
+  .bib-tout button:hover{text-decoration:underline;}
   .bib-filtres{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:22px;}
   .bib-filtres input, .bib-filtres select{
     padding:11px 14px; border:1.5px solid var(--line); border-radius:10px;
@@ -166,6 +199,10 @@
   // depuis l'écran d'administration.
   let dossiers = [];
   let tousLesLivres = [];
+  // Les dossiers que l'utilisateur a dépliés lui-même. Le rendu étant
+  // refait à chaque frappe dans la recherche, sans cette mémoire tout se
+  // refermerait sous ses doigts.
+  const ouverts = new Set();
 
   async function chargerDossiers() {
     const { data, error } = await supabaseClient
@@ -233,6 +270,12 @@
     if (vise) {
       const btn = document.querySelector('.btn-view[data-id="' + CSS.escape(vise) + '"]');
       if (btn) {
+        // Le document est dans un dossier REPLIÉ : on déplie le chemin
+        // qui y mène (sous-dossier puis dossier), sinon le défilement
+        // viserait un élément invisible et le visionneur s'ouvrirait
+        // dans une boîte fermée.
+        let d = btn.closest("details");
+        while (d) { d.open = true; ouverts.add(d.dataset.cle); d = d.parentElement && d.parentElement.closest("details"); }
         btn.closest(".book-item").scrollIntoView({ block: "center" });
         toggleViewer(btn);
       }
@@ -337,10 +380,11 @@
     const groupes = dossiers
       .filter(d => !d.parent_id)
       .map(d => ({
+        cle: d.id,
         nom: d.nom,
         livres: livresDe(d.id),
         sous: sousDossiersDe(d.id)
-                .map(s => ({ nom: s.nom, livres: livresDe(s.id) }))
+                .map(s => ({ cle: s.id, nom: s.nom, livres: livresDe(s.id) }))
                 .filter(s => s.livres.length),
       }))
       .filter(g => g.livres.length || g.sous.length);
@@ -349,7 +393,7 @@
     // taire reviendrait à le faire disparaître de la bibliothèque parce
     // que son dossier a été supprimé.
     if (livresDe("").length) {
-      groupes.push({ nom: "Autres documents", livres: livresDe(""), sous: [] });
+      groupes.push({ cle: "autres", nom: "Autres documents", livres: livresDe(""), sous: [] });
     }
 
     const carte = (book) => `
@@ -372,17 +416,48 @@
             </div>
           `;
 
-    listEl.innerHTML = groupes.map(g => `
-        <div class="bib-section">
-          <p class="bib-section-title">${esc(g.nom)}</p>
-          <div class="book-grille">${g.livres.map(carte).join("")}</div>
-          ${g.sous.map(s => `
-            <div class="bib-sous-section">
-              <p class="bib-sous-titre">${esc(s.nom)}</p>
-              <div class="book-grille">${s.livres.map(carte).join("")}</div>
-            </div>`).join("")}
-        </div>
+    // Tout est REPLIÉ au départ. On déplie d'office quand l'utilisateur a
+    // déjà dit ce qu'il cherche - une recherche tapée, un dossier
+    // choisi - : lui rendre une liste de titres fermés à ce moment-là
+    // serait une étape de plus pour rien. Les dossiers rouverts à la main
+    // sont conservés d'un affichage à l'autre (voir ouverts).
+    const q = normaliserRecherche(document.getElementById("bibRecherche").value);
+    const filtre = document.getElementById("bibDossier").value;
+    const deplierTout = !!q || !!filtre;
+    const estOuvert = (cle) => deplierTout || ouverts.has(cle);
+    const nb = (g) => g.livres.length + g.sous.reduce((n, s) => n + s.livres.length, 0);
+
+    listEl.innerHTML = `
+      <div class="bib-tout">
+        <button type="button" id="bibToutOuvrir">Tout déplier</button>
+        <button type="button" id="bibToutFermer">Tout replier</button>
+      </div>` + groupes.map(g => `
+        <details class="bib-section" data-cle="${esc(g.cle)}"${estOuvert(g.cle) ? " open" : ""}>
+          <summary class="bib-section-title">${esc(g.nom)}<span class="bib-section-compte">${nb(g)} document(s)</span></summary>
+          <div class="bib-section-corps">
+            ${g.livres.length ? `<div class="book-grille">${g.livres.map(carte).join("")}</div>` : ""}
+            ${g.sous.map(s => `
+              <details class="bib-sous-section" data-cle="${esc(s.cle)}"${estOuvert(s.cle) ? " open" : ""}>
+                <summary class="bib-sous-titre">${esc(s.nom)}<span class="bib-section-compte">${s.livres.length}</span></summary>
+                <div class="bib-sous-corps"><div class="book-grille">${s.livres.map(carte).join("")}</div></div>
+              </details>`).join("")}
+          </div>
+        </details>
       `).join("");
+
+    // Mémoriser ce que l'utilisateur ouvre ou ferme, pour que taper une
+    // lettre dans la recherche ne referme pas tout derrière lui.
+    listEl.querySelectorAll("details[data-cle]").forEach(d => {
+      d.addEventListener("toggle", () => {
+        if (d.open) ouverts.add(d.dataset.cle); else ouverts.delete(d.dataset.cle);
+      });
+    });
+    document.getElementById("bibToutOuvrir").addEventListener("click", () => {
+      listEl.querySelectorAll("details[data-cle]").forEach(d => { d.open = true; });
+    });
+    document.getElementById("bibToutFermer").addEventListener("click", () => {
+      listEl.querySelectorAll("details[data-cle]").forEach(d => { d.open = false; });
+    });
 
     listEl.querySelectorAll(".btn-view").forEach(btn => {
       btn.addEventListener("click", () => toggleViewer(btn));
