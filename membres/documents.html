@@ -94,6 +94,8 @@
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+  /* Document HTML importe, en plein ecran : la boite defile, la barre reste. */
+  .doc-viewer.plein .doc-html{flex:1;min-height:0;overflow:auto;background:var(--paper);padding:20px clamp(16px,4vw,48px) 60px;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -151,8 +153,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/lecteur-pdf.js"></script>
+<script src="../assets/js/import-html.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  let contenus = {};
   const DOCUMENTS_BUCKET = "documents-reserves";
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
@@ -182,7 +186,7 @@
     }
     const { data, error } = await supabaseClient
       .from("restricted_articles")
-      .select("id,title,excerpt,file_path,created_at")
+      .select("id,title,excerpt,file_path,content,created_at")
       .eq("category", "document")
       .order("created_at", { ascending: false });
 
@@ -196,6 +200,11 @@
       return;
     }
 
+    // Le contenu HTML importe (assets/js/import-html.js) est garde par
+    // identifiant : il s'affiche en plein ecran, comme un PDF, quand le
+    // document n'a pas de fichier - un PV ou un rapport rediges en HTML.
+    contenus = {};
+    data.forEach(doc => { if (doc.content) contenus[doc.id] = doc.content; });
     listEl.innerHTML = data.map(doc => `
       <div class="doc-item" data-id="${esc(doc.id)}">
         <div class="doc-row">
@@ -204,7 +213,7 @@
             ${doc.excerpt ? `<div class="doc-excerpt">${esc(doc.excerpt)}</div>` : ""}
             <div class="doc-date">${formatDate(doc.created_at)}</div>
           </div>
-          <button class="btn-view" data-path="${esc(doc.file_path || "")}" data-id="${esc(doc.id)}">Consulter</button>
+          <button class="btn-view" data-path="${esc(doc.file_path || "")}" data-id="${esc(doc.id)}" data-html="${doc.content && /^\s*(<style[\s>]|<div class="html-importe")/i.test(doc.content) ? "1" : ""}">Consulter</button>
         </div>
         <div class="doc-viewer" id="viewer-${esc(doc.id)}" style="display:none;"></div>
       </div>
@@ -218,7 +227,8 @@
   async function toggleViewer(btn) {
     const path = btn.dataset.path;
     const viewer = document.getElementById("viewer-" + btn.dataset.id);
-    if (!path) { alert("Aucun fichier associé à ce document."); return; }
+    const html = btn.dataset.html ? contenus[btn.dataset.id] : null;
+    if (!path && !html) { alert("Aucun fichier associé à ce document."); return; }
 
     const isOpen = viewer.style.display !== "none";
     if (isOpen) {
@@ -227,6 +237,24 @@
       viewer.classList.remove("plein");
       document.body.classList.remove("lecture-ouverte");
       btn.textContent = "Consulter";
+      return;
+    }
+
+    // Document redige en HTML (import) et sans PDF : on l'affiche tel
+    // quel, en plein ecran comme un PDF. Le contenu est deja confine et
+    // nettoye par l'import ; seule l'administration ecrit ce champ.
+    if (!path && html) {
+      const titreDoc = btn.closest(".doc-item").querySelector(".doc-title").textContent;
+      viewer.innerHTML =
+        `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titreDoc)}</span>`
+        + `<button type="button" class="btn-view lecteur-fermer">Fermer</button></div>`
+        + `<div class="doc-html">${html}</div>`;
+      viewer.style.display = "";
+      viewer.classList.add("plein");
+      document.body.classList.add("lecture-ouverte");
+      viewer.querySelector(".lecteur-fermer").addEventListener("click", () => toggleViewer(btn));
+      if (typeof rendreSommaireDepliant === "function") rendreSommaireDepliant(viewer.querySelector(".doc-html"));
+      btn.textContent = "Fermer";
       return;
     }
 

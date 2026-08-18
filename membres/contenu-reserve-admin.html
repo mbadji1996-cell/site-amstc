@@ -7,7 +7,7 @@
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contenu réservé - Gestion - Espace Membres - AMSTC</title>
+<title>Documents officiels - Gestion - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://amstc.org/membres/contenu-reserve-admin.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -87,6 +87,10 @@
   .empty, .loading{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+  .import-html-bloc{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0 4px;background:var(--paper-alt);}
+  .import-html-bloc>label{margin-top:0;}
+  .import-html-ligne{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .import-html-ligne input[type=file]{font-size:0.86rem;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
@@ -127,22 +131,20 @@
 <div class="wrap" id="pageContent" style="display:none;">
   <a class="back" href="admin.html">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
-  <h1>Contenu réservé aux membres</h1>
-  <p class="intro">Ce contenu n'est jamais publié dans le dépôt public : il n'est visible que par les membres approuvés, connectés. Utilisable pour une Formation, une Réalisation, ou un document officiel.</p>
+  <h1>Documents officiels</h1>
+  <p class="intro">Statuts, règlement intérieur, procès-verbaux, rapports. Ces documents ne sont jamais publiés dans le dépôt public : ils ne sont visibles que par les membres approuvés, connectés, dans l'onglet <strong>Documents officiels</strong>.</p>
 
   <details class="card" id="formCard">
-    <summary><span class="card-summary-icon">+</span> <span id="formSummaryLabel">Nouveau contenu</span></summary>
+    <summary><span class="card-summary-icon">+</span> <span id="formSummaryLabel">Nouveau document</span></summary>
     <form id="itemForm">
       <input type="hidden" id="itemId" value="">
       <input type="hidden" id="existingFilePath" value="">
 
-      <label for="category">Type de contenu</label>
-      <select id="category" required>
-        <option value="" disabled selected>Choisir...</option>
-        <option value="formation">Formation</option>
-        <option value="actualite">Réalisation</option>
-        <option value="document">Document officiel (Statuts, Règlement intérieur, rapports...)</option>
-      </select>
+      <!-- Plus de type a choisir : cet ecran ne publie que des documents
+           officiels. Formations et realisations se gerent dans le CMS ; les
+           anciens contenus de ces types, s'il en reste, sont toujours listes
+           ci-dessous avec leur etiquette et restent modifiables. -->
+      <input type="hidden" id="category" value="document">
 
       <label for="title">Titre</label>
       <input type="text" id="title" required>
@@ -161,14 +163,26 @@
         <input type="url" id="video_url" placeholder="https://www.youtube.com/watch?v=...">
       </div>
 
-      <div id="documentField" style="display:none;">
-        <label for="document_file">Fichier (PDF, facultatif si vous en avez déjà envoyé un)</label>
+      <div id="documentField">
+        <label for="document_file">Fichier PDF</label>
         <input type="file" id="document_file" accept="application/pdf">
-        <p class="field-hint" id="currentFileHint"></p>
+        <p class="field-hint" id="currentFileHint">Le PDF est l'objet principal du document. Facultatif seulement si vous importez un HTML ci-dessous, ou si vous en avez déjà envoyé un.</p>
       </div>
 
-      <label for="content" id="contentLabel">Contenu complet (Markdown, visible des membres uniquement)</label>
+      <label for="content" id="contentLabel">Note d'accompagnement ou contenu complet (facultatif)</label>
       <div id="content"></div>
+
+      <!-- Import d'un fichier HTML complet (assets/js/import-html.js) : un
+           rapport ou un PV redige en HTML, avec sa mise en page, ses images
+           et son sommaire, arrive tel quel - le meme bouton que le Daara. -->
+      <div class="import-html-bloc">
+        <label>Ou importer un fichier HTML</label>
+        <div class="import-html-ligne">
+          <input type="file" id="fImportHtml" accept=".html,.htm,text/html">
+          <span class="field-hint" id="fImportEtat"></span>
+        </div>
+        <p class="field-hint">Un document rédigé ailleurs, avec sa mise en page, ses images et son sommaire. Le style est conservé et confiné au contenu ; scripts et polices externes sont écartés. Il remplace le champ ci-dessus ; le PDF devient facultatif.</p>
+      </div>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" id="submitBtn">Publier</button>
@@ -197,6 +211,7 @@
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script src="https://uicdn.toast.com/editor/latest/i18n/fr-fr.js"></script>
 <script src="../assets/js/rich-editor.js"></script>
+<script src="../assets/js/import-html.js"></script>
 <script>
   let currentUserId = null;
   let contentEditor = null;
@@ -251,17 +266,13 @@
   const formSummaryLabel = document.getElementById("formSummaryLabel");
 
 
+  // Cet ecran ne publie que des documents : la couverture et la video
+  // n'ont pas lieu d'etre, le champ PDF est toujours la.
   function updateFieldsForCategory() {
-    const cat = categorySelect.value;
-    const isDocument = cat === "document";
-    coverField.style.display = isDocument ? "none" : "";
-    videoField.style.display = (cat === "formation" || cat === "actualite") ? "" : "none";
-    documentField.style.display = isDocument ? "" : "none";
-    contentLabel.textContent = isDocument
-      ? "Description (facultative, visible des membres uniquement)"
-      : "Contenu complet (Markdown, visible des membres uniquement)";
+    coverField.style.display = "none";
+    videoField.style.display = "none";
+    documentField.style.display = "";
   }
-  categorySelect.addEventListener("change", updateFieldsForCategory);
 
   function resetForm() {
     form.reset();
@@ -360,8 +371,10 @@
     const fileInput = document.getElementById("document_file");
     const newFile = fileInput.files[0];
 
-    if (category === "document" && !newFile && !existingFilePath) {
-      messageEl.textContent = "Veuillez choisir un fichier PDF pour un document officiel.";
+    const corps = contentEditor.getMarkdown().trim();
+    const htmlImporte = /^\s*(<style[\s>]|<div class="html-importe")/i.test(corps);
+    if (category === "document" && !newFile && !existingFilePath && !htmlImporte) {
+      messageEl.textContent = "Choisissez un fichier PDF, ou importez un fichier HTML.";
       messageEl.className = "form-message error";
       submitBtn.disabled = false;
       return;
@@ -437,6 +450,40 @@
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
     window.location.href = "connexion.html";
+  });
+
+  // ===== Import d'un fichier HTML complet =====
+  // Le HTML confine est pose dans l'editeur en mode Markdown, qui l'accepte
+  // sans le retoucher ; les images encodees vont dans le bucket public des
+  // couvertures, sous importes/ ; le titre est propose s'il est vide.
+  document.getElementById('fImportHtml').addEventListener('change', async (ev) => {
+    const fichier = ev.target.files && ev.target.files[0];
+    const etat = document.getElementById('fImportEtat');
+    if (!fichier) return;
+    etat.textContent = 'Lecture…';
+    try {
+      const r = await importerHtml(fichier, {
+        deposerImage: async (blob, nom) => {
+          const chemin = 'importes/' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '-' + nom;
+          const { error } = await supabaseClient.storage.from('couvertures')
+            .upload(chemin, blob, { contentType: blob.type, upsert: false });
+          if (error) throw error;
+          return supabaseClient.storage.from('couvertures').getPublicUrl(chemin).data.publicUrl;
+        },
+      });
+      if (contentEditor.changeMode) contentEditor.changeMode('markdown', true);
+      contentEditor.setMarkdown(r.html);
+      const t = document.getElementById('title');
+      if (!t.value.trim() && r.titre) t.value = r.titre;
+      const ex = document.getElementById('excerpt');
+      if (!ex.value.trim() && r.resume) ex.value = r.resume.slice(0, 200);
+      etat.textContent = 'Importé : ' + r.images + ' image(s)' + (r.imagesExtraites ? ', ' + r.imagesExtraites + ' déposée(s)' : '')
+        + (r.avertissements.length ? '. ' + r.avertissements.join(' ') : '.');
+    } catch (e) {
+      etat.textContent = 'Échec : ' + (e.message || e);
+    } finally {
+      ev.target.value = '';
+    }
   });
 </script>
 
