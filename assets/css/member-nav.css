@@ -9,6 +9,49 @@
 .member-tab:hover{color:rgba(255,255,255,0.8);}
 .member-tab.active{color:#F8B718;border-bottom-color:#F8B718;}
 
+/* ===== Onglet a sous-menu (« Formation ») =====
+   Treize onglets debordaient la barre. Formations, Daara, Enseignements
+   medicaux et Bibliotheque sont quatre facettes du meme sujet : ils
+   passent sous un parent, qui s'ouvre au survol comme au clic - le
+   survol seul exclut le tactile, le clic seul alourdit la souris. */
+.member-groupe{position:relative;flex-shrink:0;}
+/* Un <button> porte les couleur, police et fond par defaut du navigateur :
+   sans ce rappel explicite, le parent s'affichait en noir sur fond vert.
+   Les regles sont ancrees sous .member-tabs pour passer devant le style
+   local d'une page. */
+.member-tabs .member-tab-parent{
+  -webkit-appearance:none;appearance:none;background:none;border:0;
+}
+.member-tabs .member-tab-parent{
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;text-transform:uppercase;
+  letter-spacing:0.06em;color:rgba(255,255,255,0.45);padding:14px 14px;
+  border:0;border-bottom:2px solid transparent;background:none;cursor:pointer;
+  white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:color .18s;
+}
+.member-tabs .member-tab-parent:hover{color:rgba(255,255,255,0.8);}
+.member-tabs .member-tab-parent.active{color:#F8B718;border-bottom-color:#F8B718;}
+.member-tabs .member-tab-parent:focus-visible{outline:2px solid #F8B718;outline-offset:-3px;}
+.member-tabs .mt-fleche{
+  width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg) translateY(-1px);transition:transform .18s;flex:none;
+}
+.member-tabs .member-groupe.ouvert .mt-fleche{transform:rotate(-135deg) translateY(-2px);}
+
+.member-tabs .member-sous-menu{
+  display:none;position:absolute;top:100%;left:0;z-index:60;min-width:230px;
+  background:#06441C;border:1px solid rgba(255,255,255,0.14);border-top:0;
+  border-radius:0 0 10px 10px;padding:6px;box-shadow:0 12px 28px rgba(0,0,0,0.32);
+}
+.member-tabs .member-groupe.ouvert .member-sous-menu,
+.member-tabs .member-groupe:hover .member-sous-menu{display:block;}
+.member-tabs .member-sous-lien{
+  display:block;padding:10px 12px;border-radius:7px;text-decoration:none;
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;text-transform:uppercase;
+  letter-spacing:0.06em;color:rgba(255,255,255,0.6);white-space:nowrap;
+}
+.member-tabs .member-sous-lien:hover,.member-tabs .member-sous-lien:focus-visible{color:#FFFFFF;background:rgba(255,255,255,0.08);}
+.member-tabs .member-sous-lien.active{color:#F8B718;background:rgba(248,183,24,0.12);}
+
 /* Menu hamburger des onglets de l'espace membres (mobile).
    Partagé par toutes les pages membres qui portent <nav class="member-tabs">.
    Amélioration progressive : sans JavaScript, la rangée d'onglets à
@@ -67,6 +110,17 @@
     color:rgba(255,255,255,0.6); text-decoration:none;
   }
   .member-nav-panel a.active{color:#F8B718; background:rgba(248,183,24,0.1);}
+  /* Un parent (« Formation ») n'est pas un lien : c'est un intitule de
+     groupe, et ses enfants sont decales pour que la hierarchie se lise. */
+  .member-nav-panel .mn-groupe{
+    padding:12px 14px 4px; font-family:'JetBrains Mono',monospace; font-size:0.66rem;
+    text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.38);
+  }
+  .member-nav-panel a.mn-enfant{padding-left:28px;}
+  .member-nav-panel a.mn-enfant::before{
+    content:""; display:inline-block; width:10px; height:1px; background:rgba(255,255,255,0.28);
+    vertical-align:middle; margin-right:8px;
+  }
   .member-nav-panel a:hover, .member-nav-panel a:focus{color:#FFFFFF; background:rgba(255,255,255,0.06);}
 }
 
