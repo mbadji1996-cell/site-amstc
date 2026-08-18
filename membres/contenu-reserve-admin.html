@@ -294,6 +294,11 @@
       .from("restricted_articles")
       .select("*")
       .in("category", ["formation", "actualite", "document"])
+      // Les contenus reserves DEPUIS LE CMS (phase 95) portent un slug :
+      // leur maitre est Decap, pas cet ecran. Les lister ici inviterait a
+      // les modifier a deux endroits - et un « Supprimer » ici casserait
+      // la lecture d'une fiche qui existe toujours dans le depot.
+      .is("slug", null)
       .order("created_at", { ascending: false });
 
     if (error) {
