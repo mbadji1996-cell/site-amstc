@@ -114,3 +114,19 @@ select proname from pg_proc
  where proname in ('deposer_contenu_reserve', 'lire_contenu_reserve') order by proname;
 select slug, category, title, length(content) as taille
   from public.restricted_articles where slug is not null order by created_at desc limit 10;
+
+-- ===== 4. Pas de doublon dans les listes =====
+-- Les pages publiques MÉLANGENT deux sources : l'index du dépôt (où une
+-- fiche réservée du CMS figure déjà, avec son drapeau) et cette vue des
+-- « aperçus réservés » créés en base. Un contenu venu du CMS a un slug ;
+-- il ne doit pas être présenté une seconde fois par la vue. Constaté au
+-- premier essai : l'article de test apparaissait deux fois.
+create or replace view public.restricted_articles_teasers as
+  select id, category, title, excerpt, cover_image, created_at
+  from public.restricted_articles
+  where slug is null;
+
+grant select on public.restricted_articles_teasers to anon, authenticated;
+
+-- Contrôle : la vue ne doit plus lister les fiches venues du CMS.
+select count(*) as apercus_hors_cms from public.restricted_articles_teasers;
