@@ -86,7 +86,7 @@
 .defilement {
   position: fixed;
   right: 20px;
-  bottom: 80px;            /* 20 de marge + 48 du bouton de thème + 12 d'écart */
+  bottom: 80px;            /* valeur de départ ; defilement.js recalcule d'après les boutons présents (thème, recherche) */
   z-index: 998;
   display: flex;
   flex-direction: column;
@@ -97,7 +97,6 @@
   transition: opacity .2s ease, transform .2s ease;
 }
 .defilement.visible { opacity: 1; pointer-events: auto; transform: none; }
-.defilement.defilement-seul { bottom: 20px; }
 .defilement-btn {
   width: 48px;
   height: 48px;
@@ -118,6 +117,6 @@
 .defilement-btn.inutile { opacity: .28; pointer-events: none; }
 :root[data-theme="dark"] .defilement-btn { color: var(--text-accent); }
 @media (max-width: 480px) {
-  .defilement { right: 14px; bottom: 68px; }
+  .defilement { right: 14px; }
   .defilement-btn { width: 44px; height: 44px; }
 }

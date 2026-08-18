@@ -49,15 +49,31 @@
   boite.appendChild(haut);
   boite.appendChild(bas);
 
+  // Le coin bas-droit est partagé : bouton de thème partout, bouton de
+  // recherche sur le site public. Les flèches se posent AU-DESSUS du plus
+  // haut des deux, mesuré - une valeur fixe les faisait chevaucher la
+  // recherche. Recalculé au redimensionnement et quand un bouton apparaît
+  // après nous (les deux se créent par script).
+  function caler() {
+    var haut = 0;
+    var autres = document.querySelectorAll(".theme-toggle-btn, .site-search-btn");
+    for (var i = 0; i < autres.length; i++) {
+      var r = autres[i].getBoundingClientRect();
+      if (r.width && r.height) haut = Math.max(haut, window.innerHeight - r.top);
+    }
+    var ecart = window.innerWidth <= 480 ? 16 : 18;   // mesure a l ecran : 12 net une fois la boite posee
+    var marge = window.innerWidth <= 480 ? 14 : 20;
+    boite.style.bottom = (haut ? haut + ecart : marge) + "px";
+  }
   function poser() {
     if (!document.body) return;
     document.body.appendChild(boite);
-    // Le bouton de thème, s'il existe, est déjà en bas à droite : on lui
-    // laisse sa place et on se met juste au-dessus. S'il manque, on
-    // prend le coin.
-    var theme = document.querySelector(".theme-toggle-btn");
-    if (!theme) boite.classList.add("defilement-seul");
+    caler();
     majEtat();
+    // Les autres boutons flottants peuvent se poser après nous : on
+    // recale une ou deux fois, puis à chaque redimensionnement.
+    setTimeout(caler, 300); setTimeout(caler, 1500);
+    window.addEventListener("resize", caler);
   }
 
   var tick = false;

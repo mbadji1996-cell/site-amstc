@@ -43,17 +43,21 @@
   body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
   a{color:inherit; text-decoration:none;}
   img{max-width:100%; display:block;}
-  .wrap{max-width:820px; margin:0 auto; padding:0 28px;}
+  .wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   h1,h2{font-family:var(--display); font-weight:600; color:var(--text-heading); line-height:1.15;}
   header{padding:24px 0; border-bottom:1px solid var(--line); background:var(--green-deep);}
-  .header-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .header-wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   .logo-img{height:42px;filter:brightness(0) invert(1);}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:40px 0 18px;}
   .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
   .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
   h1{font-size:clamp(1.9rem,4vw,2.6rem); margin-bottom:18px;}
   .intro{font-size:1.05rem; color:var(--text-muted); max-width:60ch; margin-bottom:44px;}
+  /* Les cartes (montants, coordonnees, contact) se rangent en grille sur
+     grand ecran plutot que de s'etirer chacune sur 1400 px. */
   .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
+  .cards-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(420px,100%), 1fr)); gap:22px; align-items:start;}
+  .cards-grid .card{margin-bottom:0;}
   .card h2{font-size:1.25rem; margin-bottom:14px;}
   .card p{color:var(--text-muted); font-size:0.98rem; margin-bottom:10px;}
   .kv{font-family:var(--mono); font-size:0.9rem; color:var(--ink); background:var(--paper-alt); border-radius:8px; padding:14px 16px; margin-top:10px;}
@@ -103,6 +107,7 @@
     <p class="jauge-percent" id="jauge-percent"></p>
   </div>
 
+  <div class="cards-grid">
   <div class="card">
     <h2 id="cms-bank-title">Virement bancaire</h2>
     <div class="kv" id="cms-bank-details"></div>
@@ -123,6 +128,7 @@
     <h2 id="cms-institution-title">Don institutionnel ou partenariat</h2>
     <p id="cms-institution-text">Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.</p>
     <a href="mailto:contact@amstc.org" class="btn">Écrire à contact@amstc.org</a>
+  </div>
   </div>
 
   <p class="trust" id="cms-trust-note">Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA. Un reçu peut être délivré sur demande pour tout don.</p>
