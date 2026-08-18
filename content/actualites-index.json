@@ -1,20 +1,5 @@
 [
   {
-    "slug": "2026-08-18-test-1234",
-    "title": "test 1234",
-    "date": "2026-08-18",
-    "date_debut": "",
-    "date_fin": "",
-    "excerpt": "test",
-    "reserve": true,
-    "image": "",
-    "statut": "",
-    "projet": "",
-    "ordre": "",
-    "lieu": "",
-    "lien": ""
-  },
-  {
     "slug": "2026-07-18-lancement-de-notre-plateforme-de-gestion-des-données-de-nos-campagnes-de-consultations-gratuites",
     "title": "Lancement de notre plateforme de gestion des données de nos campagnes de consultations gratuites",
     "date": "2026-07-18T20:00:00.000+00:00",
