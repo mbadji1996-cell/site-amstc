@@ -21,11 +21,31 @@
     (function (groupe) {
       var parent = groupe.querySelector('.member-tab-parent');
       if (!parent) return;
+      var sous = groupe.querySelector('.member-sous-menu');
+      // Le sous-menu est en position:fixed (voir member-nav.css) : on le
+      // pose sous l'onglet au moment de l'ouvrir, et on le suit si la page
+      // defile ou change de taille tant qu'il est ouvert.
+      function placer() {
+        if (!sous || !groupe.classList.contains('ouvert')) return;
+        var r = parent.getBoundingClientRect();
+        sous.style.top = Math.round(r.bottom) + 'px';
+        var gauche = Math.round(r.left);
+        // Ne pas sortir de l'ecran a droite.
+        var largeur = sous.offsetWidth || 230;
+        if (gauche + largeur > window.innerWidth - 8) gauche = Math.max(8, window.innerWidth - 8 - largeur);
+        sous.style.left = gauche + 'px';
+      }
       parent.addEventListener('click', function (e) {
         e.stopPropagation();
         var ouvert = groupe.classList.toggle('ouvert');
         parent.setAttribute('aria-expanded', String(ouvert));
+        placer();
       });
+      window.addEventListener('scroll', placer, { passive: true });
+      window.addEventListener('resize', placer);
+      // Un clic dans le sous-menu ne doit pas etre pris pour un clic
+      // « ailleurs » qui refermerait avant que le lien ne parte.
+      if (sous) sous.addEventListener('click', function (e) { e.stopPropagation(); });
     })(groupes[g]);
   }
   // Un clic ailleurs referme : sans cela le panneau reste ouvert par-dessus

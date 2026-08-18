@@ -32,13 +32,18 @@
 .member-tabs .member-tab-parent.active{color:#F8B718;border-bottom-color:#F8B718;}
 .member-tabs .member-tab-parent:focus-visible{outline:2px solid #F8B718;outline-offset:-3px;}
 .member-tabs .mt-fleche{
-  width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
-  transform:rotate(45deg) translateY(-1px);transition:transform .18s;flex:none;
+  width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg);margin-top:-3px;transition:transform .18s;flex:none;
 }
-.member-tabs .member-groupe.ouvert .mt-fleche{transform:rotate(-135deg) translateY(-2px);}
+.member-tabs .member-groupe.ouvert .mt-fleche{transform:rotate(-135deg);margin-top:3px;}
 
 .member-tabs .member-sous-menu{
-  display:none;position:absolute;top:100%;left:0;z-index:60;min-width:230px;
+  /* position:fixed et non absolute : la rangee d'onglets defile en
+     horizontal (overflow-x:auto), ce qui force overflow-y et COUPE tout
+     enfant absolu qui depasse - le sous-menu s'ouvrait dans une boite de
+     deux pixels de haut, invisible, avec une barre de defilement. En
+     fixed il echappe a la boite ; member-nav.js le place sous l'onglet. */
+  display:none;position:fixed;z-index:60;min-width:230px;
   background:#06441C;border:1px solid rgba(255,255,255,0.14);border-top:0;
   border-radius:0 0 10px 10px;padding:6px;box-shadow:0 12px 28px rgba(0,0,0,0.32);
 }
