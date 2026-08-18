@@ -61,6 +61,19 @@ Allez sur `https://amstc.org/admin`, cliquez **Login with GitHub**, autorisez l'
 - Les deux paragraphes de la section "Notre mission"
 - Publication/édition/suppression d'articles dans "Actualités", affichés automatiquement sur la page d'accueil (3 derniers) et sur `actualites.html`
 
+## Réserver une réalisation ou une formation aux membres
+
+Dans Decap, chaque réalisation et chaque formation porte une case **« Réservé aux membres »**. Cochée :
+
+- **la vignette reste publique** - titre, résumé, image, date - avec un badge 🔒 sur les listes, la page d'accueil et la page de partage ;
+- **le contenu complet n'est lisible que connecté**, membre approuvé et actif. Un visiteur voit la vignette et une invitation à se connecter (qui le ramène sur la page après connexion) ou à s'inscrire ; un compte en attente est prévenu qu'il doit être validé.
+
+Ce que fait le workflow (`scripts/reserver-contenus.js`, lancé avant la construction des index) : dès qu'il rencontre une fiche cochée dont le corps est encore présent, il **déplace le corps en base** (`deposer_contenu_reserve`, phase 95) et **réécrit le fichier sans lui**. Le texte réservé n'est donc jamais servi par GitHub Pages - un fichier du dépôt étant public quoi qu'en dise la page qui l'affiche. Entre l'enregistrement dans Decap et le passage du workflow (quelques dizaines de secondes), le corps est brièvement dans le dépôt : n'y mettez pas de secret d'État, mais pour un compte rendu de réunion c'est acceptable.
+
+Prérequis : le secret **`SUPABASE_SERVICE_ROLE_KEY`** dans GitHub › Settings › Secrets. Sans lui, le script refuse de vider quoi que ce soit et échoue en le disant : on ne perd jamais un texte.
+
+**Décocher la case ne restaure pas le corps dans le fichier** : il est en base, le fichier n'en a plus. Pour rendre un contenu public à nouveau, recopier le corps depuis la base (table `restricted_articles`, colonne `slug`).
+
 ## Importer un fichier HTML complet
 
 Un article, une formation, un projet ou une étape peut être publié à partir d'une **page HTML rédigée ailleurs** - avec sa mise en page, ses encadrés, ses tableaux et ses images encodées. Ouvrez `admin/importer.html` (bouton « Importer un fichier HTML » dans la barre de Decap, ou lien depuis le Centre d'administration), déposez le fichier, vérifiez l'aperçu, publiez.
