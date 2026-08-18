@@ -79,12 +79,14 @@ function rpc(fonction, corps) {
   // D'abord repérer ce qu'il y a à faire, pour ne pas exiger de secret
   // quand il n'y a rien à réserver.
   const aFaire = [];
+  const slugsPresents = [];   // toutes les fiches du depot, reservees ou non
   for (const [dossier, categorie] of Object.entries(DOSSIERS)) {
     const dir = path.join(ROOT, 'content', dossier);
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.md'))) {
       const chemin = path.join(dir, f);
       const brut = fs.readFileSync(chemin, 'utf8');
+      slugsPresents.push(f.replace(/\.md$/, ''));
       const fm = parseFrontMatter(brut);
       if (!fm || !estVrai(fm.data.reserve)) continue;
       const corps = fm.corps.trim();
@@ -124,4 +126,24 @@ function rpc(fonction, corps) {
     }
   }
   console.log(`Contenus réservés : ${ok}/${aFaire.length} fiche(s) traitée(s).`);
-})();
+})().then(nettoyer);
+
+// ===== Nettoyage : une fiche supprimée dans Decap laisse sa copie en base =====
+// On envoie la liste des slugs encore présents ; la base retire ceux qui
+// n'y sont plus. Sans clé on ne fait rien - le nettoyage attendra.
+async function nettoyer() {
+  if (!SERVICE_KEY) return;
+  const presents = [];
+  for (const dossier of Object.keys(DOSSIERS)) {
+    const dir = path.join(ROOT, 'content', dossier);
+    if (!fs.existsSync(dir)) continue;
+    for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.md'))) presents.push(f.replace(/\.md$/, ''));
+  }
+  if (!presents.length) return;   // dépôt mal lu ? on ne touche à rien
+  try {
+    const n = await rpc('nettoyer_contenus_reserves', { p_slugs_presents: presents });
+    if (Number(n) > 0) console.log(`Contenus réservés : ${n} ligne(s) orpheline(s) retirée(s) de la base.`);
+  } catch (e) {
+    console.error('Contenus réservés : nettoyage impossible - ' + e.message);
+  }
+}

@@ -182,6 +182,11 @@
           .from("restricted_articles")
           .select("id,title,excerpt,cover_image,created_at")
           .eq("category", "formation")
+          // Les fiches reservees DEPUIS LE CMS (phase 95) ont un slug et
+          // figurent deja dans l'index public avec leur drapeau : les
+          // relire ici les afficherait deux fois - et laisserait paraitre
+          // une fiche supprimee de Decap tant que sa ligne traine en base.
+          .is("slug", null)
           .order("created_at", { ascending: false });
         restricted = data || [];
       } catch (e) { /* contenu réservé indisponible, on continue quand même */ }

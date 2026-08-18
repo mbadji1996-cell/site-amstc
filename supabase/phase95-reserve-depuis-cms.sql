@@ -130,3 +130,37 @@ grant select on public.restricted_articles_teasers to anon, authenticated;
 
 -- Contrôle : la vue ne doit plus lister les fiches venues du CMS.
 select count(*) as apercus_hors_cms from public.restricted_articles_teasers;
+
+-- ===== 5. Nettoyer les lignes dont le fichier a disparu =====
+-- Supprimer une fiche dans Decap ne supprime pas sa copie en base : elle
+-- restait la, orpheline, et les listes qui lisent la table la montraient
+-- encore. Le workflow appelle cette fonction avec la liste des slugs
+-- ENCORE PRESENTS dans le depot ; tout slug de la base absent de la
+-- liste est retire. Les lignes sans slug (documents officiels, anciens
+-- contenus crees en base) ne sont jamais touchees.
+create or replace function public.nettoyer_contenus_reserves(p_slugs_presents text[])
+returns int
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_n int;
+begin
+  -- Garde-fou : une liste vide signifie presque toujours un depot mal lu,
+  -- pas « il ne reste aucune fiche ». On refuse plutot que de tout effacer.
+  if p_slugs_presents is null or array_length(p_slugs_presents, 1) is null then
+    return 0;
+  end if;
+  delete from public.restricted_articles
+   where slug is not null
+     and not (slug = any(p_slugs_presents));
+  get diagnostics v_n = row_count;
+  return v_n;
+end;
+$$;
+
+revoke all on function public.nettoyer_contenus_reserves(text[]) from public, anon, authenticated;
+grant execute on function public.nettoyer_contenus_reserves(text[]) to service_role;
+
+notify pgrst, 'reload schema';
