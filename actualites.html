@@ -166,7 +166,7 @@
           <div class="card-body">
             <div class="card-header-row">
               <span class="card-date">${formatDatePeriode({ date: a._date, date_debut: a.date_debut, date_fin: a.date_fin })}</span>
-              ${a._restricted ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
+              ${(a._restricted || a.reserve) ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
             </div>
             <h3>${esc(a.title || 'Sans titre')}</h3>
             <p>${esc(a.excerpt || '')}</p>

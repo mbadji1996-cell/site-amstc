@@ -28,6 +28,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # AVANT les index : une fiche cochee « reservee aux membres » voit son
+      # corps deplace en base et retire du depot (scripts/reserver-contenus.js).
+      # Sans SUPABASE_SERVICE_ROLE_KEY le script refuse de vider quoi que ce
+      # soit et echoue bruyamment : on ne perd jamais un texte.
+      - name: Reserver aux membres les contenus marques
+        env:
+          SUPABASE_URL: https://api.amstc.org
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/reserver-contenus.js
+
       - name: Build index files
         run: node scripts/build-content-index.js
 
@@ -59,6 +69,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add content/actualites-index.json content/formations-index.json content/projets-index.json content/etapes-index.json content/evenements-index.json sitemap.xml
+          # Les fiches reservees dont le corps vient d'etre deplace en base.
+          git add content/actualites/*.md content/formations/*.md 2>/dev/null || true
           # L'etat des annonces deja diffusees : sans ce commit, chaque
           # passage repartirait de zero et reannoncerait tout.
           [ -f content/.chaine-publiees.json ] && git add -f content/.chaine-publiees.json

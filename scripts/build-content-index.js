@@ -48,6 +48,9 @@ function buildIndex(folderName) {
       date_debut: normalizeDate(data.date_debut),
       date_fin: normalizeDate(data.date_fin),
       excerpt: data.excerpt || '',
+      // Reserve aux membres : la vignette reste publique avec un cadenas ;
+      // le corps est en base (scripts/reserver-contenus.js).
+      reserve: /^(true|yes|oui|1)$/i.test(String(data.reserve || '').trim()),
       image: data.image || '',
       statut: data.statut || '',
       projet: data.projet || '',

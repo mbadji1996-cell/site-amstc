@@ -396,6 +396,7 @@ collections:
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
+      - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
       - { label: "Contenu de l'article", name: "body", widget: "markdown" }
 
   - name: "formations"
@@ -412,6 +413,7 @@ collections:
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
+      - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
       - { label: "Contenu", name: "body", widget: "markdown" }
 
   - name: "projets"

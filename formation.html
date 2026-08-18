@@ -77,6 +77,8 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script src="assets/js/import-html.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
 <link rel="stylesheet" href="assets/css/sommaire-mobile.css">
 <script>
   const REPO = "mbadji1996-cell/site-amstc";
@@ -173,6 +175,53 @@
       }
       const raw = await res.text();
       const { data, body } = parseFrontMatter(raw);
+
+      // ===== Réservé aux membres (phase 95) =====
+      // La vignette est publique ; le corps n'est pas dans ce fichier - il
+      // est en base, et ne se lit que connecté, membre approuvé. Trois
+      // cas : pas connecté -> invitation à se connecter, avec retour ici ;
+      // connecté mais pas approuvé -> le dire ; approuvé -> le corps.
+      const reserve = /^(true|yes|oui|1)$/i.test(String(data.reserve || '').trim());
+      if (reserve) {
+        document.title = (data.title || "Formation") + " - AMSTC";
+        const retour = encodeURIComponent(location.pathname.replace(/^\//, '') + location.search);
+        let corpsHtml = null, etat = "anonyme";
+        try {
+          const { data: sess } = await supabaseClient.auth.getSession();
+          if (sess && sess.session) {
+            etat = "connecte";
+            const { data: lu, error: err } = await supabaseClient.rpc("lire_contenu_reserve", { p_slug: slug });
+            const ligne = Array.isArray(lu) ? lu[0] : lu;
+            if (!err && ligne && ligne.content) { corpsHtml = rendreCorps(ligne.content); etat = "lecteur"; }
+          }
+        } catch (e) { /* sans client Supabase : on reste sur l'invitation */ }
+        content.innerHTML = `
+          <span class="art-date">${formatDatePeriode(data)}</span>
+          <span class="lock-badge" style="display:inline-block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;background:rgba(6,68,28,0.08);color:var(--green-deep);border-radius:999px;padding:4px 10px;margin:0 0 10px 10px;">🔒 Réservé aux membres</span>
+          <h1>${esc(data.title || '')}</h1>
+          <div id="partageZone" class="partage-zone"></div>
+          ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
+          ${data.excerpt ? `<p class="reserve-resume" style="font-size:1.05rem;color:var(--text-muted);margin:14px 0 22px;">${esc(data.excerpt)}</p>` : ""}
+          ${etat === "lecteur" ? `<div id="body">${corpsHtml}</div>` : `
+          <div class="reserve-porte" style="border:1.5px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:22px 24px;margin:8px 0 30px;background:var(--paper-alt);">
+            <p style="font-weight:600;color:var(--text-heading);margin:0 0 6px;">${etat === "connecte"
+              ? "Cette formation est réservée aux membres approuvés."
+              : "Cette formation est réservée aux membres de l'AMSTC."}</p>
+            <p style="color:var(--text-muted);margin:0 0 16px;">${etat === "connecte"
+              ? "Votre compte est en attente de validation, ou votre carte n'est plus valide. Vous pourrez la lire dès que votre accès sera actif."
+              : "Connectez-vous à l'espace membres pour la lire. Pas encore de compte ? L'inscription prend deux minutes."}</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              ${etat === "connecte"
+                ? `<a class="btn-reserve" href="membres/profil.html" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir mon compte</a>`
+                : `<a class="btn-reserve" href="membres/connexion.html?suite=${retour}" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Se connecter</a>
+                   <a href="membres/inscription.html" style="display:inline-block;background:var(--paper);color:var(--green-deep);font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;border:1.5px solid var(--line);">S'inscrire</a>`}
+            </div>
+          </div>`}
+        `;
+        partageInit({ conteneur: 'partageZone', prefixe: 'f', cle: 'slug' });
+        if (etat === "lecteur" && typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('body'));
+        return;
+      }
       document.title = (data.title || "Formation") + " - AMSTC";
       document.getElementById('canonical').setAttribute('href', window.location.href);
       document.getElementById('og-url').setAttribute('content', window.location.href);

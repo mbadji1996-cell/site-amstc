@@ -2559,6 +2559,7 @@
       grid.innerHTML = latest.map(a => `
         <a class="intro-card reveal" href="article.html?slug=${encodeURIComponent(a.slug)}" style="display:block;">
           <span class="num">${formatDatePeriode(a)}</span>
+          ${a.reserve ? '<span style="display:inline-block;font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;background:rgba(6,68,28,0.08);color:var(--green-deep);border-radius:999px;padding:3px 8px;margin-bottom:6px;">🔒 Réservé aux membres</span>' : ''}
           <h3>${esc(a.title || 'Sans titre')}</h3>
           <p>${esc(a.excerpt || '')}</p>
         </a>
