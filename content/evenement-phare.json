@@ -3,7 +3,7 @@
   "date_retrait": "2026-09-05T09:00",
   "sous_titre": "L'AMSTC au service de la Hadara Tidjaniya",
   "actif": true,
-  "date_debut": "2026-08-23T08:00",
+  "date_debut": "2026-08-23T14:00",
   "titre": "Couverture Médicale du Gamou de Tivaouane 2026",
   "note": "",
   "message_fin": "",
@@ -11,18 +11,12 @@
     {
       "nom": "Jour 1",
       "lieu": "",
-      "dates": "23 Août",
-      "en_cours": false
-    },
-    {
-      "nom": "Jour 2",
-      "lieu": "",
       "dates": "24 Août",
       "en_cours": false
     },
     {
       "en_cours": false,
-      "nom": "Jour 3",
+      "nom": "Jour 2",
       "lieu": "",
       "dates": "25 Août"
     }
