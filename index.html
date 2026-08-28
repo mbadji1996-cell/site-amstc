@@ -913,14 +913,24 @@
       // enregistrée : la barre reste masquée plutôt que d'aligner des zéros.
       if (!epStatsData || !(epStatsData.malades > 0)) { grid.innerHTML = ''; return; }
       const d = epStatsData;
-      const total = (d.hommes || 0) + (d.femmes || 0);
-      const repartition = total
-        ? Math.round(d.hommes / total * 100) + '% / ' + Math.round(d.femmes / total * 100) + '%'
-        : '-';
+      // Le sexe manque sur une part des fiches (registres papier repris).
+      // Les pourcentages portent donc sur les SEULES fiches renseignées, et
+      // le dénominateur est affiché avec eux : sans cela on lit « 36 % de
+      // 873 malades » alors qu'il s'agit de 36 % de 767 fiches, soit une
+      // trentaine de personnes d'écart. Le bilan PDF de campagne le
+      // précise déjà ; les deux disent maintenant la même chose.
+      const renseigne = (d.hommes || 0) + (d.femmes || 0);
+      // Un seul arrondi, l'autre est son complément : deux arrondis
+      // indépendants donnent 99 % ou 101 %, et font douter du reste.
+      const pctF = renseigne ? Math.round(d.femmes / renseigne * 100) : null;
+      const repartition = renseigne ? (100 - pctF) + '% / ' + pctF + '%' : '-';
+      const labelSexe = (renseigne && renseigne !== (d.malades || 0))
+        ? 'Hommes / Femmes (sur ' + epNum(renseigne) + ' fiches)'
+        : 'Hommes / Femmes';
       grid.innerHTML = [
         [epNum(d.malades), 'Malades consultés'],
         [d.age_moyen != null ? d.age_moyen + ' ans' : '-', 'Âge moyen'],
-        [repartition, 'Hommes / Femmes'],
+        [repartition, labelSexe],
         [epNum(d.ordonnances), 'Ordonnances délivrées'],
       ].map(([v, l]) => `<div class="ep-stat"><b>${epEsc(v)}</b><span>${epEsc(l)}</span></div>`).join('');
     }
