@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/defilement.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relances par courriel - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+
+  .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin:26px 0 14px;display:flex;align-items:center;gap:6px;}
+
+  .loading-msg{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:0.9rem;}
+
+  /* ---- Les quatre chiffres ---- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:14px;}
+  .stat{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-width:0;}
+  .stat-val{font-family:var(--display);font-size:1.9rem;font-weight:700;color:var(--text-heading);line-height:1.1;}
+  .stat-lbl{font-size:0.8rem;color:var(--text-muted);margin-top:4px;}
+  .stat.accent .stat-val{color:var(--gold-deep);}
+
+  /* ---- L'encart d'envoi ---- */
+  .envoi-card{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-top:18px;}
+  .avert{display:flex;gap:10px;align-items:flex-start;background:var(--paper-alt);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;font-size:0.86rem;color:var(--text-muted);margin-bottom:16px;}
+  .avert i{color:var(--gold-deep);flex-shrink:0;margin-top:2px;}
+  .avert strong{color:var(--text-heading);}
+
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:999px;padding:12px 24px;font-family:var(--body);font-size:0.92rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary:hover:not(:disabled){background:var(--green-deep);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-danger{background:#B3261E;}
+  .btn-danger:hover:not(:disabled){background:#8C1D18;}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--text-muted);border-radius:999px;padding:11px 20px;font-family:var(--body);font-size:0.9rem;cursor:pointer;}
+  .btn-ghost:hover{border-color:var(--green);color:var(--text-heading);}
+
+  /* Le pas de confirmation : on ne peut pas rattraper un envoi. */
+  .confirm-box{border:2px solid var(--gold);border-radius:12px;padding:16px 18px;margin-top:4px;background:var(--paper-alt);}
+  .confirm-titre{font-family:var(--display);font-weight:600;color:var(--text-heading);margin-bottom:6px;}
+  .confirm-txt{font-size:0.88rem;color:var(--text-muted);margin-bottom:14px;}
+  .confirm-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .forcer{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;}
+
+  .msg{font-size:0.88rem;margin-top:12px;}
+  .msg.ok{color:var(--green);}
+  .msg.ko{color:#B3261E;}
+
+  /* ---- La liste ---- */
+  .table-wrap{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  th{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--text-body,inherit);}
+  tr:last-child td{border-bottom:none;}
+  .nom-cell{font-weight:600;color:var(--text-heading);}
+  .mail-cell{font-family:var(--mono);font-size:0.78rem;color:var(--text-muted);word-break:break-all;}
+  .empty-row td{text-align:center;color:var(--text-muted);padding:26px;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .tag-carte{background:rgba(179,38,30,0.12);color:#B3261E;}
+  .tag-cotis{background:rgba(248,183,24,0.18);color:var(--gold-deep);}
+
+  @media (max-width:640px){
+    .header-inner{padding:12px 16px;}
+    .wrap{padding:0 14px 70px;}
+    .page-title{font-size:1.3rem;}
+    .envoi-card{padding:18px 16px;}
+    th,td{padding:10px 12px;}
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab active" href="index.html">Tableau de bord</a>
+    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <div class="member-groupe">
+      <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
+      <div class="member-sous-menu">
+        <a class="member-sous-lien" href="formations.html">Formations</a>
+        <a class="member-sous-lien" href="daara.html">Daara</a>
+        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+      </div>
+    </div>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
+    <a class="member-tab" href="documents.html">Documents officiels</a>
+    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes.html">Collectes</a>
+    <a class="member-tab" href="forum.html">Forum</a>
+    <a class="member-tab" href="annuaire.html">Annuaire</a>
+    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+  </div>
+</nav>
+
+<div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+
+  <div class="page-header">
+    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <h1 class="page-title">Relances par courriel</h1>
+    <p class="page-sub">Écrire d'un seul geste à tous les membres dont la carte a expiré ou dont les cotisations ont pris du retard.</p>
+  </div>
+
+  <p class="section-label"><i class="ti ti-users"></i> Qui est concerné aujourd'hui</p>
+  <div class="stats">
+    <div class="stat">
+      <p class="stat-val" id="statTotal">-</p>
+      <p class="stat-lbl">Membres à relancer</p>
+    </div>
+    <div class="stat">
+      <p class="stat-val" id="statCarte">-</p>
+      <p class="stat-lbl">Carte expirée</p>
+    </div>
+    <div class="stat">
+      <p class="stat-val" id="statCotis">-</p>
+      <p class="stat-lbl">Cotisations en retard</p>
+    </div>
+    <div class="stat accent">
+      <p class="stat-val" id="statSans">-</p>
+      <p class="stat-lbl">Sans adresse - à joindre par WhatsApp</p>
+    </div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-mail-forward"></i> Envoyer la relance</p>
+  <div class="envoi-card">
+    <div class="avert">
+      <i class="ti ti-alert-triangle"></i>
+      <span>
+        <strong>Un envoi ne se rattrape pas.</strong> Chaque membre reçoit le même texte
+        que celui du bouton « Prévenir » de sa fiche : rappel de carte pour ceux dont la
+        carte a expiré, rappel de cotisations pour les autres. Personne ne reçoit deux
+        messages. Un second envoi dans les 24 heures est refusé, sauf si vous le demandez
+        expressément.
+      </span>
+    </div>
+
+    <p class="page-sub" id="derniereRelance" style="margin-bottom:14px;"></p>
+
+    <div id="zoneBouton">
+      <button class="btn-primary" id="btnRelancer" disabled>
+        <i class="ti ti-send"></i> Relancer les retardataires
+      </button>
+    </div>
+
+    <div class="confirm-box" id="confirmBox" style="display:none;">
+      <p class="confirm-titre">Confirmer l'envoi</p>
+      <p class="confirm-txt" id="confirmTxt"></p>
+      <label class="forcer" id="labelForcer" style="display:none;">
+        <input type="checkbox" id="chkForcer">
+        <span>Une relance date de moins de 24 heures - envoyer quand même</span>
+      </label>
+      <div class="confirm-actions">
+        <button class="btn-primary btn-danger" id="btnConfirmer"><i class="ti ti-mail-fast"></i> Oui, envoyer</button>
+        <button class="btn-ghost" id="btnAnnuler">Annuler</button>
+      </div>
+    </div>
+
+    <p class="msg" id="envoiMsg"></p>
+  </div>
+
+  <p class="section-label"><i class="ti ti-list-details"></i> Liste des destinataires</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Membre</th>
+          <th>Adresse</th>
+          <th>Motif</th>
+          <th>Carte valable jusqu'à</th>
+          <th>Mois impayés</th>
+        </tr>
+      </thead>
+      <tbody id="listeBody">
+        <tr class="empty-row"><td colspan="5">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="page-sub" style="margin-top:14px;">
+    Chaque envoi est inscrit au <a href="journal-admin.html" style="color:var(--text-accent);text-decoration:underline;">journal d'administration</a>.
+  </p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  // Vrai dès que le garde-fou des 24 heures a de quoi se déclencher :
+  // la case « envoyer quand même » n'apparaît que dans ce cas.
+  let relanceRecente = false;
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    document.getElementById('btnRelancer').addEventListener('click', demanderConfirmation);
+    document.getElementById('btnAnnuler').addEventListener('click', annuler);
+    document.getElementById('btnConfirmer').addEventListener('click', envoyer);
+
+    await Promise.all([chargerApercu(), chargerListe()]);
+  })();
+
+  async function chargerApercu() {
+    try {
+      const { data, error } = await supabaseClient.rpc('apercu_relance_courriel');
+      if (error) throw error;
+      const d = data || {};
+      document.getElementById('statTotal').textContent = d.total ?? 0;
+      document.getElementById('statCarte').textContent = d.carte_expiree ?? 0;
+      document.getElementById('statCotis').textContent = d.cotisation_retard ?? 0;
+      document.getElementById('statSans').textContent = d.sans_courriel ?? 0;
+
+      // Rien à envoyer : le bouton reste inerte plutôt que de laisser
+      // croire qu'un clic ferait quelque chose.
+      document.getElementById('btnRelancer').disabled = !(d.total > 0);
+
+      const info = document.getElementById('derniereRelance');
+      if (d.derniere_relance) {
+        const quand = new Date(d.derniere_relance);
+        relanceRecente = (Date.now() - quand.getTime()) < 24 * 3600 * 1000;
+        info.textContent = 'Dernière relance envoyée le ' + formatDate(d.derniere_relance) + '.';
+      } else {
+        info.textContent = 'Aucune relance collective n\'a encore été envoyée.';
+      }
+    } catch (e) {
+      afficher('Impossible de lire le décompte : ' + (e.message || e), false);
+    }
+  }
+
+  async function chargerListe() {
+    const tbody = document.getElementById('listeBody');
+    try {
+      const { data, error } = await supabaseClient.rpc('membres_a_relancer');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Personne n\'est en retard : rien à envoyer.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(m => {
+        const carte = m.motif === 'carte_expiree';
+        return '<tr>'
+          + '<td class="nom-cell">' + echapper(m.nom || '(sans nom)') + '</td>'
+          + '<td class="mail-cell">' + echapper(m.courriel || '-') + '</td>'
+          + '<td><span class="tag ' + (carte ? 'tag-carte' : 'tag-cotis') + '">'
+            + (carte ? 'Carte expirée' : 'Cotisations') + '</span></td>'
+          + '<td>' + (m.carte_jusqu_a ? echapper(String(m.carte_jusqu_a)) : 'Jamais réglée') + '</td>'
+          + '<td>' + (m.mois_impayes ?? 0) + '</td>'
+          + '</tr>';
+      }).join('');
+    } catch (e) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Impossible de charger la liste.</td></tr>';
+    }
+  }
+
+  function demanderConfirmation() {
+    const total = parseInt(document.getElementById('statTotal').textContent, 10) || 0;
+    if (!total) return;
+    document.getElementById('confirmTxt').textContent =
+      total + ' membre(s) vont recevoir un courriel. Cette action ne peut pas être annulée.';
+    document.getElementById('labelForcer').style.display = relanceRecente ? '' : 'none';
+    document.getElementById('zoneBouton').style.display = 'none';
+    document.getElementById('confirmBox').style.display = '';
+    document.getElementById('envoiMsg').textContent = '';
+  }
+
+  function annuler() {
+    document.getElementById('confirmBox').style.display = 'none';
+    document.getElementById('zoneBouton').style.display = '';
+    document.getElementById('chkForcer').checked = false;
+  }
+
+  async function envoyer() {
+    const btn = document.getElementById('btnConfirmer');
+    // Verrouillé dès le premier clic : un double-clic ne doit pas valoir
+    // deux relances, et l'appel dure le temps de constituer les lots.
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Envoi en cours…';
+    try {
+      const forcer = document.getElementById('chkForcer').checked;
+      const { data, error } = await supabaseClient.rpc('relancer_par_courriel', { p_forcer: forcer });
+      if (error) throw error;
+      const d = data || {};
+      // « Mis en file », et non « reçus » : pg_net dépose la demande sans
+      // attendre la réponse de Resend. Dire « envoyés » serait promettre
+      // une distribution que rien ici ne constate.
+      afficher(d.mis_en_file + ' courriel(s) mis en file d\'envoi ('
+        + d.carte_expiree + ' rappel(s) de carte, ' + d.cotisation_retard
+        + ' rappel(s) de cotisation). La distribution se vérifie dans Resend.', true);
+      annuler();
+      await chargerApercu();
+    } catch (e) {
+      afficher(e.message || String(e), false);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-mail-fast"></i> Oui, envoyer';
+    }
+  }
+
+  function afficher(texte, ok) {
+    const el = document.getElementById('envoiMsg');
+    el.textContent = texte;
+    el.className = 'msg ' + (ok ? 'ok' : 'ko');
+  }
+
+  function echapper(s) {
+    return String(s ?? '').replace(/[&<>"']/g,
+      c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleString('fr-FR',
+      { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+</script>
+</body>
+</html>

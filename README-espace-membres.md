@@ -966,6 +966,56 @@ select public.envoyer_rappels_cartes(400);
 Elle renvoie le nombre de rappels envoyés. Rejouez-la : elle renverra `0`,
 puisque chaque membre n'est prévenu qu'une fois.
 
+## 4quinvicies. Relancer TOUS les retardataires d'un clic (`membres/relances-admin.html`)
+
+Prévenir un membre en retard se faisait déjà depuis sa fiche, un par un.
+À cent quatre-vingts membres, personne ne le fait. L'écran **Relances par
+courriel**, accessible depuis le Centre d'administration, écrit d'un seul
+geste à tous ceux qui sont en retard.
+
+**Qui est visé**
+
+| Motif | Définition |
+|---|---|
+| Carte expirée | `card_valid_until` absent ou antérieur à l'année en cours |
+| Cotisation en retard | au moins un mois **échu** de l'année en cours non réglé |
+
+Deux précautions intégrées : on ne réclame jamais les mois antérieurs à
+l'ouverture du compte (un inscrit d'août ne doit rien pour janvier), et la
+carte prime sur la cotisation - personne ne reçoit deux courriels le même
+jour.
+
+**Le texte n'est pas nouveau** : chacun reçoit exactement le message du
+bouton « Prévenir » de sa fiche, composé par `texte_rappel_membre()`.
+Corriger une tournure là-bas corrige les deux canaux.
+
+**Ce que le bouton promet.** L'écran annonce des courriels **mis en file**,
+jamais « reçus » : `pg_net` dépose la demande sans attendre Resend. La
+distribution se vérifie dans le tableau de bord Resend et dans les journaux
+de la fonction Edge.
+
+**Garde-fous.** Un second envoi dans les 24 heures est refusé, sauf case
+« envoyer quand même » cochée. Chaque envoi est inscrit au journal
+d'administration (`relance_masse_courriel`). Les membres **sans adresse**
+sont comptés à part sur l'écran : à joindre par WhatsApp depuis leur fiche.
+
+### Déploiement
+
+1. Studio (instance **amstc**) > SQL Editor > coller
+   `supabase/phase96-relance-courriel-masse.sql` > Run.
+   Les contrôles en fin de fichier n'envoient rien : ils affichent la liste
+   des personnes visées. **Lisez-la avant le premier envoi.**
+2. Redéployer la fonction Edge `notify-membre` : elle gagne le type
+   `rappel_masse`, qui remet les courriels à Resend **par lots de 100**
+   (point d'entrée `emails/batch`). Sans ce redéploiement, les lots
+   reviendraient en `Unknown event_type` et rien ne partirait.
+
+> **Pourquoi des lots.** Un appel par membre, ce sont deux cents requêtes
+> dans la même seconde : Resend répond 429, et `notify_membre` avale ses
+> erreurs réseau par conception. Le bouton aurait annoncé deux cents envois
+> pendant qu'une partie disparaissait sans trace. Le SQL découpe donc par
+> 50, la fonction Edge par 100.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

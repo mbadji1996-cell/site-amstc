@@ -7,6 +7,17 @@
 //   compte_refuse        - sa demande n'a pas été retenue
 //   carte_expire_bientot - sa carte arrive à échéance
 //
+// Et un type COLLECTIF, appelé par le bouton de relance en masse
+// (phase 96) :
+//
+//   rappel_masse         - un tableau « destinataires », chacun avec son
+//                          propre titre et son propre corps, remis à
+//                          Resend en UN SEUL appel (point d'entrée
+//                          « batch »). Un appel par membre aurait fait
+//                          exploser le plafond de débit de Resend, et
+//                          les refus 429 seraient passés inaperçus :
+//                          l'appelant SQL avale les erreurs réseau.
+//
 // Appelée UNIQUEMENT côté serveur, par les triggers Postgres via pg_net
 // (voir supabase/phase50-notifications-membre.sql) : aucun préflight CORS
 // à gérer.
@@ -197,6 +208,75 @@ Deno.serve(async (req: Request) => {
     body = await req.json();
   } catch {
     return new Response("Invalid JSON", { status: 400 });
+  }
+
+  // ===== Mode LOT (phase 96) =====
+  // Le corps porte un tableau « destinataires » plutôt qu'une adresse.
+  // Chaque entrée a la forme d'un rappel_admin : on réutilise donc le
+  // même compositeur, et les courriels sont mot pour mot ceux qu'envoie
+  // le bouton « Prévenir » d'une fiche.
+  if (Array.isArray(body.destinataires)) {
+    const liste = body.destinataires.filter(
+      (d: any) => d && typeof d.email === "string" && d.email.includes("@"),
+    );
+    if (liste.length === 0) {
+      return new Response("Missing recipients", { status: 400 });
+    }
+
+    const messages: Array<Record<string, unknown>> = [];
+    for (const d of liste) {
+      const m = construireEmail("rappel_admin", d);
+      if (m) {
+        messages.push({
+          from: FROM_EMAIL,
+          to: [String(d.email).trim()],
+          subject: m.subject,
+          html: m.html,
+        });
+      }
+    }
+    if (messages.length === 0) {
+      return new Response("Nothing to send", { status: 400 });
+    }
+
+    // Resend n'accepte pas plus de 100 messages par appel. L'appelant SQL
+    // découpe déjà par 50, mais on ne se fie pas à l'appelant : un lot
+    // trop gros serait refusé en entier, donc silencieusement perdu.
+    let envoyes = 0;
+    let echecs = 0;
+    for (let i = 0; i < messages.length; i += 100) {
+      const paquet = messages.slice(i, i + 100);
+      const r = await fetch("https://api.resend.com/emails/batch", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paquet),
+      });
+      if (r.ok) {
+        envoyes += paquet.length;
+      } else {
+        echecs += paquet.length;
+        console.error("Resend a refusé un lot :", r.status, await r.text());
+      }
+      // Souffler entre deux paquets : le plafond de Resend se compte à la
+      // seconde, et rien ne presse une relance mensuelle.
+      if (i + 100 < messages.length) {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+      }
+    }
+
+    console.log(`rappel_masse : ${envoyes} envoyé(s), ${echecs} en échec.`);
+    return new Response(
+      JSON.stringify({ envoyes, echecs, total: messages.length }),
+      {
+        // Tout en échec = 502, pour que l'incident se voie dans les
+        // journaux plutôt que de se confondre avec un envoi réussi.
+        status: envoyes === 0 ? 502 : 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const destinataire = String(body.email || "").trim();
