@@ -37,6 +37,13 @@
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const NOTIFY_SECRET = Deno.env.get("NOTIFY_ADMIN_SECRET");
 const FROM_EMAIL = Deno.env.get("NOTIFY_FROM_EMAIL") || "AMSTC <onboarding@resend.dev>";
+// Adresse de réponse. Un courriel dont la réponse ne mène nulle part est
+// un signal négatif pour les filtres, et un mur pour le membre qui a
+// simplement une question. On réutilise l'adresse de notification de
+// l'administration si aucune n'est déclarée ; si aucune des deux
+// n'existe, l'en-tête est omis plutôt qu'inventé.
+const REPLY_TO = Deno.env.get("NOTIFY_REPLY_TO") ||
+  Deno.env.get("ADMIN_NOTIFY_EMAIL") || "";
 
 const SITE = "https://amstc.org";
 
@@ -82,6 +89,43 @@ function chemin(url: string, parcours: string): string {
     <strong>Où aller :</strong> ${esc(parcours)}<br>
     <a href="${url}" style="color:#17763B;word-break:break-all;">${esc(url)}</a>
   </p>`;
+}
+
+// Version texte brut du message, déduite du HTML.
+//
+// POURQUOI C'EST NÉCESSAIRE. Un courriel qui ne contient QUE du HTML est
+// un signal de courrier indésirable reconnu : les envois légitimes portent
+// presque toujours les deux versions. C'était le cas ici - tous les
+// messages aux membres partaient en HTML seul.
+//
+// POURQUOI LA DÉDUIRE PLUTÔT QUE L'ÉCRIRE. Une seconde rédaction à la main
+// se désynchronise dès la première retouche d'un gabarit, et personne ne
+// s'en aperçoit puisque presque personne ne lit la version texte. Déduite,
+// elle suit le HTML sans effort. Les liens sont conservés en toutes
+// lettres : c'est tout l'intérêt de cette version.
+function enTexte(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(
+      /<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi,
+      (_m, url: string, dedans: string) => {
+        const libelle = dedans.replace(/<[^>]+>/g, "").trim();
+        return !libelle || libelle === url ? url : `${libelle} : ${url}`;
+      },
+    )
+    .replace(/<\/(p|div|h1|h2|h3|li|tr)>/gi, "\n\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&copy;/g, "(c)")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .split("\n")
+    .map((l) => l.replace(/[ \t]+/g, " ").trim())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function construireEmail(
@@ -232,6 +276,23 @@ Deno.serve(async (req: Request) => {
           to: [String(d.email).trim()],
           subject: m.subject,
           html: m.html,
+          text: enTexte(m.html),
+          ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+          // EN-TÊTE DE DÉSABONNEMENT, sur les envois COLLECTIFS seulement.
+          // Les messageries traitent plus durement un envoi en nombre qui
+          // n'offre aucun moyen de s'y soustraire, et Gmail comme Yahoo en
+          // font une exigence au-delà d'un certain volume. Le lien pointe
+          // vers l'adresse de l'association : un membre qui écrit là est
+          // traité par une personne, ce qui vaut mieux qu'un désabonnement
+          // automatique à des rappels de cotisation.
+          ...(REPLY_TO
+            ? {
+              headers: {
+                "List-Unsubscribe":
+                  `<mailto:${REPLY_TO}?subject=Ne%20plus%20recevoir%20les%20rappels>`,
+              },
+            }
+            : {}),
         });
       }
     }
@@ -358,6 +419,8 @@ Deno.serve(async (req: Request) => {
       to: [destinataire],
       subject: message.subject,
       html: message.html,
+      text: enTexte(message.html),
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
     }),
   });
 
