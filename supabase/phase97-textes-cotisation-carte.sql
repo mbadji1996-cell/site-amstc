@@ -7,7 +7,7 @@
 -- somme sert. Deux ajouts, donc :
 --
 --   1. COTISATION : ce qu'elle permet - les activités médicales et
---      sociales de l'AMSTC auprès des talibés, et, par le service rendu
+--      sociales de l'AMSTC auprès des populations, et, par le service rendu
 --      aux Hommes, le service d'Allah.
 --   2. CARTE : qu'elle est OBLIGATOIRE pour tout membre. Le rappel ne le
 --      disait pas ; beaucoup la croient facultative, ou réservée à ceux
@@ -121,7 +121,7 @@ begin
       -- NOUVEAU (phase 97). Dire à quoi la somme sert : un rappel qui
       -- n'énonce qu'une dette se lit comme une réclamation comptable.
       || 'Ces cotisations sont ce qui permet à l''AMSTC de mener à bien ses activités '
-      || 'médicales et sociales auprès des talibés, et, par le service rendu aux Hommes, '
+      || 'médicales et sociales auprès des populations, et, par le service rendu aux Hommes, '
       || 'de servir Allah. Chaque contribution y participe, si modeste soit-elle.'
       || chr(10) || chr(10)
       || 'Vous pouvez les régler à tout moment par Wave ou Orange Money, puis déclarer '
@@ -260,7 +260,7 @@ begin
         || v_nb || '/12 mois réglés).'
         || chr(10) || chr(10)
         || 'Ces cotisations sont ce qui permet à l''AMSTC de mener à bien ses activités '
-        || 'médicales et sociales auprès des talibés, et, par le service rendu aux Hommes, '
+        || 'médicales et sociales auprès des populations, et, par le service rendu aux Hommes, '
         || 'de servir Allah. Chaque contribution y participe, si modeste soit-elle.'
         || chr(10) || chr(10)
         || 'Vous pouvez les régler à tout moment par Wave ou Orange Money, puis déclarer '
