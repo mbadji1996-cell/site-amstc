@@ -313,13 +313,46 @@ select p.proname,
    and p.proname in ('texte_rappel_membre', 'texte_whatsapp_membre')
  order by p.proname;
 
--- Le nouveau paragraphe est-il bien présent dans les deux ? Doit
--- renvoyer « true » sur les deux lignes.
-select p.proname,
-       position('servir Allah' in pg_get_functiondef(p.oid)) > 0 as parle_de_la_cotisation,
-       position('obligatoire pour tout membre' in pg_get_functiondef(p.oid)) > 0 as parle_de_la_carte
-  from pg_proc p
-  join pg_namespace n on n.oid = p.pronamespace
- where n.nspname = 'public'
-   and p.proname in ('texte_rappel_membre', 'texte_whatsapp_membre')
- order by p.proname;
+-- Le texte réellement produit, pour un membre réellement concerné.
+--
+-- MIEUX QU'UNE VÉRIFICATION PAR MOT-CLÉ. Le premier contrôle écrit ici
+-- cherchait la chaîne « obligatoire pour tout membre » dans le code des
+-- deux fonctions. Il annonçait « false » sur la version WhatsApp, alors
+-- que la phrase y était : celle-ci écrit « *obligatoire* », avec les
+-- astérisques du gras WhatsApp, ce qui coupait la chaîne cherchée. Une
+-- vérification qui crie au loup est pire que pas de vérification. On
+-- affiche donc le message tel qu'il partira, et vous le lisez.
+--
+-- Ces deux requêtes choisissent elles-mêmes un membre concerné : rien à
+-- remplacer. Elles n'envoient rien.
+
+-- a) Le rappel de CARTE, tel que le recevra le premier membre dont la
+--    carte a expiré.
+select public.texte_whatsapp_membre(
+  (select p.id from public.profiles p
+    where p.status = 'approved' and p.is_active
+      and (p.card_valid_until is null
+           or p.card_valid_until < extract(year from now())::int)
+    order by p.full_name limit 1),
+  'carte_expiree') as rappel_carte;
+
+-- b) Le rappel de COTISATION, pour le premier membre à carte valide dont
+--    le mois en cours n'est pas réglé.
+select public.texte_whatsapp_membre(
+  (select p.id from public.profiles p
+    where p.status = 'approved' and p.is_active
+      and p.card_valid_until >= extract(year from now())::int
+      and not exists (
+        select 1 from public.cotisations c
+         where c.user_id = p.id
+           and c.year = extract(year from now())::int
+           and extract(month from now())::int = any(c.months_paid))
+    order by p.full_name limit 1),
+  'cotisation_retard') as rappel_cotisation;
+
+-- Le courriel dit-il la même chose ? Il le dit forcément : les deux
+-- fonctions ont été écrites ensemble, ci-dessus, et la seule différence
+-- voulue est le gras WhatsApp (*obligatoire*), absent du courriel où le
+-- HTML s'en charge. Pour le voir de vos yeux, ouvrez la fiche d'un membre
+-- dans l'écran Membres et cliquez « Prévenir » : l'aperçu s'affiche avant
+-- tout envoi.
