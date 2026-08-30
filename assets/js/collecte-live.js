@@ -20,6 +20,10 @@
      <b data-collecte="pourcentage">8 %</b>
      <b data-collecte="echeance">31 déc. 2026</b>
 
+   Un conteneur marqué « data-collecte-bloc » disparaît quand aucune
+   campagne n'est active - utile pour une pastille ou un encart qui n'ont
+   rien à dire en dehors d'une collecte.
+
    LE TEXTE ÉCRIT DANS LA FICHE SERT DE REPLI. Si le serveur ne répond
    pas, ou si aucune campagne n'est active, on ne remplace rien : le
    lecteur voit le dernier chiffre connu plutôt qu'un tiret. Un chiffre
@@ -82,7 +86,17 @@
     campagne().then(function (c) {
       // Pas de campagne active, ou serveur muet : on laisse le texte de
       // la fiche. C'est le repli voulu, pas un oubli.
-      if (!c) return;
+      //
+      // SAUF pour un bloc marque « data-collecte-bloc » : celui-la est
+      // RETIRE. Une fiche peut vivre avec un chiffre un peu ancien ; une
+      // pastille « Collecte - » sur un bandeau a l'air cassee, et il n'y
+      // a rien d'autre a y montrer.
+      if (!c) {
+        document.querySelectorAll("[data-collecte-bloc]").forEach(function (b) {
+          b.style.display = "none";
+        });
+        return;
+      }
       marques.forEach(function (el) {
         if (el.getAttribute("data-collecte-fait") === "1") return;
         var v = valeur(el.getAttribute("data-collecte"), c);

@@ -35,5 +35,6 @@
       "label": "Orientations / références",
       "valeur": 0
     }
-  ]
+  ],
+  "afficher_collecte": true
 }

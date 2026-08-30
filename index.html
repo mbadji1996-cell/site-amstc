@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <script src="assets/js/defilement.js" defer></script>
+<script src="assets/js/collecte-live.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
 <script src="assets/js/date-periode.js"></script>
 <script src="assets/js/site-search.js" defer></script>
@@ -893,9 +894,20 @@
         epCompteARebours(debut);
       }
 
-      document.getElementById('epPhases').innerHTML = (epData.phases || []).map(p => `
+      // Les pastilles du CMS, puis - si la case est cochee - celle du
+      // montant collecte. Elle n'est pas ecrite dans le CMS : elle porte
+      // une MARQUE que collecte-live.js remplit depuis la campagne
+      // active. Un montant saisi a la main serait faux des le don
+      // suivant, ce qui est exactement l'inverse de ce qu'un bandeau
+      // « en direct » doit montrer.
+      let pastilles = (epData.phases || []).map(p => `
         <span class="ep-phase${p.en_cours ? ' encours' : ''}">${epEsc([p.nom, p.lieu, p.dates].filter(Boolean).join(' · '))}</span>
       `).join('');
+      if (epData.afficher_collecte) {
+        pastilles += `
+        <span class="ep-phase encours" data-collecte-bloc>Collecté · <b data-collecte="montant">-</b></span>`;
+      }
+      document.getElementById('epPhases').innerHTML = pastilles;
 
       const lien = document.getElementById('epLink');
       if (epData.lien) { lien.href = epData.lien; lien.style.display = ''; }

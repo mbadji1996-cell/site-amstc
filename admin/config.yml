@@ -480,6 +480,7 @@ collections:
         file: "content/evenement-phare.json"
         fields:
           - { label: "Afficher la section", name: "actif", widget: "boolean", default: false, hint: "Décochez pour masquer entièrement le bandeau sur les deux sites." }
+          - { label: "Afficher le montant collecté", name: "afficher_collecte", widget: "boolean", default: false, required: false, hint: "Ajoute une pastille « Collecté · … » alimentée par la campagne de dons active. Le montant se met à jour tout seul ; il n'y a rien à saisir. Sans campagne active, la pastille ne s'affiche pas." }
           - { label: "Titre", name: "titre", widget: "string", hint: "Ex : Caravane Nationale 2026 - Phase 1, Mbour" }
           - { label: "Sous-titre (avant l'ouverture)", name: "sous_titre", widget: "text", hint: "Ex : Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main." }
           - { label: "Image de fond (facultatif)", name: "image", widget: "image", required: false, hint: "Affichée derrière le bandeau sur les deux sites, assombrie automatiquement pour garder le texte lisible." }
