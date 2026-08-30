@@ -77,6 +77,12 @@
 --
 -- À exécuter : Studio (instance amstc) > SQL Editor > Run.
 -- Ré-exécutable sans danger. AUCUN ENVOI n'a lieu à l'exécution.
+--
+-- NOTE SUR LE SQL EDITOR. Il s'exécute sans session : auth.uid() y
+-- est vide, donc is_admin() répond toujours « non ». Appeler ici
+-- l'une des trois fonctions ci-dessous renverrait « Accès refusé » -
+-- ce qui prouve que la garde tient, et non qu'il y a un défaut. Les
+-- contrôles en fin de fichier refont donc la sélection en SQL nu.
 -- ============================================================
 
 -- ============================================================
@@ -101,11 +107,23 @@ returns table (
   carte_jusqu_a int,
   mois_impayes  int
 )
-language sql
+language plpgsql
 stable
 security definer
 set search_path = public
 as $$
+begin
+  -- GARDE INDISPENSABLE. La fonction est SECURITY DEFINER : elle lit
+  -- profiles en passant outre les règles d'accès. Sans ce contrôle,
+  -- n'importe quel membre connecté appellerait la RPC et repartirait
+  -- avec le nom, l'adresse et l'état de cotisation de tous les
+  -- retardataires. Le droit « authenticated » ne suffit pas à protéger
+  -- une fonction qui, par construction, voit tout.
+  if not public.is_admin() then
+    raise exception 'Accès refusé.';
+  end if;
+
+  return query
   with reperes as (
     select extract(year from now())::int as annee,
            extract(month from now())::int as mois
@@ -146,6 +164,7 @@ as $$
    order by case when k.card_valid_until is null or k.card_valid_until < k.annee
                  then 0 else 1 end,
             k.full_name;
+end;
 $$;
 
 revoke all on function public.membres_a_relancer() from public, anon;
@@ -291,24 +310,116 @@ notify pgrst, 'reload schema';
 
 -- ============================================================
 -- CONTRÔLES - aucun envoi n'a lieu ici
+--
+-- POURQUOI CES REQUÊTES N'APPELLENT PAS LES FONCTIONS CI-DESSUS.
+-- Le SQL Editor s'exécute SANS SESSION : auth.uid() y est vide, donc
+-- is_admin() répond « non » et toute fonction gardée répondrait
+-- « Accès refusé ». Ce n'est pas un défaut des fonctions - c'est la
+-- preuve que la garde fonctionne. Les contrôles refont donc la même
+-- sélection en SQL nu, ce qui a l'avantage de montrer noir sur blanc
+-- ce que la fonction calcule.
 -- ============================================================
--- a) Le décompte tel que l'écran l'affichera.
-select public.apercu_relance_courriel();
 
--- b) Les personnes visées, avec leur motif. À lire avant le premier
---    envoi : c'est le seul moment où l'on peut encore dire non.
-select nom, courriel, motif, carte_jusqu_a, mois_impayes
-  from public.membres_a_relancer()
+-- a) La liste des personnes visées, avec leur motif.
+--    À LIRE AVANT LE PREMIER ENVOI : c'est le seul moment où l'on peut
+--    encore dire non.
+with reperes as (
+  select extract(year from now())::int as annee,
+         extract(month from now())::int as mois
+),
+candidats as (
+  select p.id, p.full_name, p.email, p.card_valid_until,
+         r.annee, r.mois,
+         case when extract(year from p.created_at)::int = r.annee
+              then extract(month from p.created_at)::int
+              else 1 end as premier_mois
+    from public.profiles p
+    cross join reperes r
+   where p.status = 'approved'
+     and p.is_active
+     and coalesce(btrim(p.email), '') <> ''
+     and position('@' in p.email) > 1
+),
+compte as (
+  select c.*,
+         (select count(*)
+            from generate_series(c.premier_mois, c.mois) as m
+           where not (m = any(
+             coalesce((select ct.months_paid
+                         from public.cotisations ct
+                        where ct.user_id = c.id and ct.year = c.annee),
+                      '{}'::int[]))))::int as impayes
+    from candidats c
+)
+select k.full_name as nom,
+       k.email     as courriel,
+       case when k.card_valid_until is null or k.card_valid_until < k.annee
+            then 'carte_expiree' else 'cotisation_retard' end as motif,
+       coalesce(k.card_valid_until::text, 'jamais réglée') as carte_jusqu_a,
+       k.impayes as mois_impayes
+  from compte k
+ where k.card_valid_until is null
+    or k.card_valid_until < k.annee
+    or k.impayes > 0
  order by motif, nom;
 
--- c) Vérifier sur un cas que le texte reçu est bien celui attendu
---    (remplacez l'identifiant par celui d'une ligne ci-dessus).
--- select * from public.texte_rappel_membre(
---   '00000000-0000-0000-0000-000000000000', 'carte_expiree');
+-- b) Le même décompte, résumé : c'est ce que l'écran affichera.
+with reperes as (
+  select extract(year from now())::int as annee,
+         extract(month from now())::int as mois
+),
+candidats as (
+  select p.id, p.card_valid_until, r.annee, r.mois,
+         case when extract(year from p.created_at)::int = r.annee
+              then extract(month from p.created_at)::int
+              else 1 end as premier_mois
+    from public.profiles p
+    cross join reperes r
+   where p.status = 'approved' and p.is_active
+     and coalesce(btrim(p.email), '') <> ''
+     and position('@' in p.email) > 1
+),
+compte as (
+  select c.*,
+         (select count(*)
+            from generate_series(c.premier_mois, c.mois) as m
+           where not (m = any(
+             coalesce((select ct.months_paid
+                         from public.cotisations ct
+                        where ct.user_id = c.id and ct.year = c.annee),
+                      '{}'::int[]))))::int as impayes
+    from candidats c
+)
+select count(*) filter (where k.card_valid_until is null
+                           or k.card_valid_until < k.annee) as carte_expiree,
+       count(*) filter (where k.card_valid_until is not null
+                          and k.card_valid_until >= k.annee
+                          and k.impayes > 0)                as cotisation_retard,
+       count(*)                                             as total
+  from compte k
+ where k.card_valid_until is null
+    or k.card_valid_until < k.annee
+    or k.impayes > 0;
 
--- d) Les concernés SANS adresse : à joindre par WhatsApp, depuis leur fiche.
+-- c) Les concernés SANS adresse : ils ne recevront rien.
+--    À joindre par WhatsApp, depuis leur fiche.
 select p.full_name, p.phone, p.card_valid_until
   from public.profiles p
  where p.status = 'approved' and p.is_active
    and coalesce(btrim(p.email), '') = ''
  order by p.full_name;
+
+-- d) Les fonctions sont-elles bien en place, et bien gardées ?
+select p.proname,
+       case when p.prosecdef then 'security definer' else 'invoker' end as mode
+  from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public'
+   and p.proname in ('membres_a_relancer', 'apercu_relance_courriel',
+                     'relancer_par_courriel')
+ order by p.proname;
+
+-- e) Preuve que la garde tient : depuis le SQL Editor, sans session,
+--    l'appel DOIT echouer avec « Accès refusé ». Si cette ligne renvoie
+--    des données au lieu d'une erreur, la garde ne fonctionne pas.
+-- select * from public.membres_a_relancer();
