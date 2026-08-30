@@ -188,10 +188,10 @@ et d'accueil.</p>
 et constitution du patrimoine immobilier de l'AMSTC.</span></div>
 <div class="pt-phase"><b>Phase II - Construction du siège</b><span>Réalisation du bâtiment
 institutionnel et des premiers espaces fonctionnels.</span></div>
-<div class="pt-phase"><b>Phase III - Espace médico-social</b><span>Mise en service
-progressive des espaces dédiés à l'accueil, à l'orientation et à l'accompagnement.</span></div>
-<div class="pt-phase"><b>Phase IV - Résidence d'accueil</b><span>Construction et équipement
+<div class="pt-phase"><b>Phase III - Résidence d'accueil</b><span>Construction et équipement
 des espaces d'hébergement temporaire.</span></div>
+<div class="pt-phase"><b>Phase IV - Espace médico-social</b><span>Mise en service
+progressive des espaces dédiés à l'accueil, à l'orientation et à l'accompagnement.</span></div>
 <div class="pt-phase"><b>Phase V - Extension</b><span>Développement ultérieur des
 infrastructures selon les besoins, les ressources et les partenariats.</span></div>
 
