@@ -9,8 +9,13 @@
   "message_fin": "",
   "phases": [
     {
+      "en_cours": false,
+      "nom": "Superficie",
+      "lieu": "300 m²"
+    },
+    {
       "en_cours": true,
-      "nom": "Objectif",
+      "nom": "Prix",
       "lieu": "5.000.000 FCFA"
     }
   ],
