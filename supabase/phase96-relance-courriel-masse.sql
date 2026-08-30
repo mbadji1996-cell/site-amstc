@@ -275,7 +275,11 @@ begin
       'first_name', v_m.prenom,
       'titre',      v_t.titre,
       'corps',      v_t.corps,
-      'lien',       'https://amstc.org/membres/profil.html'
+      -- Le lien vient de la fonction, pas d'une constante : elle mène
+      -- à la validité de la carte pour un rappel de carte, aux
+      -- cotisations pour un rappel de cotisation. En dur, tout le
+      -- monde atterrissait sur la même page et devait chercher.
+      'lien',       v_t.lien
     );
     v_total := v_total + 1;
     if v_m.motif = 'carte_expiree'
