@@ -108,7 +108,7 @@ terrain, en fonction de sa superficie et des moyens réunis.</p>
 <p>L'Association Médico-Sociale des Talibés Cheikh lance un appel à contribution auprès
 de ses membres, sympathisants, partenaires, bienfaiteurs, professionnels de santé,
 acteurs sociaux, entreprises et bonnes volontés, en vue de l'<strong>acquisition d'un
-terrain nu à Tivaouane</strong>.</p>
+terrain nu de 300 m² à Tivaouane</strong>.</p>
 
 <p>Ce terrain constituera le socle du futur complexe institutionnel de l'AMSTC, articulé
 autour de trois fonctions complémentaires.</p>
