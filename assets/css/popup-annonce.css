@@ -6,9 +6,13 @@
 }
 .popup-annonce-overlay.open{ display:flex; }
 
+/* Ce composant s'affiche sur des pages qui ne declarent pas toutes les
+   memes variables : chaque var() porte donc un repli. Sans lui, la
+   carte etait TRANSPARENTE sur projet.html et article.html, qui ne
+   definissent pas --white dont --surface depend. */
 .popup-annonce-card{
   position:relative;
-  background:var(--surface); border-radius:18px;
+  background:var(--surface, #FFFFFF); border-radius:18px;
   box-shadow:0 30px 80px rgba(6,68,28,0.4);
   width:fit-content; max-width:min(80vw, 1100px); max-height:90vh;
   display:flex; flex-direction:column; overflow:hidden;
@@ -65,7 +69,7 @@
 .popup-annonce-cta:hover{ background:var(--green-deep); }
 
 /* Pied fixe (hors défilement) : barre de progression + bouton OK. */
-.popup-annonce-footer{ flex:0 0 auto; border-top:1px solid var(--line); }
+.popup-annonce-footer{ flex:0 0 auto; border-top:1px solid var(--line, rgba(6,68,28,0.14)); }
 .popup-annonce-timer-track{
   height:4px; background:var(--paper-alt,rgba(0,0,0,0.08)); overflow:hidden;
 }
@@ -83,6 +87,6 @@
 .popup-annonce-ok{
   font-family:var(--body); font-weight:600; font-size:0.9rem;
   padding:9px 22px; border-radius:999px; cursor:pointer;
-  background:transparent; color:var(--text-heading); border:1.5px solid var(--line);
+  background:transparent; color:var(--text-heading, #06441C); border:1.5px solid var(--line, rgba(6,68,28,0.14));
 }
-.popup-annonce-ok:hover{ background:var(--paper-alt); }
+.popup-annonce-ok:hover{ background:var(--paper-alt, #ECEFE3); }

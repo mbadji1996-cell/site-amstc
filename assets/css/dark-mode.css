@@ -17,10 +17,18 @@
    sur fond coloré).
    ============================================================ */
 
+/* LES REPLIS NE SONT PAS DECORATIFS. Ces trois variables DELEGUENT a une
+   variable que chaque page definit dans son propre :root. Une page qui ne
+   la definit pas - projet.html et article.html ne declarent pas --white -
+   rendait la declaration INVALIDE, et la propriete disparaissait : le
+   pop-up plein ecran s'y affichait sans aucun fond, son texte melange a
+   celui de la page. Sans erreur, sans trace, et seulement sur certaines
+   pages. Le repli garde la main a la page quand elle definit la variable,
+   et evite la perte quand elle ne le fait pas. */
 :root {
-  --text-heading: var(--green-deep);
-  --text-accent: var(--gold-deep);
-  --surface: var(--white);
+  --text-heading: var(--green-deep, #06441C);
+  --text-accent: var(--gold-deep, #AA7B11);
+  --surface: var(--white, #FFFFFF);
   --text-muted: #5A6C60;
   /* --shadow n'existait que dans le bloc sombre : les pages qui s'en
      servent (la fenêtre de recadrage de la photo, dans profil.html)
