@@ -196,6 +196,7 @@
     <div id="campagneActive" style="display:none;">
       <p class="campagne-nom" id="campagneTitre"></p>
       <p class="campagne-meta" id="campagneDesc"></p>
+      <p class="campagne-meta" id="campagneDepots"></p>
       <div class="jauge">
         <div class="jauge-track"><div class="jauge-fill" id="jaugeFill" style="width:0%"></div></div>
         <div class="jauge-txt">
@@ -204,6 +205,7 @@
         </div>
       </div>
       <div class="actions">
+        <button class="btn" id="btnModifierActive"><i class="ti ti-pencil"></i> Modifier</button>
         <button class="btn btn-reject" id="btnCloturer"><i class="ti ti-flag-off"></i> Clôturer la campagne</button>
         <span class="msg" id="msgCampagne"></span>
       </div>
@@ -251,18 +253,28 @@
   <p class="section-label"><i class="ti ti-list-check"></i> Toutes les campagnes</p>
   <div class="bloc" id="listeCampagnes"><p class="page-sub" style="margin:0;">Chargement…</p></div>
 
-  <p class="section-label"><i class="ti ti-plus"></i> Nouvelle campagne</p>
+  <p class="section-label" id="titreFormulaire"><i class="ti ti-plus"></i> Nouvelle campagne</p>
   <div class="bloc">
+    <p class="page-sub" style="margin:0 0 14px;">Les numéros de dépôt sont facultatifs : laissés vides,
+    la page affiche ceux de la carte Mobile Money générale. Renseignez-les si cette campagne
+    collecte sur un autre numéro que les cotisations.</p>
     <div class="grille-champs">
       <div class="champ"><label for="cTitre">Titre *</label><input type="text" id="cTitre" maxlength="120"></div>
       <div class="champ"><label for="cObjectif">Objectif en FCFA *</label>
         <input type="number" id="cObjectif" min="1" step="1" inputmode="numeric"></div>
       <div class="champ"><label for="cFin">Date de fin</label><input type="date" id="cFin"></div>
+      <div class="champ"><label for="cWave">Numéro Wave de dépôt</label>
+        <input type="text" id="cWave" maxlength="40" placeholder="+221 ..."></div>
+      <div class="champ"><label for="cOrange">Numéro Orange Money de dépôt</label>
+        <input type="text" id="cOrange" maxlength="40" placeholder="+221 ..."></div>
+      <div class="champ"><label for="cTitulaire">Titulaire du numéro</label>
+        <input type="text" id="cTitulaire" maxlength="120"></div>
       <div class="champ champ-large"><label for="cDesc">Description affichée sur la page de don</label>
         <textarea id="cDesc" rows="2" maxlength="400"></textarea></div>
     </div>
     <div class="actions">
       <button class="btn-primary" id="btnCreer"><i class="ti ti-plus"></i> Créer et activer</button>
+      <button class="btn" id="btnAnnulerEdition" style="display:none;">Annuler la modification</button>
       <span class="msg" id="msgCreer"></span>
     </div>
   </div>
@@ -275,6 +287,10 @@
   const MOYENS = { wave: 'Wave', orange_money: 'Orange Money', virement: 'Virement',
                    especes: 'Espèces', autre: 'Autre' };
   const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
+  // L'apercu ne renvoie que des agregats, sans identifiant : on retient
+  // celui de la campagne active en relisant la liste, pour que le bouton
+  // « Modifier » du bloc du haut sache quoi ouvrir.
+  let campagneActiveId = null;
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
@@ -286,6 +302,10 @@
     document.getElementById('btnEnregistrer').addEventListener('click', enregistrerDon);
     document.getElementById('btnCreer').addEventListener('click', creerCampagne);
     document.getElementById('btnCloturer').addEventListener('click', cloturer);
+    document.getElementById('btnAnnulerEdition').addEventListener('click', annulerEdition);
+    document.getElementById('btnModifierActive').addEventListener('click', () => {
+      if (campagneActiveId) editer(campagneActiveId);
+    });
 
     await tout();
   })();
@@ -309,6 +329,12 @@
         const pct = Math.min(100, Math.round((Number(c.collecte || 0) / Number(c.objectif)) * 100));
         document.getElementById('campagneTitre').textContent = c.titre || '';
         document.getElementById('campagneDesc').textContent = c.description || '';
+        const dep = [c.depot_wave ? 'Wave ' + c.depot_wave : null,
+                     c.depot_orange ? 'Orange Money ' + c.depot_orange : null]
+                    .filter(Boolean).join(' - ');
+        document.getElementById('campagneDepots').textContent = dep
+          ? 'D\u00e9p\u00f4t : ' + dep + (c.depot_titulaire ? ' (au nom de ' + c.depot_titulaire + ')' : '')
+          : 'Aucun num\u00e9ro propre : la page affiche les num\u00e9ros Mobile Money g\u00e9n\u00e9raux.';
         document.getElementById('jaugeFill').style.width = pct + '%';
         document.getElementById('jaugeCollecte').textContent = fcfa(c.collecte);
         document.getElementById('jaugeObjectif').textContent = 'sur ' + fcfa(c.objectif) + ' - ' + pct + '%';
@@ -383,6 +409,8 @@
         .from('campagnes_dons').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       if (!data || !data.length) { el.innerHTML = '<p class="page-sub" style="margin:0;">Aucune campagne créée.</p>'; return; }
+      const active = data.find(c => c.is_active);
+      campagneActiveId = active ? active.id : null;
       el.innerHTML = data.map(c => `
         <div class="campagne">
           <div style="min-width:0;">
@@ -391,6 +419,7 @@
           </div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <span class="puce ${c.is_active ? 'puce-active' : 'puce-close'}">${c.is_active ? 'Active' : 'Fermée'}</span>
+            <button class="btn" onclick="editer('${c.id}')"><i class="ti ti-pencil"></i> Modifier</button>
             ${c.is_active ? '' : `<button class="btn" onclick="activer('${c.id}')"><i class="ti ti-player-play"></i> Activer</button>`}
           </div>
         </div>`).join('');
@@ -414,26 +443,84 @@
     } catch (e) { dire('msgCampagne', e.message || String(e), false); }
   }
 
+  // Identifiant de la campagne en cours de modification, ou null quand on
+  // cree. C'est lui, et lui seul, qui decide ce que fait le bouton.
+  let enEdition = null;
+
+  async function editer(id) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('campagnes_dons').select('*').eq('id', id).single();
+      if (error) throw error;
+      enEdition = id;
+      document.getElementById('cTitre').value = data.titre || '';
+      document.getElementById('cObjectif').value = data.objectif_fcfa || '';
+      document.getElementById('cFin').value = data.date_fin || '';
+      document.getElementById('cDesc').value = data.description || '';
+      document.getElementById('cWave').value = data.depot_wave || '';
+      document.getElementById('cOrange').value = data.depot_orange || '';
+      document.getElementById('cTitulaire').value = data.depot_titulaire || '';
+      document.getElementById('titreFormulaire').innerHTML =
+        '<i class="ti ti-pencil"></i> Modifier « ' + esc(data.titre || '') + ' »';
+      document.getElementById('btnCreer').innerHTML =
+        '<i class="ti ti-check"></i> Enregistrer les modifications';
+      document.getElementById('btnAnnulerEdition').style.display = '';
+      dire('msgCreer', '', true);
+      document.getElementById('titreFormulaire').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) { alert(e.message || String(e)); }
+  }
+
+  function annulerEdition() {
+    enEdition = null;
+    ['cTitre','cObjectif','cFin','cDesc','cWave','cOrange','cTitulaire']
+      .forEach(i => document.getElementById(i).value = '');
+    document.getElementById('titreFormulaire').innerHTML = '<i class="ti ti-plus"></i> Nouvelle campagne';
+    document.getElementById('btnCreer').innerHTML = '<i class="ti ti-plus"></i> Créer et activer';
+    document.getElementById('btnAnnulerEdition').style.display = 'none';
+    dire('msgCreer', '', true);
+  }
+
   async function creerCampagne() {
     const titre = document.getElementById('cTitre').value.trim();
     const objectif = parseInt(document.getElementById('cObjectif').value, 10);
     if (!titre) { dire('msgCreer', 'Donnez un titre à la campagne.', false); return; }
     if (!objectif || objectif <= 0) { dire('msgCreer', 'Indiquez un objectif supérieur à zéro.', false); return; }
+    const champs = {
+      titre: titre,
+      description: document.getElementById('cDesc').value.trim() || null,
+      objectif_fcfa: objectif,
+      date_fin: document.getElementById('cFin').value || null,
+      depot_wave: document.getElementById('cWave').value.trim() || null,
+      depot_orange: document.getElementById('cOrange').value.trim() || null,
+      depot_titulaire: document.getElementById('cTitulaire').value.trim() || null,
+    };
+
+    // MODIFICATION d'une campagne existante, active ou non. On ne touche
+    // ni a is_active - la bascule a sa propre fonction - ni au montant
+    // collecte, qui n'est pas une colonne mais la somme des dons confirmes.
+    if (enEdition) {
+      try {
+        const { error } = await supabaseClient
+          .from('campagnes_dons').update(champs).eq('id', enEdition);
+        if (error) throw error;
+        annulerEdition();
+        dire('msgCreer', 'Campagne modifiée. La page de don suit immédiatement.', true);
+        await tout();
+      } catch (e) { dire('msgCreer', e.message || String(e), false); }
+      return;
+    }
+
     try {
       // On cree INACTIVE, puis on active par la fonction dediee : elle
       // desactive l'ancienne dans le meme geste. Creer directement en
       // « active » violerait l'index unique s'il y en a deja une.
-      const { data, error } = await supabaseClient.from('campagnes_dons').insert({
-        titre: titre,
-        description: document.getElementById('cDesc').value.trim() || null,
-        objectif_fcfa: objectif,
-        date_fin: document.getElementById('cFin').value || null,
-        is_active: false,
-      }).select('id').single();
+      const { data, error } = await supabaseClient.from('campagnes_dons')
+        .insert(Object.assign({}, champs, { is_active: false }))
+        .select('id').single();
       if (error) throw error;
       const { error: e2 } = await supabaseClient.rpc('activer_campagne_don', { p_id: data.id });
       if (e2) throw e2;
-      ['cTitre','cObjectif','cFin','cDesc'].forEach(i => document.getElementById(i).value = '');
+      annulerEdition();
       dire('msgCreer', 'Campagne créée et activée. Elle s\'affiche sur la page de don.', true);
       await tout();
     } catch (e) { dire('msgCreer', e.message || String(e), false); }

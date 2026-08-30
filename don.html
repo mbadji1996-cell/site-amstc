@@ -111,6 +111,19 @@
   .declarer-msg{font-size:0.88rem;}
   .declarer-msg.ok{color:var(--green);}
   .declarer-msg.ko{color:#B3261E;}
+
+  /* ---- Ou deposer le don de CETTE campagne ----
+     Place dans la carte de la jauge, donc juste au-dessus du formulaire :
+     le donateur lit le numero, verse, puis declare - dans cet ordre. */
+  .depots{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+  .depots-titre{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--text-muted);margin-bottom:9px;}
+  .depots-liste{display:flex;gap:10px;flex-wrap:wrap;}
+  .depot{background:var(--paper-alt);border-radius:9px;padding:9px 14px;min-width:0;}
+  .depot strong{display:block;font-size:0.78rem;color:var(--text-muted);font-weight:600;}
+  .depot span{font-family:var(--mono);font-size:0.95rem;color:var(--text-heading);
+    word-break:break-word;}
+  .depots-titulaire{font-size:0.82rem;color:var(--text-muted);margin-top:9px;}
 </style>
 </head>
 <body>
@@ -318,14 +331,55 @@
           { day: 'numeric', month: 'long', year: 'numeric' });
       }
       document.getElementById('jauge-percent').textContent = bas;
+      // On RETIRE ce qu'un appel precedent aurait pose, avant de reposer.
+      // Sans cela, deux appels affichaient deux descriptions empilees -
+      // constate a l'ecran.
+      const carte = document.getElementById('jauge-card');
+      carte.querySelectorAll('[data-campagne]').forEach(el => el.remove());
+
       if (c.description) {
         const p = document.createElement('p');
         p.className = 'declarer-note';
         p.style.margin = '12px 0 0';
+        p.setAttribute('data-campagne', '1');
         p.textContent = c.description;
-        document.getElementById('jauge-card').appendChild(p);
+        carte.appendChild(p);
       }
-      document.getElementById('jauge-card').style.display = 'block';
+
+      // Les numeros propres a la campagne. Absents, on ne montre rien :
+      // la carte Mobile Money plus bas porte les numeros generaux, et
+      // afficher un bloc vide laisserait croire a un oubli.
+      const depots = [['Wave', c.depot_wave], ['Orange Money', c.depot_orange]]
+        .filter(([, n]) => n);
+      if (depots.length) {
+        const bloc = document.createElement('div');
+        bloc.className = 'depots';
+        bloc.setAttribute('data-campagne', '1');
+        bloc.innerHTML = '<p class="depots-titre">Où déposer votre don pour cette campagne</p>'
+          + '<div class="depots-liste">'
+          + depots.map(([op, n]) => `<div class="depot"><strong>${esc(op)}</strong><span>${esc(n)}</span></div>`).join('')
+          + '</div>'
+          + (c.depot_titulaire ? `<p class="depots-titulaire">Au nom de ${esc(c.depot_titulaire)}.</p>` : '');
+        carte.appendChild(bloc);
+
+        // UNE CAMPAGNE ACTIVE OCCUPE LA PAGE SEULE. Les autres moyens de
+        // don s'effacent le temps de la collecte : le visiteur ne doit pas
+        // hesiter entre le numero de la campagne et celui des cotisations,
+        // qui ne sont pas les memes.
+        //
+        // Seulement SI la campagne a ses propres numeros - sinon la page
+        // n'offrirait plus aucun moyen de verser, ce qui serait pire que
+        // l'hesitation qu'on cherche a eviter.
+        ['carte-bank', 'carte-mobile', 'carte-nature', 'carte-institution']
+          .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+          });
+        const grille = document.querySelector('.cards-grid');
+        if (grille) grille.style.display = 'none';
+      }
+
+      carte.style.display = 'block';
     } catch (e) { /* jauge simplement masquee */ }
   }
 

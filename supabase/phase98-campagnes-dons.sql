@@ -69,6 +69,18 @@ create table if not exists public.campagnes_dons (
   created_by    uuid references public.profiles(id) on delete set null
 );
 
+-- OU DEPOSER LE DON, campagne par campagne. La page affiche sinon les
+-- numeros de la Commission finances, qui sont ceux des COTISATIONS : une
+-- campagne qui collecte ailleurs enverrait les dons au mauvais endroit.
+-- Facultatifs : vides, la carte Mobile Money generale fait foi.
+--
+-- En « add column if not exists » plutot que dans le create ci-dessus :
+-- la table existe peut-etre deja, et « create table if not exists » ne
+-- rajoute aucune colonne a une table existante - en silence.
+alter table public.campagnes_dons add column if not exists depot_wave text;
+alter table public.campagnes_dons add column if not exists depot_orange text;
+alter table public.campagnes_dons add column if not exists depot_titulaire text;
+
 -- Une seule campagne active. L'index porte sur une constante : il ne
 -- peut donc exister qu'UNE ligne parmi celles qui sont actives.
 create unique index if not exists campagnes_dons_une_seule_active
@@ -178,7 +190,10 @@ as $$
                                from public.dons d
                               where d.campagne_id = c.id
                                 and d.status = 'confirme'), 0),
-    'echeance',    c.date_fin
+    'echeance',    c.date_fin,
+    'depot_wave',      nullif(btrim(coalesce(c.depot_wave, '')), ''),
+    'depot_orange',    nullif(btrim(coalesce(c.depot_orange, '')), ''),
+    'depot_titulaire', nullif(btrim(coalesce(c.depot_titulaire, '')), '')
   )
   from public.campagnes_dons c
   where c.is_active
