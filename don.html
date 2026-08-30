@@ -75,7 +75,15 @@
   .trust{font-family:var(--mono); font-size:0.8rem; color:var(--text-accent); border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin-top:36px;}
 
   .jauge-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 28px; margin-bottom:22px; display:none;}
-  .jauge-title{font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--text-heading); margin-bottom:14px;}
+  /* Le titre de la campagne est le VRAI titre de la page tant qu'une
+     collecte est ouverte : il passe de 1,05 rem - une taille d'etiquette
+     de carte - a celle d'un titre, juste sous le h1 de la page. Graisse
+     800, le plus lourd que Sora possede et que cette page charge deja ;
+     900 n'existe pas dans cette famille et donnerait un faux gras. */
+  .jauge-title{font-family:var(--display); font-weight:800;
+    font-size:clamp(1.6rem,3.6vw,2.3rem); line-height:1.15;
+    letter-spacing:-0.015em; text-wrap:balance;
+    color:var(--text-heading); margin-bottom:18px;}
   .jauge-track{background:var(--paper-alt); border-radius:999px; height:16px; overflow:hidden; margin-bottom:10px;}
   .jauge-fill{height:100%; background:linear-gradient(90deg, var(--green), var(--gold)); border-radius:999px; transition:width .6s ease;}
   .jauge-amounts{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;}
