@@ -242,9 +242,10 @@ médico-sociale et une résidence pour accueillir lors des grands rassemblements
 
 <div class="pt-collecte">
   <div class="pt-chiffres">
-    <div class="pt-chiffre"><b>5 000 000 F</b><span>Objectif de la collecte</span></div>
-    <div class="pt-chiffre"><b>406 000 F</b><span>Déjà mobilisés</span></div>
-    <div class="pt-chiffre"><b>31 déc. 2026</b><span>Clôture de la collecte</span></div>
+    <div class="pt-chiffre"><b data-collecte="objectif">5 000 000 F</b><span>Objectif de la collecte</span></div>
+    <div class="pt-chiffre"><b data-collecte="montant">406 000 F</b><span>Déjà mobilisés</span></div>
+    <div class="pt-chiffre"><b data-collecte="reste">4 594 000 F</b><span>Reste à mobiliser</span></div>
+    <div class="pt-chiffre"><b data-collecte="echeance">31 déc. 2026</b><span>Clôture de la collecte</span></div>
   </div>
   <p style="margin:0;"><strong>Où déposer votre contribution</strong></p>
   <div class="pt-depot">
