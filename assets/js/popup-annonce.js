@@ -40,6 +40,18 @@
     overlay.className = "popup-annonce-overlay" + (data.plein_ecran ? " fullscreen" : "");
 
     var duree = Math.min(300, Math.max(1, Number(data.duree_secondes) || 12));
+
+    // Un lien vers le site lui-meme - la page de don, par exemple - ne
+    // doit pas ouvrir un onglet : l'annonce resterait affichee dans
+    // l'onglet d'origine, et reapparaitrait dans le nouveau. Seules les
+    // adresses exterieures s'ouvrent a cote.
+    var estExterne = false;
+    if (data.cta_url) {
+      try {
+        estExterne = new URL(data.cta_url, location.href).origin !== location.origin;
+      } catch (e) { estExterne = /^https?:\/\//i.test(data.cta_url); }
+    }
+    var cible = estExterne ? ' target="_blank" rel="noopener"' : '';
     var hasBodyContent = !!(data.titre || data.message || (data.cta_label && data.cta_url));
     var okLabel = data.texte_fermeture || "OK";
 
@@ -53,7 +65,7 @@
                 (data.titre ? '<p class="popup-annonce-title">' + esc(data.titre) + "</p>" : "") +
                 (data.message ? '<p class="popup-annonce-message">' + esc(data.message) + "</p>" : "") +
                 (data.cta_label && data.cta_url
-                  ? '<div class="popup-annonce-actions"><a class="popup-annonce-cta" href="' + esc(data.cta_url) + '" target="_blank" rel="noopener">' + esc(data.cta_label) + "</a></div>"
+                  ? '<div class="popup-annonce-actions"><a class="popup-annonce-cta" href="' + esc(data.cta_url) + '"' + cible + '>' + esc(data.cta_label) + "</a></div>"
                   : "") +
               "</div>"
             : "") +
@@ -86,6 +98,14 @@
     });
     overlay.querySelector(".popup-annonce-close").addEventListener("click", close);
     overlay.querySelector(".popup-annonce-ok").addEventListener("click", close);
+
+    // Cliquer l'action PRINCIPALE, c'est avoir vu l'annonce. Sans cet
+    // appel, close() n'etait jamais execute par ce chemin et la signature
+    // n'entrait pas dans sessionStorage : l'annonce revenait a la page
+    // suivante. sessionStorage.setItem s'execute avant que la navigation
+    // ne parte, l'ordre est donc sur, y compris pour un lien interne.
+    var cta = overlay.querySelector(".popup-annonce-cta");
+    if (cta) cta.addEventListener("click", close);
 
     lockBackgroundScroll();
     overlay.classList.add("open");
