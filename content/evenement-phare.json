@@ -1,29 +1,22 @@
 {
-  "lien": "",
-  "date_retrait": "2026-09-05T09:00",
-  "sous_titre": "L'AMSTC au service de la Hadara Tidjaniya",
-  "actif": false,
-  "date_debut": "2026-08-23T14:00",
-  "titre": "Couverture Médicale du Gamou de Tivaouane 2026",
+  "lien": "https://amstc.org/don.html",
+  "date_retrait": "",
+  "sous_titre": "Aidez-nous à poser la première pierre de l’avenir à Tivaouane !",
+  "actif": true,
+  "date_debut": "2026-08-30T14:00",
+  "titre": "Collecte de fonds pour l'acquisition d'un terrain à Tivaouane",
   "note": "",
   "message_fin": "",
   "phases": [
     {
-      "nom": "Jour 1",
-      "lieu": "",
-      "dates": "24 Août",
-      "en_cours": false
-    },
-    {
-      "en_cours": false,
-      "nom": "Jour 2",
-      "lieu": "",
-      "dates": "25 Août"
+      "en_cours": true,
+      "nom": "Objectif",
+      "lieu": "3.000.000 FCFA"
     }
   ],
-  "date_fin": "2026-08-25T08:00",
-  "image": "/assets/uploads/photo_15_2026-05-18_12-56-00.jpg",
-  "campagne_id": "95af9ed0-96d8-4df1-9b69-8a2884832289",
+  "date_fin": "2026-12-31T12:00",
+  "image": "/assets/uploads/whatsapp-image-2026-07-20-at-10.00.07-pm.jpeg",
+  "campagne_id": "",
   "stats": [
     {
       "label": "Consultations",
