@@ -274,6 +274,15 @@
         <span class="admin-card-attente">Bientôt disponible</span>
       </span>
 
+      <a class="admin-card" href="dons-admin.html">
+        <div class="admin-card-icon"><i class="ti ti-coins"></i></div>
+        <div>
+          <p class="admin-card-label">Dons et campagnes</p>
+          <p class="admin-card-sub">Collecte de fonds &amp; jauge publique</p>
+        </div>
+        <span class="admin-card-badge" id="badgeDons" style="display:none;"></span>
+      </a>
+
       <!-- Le canal qui, lui, fonctionne : Resend est configuré. Placée
            juste après la carte WhatsApp grisée, pour que l'on trouve
            tout de suite ce qui marche là où l'on cherchait ce qui ne
@@ -421,6 +430,14 @@
       const { count } = await supabaseClient
         .from('campaign_requests').select('id', { count: 'exact', head: true }).eq('status', 'en_attente');
       setBadge('badgeCampaignRequests', count ?? 0);
+    } catch(e) {}
+
+    // Dons declares, en attente de confirmation. Tant qu'ils dorment
+    // dans la file, la jauge publique est fausse par le bas.
+    try {
+      const { count } = await supabaseClient
+        .from('dons').select('id', { count: 'exact', head: true }).eq('status', 'en_attente');
+      setBadge('badgeDons', count ?? 0);
     } catch(e) {}
   }
 

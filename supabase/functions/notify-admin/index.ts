@@ -272,6 +272,27 @@ function buildEmail(
         `,
       };
     }
+    // Un don déclaré par un visiteur (phase 98). Tant qu'il n'est pas
+    // confirmé, il ne compte pas dans la jauge publique : une déclaration
+    // oubliée, c'est une collecte affichée plus basse qu'elle ne l'est.
+    case "don_declare": {
+      return {
+        subject: `Don déclaré - ${esc(data.donateur_nom)} - ${esc(data.montant)} F`,
+        html: `
+          <h2>Un don vient d'être déclaré</h2>
+          <ul>
+            <li><strong>Donateur :</strong> ${esc(data.donateur_nom)}</li>
+            <li><strong>Montant :</strong> ${esc(data.montant)} FCFA</li>
+            <li><strong>Moyen :</strong> ${esc(data.methode)}</li>
+            <li><strong>Référence :</strong> ${esc(data.reference)}</li>
+            <li><strong>Contact :</strong> ${esc(data.contact)}</li>
+          </ul>
+          ${data.message ? `<p><strong>Message :</strong> ${esc(data.message)}</p>` : ""}
+          <p>À confirmer dans membres/dons-admin.html. La jauge de la page de
+          don ne bougera qu'une fois le don confirmé.</p>
+        `,
+      };
+    }
     default:
       return null;
   }
@@ -294,6 +315,8 @@ function buildTexteCourt(eventType: string, data: Record<string, any>): string |
       return `Commande boutique : ${data.buyer_name}, ${data.total_fcfa} FCFA (${data.payment_method}). À traiter.`;
     case "demande_campagne":
       return `Demande de campagne : ${data.full_name} pour ${data.locality}. À étudier.`;
+    case "don_declare":
+      return `Don déclaré : ${data.donateur_nom}, ${data.montant} FCFA (${data.methode}), réf. ${data.reference}. À confirmer.`;
     case "nouveau_sujet_forum":
       return `Nouveau sujet forum de ${data.author_name} : ${data.title}`;
     case "paiement_validite":

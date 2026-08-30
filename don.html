@@ -85,6 +85,32 @@
   .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem; padding:13px 24px; border-radius:999px; background:var(--green); color:#fff; margin-top:8px;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+
+  /* ---- Declarer un don (phase 98) ----
+     Le formulaire n'encaisse rien : il enregistre une DECLARATION, que
+     l'administration confirme ensuite. Le dire est important, sinon le
+     donateur croit avoir paye ici. */
+  .declarer-card{background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:26px 28px; margin-bottom:22px;}
+  .declarer-card h2{font-family:var(--display); font-weight:600; font-size:1.05rem;
+    color:var(--text-heading); margin:0 0 6px;}
+  .declarer-note{font-size:0.87rem; color:var(--text-muted); margin:0 0 18px;}
+  .declarer-grille{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr)); gap:14px;}
+  .champ{display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .champ label{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--text-muted);}
+  .champ input, .champ select, .champ textarea{font-family:var(--body); font-size:0.95rem;
+    padding:10px 12px; border:1.5px solid var(--line); border-radius:9px;
+    background:var(--paper); color:var(--text-body,inherit); width:100%;}
+  .champ input:focus, .champ select:focus, .champ textarea:focus{outline:none; border-color:var(--green);}
+  .champ-large{grid-column:1 / -1;}
+  .champ-aide{font-size:0.78rem; color:var(--text-muted);}
+  .declarer-anonyme{display:flex; align-items:center; gap:8px; font-size:0.88rem;
+    color:var(--text-muted); margin-top:14px;}
+  .declarer-actions{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:18px;}
+  .declarer-msg{font-size:0.88rem;}
+  .declarer-msg.ok{color:var(--green);}
+  .declarer-msg.ko{color:#B3261E;}
 </style>
 </head>
 <body>
@@ -112,24 +138,75 @@
     <p class="jauge-percent" id="jauge-percent"></p>
   </div>
 
+
+  <div class="declarer-card" id="declarer-card">
+    <h2>J'ai fait un don</h2>
+    <p class="declarer-note">Ce formulaire n'encaisse aucun paiement : il nous signale
+    un don que vous avez déjà envoyé, pour que nous puissions le confirmer et le
+    comptabiliser. Effectuez d'abord le transfert avec l'un des moyens ci-dessous.</p>
+    <div class="declarer-grille">
+      <div class="champ">
+        <label for="don-montant">Montant en FCFA *</label>
+        <input type="number" id="don-montant" min="1" step="1" inputmode="numeric" required>
+      </div>
+      <div class="champ">
+        <label for="don-methode">Moyen utilisé</label>
+        <select id="don-methode">
+          <option value="wave">Wave</option>
+          <option value="orange_money">Orange Money</option>
+          <option value="virement">Virement bancaire</option>
+          <option value="especes">Espèces</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div class="champ">
+        <label for="don-reference">Référence de la transaction</label>
+        <input type="text" id="don-reference" maxlength="80" autocomplete="off">
+        <span class="champ-aide">Elle nous permet de retrouver votre versement.</span>
+      </div>
+      <div class="champ">
+        <label for="don-nom">Votre nom</label>
+        <input type="text" id="don-nom" maxlength="120" autocomplete="name">
+        <span class="champ-aide">Facultatif. Il ne sera jamais affiché sur le site.</span>
+      </div>
+      <div class="champ">
+        <label for="don-contact">Téléphone ou e-mail</label>
+        <input type="text" id="don-contact" maxlength="120" autocomplete="off">
+        <span class="champ-aide">Facultatif, pour vous adresser un reçu.</span>
+      </div>
+      <div class="champ champ-large">
+        <label for="don-message">Message</label>
+        <textarea id="don-message" rows="2" maxlength="500"></textarea>
+      </div>
+    </div>
+    <label class="declarer-anonyme">
+      <input type="checkbox" id="don-anonyme">
+      <span>Je préfère rester anonyme - ne pas enregistrer mon nom</span>
+    </label>
+    <div class="declarer-actions">
+      <button type="button" class="btn" id="don-envoyer">Signaler mon don</button>
+      <p class="declarer-msg" id="don-msg"></p>
+    </div>
+  </div>
+
   <div class="cards-grid">
-  <div class="card">
+  <div class="card" id="carte-bank">
     <h2 id="cms-bank-title">Virement bancaire</h2>
     <div class="kv" id="cms-bank-details"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="carte-mobile">
     <h2 id="cms-mobile-title">Mobile Money</h2>
     <div class="mobile-grid" id="cms-mobile-options"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="carte-nature">
     <h2 id="cms-nature-title">Don en nature</h2>
     <p id="cms-nature-text">Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.</p>
     <a href="index.html#contact" class="btn">Nous contacter</a>
   </div>
 
-  <div class="card">
+  <div class="card" id="carte-institution">
     <h2 id="cms-institution-title">Don institutionnel ou partenariat</h2>
     <p id="cms-institution-text">Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.</p>
     <a href="mailto:contact@amstc.org" class="btn">Écrire à contact@amstc.org</a>
@@ -150,40 +227,160 @@
 
   fetch("content/don.json").then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
-    if (data.eyebrow) document.getElementById('cms-eyebrow').textContent = data.eyebrow;
-    if (data.title) document.getElementById('cms-title').textContent = data.title;
-    if (data.intro) document.getElementById('cms-intro').textContent = data.intro;
+    // Le fichier fait autorite des lors qu'il est charge : on ecrit TOUS
+    // les champs, vides compris. Sinon un champ vide dans Decap laisserait
+    // a l'ecran le texte de repli ecrit en dur ci-dessus, et l'encart ne
+    // pourrait jamais disparaitre.
+    const poser = (id, valeur) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = valeur || '';
+    };
+    poser('cms-eyebrow', data.eyebrow);
+    poser('cms-title', data.title);
+    poser('cms-intro', data.intro);
 
-    const objectif = Number(data.jauge_objectif) || 0;
-    if (objectif > 0) {
-      const collecte = Math.max(0, Number(data.jauge_collecte) || 0);
-      const percent = Math.min(100, Math.round((collecte / objectif) * 100));
-      const fcfa = n => n.toLocaleString('fr-FR') + ' FCFA';
-      if (data.jauge_titre) document.getElementById('jauge-title').textContent = data.jauge_titre;
-      document.getElementById('jauge-fill').style.width = percent + '%';
-      document.getElementById('jauge-collecte').textContent = fcfa(collecte) + ' collectés';
-      document.getElementById('jauge-objectif').textContent = 'sur ' + fcfa(objectif);
-      document.getElementById('jauge-percent').textContent = percent + '% de l\'objectif atteint';
-      document.getElementById('jauge-card').style.display = 'block';
-    }
-    if (data.bank_title) document.getElementById('cms-bank-title').textContent = data.bank_title;
-    if (data.bank_details) document.getElementById('cms-bank-details').innerHTML = md(data.bank_details);
-    if (data.mobile_title) document.getElementById('cms-mobile-title').textContent = data.mobile_title;
-    if (Array.isArray(data.mobile_options)) {
-      document.getElementById('cms-mobile-options').innerHTML = data.mobile_options.map(m => `
+    poser('cms-bank-title', data.bank_title);
+    document.getElementById('cms-bank-details').innerHTML = data.bank_details ? md(data.bank_details) : '';
+    poser('cms-mobile-title', data.mobile_title);
+    document.getElementById('cms-mobile-options').innerHTML =
+      (Array.isArray(data.mobile_options) ? data.mobile_options : []).map(m => `
         <div class="mobile-item">
           <strong>${esc(m.operator)}</strong>
           <span>${esc(m.number)}</span>
           ${m.name ? `<span>${esc(m.name)}</span>` : ''}
         </div>
       `).join('');
-    }
-    if (data.nature_title) document.getElementById('cms-nature-title').textContent = data.nature_title;
-    if (data.nature_text) document.getElementById('cms-nature-text').textContent = data.nature_text;
-    if (data.institution_title) document.getElementById('cms-institution-title').textContent = data.institution_title;
-    if (data.institution_text) document.getElementById('cms-institution-text').textContent = data.institution_text;
+    poser('cms-nature-title', data.nature_title);
+    poser('cms-nature-text', data.nature_text);
+    poser('cms-institution-title', data.institution_title);
+    poser('cms-institution-text', data.institution_text);
     if (data.trust_note) document.getElementById('cms-trust-note').textContent = data.trust_note;
+    else document.getElementById('cms-trust-note').style.display = 'none';
+
+    // ---- Les encarts vides disparaissent ----
+    // Ils etaient affiches meme vides dans Decap : un cadre avec un titre
+    // seul, et rien dedans. Un encart sans contenu n'a rien a dire.
+    [['carte-bank', 'cms-bank-title', 'cms-bank-details'],
+     ['carte-mobile', 'cms-mobile-title', 'cms-mobile-options'],
+     ['carte-nature', 'cms-nature-title', 'cms-nature-text'],
+     ['carte-institution', 'cms-institution-title', 'cms-institution-text']]
+      .forEach(([carte, titre, corps]) => {
+        const c = document.getElementById(carte);
+        const t = document.getElementById(titre);
+        const b = document.getElementById(corps);
+        if (!c) return;
+        const vide = (!t || !t.textContent.trim())
+                  && (!b || (!b.textContent.trim() && !b.querySelector('*')));
+        if (vide) c.style.display = 'none';
+      });
   }).catch(() => {});
+
+  // ============================================================
+  // La jauge, et la declaration de don (phase 98)
+  // ============================================================
+  // Le montant collecte n'est plus saisi a la main dans Decap : il est
+  // calcule en base, comme la somme des dons CONFIRMES. Personne ne le
+  // retape, il ne peut donc plus diverger de ce qui a ete valide.
+  const API = 'https://api.amstc.org';
+  const CLE = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg3MTA2MCwiZXhwIjo0OTQwNTQ0NjYwLCJyb2xlIjoiYW5vbiJ9.At_rHwK9bgTh4eoh1ykkLGaPiVXpZBpXxtgDb_allaM';
+  const enTetes = { 'Content-Type': 'application/json', 'apikey': CLE, 'Authorization': 'Bearer ' + CLE };
+  const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
+  let campagneId = null;
+
+  async function rpc(nom, corps) {
+    const r = await fetch(API + '/rest/v1/rpc/' + nom, {
+      method: 'POST', headers: enTetes, body: JSON.stringify(corps || {}),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+
+  async function chargerCampagne() {
+    try {
+      const c = await rpc('campagne_don_publique');
+      // null = aucune campagne active : la page reste la page de don
+      // generique d'avant, sans jauge. C'est voulu.
+      if (!c || !c.objectif) return;
+      campagneId = await rpc('campagne_don_active_id');
+
+      const objectif = Number(c.objectif) || 0;
+      const collecte = Math.max(0, Number(c.collecte) || 0);
+      const percent = objectif ? Math.min(100, Math.round((collecte / objectif) * 100)) : 0;
+
+      document.getElementById('jauge-title').textContent = c.titre || 'Notre objectif de collecte';
+      document.getElementById('jauge-fill').style.width = percent + '%';
+      document.getElementById('jauge-collecte').textContent = fcfa(collecte) + ' collectés';
+      document.getElementById('jauge-objectif').textContent = 'sur ' + fcfa(objectif);
+      let bas = percent + '% de l\'objectif atteint';
+      if (c.echeance) {
+        const d = new Date(c.echeance + 'T00:00:00');
+        if (!isNaN(d)) bas += ' - jusqu\'au ' + d.toLocaleDateString('fr-FR',
+          { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+      document.getElementById('jauge-percent').textContent = bas;
+      if (c.description) {
+        const p = document.createElement('p');
+        p.className = 'declarer-note';
+        p.style.margin = '12px 0 0';
+        p.textContent = c.description;
+        document.getElementById('jauge-card').appendChild(p);
+      }
+      document.getElementById('jauge-card').style.display = 'block';
+    } catch (e) { /* jauge simplement masquee */ }
+  }
+
+  function afficher(texte, ok) {
+    const el = document.getElementById('don-msg');
+    el.textContent = texte;
+    el.className = 'declarer-msg ' + (ok ? 'ok' : 'ko');
+  }
+
+  async function envoyerDon() {
+    const btn = document.getElementById('don-envoyer');
+    const montant = parseInt(document.getElementById('don-montant').value, 10);
+    if (!montant || montant <= 0) { afficher('Indiquez le montant de votre don.', false); return; }
+    if (montant > 100000000) { afficher('Ce montant depasse ce que le formulaire accepte. Ecrivez-nous.', false); return; }
+
+    const anonyme = document.getElementById('don-anonyme').checked;
+    const lire = id => document.getElementById(id).value.trim() || null;
+
+    btn.disabled = true;
+    const libelle = btn.textContent;
+    btn.textContent = 'Envoi…';
+    try {
+      // status et source ne sont PAS envoyes : la regle d'ecriture en base
+      // impose « en_attente » et « public ». Les envoyer ici laisserait
+      // croire que le navigateur en decide.
+      const r = await fetch(API + '/rest/v1/dons', {
+        method: 'POST',
+        headers: Object.assign({}, enTetes, { 'Prefer': 'return=minimal' }),
+        body: JSON.stringify({
+          campagne_id: campagneId,
+          donateur_nom: anonyme ? null : lire('don-nom'),
+          donateur_contact: lire('don-contact'),
+          montant_fcfa: montant,
+          methode: document.getElementById('don-methode').value,
+          reference: lire('don-reference'),
+          message: lire('don-message'),
+          status: 'en_attente',
+          source: 'public',
+        }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      afficher('Merci. Votre don nous a ete signale : il sera confirme apres verification, '
+        + 'puis compte dans la collecte.', true);
+      ['don-montant', 'don-reference', 'don-nom', 'don-contact', 'don-message']
+        .forEach(id => { document.getElementById(id).value = ''; });
+    } catch (e) {
+      afficher('L\'envoi n\'a pas abouti. Reessayez, ou ecrivez-nous a contact@amstc.org.', false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = libelle;
+    }
+  }
+
+  document.getElementById('don-envoyer').addEventListener('click', envoyerDon);
+  chargerCampagne();
 </script>
 
 </body>

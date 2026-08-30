@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/defilement.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dons et campagnes - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+  .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
+
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px 80px;}
+  .page-header{padding:32px 0 20px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .back:hover{opacity:0.75;}
+  .page-title{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--text-heading);}
+  .page-sub{font-size:0.9rem;color:var(--text-muted);margin-top:6px;}
+
+  .section-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-accent);margin:26px 0 14px;display:flex;align-items:center;gap:6px;}
+
+  .loading-msg{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:0.9rem;}
+
+  /* ---- Les quatre chiffres ---- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:14px;}
+  .stat{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-width:0;}
+  .stat-val{font-family:var(--display);font-size:1.9rem;font-weight:700;color:var(--text-heading);line-height:1.1;}
+  .stat-lbl{font-size:0.8rem;color:var(--text-muted);margin-top:4px;}
+  .stat.accent .stat-val{color:var(--gold-deep);}
+
+  /* ---- L'encart d'envoi ---- */
+  .envoi-card{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-top:18px;}
+  .avert{display:flex;gap:10px;align-items:flex-start;background:var(--paper-alt);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;font-size:0.86rem;color:var(--text-muted);margin-bottom:16px;}
+  .avert i{color:var(--gold-deep);flex-shrink:0;margin-top:2px;}
+  .avert strong{color:var(--text-heading);}
+
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:999px;padding:12px 24px;font-family:var(--body);font-size:0.92rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary:hover:not(:disabled){background:var(--green-deep);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-danger{background:#B3261E;}
+  .btn-danger:hover:not(:disabled){background:#8C1D18;}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--text-muted);border-radius:999px;padding:11px 20px;font-family:var(--body);font-size:0.9rem;cursor:pointer;}
+  .btn-ghost:hover{border-color:var(--green);color:var(--text-heading);}
+
+  /* Le pas de confirmation : on ne peut pas rattraper un envoi. */
+  .confirm-box{border:2px solid var(--gold);border-radius:12px;padding:16px 18px;margin-top:4px;background:var(--paper-alt);}
+  .confirm-titre{font-family:var(--display);font-weight:600;color:var(--text-heading);margin-bottom:6px;}
+  .confirm-txt{font-size:0.88rem;color:var(--text-muted);margin-bottom:14px;}
+  .confirm-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .forcer{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;}
+
+  .msg{font-size:0.88rem;margin-top:12px;}
+  .msg.ok{color:var(--green);}
+  .msg.ko{color:#B3261E;}
+
+  /* ---- La liste ---- */
+  .table-wrap{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  th{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--text-body,inherit);}
+  tr:last-child td{border-bottom:none;}
+  .nom-cell{font-weight:600;color:var(--text-heading);}
+  .mail-cell{font-family:var(--mono);font-size:0.78rem;color:var(--text-muted);word-break:break-all;}
+  .empty-row td{text-align:center;color:var(--text-muted);padding:26px;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .tag-carte{background:rgba(179,38,30,0.12);color:#B3261E;}
+  .tag-cotis{background:rgba(248,183,24,0.18);color:var(--gold-deep);}
+
+  @media (max-width:640px){
+    .header-inner{padding:12px 16px;}
+    .wrap{padding:0 14px 70px;}
+    .page-title{font-size:1.3rem;}
+    .envoi-card{padding:18px 16px;}
+    th,td{padding:10px 12px;}
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+<style>
+  /* ---- Formulaires de cet ecran ---- */
+  .bloc{background:var(--card-bg,var(--white));border:1px solid var(--line);
+    border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;}
+  .grille-champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:14px;}
+  .champ{display:flex;flex-direction:column;gap:5px;min-width:0;}
+  .champ label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--text-muted);}
+  .champ input,.champ select,.champ textarea{font-family:var(--body);font-size:0.94rem;
+    padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;
+    background:var(--paper);color:var(--text-body,inherit);width:100%;}
+  .champ input:focus,.champ select:focus,.champ textarea:focus{outline:none;border-color:var(--green);}
+  .champ-large{grid-column:1 / -1;}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;}
+  .btn{background:none;border:1.5px solid var(--line);color:var(--text-muted);
+    border-radius:999px;padding:8px 16px;font-family:var(--body);font-size:0.86rem;cursor:pointer;}
+  .btn:hover{border-color:var(--green);color:var(--text-heading);}
+  .btn-confirm{border-color:var(--green);color:var(--green);}
+  .btn-reject{border-color:#B3261E;color:#B3261E;}
+
+  /* ---- La jauge, telle que le public la voit ---- */
+  .jauge{margin-top:14px;}
+  .jauge-track{background:var(--paper-alt);border-radius:999px;height:14px;overflow:hidden;}
+  .jauge-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));
+    border-radius:999px;transition:width .6s ease;}
+  .jauge-txt{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    margin-top:9px;font-size:0.88rem;color:var(--text-muted);}
+  .jauge-txt b{font-family:var(--display);color:var(--text-heading);font-size:1.05rem;}
+
+  .campagne{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    align-items:center;padding:13px 0;border-bottom:1px solid var(--line);}
+  .campagne:last-child{border-bottom:none;}
+  .campagne-nom{font-weight:600;color:var(--text-heading);}
+  .campagne-meta{font-size:0.8rem;color:var(--text-muted);}
+  .puce{display:inline-block;font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;
+    letter-spacing:0.05em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .puce-active{background:rgba(23,118,59,0.14);color:var(--green);}
+  .puce-close{background:var(--paper-alt);color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab active" href="index.html">Tableau de bord</a>
+    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <div class="member-groupe">
+      <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
+      <div class="member-sous-menu">
+        <a class="member-sous-lien" href="formations.html">Formations</a>
+        <a class="member-sous-lien" href="daara.html">Daara</a>
+        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+      </div>
+    </div>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
+    <a class="member-tab" href="documents.html">Documents officiels</a>
+    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes.html">Collectes</a>
+    <a class="member-tab" href="forum.html">Forum</a>
+    <a class="member-tab" href="annuaire.html">Annuaire</a>
+    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+  </div>
+</nav>
+
+<div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+
+  <div class="page-header">
+    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <h1 class="page-title">Dons et campagnes</h1>
+    <p class="page-sub">La jauge de la page de don affiche la somme des dons confirmés ici. Personne ne retape un total.</p>
+  </div>
+
+  <p class="section-label"><i class="ti ti-coins"></i> Où en est-on</p>
+  <div class="stats">
+    <div class="stat"><p class="stat-val" id="statAttente">-</p><p class="stat-lbl">Déclarations en attente</p></div>
+    <div class="stat"><p class="stat-val" id="statConfirmes">-</p><p class="stat-lbl">Dons confirmés</p></div>
+    <div class="stat"><p class="stat-val" id="statTotalCampagne">-</p><p class="stat-lbl">Collecté sur la campagne</p></div>
+    <div class="stat accent"><p class="stat-val" id="statTotalGeneral">-</p><p class="stat-lbl">Collecté au total</p></div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-target-arrow"></i> La campagne en cours</p>
+  <div class="bloc" id="blocCampagne">
+    <p id="campagneVide" class="page-sub" style="margin:0;">Aucune campagne active : la page de don n'affiche pas de jauge.</p>
+    <div id="campagneActive" style="display:none;">
+      <p class="campagne-nom" id="campagneTitre"></p>
+      <p class="campagne-meta" id="campagneDesc"></p>
+      <div class="jauge">
+        <div class="jauge-track"><div class="jauge-fill" id="jaugeFill" style="width:0%"></div></div>
+        <div class="jauge-txt">
+          <span><b id="jaugeCollecte">-</b> collectés</span>
+          <span id="jaugeObjectif"></span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-reject" id="btnCloturer"><i class="ti ti-flag-off"></i> Clôturer la campagne</button>
+        <span class="msg" id="msgCampagne"></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-clock-hour-4"></i> Déclarations en attente</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Reçu le</th><th>Donateur</th><th>Montant</th><th>Moyen</th>
+        <th>Référence</th><th>Contact</th><th>Action</th>
+      </tr></thead>
+      <tbody id="attenteBody"><tr class="empty-row"><td colspan="7">Chargement…</td></tr></tbody>
+    </table>
+  </div>
+
+  <p class="section-label"><i class="ti ti-pencil-plus"></i> Enregistrer un don reçu</p>
+  <div class="bloc">
+    <p class="page-sub" style="margin:0 0 14px;">Pour un don remis en espèces, par virement ou de la main à la main,
+    sans passer par le formulaire public. Il entre directement confirmé et compte dans la jauge.</p>
+    <div class="grille-champs">
+      <div class="champ"><label for="nMontant">Montant en FCFA *</label>
+        <input type="number" id="nMontant" min="1" step="1" inputmode="numeric"></div>
+      <div class="champ"><label for="nMethode">Moyen</label>
+        <select id="nMethode">
+          <option value="especes">Espèces</option>
+          <option value="virement">Virement bancaire</option>
+          <option value="wave">Wave</option>
+          <option value="orange_money">Orange Money</option>
+          <option value="autre">Autre</option>
+        </select></div>
+      <div class="champ"><label for="nNom">Donateur</label><input type="text" id="nNom" maxlength="120"></div>
+      <div class="champ"><label for="nReference">Référence</label><input type="text" id="nReference" maxlength="80"></div>
+      <div class="champ"><label for="nContact">Contact</label><input type="text" id="nContact" maxlength="120"></div>
+      <div class="champ champ-large"><label for="nMessage">Note interne</label>
+        <textarea id="nMessage" rows="2" maxlength="500"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="btnEnregistrer"><i class="ti ti-check"></i> Enregistrer le don</button>
+      <span class="msg" id="msgEnregistrer"></span>
+    </div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-list-check"></i> Toutes les campagnes</p>
+  <div class="bloc" id="listeCampagnes"><p class="page-sub" style="margin:0;">Chargement…</p></div>
+
+  <p class="section-label"><i class="ti ti-plus"></i> Nouvelle campagne</p>
+  <div class="bloc">
+    <div class="grille-champs">
+      <div class="champ"><label for="cTitre">Titre *</label><input type="text" id="cTitre" maxlength="120"></div>
+      <div class="champ"><label for="cObjectif">Objectif en FCFA *</label>
+        <input type="number" id="cObjectif" min="1" step="1" inputmode="numeric"></div>
+      <div class="champ"><label for="cFin">Date de fin</label><input type="date" id="cFin"></div>
+      <div class="champ champ-large"><label for="cDesc">Description affichée sur la page de don</label>
+        <textarea id="cDesc" rows="2" maxlength="400"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="btnCreer"><i class="ti ti-plus"></i> Créer et activer</button>
+      <span class="msg" id="msgCreer"></span>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const MOYENS = { wave: 'Wave', orange_money: 'Orange Money', virement: 'Virement',
+                   especes: 'Espèces', autre: 'Autre' };
+  const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    document.getElementById('signoutBtn').style.display = '';
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+
+    document.getElementById('btnEnregistrer').addEventListener('click', enregistrerDon);
+    document.getElementById('btnCreer').addEventListener('click', creerCampagne);
+    document.getElementById('btnCloturer').addEventListener('click', cloturer);
+
+    await tout();
+  })();
+
+  async function tout() {
+    await Promise.all([chargerApercu(), chargerAttente(), chargerCampagnes()]);
+  }
+
+  async function chargerApercu() {
+    try {
+      const { data, error } = await supabaseClient.rpc('apercu_dons');
+      if (error) throw error;
+      const d = data || {};
+      document.getElementById('statAttente').textContent = d.en_attente ?? 0;
+      document.getElementById('statConfirmes').textContent = d.confirmes ?? 0;
+      document.getElementById('statTotalCampagne').textContent = fcfa(d.total_fcfa);
+      document.getElementById('statTotalGeneral').textContent = fcfa(d.total_general);
+
+      const c = d.campagne;
+      if (c && c.objectif) {
+        const pct = Math.min(100, Math.round((Number(c.collecte || 0) / Number(c.objectif)) * 100));
+        document.getElementById('campagneTitre').textContent = c.titre || '';
+        document.getElementById('campagneDesc').textContent = c.description || '';
+        document.getElementById('jaugeFill').style.width = pct + '%';
+        document.getElementById('jaugeCollecte').textContent = fcfa(c.collecte);
+        document.getElementById('jaugeObjectif').textContent = 'sur ' + fcfa(c.objectif) + ' - ' + pct + '%';
+        document.getElementById('campagneActive').style.display = '';
+        document.getElementById('campagneVide').style.display = 'none';
+      } else {
+        document.getElementById('campagneActive').style.display = 'none';
+        document.getElementById('campagneVide').style.display = '';
+      }
+    } catch (e) { dire('msgCampagne', e.message || String(e), false); }
+  }
+
+  async function chargerAttente() {
+    const tb = document.getElementById('attenteBody');
+    try {
+      const { data, error } = await supabaseClient
+        .from('dons').select('*').eq('status', 'en_attente')
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      if (!data || !data.length) {
+        tb.innerHTML = '<tr class="empty-row"><td colspan="7">Aucune déclaration en attente.</td></tr>';
+        return;
+      }
+      tb.innerHTML = data.map(d => `
+        <tr>
+          <td class="meta-cell">${esc(dateFr(d.created_at))}</td>
+          <td class="nom-cell">${esc(d.donateur_nom || '(anonyme)')}</td>
+          <td><strong>${esc(fcfa(d.montant_fcfa))}</strong></td>
+          <td>${esc(MOYENS[d.methode] || d.methode || '-')}</td>
+          <td class="mail-cell">${esc(d.reference || '-')}</td>
+          <td class="mail-cell">${esc(d.donateur_contact || '-')}</td>
+          <td>
+            <button class="btn btn-confirm" onclick="valider('${d.id}','confirme')"><i class="ti ti-check"></i> Confirmer</button>
+            <button class="btn btn-reject" onclick="valider('${d.id}','rejete')"><i class="ti ti-x"></i> Rejeter</button>
+          </td>
+        </tr>`).join('');
+    } catch (e) {
+      tb.innerHTML = '<tr class="empty-row"><td colspan="7">Impossible de charger les déclarations.</td></tr>';
+    }
+  }
+
+  async function valider(id, statut) {
+    try {
+      const { error } = await supabaseClient.rpc('valider_don', { p_id: id, p_status: statut });
+      if (error) throw error;
+      await tout();
+    } catch (e) { alert(e.message || String(e)); }
+  }
+
+  async function enregistrerDon() {
+    const montant = parseInt(document.getElementById('nMontant').value, 10);
+    if (!montant || montant <= 0) { dire('msgEnregistrer', 'Indiquez un montant.', false); return; }
+    const v = id => document.getElementById(id).value.trim() || null;
+    try {
+      const { error } = await supabaseClient.rpc('enregistrer_don', {
+        p_montant: montant,
+        p_methode: document.getElementById('nMethode').value,
+        p_nom: v('nNom'), p_reference: v('nReference'),
+        p_contact: v('nContact'), p_message: v('nMessage'),
+      });
+      if (error) throw error;
+      ['nMontant','nNom','nReference','nContact','nMessage'].forEach(i => document.getElementById(i).value = '');
+      dire('msgEnregistrer', 'Don enregistré et compté dans la collecte.', true);
+      await tout();
+    } catch (e) { dire('msgEnregistrer', e.message || String(e), false); }
+  }
+
+  async function chargerCampagnes() {
+    const el = document.getElementById('listeCampagnes');
+    try {
+      const { data, error } = await supabaseClient
+        .from('campagnes_dons').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      if (!data || !data.length) { el.innerHTML = '<p class="page-sub" style="margin:0;">Aucune campagne créée.</p>'; return; }
+      el.innerHTML = data.map(c => `
+        <div class="campagne">
+          <div style="min-width:0;">
+            <p class="campagne-nom">${esc(c.titre)}</p>
+            <p class="campagne-meta">Objectif ${esc(fcfa(c.objectif_fcfa))}${c.date_fin ? ' - jusqu\'au ' + esc(dateCourte(c.date_fin)) : ''}</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <span class="puce ${c.is_active ? 'puce-active' : 'puce-close'}">${c.is_active ? 'Active' : 'Fermée'}</span>
+            ${c.is_active ? '' : `<button class="btn" onclick="activer('${c.id}')"><i class="ti ti-player-play"></i> Activer</button>`}
+          </div>
+        </div>`).join('');
+    } catch (e) { el.innerHTML = '<p class="page-sub" style="margin:0;">Impossible de charger les campagnes.</p>'; }
+  }
+
+  async function activer(id) {
+    try {
+      const { error } = await supabaseClient.rpc('activer_campagne_don', { p_id: id });
+      if (error) throw error;
+      await tout();
+    } catch (e) { alert(e.message || String(e)); }
+  }
+
+  async function cloturer() {
+    if (!confirm('Clôturer la campagne ? La page de don n\'affichera plus de jauge.')) return;
+    try {
+      const { error } = await supabaseClient.rpc('cloturer_campagne_don');
+      if (error) throw error;
+      await tout();
+    } catch (e) { dire('msgCampagne', e.message || String(e), false); }
+  }
+
+  async function creerCampagne() {
+    const titre = document.getElementById('cTitre').value.trim();
+    const objectif = parseInt(document.getElementById('cObjectif').value, 10);
+    if (!titre) { dire('msgCreer', 'Donnez un titre à la campagne.', false); return; }
+    if (!objectif || objectif <= 0) { dire('msgCreer', 'Indiquez un objectif supérieur à zéro.', false); return; }
+    try {
+      // On cree INACTIVE, puis on active par la fonction dediee : elle
+      // desactive l'ancienne dans le meme geste. Creer directement en
+      // « active » violerait l'index unique s'il y en a deja une.
+      const { data, error } = await supabaseClient.from('campagnes_dons').insert({
+        titre: titre,
+        description: document.getElementById('cDesc').value.trim() || null,
+        objectif_fcfa: objectif,
+        date_fin: document.getElementById('cFin').value || null,
+        is_active: false,
+      }).select('id').single();
+      if (error) throw error;
+      const { error: e2 } = await supabaseClient.rpc('activer_campagne_don', { p_id: data.id });
+      if (e2) throw e2;
+      ['cTitre','cObjectif','cFin','cDesc'].forEach(i => document.getElementById(i).value = '');
+      dire('msgCreer', 'Campagne créée et activée. Elle s\'affiche sur la page de don.', true);
+      await tout();
+    } catch (e) { dire('msgCreer', e.message || String(e), false); }
+  }
+
+  function dire(id, texte, ok) {
+    const el = document.getElementById(id);
+    el.textContent = texte;
+    el.className = 'msg ' + (ok ? 'ok' : 'ko');
+  }
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function dateFr(d) {
+    return d ? new Date(d).toLocaleString('fr-FR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+  }
+  function dateCourte(d) {
+    return d ? new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+  }
+</script>
+</body>
+</html>

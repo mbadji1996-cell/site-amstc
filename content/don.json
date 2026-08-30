@@ -2,15 +2,20 @@
   "eyebrow": "Nous soutenir",
   "title": "Faire un don",
   "intro": "Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation menée par nos équipes bénévoles.",
-  "jauge_titre": "",
-  "jauge_objectif": 0,
-  "jauge_collecte": 0,
   "bank_title": "Virement bancaire",
   "bank_details": "**Compte bancaire :** Disponible bientôt",
   "mobile_title": "Mobile Money",
   "mobile_options": [
-    { "operator": "Orange Money", "number": "+221 78 867 96 23", "name": "" },
-    { "operator": "Wave", "number": "+221 78 828 32 16", "name": "" }
+    {
+      "operator": "Orange Money",
+      "number": "+221 78 867 96 23",
+      "name": ""
+    },
+    {
+      "operator": "Wave",
+      "number": "+221 78 828 32 16",
+      "name": ""
+    }
   ],
   "nature_title": "Don en nature",
   "nature_text": "Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.",
