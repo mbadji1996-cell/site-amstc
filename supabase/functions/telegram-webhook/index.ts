@@ -1071,7 +1071,11 @@ Deno.serve(async (req: Request) => {
     .filter((ligne) => ligne.length);
   rangees.push(...classement);
 
-  const ecranFiche = action.startsWith("ins") ? "/membres/validation.html" : "/membres/verification-admin.html";
+  // « Voir la fiche » doit mener là où l'on peut agir : un don ne se
+  // traite pas dans l'écran de vérification des paiements.
+  const ecranFiche = action.startsWith("ins") ? "/membres/validation.html"
+    : action.startsWith("don") ? "/membres/dons-admin.html"
+    : "/membres/verification-admin.html";
   rangees.push([{ text: "🔎 Voir la fiche", url: SITE + ecranFiche }]);
 
   await reecrire(salon, msgId, estPhoto, `${esc(avant)}\n\n➤ <b>${esc(resultat)}</b>`, rangees);

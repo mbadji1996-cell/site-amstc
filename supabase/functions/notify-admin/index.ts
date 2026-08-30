@@ -520,6 +520,7 @@ const ECRAN_ADMIN: Record<string, string> = {
   paiement_validite:      "/membres/verification-admin.html",
   paiement_cotisation:    "/membres/verification-admin.html",
   participation_collecte: "/membres/collectes-admin.html",
+  don_declare:            "/membres/dons-admin.html",
   rapport_matinal:        "/membres/admin.html",
   dossiers_oublies:       "/membres/admin.html",
   cartes_echeance:        "/membres/validation.html",
@@ -539,6 +540,9 @@ function boutons(eventType: string, data: Record<string, any>): unknown {
       case "inscription":         rangees.push(paire("ins", "✅ Approuver", "✖️ Refuser")); break;
       case "paiement_validite":   rangees.push(paire("val", "✅ Confirmer", "✖️ Refuser")); break;
       case "paiement_cotisation": rangees.push(paire("cot", "✅ Confirmer", "✖️ Refuser")); break;
+      // Un don déclaré se confirme du pouce, sans ouvrir le site :
+      // tant qu'il attend, il ne compte pas dans la jauge publique.
+      case "don_declare":        rangees.push(paire("don", "✅ Confirmer", "✖️ Rejeter")); break;
     }
   }
 
