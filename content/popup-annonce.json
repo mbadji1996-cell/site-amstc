@@ -2,10 +2,10 @@
   "duree_secondes": 30,
   "cta_url": "https://amstc.org/don.html",
   "cta_label": "En savoir plus...",
-  "active": false,
+  "active": true,
   "message": "Pour consolider son ancrage et pérenniser son action, l'AMSTC a engagé une démarche d'acquisition d'un terrain qui deviendra le siège de l'association, un lieu de référence pour ses équipes et les populations.",
   "plein_ecran": true,
   "titre": "Collecte de fonds pour l'acquisition d'un terrain à Tivaouane",
   "texte_fermeture": "OK",
-  "image": "/assets/uploads/whatsapp-image-2026-07-20-at-10.00.07-pm.jpeg"
+  "image": "/assets/uploads/siège-sociale-tiva.png"
 }
