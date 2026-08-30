@@ -89,7 +89,13 @@ self.addEventListener("fetch", (event) => {
   // il affichait la liste d'hier : un article publie restait invisible
   // pour qui avait deja visite le site, sans le moindre message d'erreur.
   // Constate sur la publication de l'article du Gamou 2026.
-  const estIndexContenu = /^\/content\/.*\.json$/i.test(new URL(req.url).pathname);
+  // TOUT ce qui vit sous /content/ change sans changer de nom : les index
+  // .json comme les fiches .md des articles, projets et formations. Le
+  // premier correctif ne visait que les .json - un article reecrit
+  // s'affichait donc encore dans sa version d'hier pour qui avait deja
+  // visite le site, et ne se corrigeait qu'a la visite suivante.
+  // Constate en verifiant une fiche projet qui venait d'etre modifiee.
+  const estIndexContenu = /^\/content\//i.test(new URL(req.url).pathname);
 
   if (estCode || estIndexContenu) {
     event.respondWith(
@@ -107,8 +113,9 @@ self.addEventListener("fetch", (event) => {
   // Le reste - images, polices - garde le cache d'abord : ceux-la
   // changent bien de nom quand ils changent (image-01.jpg d'un article
   // n'est jamais remplacee par une autre photo), et leur fraicheur
-  // immediate n'a aucune incidence sur l'affichage. Les index de contenu,
-  // eux, sont passes plus haut : ils changent SANS changer de nom.
+  // immediate n'a aucune incidence sur l'affichage. Tout /content/,
+  // en revanche, est passe plus haut : ces fichiers changent SANS changer
+  // de nom.
   event.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)
