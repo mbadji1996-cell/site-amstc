@@ -247,24 +247,51 @@ Deno.serve(async (req: Request) => {
       let echecs = 0;
       for (let i = 0; i < messages.length; i += 100) {
         const paquet = messages.slice(i, i + 100);
-        try {
-          const r = await fetch("https://api.resend.com/emails/batch", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${RESEND_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(paquet),
-          });
-          if (r.ok) {
-            envoyes += paquet.length;
-          } else {
-            echecs += paquet.length;
-            console.error("Resend a refusé un lot :", r.status, await r.text());
+        // RÉESSAI SUR 429. Resend limite le débit à quelques requêtes par
+        // seconde. pg_net dépose tous les lots d'un coup, donc plusieurs
+        // invocations de cette fonction appellent Resend en même temps :
+        // sans réessai, les lots en trop repartiraient en 429 et cinquante
+        // personnes ne recevraient rien, pour un incident qui dure une
+        // seconde. On réessaie aussi les 5xx, qui sont passagers par
+        // nature ; un 4xx autre que 429 (adresse invalide, clé refusée)
+        // ne s'arrangera pas en attendant, on abandonne tout de suite.
+        let place = false;
+        for (let essai = 1; essai <= 4 && !place; essai++) {
+          try {
+            const r = await fetch("https://api.resend.com/emails/batch", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${RESEND_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(paquet),
+            });
+            if (r.ok) {
+              envoyes += paquet.length;
+              place = true;
+            } else if ((r.status === 429 || r.status >= 500) && essai < 4) {
+              const detail = await r.text();
+              const attente = 1200 * essai;
+              console.warn(
+                `Resend ${r.status} sur un lot de ${paquet.length} : ` +
+                `nouvel essai dans ${attente} ms (essai ${essai}/4). ${detail.slice(0, 200)}`,
+              );
+              await new Promise((resolve) => setTimeout(resolve, attente));
+            } else {
+              echecs += paquet.length;
+              console.error("Resend a refusé un lot :", r.status, await r.text());
+              place = true;
+            }
+          } catch (e) {
+            if (essai < 4) {
+              console.warn(`Appel à Resend impossible (essai ${essai}/4) : ${String(e)}`);
+              await new Promise((resolve) => setTimeout(resolve, 1200 * essai));
+            } else {
+              echecs += paquet.length;
+              console.error("Appel à Resend impossible :", String(e));
+              place = true;
+            }
           }
-        } catch (e) {
-          echecs += paquet.length;
-          console.error("Appel à Resend impossible :", String(e));
         }
         // Souffler entre deux paquets : le plafond de Resend se compte à la
         // seconde, et rien ne presse une relance mensuelle.

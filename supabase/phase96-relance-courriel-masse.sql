@@ -25,10 +25,17 @@
 -- donc annoncé deux cents envois pendant qu'une bonne partie partait à la
 -- poubelle, sans la moindre trace.
 --
--- On envoie donc par PAQUETS DE 50, chacun en un seul appel, que la
--- fonction Edge remet à Resend par son point d'entrée « batch ». Deux
--- cents membres, ce sont quatre appels au lieu de deux cents : aucun
--- risque de plafond.
+-- On envoie donc par PAQUETS DE 100 - le maximum qu'accepte Resend en
+-- un appel - que la fonction Edge remet à son point d'entrée
+-- « batch ». Deux cents membres, ce sont DEUX appels au lieu de deux
+-- cents.
+--
+-- LE PLAFOND N'EST PAS ÉCARTÉ POUR AUTANT. pg_net dépose tous les lots
+-- d'un coup : les invocations de la fonction Edge partent en même
+-- temps, et Resend n'accepte que quelques requêtes par seconde. C'est
+-- pourquoi la fonction Edge RÉESSAIE sur 429 plutôt que de compter le
+-- lot comme perdu - sans quoi cent personnes ne recevraient rien pour
+-- un incident qui dure une seconde.
 --
 -- LE DÉLAI DE PG_NET, LUI, EST DÉPASSÉ - ET C'EST NORMAL. pg_net coupe
 -- la communication au bout de 5 secondes. Un démarrage à froid du
@@ -276,7 +283,7 @@ begin
       else v_cotisations := v_cotisations + 1;
     end if;
 
-    if jsonb_array_length(v_lot) >= 50 then
+    if jsonb_array_length(v_lot) >= 100 then
       perform public.notify_membre('rappel_masse',
         jsonb_build_object('destinataires', v_lot));
       v_lot := '[]'::jsonb;
