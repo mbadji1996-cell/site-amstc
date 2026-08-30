@@ -28,8 +28,15 @@
 -- On envoie donc par PAQUETS DE 50, chacun en un seul appel, que la
 -- fonction Edge remet à Resend par son point d'entrée « batch ». Deux
 -- cents membres, ce sont quatre appels au lieu de deux cents : aucun
--- risque de plafond, et chaque appel reste bien en deçà des 5 secondes
--- que pg_net accorde.
+-- risque de plafond.
+--
+-- LE DÉLAI DE PG_NET, LUI, EST DÉPASSÉ - ET C'EST NORMAL. pg_net coupe
+-- la communication au bout de 5 secondes. Un démarrage à froid du
+-- conteneur, plus l'appel à Resend, va au-delà : 5801 ms mesurées pour
+-- UN SEUL destinataire lors de la mise en service. La fonction Edge
+-- répond donc AUSSITÔT (202) et poursuit l'envoi en arrière-plan ; le
+-- délai de pg_net ne concerne plus que l'accusé de réception, jamais
+-- l'envoi lui-même.
 --
 -- CE QUE LE BOUTON PEUT PROMETTRE, ET CE QU'IL NE PEUT PAS. pg_net envoie
 -- sans attendre la réponse : la fonction rend la main dès les lots

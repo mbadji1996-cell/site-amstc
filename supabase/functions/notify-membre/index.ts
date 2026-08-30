@@ -242,40 +242,70 @@ Deno.serve(async (req: Request) => {
     // Resend n'accepte pas plus de 100 messages par appel. L'appelant SQL
     // découpe déjà par 50, mais on ne se fie pas à l'appelant : un lot
     // trop gros serait refusé en entier, donc silencieusement perdu.
-    let envoyes = 0;
-    let echecs = 0;
-    for (let i = 0; i < messages.length; i += 100) {
-      const paquet = messages.slice(i, i + 100);
-      const r = await fetch("https://api.resend.com/emails/batch", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paquet),
-      });
-      if (r.ok) {
-        envoyes += paquet.length;
-      } else {
-        echecs += paquet.length;
-        console.error("Resend a refusé un lot :", r.status, await r.text());
+    const envoyerLots = async () => {
+      let envoyes = 0;
+      let echecs = 0;
+      for (let i = 0; i < messages.length; i += 100) {
+        const paquet = messages.slice(i, i + 100);
+        try {
+          const r = await fetch("https://api.resend.com/emails/batch", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${RESEND_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(paquet),
+          });
+          if (r.ok) {
+            envoyes += paquet.length;
+          } else {
+            echecs += paquet.length;
+            console.error("Resend a refusé un lot :", r.status, await r.text());
+          }
+        } catch (e) {
+          echecs += paquet.length;
+          console.error("Appel à Resend impossible :", String(e));
+        }
+        // Souffler entre deux paquets : le plafond de Resend se compte à la
+        // seconde, et rien ne presse une relance mensuelle.
+        if (i + 100 < messages.length) {
+          await new Promise((resolve) => setTimeout(resolve, 600));
+        }
       }
-      // Souffler entre deux paquets : le plafond de Resend se compte à la
-      // seconde, et rien ne presse une relance mensuelle.
-      if (i + 100 < messages.length) {
-        await new Promise((resolve) => setTimeout(resolve, 600));
-      }
+      console.log(`rappel_masse : ${envoyes} envoyé(s), ${echecs} en échec.`);
+    };
+
+    // RÉPONDRE TOUT DE SUITE, ET ENVOYER APRÈS.
+    //
+    // pg_net coupe la communication au bout de 5 secondes. Un démarrage à
+    // froid du conteneur, plus l'appel à Resend, dépasse ce délai : mesuré
+    // sur la première mise en service, 5801 ms pour UN SEUL destinataire.
+    // pg_net inscrivait alors « Timeout of 5000 ms reached » et l'écran
+    // n'avait aucun moyen de savoir si les courriels étaient partis ou non.
+    //
+    // On rend donc la main immédiatement, et le travail se poursuit en
+    // arrière-plan : waitUntil demande à l'hôte de ne pas arrêter la
+    // fonction tant que l'envoi n'est pas terminé. Sans waitUntil (runtime
+    // plus ancien), on attend comme avant - pg_net pourra expirer, mais
+    // l'envoi, lui, ira au bout.
+    //
+    // Le compte rendu ne remonte donc plus à l'appelant : c'est assumé, et
+    // c'est pourquoi l'écran annonce des courriels « mis en file ». La
+    // preuve d'envoi est dans ces journaux et dans Resend.
+    const travail = envoyerLots();
+    const hote = (globalThis as unknown as {
+      EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void };
+    }).EdgeRuntime;
+
+    if (hote && typeof hote.waitUntil === "function") {
+      hote.waitUntil(travail);
+    } else {
+      await travail;
     }
 
-    console.log(`rappel_masse : ${envoyes} envoyé(s), ${echecs} en échec.`);
     return new Response(
-      JSON.stringify({ envoyes, echecs, total: messages.length }),
-      {
-        // Tout en échec = 502, pour que l'incident se voie dans les
-        // journaux plutôt que de se confondre avec un envoi réussi.
-        status: envoyes === 0 ? 502 : 200,
-        headers: { "Content-Type": "application/json" },
-      },
+      JSON.stringify({ accepte: messages.length }),
+      { status: 202, headers: { "Content-Type": "application/json" } },
     );
   }
 
