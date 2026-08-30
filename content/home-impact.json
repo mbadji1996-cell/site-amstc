@@ -1,10 +1,10 @@
 {
   "impact_eyebrow": "Notre impact",
   "impact_title": "Ce que nous accomplissons ensemble",
-  "impact_subtitle": "Chiffres issus de nos rapports d'activités 2025 et du premier semestre 2026.",
+  "impact_subtitle": "Chiffres issus de nos rapports d'activités 2025 et 2026, couverture médicale du Gamou de Tivaouane incluse.",
   "impact_stats": [
     {
-      "number": "1 100+",
+      "number": "1 950+",
       "label": "Patients consultés",
       "icon": "stethoscope"
     },
@@ -14,7 +14,7 @@
       "icon": "droplet"
     },
     {
-      "number": "340+",
+      "number": "390+",
       "label": "Agents de santé mobilisés",
       "icon": "users"
     },
