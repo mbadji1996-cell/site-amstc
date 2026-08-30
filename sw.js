@@ -22,7 +22,7 @@
    suivante - invisible dans l'application Android, qui garde son cache
    d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v3";
+const CACHE_VERSION = "amstc-v4";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
@@ -80,7 +80,18 @@ self.addEventListener("fetch", (event) => {
   const estCode = /\.(css|js)(\?|$)/i.test(new URL(req.url).pathname + new URL(req.url).search)
     || req.destination === "style" || req.destination === "script";
 
-  if (estCode) {
+  // LES INDEX DE CONTENU AUSSI, et pour une raison qui avait ete mal vue.
+  // Le commentaire plus bas les rangeait avec les images, au motif que
+  // « ces fichiers changent de nom quand ils changent ». C'est vrai d'une
+  // photo, dont le nom porte le contenu ; c'est FAUX de
+  // content/actualites-index.json, qui garde son nom pour toujours et dont
+  // seul le contenu change - a chaque publication. Servi depuis le cache,
+  // il affichait la liste d'hier : un article publie restait invisible
+  // pour qui avait deja visite le site, sans le moindre message d'erreur.
+  // Constate sur la publication de l'article du Gamou 2026.
+  const estIndexContenu = /^\/content\/.*\.json$/i.test(new URL(req.url).pathname);
+
+  if (estCode || estIndexContenu) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -93,9 +104,11 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Le reste - images, polices, index de contenu - garde le cache
-  // d'abord : ces fichiers changent de nom quand ils changent, et leur
-  // fraîcheur immédiate n'a pas d'incidence sur l'affichage.
+  // Le reste - images, polices - garde le cache d'abord : ceux-la
+  // changent bien de nom quand ils changent (image-01.jpg d'un article
+  // n'est jamais remplacee par une autre photo), et leur fraicheur
+  // immediate n'a aucune incidence sur l'affichage. Les index de contenu,
+  // eux, sont passes plus haut : ils changent SANS changer de nom.
   event.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)
