@@ -138,6 +138,14 @@
     letter-spacing:0.05em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
   .puce-active{background:rgba(23,118,59,0.14);color:var(--green);}
   .puce-close{background:var(--paper-alt);color:var(--text-muted);}
+  .puce-confirme{background:rgba(23,118,59,0.14);color:var(--green);}
+  .puce-attente{background:rgba(248,183,24,0.18);color:var(--gold-deep);}
+  .puce-rejete{background:rgba(179,38,30,0.12);color:#B3261E;}
+  .filtres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .filtre{background:none;border:1.5px solid var(--line);color:var(--text-muted);
+    border-radius:999px;padding:7px 15px;font-family:var(--body);font-size:0.84rem;cursor:pointer;}
+  .filtre:hover{border-color:var(--green);color:var(--text-heading);}
+  .filtre.actif{border-color:var(--green);background:var(--green);color:#fff;}
 </style>
 </head>
 <body>
@@ -223,6 +231,24 @@
     </table>
   </div>
 
+  <p class="section-label"><i class="ti ti-history"></i> Historique des dons</p>
+  <div class="filtres">
+    <button type="button" class="filtre actif" data-filtre="tous">Tous</button>
+    <button type="button" class="filtre" data-filtre="confirme">Confirmés</button>
+    <button type="button" class="filtre" data-filtre="en_attente">En attente</button>
+    <button type="button" class="filtre" data-filtre="rejete">Rejetés</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Reçu le</th><th>Donateur</th><th>Montant</th><th>Moyen</th>
+        <th>Référence</th><th>Origine</th><th>Statut</th><th>Action</th>
+      </tr></thead>
+      <tbody id="histoBody"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
+    </table>
+  </div>
+  <p class="page-sub" id="histoResume" style="margin-top:10px;"></p>
+
   <p class="section-label"><i class="ti ti-pencil-plus"></i> Enregistrer un don reçu</p>
   <div class="bloc">
     <p class="page-sub" style="margin:0 0 14px;">Pour un don remis en espèces, par virement ou de la main à la main,
@@ -303,6 +329,12 @@
     document.getElementById('btnCreer').addEventListener('click', creerCampagne);
     document.getElementById('btnCloturer').addEventListener('click', cloturer);
     document.getElementById('btnAnnulerEdition').addEventListener('click', annulerEdition);
+    document.querySelectorAll('.filtre').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.filtre').forEach(x => x.classList.remove('actif'));
+      b.classList.add('actif');
+      filtreActuel = b.getAttribute('data-filtre');
+      rendreHistorique();
+    }));
     document.getElementById('btnModifierActive').addEventListener('click', () => {
       if (campagneActiveId) editer(campagneActiveId);
     });
@@ -311,7 +343,8 @@
   })();
 
   async function tout() {
-    await Promise.all([chargerApercu(), chargerAttente(), chargerCampagnes()]);
+    await Promise.all([chargerApercu(), chargerAttente(), chargerCampagnes(),
+                       chargerHistorique()]);
   }
 
   async function chargerApercu() {
@@ -400,6 +433,90 @@
       dire('msgEnregistrer', 'Don enregistré et compté dans la collecte.', true);
       await tout();
     } catch (e) { dire('msgEnregistrer', e.message || String(e), false); }
+  }
+
+  // ============================================================
+  // Historique : tout ce qui est passe, et de quoi revenir dessus
+  // ============================================================
+  let filtreActuel = 'tous';
+  let tousLesDons = [];
+
+  const PUCES = {
+    confirme:   ['puce-confirme', 'Confirmé'],
+    en_attente: ['puce-attente',  'En attente'],
+    rejete:     ['puce-rejete',   'Rejeté'],
+  };
+
+  async function chargerHistorique() {
+    const tb = document.getElementById('histoBody');
+    try {
+      const { data, error } = await supabaseClient
+        .from('dons').select('*')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      tousLesDons = data || [];
+      rendreHistorique();
+    } catch (e) {
+      tb.innerHTML = '<tr class="empty-row"><td colspan="8">Impossible de charger l\'historique.</td></tr>';
+    }
+  }
+
+  function rendreHistorique() {
+    const tb = document.getElementById('histoBody');
+    const liste = filtreActuel === 'tous'
+      ? tousLesDons
+      : tousLesDons.filter(d => d.status === filtreActuel);
+
+    if (!liste.length) {
+      tb.innerHTML = '<tr class="empty-row"><td colspan="8">Aucun don dans cette catégorie.</td></tr>';
+      document.getElementById('histoResume').textContent = '';
+      return;
+    }
+
+    tb.innerHTML = liste.map(d => {
+      const [cls, lib] = PUCES[d.status] || ['puce-close', d.status];
+      // L'action proposee depend du statut : on n'offre jamais de
+      // confirmer ce qui l'est deja, ni de rejeter ce qui l'est.
+      let action = '';
+      if (d.status === 'confirme') {
+        action = `<button class="btn btn-reject" onclick="annulerConfirmation('${d.id}')"><i class="ti ti-arrow-back-up"></i> Annuler</button>`;
+      } else if (d.status === 'rejete') {
+        action = `<button class="btn btn-confirm" onclick="valider('${d.id}','confirme')"><i class="ti ti-check"></i> Confirmer</button>`;
+      } else {
+        action = `<button class="btn btn-confirm" onclick="valider('${d.id}','confirme')"><i class="ti ti-check"></i> Confirmer</button>`
+               + `<button class="btn btn-reject" onclick="valider('${d.id}','rejete')"><i class="ti ti-x"></i> Rejeter</button>`;
+      }
+      return `
+        <tr>
+          <td class="meta-cell">${esc(dateFr(d.created_at))}</td>
+          <td class="nom-cell">${esc(d.donateur_nom || '(anonyme)')}</td>
+          <td><strong>${esc(fcfa(d.montant_fcfa))}</strong></td>
+          <td>${esc(MOYENS[d.methode] || d.methode || '-')}</td>
+          <td class="mail-cell">${esc(d.reference || '-')}</td>
+          <td class="meta-cell">${d.source === 'admin' ? 'Saisi' : 'Déclaré'}</td>
+          <td><span class="puce ${cls}">${esc(lib)}</span></td>
+          <td>${action}</td>
+        </tr>`;
+    }).join('');
+
+    const confirmes = liste.filter(d => d.status === 'confirme');
+    const somme = confirmes.reduce((t, d) => t + Number(d.montant_fcfa || 0), 0);
+    document.getElementById('histoResume').textContent =
+      liste.length + ' don(s) affiché(s), dont ' + confirmes.length
+      + ' confirmé(s) pour ' + fcfa(somme) + '.';
+  }
+
+  // Revenir sur une confirmation donnee par erreur. Le don repasse en
+  // « rejete » : il quitte le total, et la jauge publique baisse d'autant.
+  // On passe par valider_don, comme partout ailleurs, pour que la
+  // correction soit inscrite au journal.
+  async function annulerConfirmation(id) {
+    const don = tousLesDons.find(d => d.id === id);
+    const quoi = don ? fcfa(don.montant_fcfa) : 'ce don';
+    if (!confirm('Annuler la confirmation de ' + quoi + ' ?\n\n'
+      + 'Le don sortira du total : le montant affiché publiquement baissera d\'autant.')) return;
+    await valider(id, 'rejete');
   }
 
   async function chargerCampagnes() {
