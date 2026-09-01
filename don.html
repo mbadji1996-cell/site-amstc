@@ -140,6 +140,12 @@
   .wave-card{background:var(--surface); border:1px solid var(--line);
     border-left:4px solid var(--green); border-radius:var(--radius);
     padding:24px 26px; margin-bottom:22px; display:none;}
+  /* Affiche UNIQUEMENT sur un appareil a souris. Sur telephone, le
+     serveur de Wave renvoie vers le Play Store quoi qu'il arrive (307
+     vers /download puis 302) : le bouton y serait une impasse. */
+  @media (hover:hover) and (pointer:fine){
+    .wave-card.wave-prete{display:block;}
+  }
   .wave-card h2{font-family:var(--display); font-weight:600; font-size:1.05rem;
     color:var(--text-heading); margin:0 0 6px;}
   .wave-texte{font-size:0.9rem; color:var(--text-muted); margin:0 0 16px;}
@@ -317,7 +323,7 @@
       const t = document.getElementById('wave-texte');
       if (data.wave_texte) t.textContent = data.wave_texte; else t.style.display = 'none';
       if (data.wave_essai) document.getElementById('wave-essai').style.display = '';
-      document.getElementById('wave-card').style.display = 'block';
+      document.getElementById('wave-card').classList.add('wave-prete');
     }
 
     // ---- Les encarts vides disparaissent ----
