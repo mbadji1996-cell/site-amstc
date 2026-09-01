@@ -7,7 +7,7 @@
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relances par courriel - Admin AMSTC</title>
+<title>Rappels par mail - Admin AMSTC</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
@@ -74,6 +74,15 @@
   .forcer{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;}
 
   .msg{font-size:0.88rem;margin-top:12px;}
+  /* ---- Message libre ---- */
+  .champ{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .champ label{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--text-muted);}
+  .champ select,.champ textarea{font-family:var(--body);font-size:0.95rem;
+    padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;
+    background:var(--paper);color:var(--text-body,inherit);width:100%;}
+  .champ select:focus,.champ textarea:focus{outline:none;border-color:var(--green);}
+  .compteur{font-size:0.8rem;color:var(--text-muted);text-align:right;}
   .msg.ok{color:var(--green);}
   .msg.ko{color:#B3261E;}
 
@@ -139,7 +148,7 @@
 
   <div class="page-header">
     <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
-    <h1 class="page-title">Relances par courriel</h1>
+    <h1 class="page-title">Rappels par mail</h1>
     <p class="page-sub">Écrire d'un seul geste à tous les membres dont la carte a expiré ou dont les cotisations ont pris du retard.</p>
   </div>
 
@@ -218,6 +227,52 @@
     </table>
   </div>
 
+  <p class="section-label"><i class="ti ti-message-2"></i> Message libre</p>
+  <div class="envoi-card">
+    <div class="avert">
+      <i class="ti ti-info-circle"></i>
+      <span>Pour ce qui n'est pas un rappel : une assemblée générale, un remerciement,
+      une annonce. Le message part avec la même enveloppe que les autres - « Bonjour
+      Prénom », le lien vers l'espace membres, la signature.</span>
+    </div>
+
+    <div class="champ">
+      <label for="mlAudience">Destinataires</label>
+      <select id="mlAudience">
+        <option value="retardataires">Les retardataires seulement (<span>-</span>)</option>
+        <option value="tous">Tous les membres</option>
+      </select>
+    </div>
+
+    <div class="champ">
+      <label for="mlTexte">Votre message</label>
+      <textarea id="mlTexte" rows="5" maxlength="2000"
+        placeholder="Ex : L'assemblée générale se tiendra le samedi 12 septembre à 10 h, au siège de l'association. Votre présence compte."></textarea>
+      <p class="compteur" id="mlCompteur">0 / 2000</p>
+    </div>
+
+    <div id="mlZoneBouton">
+      <button class="btn-primary" id="mlEnvoyer" disabled>
+        <i class="ti ti-send"></i> Envoyer le message
+      </button>
+    </div>
+
+    <div class="confirm-box" id="mlConfirm" style="display:none;">
+      <p class="confirm-titre">Confirmer l'envoi</p>
+      <p class="confirm-txt" id="mlConfirmTxt"></p>
+      <label class="forcer" id="mlLabelForcer" style="display:none;">
+        <input type="checkbox" id="mlForcer">
+        <span>Un message date de moins de 24 heures - envoyer quand même</span>
+      </label>
+      <div class="confirm-actions">
+        <button class="btn-primary btn-danger" id="mlConfirmer"><i class="ti ti-mail-fast"></i> Oui, envoyer</button>
+        <button class="btn-ghost" id="mlAnnuler">Annuler</button>
+      </div>
+    </div>
+
+    <p class="msg" id="mlMsg"></p>
+  </div>
+
   <p class="page-sub" style="margin-top:14px;">
     Chaque envoi est inscrit au <a href="journal-admin.html" style="color:var(--text-accent);text-decoration:underline;">journal d'administration</a>.
   </p>
@@ -243,8 +298,103 @@
     document.getElementById('btnAnnuler').addEventListener('click', annuler);
     document.getElementById('btnConfirmer').addEventListener('click', envoyer);
 
-    await Promise.all([chargerApercu(), chargerListe()]);
+    document.getElementById('mlEnvoyer').addEventListener('click', mlDemanderConfirmation);
+    document.getElementById('mlAnnuler').addEventListener('click', mlAnnuler);
+    document.getElementById('mlConfirmer').addEventListener('click', mlEnvoyer);
+    document.getElementById('mlTexte').addEventListener('input', majCompteurMessage);
+    document.getElementById('mlAudience').addEventListener('change', majBoutonMessage);
+
+    await Promise.all([chargerApercu(), chargerListe(), chargerApercuMessage()]);
   })();
+
+  // ============================================================
+  // Message libre
+  // ============================================================
+  let mlRecent = false;      // un message date de moins de 24 h
+  let mlComptes = { retardataires: 0, tous: 0 };
+
+  async function chargerApercuMessage() {
+    try {
+      const { data, error } = await supabaseClient.rpc('apercu_message_libre');
+      if (error) throw error;
+      const d = data || {};
+      mlComptes = { retardataires: d.retardataires || 0, tous: d.tous || 0 };
+
+      const sel = document.getElementById('mlAudience');
+      sel.options[0].textContent = 'Les retardataires seulement (' + mlComptes.retardataires + ')';
+      sel.options[1].textContent = 'Tous les membres (' + mlComptes.tous + ')';
+
+      if (d.dernier_envoi) {
+        mlRecent = (Date.now() - new Date(d.dernier_envoi).getTime()) < 24 * 3600 * 1000;
+      }
+      majBoutonMessage();
+    } catch (e) { /* le bouton reste inerte */ }
+  }
+
+  // Le bouton ne s'allume qu'avec un texte ET des destinataires : un
+  // envoi vide n'a rien a faire derriere une confirmation.
+  function majBoutonMessage() {
+    const texte = document.getElementById('mlTexte').value.trim();
+    const cible = document.getElementById('mlAudience').value;
+    document.getElementById('mlEnvoyer').disabled = !texte || !mlComptes[cible];
+  }
+
+  function mlDemanderConfirmation() {
+    const cible = document.getElementById('mlAudience').value;
+    const n = mlComptes[cible] || 0;
+    if (!n) return;
+    document.getElementById('mlConfirmTxt').textContent =
+      n + ' membre(s) vont recevoir ce message. Cette action ne peut pas être annulée.';
+    document.getElementById('mlLabelForcer').style.display = mlRecent ? '' : 'none';
+    document.getElementById('mlZoneBouton').style.display = 'none';
+    document.getElementById('mlConfirm').style.display = '';
+    document.getElementById('mlMsg').textContent = '';
+  }
+
+  function mlAnnuler() {
+    document.getElementById('mlConfirm').style.display = 'none';
+    document.getElementById('mlZoneBouton').style.display = '';
+    document.getElementById('mlForcer').checked = false;
+  }
+
+  async function mlEnvoyer() {
+    const btn = document.getElementById('mlConfirmer');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Envoi en cours…';
+    try {
+      const { data, error } = await supabaseClient.rpc('envoyer_message_libre', {
+        p_message: document.getElementById('mlTexte').value.trim(),
+        p_audience: document.getElementById('mlAudience').value,
+        p_forcer: document.getElementById('mlForcer').checked,
+      });
+      if (error) throw error;
+      const d = data || {};
+      // « Mis en file » et non « recus » : pg_net n'attend pas Resend.
+      afficherMl(d.mis_en_file + ' message(s) mis en file d\'envoi. '
+        + 'La distribution se vérifie dans Resend.', true);
+      document.getElementById('mlTexte').value = '';
+      majCompteurMessage();
+      mlAnnuler();
+      await chargerApercuMessage();
+    } catch (e) {
+      afficherMl(e.message || String(e), false);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-mail-fast"></i> Oui, envoyer';
+    }
+  }
+
+  function majCompteurMessage() {
+    const t = document.getElementById('mlTexte').value;
+    document.getElementById('mlCompteur').textContent = t.length + ' / 2000';
+    majBoutonMessage();
+  }
+
+  function afficherMl(texte, ok) {
+    const el = document.getElementById('mlMsg');
+    el.textContent = texte;
+    el.className = 'msg ' + (ok ? 'ok' : 'ko');
+  }
 
   async function chargerApercu() {
     try {

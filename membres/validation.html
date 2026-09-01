@@ -781,15 +781,50 @@
     ["libre", "Message libre"],
   ];
 
+  // Les rappels qui ont un sens pour CE membre, et eux seuls.
+  //
+  // Proposer « Cotisations en retard » a quelqu'un qui a tout regle, c'est
+  // s'exposer a le lui envoyer d'un clic distrait - et un rappel pour une
+  // dette inexistante fait douter de tout le reste.
+  //
+  // « A jour » se compte sur les MOIS ECHUS et non sur douze : en
+  // septembre, avoir regle janvier a septembre suffit. Exiger 12/12
+  // aurait marque presque tout le monde « en retard » toute l'annee.
+  // C'est la definition retenue par la relance collective (phase 96).
+  function typesRappelPour(p){
+    const cvu = Number(p.card_valid_until) || 0;
+    const carteValide = cvu >= ANNEE_COURANTE;
+
+    const payes = moisPayes(p.id);
+    // L'annee affichee peut etre passee : tout y est alors du.
+    const moisDus = anneeCotis < ANNEE_COURANTE ? 12
+      : anneeCotis > ANNEE_COURANTE ? 0
+      : (new Date().getMonth() + 1);
+    let aJour = true;
+    for (let m = 1; m <= moisDus; m++) {
+      if (payes.indexOf(m) === -1) { aJour = false; break; }
+    }
+
+    return TYPES_RAPPEL.filter(([v]) => {
+      if (v === "carte_expiree") return !carteValide;
+      // Annoncer une echeance a venir a une carte deja expiree n'a pas
+      // plus de sens que l'inverse.
+      if (v === "carte_expire_bientot") return carteValide;
+      if (v === "cotisation_retard") return !aJour;
+      return true;   // compte active, message libre : toujours
+    });
+  }
+
   function basculerRappel(memberId){
     const box = document.getElementById("rappel-" + memberId);
     if (box.style.display !== "none") { box.style.display = "none"; return; }
     const p = allApprovedMembers.find(m => m.id === memberId) || {};
     const wa = lienWhatsApp(p.phone);
+    const types = typesRappelPour(p);
     box.innerHTML = `
       <div class="assign-inline-row">
         <select id="rappelType-${esc(memberId)}" onchange="majRappelLibre('${esc(memberId)}')">
-          ${TYPES_RAPPEL.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}
+          ${types.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}
         </select>
         <button class="btn-sm btn-approve" onclick="ouvrirRappelWhatsApp('${esc(memberId)}')"
           ${wa ? "" : "disabled title=\"Ce membre n'a pas de numéro\""}>Ouvrir WhatsApp</button>
