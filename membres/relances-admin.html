@@ -83,6 +83,21 @@
     background:var(--paper);color:var(--text-body,inherit);width:100%;}
   .champ select:focus,.champ textarea:focus{outline:none;border-color:var(--green);}
   .compteur{font-size:0.8rem;color:var(--text-muted);text-align:right;}
+  /* ---- Choix des membres un par un ---- */
+  .choix-membres{border:1.5px solid var(--line);border-radius:10px;margin-bottom:14px;}
+  .choix-barre{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:10px 12px;border-bottom:1px solid var(--line);}
+  .choix-barre input[type=search]{flex:1 1 200px;min-width:0;font-family:var(--body);
+    font-size:0.9rem;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;
+    background:var(--paper);color:var(--text-body,inherit);}
+  .choix-liste{max-height:280px;overflow-y:auto;}
+  .choix-ligne{display:flex;align-items:center;gap:10px;padding:8px 12px;
+    border-bottom:1px solid var(--line);font-size:0.9rem;}
+  .choix-ligne:last-child{border-bottom:none;}
+  .choix-ligne label{display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;min-width:0;}
+  .choix-nom{font-weight:600;color:var(--text-heading);}
+  .choix-meta{font-family:var(--mono);font-size:0.75rem;color:var(--text-muted);
+    margin-left:auto;white-space:nowrap;}
   .msg.ok{color:var(--green);}
   .msg.ko{color:#B3261E;}
 
@@ -239,9 +254,23 @@
     <div class="champ">
       <label for="mlAudience">Destinataires</label>
       <select id="mlAudience">
-        <option value="retardataires">Les retardataires seulement (<span>-</span>)</option>
         <option value="tous">Tous les membres</option>
+        <option value="carte_expire_bientot">Cartes à renouveler bientôt</option>
+        <option value="carte_expiree">Cartes expirées</option>
+        <option value="cotisation_retard">Cotisations en retard</option>
+        <option value="retardataires">Tous les retardataires (carte ou cotisation)</option>
+        <option value="bureau">Membres du Bureau</option>
+        <option value="selection">Membres choisis un par un…</option>
       </select>
+    </div>
+
+    <div class="choix-membres" id="mlChoix" style="display:none;">
+      <div class="choix-barre">
+        <input type="search" id="mlRecherche" placeholder="Rechercher un nom ou une adresse…">
+        <button type="button" class="btn-ghost" id="mlToutCocher">Tout cocher</button>
+        <button type="button" class="btn-ghost" id="mlToutDecocher">Tout décocher</button>
+      </div>
+      <div class="choix-liste" id="mlListe"></div>
     </div>
 
     <div class="champ">
@@ -302,7 +331,15 @@
     document.getElementById('mlAnnuler').addEventListener('click', mlAnnuler);
     document.getElementById('mlConfirmer').addEventListener('click', mlEnvoyer);
     document.getElementById('mlTexte').addEventListener('input', majCompteurMessage);
-    document.getElementById('mlAudience').addEventListener('change', majBoutonMessage);
+    document.getElementById('mlAudience').addEventListener('change', majChoixVisible);
+    document.getElementById('mlRecherche').addEventListener('input', rendreChoix);
+    document.getElementById('mlToutCocher').addEventListener('click', () => {
+      mlMembres.forEach(m => mlCoches.add(m.id_membre));
+      rendreChoix(); majBoutonMessage();
+    });
+    document.getElementById('mlToutDecocher').addEventListener('click', () => {
+      mlCoches.clear(); rendreChoix(); majBoutonMessage();
+    });
 
     await Promise.all([chargerApercu(), chargerListe(), chargerApercuMessage()]);
   })();
@@ -311,18 +348,38 @@
   // Message libre
   // ============================================================
   let mlRecent = false;      // un message date de moins de 24 h
-  let mlComptes = { retardataires: 0, tous: 0 };
+  let mlComptes = {};        // audience -> nombre de destinataires
+  let mlMembres = [];        // la liste complete, pour le choix un par un
+  const mlCoches = new Set();
+
+  // Les libelles du selecteur, pour y coller le decompte. L'ordre suit
+  // celui du <select> : du plus large au plus etroit, « choisis un par
+  // un » en dernier puisqu'il ouvre un panneau.
+  const AUDIENCES = {
+    tous:                 'Tous les membres',
+    carte_expire_bientot: 'Cartes à renouveler bientôt',
+    carte_expiree:        'Cartes expirées',
+    cotisation_retard:    'Cotisations en retard',
+    retardataires:        'Tous les retardataires (carte ou cotisation)',
+    bureau:               'Membres du Bureau',
+  };
 
   async function chargerApercuMessage() {
     try {
-      const { data, error } = await supabaseClient.rpc('apercu_message_libre');
+      const { data, error } = await supabaseClient.rpc('apercu_audiences');
       if (error) throw error;
       const d = data || {};
-      mlComptes = { retardataires: d.retardataires || 0, tous: d.tous || 0 };
+      mlComptes = d;
 
+      // Le decompte va DANS le libelle : on choisit son audience en
+      // sachant combien de personnes elle represente, sans avoir a
+      // basculer pour le decouvrir.
       const sel = document.getElementById('mlAudience');
-      sel.options[0].textContent = 'Les retardataires seulement (' + mlComptes.retardataires + ')';
-      sel.options[1].textContent = 'Tous les membres (' + mlComptes.tous + ')';
+      [...sel.options].forEach(o => {
+        if (AUDIENCES[o.value]) {
+          o.textContent = AUDIENCES[o.value] + ' (' + (d[o.value] || 0) + ')';
+        }
+      });
 
       if (d.dernier_envoi) {
         mlRecent = (Date.now() - new Date(d.dernier_envoi).getTime()) < 24 * 3600 * 1000;
@@ -331,20 +388,83 @@
     } catch (e) { /* le bouton reste inerte */ }
   }
 
+  // La liste complete n'est chargee QUE si l'on choisit « un par un » :
+  // inutile de demander deux cents lignes au serveur pour un envoi a
+  // tous, qui n'en affiche aucune.
+  async function chargerMembresChoix() {
+    if (mlMembres.length) return;
+    try {
+      const { data, error } = await supabaseClient.rpc('liste_membres_message');
+      if (error) throw error;
+      mlMembres = data || [];
+      rendreChoix();
+    } catch (e) {
+      document.getElementById('mlListe').innerHTML =
+        '<p class="page-sub" style="padding:14px;">Impossible de charger la liste.</p>';
+    }
+  }
+
+  function rendreChoix() {
+    const q = document.getElementById('mlRecherche').value.trim().toLowerCase();
+    const vus = mlMembres.filter(m => !q
+      || (m.nom || '').toLowerCase().includes(q)
+      || (m.courriel || '').toLowerCase().includes(q));
+
+    document.getElementById('mlListe').innerHTML = vus.length
+      ? vus.map(m => `
+        <div class="choix-ligne">
+          <label>
+            <input type="checkbox" value="${echapper(m.id_membre)}"
+              ${mlCoches.has(m.id_membre) ? 'checked' : ''}>
+            <span class="choix-nom">${echapper(m.nom || '(sans nom)')}</span>
+            <span class="choix-meta">${echapper(m.fonction || motifCourt(m.motif))}</span>
+          </label>
+        </div>`).join('')
+      : '<p class="page-sub" style="padding:14px;">Aucun membre ne correspond.</p>';
+
+    document.querySelectorAll('#mlListe input[type=checkbox]').forEach(c => {
+      c.addEventListener('change', () => {
+        if (c.checked) mlCoches.add(c.value); else mlCoches.delete(c.value);
+        majBoutonMessage();
+      });
+    });
+  }
+
+  function motifCourt(m) {
+    return m === 'carte_expiree' ? 'carte expirée'
+      : m === 'cotisation_retard' ? 'cotisations'
+      : m === 'carte_expire_bientot' ? 'à renouveler'
+      : 'à jour';
+  }
+
+  function nombreVise() {
+    const cible = document.getElementById('mlAudience').value;
+    return cible === 'selection' ? mlCoches.size : (mlComptes[cible] || 0);
+  }
+
   // Le bouton ne s'allume qu'avec un texte ET des destinataires : un
   // envoi vide n'a rien a faire derriere une confirmation.
   function majBoutonMessage() {
     const texte = document.getElementById('mlTexte').value.trim();
+    document.getElementById('mlEnvoyer').disabled = !texte || !nombreVise();
+  }
+
+  function majChoixVisible() {
     const cible = document.getElementById('mlAudience').value;
-    document.getElementById('mlEnvoyer').disabled = !texte || !mlComptes[cible];
+    const ouvert = cible === 'selection';
+    document.getElementById('mlChoix').style.display = ouvert ? '' : 'none';
+    if (ouvert) chargerMembresChoix();
+    majBoutonMessage();
   }
 
   function mlDemanderConfirmation() {
-    const cible = document.getElementById('mlAudience').value;
-    const n = mlComptes[cible] || 0;
+    const n = nombreVise();
     if (!n) return;
+    const cible = document.getElementById('mlAudience').value;
+    const nom = cible === 'selection' ? 'les membres choisis' : (AUDIENCES[cible] || cible);
     document.getElementById('mlConfirmTxt').textContent =
-      n + ' membre(s) vont recevoir ce message. Cette action ne peut pas être annulée.';
+      n + ' membre(s) - ' + nom + ' - vont recevoir ce message. '
+      + 'Cette action ne peut pas être annulée.';
     document.getElementById('mlLabelForcer').style.display = mlRecent ? '' : 'none';
     document.getElementById('mlZoneBouton').style.display = 'none';
     document.getElementById('mlConfirm').style.display = '';
@@ -362,10 +482,12 @@
     btn.disabled = true;
     btn.innerHTML = '<i class="ti ti-loader-2"></i> Envoi en cours…';
     try {
+      const cible = document.getElementById('mlAudience').value;
       const { data, error } = await supabaseClient.rpc('envoyer_message_libre', {
         p_message: document.getElementById('mlTexte').value.trim(),
-        p_audience: document.getElementById('mlAudience').value,
+        p_audience: cible,
         p_forcer: document.getElementById('mlForcer').checked,
+        p_ids: cible === 'selection' ? [...mlCoches] : null,
       });
       if (error) throw error;
       const d = data || {};
