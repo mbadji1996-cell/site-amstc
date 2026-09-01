@@ -25,6 +25,6 @@
   "wave_titre": "Payer par Wave",
   "wave_texte": "Ouvre la page de paiement Wave de l'association : scannez le QR code affiché avec votre application Wave. Le paiement s'effectue chez Wave, jamais sur ce site.",
   "wave_label": "Afficher le QR code Wave",
-  "wave_url": "https://pay.wave.com/m/M_sn_LLKSu3LdpVFV/c/sn/",
-  "wave_essai": true
+  "wave_url": "",
+  "wave_essai": false
 }
