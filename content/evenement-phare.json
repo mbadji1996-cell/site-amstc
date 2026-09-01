@@ -1,5 +1,6 @@
 {
-  "lien": "https://amstc.org/projet.html?slug=2026-08-30-terrain-tivaouane-siege-amstc",
+  "afficher_collecte": true,
+  "lien": "https://pay.wave.com/m/M_sn_LLKSu3LdpVFV/c/sn/",
   "date_retrait": "",
   "sous_titre": "Pour consolider son ancrage et pérenniser son action, l'AMSTC a engagé une démarche d'acquisition d'un terrain qui deviendra le siège de l'association, un lieu de référence pour ses équipes et les populations.\nAidez-nous à poser la première pierre de l’avenir à Tivaouane !",
   "actif": true,
@@ -35,6 +36,5 @@
       "label": "Orientations / références",
       "valeur": 0
     }
-  ],
-  "afficher_collecte": true
+  ]
 }
