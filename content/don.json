@@ -21,5 +21,10 @@
   "title": "Faire un don",
   "trust_note": "Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA. Un reçu peut être délivré sur demande pour tout don.",
   "mobile_title": "Mobile Money",
-  "bank_details": "**Compte bancaire :** Disponible bientôt"
+  "bank_details": "**Compte bancaire :** Disponible bientôt",
+  "wave_titre": "Payer par Wave",
+  "wave_texte": "Vous êtes redirigé vers la page sécurisée de Wave. Le paiement s'effectue chez Wave, jamais sur ce site.",
+  "wave_label": "Payer avec Wave",
+  "wave_url": "https://pay.wave.com/m/M_sn_LLKSu3LdpVFV/c/sn/",
+  "wave_essai": true
 }

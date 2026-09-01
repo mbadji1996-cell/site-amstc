@@ -349,6 +349,11 @@ collections:
           - { label: "Accroche", name: "eyebrow", widget: "string" }
           - { label: "Titre", name: "title", widget: "string" }
           - { label: "Texte d'introduction", name: "intro", widget: "text" }
+          - { label: "Lien de paiement (Wave, PayDunya…)", name: "wave_url", widget: "string", required: false, hint: "Collez ici le lien de paiement généré depuis votre compte marchand. Le visiteur y est envoyé directement, sans étape intermédiaire. Laissez vide pour masquer le bouton." }
+          - { label: "Titre du bloc de paiement", name: "wave_titre", widget: "string", required: false }
+          - { label: "Texte du bloc de paiement", name: "wave_texte", widget: "text", required: false }
+          - { label: "Texte du bouton de paiement", name: "wave_label", widget: "string", required: false }
+          - { label: "Afficher la mention « en cours d'essai »", name: "wave_essai", widget: "boolean", default: false, required: false, hint: "À décocher le jour où le paiement n'est plus un test." }
           - { label: "Titre - Virement bancaire", name: "bank_title", widget: "string", required: false }
           - { label: "Coordonnées bancaires", name: "bank_details", widget: "markdown", hint: "Titulaire, banque, IBAN/RIB, SWIFT...", required: false }
           - { label: "Titre - Mobile Money", name: "mobile_title", widget: "string", required: false }

@@ -132,6 +132,23 @@
   .depot span{font-family:var(--mono);font-size:0.95rem;color:var(--text-heading);
     word-break:break-word;}
   .depots-titulaire{font-size:0.82rem;color:var(--text-muted);margin-top:9px;}
+
+  /* ---- Paiement direct (Wave) ----
+     Vert plein : c'est l'action principale de la page quand elle est
+     proposee. Le formulaire de declaration, juste en dessous, reste en
+     retrait - il ne sert qu'a signaler un don deja fait. */
+  .wave-card{background:var(--surface); border:1px solid var(--line);
+    border-left:4px solid var(--green); border-radius:var(--radius);
+    padding:24px 26px; margin-bottom:22px; display:none;}
+  .wave-card h2{font-family:var(--display); font-weight:600; font-size:1.05rem;
+    color:var(--text-heading); margin:0 0 6px;}
+  .wave-texte{font-size:0.9rem; color:var(--text-muted); margin:0 0 16px;}
+  .wave-btn{display:inline-flex; align-items:center; gap:9px;
+    background:var(--green); color:#fff; border-radius:999px;
+    padding:13px 28px; font-weight:600; font-size:0.98rem; text-decoration:none;}
+  .wave-btn:hover{background:var(--green-deep, #06441C);}
+  .wave-essai{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--text-accent, #AA7B11); margin:12px 0 0;}
 </style>
 </head>
 <body>
@@ -159,6 +176,15 @@
     <p class="jauge-percent" id="jauge-percent"></p>
   </div>
 
+
+  <div class="wave-card" id="wave-card">
+    <h2 id="wave-titre">Payer par Wave</h2>
+    <p class="wave-texte" id="wave-texte"></p>
+    <a class="wave-btn" id="wave-lien" href="#" target="_blank" rel="noopener">
+      <span id="wave-label">Payer avec Wave</span>
+    </a>
+    <p class="wave-essai" id="wave-essai" style="display:none;">Paiement en cours d'essai</p>
+  </div>
 
   <div class="declarer-card" id="declarer-card">
     <h2>J'ai fait un don</h2>
@@ -277,6 +303,22 @@
     poser('cms-institution-text', data.institution_text);
     if (data.trust_note) document.getElementById('cms-trust-note').textContent = data.trust_note;
     else document.getElementById('cms-trust-note').style.display = 'none';
+
+    // ---- Bouton de paiement direct ----
+    // Le lien est pose par PROPRIETE, jamais par interpolation dans du
+    // HTML : ce qui est saisi dans le CMS part tel quel, sans qu'aucun
+    // echappement puisse le transformer. Et c'est une <a> nue - aucun
+    // ecouteur de clic, aucune etape intermediaire.
+    const waveUrl = String(data.wave_url || '').trim();
+    if (waveUrl) {
+      document.getElementById('wave-lien').href = waveUrl;
+      if (data.wave_titre) document.getElementById('wave-titre').textContent = data.wave_titre;
+      if (data.wave_label) document.getElementById('wave-label').textContent = data.wave_label;
+      const t = document.getElementById('wave-texte');
+      if (data.wave_texte) t.textContent = data.wave_texte; else t.style.display = 'none';
+      if (data.wave_essai) document.getElementById('wave-essai').style.display = '';
+      document.getElementById('wave-card').style.display = 'block';
+    }
 
     // ---- Les encarts vides disparaissent ----
     // Ils etaient affiches meme vides dans Decap : un cadre avec un titre
