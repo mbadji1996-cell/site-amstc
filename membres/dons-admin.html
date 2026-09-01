@@ -142,6 +142,20 @@
   .puce-attente{background:rgba(248,183,24,0.18);color:var(--gold-deep);}
   .puce-rejete{background:rgba(179,38,30,0.12);color:#B3261E;}
   .filtres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+
+  /* ---- Section repliable ---- */
+  .repli{margin:26px 0 0;}
+  /* summary cesse d'etre « list-item » des qu'il passe en display:flex,
+     ce que fait .section-label ; les deux regles suivantes couvrent les
+     navigateurs qui dessinent leur triangle malgre tout. */
+  .repli-titre{margin:0;cursor:pointer;list-style:none;-webkit-user-select:none;user-select:none;}
+  .repli-titre::-webkit-details-marker{display:none;}
+  .repli-titre::marker{content:"";}
+  .repli-compte{font-family:var(--mono);text-transform:none;letter-spacing:0;
+    color:var(--text-muted);font-size:0.95em;}
+  .repli-chevron{font-size:0.95rem;opacity:.75;transition:transform .18s ease;}
+  .repli[open] .repli-chevron{transform:rotate(180deg);}
+  .repli .filtres{margin-top:14px;}
   .filtre{background:none;border:1.5px solid var(--line);color:var(--text-muted);
     border-radius:999px;padding:7px 15px;font-family:var(--body);font-size:0.84rem;cursor:pointer;}
   .filtre:hover{border-color:var(--green);color:var(--text-heading);}
@@ -231,23 +245,29 @@
     </table>
   </div>
 
-  <p class="section-label"><i class="ti ti-history"></i> Historique des dons</p>
-  <div class="filtres">
-    <button type="button" class="filtre actif" data-filtre="tous">Tous</button>
-    <button type="button" class="filtre" data-filtre="confirme">Confirmés</button>
-    <button type="button" class="filtre" data-filtre="en_attente">En attente</button>
-    <button type="button" class="filtre" data-filtre="rejete">Rejetés</button>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>Reçu le</th><th>Donateur</th><th>Montant</th><th>Moyen</th>
-        <th>Référence</th><th>Origine</th><th>Statut</th><th>Action</th>
-      </tr></thead>
-      <tbody id="histoBody"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
-    </table>
-  </div>
-  <p class="page-sub" id="histoResume" style="margin-top:10px;"></p>
+  <details class="repli" id="histoRepli">
+    <summary class="section-label repli-titre">
+      <i class="ti ti-history"></i> Historique des dons
+      <span class="repli-compte" id="histoCompte"></span>
+      <i class="ti ti-chevron-down repli-chevron" aria-hidden="true"></i>
+    </summary>
+    <div class="filtres">
+      <button type="button" class="filtre actif" data-filtre="tous">Tous</button>
+      <button type="button" class="filtre" data-filtre="confirme">Confirmés</button>
+      <button type="button" class="filtre" data-filtre="en_attente">En attente</button>
+      <button type="button" class="filtre" data-filtre="rejete">Rejetés</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Reçu le</th><th>Donateur</th><th>Montant</th><th>Moyen</th>
+          <th>Référence</th><th>Origine</th><th>Statut</th><th>Action</th>
+        </tr></thead>
+        <tbody id="histoBody"><tr class="empty-row"><td colspan="8">Chargement…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="page-sub" id="histoResume" style="margin-top:10px;"></p>
+  </details>
 
   <p class="section-label"><i class="ti ti-pencil-plus"></i> Enregistrer un don reçu</p>
   <div class="bloc">
@@ -456,10 +476,21 @@
         .limit(200);
       if (error) throw error;
       tousLesDons = data || [];
+      majCompteHistorique();
       rendreHistorique();
     } catch (e) {
       tb.innerHTML = '<tr class="empty-row"><td colspan="8">Impossible de charger l\'historique.</td></tr>';
+      document.getElementById('histoCompte').textContent = '';
     }
+  }
+
+  // Le total, jamais le filtre courant : le titre doit rester lisible
+  // quand le bloc est ferme, et ne pas bouger au gre d'un filtre que
+  // l'on ne voit pas.
+  function majCompteHistorique() {
+    const n = tousLesDons.length;
+    document.getElementById('histoCompte').textContent =
+      n ? '(' + n + ' don' + (n > 1 ? 's' : '') + ')' : '(aucun)';
   }
 
   function rendreHistorique() {
