@@ -41,6 +41,11 @@ const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
 const META_TEMPLATE_NAME = Deno.env.get("META_TEMPLATE_NAME") || "nouvelle_annonce";
 const META_TEMPLATE_NAME_RAPPEL = Deno.env.get("META_TEMPLATE_NAME_RAPPEL") || "rappel_compte";
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
+// Facultatif, et seulement pour le mode « vérifier » : les modèles
+// appartiennent au compte WhatsApp Business, pas au numéro. Sans lui, la
+// diffusion fonctionne normalement - seul l'état des modèles reste
+// invisible.
+const META_WABA_ID = Deno.env.get("META_WABA_ID");
 
 // Audiences servies par le modèle « rappel » plutôt que par le modèle
 // d'alerte générale. « carte_jamais_reclamee » (phase 93) vise le
@@ -63,6 +68,90 @@ const CORS_HEADERS = {
 
 function digitsOnly(phone: string): string {
   return String(phone || "").replace(/[^0-9]/g, "");
+}
+
+// ============================================================
+// MODE « VÉRIFIER » - lecture seule, aucun envoi
+// ============================================================
+async function meta(chemin: string): Promise<Record<string, unknown>> {
+  const res = await fetch(`https://graph.facebook.com/v20.0/${chemin}`, {
+    headers: { Authorization: `Bearer ${META_WHATSAPP_TOKEN}` },
+  });
+  const corps = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const e = (corps as { error?: { message?: string } })?.error || {};
+    throw new Error(e.message || `HTTP ${res.status}`);
+  }
+  return corps as Record<string, unknown>;
+}
+
+async function verifierConfiguration(): Promise<Record<string, unknown>> {
+  const rapport: Record<string, unknown> = {
+    secrets: {
+      META_WHATSAPP_TOKEN: !!META_WHATSAPP_TOKEN,
+      META_PHONE_NUMBER_ID: !!META_PHONE_NUMBER_ID,
+      META_WABA_ID: !!META_WABA_ID,
+    },
+    attendus: {
+      annonce: META_TEMPLATE_NAME,
+      rappel: META_TEMPLATE_NAME_RAPPEL,
+      langue: META_TEMPLATE_LANG,
+    },
+  };
+
+  if (!META_WHATSAPP_TOKEN || !META_PHONE_NUMBER_ID) {
+    rapport.numero = { erreur: "Posez d'abord le jeton et l'identifiant du numéro." };
+    rapport.modeles = { erreur: "Rien ne peut être lu chez Meta sans le jeton." };
+    return rapport;
+  }
+
+  try {
+    const n = await meta(
+      `${META_PHONE_NUMBER_ID}?fields=display_phone_number,verified_name,quality_rating,platform_type`,
+    );
+    rapport.numero = {
+      numero: n.display_phone_number,
+      nom_verifie: n.verified_name,
+      qualite: n.quality_rating,
+      plateforme: n.platform_type,
+    };
+  } catch (e) {
+    rapport.numero = { erreur: String((e as Error).message || e) };
+  }
+
+  if (!META_WABA_ID) {
+    rapport.modeles = {
+      erreur: "META_WABA_ID n'est pas défini. Les modèles appartiennent au compte "
+        + "WhatsApp Business : sans son identifiant, leur état ne peut pas être lu.",
+    };
+    return rapport;
+  }
+
+  try {
+    const rep = await meta(
+      `${META_WABA_ID}/message_templates?fields=name,status,category,language&limit=200`,
+    );
+    const tous = ((rep.data as Array<Record<string, string>>) || []);
+    const retenir = (nom: string) =>
+      tous.filter((m) => m.name === nom)
+          .map((m) => ({ nom: m.name, statut: m.status, categorie: m.category, langue: m.language }));
+    rapport.modeles = {
+      annonce: retenir(META_TEMPLATE_NAME),
+      rappel: retenir(META_TEMPLATE_NAME_RAPPEL),
+      total: tous.length,
+    };
+  } catch (e) {
+    // « lire les modèles » exige whatsapp_business_management, que
+    // « envoyer » n'exige pas : on le dit, plutôt que de laisser croire
+    // que les modèles n'existent pas.
+    rapport.modeles = {
+      erreur: String((e as Error).message || e),
+      indice: "Lire les modèles exige la permission whatsapp_business_management, "
+        + "distincte de whatsapp_business_messaging utilisée pour envoyer.",
+    };
+  }
+
+  return rapport;
 }
 
 function json(body: Record<string, unknown>, status = 200) {
@@ -97,6 +186,15 @@ Deno.serve(async (req: Request) => {
 
   if (!callerProfile || !["admin", "super_admin"].includes(callerProfile.role)) {
     return json({ error: "Réservé aux administrateurs" }, 403);
+  }
+
+  // Le mode « vérifier » passe AVANT le contrôle des secrets : ce
+  // contrôle répond 500, alors qu'ici l'absence d'un secret est
+  // précisément ce que l'on vient constater.
+  let sonde: { verifier?: boolean } = {};
+  try { sonde = await req.clone().json(); } catch { /* traité plus bas */ }
+  if (sonde.verifier === true) {
+    return json({ verification: await verifierConfiguration() });
   }
 
   // Le secret manquant est nommé : « Configuration serveur incomplète »

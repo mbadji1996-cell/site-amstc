@@ -733,6 +733,12 @@ prend généralement de quelques minutes à quelques heures.
    - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
    - `META_TEMPLATE_NAME_RAPPEL` - optionnel, si différent de `rappel_compte`
    - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
+   - `META_WABA_ID` - optionnel, identifiant du **compte WhatsApp
+     Business** (WhatsApp Manager → Paramètres, ou en haut de la page des
+     modèles). Il ne sert **pas** à envoyer : uniquement au bouton
+     « Vérifier la configuration » ci-dessous, pour lire l'état des
+     modèles. Les modèles appartiennent au compte, pas au numéro - d'où
+     un identifiant distinct de `META_PHONE_NUMBER_ID`.
 
    Tant qu'un secret manque, la page d'envoi affiche précisément lequel :
    « Configuration WhatsApp incomplète : META_WHATSAPP_TOKEN n'est pas
@@ -741,11 +747,30 @@ prend généralement de quelques minutes à quelques heures.
    `supabase/phase30-whatsapp-broadcasts.sql`, puis
    `supabase/phase31-whatsapp-rappels-cibles.sql` (fonctions de ciblage par
    audience - carte expirée/à renouveler/cotisation impayée).
-8. **Testez** depuis `membres/whatsapp-admin.html` (Centre
-   d'administration → carte "Diffusion WhatsApp") : choisissez une
-   audience, le nombre de destinataires affiché doit se mettre à jour, et
-   l'historique en bas de page doit se remplir après envoi (avec
-   l'audience utilisée). En cas d'échec : Edge Functions →
+8. **Vérifiez AVANT d'envoyer.** En haut de
+   `membres/whatsapp-admin.html`, le bouton **« Vérifier la
+   configuration »** interroge Meta en lecture seule : il n'envoie aucun
+   message, ne coûte rien et ne dérange personne. Il rend une liste à
+   cocher : jeton présent, identifiant du numéro présent, numéro
+   réellement joignable (avec son nom vérifié et sa note de qualité), et
+   l'état de chaque modèle - `APPROVED`, `PENDING`, `REJECTED`, absent,
+   ou présent dans une autre langue que celle configurée.
+
+   Deux pièges que ce bouton distingue explicitement :
+   - **Un numéro de test** se reconnaît à son indicatif américain et à un
+     nom non vérifié. Il ne peut écrire qu'aux cinq destinataires
+     enregistrés d'avance chez Meta : tant qu'on y est, aucune diffusion
+     réelle n'est possible.
+   - **« Missing permissions » sur les modèles** ne veut pas dire que les
+     modèles manquent. Lire les modèles exige
+     `whatsapp_business_management`, alors qu'envoyer exige
+     `whatsapp_business_messaging` : un jeton peut donc envoyer
+     parfaitement et échouer ici. Ajoutez la permission manquante à
+     l'utilisateur système, ou ignorez cette ligne si l'envoi fonctionne.
+
+9. **Testez enfin un envoi réel** : choisissez une audience, le nombre de
+   destinataires affiché doit se mettre à jour, et l'historique en bas de
+   page doit se remplir après envoi (avec l'audience utilisée). En cas d'échec : Edge Functions →
    `notify-members-whatsapp` → **Logs**, et le détail des échecs
    individuels s'affiche aussi directement dans la page après l'envoi.
 

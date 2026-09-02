@@ -64,6 +64,11 @@
   .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
   .send-msg{font-size:0.85rem;}
   .send-msg.error{color:#B23B3B;}
+  .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--text-heading);font-family:var(--body);font-weight:600;font-size:0.9rem;padding:10px 18px;border-radius:999px;cursor:pointer;}
+  .btn-ghost:hover{border-color:var(--green);}
+  .verif-ligne{display:flex;gap:8px;align-items:flex-start;margin:0 0 6px;}
+  .verif-ok{color:#1B7F4B;}
+  .verif-ko{color:#B23B3B;}
   .send-msg.ok{color:#3B6D11;}
   .send-result{margin-top:14px;background:var(--paper-alt);border-radius:8px;padding:14px 16px;font-size:0.85rem;}
   .send-result ul{margin:8px 0 0 18px;color:#B23B3B;}
@@ -139,6 +144,12 @@
     (Meta Cloud API + modèle de message approuvé). Voir README-espace-membres.md,
     section "Diffusion WhatsApp aux membres".</span>
   </div>
+
+  <div class="compose-actions" style="margin-bottom:22px;">
+    <button class="btn-ghost" id="verifBtn"><i class="ti ti-plug-connected"></i> Vérifier la configuration</button>
+    <p class="send-msg" id="verifMsg"></p>
+  </div>
+  <div class="send-result" id="verifResult" style="display:none;"></div>
 
   <p class="section-label"><i class="ti ti-brand-whatsapp"></i> Composer une alerte</p>
   <div class="compose-card">
@@ -297,6 +308,80 @@
     charCount.textContent = `${len} / 800`;
     charCount.classList.toggle('over', len > 800);
   });
+
+  // Vérification : ne parle qu'à Meta, en lecture. Aucun message n'est
+  // envoyé, rien n'est facturé, personne n'est dérangé.
+  document.getElementById('verifBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('verifBtn');
+    const msg = document.getElementById('verifMsg');
+    const zone = document.getElementById('verifResult');
+    btn.disabled = true; msg.className = 'send-msg';
+    msg.textContent = 'Vérification en cours…'; zone.style.display = 'none';
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('notify-members-whatsapp', {
+        body: { verifier: true },
+      });
+      if (error) throw error;
+      if (data && data.error) throw new Error(data.error);
+      afficherVerification(data.verification || {});
+      msg.textContent = '';
+    } catch (e) {
+      msg.textContent = e.message || String(e);
+      msg.classList.add('error');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  function ligne(ok, texte) {
+    return '<p class="verif-ligne"><span class="' + (ok ? 'verif-ok' : 'verif-ko') + '">'
+      + (ok ? '&#10003;' : '&#10007;') + '</span><span>' + texte + '</span></p>';
+  }
+
+  function afficherVerification(v) {
+    const zone = document.getElementById('verifResult');
+    const sec = v.secrets || {}, att = v.attendus || {};
+    let h = '';
+
+    h += ligne(!!sec.META_WHATSAPP_TOKEN, 'Jeton d\'accès Meta');
+    h += ligne(!!sec.META_PHONE_NUMBER_ID, 'Identifiant du numéro expéditeur');
+
+    const n = v.numero || {};
+    if (n.erreur) {
+      h += ligne(false, 'Numéro : ' + escapeHtml(n.erreur));
+    } else {
+      h += ligne(true, 'Numéro : <strong>' + escapeHtml(n.numero || '?') + '</strong>'
+        + ' - ' + escapeHtml(n.nom_verifie || 'nom non vérifié')
+        + ' (qualité ' + escapeHtml(String(n.qualite || '?')) + ')');
+    }
+
+    const m = v.modeles || {};
+    if (m.erreur) {
+      h += ligne(false, 'Modèles : ' + escapeHtml(m.erreur)
+        + (m.indice ? '<br><em>' + escapeHtml(m.indice) + '</em>' : ''));
+    } else {
+      [['annonce', att.annonce], ['rappel', att.rappel]].forEach(([cle, nom]) => {
+        const trouves = m[cle] || [];
+        // On cherche le modèle DANS LA LANGUE attendue : un modèle
+        // approuvé en anglais ne servira pas un envoi déclaré en « fr ».
+        const bon = trouves.find(x => x.langue === att.langue);
+        if (!trouves.length) {
+          h += ligne(false, 'Modèle <code>' + escapeHtml(nom || '?') + '</code> : introuvable');
+        } else if (!bon) {
+          h += ligne(false, 'Modèle <code>' + escapeHtml(nom) + '</code> : existe, mais pas en « '
+            + escapeHtml(att.langue) + ' » (trouvé : '
+            + trouves.map(x => escapeHtml(x.langue)).join(', ') + ')');
+        } else {
+          h += ligne(bon.statut === 'APPROVED',
+            'Modèle <code>' + escapeHtml(nom) + '</code> : ' + escapeHtml(bon.statut)
+            + ' (' + escapeHtml(bon.categorie || '?') + ', ' + escapeHtml(bon.langue) + ')');
+        }
+      });
+    }
+
+    zone.innerHTML = h;
+    zone.style.display = 'block';
+  }
 
   document.getElementById('sendBtn').addEventListener('click', async () => {
     const message = messageInput.value.trim();
