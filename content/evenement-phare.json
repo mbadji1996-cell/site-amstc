@@ -12,12 +12,20 @@
     {
       "en_cours": false,
       "nom": "Superficie",
-      "lieu": "300 m²"
+      "lieu": "600 m²"
     },
     {
       "en_cours": true,
-      "nom": "Prix",
+      "nom": "Objectif 1",
       "lieu": "5.000.000 FCFA"
+    },
+    {
+      "en_cours": false,
+      "nom": "Objectif 2 : 5.000.000 FCFA"
+    },
+    {
+      "en_cours": false,
+      "nom": "Objectif 3 : 5.000.000 FCFA"
     }
   ],
   "date_fin": "2026-12-31T12:00",
