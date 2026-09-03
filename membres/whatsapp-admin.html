@@ -350,9 +350,15 @@
     if (n.erreur) {
       h += ligne(false, 'Numéro : ' + escapeHtml(n.erreur));
     } else {
-      h += ligne(true, 'Numéro : <strong>' + escapeHtml(n.numero || '?') + '</strong>'
+      // L'état du nom n'est pas toujours servi par Meta : on ne
+      // l'affiche que s'il est là, plutôt qu'un « ? » qui inquiète.
+      const detail = [];
+      if (n.nom_statut) detail.push('nom ' + escapeHtml(String(n.nom_statut)));
+      detail.push('qualité ' + escapeHtml(String(n.qualite || '?')));
+      h += ligne(n.nom_statut ? n.nom_statut === 'APPROVED' : true,
+        'Numéro : <strong>' + escapeHtml(n.numero || '?') + '</strong>'
         + ' - ' + escapeHtml(n.nom_verifie || 'nom non vérifié')
-        + ' (qualité ' + escapeHtml(String(n.qualite || '?')) + ')');
+        + ' (' + detail.join(', ') + ')');
     }
 
     const m = v.modeles || {};

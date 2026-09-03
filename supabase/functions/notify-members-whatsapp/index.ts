@@ -119,6 +119,19 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
     rapport.numero = { erreur: String((e as Error).message || e) };
   }
 
+  // L'état du nom d'affichage, dans un appel À PART. Meta documente
+  // « name_status » comme étant en bêta et non ouvert à toutes les
+  // applications : demandé dans la requête ci-dessus, un champ
+  // indisponible aurait fait échouer la lecture entière du numéro. Ici,
+  // s'il n'est pas servi, on n'affiche simplement pas la mention.
+  const n0 = rapport.numero as Record<string, unknown>;
+  if (n0 && !n0.erreur) {
+    try {
+      const st = await meta(`${META_PHONE_NUMBER_ID}?fields=name_status`);
+      if (st.name_status) n0.nom_statut = st.name_status;
+    } catch { /* champ indisponible : sans conséquence */ }
+  }
+
   if (!META_WABA_ID) {
     rapport.modeles = {
       erreur: "META_WABA_ID n'est pas défini. Les modèles appartiennent au compte "
