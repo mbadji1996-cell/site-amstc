@@ -783,6 +783,77 @@ fonction Edge choisit automatiquement le bon modèle selon l'audience -
 audiences de rappel - seul le texte tapé dans la variable `{{message}}`
 change à chaque envoi.
 
+## 4undevicies bis. Recevoir et repondre aux messages WhatsApp
+
+Un numero basculé sur l'API Cloud **ne s'ouvre plus dans aucune
+application WhatsApp**. Sans ce qui suit, un membre qui repond a une
+diffusion ecrit dans le vide : personne ne voit son message, et lui croit
+avoir joint l'association.
+
+La fonction `whatsapp-webhook` recoit ces messages et les repose dans le
+salon Telegram d'administration. **Vous repondez en repondant au message
+Telegram** - le numero voyage dans une marque `[wa:221...]` au bas du
+message, que Telegram nous rend. Aucune table, aucune phase SQL : rien
+n'est garde entre deux appels, exactement comme pour `[#uuid]`.
+
+**LA REGLE DES 24 HEURES commande tout.** Meta n'autorise un message
+libre - hors modele - que dans les 24 heures suivant le dernier message
+du correspondant. Le message repose dans Telegram annonce donc l'heure
+limite. Passe ce delai, la reponse est refusee et le bot vous le dit en
+clair : il faut attendre que le membre reecrive, ou passer par un modele
+approuve depuis l'ecran Diffusion.
+
+### Mise en place
+
+1. **Deux secrets** a ajouter sur le service edge-functions, puis
+   Restart :
+   - `META_APP_SECRET` - Meta for Developers > votre app > Parametres de
+     base > **Cle secrete** (bouton « Afficher »)
+   - `META_VERIFY_TOKEN` - une chaine au hasard que vous choisissez ;
+     elle ne sert qu'a la poignee de main ci-dessous. `openssl rand -hex 24`
+     fait l'affaire.
+
+   `META_WHATSAPP_TOKEN`, `META_PHONE_NUMBER_ID`, `TELEGRAM_BOT_TOKEN` et
+   `TELEGRAM_CHAT_ID` sont deja poses pour la diffusion : les fonctions
+   partagent l'environnement du service.
+
+2. **Deployer la fonction**, en SSH sur le VPS :
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/whatsapp-webhook/index.ts -o /tmp/wh.ts && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/whatsapp-webhook && docker cp /tmp/wh.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/whatsapp-webhook/index.ts && docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+   ```
+
+   `telegram-webhook` doit etre redeploye aussi : c'est lui qui envoie
+   les reponses.
+
+3. **Declarer le webhook chez Meta** : app > WhatsApp > Configuration >
+   Webhooks > *Modifier* :
+   - **URL de rappel** :
+     `https://api.amstc.org/functions/v1/whatsapp-webhook?apikey=CLE_ANON_AMSTC`
+     La cle anon en parametre est necessaire : la passerelle de
+     l'instance auto-hebergee la reclame, comme pour `sante`.
+   - **Verifier le token** : la valeur de `META_VERIFY_TOKEN`
+   - *Verifier et enregistrer*. Meta appelle alors l'adresse en GET ; si
+     le jeton correspond, l'enregistrement passe.
+   - Puis **s'abonner au champ `messages`**. N'ABONNEZ PAS `statuses` :
+     Meta enverrait un evenement par message livre, soit des centaines de
+     notifications Telegram pour une seule diffusion. La fonction les
+     ignore de toute facon.
+
+### Ce qui protege cette adresse
+
+Elle est publiquement accessible - Meta doit pouvoir l'appeler sans
+session - et **deux barrieres** la gardent :
+
+- La **signature** `X-Hub-Signature-256`, un HMAC-SHA256 du corps brut
+  avec `META_APP_SECRET`, verifiee a temps constant. Sans elle, quiconque
+  connaitrait l'adresse pourrait injecter de faux « messages de membres »
+  dans votre salon - et vous y repondriez de bonne foi.
+- La **marque ancree en fin de message**, doublee d'une neutralisation du
+  texte du membre. Un membre ecrivant `[wa:999999]` dans son propre
+  message placerait sinon une marque avant la notre, et votre reponse
+  partirait au numero de son choix.
+
 ## 4vicies. Dupliquer une fiche & consulter l'historique des versions
 
 Deux améliorations pour l'édition de contenu via Decap CMS (Réalisations,

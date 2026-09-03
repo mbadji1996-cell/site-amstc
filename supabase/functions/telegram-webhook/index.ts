@@ -74,6 +74,10 @@ const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 const TELEGRAM_CHANNEL_ID = Deno.env.get("TELEGRAM_CHANNEL_ID");
 const WEBHOOK_SECRET = Deno.env.get("TELEGRAM_WEBHOOK_SECRET");
+// Pour RÉPONDRE aux messages WhatsApp reçus. Déjà posés pour la
+// diffusion : les fonctions partagent l'environnement du service.
+const META_WHATSAPP_TOKEN = Deno.env.get("META_WHATSAPP_TOKEN");
+const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
 
 const SITE = "https://amstc.org";
 
@@ -100,6 +104,53 @@ function baseTexte(t: unknown): string {
   const s = String(t ?? "");
   const i = s.indexOf("\n\n➤ ");
   return i === -1 ? s : s.slice(0, i);
+}
+
+/**
+ * Envoie un message libre à un numéro WhatsApp.
+ *
+ * « Libre » veut dire hors modèle, et Meta ne l'autorise que dans les 24
+ * heures suivant le dernier message du correspondant. Au-delà, l'API
+ * répond 131047. Ce cas n'est pas une panne : c'est la règle. On le
+ * traduit donc en français plutôt que de recracher un code.
+ */
+async function repondreWhatsApp(numero: string, texte: string): Promise<string | null> {
+  if (!META_WHATSAPP_TOKEN || !META_PHONE_NUMBER_ID) {
+    return "La diffusion WhatsApp n'est pas configurée sur ce serveur.";
+  }
+  try {
+    const res = await fetch(
+      `https://graph.facebook.com/v20.0/${META_PHONE_NUMBER_ID}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${META_WHATSAPP_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: numero,
+          type: "text",
+          text: { body: texte, preview_url: false },
+        }),
+      },
+    );
+    if (res.ok) return null;
+
+    const corps = await res.json().catch(() => ({}));
+    const err = corps?.error ?? {};
+    const code = Number(err.code ?? 0);
+    if (code === 131047 || /24 hours/i.test(String(err.message ?? ""))) {
+      return "Plus de 24 heures se sont écoulées depuis son message : Meta "
+        + "n'autorise plus de réponse libre. Il faut attendre qu'il réécrive, "
+        + "ou passer par un modèle approuvé depuis l'écran Diffusion WhatsApp.";
+    }
+    console.error("telegram-webhook: échec réponse WhatsApp", res.status, JSON.stringify(err).slice(0, 300));
+    return "Échec de l'envoi : " + String(err.message ?? res.status);
+  } catch (e) {
+    console.error("telegram-webhook: WhatsApp injoignable", e);
+    return "WhatsApp est injoignable pour le moment.";
+  }
 }
 
 async function telegram(methode: string, corps: Record<string, unknown>): Promise<void> {
@@ -687,8 +738,37 @@ async function traiterMessageAdmin(msg: any): Promise<boolean> {
   const salon = msg.chat?.id;
   const texte = String(msg.text ?? "").trim();
 
-  // 1. Réponse à la demande de message libre.
   const repondA = msg.reply_to_message;
+
+  // 0. Réponse à un message WhatsApp reçu. La marque « [wa:221...] »
+  //    posée par whatsapp-webhook porte le numéro : Telegram nous la
+  //    rend, il n'y a donc rien à mémoriser entre deux appels.
+  //    ANCREE EN FIN de message : la nôtre est toujours la dernière
+  //    ligne. Sans cette ancre, un membre écrivant « [wa:999999] »
+  //    dans son propre texte placerait une marque avant la nôtre, et
+  //    la réponse partirait au numéro de son choix.
+  const marqueWa = repondA
+    ? /\[wa:(\d{6,20})\]\s*$/.exec(String(repondA.text ?? ""))
+    : null;
+  if (marqueWa) {
+    if (!texte) {
+      await telegram("sendMessage", {
+        chat_id: salon,
+        text: "Message vide : rien n'a été envoyé.",
+        reply_to_message_id: msg.message_id,
+      });
+      return true;
+    }
+    const echec = await repondreWhatsApp(marqueWa[1], texte);
+    await telegram("sendMessage", {
+      chat_id: salon,
+      text: echec ? "\u274C " + echec : "\u2705 Réponse envoyée sur WhatsApp.",
+      reply_to_message_id: msg.message_id,
+    });
+    return true;
+  }
+
+  // 1. Réponse à la demande de message libre.
   const marque = repondA ? /\[#([0-9a-fA-F-]{36})\]/.exec(String(repondA.text ?? "")) : null;
   if (marque) {
     if (!texte) {
