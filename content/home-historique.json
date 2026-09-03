@@ -94,7 +94,8 @@
     },
     {
       "name": "Dr Racine Ly",
-      "photo": "assets/pioneers/05-racine-ly.jpg"
+      "photo": "assets/pioneers/05-racine-ly.jpg",
+      "fonction": "Pharmacien"
     },
     {
       "name": "Dr Bineta GUEYE",
@@ -119,15 +120,18 @@
     },
     {
       "name": "Dr Salmane ibn Rassoul Niengue",
-      "photo": ""
+      "photo": "",
+      "fonction": "Orthopédiste - Traumatologue"
     },
     {
       "name": "Feue Dr Ndeye Yaga CISSE",
-      "photo": "/assets/uploads/1002164697.jpg"
+      "photo": "/assets/uploads/1002164697.jpg",
+      "fonction": "Gériatrie - Gérontologie"
     },
     {
       "name": "Dr Souleymane DIATTA",
-      "photo": "assets/pioneers/21-xulio.jpg"
+      "photo": "assets/pioneers/21-xulio.jpg",
+      "fonction": "Urgentiste - SAMU Kaolack"
     },
     {
       "name": "Dr Niania",
@@ -135,7 +139,8 @@
     },
     {
       "name": "El Hadji Malick GUEYE",
-      "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg"
+      "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg",
+      "fonction": "Biologiste - CNTS"
     },
     {
       "name": "Dr Yacine FALL",
@@ -143,7 +148,8 @@
     },
     {
       "name": "Dr Mar FALL Dabakh",
-      "photo": "assets/pioneers/07-mar-fall-dabakh.jpg"
+      "photo": "assets/pioneers/07-mar-fall-dabakh.jpg",
+      "fonction": "Pharmacien - Spécialiste en Supply Chain"
     },
     {
       "name": "Dr Khadija Samb",
@@ -151,7 +157,8 @@
     },
     {
       "name": "Dr Mouhamadou Mansour BA",
-      "photo": "assets/pioneers/19-mansour.jpg"
+      "photo": "assets/pioneers/19-mansour.jpg",
+      "fonction": "Pharmacien Titulaire Pharmacie Thiellal Odobéré"
     },
     {
       "name": "Dr Bousso Ndiaye",
@@ -159,35 +166,43 @@
     },
     {
       "name": "Dr Mbaye SOW",
-      "photo": "assets/pioneers/13-mbaye-sow.jpg"
+      "photo": "assets/pioneers/13-mbaye-sow.jpg",
+      "fonction": "Urgentiste - SAMU Kolda"
     },
     {
       "name": "Dr Fatou Faye FALL",
-      "photo": "assets/pioneers/12-fatou-faye-fall.jpg"
+      "photo": "assets/pioneers/12-fatou-faye-fall.jpg",
+      "fonction": "Pharmacienne"
     },
     {
       "name": "Dr Kaoussou A. BODIAN",
-      "photo": "assets/pioneers/11-kaoussou.jpg"
+      "photo": "assets/pioneers/11-kaoussou.jpg",
+      "fonction": "Orthopédiste - Traumatologue"
     },
     {
       "name": "Dr Aida NDOUR",
-      "photo": "assets/pioneers/06-aida-ndour.jpg"
+      "photo": "assets/pioneers/06-aida-ndour.jpg",
+      "fonction": "Dentiste"
     },
     {
       "photo": "/assets/uploads/bouba.jpg",
-      "name": "Dr El Hadji Boubacar GUEYE (Buba)"
+      "name": "Dr El Hadji Boubacar GUEYE (Buba)",
+      "fonction": "Médecine du travail"
     },
     {
       "name": "Dr Bineta Kane DIA",
-      "photo": "assets/pioneers/08-bineta-kane-dia.jpg"
+      "photo": "assets/pioneers/08-bineta-kane-dia.jpg",
+      "fonction": "Dentiste"
     },
     {
       "name": "Dr Mouhamadou Habib DIOP",
-      "photo": "/assets/uploads/habib.jpg"
+      "photo": "/assets/uploads/habib.jpg",
+      "fonction": "Centre de santé Mamadou DIOP"
     },
     {
       "name": "Dr Ndèye Mariètou DANFAKHA",
-      "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg"
+      "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg",
+      "fonction": "Gériatrie - Gérontologie"
     },
     {
       "name": "Dr Arona NDIAYE",
@@ -195,7 +210,8 @@
     },
     {
       "name": "Dr Amayel KANE",
-      "photo": "assets/pioneers/10-amayel.jpg"
+      "photo": "assets/pioneers/10-amayel.jpg",
+      "fonction": "Anatomie et Cytologie Pathologique"
     },
     {
       "name": "Ismaila DIAGNE",
@@ -207,19 +223,23 @@
     },
     {
       "name": "Dr El Hadji Babacar Fall",
-      "photo": "/assets/uploads/dr-el-hadji-babacar-fall.jpg"
+      "photo": "/assets/uploads/dr-el-hadji-babacar-fall.jpg",
+      "fonction": "Biologiste"
     },
     {
       "name": "Dr Ndeye Adele GUEYE",
-      "photo": "assets/pioneers/20-adele.jpg"
+      "photo": "assets/pioneers/20-adele.jpg",
+      "fonction": "Interne - Psychiatrie"
     },
     {
       "name": "Dr Bacary BA",
-      "photo": "/assets/uploads/dr-bacary-ba.jpg"
+      "photo": "/assets/uploads/dr-bacary-ba.jpg",
+      "fonction": "Néphrologue - Ancien Interne"
     },
     {
       "name": "Dr Youssoupha KASSE",
-      "photo": "/assets/uploads/dr-youssoupha-kasse.jpg"
+      "photo": "/assets/uploads/dr-youssoupha-kasse.jpg",
+      "fonction": "Radiologue - Ancien Interne"
     },
     {
       "name": "Pap Alaaji Maalik Mbay",
@@ -227,19 +247,23 @@
     },
     {
       "name": "Dr Massogui Bathily",
-      "photo": "/assets/uploads/dr-massogui.jpg"
+      "photo": "/assets/uploads/dr-massogui.jpg",
+      "fonction": "Pharmacien"
     },
     {
       "name": "Dr Ibrahima SECK",
-      "photo": "/assets/uploads/dr-ibrahima-seck.jpg"
+      "photo": "/assets/uploads/dr-ibrahima-seck.jpg",
+      "fonction": "Dentiste"
     },
     {
       "name": "Dr Babacar SEYE",
-      "photo": "/assets/uploads/dr-babacar-seye.jpg"
+      "photo": "/assets/uploads/dr-babacar-seye.jpg",
+      "fonction": "Anesthésie - Réanimation"
     },
     {
       "photo": "/assets/uploads/dr-pape-mor-sarr.jpeg",
-      "name": "Dr Pape Mor SARR"
+      "name": "Dr Pape Mor SARR",
+      "fonction": "Spécialiste en santé publique"
     }
   ],
   "pioneers_subtitle": "Véritables bâtisseurs, ces pionniers ont transformé une noble ambition en une institution portée par des valeurs d'excellence, de solidarité et de service, léguant aux générations futures un héritage précieux.",
