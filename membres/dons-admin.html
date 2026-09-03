@@ -567,7 +567,7 @@
             <p class="campagne-meta">Objectif ${esc(fcfa(c.objectif_fcfa))}${c.date_fin ? ' - jusqu\'au ' + esc(dateCourte(c.date_fin)) : ''}</p>
           </div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <span class="puce ${c.is_active ? 'puce-active' : 'puce-close'}">${c.is_active ? 'Active' : 'Fermée'}</span>
+            <span class="puce ${c.is_active ? 'puce-active' : (c.a_ete_active ? 'puce-close' : 'puce-attente')}">${c.is_active ? 'Active' : (c.a_ete_active ? 'Fermée' : 'À venir')}</span>
             <button class="btn" onclick="editer('${c.id}')"><i class="ti ti-pencil"></i> Modifier</button>
             ${c.is_active ? '' : `<button class="btn" onclick="activer('${c.id}')"><i class="ti ti-player-play"></i> Activer</button>`}
           </div>
