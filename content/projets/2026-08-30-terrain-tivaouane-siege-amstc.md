@@ -110,7 +110,21 @@ terrain, en fonction de sa superficie et des moyens réunis.</p>
 <p>L'Association Médico-Sociale des Talibés Cheikh lance un appel à contribution auprès
 de ses membres, sympathisants, partenaires, bienfaiteurs, professionnels de santé,
 acteurs sociaux, entreprises et bonnes volontés, en vue de l'<strong>acquisition d'un
-terrain nu de 300 m² à Tivaouane</strong>.</p>
+terrain nu de 600 m² à Tivaouane</strong>.</p>
+
+<h2>Le prix du terrain, en trois paliers</h2>
+<p>Le terrain s'acquiert pour <strong>15 000 000 FCFA</strong>, payable en trois paliers
+de <strong>5 000 000 FCFA</strong> chacun. La collecte actuellement ouverte vise le
+premier palier.</p>
+<table>
+  <thead><tr><th scope="col">Palier</th><th scope="col">Montant</th><th scope="col">Statut</th></tr></thead>
+  <tbody>
+    <tr><td>Palier 1</td><td>5 000 000 FCFA</td><td>Collecte en cours</td></tr>
+    <tr><td>Palier 2</td><td>5 000 000 FCFA</td><td>À venir</td></tr>
+    <tr><td>Palier 3</td><td>5 000 000 FCFA</td><td>À venir</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>15 000 000 FCFA</strong></td><td>-</td></tr>
+  </tbody>
+</table>
 
 <p>Ce terrain constituera le socle du futur complexe institutionnel de l'AMSTC, articulé
 autour de trois fonctions complémentaires.</p>
