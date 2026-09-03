@@ -99,7 +99,8 @@
     },
     {
       "name": "Dr Bineta GUEYE",
-      "photo": "/assets/uploads/dr-bineta-gueye-idh-cardio.jpg"
+      "photo": "/assets/uploads/dr-bineta-gueye-idh-cardio.jpg",
+      "fonction": "Cardiologue - Ancien Interne"
     },
     {
       "name": "Dr Demba Tahirou DIOP",
@@ -215,11 +216,13 @@
     },
     {
       "name": "Ismaila DIAGNE",
-      "photo": "assets/pioneers/17-ismaila-diagne.jpg"
+      "photo": "assets/pioneers/17-ismaila-diagne.jpg",
+      "fonction": "Pharmacien"
     },
     {
       "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
-      "name": "Dr Ndèye Codou FAYE"
+      "name": "Dr Ndèye Codou FAYE",
+      "fonction": "Médecin généraliste"
     },
     {
       "name": "Dr El Hadji Babacar Fall",
