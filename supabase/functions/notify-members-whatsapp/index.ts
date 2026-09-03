@@ -144,10 +144,16 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
     // « lire les modèles » exige whatsapp_business_management, que
     // « envoyer » n'exige pas : on le dit, plutôt que de laisser croire
     // que les modèles n'existent pas.
+    const msg = String((e as Error).message || e);
     rapport.modeles = {
-      erreur: String((e as Error).message || e),
-      indice: "Lire les modèles exige la permission whatsapp_business_management, "
-        + "distincte de whatsapp_business_messaging utilisée pour envoyer.",
+      erreur: msg,
+      // L'indice n'apparaît QUE si l'erreur parle vraiment de permissions.
+      // Affiché sous une erreur de jeton expiré, il envoyait chercher au
+      // mauvais endroit - un indice qui se trompe est suivi.
+      ...(/permission|\(#200\)|#10/i.test(msg)
+        ? { indice: "Lire les modèles exige la permission whatsapp_business_management, "
+            + "distincte de whatsapp_business_messaging utilisée pour envoyer." }
+        : {}),
     };
   }
 
