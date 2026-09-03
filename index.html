@@ -391,6 +391,7 @@
     background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.6rem;
   }
   .pio-item-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
+  .pio-item-fonction{font-size:0.78rem; color:var(--text-muted); line-height:1.3; margin-top:3px;}
   @media (max-width:560px){ .pio-item{width:160px;} }
 
   /* ===== Pionniers / Présidents (PC uniquement) : carrousel en éventail =====
@@ -1804,7 +1805,10 @@
         const p = list[idx];
         const name = typeof p === 'string' ? p : (p.name || '');
         const photo = typeof p === 'string' ? '' : (p.photo || '');
-        const mandate = typeof p === 'string' ? '' : (p.mandate || '');
+        // « mandate » pour les présidents, « fonction » pour les pionniers -
+        // setupFanCarousel sert les deux listes, chacune avec son propre nom
+        // de champ.
+        const mandate = typeof p === 'string' ? '' : (p.mandate || p.fonction || '');
         const card = document.createElement('div');
         card.className = 'fan-card';
         // La carte centrale garde son nom affiché en permanence.
@@ -1889,12 +1893,14 @@
       const itemsHtml = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
         const photo = typeof p === 'string' ? '' : (p.photo || '');
+        const fonction = typeof p === 'string' ? '' : (p.fonction || '');
         return `
           <div class="pio-item">
             <div class="pio-avatar">
               ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
             </div>
             ${name ? `<div class="pio-item-name">${esc(name)}</div>` : ''}
+            ${fonction ? `<div class="pio-item-fonction">${esc(fonction)}</div>` : ''}
           </div>
         `;
       }).join('');
@@ -1904,7 +1910,8 @@
     } else {
       listEl.innerHTML = list.map(p => {
         const name = typeof p === 'string' ? p : (p.name || '');
-        return name ? `<span>${esc(name)}</span>` : '';
+        const fonction = typeof p === 'string' ? '' : (p.fonction || '');
+        return name ? `<span>${esc(name)}${fonction ? ', ' + esc(fonction) : ''}</span>` : '';
       }).join('');
     }
   }

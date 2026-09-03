@@ -85,7 +85,8 @@
     },
     {
       "name": "Dr Makhan DANFAKHA",
-      "photo": "assets/pioneers/03-makhan.jpg"
+      "photo": "assets/pioneers/03-makhan.jpg",
+      "fonction": "Directeur du CHR de Kolda"
     },
     {
       "name": "Dr Mame Fatou Ballé NIANG",
@@ -101,7 +102,8 @@
     },
     {
       "name": "Dr Demba Tahirou DIOP",
-      "photo": "/assets/uploads/dr-demba.jpeg"
+      "photo": "/assets/uploads/dr-demba.jpeg",
+      "fonction": "Anesthésiste - Réanimateur"
     },
     {
       "name": "Dr Ndeye Khady BA",

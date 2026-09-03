@@ -110,6 +110,8 @@ collections:
             fields:
               - { label: "Photo", name: "photo", widget: "image", required: false }
               - { label: "Nom", name: "name", widget: "string", required: false }
+              - { label: "Fonction actuelle", name: "fonction", widget: "string", required: false,
+                  hint: "Ex : Directeur du CHR de Kolda, ou Anesthésiste - Réanimateur." }
 
           - { label: "Titre - Anciens présidents", name: "presidents_title", widget: "string", default: "Nos anciens présidents" }
           - { label: "Sous-titre - Anciens présidents", name: "presidents_subtitle", widget: "string", required: false }
