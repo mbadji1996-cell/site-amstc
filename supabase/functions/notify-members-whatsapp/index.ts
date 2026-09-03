@@ -150,7 +150,7 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
       // L'indice n'apparaît QUE si l'erreur parle vraiment de permissions.
       // Affiché sous une erreur de jeton expiré, il envoyait chercher au
       // mauvais endroit - un indice qui se trompe est suivi.
-      ...(/permission|\(#200\)|#10/i.test(msg)
+      ...(/permission|\(#200\)/i.test(msg)
         ? { indice: "Lire les modèles exige la permission whatsapp_business_management, "
             + "distincte de whatsapp_business_messaging utilisée pour envoyer." }
         : {}),
