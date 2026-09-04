@@ -30,6 +30,7 @@
 //   META_PHONE_NUMBER_ID      - identifiant du numéro expéditeur WhatsApp Business
 //   META_TEMPLATE_NAME          - optionnel, défaut "nouvelle_annonce" (Marketing, audience "tous")
 //   META_TEMPLATE_NAME_RAPPEL   - optionnel, défaut "rappel_compte" (Utilitaire, audiences carte/cotisation)
+//   META_TEMPLATE_NAME_IMAGE    - optionnel, défaut "annonce_image" (Marketing, EN-TÊTE IMAGE)
 //   META_TEMPLATE_LANG          - optionnel, défaut "fr"
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -40,6 +41,11 @@ const META_WHATSAPP_TOKEN = Deno.env.get("META_WHATSAPP_TOKEN");
 const META_PHONE_NUMBER_ID = Deno.env.get("META_PHONE_NUMBER_ID");
 const META_TEMPLATE_NAME = Deno.env.get("META_TEMPLATE_NAME") || "nouvelle_annonce";
 const META_TEMPLATE_NAME_RAPPEL = Deno.env.get("META_TEMPLATE_NAME_RAPPEL") || "rappel_compte";
+// Modèle à EN-TÊTE IMAGE, pour une annonce illustrée. Il est distinct et
+// ne peut pas l'être autrement : le type d'en-tête d'un modèle Meta est
+// figé à sa création, et celui-ci exige une image à chaque envoi. Un
+// même modèle ne peut donc pas être « parfois » illustré.
+const META_TEMPLATE_NAME_IMAGE = Deno.env.get("META_TEMPLATE_NAME_IMAGE") || "annonce_image";
 const META_TEMPLATE_LANG = Deno.env.get("META_TEMPLATE_LANG") || "fr";
 // Facultatif, et seulement pour le mode « vérifier » : les modèles
 // appartiennent au compte WhatsApp Business, pas au numéro. Sans lui, la
@@ -251,7 +257,34 @@ Deno.serve(async (req: Request) => {
   if (!KNOWN_AUDIENCES.includes(audience)) {
     return json({ error: `Audience inconnue : ${audience}` }, 400);
   }
-  const templateName = templateNameFor(audience);
+  // ---- Image d'accompagnement, facultative ----
+  // Elle bascule l'envoi sur le modèle à en-tête image. Deux refus plutôt
+  // qu'un envoi qui échouerait chez Meta destinataire par destinataire :
+  //   - une adresse non https : Meta va chercher l'image lui-même et
+  //     n'accepte rien d'autre ;
+  //   - une image sur une audience de rappel : le modèle des rappels n'a
+  //     pas d'en-tête, l'image n'aurait nulle part où aller.
+  const image = String(payload.image || "").trim();
+  if (image && !/^https:\/\//i.test(image)) {
+    return json({ error: "L'image doit être une adresse https, accessible publiquement." }, 400);
+  }
+  if (image && REMINDER_AUDIENCES.includes(audience)) {
+    return json({
+      error: "Une image ne peut accompagner qu'une annonce générale : le modèle "
+        + "des rappels de compte n'a pas d'en-tête image.",
+    }, 400);
+  }
+
+  const templateName = image ? META_TEMPLATE_NAME_IMAGE : templateNameFor(audience);
+
+  const composants: Record<string, unknown>[] = [];
+  if (image) {
+    composants.push({ type: "header", parameters: [{ type: "image", image: { link: image } }] });
+  }
+  composants.push({
+    type: "body",
+    parameters: [{ type: "text", parameter_name: "message", text: message }],
+  });
 
   const { data: recipients, error: recErr } = await admin
     .rpc("whatsapp_target_members", { p_audience: audience });
@@ -282,9 +315,7 @@ Deno.serve(async (req: Request) => {
           template: {
             name: templateName,
             language: { code: META_TEMPLATE_LANG },
-            components: [
-              { type: "body", parameters: [{ type: "text", parameter_name: "message", text: message }] },
-            ],
+            components: composants,
           },
         }),
       });

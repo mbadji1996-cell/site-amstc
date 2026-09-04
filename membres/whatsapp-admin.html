@@ -58,6 +58,21 @@
   textarea:focus{outline:none;border-color:var(--green);}
   .char-count{font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;text-align:right;margin-top:6px;}
   .char-count.over{color:#B23B3B;}
+  /* ---- Image d'accompagnement ---- */
+  .champ-image{margin-top:14px;padding-top:16px;border-top:1px solid var(--line);}
+  .champ-image label{display:block;font-weight:600;font-size:0.86rem;color:var(--text-heading);margin-bottom:6px;}
+  .champ-image .facultatif{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--text-muted);font-weight:500;margin-left:4px;}
+  .champ-image input[type=url]{width:100%;border:1.5px solid var(--line);border-radius:8px;
+    padding:10px 13px;font-family:var(--body);font-size:0.9rem;color:var(--ink);background:var(--paper);}
+  .champ-image input[type=url]:focus{outline:none;border-color:var(--green);}
+  .image-aide{font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin:7px 0 0;}
+  .image-aide code{font-family:var(--mono);font-size:0.94em;}
+  .image-apercu{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:0.8rem;}
+  .image-apercu img{max-height:74px;max-width:130px;border-radius:6px;border:1px solid var(--line);display:block;}
+  .image-apercu img[hidden]{display:none;}
+  .image-apercu .ko{color:#B23B3B;}
+  .image-apercu .ok{color:var(--green);}
   .compose-actions{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap;}
   .btn-primary{background:var(--green);color:var(--white);border:none;padding:11px 22px;border-radius:999px;font-size:0.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
   .btn-primary:hover{background:var(--green-deep);}
@@ -192,6 +207,18 @@
     </div>
     <textarea id="messageInput" maxlength="800" placeholder="Ex : Nouvelle campagne de consultations gratuites ce samedi à Ouakam, de 9h à 16h. Venez nombreux !"></textarea>
     <p class="char-count" id="charCount">0 / 800</p>
+
+    <div class="champ-image" id="champImage">
+      <label for="imageInput">Image d'accompagnement <span class="facultatif">facultative</span></label>
+      <input type="url" id="imageInput" placeholder="https://amstc.org/assets/uploads/mon-affiche.jpg">
+      <p class="image-aide">Adresse d'une image déjà en ligne, en <code>https</code> : c'est Meta qui va
+      la chercher, elle doit donc être publiquement accessible. Une image déposée dans le CMS convient
+      (JPG ou PNG, 5 Mo maximum). Laissez vide pour un message sans image.</p>
+      <div class="image-apercu" id="imageApercu" style="display:none;">
+        <img id="imageApercuImg" alt="Aperçu de l'image">
+        <span id="imageApercuMsg"></span>
+      </div>
+    </div>
     <div class="compose-actions">
       <button class="btn-primary" id="sendBtn"><i class="ti ti-send"></i> Envoyer l'alerte</button>
       <p class="send-msg" id="sendMsg"></p>
@@ -231,6 +258,59 @@
     carte_jamais_reclamee: 'Carte jamais réclamée',
   };
 
+  // Le modèle des rappels n'a pas d'en-tête image : le champ n'aurait
+  // nulle part où poser l'image. On le masque plutôt que de laisser
+  // saisir une adresse qui serait refusée au moment de l'envoi.
+  const AUDIENCES_AVEC_IMAGE = ['tous', 'tous_et_registre'];
+
+  function majChampImage() {
+    const permise = AUDIENCES_AVEC_IMAGE.includes(selectedAudience());
+    document.getElementById('champImage').style.display = permise ? '' : 'none';
+    if (!permise) {
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imageApercu').style.display = 'none';
+    }
+  }
+
+  // L'aperçu n'est pas décoratif : c'est Meta qui va chercher l'image,
+  // et une adresse fautive n'échouerait qu'au moment de l'envoi, une
+  // fois par destinataire. Mieux vaut le savoir avant.
+  let apercuTimer = null;
+  function apercuImage() {
+    clearTimeout(apercuTimer);
+    apercuTimer = setTimeout(() => {
+      const url = document.getElementById('imageInput').value.trim();
+      const zone = document.getElementById('imageApercu');
+      const img = document.getElementById('imageApercuImg');
+      const msg = document.getElementById('imageApercuMsg');
+      if (!url) { zone.style.display = 'none'; return; }
+      zone.style.display = 'flex';
+      if (!/^https:\/\//i.test(url)) {
+        img.hidden = true;
+        msg.className = 'ko';
+        msg.textContent = "L'adresse doit commencer par https : Meta refuse tout le reste.";
+        return;
+      }
+      img.hidden = true;
+      msg.className = '';
+      msg.textContent = 'Vérification…';
+      // Que le navigateur y arrive ne garantit pas que Meta y arrivera ;
+      // mais s'il n'y arrive pas, Meta n'y arrivera pas non plus.
+      const test = new Image();
+      test.onload = () => {
+        img.src = url; img.hidden = false;
+        msg.className = 'ok';
+        msg.textContent = 'Image accessible.';
+      };
+      test.onerror = () => {
+        img.hidden = true;
+        msg.className = 'ko';
+        msg.textContent = 'Aucune image trouvée à cette adresse.';
+      };
+      test.src = url;
+    }, 400);
+  }
+
   function selectedAudience() {
     const checked = document.querySelector('input[name="audience"]:checked');
     return checked ? checked.value : 'tous';
@@ -249,9 +329,13 @@
         document.querySelectorAll('.audience-option').forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
         loadRecipientsCount();
+        majChampImage();
       });
     });
 
+    document.getElementById('imageInput').addEventListener('input', apercuImage);
+
+    majChampImage();
     loadRecipientsCount();
     loadHistory();
   })();
@@ -415,8 +499,16 @@
       return;
     }
     const audience = selectedAudience();
+    const image = AUDIENCES_AVEC_IMAGE.includes(audience)
+      ? document.getElementById('imageInput').value.trim() : '';
+    if (image && !/^https:\/\//i.test(image)) {
+      sendMsg.textContent = "L'adresse de l'image doit commencer par https.";
+      sendMsg.classList.add('error');
+      return;
+    }
     const count = document.getElementById('recipientsCount').textContent;
-    if (!confirm(`Envoyer cette alerte WhatsApp à ${count} membre(s) (${AUDIENCE_LABELS[audience]}) ?`)) {
+    const avecImage = image ? ', avec image' : '';
+    if (!confirm(`Envoyer cette alerte WhatsApp à ${count} membre(s) (${AUDIENCE_LABELS[audience]}${avecImage}) ?`)) {
       return;
     }
 
@@ -425,7 +517,7 @@
 
     try {
       const { data, error } = await supabaseClient.functions.invoke('notify-members-whatsapp', {
-        body: { message, audience },
+        body: { message, audience, image },
       });
       if (error) throw error;
       if (data && data.error) throw new Error(data.error);
@@ -440,6 +532,8 @@
 
       messageInput.value = '';
       charCount.textContent = '0 / 800';
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imageApercu').style.display = 'none';
       loadHistory();
     } catch (e) {
       sendMsg.textContent = 'Échec de l\'envoi : ' + (e.message || 'erreur inconnue');
