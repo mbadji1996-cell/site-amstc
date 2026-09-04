@@ -101,6 +101,7 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
     attendus: {
       annonce: META_TEMPLATE_NAME,
       rappel: META_TEMPLATE_NAME_RAPPEL,
+      image: META_TEMPLATE_NAME_IMAGE,
       langue: META_TEMPLATE_LANG,
     },
   };
@@ -147,16 +148,29 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
   }
 
   try {
+    // « components » sert au seul modèle image : un modèle approuvé mais
+    // SANS en-tête image ferait échouer chaque envoi illustré, et rien
+    // dans son nom ni son statut ne le laisserait voir. On lit donc la
+    // forme réelle de l'en-tête plutôt que de se fier au nom.
     const rep = await meta(
-      `${META_WABA_ID}/message_templates?fields=name,status,category,language&limit=200`,
+      `${META_WABA_ID}/message_templates?fields=name,status,category,language,components&limit=200`,
     );
-    const tous = ((rep.data as Array<Record<string, string>>) || []);
+    const tous = ((rep.data as Array<Record<string, any>>) || []);
     const retenir = (nom: string) =>
       tous.filter((m) => m.name === nom)
-          .map((m) => ({ nom: m.name, statut: m.status, categorie: m.category, langue: m.language }));
+          .map((m) => ({
+            nom: m.name,
+            statut: m.status,
+            categorie: m.category,
+            langue: m.language,
+            entete_image: (m.components || []).some((c: Record<string, unknown>) =>
+              String(c.type).toUpperCase() === "HEADER" &&
+              String(c.format).toUpperCase() === "IMAGE"),
+          }));
     rapport.modeles = {
       annonce: retenir(META_TEMPLATE_NAME),
       rappel: retenir(META_TEMPLATE_NAME_RAPPEL),
+      image: retenir(META_TEMPLATE_NAME_IMAGE),
       total: tous.length,
     };
   } catch (e) {

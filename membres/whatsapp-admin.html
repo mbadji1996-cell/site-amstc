@@ -456,7 +456,11 @@
       h += ligne(false, 'Modèles : ' + escapeHtml(m.erreur)
         + (m.indice ? '<br><em>' + escapeHtml(m.indice) + '</em>' : ''));
     } else {
-      [['annonce', att.annonce], ['rappel', att.rappel]].forEach(([cle, nom]) => {
+      // « nom » absent = fonction Edge pas encore redéployée : on saute
+      // la ligne plutôt que d'afficher « Modèle ? : introuvable ».
+      [['annonce', att.annonce], ['rappel', att.rappel], ['image', att.image]]
+        .filter(([, nom]) => !!nom)
+        .forEach(([cle, nom]) => {
         const trouves = m[cle] || [];
         // On cherche le modèle DANS LA LANGUE attendue : un modèle
         // approuvé en anglais ne servira pas un envoi déclaré en « fr ».
@@ -468,9 +472,15 @@
             + escapeHtml(att.langue) + ' » (trouvé : '
             + trouves.map(x => escapeHtml(x.langue)).join(', ') + ')');
         } else {
-          h += ligne(bon.statut === 'APPROVED',
+          // Pour le modèle illustré, « approuvé » ne suffit pas : sans
+          // en-tête image, chaque envoi avec image échouerait, et ni le
+          // nom ni le statut ne le laisseraient voir.
+          const enteteManquante = cle === 'image' && bon.entete_image === false;
+          h += ligne(bon.statut === 'APPROVED' && !enteteManquante,
             'Modèle <code>' + escapeHtml(nom) + '</code> : ' + escapeHtml(bon.statut)
-            + ' (' + escapeHtml(bon.categorie || '?') + ', ' + escapeHtml(bon.langue) + ')');
+            + ' (' + escapeHtml(bon.categorie || '?') + ', ' + escapeHtml(bon.langue) + ')'
+            + (enteteManquante
+              ? '<br><em>Aucun en-tête image : les envois illustrés échoueraient.</em>' : ''));
         }
       });
     }
