@@ -639,16 +639,26 @@ supplémentaire ni changement du plafond/limite de fréquence.
 
 Un admin peut envoyer une alerte WhatsApp (ex : nouvelle campagne de
 consultations) depuis `membres/whatsapp-admin.html`, en un clic depuis le
-Centre d'administration - soit à **tous** les membres approuvés ayant
-renseigné un numéro de téléphone, soit ciblée sur une audience précise :
-**carte expirée** (jamais réglée ou expirée depuis une année précédente),
-**carte à renouveler bientôt** (valide jusqu'au 31 décembre de l'année en
-cours) ou **cotisation du mois en cours impayée** (uniquement pour les membres à
-carte valide - un membre à carte expirée reçoit le rappel "carte expirée"
-à la place). Comme pour la
-Phase 4quaterdecies (e-mail), ceci introduit une nouvelle fonction Edge et
-nécessite un compte chez un service tiers - ici la **Meta Cloud API**
-(WhatsApp Business Platform), gratuite avec un quota généreux.
+Centre d'administration. Six audiences :
+
+| Audience | Qui elle vise | Modèle Meta |
+|---|---|---|
+| **Tous les membres** | Tout membre approuvé, actif, avec téléphone | Marketing |
+| **Membres inscrits et cartes non réclamées** | Les précédents **plus** le registre jamais activé (phase 103) | Marketing |
+| **Carte expirée** | Jamais réglée, ou expirée depuis une année précédente | Utilitaire |
+| **Carte à renouveler bientôt** | Valide jusqu'au 31 décembre de l'année en cours | Utilitaire |
+| **Cotisation du mois impayée** | Carte valide, mois en cours non réglé | Utilitaire |
+| **Carte jamais réclamée** | Au registre, sans compte sur le site (phase 93) | Utilitaire |
+
+Le rappel de cotisation ne vise que les membres à carte valide : un membre
+à carte expirée reçoit le rappel "carte expirée" à la place, jamais les
+deux. Et « Membres inscrits et cartes non réclamées » ne fait doublon avec
+personne : la phase 93 écarte déjà du registre quiconque a un compte au
+même numéro, les deux ensembles sont donc disjoints par construction.
+
+Comme pour la Phase 4quaterdecies (e-mail), ceci introduit une nouvelle
+fonction Edge et nécessite un compte chez un service tiers - ici la
+**Meta Cloud API** (WhatsApp Business Platform).
 
 **Point important à comprendre avant de commencer** : une entreprise ne
 peut PAS envoyer de message WhatsApp libre à quelqu'un qui ne lui a pas
@@ -709,10 +719,28 @@ prend généralement de quelques minutes à quelques heures.
      à une notification de compte, pas à une annonce, aide à passer la
      catégorie Utilitaire sans blocage)
 
+   **c) `annonce_image`** (catégorie **Marketing**, pour une annonce
+   illustrée) :
+   - **En-tête : Image** - c'est la seule différence avec
+     `nouvelle_annonce`, et toute la raison d'être de ce troisième modèle.
+     Le type d'en-tête d'un modèle est **figé à sa création** : celui-ci
+     exige une image à chaque envoi, un même modèle ne peut donc pas être
+     « parfois » illustré.
+   - Corps : identique à `nouvelle_annonce`, mot pour mot.
+   - Meta demande un exemple d'image à la soumission : n'importe quelle
+     affiche de l'association convient.
+
+   **LE PIÈGE À CONNAÎTRE, il fait échouer la création à coup sûr** :
+   dans la section *Contenu*, le sélecteur **« Type de variable »** doit
+   être sur **« Nom »**, jamais sur « Valeur numérique ». Sur « Valeur
+   numérique », Meta refuse `{{message}}` et n'accepte que `{{1}}` - or
+   le code envoie un paramètre NOMMÉ (`parameter_name: "message"`). Un
+   modèle en `{{1}}` serait approuvé et chaque envoi échouerait ensuite.
+
    Notez bien : le nom de la variable (`message`) doit être en minuscules
    avec des tirets bas uniquement, et ne peut pas se trouver en tout début
    ou toute fin du corps du message - Meta l'exige entouré de texte fixe.
-   Soumettez les deux modèles et attendez le statut "Approuvé" pour chacun.
+   Soumettez les trois modèles et attendez le statut "Approuvé" pour chacun.
 5. **Déployer la fonction Edge**, en SSH sur le VPS (l'instance est
    auto-hébergée depuis juillet 2026 : il n'y a plus de Dashboard Supabase,
    et le déploiement passe par le conteneur, comme pour les autres
@@ -732,6 +760,9 @@ prend généralement de quelques minutes à quelques heures.
    - `META_PHONE_NUMBER_ID` - l'identifiant de l'étape 2
    - `META_TEMPLATE_NAME` - optionnel, si différent de `nouvelle_annonce`
    - `META_TEMPLATE_NAME_RAPPEL` - optionnel, si différent de `rappel_compte`
+   - `META_TEMPLATE_NAME_IMAGE` - optionnel, si différent de `annonce_image`
+     (le modèle à en-tête image, utilisé dès qu'une image accompagne
+     l'annonce)
    - `META_TEMPLATE_LANG` - optionnel, si différent de `fr`
    - `META_WABA_ID` - optionnel, identifiant du **compte WhatsApp
      Business** (WhatsApp Manager → Paramètres, ou en haut de la page des
