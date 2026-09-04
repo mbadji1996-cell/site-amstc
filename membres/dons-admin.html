@@ -160,6 +160,9 @@
     border-radius:999px;padding:7px 15px;font-family:var(--body);font-size:0.84rem;cursor:pointer;}
   .filtre:hover{border-color:var(--green);color:var(--text-heading);}
   .filtre.actif{border-color:var(--green);background:var(--green);color:#fff;}
+
+  /* ---- Graphique d'evolution ---- */
+  #graphiqueZone{height:280px;position:relative;}
 </style>
 </head>
 <body>
@@ -231,6 +234,14 @@
         <button class="btn btn-reject" id="btnCloturer"><i class="ti ti-flag-off"></i> Clôturer la campagne</button>
         <span class="msg" id="msgCampagne"></span>
       </div>
+    </div>
+  </div>
+
+  <p class="section-label"><i class="ti ti-chart-line"></i> Évolution de la collecte</p>
+  <div class="bloc">
+    <p id="graphiqueVide" class="page-sub" style="margin:0;">Pas encore de don confirmé sur cette campagne.</p>
+    <div id="graphiqueZone" style="display:none;">
+      <canvas id="graphiqueCollecte"></canvas>
     </div>
   </div>
 
@@ -329,6 +340,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   const MOYENS = { wave: 'Wave', orange_money: 'Orange Money', virement: 'Virement',
@@ -338,6 +350,8 @@
   // celui de la campagne active en relisant la liste, pour que le bouton
   // « Modifier » du bloc du haut sache quoi ouvrir.
   let campagneActiveId = null;
+  let campagneActiveObjectif = null;
+  let graphiqueChart = null;
 
   (async () => {
     const profile = await requireAdmin('connexion.html');
@@ -366,6 +380,12 @@
   async function tout() {
     await Promise.all([chargerApercu(), chargerAttente(), chargerCampagnes(),
                        chargerHistorique()]);
+    // Apres les quatre : le graphique a besoin a la fois de l'objectif
+    // (charge par chargerApercu), de l'identifiant de la campagne active
+    // (charge par chargerCampagnes) et des dons eux-memes (charges par
+    // chargerHistorique). Le dessiner avant l'un des trois le laisserait
+    // vide ou sans ligne d'objectif.
+    dessinerGraphique();
   }
 
   async function chargerApercu() {
@@ -379,6 +399,7 @@
       document.getElementById('statTotalGeneral').textContent = fcfa(d.total_general);
 
       const c = d.campagne;
+      campagneActiveObjectif = (c && c.objectif) ? Number(c.objectif) : null;
       if (c && c.objectif) {
         const pct = Math.min(100, Math.round((Number(c.collecte || 0) / Number(c.objectif)) * 100));
         document.getElementById('campagneTitre').textContent = c.titre || '';
@@ -467,6 +488,120 @@
     en_attente: ['puce-attente',  'En attente'],
     rejete:     ['puce-rejete',   'Rejeté'],
   };
+
+  // Toutes les dates calendaires de `debut` a `fin` inclus, au format
+  // ISO (YYYY-MM-DD). Un plateau doit se voir comme un plateau : sans
+  // cette liste, un jour sans don disparaitrait de l'axe au lieu d'y
+  // montrer une ligne plate.
+  function joursEntre(debut, fin) {
+    const jours = [];
+    const d = new Date(debut.getFullYear(), debut.getMonth(), debut.getDate());
+    const f = new Date(fin.getFullYear(), fin.getMonth(), fin.getDate());
+    while (d <= f) {
+      jours.push(d.toISOString().slice(0, 10));
+      d.setDate(d.getDate() + 1);
+    }
+    return jours;
+  }
+
+  // La campagne active seulement, par choix : comparer Campagne 1/2/3
+  // entre elles est un vrai second graphique, pas une variante de celui-ci.
+  function dessinerGraphique() {
+    const vide = document.getElementById('graphiqueVide');
+    const zone = document.getElementById('graphiqueZone');
+    const canvas = document.getElementById('graphiqueCollecte');
+
+    const dons = tousLesDons
+      .filter(d => d.campagne_id === campagneActiveId && d.status === 'confirme')
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    if (!campagneActiveId || !dons.length) {
+      zone.style.display = 'none';
+      vide.style.display = '';
+      if (graphiqueChart) { graphiqueChart.destroy(); graphiqueChart = null; }
+      return;
+    }
+    vide.style.display = 'none';
+    zone.style.display = '';
+
+    const jours = joursEntre(new Date(dons[0].created_at), new Date());
+
+    // Somme par jour, puis cumul : deux dons le meme jour s'additionnent
+    // avant de rejoindre le total courant.
+    const parJour = {};
+    dons.forEach(d => {
+      const cle = new Date(d.created_at).toISOString().slice(0, 10);
+      parJour[cle] = (parJour[cle] || 0) + Number(d.montant_fcfa || 0);
+    });
+    let cumul = 0;
+    const cumules = jours.map(j => { cumul += (parJour[j] || 0); return cumul; });
+    const etiquettes = jours.map(j => { const [, m, q] = j.split('-'); return q + '/' + m; });
+
+    // Couleurs lues sur le theme courant (clair ou sombre) : Chart.js
+    // dessine sur un canvas, les variables CSS ne s'y appliquent pas
+    // toutes seules. Un observateur plus bas redessine au changement de
+    // theme.
+    const style = getComputedStyle(document.documentElement);
+    const lire = (nom, repli) => (style.getPropertyValue(nom).trim() || repli);
+    const vert = lire('--green', '#17763B');
+    const or = lire('--gold-deep', '#AA7B11');
+    const muet = lire('--text-muted', '#5A6560');
+    const filet = lire('--line', '#DDE4DE');
+
+    const datasets = [{
+      label: 'Collecté (cumulé)',
+      data: cumules,
+      borderColor: vert,
+      backgroundColor: vert + '26',
+      fill: true,
+      tension: 0.25,
+      pointRadius: 0,
+      borderWidth: 2,
+    }];
+    if (campagneActiveObjectif) {
+      datasets.push({
+        label: 'Objectif',
+        data: jours.map(() => campagneActiveObjectif),
+        borderColor: or,
+        borderDash: [6, 5],
+        pointRadius: 0,
+        borderWidth: 1.5,
+        fill: false,
+      });
+    }
+
+    if (graphiqueChart) graphiqueChart.destroy();
+    graphiqueChart = new Chart(canvas, {
+      type: 'line',
+      data: { labels: etiquettes, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: muet, maxRotation: 0, autoSkip: true } },
+          y: {
+            beginAtZero: true,
+            grid: { color: filet },
+            ticks: { color: muet, callback: v => Number(v).toLocaleString('fr-FR') },
+          },
+        },
+        plugins: {
+          legend: { labels: { color: muet, boxWidth: 14 } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ctx.dataset.label + ' : ' + Number(ctx.parsed.y).toLocaleString('fr-FR') + ' FCFA',
+            },
+          },
+        },
+      },
+    });
+  }
+
+  // Le bouton clair/sombre (theme-toggle.js) ne previent de rien : on
+  // observe l'attribut qu'il pose plutot que d'y ajouter un evenement.
+  new MutationObserver(() => { if (graphiqueChart) dessinerGraphique(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   async function chargerHistorique() {
     const tb = document.getElementById('histoBody');
