@@ -160,6 +160,11 @@
         <span class="audience-option-title"><i class="ti ti-users"></i> Tous les membres</span>
         <span class="audience-option-sub">Tous les membres approuvés avec téléphone</span>
       </label>
+      <label class="audience-option" data-audience="tous_et_registre">
+        <input type="radio" name="audience" value="tous_et_registre">
+        <span class="audience-option-title"><i class="ti ti-users-group"></i> Membres inscrits et cartes non réclamées</span>
+        <span class="audience-option-sub">Tous les membres avec compte, plus le registre jamais activé</span>
+      </label>
       <label class="audience-option" data-audience="carte_expiree">
         <input type="radio" name="audience" value="carte_expiree">
         <span class="audience-option-title"><i class="ti ti-id-badge-2"></i> Carte expirée</span>
@@ -219,6 +224,7 @@
 <script>
   const AUDIENCE_LABELS = {
     tous: 'Tous les membres',
+    tous_et_registre: 'Membres inscrits et cartes non réclamées',
     carte_expiree: 'Carte expirée',
     carte_expire_bientot: 'Carte à renouveler bientôt',
     cotisation_impayee: 'Cotisation impayée',

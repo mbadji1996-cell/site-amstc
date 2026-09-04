@@ -244,7 +244,10 @@ Deno.serve(async (req: Request) => {
   if (message.length > 800) return json({ error: "Message trop long (800 caractères maximum)" }, 400);
 
   const audience = String(payload.audience || "tous");
-  const KNOWN_AUDIENCES = ["tous", ...REMINDER_AUDIENCES];
+  // "tous_et_registre" part par le meme modele Marketing que "tous" - ce
+  // n'est pas un rappel de compte, seulement un "tous" elargi au
+  // registre non reclame (phase 103).
+  const KNOWN_AUDIENCES = ["tous", "tous_et_registre", ...REMINDER_AUDIENCES];
   if (!KNOWN_AUDIENCES.includes(audience)) {
     return json({ error: `Audience inconnue : ${audience}` }, 400);
   }
