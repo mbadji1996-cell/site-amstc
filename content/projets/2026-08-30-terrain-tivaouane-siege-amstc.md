@@ -4,7 +4,7 @@ date: 2026-08-30
 statut: En cours
 excerpt: "L'AMSTC lance un appel à contribution pour acquérir un terrain à
   Tivaouane, socle de son futur siège, d'un espace de prise en charge
-  médico-sociale et d'une résidence d'accueil. Objectif : 5 000 000 FCFA."
+  médico-sociale et d'une résidence d'accueil. Premier palier : 5 000 000 FCFA sur un total de 15 000 000."
 image: /assets/uploads/siège-sociale-tiva-petite-taille.jpg
 ---
 <style>
