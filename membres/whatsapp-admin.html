@@ -640,8 +640,13 @@
       sendMsg.classList.add('ok');
 
       if (data.failures && data.failures.length > 0) {
+        // La fonction ne renvoie qu'un échantillon : compter l'échantillon
+        // aurait annoncé vingt échecs là où il y en a deux cents.
+        const total = data.failures_count || data.failures.length;
+        const reste = total - data.failures.length;
         sendResult.style.display = 'block';
-        sendResult.innerHTML = `<strong>${data.failures.length} échec(s) :</strong><ul>${data.failures.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>`;
+        sendResult.innerHTML = `<strong>${total} échec(s) :</strong><ul>${data.failures.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>`
+          + (reste > 0 ? `<p>Et ${reste} autre(s), de même nature.</p>` : '');
       }
 
       messageInput.value = '';

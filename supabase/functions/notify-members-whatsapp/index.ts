@@ -252,7 +252,7 @@ Deno.serve(async (req: Request) => {
     }, 500);
   }
 
-  let payload: { message?: string; audience?: string };
+  let payload: { message?: string; audience?: string; image?: string };
   try {
     payload = await req.json();
   } catch {
@@ -313,7 +313,7 @@ Deno.serve(async (req: Request) => {
   let successCount = 0;
   const failures: string[] = [];
 
-  for (const r of targets) {
+  const envoyerUn = async (r: { phone?: string; full_name?: string }) => {
     const to = digitsOnly(r.phone || "");
     try {
       const res = await fetch(`https://graph.facebook.com/v20.0/${META_PHONE_NUMBER_ID}/messages`, {
@@ -342,7 +342,24 @@ Deno.serve(async (req: Request) => {
     } catch (e) {
       failures.push(`${r.full_name || to} : ${String(e).slice(0, 150)}`);
     }
-  }
+  };
+
+  // Meta est contacté par paquets parallèles, et non un destinataire
+  // après l'autre. En série, 399 appels à quelques centaines de
+  // millisecondes chacun dépassaient le temps accordé à la fonction :
+  // le superviseur la coupait (« WorkerRequestCancelled »), APRÈS que
+  // des messages soient partis, et sans rien journaliser - personne ne
+  // savait alors qui avait reçu quoi. Dix de front ramènent le même
+  // envoi sous la demi-minute, loin sous la limite de débit de Meta.
+  const CONCURRENCE = 10;
+  let suivant = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCE, targets.length) }, async () => {
+      while (suivant < targets.length) {
+        await envoyerUn(targets[suivant++]);
+      }
+    }),
+  );
 
   const { error: logErr } = await admin.from("whatsapp_broadcasts").insert({
     message,
@@ -358,6 +375,10 @@ Deno.serve(async (req: Request) => {
     ok: true,
     recipients_count: targets.length,
     success_count: successCount,
+    // Le total, en plus de l'échantillon : avec le plafond de
+    // conversations de Meta, les échecs se comptent par centaines et
+    // n'en montrer que vingt laissait croire à vingt.
+    failures_count: failures.length,
     failures: failures.slice(0, 20),
   });
 });
