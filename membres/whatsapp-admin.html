@@ -442,10 +442,26 @@
     } else {
       // L'état du nom n'est pas toujours servi par Meta : on ne
       // l'affiche que s'il est là, plutôt qu'un « ? » qui inquiète.
+      // AVAILABLE_WITHOUT_REVIEW est un état SAIN : Meta autorise le nom
+      // sans examen préalable, et il s'affiche déjà chez les destinataires.
+      // Ne cocher que APPROVED posait une croix rouge sur une configuration
+      // qui marche, et envoyait chercher un problème inexistant.
+      const NOMS_OK = ['APPROVED', 'AVAILABLE_WITHOUT_REVIEW'];
+      const NOMS_LISIBLES = {
+        APPROVED: 'nom approuvé par Meta',
+        AVAILABLE_WITHOUT_REVIEW: 'nom accepté sans examen',
+        PENDING_REVIEW: 'nom en cours de vérification',
+        DECLINED: 'nom refusé par Meta',
+        EXPIRED: 'nom expiré',
+        NONE: 'aucun nom déposé'
+      };
       const detail = [];
-      if (n.nom_statut) detail.push('nom ' + escapeHtml(String(n.nom_statut)));
+      if (n.nom_statut) {
+        const st = String(n.nom_statut);
+        detail.push(NOMS_LISIBLES[st] || ('nom ' + escapeHtml(st)));
+      }
       detail.push('qualité ' + escapeHtml(String(n.qualite || '?')));
-      h += ligne(n.nom_statut ? n.nom_statut === 'APPROVED' : true,
+      h += ligne(n.nom_statut ? NOMS_OK.indexOf(String(n.nom_statut)) !== -1 : true,
         'Numéro : <strong>' + escapeHtml(n.numero || '?') + '</strong>'
         + ' - ' + escapeHtml(n.nom_verifie || 'nom non vérifié')
         + ' (' + detail.join(', ') + ')');
