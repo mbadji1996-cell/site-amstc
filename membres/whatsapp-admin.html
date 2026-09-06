@@ -446,6 +446,29 @@
 
   // Vérification : ne parle qu'à Meta, en lecture. Aucun message n'est
   // envoyé, rien n'est facturé, personne n'est dérangé.
+  // supabase-js jette « Edge Function returned a non-2xx status code »
+  // et laisse le corps de la réponse de côté. Or c'est là qu'est la
+  // raison : notre fonction répond { error: "..." }, et y recopie le
+  // refus de Meta. Sans cette lecture, un échec n'apprend rien et
+  // oblige à ouvrir les journaux du serveur.
+  async function detailErreur(e) {
+    const ctx = e && e.context;
+    if (ctx && typeof ctx.clone === 'function') {
+      try {
+        const corps = await ctx.clone().json();
+        if (corps && (corps.error || corps.message)) {
+          return String(corps.error || corps.message);
+        }
+      } catch (_) {
+        try {
+          const texte = (await ctx.clone().text() || '').trim();
+          if (texte) return texte.slice(0, 500);
+        } catch (__) { /* corps illisible : on garde le message d'origine */ }
+      }
+    }
+    return (e && e.message) ? e.message : String(e);
+  }
+
   document.getElementById('verifBtn').addEventListener('click', async () => {
     const btn = document.getElementById('verifBtn');
     const msg = document.getElementById('verifMsg');
@@ -461,7 +484,7 @@
       afficherVerification(data.verification || {});
       msg.textContent = '';
     } catch (e) {
-      msg.textContent = e.message || String(e);
+      msg.textContent = await detailErreur(e);
       msg.classList.add('error');
     } finally {
       btn.disabled = false;
@@ -617,7 +640,7 @@
       document.getElementById('imageApercu').style.display = 'none';
       loadHistory();
     } catch (e) {
-      sendMsg.textContent = 'Échec de l\'envoi : ' + (e.message || 'erreur inconnue');
+      sendMsg.textContent = 'Échec de l\'envoi : ' + await detailErreur(e);
       sendMsg.classList.add('error');
     } finally {
       sendBtn.disabled = false;
