@@ -63,9 +63,9 @@
   .champ-image label{display:block;font-weight:600;font-size:0.86rem;color:var(--text-heading);margin-bottom:6px;}
   .champ-image .facultatif{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
     letter-spacing:0.06em;color:var(--text-muted);font-weight:500;margin-left:4px;}
-  .champ-image input[type=url]{width:100%;border:1.5px solid var(--line);border-radius:8px;
+  .champ-image input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:8px;
     padding:10px 13px;font-family:var(--body);font-size:0.9rem;color:var(--ink);background:var(--paper);}
-  .champ-image input[type=url]:focus{outline:none;border-color:var(--green);}
+  .champ-image input[type=text]:focus{outline:none;border-color:var(--green);}
   .image-aide{font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin:7px 0 0;}
   .image-aide code{font-family:var(--mono);font-size:0.94em;}
   .image-apercu{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:0.8rem;}
@@ -210,10 +210,11 @@
 
     <div class="champ-image" id="champImage">
       <label for="imageInput">Image d'accompagnement <span class="facultatif">facultative</span></label>
-      <input type="url" id="imageInput" placeholder="https://amstc.org/assets/uploads/mon-affiche.jpg">
-      <p class="image-aide">Adresse d'une image déjà en ligne, en <code>https</code> : c'est Meta qui va
-      la chercher, elle doit donc être publiquement accessible. Une image déposée dans le CMS convient
-      (JPG ou PNG, 5 Mo maximum). Laissez vide pour un message sans image.</p>
+      <input type="text" inputmode="url" id="imageInput" placeholder="assets/uploads/mon-affiche.jpg">
+      <p class="image-aide">Le chemin d'une image déposée dans le CMS suffit : <code>assets/uploads/affiche.jpg</code>.
+      Une adresse <code>https</code> complète, vers ce site ou vers un autre, convient aussi. C'est Meta qui va
+      chercher l'image : elle doit être publiquement accessible (JPG ou PNG, 5 Mo maximum). Laissez vide
+      pour un message sans image.</p>
       <div class="image-apercu" id="imageApercu" style="display:none;">
         <img id="imageApercuImg" alt="Aperçu de l'image">
         <span id="imageApercuMsg"></span>
@@ -272,6 +273,38 @@
     }
   }
 
+  // Le CMS donne un chemin (assets/uploads/affiche.jpg), pas une
+  // adresse. Exiger https de l'administrateur revenait à lui demander
+  // de reconstituer à la main ce que le site sait déjà : on complète.
+  const ORIGINE_SITE = 'https://amstc.org';
+  function resoudreImage(saisie) {
+    const brut = String(saisie || '').trim();
+    if (!brut) return '';
+    // Une adresse déjà complète est respectée telle quelle ; http
+    // reste fautif, Meta le refuse, et le deviner serait présomptueux.
+    const complete = /^https?:\/\//i.test(brut) ? brut
+      : ORIGINE_SITE + '/' + brut.replace(/^\/+/, '');
+    // Le dossier uploads contient des noms accentués ; c'est un serveur
+    // distant qui ira les chercher, l'adresse doit donc être encodée.
+    // Une adresse déjà encodée ne l'est pas deux fois.
+    return /%[0-9A-Fa-f]{2}/.test(complete) ? complete : encodeURI(complete);
+  }
+
+  // Meta plafonne l'image d'en-tête à 5 Mo. Le navigateur, lui, affiche
+  // un fichier de 6 Mo sans broncher : sans cette mesure, l'aperçu
+  // annoncerait « Image accessible » et l'envoi échouerait chez Meta.
+  const LIMITE_IMAGE = 5 * 1024 * 1024;
+  function tailleImage(url) {
+    // Le CORS interdit de lire l'en-tête d'un serveur tiers : une image
+    // hébergée ailleurs rend 0, c'est-à-dire « non mesurable ». On ne
+    // bloque pas un envoi sur une supposition.
+    return fetch(url, { method: 'HEAD' })
+      .then(r => Number(r.headers.get('content-length')) || 0)
+      .catch(() => 0);
+  }
+
+  function enMo(octets) { return (octets / 1048576).toFixed(1).replace('.', ',') + ' Mo'; }
+
   // L'aperçu n'est pas décoratif : c'est Meta qui va chercher l'image,
   // et une adresse fautive n'échouerait qu'au moment de l'envoi, une
   // fois par destinataire. Mieux vaut le savoir avant.
@@ -279,7 +312,8 @@
   function apercuImage() {
     clearTimeout(apercuTimer);
     apercuTimer = setTimeout(() => {
-      const url = document.getElementById('imageInput').value.trim();
+      const saisie = document.getElementById('imageInput').value.trim();
+      const url = resoudreImage(saisie);
       const zone = document.getElementById('imageApercu');
       const img = document.getElementById('imageApercuImg');
       const msg = document.getElementById('imageApercuMsg');
@@ -288,7 +322,8 @@
       if (!/^https:\/\//i.test(url)) {
         img.hidden = true;
         msg.className = 'ko';
-        msg.textContent = "L'adresse doit commencer par https : Meta refuse tout le reste.";
+        msg.textContent = 'Meta refuse le http : mettez https, ou seulement le chemin '
+          + "de l'image sur ce site.";
         return;
       }
       img.hidden = true;
@@ -300,7 +335,17 @@
       test.onload = () => {
         img.src = url; img.hidden = false;
         msg.className = 'ok';
-        msg.textContent = 'Image accessible.';
+        // Quand le chemin a été complété, l'adresse envoyée à Meta n'est
+        // plus celle qui est tapée : la montrer évite la surprise.
+        msg.textContent = url === saisie ? 'Image accessible.'
+          : 'Image accessible : ' + url;
+        tailleImage(url).then(octets => {
+          if (octets > LIMITE_IMAGE) {
+            msg.className = 'ko';
+            msg.textContent = 'Image trop lourde : ' + enMo(octets)
+              + '. Meta refuse au-delà de 5 Mo, il faut la réduire.';
+          }
+        });
       };
       test.onerror = () => {
         img.hidden = true;
@@ -526,11 +571,21 @@
     }
     const audience = selectedAudience();
     const image = AUDIENCES_AVEC_IMAGE.includes(audience)
-      ? document.getElementById('imageInput').value.trim() : '';
+      ? resoudreImage(document.getElementById('imageInput').value) : '';
     if (image && !/^https:\/\//i.test(image)) {
-      sendMsg.textContent = "L'adresse de l'image doit commencer par https.";
+      sendMsg.textContent = "L'image doit être en https : Meta refuse le http. "
+        + "Un chemin du CMS, comme assets/uploads/affiche.jpg, convient aussi.";
       sendMsg.classList.add('error');
       return;
+    }
+    if (image) {
+      const octets = await tailleImage(image);
+      if (octets > LIMITE_IMAGE) {
+        sendMsg.textContent = "L'image pèse " + enMo(octets)
+          + ' : Meta refuse au-delà de 5 Mo. Réduisez-la avant de la redéposer.';
+        sendMsg.classList.add('error');
+        return;
+      }
     }
     const count = document.getElementById('recipientsCount').textContent;
     const avecImage = image ? ', avec image' : '';

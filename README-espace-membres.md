@@ -730,6 +730,17 @@ prend généralement de quelques minutes à quelques heures.
    - Meta demande un exemple d'image à la soumission : n'importe quelle
      affiche de l'association convient.
 
+   **Côté page d'administration**, le champ « Image d'accompagnement »
+   accepte le **chemin** que donne le CMS - `assets/uploads/affiche.jpg` -
+   et le complète en `https://amstc.org/...`, en encodant les accents ;
+   une adresse `https` complète reste évidemment acceptée. Deux refus
+   possibles, tous deux annoncés avant l'envoi : le `http` (Meta ne va
+   chercher qu'en `https`) et le **poids supérieur à 5 Mo**, plafond de
+   Meta pour une image d'en-tête. Une photo sortie d'un appareil dépasse
+   couramment ce plafond : `collecte.png` déposée dans le CMS pesait
+   6,1 Mo. Le poids n'est mesurable que pour une image hébergée sur un
+   serveur qui l'autorise ; ailleurs, l'envoi n'est pas bloqué.
+
    **LE PIÈGE À CONNAÎTRE, il fait échouer la création à coup sûr** :
    dans la section *Contenu*, le sélecteur **« Type de variable »** doit
    être sur **« Nom »**, jamais sur « Valeur numérique ». Sur « Valeur
