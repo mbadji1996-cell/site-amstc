@@ -453,20 +453,30 @@
   // oblige à ouvrir les journaux du serveur.
   async function detailErreur(e) {
     const ctx = e && e.context;
+    const statut = ctx && Number(ctx.status) ? Number(ctx.status) : 0;
+    let detail = '';
     if (ctx && typeof ctx.clone === 'function') {
       try {
-        const corps = await ctx.clone().json();
-        if (corps && (corps.error || corps.message)) {
-          return String(corps.error || corps.message);
+        const texte = (await ctx.clone().text() || '').trim();
+        if (texte) {
+          // Un corps JSON sans « error » ni « message » - la forme
+          // qu'ont les pannes de la plateforme, dont la coupure pour
+          // dépassement de temps - doit être montré tel quel plutôt que
+          // remplacé par le message générique.
+          try {
+            const corps = JSON.parse(texte);
+            detail = String((corps && (corps.error || corps.message)) || texte);
+          } catch (_) {
+            detail = texte;
+          }
         }
-      } catch (_) {
-        try {
-          const texte = (await ctx.clone().text() || '').trim();
-          if (texte) return texte.slice(0, 500);
-        } catch (__) { /* corps illisible : on garde le message d'origine */ }
-      }
+      } catch (__) { /* corps illisible : on garde le message d'origine */ }
     }
-    return (e && e.message) ? e.message : String(e);
+    if (!detail) detail = (e && e.message) ? e.message : String(e);
+    detail = detail.slice(0, 500);
+    // 400 et 500 viennent de nous, 504 et 546 de la plateforme qui a
+    // coupé : le code oriente le diagnostic, il n'est pas décoratif.
+    return statut ? detail + ' (HTTP ' + statut + ')' : detail;
   }
 
   document.getElementById('verifBtn').addEventListener('click', async () => {
