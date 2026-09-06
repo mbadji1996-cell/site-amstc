@@ -91,6 +91,45 @@ async function meta(chemin: string): Promise<Record<string, unknown>> {
   return corps as Record<string, unknown>;
 }
 
+// Meta accepte deux déclarations de variable, choisies à la création du
+// modèle par le sélecteur « Type de variable » :
+//   « Nom »              -> {{message}}, l'envoi doit NOMMER le paramètre ;
+//   « Valeur numérique » -> {{1}}, l'envoi ne doit PAS le nommer.
+// Se tromper de forme fait échouer 100 % des envois avec (#132018), sur
+// un modèle pourtant APPROVED. Plutôt que de supposer, on lit le corps.
+type FormeVariable = { mode: "nommee" | "numerotee" | "aucune"; nom: string };
+
+function formeVariable(components: unknown): FormeVariable {
+  const liste = (components as Array<Record<string, unknown>>) || [];
+  const corps = liste.find((c) => String(c.type).toUpperCase() === "BODY");
+  const texte = String((corps && corps.text) || "");
+  const numerotee = texte.match(/\{\{\s*(\d+)\s*\}\}/);
+  if (numerotee) return { mode: "numerotee", nom: numerotee[1] };
+  const nommee = texte.match(/\{\{\s*([A-Za-z_]\w*)\s*\}\}/);
+  if (nommee) return { mode: "nommee", nom: nommee[1] };
+  return { mode: "aucune", nom: "" };
+}
+
+// La langue compte : deux modèles peuvent porter le même nom et ne
+// différer que par elle, et c'est la version en META_TEMPLATE_LANG qui
+// sera envoyée.
+async function lireModele(nom: string): Promise<Record<string, unknown> | null> {
+  if (!META_WABA_ID) return null;
+  try {
+    const rep = await meta(
+      `${META_WABA_ID}/message_templates?fields=name,language,components&limit=200`,
+    );
+    const tous = (rep.data as Array<Record<string, unknown>>) || [];
+    return tous.find((m) => m.name === nom && String(m.language) === META_TEMPLATE_LANG)
+      || tous.find((m) => m.name === nom)
+      || null;
+  } catch {
+    // Illisible : l'envoi continue sur la forme nommée, celle de nos
+    // modèles d'origine. Mieux vaut tenter que refuser en bloc.
+    return null;
+  }
+}
+
 async function verifierConfiguration(): Promise<Record<string, unknown>> {
   const rapport: Record<string, unknown> = {
     secrets: {
@@ -166,6 +205,7 @@ async function verifierConfiguration(): Promise<Record<string, unknown>> {
             entete_image: (m.components || []).some((c: Record<string, unknown>) =>
               String(c.type).toUpperCase() === "HEADER" &&
               String(c.format).toUpperCase() === "IMAGE"),
+            variable: formeVariable(m.components).mode,
           }));
     rapport.modeles = {
       annonce: retenir(META_TEMPLATE_NAME),
@@ -295,9 +335,22 @@ Deno.serve(async (req: Request) => {
   if (image) {
     composants.push({ type: "header", parameters: [{ type: "image", image: { link: image } }] });
   }
+  // Une lecture par diffusion, pas par destinataire.
+  const modele = await lireModele(templateName);
+  const variable = modele ? formeVariable(modele.components) : { mode: "nommee", nom: "message" };
+  if (variable.mode === "aucune") {
+    return json({
+      error: `Le modèle « ${templateName} » n'a aucune variable dans son corps : `
+        + "le message ne pourrait pas y être inséré. Recréez-le avec une variable.",
+    }, 400);
+  }
   composants.push({
     type: "body",
-    parameters: [{ type: "text", parameter_name: "message", text: message }],
+    parameters: [
+      variable.mode === "numerotee"
+        ? { type: "text", text: message }
+        : { type: "text", parameter_name: variable.nom, text: message },
+    ],
   });
 
   const { data: recipients, error: recErr } = await admin
@@ -337,7 +390,7 @@ Deno.serve(async (req: Request) => {
         successCount++;
       } else {
         const errText = await res.text();
-        failures.push(`${r.full_name || to} : ${errText.slice(0, 150)}`);
+        failures.push(`${r.full_name || to} : ${errText.slice(0, 400)}`);
       }
     } catch (e) {
       failures.push(`${r.full_name || to} : ${String(e).slice(0, 150)}`);

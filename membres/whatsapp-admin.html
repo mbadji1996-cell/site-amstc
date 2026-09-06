@@ -570,11 +570,25 @@
           // en-tête image, chaque envoi avec image échouerait, et ni le
           // nom ni le statut ne le laisseraient voir.
           const enteteManquante = cle === 'image' && bon.entete_image === false;
-          h += ligne(bon.statut === 'APPROVED' && !enteteManquante,
+          // La forme de la variable ne se voyait nulle part, et c'est
+          // elle qui a fait échouer 100 % d'une diffusion avec (#132018)
+          // sur un modèle pourtant approuvé, en français, en-tête comprise.
+          const VARIABLES = {
+            nommee: 'variable nommée',
+            numerotee: 'variable numérotée',
+            aucune: 'AUCUNE variable'
+          };
+          const sansVariable = bon.variable === 'aucune';
+          h += ligne(bon.statut === 'APPROVED' && !enteteManquante && !sansVariable,
             'Modèle <code>' + escapeHtml(nom) + '</code> : ' + escapeHtml(bon.statut)
-            + ' (' + escapeHtml(bon.categorie || '?') + ', ' + escapeHtml(bon.langue) + ')'
+            + ' (' + escapeHtml(bon.categorie || '?') + ', ' + escapeHtml(bon.langue)
+            + (bon.variable ? ', ' + escapeHtml(VARIABLES[bon.variable] || bon.variable) : '')
+            + ')'
             + (enteteManquante
-              ? '<br><em>Aucun en-tête image : les envois illustrés échoueraient.</em>' : ''));
+              ? '<br><em>Aucun en-tête image : les envois illustrés échoueraient.</em>' : '')
+            + (sansVariable
+              ? '<br><em>Le message n\'aurait nulle part où aller : ce modèle est à recréer.</em>'
+              : ''));
         }
       });
     }
