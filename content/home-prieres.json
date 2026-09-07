@@ -1,16 +1,16 @@
 {
   "prayer_eyebrow": "Vie spirituelle",
   "prayer_title": "Heures de prière",
-  "prayer_period_hijri": "du 23 au 29 Safar 1448H",
-  "prayer_period_gregorian": "du Vendredi 07 au Jeudi 13 Août 2026",
+  "prayer_period_hijri": "du 21 au 27 Rabi' Al-Awwal 1448H",
+  "prayer_period_gregorian": "du Vendredi 04 au Jeudi 10 Septembre 2026",
   "prayer_times": [
     {
       "label": "Fadjar",
-      "time": "05H 40"
+      "time": "05H 43"
     },
     {
       "label": "Souba",
-      "time": "05H 55"
+      "time": "05H 58"
     },
     {
       "label": "Tisbar",
@@ -22,11 +22,11 @@
     },
     {
       "label": "Timis",
-      "time": "19H 43"
+      "time": "19H 25"
     },
     {
       "label": "Guéwé",
-      "time": "20H 43"
+      "time": "20H 25"
     }
   ]
 }
