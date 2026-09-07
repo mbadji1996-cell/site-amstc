@@ -103,6 +103,20 @@
 
   /* ---- La liste ---- */
   .table-wrap{background:var(--card-bg,var(--white));border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;}
+
+  /* ---- Section repliable (même motif que l'historique des dons) ---- */
+  .repli{margin:26px 0 0;}
+  /* summary cesse d'etre « list-item » des qu'il passe en display:flex,
+     ce que fait .section-label ; les deux regles suivantes couvrent les
+     navigateurs qui dessinent leur triangle malgre tout. */
+  .repli-titre{margin:0;cursor:pointer;list-style:none;-webkit-user-select:none;user-select:none;}
+  .repli-titre::-webkit-details-marker{display:none;}
+  .repli-titre::marker{content:"";}
+  .repli-compte{font-family:var(--mono);text-transform:none;letter-spacing:0;
+    color:var(--text-muted);font-size:0.95em;}
+  .repli-chevron{font-size:0.95rem;opacity:.75;transition:transform .18s ease;}
+  .repli[open] .repli-chevron{transform:rotate(180deg);}
+  .repli .table-wrap{margin-top:14px;}
   table{width:100%;border-collapse:collapse;font-size:0.88rem;}
   th{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap;}
   td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--text-body,inherit);}
@@ -224,7 +238,12 @@
     <p class="msg" id="envoiMsg"></p>
   </div>
 
-  <p class="section-label"><i class="ti ti-list-details"></i> Liste des destinataires</p>
+  <details class="repli" id="listeRepli">
+    <summary class="section-label repli-titre">
+      <i class="ti ti-list-details"></i> Liste des destinataires
+      <span class="repli-compte" id="listeCompte"></span>
+      <i class="ti ti-chevron-down repli-chevron" aria-hidden="true"></i>
+    </summary>
   <div class="table-wrap">
     <table>
       <thead>
@@ -241,6 +260,7 @@
       </tbody>
     </table>
   </div>
+  </details>
 
   <p class="section-label"><i class="ti ti-message-2"></i> Message libre</p>
   <div class="envoi-card">
@@ -545,6 +565,14 @@
     }
   }
 
+  // Repliée, la section doit dire ce qu'elle cache : sans ce
+  // décompte, « Liste des destinataires » fermée ne distingue pas
+  // trois cents retardataires d'aucun.
+  function majCompteListe(n) {
+    document.getElementById('listeCompte').textContent =
+      n ? '(' + n + ' membre' + (n > 1 ? 's' : '') + ')' : '(aucun)';
+  }
+
   async function chargerListe() {
     const tbody = document.getElementById('listeBody');
     try {
@@ -552,8 +580,10 @@
       if (error) throw error;
       if (!data || data.length === 0) {
         tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Personne n\'est en retard : rien à envoyer.</td></tr>';
+        majCompteListe(0);
         return;
       }
+      majCompteListe(data.length);
       tbody.innerHTML = data.map(m => {
         const carte = m.motif === 'carte_expiree';
         return '<tr>'
@@ -567,6 +597,7 @@
       }).join('');
     } catch (e) {
       tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Impossible de charger la liste.</td></tr>';
+      document.getElementById('listeCompte').textContent = '';
     }
   }
 
