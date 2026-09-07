@@ -66,6 +66,10 @@
   .champ-image input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:8px;
     padding:10px 13px;font-family:var(--body);font-size:0.9rem;color:var(--ink);background:var(--paper);}
   .champ-image input[type=text]:focus{outline:none;border-color:var(--green);}
+  .avis-plat{font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin:2px 0 0;
+    padding:9px 12px;border-left:2px solid var(--gold);background:var(--paper);border-radius:0 6px 6px 0;}
+  .avis-plat b{color:var(--text-heading);font-weight:600;}
+  .avis-plat q{color:var(--ink);font-style:normal;}
   .image-aide{font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin:7px 0 0;}
   .image-aide code{font-family:var(--mono);font-size:0.94em;}
   .image-apercu{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:0.8rem;}
@@ -207,6 +211,7 @@
     </div>
     <textarea id="messageInput" maxlength="800" placeholder="Ex : Nouvelle campagne de consultations gratuites ce samedi à Ouakam, de 9h à 16h. Venez nombreux !"></textarea>
     <p class="char-count" id="charCount">0 / 800</p>
+    <p class="avis-plat" id="avisPlat" style="display:none;"></p>
 
     <div class="champ-image" id="champImage">
       <label for="imageInput">Image d'accompagnement <span class="facultatif">facultative</span></label>
@@ -438,10 +443,37 @@
 
   const messageInput = document.getElementById('messageInput');
   const charCount = document.getElementById('charCount');
+  // Meta refuse un paramètre de modèle contenant un retour à la ligne,
+  // une tabulation ou plus de quatre espaces d'affilée. La fonction Edge
+  // aplatit donc le message avant l'envoi ; cet aperçu montre le
+  // résultat, pour qu'un message qui ne ressemble pas à ce qui a été
+  // tapé ne soit pas une surprise. La règle est dupliquée : c'est la
+  // fonction qui fait foi, si l'une change l'autre doit suivre.
+  function aplatirPourMeta(texte) {
+    return String(texte || '')
+      .replace(/\r\n?/g, '\n')
+      .replace(/\t/g, ' ')
+      .replace(/\n[ ]*\n\s*/g, ' · ')
+      .replace(/\n/g, ' ')
+      .replace(/ {2,}/g, ' ')
+      .trim();
+  }
+
+  function majAvisPlat() {
+    const avis = document.getElementById('avisPlat');
+    const brut = messageInput.value.trim();
+    const plat = aplatirPourMeta(brut);
+    if (!brut || plat === brut) { avis.style.display = 'none'; return; }
+    avis.style.display = 'block';
+    avis.innerHTML = '<b>WhatsApp n\'accepte pas les retours à la ligne dans un modèle.</b> '
+      + 'Le message partira ainsi : <q>' + escapeHtml(plat) + '</q>';
+  }
+
   messageInput.addEventListener('input', () => {
     const len = messageInput.value.length;
     charCount.textContent = `${len} / 800`;
     charCount.classList.toggle('over', len > 800);
+    majAvisPlat();
   });
 
   // Vérification : ne parle qu'à Meta, en lecture. Aucun message n'est
@@ -665,6 +697,7 @@
 
       messageInput.value = '';
       charCount.textContent = '0 / 800';
+      majAvisPlat();
       document.getElementById('imageInput').value = '';
       document.getElementById('imageApercu').style.display = 'none';
       loadHistory();

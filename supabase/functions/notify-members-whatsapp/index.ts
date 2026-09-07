@@ -76,6 +76,25 @@ function digitsOnly(phone: string): string {
   return String(phone || "").replace(/[^0-9]/g, "");
 }
 
+// Meta refuse un paramètre de modèle contenant un retour à la ligne, une
+// tabulation ou plus de quatre espaces d'affilée :
+//   (#132018) Param text cannot have new-line/tab characters
+// La règle porte sur la VARIABLE, pas sur le corps du modèle : les
+// sauts de ligne écrits autour de {{1}} à la création restent en place.
+// Un message rédigé en paragraphes - donc tout message normal -
+// échouait pour la totalité des destinataires. On l'aplatit plutôt que
+// de refuser d'envoyer : le point médian garde la respiration entre
+// deux paragraphes.
+function aplatirPourMeta(texte: string): string {
+  return String(texte || "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/\t/g, " ")
+    .replace(/\n[ ]*\n\s*/g, " · ")
+    .replace(/\n/g, " ")
+    .replace(/ {2,}/g, " ")
+    .trim();
+}
+
 // ============================================================
 // MODE « VÉRIFIER » - lecture seule, aucun envoi
 // ============================================================
@@ -344,12 +363,14 @@ Deno.serve(async (req: Request) => {
         + "le message ne pourrait pas y être inséré. Recréez-le avec une variable.",
     }, 400);
   }
+  const messageEnvoye = aplatirPourMeta(message);
+  if (!messageEnvoye) return json({ error: "Message vide" }, 400);
   composants.push({
     type: "body",
     parameters: [
       variable.mode === "numerotee"
-        ? { type: "text", text: message }
-        : { type: "text", parameter_name: variable.nom, text: message },
+        ? { type: "text", text: messageEnvoye }
+        : { type: "text", parameter_name: variable.nom, text: messageEnvoye },
     ],
   });
 
