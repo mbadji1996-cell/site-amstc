@@ -113,6 +113,28 @@
     border-bottom-left-radius:4px;}
   .bulle-sortant{align-self:flex-end;background:var(--vert-plein);color:#fff;border-bottom-right-radius:4px;}
   .bulle-pied{display:block;font-family:var(--mono);font-size:0.62rem;margin-top:5px;opacity:.72;}
+
+  /* image, audio ou video : le meme gabarit, la largeur de la bulle. */
+  .bulle-media{display:block;max-width:100%;border-radius:8px;margin-bottom:4px;}
+  img.bulle-media{cursor:zoom-in;}
+  /* Une largeur en % ici boucle sur elle-meme : .bulle se
+     dimensionne sur son contenu (align-self:flex-start/-end), et
+     un pourcentage contre un ancetre en largeur automatique
+     s'effondre - mesure a 30px au lieu de 260 avant ce correctif. */
+  audio.bulle-media, video.bulle-media{width:240px;}
+  /* La bordure porte l'essentiel de l'affordance : le fond seul ne
+     depasse pas 1,34:1 sur une bulle sombre, et un fond assez clair
+     pour atteindre 3:1 peserait trop dans un fil de discussion. */
+  .bulle-doc{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;
+    background:rgba(0,0,0,0.06);border:1px solid var(--line);color:inherit;
+    font-size:0.86rem;margin-bottom:4px;}
+  .bulle-sortant .bulle-doc{background:rgba(255,255,255,0.18);}
+  /* Un voile noir sur une bulle deja sombre ne se voit plus : en
+     theme sombre la pastille s'eclaircit au lieu de s'assombrir.
+     La bulle sortante, elle, garde son vert fixe dans les deux
+     themes et n'a donc rien a changer. */
+  :root[data-theme="dark"] .bulle-entrant .bulle-doc{background:rgba(255,255,255,0.10);}
+  .media-indispo{display:block;font-style:italic;opacity:.75;}
   .fil-vide{margin:auto;text-align:center;color:var(--text-muted,#8A9E8F);font-family:var(--mono);font-size:0.8rem;}
 
   .fenetre{font-size:0.76rem;padding:8px 14px;border-top:1px solid var(--line);flex-shrink:0;}
@@ -253,6 +275,12 @@
   let conversations = [];
   let courant = null;          // téléphone de la conversation ouverte
   let dernierFil = 0;          // nombre de messages affichés, pour ne défiler qu'à l'arrivée
+  // Identifiants du fil actuellement affiché. Un sondage qui ne ramène
+  // rien de neuf ne doit RIEN reconstruire : un message vocal en cours
+  // d'écoute serait sinon coupé net toutes les quinze secondes. null
+  // distingue « jamais chargé » de « conversation vide », qui produisent
+  // tous deux la chaîne vide.
+  let dernierFilSignature = null;
   let minuteur = null;
 
   const $ = (id) => document.getElementById(id);
@@ -382,6 +410,7 @@
       document.body.classList.add('fil-plein');
     }
     fermerEmoji();
+    dernierFilSignature = null;
     const conv = conversations.find(c => c.telephone === tel);
     $('filNom').textContent = conv ? conv.nom : '+' + tel;
     $('filNum').textContent = '+' + tel;
@@ -404,37 +433,95 @@
         p_telephone: courant, p_limite: 300,
       });
       if (error) throw error;
-      rendreFil(data || []);
+      const messages = data || [];
+      const signature = messages.map(m => m.id).join(',');
+      if (dernierFilSignature !== null && signature === dernierFilSignature) return;
+      dernierFilSignature = signature;
+      await rendreFil(messages);
     } catch (e) {
       $('fil').innerHTML = '<p class="fil-vide">Impossible de charger la conversation.</p>';
     }
   }
 
-  function rendreFil(messages) {
+  // La marque de repli entre crochets - « [une image] » - reste utile
+  // dans l'aperçu de la liste des conversations ; dans le fil, une fois
+  // le media affiché, elle est redondante. Seule une eventuelle legende
+  // qui suit doit rester.
+  function texteSansEtiquette(texte) {
+    return String(texte || '').replace(/^\[[^\]]*\]\s*/, '');
+  }
+
+  // Le gabarit depend du type WhatsApp d'origine, pas d'une devinette
+  // sur le type MIME : Meta les distingue deja pour nous.
+  function rendreMedia(m, url) {
+    if (!url) {
+      return '<span class="media-indispo">' + echapper(m.texte || 'Média indisponible') + '</span>';
+    }
+    const u = echapper(url);
+    if (m.type_message === 'image' || m.type_message === 'sticker') {
+      return '<a href="' + u + '" target="_blank" rel="noopener">'
+        + '<img class="bulle-media" src="' + u + '" alt="Image envoyée" loading="lazy"></a>';
+    }
+    if (m.type_message === 'audio') {
+      return '<audio class="bulle-media" controls preload="none" src="' + u + '"></audio>';
+    }
+    if (m.type_message === 'video') {
+      return '<video class="bulle-media" controls preload="none" src="' + u + '"></video>';
+    }
+    // document, ou tout type imprevu : un lien plutot qu'un rendu devine.
+    return '<a class="bulle-doc" href="' + u + '" target="_blank" rel="noopener">'
+      + '<i class="ti ti-file-text"></i> Ouvrir le fichier</a>';
+  }
+
+  async function rendreFil(messages) {
     const zone = $('fil');
     if (!messages.length) {
       zone.innerHTML = '<p class="fil-vide">Aucun message dans cette conversation.</p>';
-    } else {
-      zone.innerHTML = messages.map(m => {
-        const sortant = m.sens === 'sortant';
-        // Telegram donne « Prenom Nom (@pseudo) » : l'arobase n'apprend
-        // rien de plus que le nom, et fait passer le pied a deux lignes
-        // sur un telephone.
-        const auteur = String(m.envoye_par_nom || '').replace(/\s*\(@[^)]*\)\s*$/, '');
-        const pied = heure(m.cree_le)
-          + (sortant && auteur ? ' · ' + auteur : '')
-          + (sortant && m.via === 'telegram' ? ' · Telegram' : '');
-        return '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
-          + echapper(m.texte)
-          + '<span class="bulle-pied">' + echapper(pied) + '</span>'
-          + '</div>';
-      }).join('');
-      // On ne redescend qu'à l'arrivée d'un message : sinon un
-      // rafraîchissement automatique arracherait la lecture d'un
-      // échange ancien toutes les quinze secondes.
-      if (messages.length !== dernierFil) zone.scrollTop = zone.scrollHeight;
-      dernierFil = messages.length;
+      majFenetre();
+      return;
     }
+
+    // Une URL signee par piece jointe, valable le temps d'une lecture -
+    // le bucket est prive, il n'y a pas d'autre acces possible. Un echec
+    // de signature ne doit pas cacher tout le message : seul le media
+    // manquera, le texte de repli suffit alors.
+    const urlsMedia = {};
+    await Promise.all(
+      messages.filter(m => m.media_path).map(async (m) => {
+        try {
+          const { data } = await supabaseClient.storage
+            .from('whatsapp-medias')
+            .createSignedUrl(m.media_path, 900);
+          if (data) urlsMedia[m.media_path] = data.signedUrl;
+        } catch (e) { /* le texte de repli suffira */ }
+      }),
+    );
+
+    zone.innerHTML = messages.map(m => {
+      const sortant = m.sens === 'sortant';
+      // Telegram donne « Prenom Nom (@pseudo) » : l'arobase n'apprend
+      // rien de plus que le nom, et fait passer le pied a deux lignes
+      // sur un telephone.
+      const auteur = String(m.envoye_par_nom || '').replace(/\s*\(@[^)]*\)\s*$/, '');
+      const pied = heure(m.cree_le)
+        + (sortant && auteur ? ' · ' + auteur : '')
+        + (sortant && m.via === 'telegram' ? ' · Telegram' : '');
+      const mediaOk = m.media_path && urlsMedia[m.media_path];
+      const media = m.media_path ? rendreMedia(m, urlsMedia[m.media_path]) : '';
+      // Le texte de repli (media introuvable) redonne deja le texte
+      // complet entre crochets : une legende par-dessus le dupliquerait.
+      const legende = !m.media_path ? echapper(m.texte)
+        : (mediaOk ? echapper(texteSansEtiquette(m.texte)) : '');
+      return '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
+        + media + legende
+        + '<span class="bulle-pied">' + echapper(pied) + '</span>'
+        + '</div>';
+    }).join('');
+    // On ne redescend qu'à l'arrivée d'un message : sinon un
+    // rafraîchissement automatique arracherait la lecture d'un
+    // échange ancien toutes les quinze secondes.
+    if (messages.length !== dernierFil) zone.scrollTop = zone.scrollHeight;
+    dernierFil = messages.length;
     majFenetre();
   }
 

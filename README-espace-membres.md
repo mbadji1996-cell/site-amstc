@@ -1184,10 +1184,27 @@ parent, un inconnu. Le profil est retrouvé à la lecture, par le
 téléphone normalisé - une inscription ultérieure rattache d'un coup tout
 l'historique passé. L'étiquette « Hors registre » signale les autres.
 
-**Les médias ne sont pas téléchargés.** Une image reçue apparaît comme
-`[une image]` avec sa légende. Meta ne donne qu'un identifiant valable
-quelques jours ; conserver les pièces jointes demanderait un stockage et
-une politique de conservation, qui viendront s'il le faut.
+**Les médias sont consultables** depuis la phase 105 : une image
+s'affiche, un message vocal se joue, une vidéo aussi, un document
+s'ouvre par un lien. Meta ne donne qu'un identifiant, et une adresse de
+téléchargement valable quelques minutes : le webhook va donc chercher le
+fichier dès réception et le dépose dans le bucket **privé**
+`whatsapp-medias`. La page en obtient une **URL signée** de quinze
+minutes, comme les documents réservés (phase 3c) - rien n'est jamais
+accessible par une adresse devinable, et seul un administrateur peut
+faire signer.
+
+**Un téléchargement raté n'empêche rien.** Le message reste enregistré
+et reposé dans Telegram avec son texte de repli (`[une image]`), sans
+la pièce jointe. C'est exactement le comportement d'avant la phase 105.
+
+**Le fil ne se reconstruit que s'il a changé.** Le rafraîchissement
+automatique toutes les quinze secondes comparait jusqu'ici sans rien
+comparer : il réécrivait le fil entier à chaque passage. Avec des
+lecteurs audio dans les bulles, cela aurait coupé net toute écoute en
+cours, toutes les quinze secondes. La liste des identifiants reçus est
+donc comparée à celle affichée, et un sondage sans nouveauté ne touche
+plus rien.
 
 ### Déploiement
 
@@ -1195,6 +1212,10 @@ une politique de conservation, qui viendront s'il le faut.
    `supabase/phase104-boite-whatsapp.sql` > Run. Les contrôles en fin de
    fichier n'écrivent rien : sur une table neuve ils affichent zéro, ce
    qui est le résultat attendu.
+1bis. Puis `supabase/phase105-boite-whatsapp-medias.sql`, qui ouvre le
+   bucket privé `whatsapp-medias`, ajoute `media_path` / `media_mime` et
+   recrée `whatsapp_fil` (sa forme de retour change, ce que
+   `create or replace` ne permet pas - d'où le `drop function` en tête).
 2. Déployer la nouvelle fonction `whatsapp-repondre`, et **redéployer**
    `whatsapp-webhook` (il enregistre désormais ce qu'il reçoit) et
    `telegram-webhook` (il archive les réponses parties de Telegram) :
@@ -1210,6 +1231,9 @@ une politique de conservation, qui viendront s'il le faut.
 
 3. Aucun secret nouveau : `whatsapp-repondre` se sert de
    `META_WHATSAPP_TOKEN` et `META_PHONE_NUMBER_ID`, déjà posés.
+   `whatsapp-webhook` se sert lui aussi de `META_WHATSAPP_TOKEN` depuis
+   la phase 105, pour télécharger les médias - c'est le même secret,
+   déjà présent sur le service.
 
 > **L'historique ne remonte pas.** La table part vide : seuls les
 > messages reçus APRÈS le redéploiement du webhook y figureront. Les
