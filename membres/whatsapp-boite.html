@@ -119,8 +119,33 @@
   .fenetre-ok{color:var(--text-muted,#5A6B5E);}
   .fenetre-ko{color:#B23B3B;background:rgba(178,59,59,0.07);}
 
-  .repondre{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);flex-shrink:0;
+  /* position:relative sert d'ancrage au popover d'emojis, seul enfant
+     positionne en absolu de cette barre : il ne participe donc pas a
+     sa disposition flexible et n'a pas a etre exclu des selecteurs
+     .repondre > * ecrits ailleurs. */
+  .repondre{position:relative;display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);flex-shrink:0;
     align-items:flex-end;background:var(--surface,var(--white));}
+
+  .emoji-btn{background:none;border:1.5px solid var(--line);color:var(--text-muted,#5A6B5E);
+    width:44px;height:44px;border-radius:50%;flex-shrink:0;cursor:pointer;font-size:1.25rem;
+    display:inline-flex;align-items:center;justify-content:center;}
+  .emoji-btn:hover{border-color:var(--green);color:var(--green);}
+  .emoji-btn.ouvert{border-color:var(--green);color:var(--green);background:var(--paper);}
+  .emoji-btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  /* Ancre sur .repondre (position:relative) : « bottom:100% » colle son
+     bord bas au bord haut de la barre, sans jamais pousser le champ ni
+     le bouton d'envoi - un popover qui deplacerait le clavier virtuel
+     sur telephone serait pire que pas de popover du tout. */
+  .emoji-popover{display:none;position:absolute;left:8px;right:8px;bottom:100%;margin-bottom:8px;
+    background:var(--surface,var(--white));border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:10px;z-index:5;}
+  .emoji-popover.ouvert{display:block;}
+  .emoji-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));
+    gap:2px;max-height:min(260px,40vh);overflow-y:auto;}
+  .emoji-item{background:none;border:none;font-size:1.35rem;line-height:1;padding:7px 0;
+    border-radius:8px;cursor:pointer;}
+  .emoji-item:hover{background:var(--paper);}
   .repondre textarea{flex:1;min-height:44px;max-height:140px;resize:none;border:1.5px solid var(--line);
     border-radius:12px;padding:11px 13px;font-family:var(--body);font-size:0.9rem;color:var(--ink);
     background:var(--paper);line-height:1.45;}
@@ -209,6 +234,9 @@
       </div>
       <p class="fenetre fenetre-ok" id="fenetre" style="display:none;"></p>
       <div class="repondre">
+        <button type="button" class="emoji-btn" id="emojiBtn" disabled
+          aria-label="Insérer un emoji" aria-expanded="false"><i class="ti ti-mood-smile"></i></button>
+        <div class="emoji-popover" id="emojiPopover"><div class="emoji-grille" id="emojiGrille"></div></div>
         <textarea id="reponse" rows="1" placeholder="Écrire une réponse…" disabled></textarea>
         <button class="env-btn" id="envoyer" disabled aria-label="Envoyer"><i class="ti ti-send"></i></button>
       </div>
@@ -353,6 +381,7 @@
     if (!matchMedia('(min-width:900px)').matches) {
       document.body.classList.add('fil-plein');
     }
+    fermerEmoji();
     const conv = conversations.find(c => c.telephone === tel);
     $('filNom').textContent = conv ? conv.nom : '+' + tel;
     $('filNum').textContent = '+' + tel;
@@ -417,6 +446,7 @@
     if (!courant) {
       zone.style.display = 'none';
       champ.disabled = true; bouton.disabled = true;
+      $('emojiBtn').disabled = true;
       return;
     }
     const reste = conv ? resteFenetre(conv.fenetre_jusqu_a) : null;
@@ -426,12 +456,55 @@
       zone.textContent = 'Réponse libre possible encore ' + reste + '.';
       champ.disabled = false;
       bouton.disabled = !champ.value.trim();
+      $('emojiBtn').disabled = false;
     } else {
       zone.className = 'fenetre fenetre-ko';
       zone.textContent = 'Fenêtre de 24 heures fermée : Meta n\'accepte plus de réponse libre. '
         + 'Il faut attendre que la personne réécrive, ou lui envoyer un modèle depuis l\'écran Diffusion.';
       champ.disabled = true; bouton.disabled = true;
+      $('emojiBtn').disabled = true;
+      fermerEmoji();
     }
+  }
+
+  // Une liste courte et choisie plutot qu'un selecteur generique a
+  // onglets et recherche : usage occasionnel, par des administrateurs,
+  // pas un client de messagerie grand public. Salutations, gestes,
+  // sante, registres et evenements de l'association (Ndogou, Gamou).
+  const EMOJIS = [
+    '😊','🙂','😅','🥰','😢','🙏','🤝',
+    '👍','👌','👏','🙌','💪',
+    '❤️','⭐','✅','❌','⚠️','❗','❓','🔔','📢',
+    '🕌','🌙','📿','🤲','☀️',
+    '🩺','⚕️','💊','🏥','🚑',
+    '📅','⏰','📍','📞','💬','📸','📄','💰','🎉','🍲'
+  ];
+
+  function fermerEmoji() {
+    $('emojiPopover').classList.remove('ouvert');
+    $('emojiBtn').classList.remove('ouvert');
+    $('emojiBtn').setAttribute('aria-expanded', 'false');
+  }
+
+  function basculerEmoji() {
+    const ouvert = $('emojiPopover').classList.toggle('ouvert');
+    $('emojiBtn').classList.toggle('ouvert', ouvert);
+    $('emojiBtn').setAttribute('aria-expanded', String(ouvert));
+  }
+
+  // Au point d'insertion du curseur, pas en fin de texte : reprendre
+  // une reponse deja commencee pour y glisser un emoji au milieu doit
+  // rester possible. Le popover reste ouvert pour en poser plusieurs
+  // d'affilee, comme dans WhatsApp lui-meme.
+  function insererEmoji(e) {
+    const champ = $('reponse');
+    const deb = champ.selectionStart ?? champ.value.length;
+    const fin = champ.selectionEnd ?? champ.value.length;
+    champ.value = champ.value.slice(0, deb) + e + champ.value.slice(fin);
+    const pos = deb + e.length;
+    champ.setSelectionRange(pos, pos);
+    champ.focus();
+    champ.dispatchEvent(new Event('input'));
   }
 
   async function envoyer() {
@@ -449,6 +522,7 @@
       if (data && data.error) throw new Error(data.error);
       champ.value = '';
       champ.style.height = 'auto';
+      fermerEmoji();
       await chargerFil();
       await chargerConversations(true);
     } catch (e) {
@@ -472,8 +546,22 @@
       $('boite').classList.remove('fil-ouvert');
       document.body.classList.remove('fil-plein');
       courant = null;
+      fermerEmoji();
       rendreListe();
       majFenetre();
+    });
+
+    $('emojiGrille').innerHTML = EMOJIS.map(e =>
+      '<button type="button" class="emoji-item">' + e + '</button>').join('');
+    $('emojiGrille').addEventListener('click', (ev) => {
+      const bt = ev.target.closest('.emoji-item');
+      if (bt) insererEmoji(bt.textContent);
+    });
+    $('emojiBtn').addEventListener('click', basculerEmoji);
+    // Toucher ailleurs referme le popover - sur telephone surtout, ou
+    // il n'y a pas de survol pour deviner qu'on est "sorti" de la zone.
+    document.addEventListener('click', (ev) => {
+      if (!ev.target.closest('#emojiPopover, #emojiBtn')) fermerEmoji();
     });
 
     const champ = $('reponse');
