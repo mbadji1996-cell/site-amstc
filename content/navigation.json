@@ -1,34 +1,118 @@
 {
   "nav_decouvrir": [
-    { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
-    { "label": "Nos actions", "href": "#nos-actions" },
-    { "label": "Historique", "href": "#historique" },
-    { "label": "Médiathèque", "href": "#mediatheque" },
-    { "label": "Vie spirituelle", "href": "#vie-spirituelle" }
+    {
+      "label": "Qui sommes-nous ?",
+      "href": "#qui-sommes-nous"
+    },
+    {
+      "label": "Nos actions",
+      "href": "#nos-actions"
+    },
+    {
+      "label": "Historique",
+      "href": "#historique"
+    },
+    {
+      "label": "Médiathèque",
+      "href": "#mediatheque"
+    },
+    {
+      "label": "Vie spirituelle",
+      "href": "#vie-spirituelle"
+    }
   ],
   "nav_activites": [
-    { "label": "Réalisations", "href": "actualites.html" },
-    { "label": "Formation", "href": "formations.html" },
-    { "label": "Projets", "href": "projets.html" },
-    { "label": "Agenda", "href": "agenda.html" },
-    { "label": "Demander une campagne", "href": "demande-campagne.html" }
+    {
+      "label": "Réalisations",
+      "href": "actualites.html"
+    },
+    {
+      "label": "Formation",
+      "href": "formations.html"
+    },
+    {
+      "label": "Projets",
+      "href": "projets.html"
+    },
+    {
+      "label": "Agenda",
+      "href": "agenda.html"
+    },
+    {
+      "label": "Demander une campagne",
+      "href": "demande-campagne.html"
+    }
   ],
   "footer_pages": [
-    { "label": "Qui sommes-nous ?", "href": "#qui-sommes-nous" },
-    { "label": "Nos actions", "href": "#nos-actions" },
-    { "label": "Historique", "href": "#historique" },
-    { "label": "Médiathèque", "href": "#mediatheque" },
-    { "label": "Vie spirituelle", "href": "#vie-spirituelle" },
-    { "label": "Réalisations", "href": "actualites.html" },
-    { "label": "Formation", "href": "formations.html" },
-    { "label": "Projets", "href": "projets.html" },
-    { "label": "Agenda", "href": "agenda.html" },
-    { "label": "Demander une campagne", "href": "demande-campagne.html" },
-    { "label": "Faire un don", "href": "don.html" },
-    { "label": "Espace consultation", "href": "https://consultations-amstc.org" },
-    { "label": "Espace membres", "href": "membres/connexion.html" },
-    { "label": "Bilans annuels", "href": "rapports/index.html" },
-    { "label": "Guide de navigation", "href": "guide.html" }
+    {
+      "label": "Qui sommes-nous ?",
+      "href": "#qui-sommes-nous"
+    },
+    {
+      "label": "Nos actions",
+      "href": "#nos-actions"
+    },
+    {
+      "label": "Historique",
+      "href": "#historique"
+    },
+    {
+      "label": "Médiathèque",
+      "href": "#mediatheque"
+    },
+    {
+      "label": "Vie spirituelle",
+      "href": "#vie-spirituelle"
+    },
+    {
+      "label": "Réalisations",
+      "href": "actualites.html"
+    },
+    {
+      "label": "Formation",
+      "href": "formations.html"
+    },
+    {
+      "label": "Projets",
+      "href": "projets.html"
+    },
+    {
+      "label": "Agenda",
+      "href": "agenda.html"
+    },
+    {
+      "label": "Demander une campagne",
+      "href": "demande-campagne.html"
+    },
+    {
+      "label": "Faire un don",
+      "href": "don.html"
+    },
+    {
+      "label": "Espace consultation",
+      "href": "https://consultations-amstc.org"
+    },
+    {
+      "label": "Espace membres",
+      "href": "membres/connexion.html"
+    },
+    {
+      "label": "Bilans annuels",
+      "href": "rapports/index.html"
+    },
+    {
+      "label": "Guide de navigation",
+      "href": "guide.html"
+    }
   ],
-  "contact_email": "contact@amstc.org"
+  "contact_email": "contact@amstc.org",
+  "footer_description": "Association Médico-Sociale des Talibés Cheikh - association sénégalaise apolitique, confessionnelle et sans but lucratif.",
+  "recepisse": "Récépissé n° 022909/MISP/DGAT/DLPL/DAPA",
+  "contact_phone": "+221 77 535 19 12",
+  "lien_facebook": "https://www.facebook.com/amstc2.0",
+  "lien_linkedin": "https://www.linkedin.com/in/amstc/",
+  "lien_instagram": "https://www.instagram.com/amstc2.0?igsh=MTg5czY0ajA5eHA3OQ%3D%3D",
+  "lien_youtube": "https://www.youtube.com/@amstc",
+  "lien_tiktok": "https://www.tiktok.com/@amstc8?_r=1&_t=ZS-987WQc0VReZ",
+  "lien_telegram": "https://t.me/AMSTC"
 }
