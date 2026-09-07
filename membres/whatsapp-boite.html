@@ -388,8 +388,12 @@
     } else {
       zone.innerHTML = messages.map(m => {
         const sortant = m.sens === 'sortant';
+        // Telegram donne « Prenom Nom (@pseudo) » : l'arobase n'apprend
+        // rien de plus que le nom, et fait passer le pied a deux lignes
+        // sur un telephone.
+        const auteur = String(m.envoye_par_nom || '').replace(/\s*\(@[^)]*\)\s*$/, '');
         const pied = heure(m.cree_le)
-          + (sortant && m.envoye_par_nom ? ' · ' + m.envoye_par_nom : '')
+          + (sortant && auteur ? ' · ' + auteur : '')
           + (sortant && m.via === 'telegram' ? ' · Telegram' : '');
         return '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
           + echapper(m.texte)
@@ -508,8 +512,16 @@
     // personne ne regarde ne sert personne.
     const battre = async () => {
       if (document.visibilityState !== 'visible') return;
+      if (courant) {
+        await chargerFil();
+        // Une conversation ouverte, et rafraichie sous les yeux, est une
+        // conversation lue : sans cela un message arrive pendant qu'on la
+        // regarde gardait sa pastille jusqu'a ce qu'on la rouvre.
+        try {
+          await supabaseClient.rpc('whatsapp_marquer_lu', { p_telephone: courant });
+        } catch (e) { /* la pastille restera, sans consequence */ }
+      }
       await chargerConversations(true);
-      if (courant) await chargerFil();
     };
     minuteur = setInterval(battre, RAFRAICHIR_MS);
     document.addEventListener('visibilitychange', () => {
