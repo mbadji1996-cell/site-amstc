@@ -279,20 +279,33 @@ notify pgrst, 'reload schema';
 
 -- ============================================================
 -- CONTRÔLES - rien n'est envoyé, rien n'est modifié
+--
+-- ILS N'APPELLENT PAS LES FONCTIONS CI-DESSUS, ET C'EST VOULU. Toutes
+-- passent par is_admin(), qui lit auth.uid() : dans l'éditeur SQL il
+-- n'y a pas de session, auth.uid() vaut NULL, et l'appel échouerait sur
+-- « Réservé aux administrateurs » - en emportant au passage la création
+-- de la table, puisque l'éditeur exécute le fichier d'un bloc. Ces
+-- fonctions se vérifient depuis la page, connecté.
 -- ============================================================
--- a) La table existe et est vide au premier passage. Elle se remplira
+-- a) La table existe. Elle est vide au premier passage, et se remplira
 --    dès que whatsapp-webhook sera redéployé.
 select count(*) as messages_enregistres from public.whatsapp_messages;
 
--- b) Les quatre fonctions répondent. Sur une table vide, la liste est
---    vide et le compteur vaut 0 : c'est le résultat attendu, pas une
---    erreur.
-select count(*) as conversations from public.whatsapp_conversations();
-select public.whatsapp_non_lus() as non_lus;
+-- b) Les quatre fonctions sont bien en place, avec leurs paramètres.
+select p.proname as fonction,
+       pg_get_function_identity_arguments(p.oid) as parametres
+  from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public'
+   and p.proname in ('whatsapp_conversations', 'whatsapp_fil',
+                     'whatsapp_marquer_lu', 'whatsapp_non_lus')
+ order by p.proname;
 
--- c) Le rattachement au membre, éprouvé sans dépendre des messages :
---    un numéro au format Meta doit retrouver le profil correspondant.
-select count(*) as profils_joignables
+-- c) Le rattachement au membre, éprouvé sans dépendre des messages : un
+--    numéro au format Meta (« 221 » + neuf chiffres) doit retrouver le
+--    profil correspondant. Le compte attendu est celui des membres
+--    ayant un téléphone exploitable.
+select count(*) as profils_rattachables
   from public.profiles p
  where p.phone is not null
-   and public.telephone_cle(p.phone) = public.telephone_cle('221' || public.telephone_cle(p.phone));
+   and length(public.telephone_cle(p.phone)) = 9;
