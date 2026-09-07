@@ -92,7 +92,9 @@
   .send-result{margin-top:14px;background:var(--paper-alt);border-radius:8px;padding:14px 16px;font-size:0.85rem;}
   .send-result ul{margin:8px 0 0 18px;color:#B23B3B;}
 
-  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:36px;}
+  /* overflow-x auto plutot que hidden, qui coupait les colonnes de
+     droite sans le dire */
+  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;margin-bottom:36px;}
   table{width:100%;border-collapse:collapse;}
   th{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
   td{padding:12px 14px;font-size:0.86rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
@@ -100,6 +102,8 @@
   tr:hover td{background:var(--paper);}
   .msg-cell{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .meta-cell{font-size:0.78rem;color:#8A9E8F;}
+  /* une date brisee sur cinq lignes n'est plus une date */
+  .date-cell{white-space:nowrap;}
   .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:28px;}
 
   .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
@@ -110,6 +114,26 @@
 
   @media(max-width:560px){
     .audience-grid{grid-template-columns:1fr;}
+  }
+
+  /* Six colonnes ne tiennent pas dans 360 px. Plutot qu'un tableau
+     tronque, chaque diffusion devient un bloc dont chaque valeur
+     porte son etiquette - celle-la meme qui est en tete de colonne
+     sur grand ecran, reprise depuis data-libelle. */
+  @media(max-width:820px){
+    .table-wrap{overflow-x:visible;}
+    table, tbody, tr, td{display:block;width:100%;}
+    thead{display:none;}
+    tr{border-bottom:1px solid var(--line);padding:14px 16px;}
+    tr:last-child{border-bottom:none;}
+    tr:hover td{background:none;}
+    td{border:none;padding:3px 0;font-size:0.85rem;}
+    td::before{content:attr(data-libelle) ' ';font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.06em;color:#8A9E8F;}
+    .msg-cell{max-width:none;white-space:normal;overflow:visible;text-overflow:clip;
+      font-size:0.9rem;line-height:1.5;margin-bottom:8px;}
+    .msg-cell::before{content:none;}
+    .empty-row td{padding:28px 0;}
+    .empty-row td::before{content:none;}
   }
 </style>
 <script src="../assets/js/retour.js" defer></script>
@@ -420,11 +444,11 @@
       tbody.innerHTML = data.map(b => `
         <tr>
           <td class="msg-cell" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
-          <td class="meta-cell">${escapeHtml(AUDIENCE_LABELS[b.audience] || b.audience || '-')}</td>
-          <td>${escapeHtml(b.sent_by_name || '-')}</td>
-          <td>${b.recipients_count}</td>
-          <td>${b.success_count}</td>
-          <td class="meta-cell">${formatDate(b.created_at)}</td>
+          <td class="meta-cell" data-libelle="Audience :">${escapeHtml(AUDIENCE_LABELS[b.audience] || b.audience || '-')}</td>
+          <td data-libelle="Envoyé par :">${escapeHtml(b.sent_by_name || '-')}</td>
+          <td data-libelle="Destinataires :">${b.recipients_count}</td>
+          <td data-libelle="Réussis :">${b.success_count}</td>
+          <td class="meta-cell date-cell" data-libelle="Date :">${formatDate(b.created_at)}</td>
         </tr>
       `).join('');
     } catch (e) {
