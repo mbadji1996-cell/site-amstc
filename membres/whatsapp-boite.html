@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boîte WhatsApp - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    /* Le vert qui porte du texte blanc. Il ne suit PAS --green, que le
+       theme sombre eclaircit a #35B872 : blanc sur ce vert-la tombe a
+       2,6:1, sous le seuil de 4,5. Fixe, il tient 5,6:1 dans les deux
+       themes - et une bulle envoyee se distingue toujours du fond. */
+    --vert-plein:#17763B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .signout-btn{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);background:none;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:7px 16px;cursor:pointer;}
+
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px 48px;}
+  .page-header{padding:26px 0 16px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent,var(--gold-deep));display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .page-title{font-family:var(--display);font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700;color:var(--text-heading,var(--green-deep));line-height:1.15;}
+  .page-sub{color:var(--text-muted,#5A6B5E);font-size:0.9rem;margin-top:6px;max-width:70ch;}
+  .loading-msg{color:var(--text-muted,#5A6B5E);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
+
+  /* ---------- La boîte ----------
+     Une seule colonne par défaut, celle du téléphone : c'est là que se
+     lisent les messages en pratique. La seconde colonne n'apparaît que
+     si l'écran peut la porter. */
+  .boite{display:grid;grid-template-columns:1fr;
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    background:var(--surface,var(--white));}
+
+  .pane-liste{display:flex;flex-direction:column;min-height:0;}
+  .pane-fil{display:flex;flex-direction:column;min-height:0;}
+
+  /* Sur téléphone les deux panneaux se relaient : la liste, puis le fil
+     qui la remplace. Deux colonnes de 180 px n'auraient servi ni l'une
+     ni l'autre. */
+  .boite .pane-fil{display:none;}
+  .boite.fil-ouvert .pane-liste{display:none;}
+  .boite.fil-ouvert .pane-fil{display:flex;}
+
+  .pane-titre{font-family:var(--mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--text-muted,#8A9E8F);padding:12px 14px;border-bottom:1px solid var(--line);
+    background:var(--paper);display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .pane-titre .rafraichi{margin-left:auto;text-transform:none;letter-spacing:0;font-size:0.92em;opacity:.75;}
+
+  /* Pas de défilement propre sur téléphone : la page s'en charge. */
+  .liste{flex:1;min-height:0;}
+  .conv{display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    padding:13px 14px;border-bottom:1px solid var(--paper-alt);font-family:var(--body);color:var(--ink);}
+  .conv:hover{background:var(--paper);}
+  .conv.actif{background:var(--paper);box-shadow:inset 3px 0 0 var(--green);}
+  .conv-haut{display:flex;align-items:baseline;gap:8px;}
+  .conv-nom{font-weight:600;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .conv-date{margin-left:auto;font-family:var(--mono);font-size:0.66rem;color:var(--text-muted,#8A9E8F);white-space:nowrap;flex-shrink:0;}
+  .conv-apercu{font-size:0.82rem;color:var(--text-muted,#5A6B5E);margin-top:2px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .conv-bas{display:flex;align-items:center;gap:8px;margin-top:5px;}
+  .pastille{background:var(--vert-plein);color:#fff;font-family:var(--mono);font-size:0.62rem;
+    border-radius:999px;padding:2px 7px;font-weight:600;}
+  .etiq{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.05em;
+    border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--text-muted,#8A9E8F);}
+
+  .fil-entete{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);
+    background:var(--paper);flex-shrink:0;}
+  .retour-liste{background:none;border:none;cursor:pointer;color:var(--text-heading,var(--green-deep));
+    font-size:1.15rem;line-height:1;padding:4px;display:inline-flex;}
+  .fil-nom{font-weight:600;font-size:0.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fil-num{font-family:var(--mono);font-size:0.7rem;color:var(--text-muted,#8A9E8F);}
+
+  .fil{overflow-y:auto;flex:1;min-height:0;padding:16px 14px;display:flex;flex-direction:column;gap:10px;
+    background:var(--paper);}
+
+  /* Le fil ouvert occupe l'écran entier, comme une messagerie : une
+     seule zone qui défile, le pouce sait où il agit. Le bouton retour
+     de l'entête ramène à la page. */
+  @media(max-width:899px){
+    body.fil-plein{overflow:hidden;}
+    body.fil-plein .boite{position:fixed;inset:0;z-index:60;
+      height:100dvh;border:none;border-radius:0;}
+    body.fil-plein .fil{padding-bottom:20px;}
+    /* Les boutons flottants (theme, defilement) se posent en bas a
+       droite, c'est-a-dire exactement sur le bouton d'envoi. */
+    body.fil-plein .theme-toggle-btn,
+    body.fil-plein .defilement{display:none;}
+  }
+  .bulle{max-width:min(82%,560px);padding:9px 13px;border-radius:14px;font-size:0.9rem;line-height:1.5;
+    white-space:pre-wrap;overflow-wrap:anywhere;}
+  .bulle-entrant{align-self:flex-start;background:var(--surface,var(--white));border:1px solid var(--line);
+    border-bottom-left-radius:4px;}
+  .bulle-sortant{align-self:flex-end;background:var(--vert-plein);color:#fff;border-bottom-right-radius:4px;}
+  .bulle-pied{display:block;font-family:var(--mono);font-size:0.62rem;margin-top:5px;opacity:.72;}
+  .fil-vide{margin:auto;text-align:center;color:var(--text-muted,#8A9E8F);font-family:var(--mono);font-size:0.8rem;}
+
+  .fenetre{font-size:0.76rem;padding:8px 14px;border-top:1px solid var(--line);flex-shrink:0;}
+  .fenetre-ok{color:var(--text-muted,#5A6B5E);}
+  .fenetre-ko{color:#B23B3B;background:rgba(178,59,59,0.07);}
+
+  .repondre{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);flex-shrink:0;
+    align-items:flex-end;background:var(--surface,var(--white));}
+  .repondre textarea{flex:1;min-height:44px;max-height:140px;resize:none;border:1.5px solid var(--line);
+    border-radius:12px;padding:11px 13px;font-family:var(--body);font-size:0.9rem;color:var(--ink);
+    background:var(--paper);line-height:1.45;}
+  .repondre textarea:focus{outline:none;border-color:var(--green);}
+  .repondre textarea:disabled{opacity:.6;}
+  .env-btn{background:var(--vert-plein);color:#fff;border:none;width:44px;height:44px;border-radius:50%;
+    cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;}
+  .env-btn:disabled{opacity:.45;cursor:not-allowed;}
+  .env-msg{font-size:0.78rem;padding:0 14px 10px;color:#B23B3B;}
+  .env-msg:empty{display:none;}
+
+  .vide{padding:40px 20px;text-align:center;color:var(--text-muted,#8A9E8F);font-size:0.85rem;}
+  .vide i{font-size:26px;display:block;margin-bottom:8px;opacity:.6;}
+
+  .note{background:var(--paper);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;
+    padding:11px 14px;font-size:0.8rem;color:var(--text-muted,#5A6B5E);margin-bottom:18px;line-height:1.55;}
+  .note b{color:var(--text-heading,var(--green-deep));font-weight:600;}
+
+  /* À partir de 900 px, les deux panneaux tiennent côte à côte et le
+     bouton « retour » n'a plus lieu d'être. */
+  @media(min-width:900px){
+    .boite{grid-template-columns:330px 1fr;height:calc(100dvh - 260px);}
+    .pane-liste{border-right:1px solid var(--line);}
+    .liste{overflow-y:auto;}
+    .boite .pane-liste, .boite.fil-ouvert .pane-liste{display:flex;}
+    .boite .pane-fil, .boite.fil-ouvert .pane-fil{display:flex;}
+    .retour-liste{display:none;}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 12px 32px;}
+    .header-inner{padding:12px 16px;}
+    .boite{border-radius:12px;}
+    .fil{padding:13px 11px;}
+    .bulle{max-width:88%;}
+  }
+</style>
+<script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <div class="page-header">
+    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <h1 class="page-title">Boîte WhatsApp</h1>
+    <p class="page-sub">Les messages que les membres écrivent au numéro de l'association, et les réponses qui leur sont faites - d'ici comme depuis Telegram.</p>
+  </div>
+
+  <p class="note"><b>Meta n'autorise une réponse libre que dans les 24 heures</b> suivant le
+  dernier message de la personne. Le délai restant est indiqué sous chaque conversation ;
+  passé ce terme, seul un modèle approuvé peut repartir, depuis l'écran Diffusion.</p>
+
+  <div class="boite" id="boite">
+    <aside class="pane-liste" id="paneListe">
+      <p class="pane-titre">
+        <i class="ti ti-messages"></i> Conversations
+        <span class="rafraichi" id="rafraichi"></span>
+      </p>
+      <div class="liste" id="liste">
+        <p class="vide">Chargement…</p>
+      </div>
+    </aside>
+
+    <section class="pane-fil" id="paneFil">
+      <div class="fil-entete">
+        <button type="button" class="retour-liste" id="retourListe" aria-label="Revenir aux conversations">
+          <i class="ti ti-arrow-left"></i>
+        </button>
+        <span>
+          <span class="fil-nom" id="filNom">-</span><br>
+          <span class="fil-num" id="filNum"></span>
+        </span>
+      </div>
+      <div class="fil" id="fil">
+        <p class="fil-vide">Choisissez une conversation.</p>
+      </div>
+      <p class="fenetre fenetre-ok" id="fenetre" style="display:none;"></p>
+      <div class="repondre">
+        <textarea id="reponse" rows="1" placeholder="Écrire une réponse…" disabled></textarea>
+        <button class="env-btn" id="envoyer" disabled aria-label="Envoyer"><i class="ti ti-send"></i></button>
+      </div>
+      <p class="env-msg" id="envMsg"></p>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  const RAFRAICHIR_MS = 15000;
+
+  let conversations = [];
+  let courant = null;          // téléphone de la conversation ouverte
+  let dernierFil = 0;          // nombre de messages affichés, pour ne défiler qu'à l'arrivée
+  let minuteur = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function echapper(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  // supabase-js remplace le corps de la réponse par « non-2xx status
+  // code » : la raison est dans error.context, et c'est elle qui compte.
+  async function detailErreur(e) {
+    const ctx = e && e.context;
+    if (ctx && typeof ctx.clone === 'function') {
+      try {
+        const texte = (await ctx.clone().text() || '').trim();
+        if (texte) {
+          try {
+            const corps = JSON.parse(texte);
+            return String((corps && (corps.error || corps.message)) || texte).slice(0, 400);
+          } catch (_) { return texte.slice(0, 400); }
+        }
+      } catch (__) { /* corps illisible */ }
+    }
+    return (e && e.message) ? e.message : String(e);
+  }
+
+  function heure(iso) {
+    const d = new Date(iso);
+    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Une date de conversation ne sert qu'à situer : l'heure aujourd'hui,
+  // le jour ensuite. « 07/09/2026 12:14 » sur une liste étroite prend la
+  // place du nom sans rien apprendre de plus.
+  function dateCourte(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    const memeJour = d.toDateString() === now.toDateString();
+    if (memeJour) return heure(iso);
+    const hier = new Date(now); hier.setDate(now.getDate() - 1);
+    if (d.toDateString() === hier.toDateString()) return 'hier';
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+  }
+
+  function resteFenetre(jusquA) {
+    if (!jusquA) return null;
+    const ms = new Date(jusquA).getTime() - Date.now();
+    if (ms <= 0) return null;
+    const h = Math.floor(ms / 3600000);
+    const min = Math.floor((ms % 3600000) / 60000);
+    return h > 0 ? h + ' h ' + String(min).padStart(2, '0') : min + ' min';
+  }
+
+  // La hauteur du cadre depend de ce qui le precede - titre, chapeau,
+  // avertissement -, dont la hauteur varie avec la largeur de l'ecran et
+  // la taille de police du lecteur. Une valeur en dur la manquait de 57
+  // pixels sur un ecran de 900 : la zone de reponse passait sous le pli,
+  // et il fallait faire defiler la page pour ecrire. On la mesure.
+  function calerHauteur() {
+    const b = document.getElementById('boite');
+    if (!matchMedia('(min-width:900px)').matches) { b.style.height = ''; return; }
+    b.style.height = '';
+    const haut = b.getBoundingClientRect().top + window.scrollY;
+    b.style.height = Math.max(380, window.innerHeight - haut - 24) + 'px';
+    // Le bas de page compte lui aussi : sans cette seconde passe, il
+    // restait vingt pixels a faire defiler pour rien.
+    const trop = document.documentElement.scrollHeight - window.innerHeight;
+    if (trop > 0) {
+      b.style.height = Math.max(380, b.getBoundingClientRect().height - trop) + 'px';
+    }
+  }
+
+  async function chargerConversations(silencieux) {
+    try {
+      const { data, error } = await supabaseClient.rpc('whatsapp_conversations');
+      if (error) throw error;
+      conversations = data || [];
+      rendreListe();
+      $('rafraichi').textContent = heure(new Date().toISOString());
+    } catch (e) {
+      if (!silencieux) {
+        $('liste').innerHTML = '<p class="vide"><i class="ti ti-alert-triangle"></i>'
+          + 'Impossible de charger les conversations.</p>';
+      }
+    }
+  }
+
+  function rendreListe() {
+    const zone = $('liste');
+    if (!conversations.length) {
+      zone.innerHTML = '<p class="vide"><i class="ti ti-inbox"></i>'
+        + 'Aucun message reçu pour l\'instant.<br>Les messages des membres apparaîtront ici.</p>';
+      return;
+    }
+    zone.innerHTML = conversations.map(c => {
+      const reste = resteFenetre(c.fenetre_jusqu_a);
+      const prefixe = c.dernier_sens === 'sortant' ? 'Vous : ' : '';
+      return '<button type="button" class="conv' + (c.telephone === courant ? ' actif' : '') + '"'
+        + ' data-tel="' + echapper(c.telephone) + '">'
+        + '<span class="conv-haut">'
+        +   '<span class="conv-nom">' + echapper(c.nom) + '</span>'
+        +   '<span class="conv-date">' + echapper(dateCourte(c.dernier_le)) + '</span>'
+        + '</span>'
+        + '<span class="conv-apercu">' + echapper(prefixe + (c.dernier_texte || '')) + '</span>'
+        + '<span class="conv-bas">'
+        +   (c.non_lus > 0 ? '<span class="pastille">' + c.non_lus + '</span>' : '')
+        +   (c.est_membre ? '<span class="etiq">Membre</span>' : '<span class="etiq">Hors registre</span>')
+        +   (reste ? '<span class="etiq">Réponse ' + echapper(reste) + '</span>'
+                   : '<span class="etiq">Fenêtre fermée</span>')
+        + '</span>'
+        + '</button>';
+    }).join('');
+    zone.querySelectorAll('.conv').forEach(b => {
+      b.addEventListener('click', () => ouvrir(b.dataset.tel));
+    });
+  }
+
+  async function ouvrir(tel) {
+    courant = tel;
+    dernierFil = 0;
+    $('boite').classList.add('fil-ouvert');
+    // Le plein écran ne vaut que là où la liste disparaît ; au-dessus
+    // de 900 px les deux panneaux cohabitent et rien ne doit bouger.
+    if (!matchMedia('(min-width:900px)').matches) {
+      document.body.classList.add('fil-plein');
+    }
+    const conv = conversations.find(c => c.telephone === tel);
+    $('filNom').textContent = conv ? conv.nom : '+' + tel;
+    $('filNum').textContent = '+' + tel;
+    $('envMsg').textContent = '';
+    $('fil').innerHTML = '<p class="fil-vide">Chargement…</p>';
+    rendreListe();
+    await chargerFil();
+    // Marqué lu APRÈS l'affichage : si le chargement échoue, la
+    // conversation doit rester signalée comme non lue.
+    try {
+      await supabaseClient.rpc('whatsapp_marquer_lu', { p_telephone: tel });
+      await chargerConversations(true);
+    } catch (e) { /* la pastille restera, sans conséquence */ }
+  }
+
+  async function chargerFil() {
+    if (!courant) return;
+    try {
+      const { data, error } = await supabaseClient.rpc('whatsapp_fil', {
+        p_telephone: courant, p_limite: 300,
+      });
+      if (error) throw error;
+      rendreFil(data || []);
+    } catch (e) {
+      $('fil').innerHTML = '<p class="fil-vide">Impossible de charger la conversation.</p>';
+    }
+  }
+
+  function rendreFil(messages) {
+    const zone = $('fil');
+    if (!messages.length) {
+      zone.innerHTML = '<p class="fil-vide">Aucun message dans cette conversation.</p>';
+    } else {
+      zone.innerHTML = messages.map(m => {
+        const sortant = m.sens === 'sortant';
+        const pied = heure(m.cree_le)
+          + (sortant && m.envoye_par_nom ? ' · ' + m.envoye_par_nom : '')
+          + (sortant && m.via === 'telegram' ? ' · Telegram' : '');
+        return '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
+          + echapper(m.texte)
+          + '<span class="bulle-pied">' + echapper(pied) + '</span>'
+          + '</div>';
+      }).join('');
+      // On ne redescend qu'à l'arrivée d'un message : sinon un
+      // rafraîchissement automatique arracherait la lecture d'un
+      // échange ancien toutes les quinze secondes.
+      if (messages.length !== dernierFil) zone.scrollTop = zone.scrollHeight;
+      dernierFil = messages.length;
+    }
+    majFenetre();
+  }
+
+  function majFenetre() {
+    const conv = conversations.find(c => c.telephone === courant);
+    const zone = $('fenetre');
+    const champ = $('reponse');
+    const bouton = $('envoyer');
+    if (!courant) {
+      zone.style.display = 'none';
+      champ.disabled = true; bouton.disabled = true;
+      return;
+    }
+    const reste = conv ? resteFenetre(conv.fenetre_jusqu_a) : null;
+    zone.style.display = 'block';
+    if (reste) {
+      zone.className = 'fenetre fenetre-ok';
+      zone.textContent = 'Réponse libre possible encore ' + reste + '.';
+      champ.disabled = false;
+      bouton.disabled = !champ.value.trim();
+    } else {
+      zone.className = 'fenetre fenetre-ko';
+      zone.textContent = 'Fenêtre de 24 heures fermée : Meta n\'accepte plus de réponse libre. '
+        + 'Il faut attendre que la personne réécrive, ou lui envoyer un modèle depuis l\'écran Diffusion.';
+      champ.disabled = true; bouton.disabled = true;
+    }
+  }
+
+  async function envoyer() {
+    const champ = $('reponse');
+    const texte = champ.value.trim();
+    if (!texte || !courant) return;
+    const bouton = $('envoyer');
+    bouton.disabled = true; champ.disabled = true;
+    $('envMsg').textContent = '';
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('whatsapp-repondre', {
+        body: { telephone: courant, message: texte },
+      });
+      if (error) throw error;
+      if (data && data.error) throw new Error(data.error);
+      champ.value = '';
+      champ.style.height = 'auto';
+      await chargerFil();
+      await chargerConversations(true);
+    } catch (e) {
+      $('envMsg').textContent = await detailErreur(e);
+    } finally {
+      champ.disabled = false;
+      majFenetre();
+      champ.focus();
+    }
+  }
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+
+    $('signoutBtn').style.display = '';
+    $('loadingMsg').style.display = 'none';
+    $('pageContent').style.display = '';
+
+    $('retourListe').addEventListener('click', () => {
+      $('boite').classList.remove('fil-ouvert');
+      document.body.classList.remove('fil-plein');
+      courant = null;
+      rendreListe();
+      majFenetre();
+    });
+
+    const champ = $('reponse');
+    champ.addEventListener('input', () => {
+      champ.style.height = 'auto';
+      champ.style.height = Math.min(champ.scrollHeight, 140) + 'px';
+      $('envoyer').disabled = !champ.value.trim() || champ.disabled;
+    });
+    // Entrée envoie, Maj+Entrée va à la ligne - la convention de toutes
+    // les messageries. Sur téléphone le clavier rend un vrai saut de
+    // ligne, jamais un envoi involontaire.
+    champ.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' && !ev.shiftKey && !matchMedia('(pointer:coarse)').matches) {
+        ev.preventDefault();
+        envoyer();
+      }
+    });
+    $('envoyer').addEventListener('click', envoyer);
+
+    // Une rotation, ou un navigateur de bureau qu'on élargit, ne doit
+    // pas laisser un cadre fixe par-dessus une mise en page à deux
+    // colonnes qui n'en a plus besoin.
+    const large = matchMedia('(min-width:900px)');
+    const ajusterPlein = () => {
+      document.body.classList.toggle('fil-plein', !large.matches && !!courant);
+      calerHauteur();
+    };
+    large.addEventListener('change', ajusterPlein);
+    window.addEventListener('resize', calerHauteur);
+    calerHauteur();
+
+    await chargerConversations();
+
+    // Le rafraîchissement s'arrête quand l'onglet passe à l'arrière-plan :
+    // interroger la base toutes les quinze secondes pour un écran que
+    // personne ne regarde ne sert personne.
+    const battre = async () => {
+      if (document.visibilityState !== 'visible') return;
+      await chargerConversations(true);
+      if (courant) await chargerFil();
+    };
+    minuteur = setInterval(battre, RAFRAICHIR_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') battre();
+    });
+
+    document.getElementById('signoutBtn').addEventListener('click', async () => {
+      clearInterval(minuteur);
+      await supabaseClient.auth.signOut();
+      window.location.href = 'connexion.html';
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1154,6 +1154,67 @@ sont comptés à part sur l'écran : à joindre par WhatsApp depuis leur fiche.
 > pendant qu'une partie disparaissait sans trace. Le SQL découpe donc par
 > 50, la fonction Edge par 100.
 
+## 4sexvicies. Boîte de réception WhatsApp (`membres/whatsapp-boite.html`)
+
+Les messages que les membres écrivent au numéro de l'association, et les
+réponses qui leur sont faites, dans un seul écran : liste des
+conversations, fil, champ de réponse.
+
+**Pourquoi elle existe.** Le webhook reposait déjà chaque message dans le
+salon Telegram, et l'on répondait de là. Rien n'était gardé : impossible
+de relire un échange de la semaine passée, de savoir si un collègue avait
+déjà répondu, ou de chercher ce qu'un membre avait demandé.
+
+**Telegram n'est pas remplacé, et ne doit pas l'être.** C'est lui qui
+NOTIFIE - un téléphone sonne, une page web ouverte nulle part ne sonne
+pas. Les deux voies écrivent dans la même table : une réponse envoyée
+depuis Telegram apparaît dans la boîte, et l'inverse aussi. La mention
+« Telegram » sous une bulle dit d'où elle est partie.
+
+**La fenêtre de 24 heures commande tout.** Meta n'autorise un message
+libre - hors modèle - que dans les 24 heures suivant le dernier message
+de la personne. La boîte affiche le temps restant sous chaque
+conversation, et ferme le champ de réponse quand le délai est passé.
+Au-delà, il faut attendre que la personne réécrive, ou passer par un
+modèle approuvé depuis l'écran Diffusion.
+
+**Le numéro est la clé, pas le membre.** Beaucoup d'écrivants ne sont pas
+inscrits : quelqu'un du registre qui n'a jamais réclamé sa carte, un
+parent, un inconnu. Le profil est retrouvé à la lecture, par le
+téléphone normalisé - une inscription ultérieure rattache d'un coup tout
+l'historique passé. L'étiquette « Hors registre » signale les autres.
+
+**Les médias ne sont pas téléchargés.** Une image reçue apparaît comme
+`[une image]` avec sa légende. Meta ne donne qu'un identifiant valable
+quelques jours ; conserver les pièces jointes demanderait un stockage et
+une politique de conservation, qui viendront s'il le faut.
+
+### Déploiement
+
+1. Studio (instance **amstc**) > SQL Editor > coller
+   `supabase/phase104-boite-whatsapp.sql` > Run. Les contrôles en fin de
+   fichier n'écrivent rien : sur une table neuve ils affichent zéro, ce
+   qui est le résultat attendu.
+2. Déployer la nouvelle fonction `whatsapp-repondre`, et **redéployer**
+   `whatsapp-webhook` (il enregistre désormais ce qu'il reçoit) et
+   `telegram-webhook` (il archive les réponses parties de Telegram) :
+
+   ```
+   for f in whatsapp-repondre whatsapp-webhook telegram-webhook; do
+     curl -fsSL "https://raw.githubusercontent.com/mbadji1996-cell/site-amstc/main/supabase/functions/$f/index.ts" -o /tmp/$f.ts \
+       && docker exec supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc mkdir -p /home/deno/functions/$f \
+       && docker cp /tmp/$f.ts supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc:/home/deno/functions/$f/index.ts
+   done
+   docker restart supabase-edge-functions-rffqs8ck1ckdixkuu2xjo5sc
+   ```
+
+3. Aucun secret nouveau : `whatsapp-repondre` se sert de
+   `META_WHATSAPP_TOKEN` et `META_PHONE_NUMBER_ID`, déjà posés.
+
+> **L'historique ne remonte pas.** La table part vide : seuls les
+> messages reçus APRÈS le redéploiement du webhook y figureront. Les
+> échanges passés restent dans le salon Telegram.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de

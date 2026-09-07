@@ -17,7 +17,16 @@
 // modèle approuvé peut repartir. Le message reposé dans Telegram annonce
 // l'heure limite pour que personne ne le découvre en essayant.
 //
-// AUCUNE TABLE, AUCUNE PHASE SQL. Le numéro de l'expéditeur voyage dans
+// LES MESSAGES SONT ENREGISTRÉS depuis la phase 104, dans
+// whatsapp_messages : c'est ce qui permet la boîte de réception de
+// l'espace membres (membres/whatsapp-boite.html), où l'on relit un
+// échange et où l'on travaille à plusieurs. L'enregistrement ne peut
+// PAS empêcher le dépôt Telegram : si la base refuse, le message doit
+// tout de même parvenir à l'administrateur, qui reste le canal
+// d'alerte. Meta réessayant un webhook resté sans réponse, l'insertion
+// vise l'identifiant Meta du message et ignore les doublons.
+//
+// LA RÉPONSE PAR TELEGRAM RESTE INCHANGÉE. Le numéro de l'expéditeur voyage dans
 // une marque « [wa:221...] » écrite au bas du message Telegram. Quand
 // l'administrateur répond à ce message, Telegram nous rend la marque :
 // il n'y a donc rien à garder entre deux appels. C'est le mécanisme déjà
@@ -48,7 +57,10 @@
 //   META_PHONE_NUMBER_ID - déjà posé pour la diffusion
 //   TELEGRAM_BOT_TOKEN   - déjà posé
 //   TELEGRAM_CHAT_ID     - déjà posé : le salon d'administration
+//   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY - fournis automatiquement
 
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const META_APP_SECRET = Deno.env.get("META_APP_SECRET");
 const META_VERIFY_TOKEN = Deno.env.get("META_VERIFY_TOKEN");
 const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
@@ -72,6 +84,38 @@ function htm(s: unknown): string {
 // dans le salon.
 function sansMarque(s: string): string {
   return s.replace(/\[\s*wa\s*:/gi, "[wa - ");
+}
+
+// Enregistre un message entrant. « on_conflict » vise l'identifiant
+// Meta : Meta réessaie un webhook resté sans réponse, et le même
+// message apparaîtrait sinon deux fois dans le fil.
+//
+// Ne lève jamais : un échec d'enregistrement est ennuyeux, un message
+// de membre perdu ne l'est pas au même titre. Le dépôt Telegram suit,
+// quoi qu'il arrive ici.
+async function enregistrer(ligne: Record<string, unknown>): Promise<void> {
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/whatsapp_messages?on_conflict=wa_message_id`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "resolution=ignore-duplicates,return=minimal",
+        },
+        body: JSON.stringify(ligne),
+      },
+    );
+    if (!res.ok) {
+      console.error("whatsapp-webhook: enregistrement refusé",
+        res.status, (await res.text()).slice(0, 300));
+    }
+  } catch (e) {
+    console.error("whatsapp-webhook: base injoignable", e);
+  }
 }
 
 async function telegram(methode: string, corps: Record<string, unknown>): Promise<void> {
@@ -166,11 +210,24 @@ async function reposerDansTelegram(charge: Record<string, any>): Promise<void> {
         const numero = String(m.from ?? "").replace(/[^0-9]/g, "");
         if (!numero) continue;
         const nom = noms[numero] || "";
+        const contenu = resume(m);
+
+        // La marque n'est PAS retirée ici : ce qui est archivé doit
+        // être ce que le membre a écrit. Le détournement que « sansMarque »
+        // empêche ne concerne que Telegram, où la marque commande.
+        await enregistrer({
+          telephone: numero,
+          sens: "entrant",
+          texte: contenu,
+          type_message: String(m.type ?? "text"),
+          wa_message_id: m.id ? String(m.id) : null,
+          nom_affiche: nom || null,
+        });
 
         const texte =
           "💬 <b>Message WhatsApp</b>\n" +
           (nom ? htm(nom) + " " : "") + "<code>+" + htm(numero) + "</code>\n\n" +
-          htm(sansMarque(resume(m))) + "\n\n" +
+          htm(sansMarque(contenu)) + "\n\n" +
           "<i>Répondez à ce message pour lui écrire. " +
           "Réponse libre possible jusqu'au " + htm(heureLimite(m.timestamp)) + ".</i>\n" +
           "[wa:" + numero + "]";

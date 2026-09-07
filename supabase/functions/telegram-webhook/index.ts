@@ -194,6 +194,43 @@ async function reecrire(
   });
 }
 
+/**
+ * Archive dans whatsapp_messages (phase 104) une réponse partie d'ici.
+ *
+ * La boîte de réception de l'espace membres montrerait sinon les
+ * questions des membres sans les réponses faites depuis Telegram, et
+ * deux administrateurs répondraient deux fois à la même personne.
+ *
+ * Ne lève pas : le message est déjà remis à Meta quand on arrive ici.
+ */
+async function archiverWhatsApp(numero: string, texte: string, qui: string): Promise<void> {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/whatsapp_messages`, {
+      method: "POST",
+      headers: {
+        apikey: SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        telephone: String(numero).replace(/[^0-9]/g, ""),
+        sens: "sortant",
+        texte,
+        type_message: "text",
+        envoye_par_nom: qui || null,
+        via: "telegram",
+      }),
+    });
+    if (!r.ok) {
+      console.error("telegram-webhook: archivage WhatsApp refusé",
+        r.status, (await r.text()).slice(0, 300));
+    }
+  } catch (e) {
+    console.error("telegram-webhook: archivage WhatsApp impossible", e);
+  }
+}
+
 async function rpc(fonction: string, corps: Record<string, unknown>): Promise<string> {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fonction}`, {
@@ -760,6 +797,9 @@ async function traiterMessageAdmin(msg: any): Promise<boolean> {
       return true;
     }
     const echec = await repondreWhatsApp(marqueWa[1], texte);
+    // Seulement si c'est parti : archiver un échec ferait croire à
+    // une réponse reçue par le membre.
+    if (!echec) await archiverWhatsApp(marqueWa[1], texte, quiEst(msg.from));
     await telegram("sendMessage", {
       chat_id: salon,
       text: echec ? "\u274C " + echec : "\u2705 Réponse envoyée sur WhatsApp.",

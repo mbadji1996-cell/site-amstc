@@ -268,6 +268,15 @@
         </div>
       </a>
 
+      <a class="admin-card" href="whatsapp-boite.html">
+        <div class="admin-card-icon"><i class="ti ti-messages"></i></div>
+        <div>
+          <p class="admin-card-label">Bo&icirc;te WhatsApp</p>
+          <p class="admin-card-sub">R&eacute;pondre aux membres qui &eacute;crivent</p>
+        </div>
+        <span class="admin-card-badge" id="badgeWhatsApp" style="display:none;"></span>
+      </a>
+
       <a class="admin-card" href="dons-admin.html">
         <div class="admin-card-icon"><i class="ti ti-coins"></i></div>
         <div>
@@ -432,6 +441,14 @@
       const { count } = await supabaseClient
         .from('dons').select('id', { count: 'exact', head: true }).eq('status', 'en_attente');
       setBadge('badgeDons', count ?? 0);
+    } catch(e) {}
+
+    // Messages WhatsApp non lus. Un membre qui ecrit attend une reponse
+    // dans les 24 heures - au-dela, Meta ne laisse plus repondre
+    // librement, et la pastille arrive trop tard pour servir.
+    try {
+      const { data } = await supabaseClient.rpc('whatsapp_non_lus');
+      setBadge('badgeWhatsApp', data ?? 0);
     } catch(e) {}
   }
 
