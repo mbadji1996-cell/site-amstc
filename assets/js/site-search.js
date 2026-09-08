@@ -7,9 +7,9 @@
    ============================================================ */
 (function () {
   var SOURCES = [
-    { file: "content/actualites-index.json", type: "Réalisation", page: "article.html" },
-    { file: "content/formations-index.json", type: "Formation", page: "formation.html" },
-    { file: "content/projets-index.json", type: "Projet", page: "projet.html" }
+    { file: "content/actualites-index.json", type: "Réalisation", page: "article" },
+    { file: "content/formations-index.json", type: "Formation", page: "formation" },
+    { file: "content/projets-index.json", type: "Projet", page: "projet" }
   ];
 
   var allItems = null;

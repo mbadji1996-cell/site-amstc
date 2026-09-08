@@ -166,31 +166,31 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab active" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab active" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -199,7 +199,7 @@
 
   <div id="pageContent" style="display:none;">
     <div class="page-header">
-      <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Espace membres</a>
+      <a class="back" href="./"><i class="ti ti-arrow-left"></i> Espace membres</a>
       <h1 class="page-title">Carte de membre et Cotisations</h1>
     </div>
 
@@ -220,7 +220,7 @@
 
     <div class="claim-banner" id="claimBanner" style="display:none;">
       <p class="claim-banner-text"><strong>Membre de longue date ?</strong> Retrouvez votre carte historique et associez-la à votre compte.</p>
-      <a class="btn-claim-link" href="reclamer-carte.html">Réclamer ma carte →</a>
+      <a class="btn-claim-link" href="reclamer-carte">Réclamer ma carte →</a>
     </div>
 
     <!-- Rattachement Telegram : facultatif, et réversible d'un clic. -->
@@ -434,7 +434,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -476,7 +476,7 @@
   const PHARMACIE_SPECIALTIES = ['Officine', 'Biologie', 'Industrie'];
 
   (async () => {
-    const profile = await requireApprovedMember('connexion.html');
+    const profile = await requireApprovedMember('connexion');
     if (!profile) return;
     currentProfile = profile;
     document.getElementById('signoutBtn').style.display = '';
@@ -1319,7 +1319,7 @@
   document.getElementById('telegramBtn').addEventListener('click', basculerTelegram);
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
-    await signOut(); window.location.href = 'connexion.html';
+    await signOut(); window.location.href = 'connexion';
   });
 </script>
 

@@ -22,27 +22,27 @@
     },
     {
       "label": "Réalisations",
-      "href": "actualites.html"
+      "href": "actualites"
     },
     {
       "label": "Formation",
-      "href": "formations.html"
+      "href": "formations"
     },
     {
       "label": "Projets",
-      "href": "projets.html"
+      "href": "projets"
     },
     {
       "label": "Agenda",
-      "href": "agenda.html"
+      "href": "agenda"
     },
     {
       "label": "Demander une campagne",
-      "href": "demande-campagne.html"
+      "href": "demande-campagne"
     },
     {
       "label": "Faire un don",
-      "href": "don.html"
+      "href": "don"
     },
     {
       "label": "Espace consultation",
@@ -50,15 +50,15 @@
     },
     {
       "label": "Espace membres",
-      "href": "membres/connexion.html"
+      "href": "membres/connexion"
     },
     {
       "label": "Bilans annuels",
-      "href": "rapports/index.html"
+      "href": "rapports/"
     },
     {
       "label": "Guide de navigation",
-      "href": "guide.html"
+      "href": "guide"
     }
   ],
   "lien_youtube": "https://www.youtube.com/@amstc",
@@ -94,27 +94,27 @@
   "nav_activites": [
     {
       "label": "Réalisations",
-      "href": "actualites.html"
+      "href": "actualites"
     },
     {
       "label": "Formation",
-      "href": "formations.html"
+      "href": "formations"
     },
     {
       "label": "Projets",
-      "href": "projets.html"
+      "href": "projets"
     },
     {
       "label": "Agenda",
-      "href": "agenda.html"
+      "href": "agenda"
     },
     {
       "label": "S'inscrire à une activité",
-      "href": "activites.html"
+      "href": "activites"
     },
     {
       "label": "Demander une campagne",
-      "href": "demande-campagne.html"
+      "href": "demande-campagne"
     }
   ],
   "contact_email": "contact@amstc.org",

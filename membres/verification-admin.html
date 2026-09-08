@@ -47,33 +47,33 @@
 </head>
 <body>
 
-<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+<header><div class="header-inner"><a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab active" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab active" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap" id="pageContent" style="display:none;">
-  <a class="back" href="admin.html">← Centre d'administration</a>
+  <a class="back" href="admin">← Centre d'administration</a>
   <h1>Vérification avant mise en ligne</h1>
   <p class="intro">À dérouler après chaque déploiement important. Chaque lien s'ouvre dans un nouvel onglet : vérifiez le comportement attendu, cochez, passez au suivant.</p>
   <p class="note">Rappel : un déploiement met 2 à 5 minutes à arriver en ligne (deux passages : commit + index de contenu). Toujours recharger avec Ctrl+F5 avant de conclure à un bug.</p>
@@ -90,30 +90,30 @@
   // devenir une ligne ici, pour ne jamais être redécouverte par un membre.
   const BLOCS = [
     { titre: "Site public - amstc.org", items: [
-      ["../index.html", "Accueil : bandeau événement phare", "Compte à rebours ou EN DIRECT selon la date ; chiffres si campagne liée avec données ; pastille dans le hero non déformée sur mobile."],
-      ["../actualites.html", "Réalisations : recherche", "Taper un mot d'un titre filtre la liste ; effacer la recherche la restaure."],
-      ["../agenda.html", "Agenda : événement phare présent", "L'événement du compte à rebours occupe ses dates dans le calendrier."],
-      ["../don.html", "Page Don", "Numéros Wave et Orange Money affichés."],
+      ["../", "Accueil : bandeau événement phare", "Compte à rebours ou EN DIRECT selon la date ; chiffres si campagne liée avec données ; pastille dans le hero non déformée sur mobile."],
+      ["../actualites", "Réalisations : recherche", "Taper un mot d'un titre filtre la liste ; effacer la recherche la restaure."],
+      ["../agenda", "Agenda : événement phare présent", "L'événement du compte à rebours occupe ses dates dans le calendrier."],
+      ["../don", "Page Don", "Numéros Wave et Orange Money affichés."],
     ]},
     { titre: "Espace membres", items: [
-      ["connexion.html", "Connexion", "E-mail + mot de passe ; fermer l'onglet déconnecte réellement."],
-      ["profil.html", "Profil : carte de membre", "Carte au template (photo, QR, numéro sous le QR) ; PDF 85x55 ; reçu PDF sur un paiement confirmé."],
-      ["profil.html", "Profil : cotisations toujours payables", "La section Cotisations doit s'ouvrir même sans validité de carte, ou avec une carte expirée - plus aucun message « Verrouillé »."],
-      ["annuaire.html", "Annuaire", "Ordre alphabétique du nom affiché ; badge admin ; clic sur le numéro ouvre WhatsApp."],
-      ["mediatheque.html", "Médiathèque", "Recherche d'album ; compteurs de photos corrects."],
+      ["connexion", "Connexion", "E-mail + mot de passe ; fermer l'onglet déconnecte réellement."],
+      ["profil", "Profil : carte de membre", "Carte au template (photo, QR, numéro sous le QR) ; PDF 85x55 ; reçu PDF sur un paiement confirmé."],
+      ["profil", "Profil : cotisations toujours payables", "La section Cotisations doit s'ouvrir même sans validité de carte, ou avec une carte expirée - plus aucun message « Verrouillé »."],
+      ["annuaire", "Annuaire", "Ordre alphabétique du nom affiché ; badge admin ; clic sur le numéro ouvre WhatsApp."],
+      ["mediatheque", "Médiathèque", "Recherche d'album ; compteurs de photos corrects."],
     ]},
     { titre: "Administration", items: [
-      ["validation.html", "Gestion des membres : boutons après recherche", "Faire une recherche PUIS cliquer Désactiver : le bouton doit répondre (régression déjà vue). Supprimer visible sur un compte désactivé (Super Admin)."],
-      ["validation.html", "Exports et impression", "Exporter Excel / PDF ; Imprimer les cartes en lot (une carte par page)."],
-      ["validation.html", "Prévenir un membre", "Bouton « Prévenir » : choisir un rappel, envoyer par e-mail, ou ouvrir WhatsApp avec le message déjà écrit. Les deux doivent dire la même chose."],
-      ["cartes-admin.html", "Cartes : modification", "Changer l'année « Depuis » renumérote ; le repère de demande d'année apparaît si une demande dort."],
-      ["cartes-admin.html", "Cartes : inviter le porteur", "Bouton « Inviter » sur une carte non réclamée : WhatsApp s'ouvre avec le lien. Ouvert dans un autre navigateur, il doit afficher la carte puis créer le compte."],
-      ["validation.html", "État d'adhésion et cotisations", "Deux repères sous chaque nom ; la grille des 12 mois dans Détails enregistre les cotisations déjà versées."],
-      ["medical-admin.html", "Quiz : import Excel", "Télécharger le modèle ; importer un fichier rempli ajoute les questions pour relecture."],
-      ["daara-admin.html", "Daara : auteur d'un cours", "Renseigner un auteur : il doit apparaître dans la liste du Daara et sous le titre du cours. Laissé vide, rien ne s'affiche."],
-      ["statistiques-admin.html", "Statistiques", "Les chiffres se chargent ; « Sans photo » signale les cartes impossibles à établir ; l'export CSV s'ouvre en colonnes dans Excel."],
-      ["journal-admin.html", "Journal d'administration", "Super Admin uniquement. Après une approbation ou une désactivation, la ligne correspondante doit apparaître en tête."],
-      ["collectes-admin.html", "Collectes", "Créer un sasso avec une liste collée : l'aperçu doit valider chaque ligne. Une déclaration de paiement d'un membre doit apparaître « à valider »."],
+      ["validation", "Gestion des membres : boutons après recherche", "Faire une recherche PUIS cliquer Désactiver : le bouton doit répondre (régression déjà vue). Supprimer visible sur un compte désactivé (Super Admin)."],
+      ["validation", "Exports et impression", "Exporter Excel / PDF ; Imprimer les cartes en lot (une carte par page)."],
+      ["validation", "Prévenir un membre", "Bouton « Prévenir » : choisir un rappel, envoyer par e-mail, ou ouvrir WhatsApp avec le message déjà écrit. Les deux doivent dire la même chose."],
+      ["cartes-admin", "Cartes : modification", "Changer l'année « Depuis » renumérote ; le repère de demande d'année apparaît si une demande dort."],
+      ["cartes-admin", "Cartes : inviter le porteur", "Bouton « Inviter » sur une carte non réclamée : WhatsApp s'ouvre avec le lien. Ouvert dans un autre navigateur, il doit afficher la carte puis créer le compte."],
+      ["validation", "État d'adhésion et cotisations", "Deux repères sous chaque nom ; la grille des 12 mois dans Détails enregistre les cotisations déjà versées."],
+      ["medical-admin", "Quiz : import Excel", "Télécharger le modèle ; importer un fichier rempli ajoute les questions pour relecture."],
+      ["daara-admin", "Daara : auteur d'un cours", "Renseigner un auteur : il doit apparaître dans la liste du Daara et sous le titre du cours. Laissé vide, rien ne s'affiche."],
+      ["statistiques-admin", "Statistiques", "Les chiffres se chargent ; « Sans photo » signale les cartes impossibles à établir ; l'export CSV s'ouvre en colonnes dans Excel."],
+      ["journal-admin", "Journal d'administration", "Super Admin uniquement. Après une approbation ou une désactivation, la ligne correspondante doit apparaître en tête."],
+      ["collectes-admin", "Collectes", "Créer un sasso avec une liste collée : l'aperçu doit valider chaque ligne. Une déclaration de paiement d'un membre doit apparaître « à valider »."],
       ["../admin/", "CMS sur téléphone (et dans l'app Android)", "Ouvrir une fiche longue comme « Page d'accueil » : on doit pouvoir descendre jusqu'au dernier champ, sans vide au-dessus de la barre Publier."],
     ]},
     { titre: "consultations-amstc.org", items: [
@@ -149,7 +149,7 @@
   }
 
   (async () => {
-    const profile = await requireAdmin('connexion.html');
+    const profile = await requireAdmin('connexion');
     if (!profile) return;
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';

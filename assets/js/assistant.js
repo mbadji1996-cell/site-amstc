@@ -50,7 +50,7 @@
       cles: 'payer paiement wave orange money transaction capture preuve envoyer',
       question: 'Comment payer ma cotisation ou ma carte ?',
       reponse: function () {
-        return 'Rendez-vous sur ' + lien('profil.html', 'Carte de membre et Cotisations') + '.'
+        return 'Rendez-vous sur ' + lien('profil', 'Carte de membre et Cotisations') + '.'
           + '<br><br>Vous y trouverez les numéros Wave et Orange Money de l\'association, '
           + 'et un formulaire pour déclarer votre paiement une fois effectué. '
           + 'Indiquez-y la référence de la transaction : c\'est elle qui permet à '
@@ -71,7 +71,7 @@
       cles: 'photo identite portrait carte imprimer changer modifier',
       question: 'Comment changer ma photo ?',
       reponse: function () {
-        return 'Depuis ' + lien('profil.html', 'Carte de membre et Cotisations') + ', section informations.'
+        return 'Depuis ' + lien('profil', 'Carte de membre et Cotisations') + ', section informations.'
           + '<br><br>Cette photo est celle qui figure sur votre carte : préférez un portrait net, '
           + 'cadré sur le visage. Sans photo, la carte ne peut pas être établie.';
       },
@@ -80,7 +80,7 @@
       cles: 'profil informations nom prenom telephone localite region domaine specialite modifier corriger',
       question: 'Comment corriger mes informations ?',
       reponse: function () {
-        return 'Depuis ' + lien('profil.html', 'Carte de membre et Cotisations') + '.'
+        return 'Depuis ' + lien('profil', 'Carte de membre et Cotisations') + '.'
           + '<br><br>Vous pouvez y modifier votre prénom, votre nom, votre téléphone, '
           + 'votre région et votre localité.'
           + '<br><br>Ces informations figurent sur votre carte imprimée : vérifiez-les avant '
@@ -92,7 +92,7 @@
       cles: 'formation formations daara cours quiz enseignement medical bibliotheque livre document',
       question: 'Où trouver les formations et les livres ?',
       reponse: function () {
-        return 'Tout se trouve sous ' + lien('formations.html', 'Formations') + ' : '
+        return 'Tout se trouve sous ' + lien('formations', 'Formations') + ' : '
           + 'l\'Espace Daara, les enseignements médicaux, les quiz et la bibliothèque.'
           + '<br><br>Ces contenus sont réservés aux membres dont la carte est à jour.';
       },
@@ -101,7 +101,7 @@
       cles: 'document officiel statuts reglement interieur rapport pv assemblee',
       question: 'Où sont les statuts et documents officiels ?',
       reponse: function () {
-        return 'Dans ' + lien('documents.html', 'Documents officiels') + ' : statuts, '
+        return 'Dans ' + lien('documents', 'Documents officiels') + ' : statuts, '
           + 'règlement intérieur, rapports et procès-verbaux.';
       },
     },
@@ -109,9 +109,9 @@
       cles: 'annuaire membres contacter confrere collegue chercher trouver quelqu un',
       question: 'Comment contacter un autre membre ?',
       reponse: function () {
-        return 'Par ' + lien('annuaire.html', 'l\'Annuaire') + ', qui liste les membres '
+        return 'Par ' + lien('annuaire', 'l\'Annuaire') + ', qui liste les membres '
           + 'avec leur domaine et leur localité.'
-          + '<br><br>Pour un échange collectif, le ' + lien('forum.html', 'Forum') + ' est plus adapté.';
+          + '<br><br>Pour un échange collectif, le ' + lien('forum', 'Forum') + ' est plus adapté.';
       },
     },
     {
@@ -129,7 +129,7 @@
       question: 'Je n\'ai pas trouvé ma réponse',
       reponse: function () {
         return 'Écrivez à l\'association à <strong>contact@amstc.org</strong>, ou passez par '
-          + 'le ' + lien('forum.html', 'Forum') + ' si votre question peut profiter aux autres membres.'
+          + 'le ' + lien('forum', 'Forum') + ' si votre question peut profiter aux autres membres.'
           + '<br><br>Pour un problème technique, précisez la page concernée et ce qui s\'est '
           + 'affiché à l\'écran : cela fait gagner beaucoup de temps.';
       },
@@ -162,7 +162,7 @@
 
   async function reponseCarte() {
     var generique = 'Votre carte et sa validité sont affichées sur '
-      + lien('profil.html', 'Carte de membre et Cotisations') + '.';
+      + lien('profil', 'Carte de membre et Cotisations') + '.';
     var p = await chargerProfil();
     if (!p) return generique;
 
@@ -186,7 +186,7 @@
 
   async function reponseCotisations() {
     return 'Le détail année par année figure sur '
-      + lien('profil.html', 'Carte de membre et Cotisations') + ', '
+      + lien('profil', 'Carte de membre et Cotisations') + ', '
       + 'section Cotisations : les années réglées y sont marquées, les autres restent à jour.'
       + '<br><br>Si un versement que vous avez fait n\'y apparaît pas, c\'est qu\'il '
       + 'n\'a pas encore été validé par l\'administration. Déclarez-le depuis cette même '

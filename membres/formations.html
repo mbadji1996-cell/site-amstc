@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formations - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/formations.html">
+<link rel="canonical" href="https://amstc.org/membres/formations">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -77,31 +77,31 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien active" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien active" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -117,7 +117,7 @@
   <p class="loading" id="loadingMsg" style="display:none;"></p>
 
   <div class="modules-grid">
-    <a class="module-card" href="daara.html">
+    <a class="module-card" href="daara">
       <div class="module-card-accent" style="background:linear-gradient(90deg,#1D9E75,#0F6E56);"></div>
       <div class="module-card-body">
         <div class="module-icon" style="background:#E1F5EE;"><i class="ti ti-book" style="color:#0F6E56;"></i></div>
@@ -131,7 +131,7 @@
       </div>
     </a>
 
-    <a class="module-card" href="medical.html">
+    <a class="module-card" href="medical">
       <div class="module-card-accent" style="background:linear-gradient(90deg,#378ADD,#185FA5);"></div>
       <div class="module-card-body">
         <div class="module-icon" style="background:#E6F1FB;"><i class="ti ti-stethoscope" style="color:#185FA5;"></i></div>
@@ -144,7 +144,7 @@
       </div>
     </a>
 
-    <a class="module-card" href="formations-cms.html">
+    <a class="module-card" href="formations-cms">
       <div class="module-card-accent" style="background:linear-gradient(90deg,#8A9E8F,#5A6C60);"></div>
       <div class="module-card-body">
         <div class="module-icon" style="background:var(--paper-alt);"><i class="ti ti-notebook" style="color:var(--text-accent);"></i></div>
@@ -157,7 +157,7 @@
       </div>
     </a>
 
-    <a class="module-card" href="bibliotheque.html">
+    <a class="module-card" href="bibliotheque">
       <div class="module-card-accent" style="background:linear-gradient(90deg,#A9762F,#6E4A1A);"></div>
       <div class="module-card-body">
         <div class="module-icon" style="background:#F5EBDC;"><i class="ti ti-books" style="color:#6E4A1A;"></i></div>
@@ -173,14 +173,14 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
   (async () => {
-    const profile = await requireApprovedMember("connexion.html");
+    const profile = await requireApprovedMember("connexion");
     if (!profile) return;
     document.getElementById("signoutBtn").style.display = "";
     loadStats(profile.id);
@@ -206,7 +206,7 @@
   }
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
-    await signOut(); window.location.href = "connexion.html";
+    await signOut(); window.location.href = "connexion";
   });
 </script>
 

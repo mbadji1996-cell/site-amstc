@@ -161,31 +161,31 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien active" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien active" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -196,7 +196,7 @@
 
   <!-- INTRO -->
   <div id="introScreen" style="display:none;">
-    <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
+    <a class="back" href="medical"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
     <div style="height:20px;"></div>
     <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
     <div class="quiz-intro-card">
@@ -241,7 +241,7 @@
 
   <!-- RESULTS -->
   <div id="resultScreen">
-    <a class="back" href="medical.html"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
+    <a class="back" href="medical"><i class="ti ti-arrow-left"></i> Enseignements médicaux</a>
     <div style="height:20px;"></div>
 
     <div class="result-card">
@@ -258,7 +258,7 @@
       </div>
       <div class="result-btns">
         <button class="btn btn-primary" id="replayBtn"><i class="ti ti-refresh"></i> Rejouer</button>
-        <a class="btn btn-outline" href="medical.html"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
+        <a class="btn btn-outline" href="medical"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
       </div>
     </div>
 
@@ -273,7 +273,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -289,11 +289,11 @@
     const el = document.getElementById('cardStatusBanner');
     if (state === 'grace') {
       el.className = 'card-status-banner';
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = '';
     } else if (state === 'blocked') {
       el.className = 'card-status-banner blocked';
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce quiz n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce quiz n\'est plus accessible.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = '';
     } else {
       el.style.display = 'none';
@@ -301,8 +301,8 @@
   }
 
   (async () => {
-    if (!quizId) { location.href = 'medical.html'; return; }
-    const result = await requireActiveMember('connexion.html');
+    if (!quizId) { location.href = 'medical'; return; }
+    const result = await requireActiveMember('connexion');
     if (!result) return;
     userId = result.profile.id;
     document.getElementById('signoutBtn').style.display = '';
@@ -326,7 +326,7 @@
       supabaseClient.from('quiz_attempts').select('score, total, created_at').eq('quiz_id', quizId).eq('user_id', userId).order('created_at', { ascending: false }).limit(20)
     ]);
 
-    if (!quizRes.data) { location.href = 'medical.html'; return; }
+    if (!quizRes.data) { location.href = 'medical'; return; }
     quiz = quizRes.data;
     questions = qRes.data || [];
 
@@ -557,7 +557,7 @@
   });
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
-    await signOut(); window.location.href = 'connexion.html';
+    await signOut(); window.location.href = 'connexion';
   });
 </script>
 

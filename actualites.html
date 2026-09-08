@@ -16,13 +16,13 @@
 <script src="assets/js/pwa-register.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Réalisations - AMSTC</title>
-<link rel="canonical" href="https://amstc.org/actualites.html">
+<link rel="canonical" href="https://amstc.org/actualites">
 <meta name="description" content="Les réalisations récentes de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Réalisations - AMSTC">
 <meta property="og:description" content="Les réalisations récentes de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
-<meta property="og:url" content="https://amstc.org/actualites.html">
+<meta property="og:url" content="https://amstc.org/actualites">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -76,13 +76,13 @@
 <body>
 <header>
   <div class="wrap">
-    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="./"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <a class="back" href="./">← Retour à l'accueil</a>
   <h1>Nos réalisations</h1>
-  <a class="reports-link" href="rapports/index.html">📊 Voir les bilans annuels</a>
+  <a class="reports-link" href="rapports/">📊 Voir les bilans annuels</a>
   <noscript><p class="error">L'affichage des actualités nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="search-wrap">
     <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un titre, un mot-clé…" oninput="onRecherche()">
@@ -158,8 +158,8 @@
 
     grid.innerHTML = visibles.map(a => {
       const href = a._restricted
-        ? `membres/actualite-reservee.html?id=${encodeURIComponent(a.id)}`
-        : `article.html?slug=${encodeURIComponent(a.slug)}`;
+        ? `membres/actualite-reservee?id=${encodeURIComponent(a.id)}`
+        : `article?slug=${encodeURIComponent(a.slug)}`;
       return `
         <a class="card" href="${href}">
           ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}

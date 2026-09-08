@@ -95,20 +95,20 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 
 <div class="wrap">
   <div class="page-header">
-    <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Administration du contenu</a>
+    <a class="back" href="./"><i class="ti ti-arrow-left"></i> Administration du contenu</a>
     <h1 class="page-title">Importer un fichier HTML</h1>
     <p class="page-sub">Publiez un article, une formation, un projet ou une étape à partir d'une page HTML rédigée ailleurs - mise en page et images comprises. Le fichier est déposé dans le dépôt, exactement comme une fiche créée dans l'administration.</p>
   </div>
 
   <div class="auth-warning" id="authWarning" style="display:none;">
     <i class="ti ti-lock"></i>
-    <div>Vous n'êtes pas connecté à l'administration. <a href="index.html">Connectez-vous d'abord</a>, puis revenez sur cette page - elle utilise la même session.</div>
+    <div>Vous n'êtes pas connecté à l'administration. <a href="./">Connectez-vous d'abord</a>, puis revenez sur cette page - elle utilise la même session.</div>
   </div>
 
   <div id="outil" style="display:none;">
@@ -138,11 +138,11 @@
         </label>
         <div class="type-opt ailleurs">
           <span class="t-titre"><i class="ti ti-book"></i> Cours du Daara</span>
-          <span class="t-sub">Espace membres : <a href="../membres/daara-admin.html" target="_blank">Daara &rsaquo; Nouveau cours</a>, même bouton d'import dans le formulaire</span>
+          <span class="t-sub">Espace membres : <a href="../membres/daara-admin" target="_blank">Daara &rsaquo; Nouveau cours</a>, même bouton d'import dans le formulaire</span>
         </div>
         <div class="type-opt ailleurs">
           <span class="t-titre"><i class="ti ti-stethoscope"></i> Leçon médicale</span>
-          <span class="t-sub">Espace membres : <a href="../membres/medical-admin.html" target="_blank">Médical &rsaquo; Nouvelle leçon</a>, même bouton d'import</span>
+          <span class="t-sub">Espace membres : <a href="../membres/medical-admin" target="_blank">Médical &rsaquo; Nouvelle leçon</a>, même bouton d'import</span>
         </div>
       </div>
       <p class="hint">Réalisation, formation, projet et étape sont publiés sur le site public, dans le dépôt. Les cours et leçons vivent dans l'espace membres : leur formulaire a le même bouton.</p>
@@ -211,7 +211,7 @@
 <script>
   const REPO = 'mbadji1996-cell/site-amstc';
   const DOSSIERS = { actualites: 'content/actualites', formations: 'content/formations', projets: 'content/projets', etapes: 'content/etapes' };
-  const PAGES = { actualites: 'article.html', formations: 'formation.html', projets: 'projet.html', etapes: 'etape.html' };
+  const PAGES = { actualites: 'article', formations: 'formation', projets: 'projet', etapes: 'etape' };
 
   function ghToken() {
     try { const p = JSON.parse(localStorage.getItem('decap-cms-user') || 'null'); return p && p.token ? p.token : null; }
@@ -382,7 +382,7 @@
       r.style.display = '';
       r.innerHTML = `<strong>Fiche déposée dans le dépôt.</strong> Le site se met à jour dans les minutes qui suivent (construction automatique).<br>
         Elle paraîtra ici : <a href="../${PAGES[type]}?slug=${encodeURIComponent(slug)}" target="_blank">${esc(PAGES[type])}?slug=${esc(slug)}</a><br>
-        Pour la retoucher ensuite : <a href="index.html" target="_blank">Administration du contenu</a>, rubrique correspondante.`;
+        Pour la retoucher ensuite : <a href="./" target="_blank">Administration du contenu</a>, rubrique correspondante.`;
     } catch (e) {
       etat.textContent = 'Échec : ' + (e.message || e); etat.className = 'etat err';
     } finally {

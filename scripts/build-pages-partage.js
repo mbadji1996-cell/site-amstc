@@ -2,7 +2,7 @@
  * Génère une page d'aperçu par article, formation, projet, étape et cours.
  *
  * POURQUOI. Les fiches sont servies par des pages uniques paramétrées
- * (`article.html?slug=…`, `membres/cours.html?id=…`). Sur un hébergement
+ * (`article?slug=…`, `membres/cours?id=…`). Sur un hébergement
  * statique, toutes ces adresses renvoient LE MÊME fichier : le robot de
  * WhatsApp, qui n'exécute pas JavaScript, y lit donc toujours le titre
  * générique (« Cours - Daara AMSTC »). Aucune balise posée à l'exécution
@@ -15,10 +15,12 @@
  * balises, alors qu'un meta-refresh en ferait suivre certains jusqu'à la
  * page générique - ce qu'on cherche précisément à éviter.
  *
- * Adresses produites :
- *   /a/<slug>.html  article        /f/<slug>.html  formation
- *   /p/<slug>.html  projet         /e/<slug>.html  étape
- *   /c/<id>.html    cours du Daara ou leçon médicale
+ * Adresses produites - le fichier écrit s'appelle bien <nom>.html, mais
+ * c'est sans l'extension qu'on le partage : GitHub Pages sert les deux,
+ * et c'est cette adresse-là qui se lit dans un message.
+ *   /a/<slug>  article        /f/<slug>  formation
+ *   /p/<slug>  projet         /e/<slug>  étape
+ *   /c/<id>    cours du Daara ou leçon médicale
  */
 
 const fs = require('fs');
@@ -57,7 +59,7 @@ function pagePartage({ titre, description, image, destination, adressePartage })
   const d = esc(description);
   const img = esc(urlAbsolue(image));
   // Racine obligatoire : la page d'aperçu vit dans /a/, /f/… et un chemin
-  // relatif y résoudrait « article.html » en « /a/article.html ».
+  // relatif y résoudrait « article » en « /a/article ».
   const dest = '/' + String(destination).replace(/^\/+/, '');
   // Les dimensions ne sont déclarées que pour l'image par défaut, la seule
   // dont on connaisse la taille : annoncer 1200x630 pour une photo qui ne
@@ -150,7 +152,7 @@ function genererDepuisIndex(index, dossier, pageCible, cle) {
       description: resume(f.excerpt || f.description, 200) || "Association Médico-Sociale des Talibés Cheikh.",
       image: f.image,
       destination: `${pageCible}?${cle}=${encodeURIComponent(id)}`,
-      adressePartage: `/${dossier}/${encodeURIComponent(id)}.html`,
+      adressePartage: `/${dossier}/${encodeURIComponent(id)}`,
     }));
   }
   const supprimes = purger(dossier, gardes);
@@ -223,14 +225,14 @@ async function genererCours() {
   for (const c of cours) {
     if (!c.id) continue;
     gardes.add(c.id);
-    const cible = c.source === 'medical' ? 'membres/lecon.html' : 'membres/cours.html';
+    const cible = c.source === 'medical' ? 'membres/lecon' : 'membres/cours';
     const morceaux = [resume(c.description, 160), c.author ? 'Par ' + c.author : ''].filter(Boolean);
     ecrire('c', c.id, pagePartage({
       titre: c.title,
       description: morceaux.join(' · ') || "Espace membres de l'AMSTC.",
       image: null,
       destination: `${cible}?id=${encodeURIComponent(c.id)}`,
-      adressePartage: `/c/${encodeURIComponent(c.id)}.html`,
+      adressePartage: `/c/${encodeURIComponent(c.id)}`,
     }));
   }
   const supprimes = purger('c', gardes);
@@ -269,8 +271,8 @@ async function genererBibliotheque() {
       titre: d.title,
       description: resume(d.excerpt, 200) || 'Bibliothèque des membres de l\'AMSTC.',
       image: d.cover_image,
-      destination: `membres/bibliotheque.html?doc=${encodeURIComponent(d.id)}`,
-      adressePartage: `/b/${encodeURIComponent(d.id)}.html`,
+      destination: `membres/bibliotheque?doc=${encodeURIComponent(d.id)}`,
+      adressePartage: `/b/${encodeURIComponent(d.id)}`,
     }));
   }
   const supprimes = purger('b', gardes);
@@ -281,10 +283,10 @@ async function genererBibliotheque() {
 (async () => {
   console.log('Pages d\'aperçu de partage :');
   let total = 0;
-  total += genererDepuisIndex('actualites', 'a', 'article.html', 'slug');
-  total += genererDepuisIndex('formations', 'f', 'formation.html', 'slug');
-  total += genererDepuisIndex('projets', 'p', 'projet.html', 'slug');
-  total += genererDepuisIndex('etapes', 'e', 'etape.html', 'slug');
+  total += genererDepuisIndex('actualites', 'a', 'article', 'slug');
+  total += genererDepuisIndex('formations', 'f', 'formation', 'slug');
+  total += genererDepuisIndex('projets', 'p', 'projet', 'slug');
+  total += genererDepuisIndex('etapes', 'e', 'etape', 'slug');
   total += await genererCours();
   total += await genererBibliotheque();
   console.log('Total : ' + total + ' page(s).');

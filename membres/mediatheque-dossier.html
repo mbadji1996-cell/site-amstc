@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Album - Médiathèque AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/mediatheque-dossier.html">
+<link rel="canonical" href="https://amstc.org/membres/mediatheque-dossier">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -82,36 +82,36 @@
 
 <header>
   <div class="header-wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab active" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab active" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap">
-  <p class="breadcrumb" id="breadcrumb"><a href="mediatheque.html">← Médiathèque</a></p>
+  <p class="breadcrumb" id="breadcrumb"><a href="mediatheque">← Médiathèque</a></p>
   <noscript><p class="loading">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p class="loading" id="loadingMsg">Chargement de l'album…</p>
@@ -127,7 +127,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -150,8 +150,8 @@
       current = parent;
     }
     const el = document.getElementById("breadcrumb");
-    const links = crumbs.map(c => `<a href="mediatheque-dossier.html?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`);
-    el.innerHTML = ['<a href="mediatheque.html">Médiathèque</a>', ...links, `<span class="current">${esc(folder.title)}</span>`]
+    const links = crumbs.map(c => `<a href="mediatheque-dossier?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`);
+    el.innerHTML = ['<a href="mediatheque">Médiathèque</a>', ...links, `<span class="current">${esc(folder.title)}</span>`]
       .map((html, i) => i === 0 ? html : `<span class="sep">/</span>${html}`)
       .join(' ');
   }
@@ -187,7 +187,7 @@
         ${subfolders.map(f => {
           const cover = f.cover_path && subCoverByPath[f.cover_path];
           return `
-            <a class="subfolder-card" href="mediatheque-dossier.html?id=${encodeURIComponent(f.id)}">
+            <a class="subfolder-card" href="mediatheque-dossier?id=${encodeURIComponent(f.id)}">
               ${cover ? `<img class="subfolder-cover" src="${cover}" alt="" loading="lazy">` : `<div class="subfolder-cover-placeholder"><i class="ti ti-photo"></i></div>`}
               <div class="subfolder-body"><p class="subfolder-title">${esc(f.title)}</p></div>
             </a>`;
@@ -260,7 +260,7 @@
   });
 
   (async () => {
-    const profile = await requireApprovedMember("connexion.html");
+    const profile = await requireApprovedMember("connexion");
     if (!profile) return;
     document.getElementById("signoutBtn").style.display = "";
     await loadFolder();
@@ -268,7 +268,7 @@
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
-    window.location.href = "connexion.html";
+    window.location.href = "connexion";
   });
 </script>
 

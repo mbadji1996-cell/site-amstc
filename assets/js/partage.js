@@ -2,7 +2,7 @@
  * Bouton « Partager » commun aux fiches (articles, formations, cours…).
  *
  * POURQUOI un lien différent de celui de la barre d'adresse. Les fiches
- * sont servies par des pages paramétrées (`article.html?slug=…`) : sur un
+ * sont servies par des pages paramétrées (`article?slug=…`) : sur un
  * hébergement statique, toutes ces adresses renvoient le même fichier, et
  * le robot de WhatsApp - qui n'exécute pas JavaScript - y lit toujours le
  * même titre générique. Une page d'aperçu est donc pré-générée pour
@@ -64,7 +64,9 @@ function partageAdresse(prefixe, cle, valeurExplicite) {
     ? String(valeurExplicite)
     : new URLSearchParams(location.search).get(cle);
   if (!valeur) return null;
-  return location.origin + '/' + prefixe + '/' + encodeURIComponent(valeur) + '.html';
+  // Sans « .html » : le fichier s'appelle bien <id>.html sur le disque,
+  // mais c'est cette adresse-ci qui part dans WhatsApp, et elle se lit.
+  return location.origin + '/' + prefixe + '/' + encodeURIComponent(valeur);
 }
 
 /**

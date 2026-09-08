@@ -1,7 +1,7 @@
 // Génère sitemap.xml à partir des index de contenu (Réalisations,
 // Formations, Projets, Étapes) + des pages statiques du site, pour que
 // les moteurs de recherche découvrent aussi les pages individuelles
-// (article.html?slug=..., formation.html?slug=..., etc.), pas seulement
+// (article?slug=..., formation?slug=..., etc.), pas seulement
 // les listes.
 //
 // Usage : node scripts/build-sitemap.js
@@ -51,25 +51,25 @@ function addUrl(loc, lastmod, changefreq, priority) {
 
 // ===== Pages statiques =====
 addUrl(`${SITE_URL}/`, latestDate(actualites, today), 'weekly', '1.0');
-addUrl(`${SITE_URL}/actualites.html`, latestDate(actualites, today), 'weekly', '0.8');
-addUrl(`${SITE_URL}/formations.html`, latestDate(formations, today), 'weekly', '0.8');
-addUrl(`${SITE_URL}/projets.html`, latestDate(projets, today), 'weekly', '0.8');
-addUrl(`${SITE_URL}/agenda.html`, latestDate([...actualites, ...formations, ...projets], today), 'weekly', '0.7');
-addUrl(`${SITE_URL}/don.html`, today, 'monthly', '0.6');
-addUrl(`${SITE_URL}/demande-campagne.html`, today, 'monthly', '0.5');
-addUrl(`${SITE_URL}/guide.html`, today, 'monthly', '0.4');
-addUrl(`${SITE_URL}/confidentialite.html`, today, 'yearly', '0.3');
-addUrl(`${SITE_URL}/cgu.html`, today, 'yearly', '0.3');
+addUrl(`${SITE_URL}/actualites`, latestDate(actualites, today), 'weekly', '0.8');
+addUrl(`${SITE_URL}/formations`, latestDate(formations, today), 'weekly', '0.8');
+addUrl(`${SITE_URL}/projets`, latestDate(projets, today), 'weekly', '0.8');
+addUrl(`${SITE_URL}/agenda`, latestDate([...actualites, ...formations, ...projets], today), 'weekly', '0.7');
+addUrl(`${SITE_URL}/don`, today, 'monthly', '0.6');
+addUrl(`${SITE_URL}/demande-campagne`, today, 'monthly', '0.5');
+addUrl(`${SITE_URL}/guide`, today, 'monthly', '0.4');
+addUrl(`${SITE_URL}/confidentialite`, today, 'yearly', '0.3');
+addUrl(`${SITE_URL}/cgu`, today, 'yearly', '0.3');
 
 // ===== Pages individuelles =====
 // encodeURIComponent : certains slugs contiennent des caractères accentués
 // (générés depuis un titre) - une URL de sitemap doit rester correctement
 // encodée, sinon des lecteurs stricts (Google Search Console, validateurs
 // XML) peuvent la rejeter.
-actualites.forEach(a => addUrl(`${SITE_URL}/article.html?slug=${encodeURIComponent(a.slug)}`, isoDate(a.date), 'monthly', '0.6'));
-formations.forEach(f => addUrl(`${SITE_URL}/formation.html?slug=${encodeURIComponent(f.slug)}`, isoDate(f.date), 'monthly', '0.6'));
-projets.forEach(p => addUrl(`${SITE_URL}/projet.html?slug=${encodeURIComponent(p.slug)}`, isoDate(p.date), 'monthly', '0.6'));
-etapes.forEach(e => addUrl(`${SITE_URL}/etape.html?slug=${encodeURIComponent(e.slug)}`, isoDate(e.date), 'monthly', '0.5'));
+actualites.forEach(a => addUrl(`${SITE_URL}/article?slug=${encodeURIComponent(a.slug)}`, isoDate(a.date), 'monthly', '0.6'));
+formations.forEach(f => addUrl(`${SITE_URL}/formation?slug=${encodeURIComponent(f.slug)}`, isoDate(f.date), 'monthly', '0.6'));
+projets.forEach(p => addUrl(`${SITE_URL}/projet?slug=${encodeURIComponent(p.slug)}`, isoDate(p.date), 'monthly', '0.6'));
+etapes.forEach(e => addUrl(`${SITE_URL}/etape?slug=${encodeURIComponent(e.slug)}`, isoDate(e.date), 'monthly', '0.5'));
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

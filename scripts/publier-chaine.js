@@ -182,8 +182,8 @@ function envoyer(titre, texte, lien) {
         titre: s.intitule + ' : ' + (f.title || 'AMSTC'),
         texte: resume(f.excerpt || f.description, 180),
         // La page d'aperçu porte titre et image ; à défaut, la page réelle.
-        lien: s.prefixe ? `${SITE}/${s.prefixe}/${encodeURIComponent(id)}.html`
-                        : `${SITE}/evenements.html`,
+        lien: s.prefixe ? `${SITE}/${s.prefixe}/${encodeURIComponent(id)}`
+                        : `${SITE}/agenda`,
       });
     }
   }

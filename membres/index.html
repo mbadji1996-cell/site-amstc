@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/index.html">
+<link rel="canonical" href="https://amstc.org/membres/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -127,7 +127,7 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <div class="header-right" id="headerRight" style="display:none;">
       <div class="avatar" id="avatarEl">?</div>
       <button class="signout-btn" id="signoutBtn">Se déconnecter</button>
@@ -137,24 +137,24 @@
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab active" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab active" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -178,7 +178,7 @@
 
     <div id="adminSection" style="display:none;margin-bottom:32px;">
       <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
-      <a class="admin-card" href="admin.html" style="max-width:360px;">
+      <a class="admin-card" href="admin" style="max-width:360px;">
         <div class="admin-card-icon" style="background:rgba(248,183,24,0.15);color:var(--text-accent);"><i class="ti ti-shield-lock"></i></div>
         <div>
           <p class="admin-card-label">Centre d'administration</p>
@@ -193,7 +193,7 @@
       <div class="espaces-grid">
 
         <!-- En tête, toujours : c'est la raison première de venir ici. -->
-        <a class="espace-card" href="profil.html">
+        <a class="espace-card" href="profil">
           <div class="espace-icon"><i class="ti ti-id-badge"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Carte de membre et Cotisations</p>
@@ -206,7 +206,7 @@
              que réafficher ces quatre choix : un palier de plus pour rien.
              Les destinations sont donc remontées ici. La page formations.html
              reste en place, l'onglet du haut y conduit toujours. -->
-        <a class="espace-card" href="daara.html" data-espace="formations">
+        <a class="espace-card" href="daara" data-espace="formations">
           <div class="espace-icon"><i class="ti ti-book"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Espace Daara</p>
@@ -215,7 +215,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="medical.html" data-espace="formations">
+        <a class="espace-card" href="medical" data-espace="formations">
           <div class="espace-icon"><i class="ti ti-stethoscope"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Enseignements Médicaux</p>
@@ -224,7 +224,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="formations-cms.html" data-espace="formations">
+        <a class="espace-card" href="formations-cms" data-espace="formations">
           <div class="espace-icon"><i class="ti ti-notebook"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Autres formations</p>
@@ -236,7 +236,7 @@
         <!-- Pas de page Quiz autonome : ils vivent dans les Enseignements
              Médicaux, par catégorie. Le paramètre vue=quiz ouvre la première
              catégorie qui en contient et fait défiler jusqu'à eux. -->
-        <a class="espace-card" href="medical.html?vue=quiz" data-espace="formations">
+        <a class="espace-card" href="medical?vue=quiz" data-espace="formations">
           <div class="espace-icon"><i class="ti ti-rosette"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Quiz</p>
@@ -245,7 +245,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="bibliotheque.html" data-espace="bibliotheque">
+        <a class="espace-card" href="bibliotheque" data-espace="bibliotheque">
           <div class="espace-icon"><i class="ti ti-books"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Bibliothèque</p>
@@ -254,7 +254,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="actualites.html" data-espace="realisations">
+        <a class="espace-card" href="actualites" data-espace="realisations">
           <div class="espace-icon"><i class="ti ti-building-community"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Réalisations</p>
@@ -263,7 +263,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="documents.html" data-espace="documents">
+        <a class="espace-card" href="documents" data-espace="documents">
           <div class="espace-icon"><i class="ti ti-file-text"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Documents officiels</p>
@@ -272,7 +272,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="boutique.html">
+        <a class="espace-card" href="boutique">
           <div class="espace-icon"><i class="ti ti-shopping-bag"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Boutique AMSTC</p>
@@ -281,7 +281,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="collectes.html">
+        <a class="espace-card" href="collectes">
           <div class="espace-icon"><i class="ti ti-heart-handshake"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Collectes</p>
@@ -290,7 +290,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="forum.html">
+        <a class="espace-card" href="forum">
           <div class="espace-icon"><i class="ti ti-messages"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Forum</p>
@@ -299,7 +299,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="annuaire.html">
+        <a class="espace-card" href="annuaire">
           <div class="espace-icon"><i class="ti ti-address-book"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Annuaire</p>
@@ -308,7 +308,7 @@
           <i class="ti ti-arrow-right espace-fleche"></i>
         </a>
 
-        <a class="espace-card" href="mediatheque.html">
+        <a class="espace-card" href="mediatheque">
           <div class="espace-icon"><i class="ti ti-photo"></i></div>
           <div class="espace-body">
             <p class="espace-titre">Médiathèque</p>
@@ -324,7 +324,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <div class="ann-overlay" id="annOverlay">
@@ -382,11 +382,11 @@
     const el = document.getElementById("cardStatusBanner");
     if (state === "grace") {
       el.className = "card-status-banner";
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = "";
     } else if (state === "blocked") {
       el.className = "card-status-banner blocked";
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux formations et documents réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux formations et documents réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = "";
     } else {
       el.style.display = "none";
@@ -412,12 +412,12 @@
     el.innerHTML = '<p class="card-status-banner-text"><strong>Votre profil est incomplet.</strong> Il manque : '
       + esc(manquants.join(", "))
       + '. Un profil complet rend votre carte de membre et l\'annuaire plus utiles.</p>'
-      + '<a class="btn-renew-link" href="profil.html">Compléter mon profil →</a>';
+      + '<a class="btn-renew-link" href="profil">Compléter mon profil →</a>';
     el.style.display = "";
   }
 
   (async () => {
-    const result = await requireActiveMember("connexion.html");
+    const result = await requireActiveMember("connexion");
     if (!result) return;
     const profile = result.profile;
 
@@ -490,7 +490,7 @@
   });
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
-    await signOut(); window.location.href = "connexion.html";
+    await signOut(); window.location.href = "connexion";
   });
 </script>
 

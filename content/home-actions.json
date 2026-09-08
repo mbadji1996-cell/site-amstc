@@ -7,31 +7,31 @@
       "title": "Campagnes de consultations médicales gratuites",
       "text": "Consultations et sensibilisation, avec suivi numérique via notre espace dédié.",
       "tag": "Médical",
-      "href": "actualites.html"
+      "href": "actualites"
     },
     {
       "title": "Couvertures sanitaires d'événements",
       "text": "Présence médicale lors de grands rassemblements religieux (Ex : Gamou de Tivaouane).",
       "tag": "Médical",
-      "href": "actualites.html"
+      "href": "actualites"
     },
     {
       "title": "Dons de sang, médicaments et denrées",
       "text": "Collectes régulières et actions humanitaires ponctuelles.",
       "tag": "Social",
-      "href": "actualites.html"
+      "href": "actualites"
     },
     {
       "title": "Enseignements post-universitaires (EPU)",
       "text": "Conférences médicales ouvertes, animées par des professeurs et spécialistes.",
       "tag": "Formation",
-      "href": "formations.html"
+      "href": "formations"
     },
     {
       "title": "Renforcement de compétences et développement personnel",
       "text": "Ateliers et formations internes destinés aux membres de l'association.",
       "tag": "Formation",
-      "href": "formations.html"
+      "href": "formations"
     }
   ]
 }

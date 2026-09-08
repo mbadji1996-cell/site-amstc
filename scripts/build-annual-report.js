@@ -128,7 +128,7 @@ const html = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapport annuel</p>
     <h1>Bilan des réalisations ${year}</h1>
     <p>${yearItems.length} réalisation${yearItems.length > 1 ? 's' : ''} - Association Médico-Sociale des Talibés Cheikh</p>
@@ -136,7 +136,7 @@ const html = `<!DOCTYPE html>
 </header>
 
 <div class="wrap">
-  <a class="back" href="index.html">← Retour aux bilans annuels</a>
+  <a class="back" href="./">← Retour aux bilans annuels</a>
   <div class="toolbar" id="printToolbar" style="display:none;">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
   </div>
@@ -219,16 +219,16 @@ const indexHtml = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapports</p>
     <h1>Bilans annuels</h1>
   </div>
 </header>
 
 <div class="wrap">
-  <a class="back" href="../actualites.html">← Retour aux réalisations</a>
+  <a class="back" href="../actualites">← Retour aux réalisations</a>
   <div class="year-list">
-${years.map(y => `    <a class="year-card" href="${y}.html">Bilan ${y} <span>Voir →</span></a>`).join('\n')}
+${years.map(y => `    <a class="year-card" href="${y}">Bilan ${y} <span>Voir →</span></a>`).join('\n')}
   </div>
 </div>
 

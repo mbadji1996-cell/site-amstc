@@ -37,11 +37,19 @@ try {
  */
 function urlConnexionAvecRetour(redirectTo) {
   try {
-    const fichier = window.location.pathname.split("/").pop();
-    if (!fichier || !/^[\w-]+\.html$/.test(fichier)) return redirectTo;
+    // Chemin depuis la racine du site, et non le seul nom de fichier :
+    // une page de l'espace membres et une page publique portent toutes
+    // deux un nom simple, et « article » renvoyé sans son dossier était
+    // relu depuis /membres/ - donc introuvable.
+    const chemin = window.location.pathname.replace(/^\/+/, "");
+    // Un seul niveau de dossier, un nom, rien d'autre : ni « .. », ni
+    // « // », ni schéma. L'extension est acceptée mais plus produite -
+    // un ancien favori en « .html » doit continuer de marcher.
+    if (!/^(?:[\w-]+\/)?[\w-]+(?:\.html)?$/.test(chemin)) return redirectTo;
     // La page de connexion elle-même ne se mémorise pas : on tournerait en rond.
-    if (fichier === "connexion.html" || fichier === "inscription.html") return redirectTo;
-    const suite = fichier + window.location.search;
+    const nom = chemin.split("/").pop().replace(/\.html$/, "");
+    if (nom === "connexion" || nom === "inscription") return redirectTo;
+    const suite = chemin + window.location.search;
     const separateur = redirectTo.includes("?") ? "&" : "?";
     return redirectTo + separateur + "suite=" + encodeURIComponent(suite);
   } catch (e) {
@@ -69,7 +77,7 @@ async function getCurrentProfile() {
  * Protège une page membre : redirige vers la connexion si personne n'est
  * connecté ou si le compte n'est pas encore approuvé.
  */
-async function requireApprovedMember(redirectTo = "connexion.html") {
+async function requireApprovedMember(redirectTo = "connexion") {
   const profile = await getCurrentProfile();
   if (!profile || profile.status !== "approved" || profile.is_active === false) {
     window.location.href = urlConnexionAvecRetour(redirectTo);
@@ -90,8 +98,13 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
     || !String(profile.city || "").trim()
     || !String(profile.photo_url || "").trim()
     || (profile.domain === "autre" && !String(profile.domain_autre || "").trim());
-  if (incomplet && !window.location.pathname.endsWith("profil.html")) {
-    window.location.href = "profil.html?completer=1";
+  // Le dernier segment, extension retirée : la page répond aussi bien à
+  // /membres/profil qu'à /membres/profil.html (ancien favori), et un
+  // simple endsWith("profil") manquerait la seconde forme - la boucle de
+  // complétion se refermerait sur elle-même.
+  const pageCourante = window.location.pathname.split("/").pop().replace(/\.html$/, "");
+  if (incomplet && pageCourante !== "profil") {
+    window.location.href = "profil?completer=1";
     return null;
   }
   return profile;
@@ -101,7 +114,7 @@ async function requireApprovedMember(redirectTo = "connexion.html") {
  * Protège une page d'administration : redirige si le compte connecté n'a
  * pas le rôle admin/super_admin.
  */
-async function requireAdmin(redirectTo = "connexion.html") {
+async function requireAdmin(redirectTo = "connexion") {
   const profile = await getCurrentProfile();
   if (!profile || !["admin", "super_admin"].includes(profile.role) || profile.is_active === false) {
     window.location.href = urlConnexionAvecRetour(redirectTo);
@@ -113,7 +126,7 @@ async function requireAdmin(redirectTo = "connexion.html") {
 /**
  * Protège une page réservée au Super Administrateur uniquement.
  */
-async function requireSuperAdmin(redirectTo = "connexion.html") {
+async function requireSuperAdmin(redirectTo = "connexion") {
   const profile = await getCurrentProfile();
   if (!profile || profile.role !== "super_admin" || profile.is_active === false) {
     window.location.href = urlConnexionAvecRetour(redirectTo);
@@ -165,7 +178,7 @@ function cardActiveState(profile, restrictionActive) {
  * des contenus réservés se gère page par page (message explicite), pas par
  * une redirection globale.
  */
-async function requireActiveMember(redirectTo = "connexion.html") {
+async function requireActiveMember(redirectTo = "connexion") {
   const profile = await requireApprovedMember(redirectTo);
   if (!profile) return null;
   const restrictionActive = await isCardRestrictionActive();

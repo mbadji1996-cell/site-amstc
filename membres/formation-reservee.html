@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formation réservée - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/formation-reservee.html">
+<link rel="canonical" href="https://amstc.org/membres/formation-reservee">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -67,36 +67,36 @@
 
 <header>
   <div class="header-wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien active" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien active" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap">
-  <a class="back" href="formations-cms.html">← Toutes les formations</a>
+  <a class="back" href="formations-cms">← Toutes les formations</a>
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
@@ -104,7 +104,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -126,7 +126,7 @@
 
   function cardStatusBannerHtml(state) {
     if (state === "grace") {
-      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a></div>';
     }
     return "";
   }
@@ -137,7 +137,7 @@
     if (!id) { content.innerHTML = "<p>Article introuvable.</p>"; return; }
 
     if (blocked) {
-      content.innerHTML = '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce contenu réservé n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+      content.innerHTML = '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce contenu réservé n\'est plus accessible.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a></div>';
       return;
     }
 
@@ -167,7 +167,7 @@
   }
 
   (async () => {
-    const result = await requireActiveMember("connexion.html");
+    const result = await requireActiveMember("connexion");
     if (!result) return;
     document.getElementById("signoutBtn").style.display = "";
     loadArticle(result.state === "blocked", result.state);
@@ -175,7 +175,7 @@
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
-    window.location.href = "connexion.html";
+    window.location.href = "connexion";
   });
 </script>
 

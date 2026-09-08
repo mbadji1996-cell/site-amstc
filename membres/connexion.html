@@ -12,7 +12,7 @@
 <title>Connexion - Espace Membres - AMSTC</title>
 <meta name="description" content="Connectez-vous à l'espace membres de l'AMSTC.">
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/connexion.html">
+<link rel="canonical" href="https://amstc.org/membres/connexion">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -76,12 +76,12 @@
 
 <header>
   <div class="header-wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 
 <div class="wrap">
-  <a class="back" href="../index.html">← Retour à l'accueil</a>
+  <a class="back" href="../">← Retour à l'accueil</a>
 
   <p class="eyebrow">Espace Membres</p>
   <h1>Connexion</h1>
@@ -123,12 +123,12 @@
 
   <div class="form-message" id="googleMessage"></div>
 
-  <p class="alt-link" style="margin-top:24px;"><a href="mot-de-passe-oublie.html">Mot de passe oublié ?</a></p>
-  <p class="alt-link">Pas encore de compte ? <a href="inscription.html">S'inscrire</a></p>
+  <p class="alt-link" style="margin-top:24px;"><a href="mot-de-passe-oublie">Mot de passe oublié ?</a></p>
+  <p class="alt-link">Pas encore de compte ? <a href="inscription">S'inscrire</a></p>
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -167,9 +167,11 @@
    *
    * Le contenu est traité comme hostile : il vient de la barre d'adresse et
    * pourrait servir à renvoyer quelqu'un vers un site tiers depuis un lien
-   * d'apparence légitime. On n'accepte donc qu'un nom de fichier de
-   * l'espace membres, éventuellement suivi d'une requête - jamais de
-   * chemin, de « // », ni de schéma.
+   * d'apparence légitime. On n'accepte donc qu'un chemin d'UN seul niveau
+   * de dossier, éventuellement suivi d'une requête - jamais de « .. », de
+   * « // », ni de schéma. La destination est ensuite lue depuis la RACINE
+   * du site, et non depuis /membres/ : une réalisation réservée renvoie
+   * « article?slug=… », qui vit à la racine.
    */
   const CLE_SUITE = "amstc-suite-connexion";
 
@@ -180,10 +182,13 @@
     if (!brut) { try { brut = sessionStorage.getItem(CLE_SUITE); } catch (e) { brut = null; } }
     try { sessionStorage.removeItem(CLE_SUITE); } catch (e) { /* stockage indisponible */ }
 
-    if (!brut) return "index.html";
-    if (!/^[\w-]+\.html(\?[^#\s]*)?$/.test(brut)) return "index.html";
-    if (brut.startsWith("connexion.html")) return "index.html";
-    return brut;
+    if (!brut) return "./";
+    // L'extension reste acceptée sans être produite : un lien de partage
+    // envoyé avant ce changement porte encore « .html ».
+    if (!/^(?:[\w-]+\/)?[\w-]+(?:\.html)?(\?[^#\s]*)?$/.test(brut)) return "./";
+    const nom = brut.split("?")[0].split("/").pop().replace(/\.html$/, "");
+    if (nom === "connexion") return "./";
+    return "/" + brut;
   }
 
   // Vérifie le profil et redirige ou affiche le message d'erreur approprié.
@@ -201,7 +206,7 @@
     if (!String(profile.first_name || "").trim() || !String(profile.last_name || "").trim()
       || !String(profile.phone || "").trim() || !String(profile.domain || "").trim()
       || !String(profile.city || "").trim()) {
-      window.location.href = "inscription.html";
+      window.location.href = "inscription";
       return true;
     }
     if (profile.status === "pending") {
@@ -308,7 +313,7 @@
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin + "/membres/connexion.html",
+        redirectTo: window.location.origin + "/membres/connexion",
         // Google garde sa propre session dans le navigateur, indépendante de
         // Supabase : sans ce paramètre, se déconnecter puis recliquer ici
         // ré-authentifie silencieusement le même compte Google au lieu de

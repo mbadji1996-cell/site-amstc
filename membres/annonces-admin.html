@@ -104,31 +104,31 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab active" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab active" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -136,7 +136,7 @@
 
 <div class="wrap" id="pageContent" style="display:none;">
   <div class="page-header">
-    <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+    <a class="back" href="admin"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
     <h1 class="page-title">Annonces</h1>
     <p class="page-sub">Créez des annonces pour les membres. Jusqu'à 3 peuvent être épinglées : elles s'affichent alors dans une fenêtre à chaque connexion, pour être sûr qu'elles ne passent pas inaperçues.</p>
   </div>
@@ -189,7 +189,7 @@
   let selectedImageFile = null;
 
   (async () => {
-    const profile = await requireAdmin('connexion.html');
+    const profile = await requireAdmin('connexion');
     if (!profile) return;
     currentProfile = profile;
 
@@ -458,7 +458,7 @@
   });
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
-    await signOut(); window.location.href = 'connexion.html';
+    await signOut(); window.location.href = 'connexion';
   });
 </script>
 

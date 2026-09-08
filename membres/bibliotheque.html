@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bibliothèque - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/bibliotheque.html">
+<link rel="canonical" href="https://amstc.org/membres/bibliotheque">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -166,36 +166,36 @@
 
 <header>
   <div class="header-wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien active" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien active" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap">
-  <a class="back" href="formations.html">← Formations</a>
+  <a class="back" href="formations">← Formations</a>
   <p class="eyebrow">Espace Membres - Formations & Daara</p>
   <h1><i class="ti ti-books"></i> Bibliothèque</h1>
   <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Ce contenu n'est pas téléchargeable.</p>
@@ -212,7 +212,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -249,11 +249,11 @@
     const el = document.getElementById("cardStatusBanner");
     if (state === "grace") {
       el.className = "card-status-banner";
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = "";
     } else if (state === "blocked") {
       el.className = "card-status-banner blocked";
-      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux contenus réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a>';
+      el.innerHTML = '<p class="card-status-banner-text"><strong>Accès aux contenus réservés suspendu.</strong> Votre carte est expirée depuis plus de 2 mois.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a>';
       el.style.display = "";
     } else {
       el.style.display = "none";
@@ -500,12 +500,12 @@
    * l'espace membres ; le destinataire se connecte, le document s'ouvre.
    */
   async function partagerLivre(btn) {
-    const direct = location.origin + "/membres/bibliotheque.html?doc=" + encodeURIComponent(btn.dataset.id);
+    const direct = location.origin + "/membres/bibliotheque?doc=" + encodeURIComponent(btn.dataset.id);
     // La page d'apercu (/b/) porte le titre et la couverture dans les
     // messageries. Pas encore generee - document tout juste publie - ou
     // script phase76 pas execute : le lien direct part a la place, il
     // fonctionne dans tous les cas.
-    const apercu = location.origin + "/b/" + encodeURIComponent(btn.dataset.id) + ".html";
+    const apercu = location.origin + "/b/" + encodeURIComponent(btn.dataset.id);
     const adresse = (await partageDisponible(apercu)) ? apercu : direct;
     const etat = await partagerAdresse(adresse, btn.dataset.titre);
     if (etat === "partage" || etat === "annule") return;
@@ -565,7 +565,7 @@
   }
 
   (async () => {
-    const result = await requireActiveMember("connexion.html");
+    const result = await requireActiveMember("connexion");
     if (!result) return;
     document.getElementById("signoutBtn").style.display = "";
     document.getElementById("loadingMsg").style.display = "none";
@@ -583,7 +583,7 @@
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
-    window.location.href = "connexion.html";
+    window.location.href = "connexion";
   });
 
   // Echap ferme le document en lecture, comme on l'attend d'un plein

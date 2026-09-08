@@ -18,12 +18,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projet - AMSTC</title>
 <meta name="description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
-<link rel="canonical" href="https://amstc.org/projets.html" id="canonical">
+<link rel="canonical" href="https://amstc.org/projets" id="canonical">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Projet - AMSTC" id="og-title">
 <meta property="og:description" content="Projets de l'AMSTC - Association Médico-Sociale des Talibés Cheikh." id="og-desc">
-<meta property="og:url" content="https://amstc.org/projets.html" id="og-url">
+<meta property="og:url" content="https://amstc.org/projets" id="og-url">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -103,11 +103,11 @@
 <body>
 <header>
   <div class="header-wrap">
-    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="./"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="projets.html">← Tous les projets</a>
+  <a class="back" href="projets">← Tous les projets</a>
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
     <p>Chargement…</p>
@@ -212,7 +212,7 @@
         document.title = "Projet introuvable - AMSTC";
         content.innerHTML = `<h1>Ce projet n'existe pas ou plus.</h1>
           <p>Le lien est peut-être ancien, ou le contenu a été retiré.</p>
-          <p><a href="projets.html">Tous les projets &rarr;</a></p>`;
+          <p><a href="projets">Tous les projets &rarr;</a></p>`;
         return;
       }
       const raw = await res.text();
@@ -263,7 +263,7 @@
       document.getElementById("etapes-timeline").innerHTML = etapes.map((e, i) => `
         <div class="etape-item">
           <div class="etape-dot">${i + 1}</div>
-          <a class="etape-card" href="etape.html?slug=${encodeURIComponent(e.slug)}">
+          <a class="etape-card" href="etape?slug=${encodeURIComponent(e.slug)}">
             <span class="etape-date">${formatDatePeriode(e)}</span>
             <h3>${esc(e.title || 'Sans titre')}</h3>
             <p>${esc(e.excerpt || '')}</p>

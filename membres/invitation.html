@@ -56,7 +56,7 @@
 </head>
 <body>
 
-<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+<header><div class="header-inner"><a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
 
 <div class="wrap">
   <p class="loading" id="chargement">Vérification de votre invitation…</p>
@@ -91,7 +91,7 @@
       <div class="msg" id="cMsg"></div>
     </div>
 
-    <p class="intro" style="font-size:0.85rem;">Vous avez déjà un compte ? <a href="connexion.html">Connectez-vous</a>.</p>
+    <p class="intro" style="font-size:0.85rem;">Vous avez déjà un compte ? <a href="connexion">Connectez-vous</a>.</p>
   </div>
 
   <div id="erreurBloc" style="display:none;">
@@ -100,13 +100,13 @@
     <div class="card">
       <p style="font-size:0.9rem;color:var(--text-muted);">
         Contactez l'administration de l'AMSTC pour recevoir un nouveau lien, ou
-        <a href="inscription.html">créez un compte normalement</a> - vous pourrez réclamer votre carte ensuite.
+        <a href="inscription">créez un compte normalement</a> - vous pourrez réclamer votre carte ensuite.
       </p>
     </div>
   </div>
 </div>
 
-<footer><a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a></footer>
+<footer><a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/localites.js"></script>
@@ -230,7 +230,7 @@
     // L'écran obligatoire d'inscription.html prend le relais : photo,
     // titre, téléphone, domaine. Inutile de le dupliquer ici.
     message("Compte activé. Encore quelques informations…", "ok");
-    window.location.href = "inscription.html";
+    window.location.href = "inscription";
   }
 
   (async () => {

@@ -133,35 +133,35 @@
 </head>
 <body>
 
-<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+<header><div class="header-inner"><a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap"><p class="loading" id="loadingMsg">Vérification de vos droits…</p></div>
 
 <div class="wrap" id="pageContent" style="display:none;">
-  <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+  <a class="back" href="admin"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
   <div class="entete">
     <h1>Inscriptions aux activités</h1>
     <button class="btn btn-primary" id="btnNouvelle"><i class="ti ti-plus"></i> Nouvelle activité</button>
@@ -265,7 +265,7 @@
         +   '<button class="btn btn-ligne btn-sm" data-bascule="' + a.id + '">'
         +     (a.is_open ? '<i class="ti ti-lock"></i> Clore les inscriptions'
                          : '<i class="ti ti-lock-open"></i> Rouvrir') + '</button>'
-        +   '<a class="btn btn-ligne btn-sm" href="../activites.html?id=' + a.id + '" target="_blank" rel="noopener">'
+        +   '<a class="btn btn-ligne btn-sm" href="../activites?id=' + a.id + '" target="_blank" rel="noopener">'
         +     '<i class="ti ti-external-link"></i> Page publique</a>'
         +   '<button class="btn btn-danger btn-sm" data-supprimer="' + a.id + '">'
         +     '<i class="ti ti-trash"></i> Supprimer</button>'
@@ -699,7 +699,7 @@
   }
 
   (async () => {
-    const profile = await requireAdmin('connexion.html');
+    const profile = await requireAdmin('connexion');
     if (!profile) return;
     $('loadingMsg').style.display = 'none';
     $('pageContent').style.display = '';

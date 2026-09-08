@@ -58,7 +58,9 @@ function esc(v: unknown): string {
 // L'admin choisit la page de retour, mais on ne relaie pas n'importe quelle
 // URL : un lien de récupération pointant vers un domaine tiers y enverrait
 // le jeton du membre.
-const REDIRECT_ALLOWED = /^https?:\/\/[^\/]+\/(?:[^?#]*\/)?reinitialiser\.html$/;
+// L'extension est devenue facultative le jour où les adresses du site l'ont
+// perdue : la page répond aux deux formes, le filtre doit en faire autant.
+const REDIRECT_ALLOWED = /^https?:\/\/[^\/]+\/(?:[^?#]*\/)?reinitialiser(?:\.html)?$/;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });

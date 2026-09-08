@@ -121,31 +121,31 @@
 
 <header>
   <div class="header-inner">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien active" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien active" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
@@ -156,7 +156,7 @@
 
   <div id="pageContent" style="display:none;">
     <div class="course-header">
-      <a class="back" href="daara.html"><i class="ti ti-arrow-left"></i> Retour au Daara</a>
+      <a class="back" href="daara"><i class="ti ti-arrow-left"></i> Retour au Daara</a>
       <div class="cat-pill" id="catPill"><i class="ti ti-book"></i> <span id="catLabel">Islam</span></div>
       <h1 id="courseTitle">Titre du cours</h1>
       <div class="course-meta-row">
@@ -196,7 +196,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -213,15 +213,15 @@
 
   function cardStatusBannerHtml(state) {
     if (state === 'grace') {
-      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>';
+      return '<div class="card-status-banner"><p class="card-status-banner-text"><strong>Votre carte a expiré.</strong> Renouvelez avant le 1er mars pour garder l\'accès aux contenus réservés.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a></div>';
     }
     return '';
   }
 
   (async () => {
-    if (!courseId) { location.href = 'daara.html'; return; }
+    if (!courseId) { location.href = 'daara'; return; }
 
-    const result = await requireActiveMember('connexion.html');
+    const result = await requireActiveMember('connexion');
     if (!result) return;
     const profile = result.profile;
 
@@ -234,7 +234,7 @@
       document.getElementById('courseContent').innerHTML = '';
       document.getElementById('courseTitle').textContent = 'Cours verrouillé';
       document.querySelector('.progress-card').style.display = 'none';
-      document.getElementById('courseContent').insertAdjacentHTML('beforebegin', '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce cours n\'est plus accessible.</p><a class="btn-renew-link" href="profil.html?open=validity">Renouveler ma carte →</a></div>');
+      document.getElementById('courseContent').insertAdjacentHTML('beforebegin', '<div class="card-status-banner blocked"><p class="card-status-banner-text"><strong>Accès suspendu.</strong> Votre carte est expirée depuis plus de 2 mois : ce cours n\'est plus accessible.</p><a class="btn-renew-link" href="profil?open=validity">Renouveler ma carte →</a></div>');
       return;
     }
 
@@ -243,7 +243,7 @@
       supabaseClient.from('daara_progress').select('*').eq('user_id', currentUserId).eq('course_id', courseId).single()
     ]);
 
-    if (!courseRes.data) { location.href = 'daara.html'; return; }
+    if (!courseRes.data) { location.href = 'daara'; return; }
 
     const course = courseRes.data;
     const prog = progressRes.data || {};
@@ -369,7 +369,7 @@
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut();
-    window.location.href = 'connexion.html';
+    window.location.href = 'connexion';
   });
 </script>
 

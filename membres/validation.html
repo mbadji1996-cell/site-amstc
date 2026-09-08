@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestion des membres - Espace Membres - AMSTC</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://amstc.org/membres/validation.html">
+<link rel="canonical" href="https://amstc.org/membres/validation">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
@@ -155,36 +155,36 @@
 
 <header>
   <div class="header-wrap">
-    <a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
 
 <nav class="member-tabs">
   <div class="member-tabs-inner">
-    <a class="member-tab active" href="index.html">Tableau de bord</a>
-    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <a class="member-tab active" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <div class="member-groupe">
       <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
       <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations.html">Formations</a>
-        <a class="member-sous-lien" href="daara.html">Daara</a>
-        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
-        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
       </div>
     </div>
-    <a class="member-tab" href="actualites.html">Réalisations</a>
-    <a class="member-tab" href="documents.html">Documents officiels</a>
-    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
-    <a class="member-tab" href="collectes.html">Collectes</a>
-    <a class="member-tab" href="forum.html">Forum</a>
-    <a class="member-tab" href="annuaire.html">Annuaire</a>
-    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
   </div>
 </nav>
 
 <div class="wrap" id="pageContent" style="display:none;">
-  <a class="back" href="admin.html">← Centre d'administration</a>
+  <a class="back" href="admin">← Centre d'administration</a>
   <p class="eyebrow">Espace Membres - Administration</p>
   <h1>Gestion des membres</h1>
   <p class="intro">Approuvez les inscriptions, gérez les comptes et (si vous êtes Super Administrateur) les droits d'administration.</p>
@@ -270,7 +270,7 @@
 </div>
 
 <footer>
-  <a href="../index.html">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+  <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1670,7 +1670,9 @@
     const { data, error } = await supabaseClient.functions.invoke('admin-reset-link', {
       body: {
         member_id: memberId,
-        redirect_to: window.location.origin + window.location.pathname.replace("validation.html", "reinitialiser.html"),
+        // Dernier segment remplacé, sans dépendre de l'extension : même
+        // adresse de retour que la page « mot de passe oublié ».
+        redirect_to: window.location.origin + window.location.pathname.replace(/[^/]*$/, "reinitialiser"),
       },
     });
 
@@ -1848,7 +1850,7 @@
   }
 
   (async () => {
-    const profile = await requireAdmin("connexion.html");
+    const profile = await requireAdmin("connexion");
     if (!profile) return;
 
     currentUserId = profile.id;
@@ -1863,7 +1865,7 @@
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
-    window.location.href = "connexion.html";
+    window.location.href = "connexion";
   });
 
 </script>

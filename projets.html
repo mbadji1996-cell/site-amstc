@@ -16,13 +16,13 @@
 <script src="assets/js/pwa-register.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projets - AMSTC</title>
-<link rel="canonical" href="https://amstc.org/projets.html">
+<link rel="canonical" href="https://amstc.org/projets">
 <meta name="description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Projets - AMSTC">
 <meta property="og:description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
-<meta property="og:url" content="https://amstc.org/projets.html">
+<meta property="og:url" content="https://amstc.org/projets">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -69,11 +69,11 @@
 <body>
 <header>
   <div class="wrap">
-    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="./"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <a class="back" href="./">← Retour à l'accueil</a>
   <h1>Projets</h1>
   <noscript><p class="error">L'affichage des projets nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="grid" class="grid">
@@ -103,7 +103,7 @@
       }
 
       grid.innerHTML = articles.map(a => `
-        <a class="card" href="projet.html?slug=${encodeURIComponent(a.slug)}">
+        <a class="card" href="projet?slug=${encodeURIComponent(a.slug)}">
           ${a.statut ? `<span class="status-badge statut-${slugifyStatut(a.statut)}">${esc(a.statut)}</span>` : ""}
           ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
           <div class="card-body">

@@ -3,7 +3,7 @@
   "short_name": "AMSTC",
   "description": "Association Médico-Sociale des Talibés Cheikh - consultations gratuites, formations, projets et vie associative.",
   "lang": "fr",
-  "start_url": "/index.html",
+  "start_url": "/",
   "scope": "/",
   "id": "/index.html",
   "display": "standalone",

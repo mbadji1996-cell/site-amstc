@@ -16,13 +16,13 @@
 <script src="assets/js/pwa-register.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda - AMSTC</title>
-<link rel="canonical" href="https://amstc.org/agenda.html">
+<link rel="canonical" href="https://amstc.org/agenda">
 <meta name="description" content="Le calendrier de l'AMSTC - nos événements à venir, nos réalisations, formations et projets, mois par mois.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Agenda - AMSTC">
 <meta property="og:description" content="Le calendrier de l'AMSTC - nos événements à venir, nos réalisations, formations et projets, mois par mois.">
-<meta property="og:url" content="https://amstc.org/agenda.html">
+<meta property="og:url" content="https://amstc.org/agenda">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -191,11 +191,11 @@
 <body>
 <header>
   <div class="wrap">
-    <a href="index.html"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="./"><img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
   </div>
 </header>
 <div class="wrap">
-  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <a class="back" href="./">← Retour à l'accueil</a>
   <h1>Agenda</h1>
   <p class="page-sub">Nos événements, réalisations, formations et projets, mois par mois.</p>
 
@@ -250,9 +250,9 @@
 <script>
   const SOURCES = [
     { type: 'evenements', label: 'Événement',  page: '',                file: 'content/evenements-index.json' },
-    { type: 'actualites', label: 'Réalisation', page: 'article.html',   file: 'content/actualites-index.json' },
-    { type: 'formations', label: 'Formation',   page: 'formation.html', file: 'content/formations-index.json' },
-    { type: 'projets',    label: 'Projet',      page: 'projet.html',    file: 'content/projets-index.json' },
+    { type: 'actualites', label: 'Réalisation', page: 'article',   file: 'content/actualites-index.json' },
+    { type: 'formations', label: 'Formation',   page: 'formation', file: 'content/formations-index.json' },
+    { type: 'projets',    label: 'Projet',      page: 'projet',    file: 'content/projets-index.json' },
   ];
   const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
   const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -529,7 +529,7 @@
         excerpt: [e.sous_titre, jours].filter(Boolean).join(' - '),
         image: e.image || '',
         // Sans lien explicite, l'agenda pointe vers le bandeau de l'accueil.
-        lien: e.lien || 'index.html#evenement-phare',
+        lien: e.lien || './#evenement-phare',
         slug: 'evenement-phare',
       }];
     } catch (err) {

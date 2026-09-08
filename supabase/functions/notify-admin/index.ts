@@ -89,7 +89,7 @@ function buildEmail(
           ${data.doublon ? `<p style="background:#FDEEEE;border-left:3px solid #C0392B;padding:10px 14px;color:#8A2C2C;">
             <strong>Doublon probable</strong> - ${esc(data.doublon)}. Vérifiez avant d'approuver : s'il s'agit
             de la même personne, refusez cette inscription et invitez-la à se connecter avec son compte existant.</p>` : ""}
-          <p>À valider dans membres/validation.html.</p>
+          <p>À valider dans membres/validation.</p>
         `,
       };
     }
@@ -103,7 +103,7 @@ function buildEmail(
             <li><strong>Carte réclamée :</strong> ${esc(data.card_full_name)} - n° ${esc(data.card_number)}</li>
             <li><strong>Ville / membre depuis :</strong> ${esc(data.card_city)} / ${esc(data.card_member_since)}</li>
           </ul>
-          <p>À confirmer dans membres/cartes-admin.html.</p>
+          <p>À confirmer dans membres/cartes-admin.</p>
         `,
       };
     }
@@ -123,7 +123,7 @@ function buildEmail(
           </ul>
           <p><strong>Articles :</strong></p>
           <ul>${itemsHtml}</ul>
-          <p>À traiter dans membres/boutique-admin.html.</p>
+          <p>À traiter dans membres/boutique-admin.</p>
         `,
       };
     }
@@ -140,7 +140,7 @@ function buildEmail(
           </ul>
           <p><strong>Description :</strong></p>
           <p>${esc(data.description)}</p>
-          <p>À étudier dans membres/demandes-campagnes-admin.html.</p>
+          <p>À étudier dans membres/demandes-campagnes-admin.</p>
         `,
       };
     }
@@ -156,7 +156,7 @@ function buildEmail(
             <li><strong>Titre :</strong> ${esc(data.title)}</li>
           </ul>
           <p><strong>Extrait :</strong> ${esc(excerpt)}${bodyStr.length > 200 ? "…" : ""}</p>
-          <p>Voir membres/forum.html.</p>
+          <p>Voir membres/forum.</p>
         `,
       };
     }
@@ -171,7 +171,7 @@ function buildEmail(
             <li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
             <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>
           </ul>
-          <p>À vérifier puis confirmer dans membres/validation.html &rsaquo; Validité de carte.</p>
+          <p>À vérifier puis confirmer dans membres/validation &rsaquo; Validité de carte.</p>
         `,
       };
     }
@@ -187,7 +187,7 @@ function buildEmail(
             <li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
             <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>
           </ul>
-          <p>À vérifier puis confirmer dans membres/validation.html &rsaquo; Cotisations.</p>
+          <p>À vérifier puis confirmer dans membres/validation &rsaquo; Cotisations.</p>
         `,
       };
     }
@@ -245,7 +245,7 @@ function buildEmail(
             <li><strong>${esc(aRelancer)}</strong> membre(s) à relancer à la main : ils n'ont pas rattaché Telegram</li>
           </ul>
           ${aRelancer > 0
-            ? `<p>Depuis membres/validation.html, le bouton « Prévenir » propose « Carte expirée »
+            ? `<p>Depuis membres/validation, le bouton « Prévenir » propose « Carte expirée »
                  et « Carte à renouveler bientôt » par WhatsApp.</p>`
             : "<p>Rien à faire à la main.</p>"}
         `,
@@ -268,7 +268,7 @@ function buildEmail(
               : `<li><strong>Montant :</strong> ${esc(data.amount_fcfa)} FCFA</li>
                  <li><strong>Paiement :</strong> ${esc(data.payment_method)} - réf. ${esc(data.payment_reference)}</li>`}
           </ul>
-          <p>À traiter dans membres/collectes-admin.html.</p>
+          <p>À traiter dans membres/collectes-admin.</p>
         `,
       };
     }
@@ -288,7 +288,7 @@ function buildEmail(
             <li><strong>Contact :</strong> ${esc(data.contact)}</li>
           </ul>
           ${data.message ? `<p><strong>Message :</strong> ${esc(data.message)}</p>` : ""}
-          <p>À confirmer dans membres/dons-admin.html. La jauge de la page de
+          <p>À confirmer dans membres/dons-admin. La jauge de la page de
           don ne bougera qu'une fois le don confirmé.</p>
         `,
       };
@@ -512,18 +512,18 @@ const SITE = "https://amstc.org";
 // Écran d'administration où traiter chaque type d'événement. Le lien
 // « Voir la fiche » y mène, pour les cas où un clic ne suffit pas.
 const ECRAN_ADMIN: Record<string, string> = {
-  inscription:            "/membres/validation.html",
-  reclamation_carte:      "/membres/cartes-admin.html",
-  achat_boutique:         "/membres/boutique-admin.html",
-  demande_campagne:       "/membres/demandes-campagnes-admin.html",
-  nouveau_sujet_forum:    "/membres/forum.html",
-  paiement_validite:      "/membres/verification-admin.html",
-  paiement_cotisation:    "/membres/verification-admin.html",
-  participation_collecte: "/membres/collectes-admin.html",
-  don_declare:            "/membres/dons-admin.html",
-  rapport_matinal:        "/membres/admin.html",
-  dossiers_oublies:       "/membres/admin.html",
-  cartes_echeance:        "/membres/validation.html",
+  inscription:            "/membres/validation",
+  reclamation_carte:      "/membres/cartes-admin",
+  achat_boutique:         "/membres/boutique-admin",
+  demande_campagne:       "/membres/demandes-campagnes-admin",
+  nouveau_sujet_forum:    "/membres/forum",
+  paiement_validite:      "/membres/verification-admin",
+  paiement_cotisation:    "/membres/verification-admin",
+  participation_collecte: "/membres/collectes-admin",
+  don_declare:            "/membres/dons-admin",
+  rapport_matinal:        "/membres/admin",
+  dossiers_oublies:       "/membres/admin",
+  cartes_echeance:        "/membres/validation",
 };
 
 function boutons(eventType: string, data: Record<string, any>): unknown {
