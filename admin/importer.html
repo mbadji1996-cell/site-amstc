@@ -319,8 +319,11 @@
       const url = URL.createObjectURL(im.blob);
       html = html.split(im.marqueur).join(url);
     }
+    // Le style tient dans le bloc ci-dessous. Une feuille externe était
+    // appelée ici - assets/css/main.css, qui n'a jamais existé dans ce
+    // dépôt : le navigateur la demandait à chaque aperçu et recevait un
+    // 404, sans que rien ne se voie. L'aperçu n'en a jamais dépendu.
     const doc = `<!doctype html><html><head><meta charset="utf-8">
-      <link rel="stylesheet" href="../assets/css/main.css">
       <style>body{margin:0;padding:24px;font-family:Inter,sans-serif;background:#fff;color:#0B2E17}
       .art-body img{max-width:100%;height:auto}</style></head>
       <body><div class="art-body">${html}</div></body></html>`;
