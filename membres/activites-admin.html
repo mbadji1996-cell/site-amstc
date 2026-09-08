@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/defilement.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscriptions aux activités - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#F6F7F1; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.14);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+    --vert-plein:#17763B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:38px;filter:brightness(0) invert(1);}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--text-accent,var(--gold-deep));display:inline-flex;align-items:center;gap:6px;margin:26px 0 8px;}
+  h1{font-family:var(--display);font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700;
+    color:var(--text-heading,var(--green-deep));line-height:1.15;}
+  .page-sub{color:var(--text-muted,#5A6C60);font-size:0.9rem;margin:6px 0 22px;max-width:75ch;}
+  .loading{color:var(--text-muted,#5A6C60);font-family:var(--mono);font-size:0.85rem;padding:60px 0;text-align:center;}
+
+  .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--body);font-size:0.88rem;
+    font-weight:600;padding:10px 18px;border-radius:999px;border:none;cursor:pointer;}
+  .btn-primary{background:var(--vert-plein);color:#fff;}
+  .btn-ligne{background:none;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-sm{font-size:0.78rem;padding:6px 13px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  .carte{background:var(--surface,var(--white));border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;}
+  .carte-titre{font-family:var(--display);font-size:1.08rem;font-weight:600;
+    color:var(--text-heading,var(--green-deep));}
+  .carte-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:0.83rem;
+    color:var(--text-muted,#5A6C60);margin:6px 0 12px;}
+  .carte-meta span{display:inline-flex;align-items:center;gap:5px;}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;}
+
+  .etiq{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;
+    border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--text-muted,#5A6C60);}
+  .etiq-ouvert{border-color:var(--vert-plein);color:var(--vert-plein);}
+  .etiq-ferme{border-color:#B23B3B;color:#B23B3B;}
+  .etiq-membre{border-color:var(--vert-plein);color:var(--vert-plein);}
+
+  .champ{margin-bottom:16px;}
+  .champ label{display:block;font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--text-muted,#5A6C60);margin-bottom:7px;}
+  .champ input, .champ textarea, .champ select{width:100%;border:1.5px solid var(--line);
+    border-radius:8px;padding:10px 13px;font-family:var(--body);font-size:0.92rem;
+    color:var(--ink);background:var(--paper);}
+  .champ textarea{min-height:90px;resize:vertical;}
+  .champ input:focus, .champ textarea:focus, .champ select:focus{outline:none;border-color:var(--green);}
+  .grille{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grille-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .aide{font-size:0.78rem;color:var(--text-muted,#5A6C60);margin-top:-8px;margin-bottom:14px;line-height:1.5;}
+
+  /* Le constructeur de questions : une ligne par question. */
+  .question{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;
+    background:var(--paper);}
+  .question .ligne{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end;}
+  .question .champ{margin-bottom:0;}
+  .q-suppr{background:none;border:none;color:#B23B3B;cursor:pointer;font-size:1.1rem;padding:8px;}
+
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--text-muted,#8A9E8F);padding:10px 12px;text-align:left;
+    border-bottom:1px solid var(--line);background:var(--paper);}
+  td{padding:11px 12px;font-size:0.86rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
+  .table-wrap{background:var(--surface,var(--white));border:1px solid var(--line);
+    border-radius:var(--radius);overflow-x:auto;}
+  .rang{font-family:var(--mono);font-weight:600;}
+  .ligne-attente td{opacity:.72;}
+  .ligne-desiste td{opacity:.5;text-decoration:line-through;}
+  .separateur td{background:var(--paper-alt);font-family:var(--mono);font-size:0.66rem;
+    text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted,#5A6C60);
+    text-align:center;padding:7px;}
+
+  .msg{font-size:0.85rem;margin-top:12px;}
+  .msg.error{color:#B23B3B;}
+  .msg.ok{color:var(--vert-plein);}
+  .vide{text-align:center;color:var(--text-muted,#8A9E8F);font-size:0.88rem;padding:36px 20px;}
+  .vide i{display:block;font-size:28px;opacity:.55;margin-bottom:8px;}
+
+  /* Sous 820 px le tableau des inscrits devient une liste de blocs :
+     huit colonnes dans 360 px seraient tronquees, comme l'etait
+     l'historique des diffusions avant correction. */
+  @media(max-width:820px){
+    .table-wrap{overflow-x:visible;}
+    table, tbody, tr, td{display:block;width:100%;}
+    thead{display:none;}
+    tr{border-bottom:1px solid var(--line);padding:12px 14px;}
+    tr:last-child{border-bottom:none;}
+    td{border:none;padding:3px 0;}
+    td::before{content:attr(data-libelle) ' ';font-family:var(--mono);font-size:0.64rem;
+      text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted,#8A9E8F);}
+    .separateur td{text-align:left;}
+    .separateur td::before{content:none;}
+    .grille, .grille-3{grid-template-columns:1fr;}
+    .question .ligne{grid-template-columns:1fr;}
+  }
+  @media(max-width:560px){ .wrap{padding:0 14px 40px;} }
+</style>
+<script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+</head>
+<body>
+
+<header><div class="header-inner"><a href="../index.html"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a></div></header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab" href="index.html">Tableau de bord</a>
+    <a class="member-tab" href="profil.html">Carte de membre et Cotisations</a>
+    <div class="member-groupe">
+      <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
+      <div class="member-sous-menu">
+        <a class="member-sous-lien" href="formations.html">Formations</a>
+        <a class="member-sous-lien" href="daara.html">Daara</a>
+        <a class="member-sous-lien" href="medical.html">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque.html">Bibliothèque</a>
+      </div>
+    </div>
+    <a class="member-tab" href="actualites.html">Réalisations</a>
+    <a class="member-tab" href="documents.html">Documents officiels</a>
+    <a class="member-tab" href="boutique.html">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes.html">Collectes</a>
+    <a class="member-tab" href="forum.html">Forum</a>
+    <a class="member-tab" href="annuaire.html">Annuaire</a>
+    <a class="member-tab" href="mediatheque.html">Médiathèque</a>
+  </div>
+</nav>
+
+<div class="wrap"><p class="loading" id="loadingMsg">Vérification de vos droits…</p></div>
+
+<div class="wrap" id="pageContent" style="display:none;">
+  <a class="back" href="admin.html"><i class="ti ti-arrow-left"></i> Centre d'administration</a>
+  <div class="entete">
+    <h1>Inscriptions aux activités</h1>
+    <button class="btn btn-primary" id="btnNouvelle"><i class="ti ti-plus"></i> Nouvelle activité</button>
+  </div>
+  <p class="page-sub">Ouvrez les inscriptions à une campagne ou à une activité, et suivez la liste dans l'ordre d'arrivée. Les membres sont prioritaires sur les places qui ne sont pas réservées aux non-membres.</p>
+
+  <!-- Création / modification -->
+  <div id="editeur" style="display:none;"></div>
+
+  <!-- Liste des activités -->
+  <div id="liste"><p class="loading">Chargement…</p></div>
+
+  <!-- Inscrits d'une activité -->
+  <div id="inscrits" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+  let activites = [];
+  let questionsEnCours = [];
+  let activiteOuverte = null;   // celle dont on regarde les inscrits
+  let classementCourant = [];
+
+  const $ = (id) => document.getElementById(id);
+
+  function echapper(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  function dateFr(iso) {
+    if (!iso) return '';
+    return new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR',
+      { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+  function heureFr(iso) {
+    return new Date(iso).toLocaleString('fr-FR',
+      { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ---------- Liste des activités ----------
+  async function chargerActivites() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('activites').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      activites = data || [];
+      rendreListe();
+    } catch (e) {
+      $('liste').innerHTML = '<p class="vide"><i class="ti ti-alert-triangle"></i>'
+        + 'Impossible de charger les activités.</p>';
+    }
+  }
+
+  function rendreListe() {
+    if (!activites.length) {
+      $('liste').innerHTML = '<p class="vide"><i class="ti ti-calendar-plus"></i>'
+        + 'Aucune activité pour le moment.<br>Créez-en une pour ouvrir les inscriptions.</p>';
+      return;
+    }
+    $('liste').innerHTML = activites.map(a => {
+      const membres = a.places === null ? null : Math.max(0, a.places - (a.places_non_membres || 0));
+      return '<div class="carte">'
+        + '<p class="carte-titre">' + echapper(a.titre) + '</p>'
+        + '<p class="carte-meta">'
+        +   '<span class="etiq ' + (a.is_open ? 'etiq-ouvert">Ouverte' : 'etiq-ferme">Fermée') + '</span>'
+        +   (a.date_activite ? '<span><i class="ti ti-calendar"></i>' + dateFr(a.date_activite) + '</span>' : '')
+        +   (a.lieu ? '<span><i class="ti ti-map-pin"></i>' + echapper(a.lieu) + '</span>' : '')
+        +   (a.places
+              ? '<span><i class="ti ti-users"></i>' + a.places + ' places, dont '
+                + (a.places_non_membres || 0) + ' pour les non-membres et ' + membres + ' pour les membres</span>'
+              : '<span><i class="ti ti-infinity"></i>Places illimitées</span>')
+        +   (a.date_limite ? '<span><i class="ti ti-hourglass"></i>Jusqu\'au ' + dateFr(a.date_limite) + '</span>' : '')
+        + '</p>'
+        + '<div class="actions">'
+        +   '<button class="btn btn-primary btn-sm" data-voir="' + a.id + '">'
+        +     '<i class="ti ti-list-numbers"></i> Voir les inscrits</button>'
+        +   '<button class="btn btn-ligne btn-sm" data-modifier="' + a.id + '">'
+        +     '<i class="ti ti-pencil"></i> Modifier</button>'
+        +   '<button class="btn btn-ligne btn-sm" data-bascule="' + a.id + '">'
+        +     (a.is_open ? '<i class="ti ti-lock"></i> Clore les inscriptions'
+                         : '<i class="ti ti-lock-open"></i> Rouvrir') + '</button>'
+        +   '<a class="btn btn-ligne btn-sm" href="../activites.html?id=' + a.id + '" target="_blank" rel="noopener">'
+        +     '<i class="ti ti-external-link"></i> Page publique</a>'
+        + '</div></div>';
+    }).join('');
+
+    $('liste').querySelectorAll('[data-voir]').forEach(b =>
+      b.addEventListener('click', () => voirInscrits(b.dataset.voir)));
+    $('liste').querySelectorAll('[data-modifier]').forEach(b =>
+      b.addEventListener('click', () => ouvrirEditeur(activites.find(a => a.id === b.dataset.modifier))));
+    $('liste').querySelectorAll('[data-bascule]').forEach(b =>
+      b.addEventListener('click', () => basculerOuverture(activites.find(a => a.id === b.dataset.bascule))));
+  }
+
+  async function basculerOuverture(a) {
+    if (!a) return;
+    const action = a.is_open ? 'clore les inscriptions à' : 'rouvrir les inscriptions de';
+    if (!confirm('Voulez-vous ' + action + ' « ' + a.titre + ' » ?')) return;
+    try {
+      await enregistrerActivite({ ...a, is_open: !a.is_open });
+      await chargerActivites();
+    } catch (e) { alert('Impossible de modifier cette activité.'); }
+  }
+
+  // ---------- Éditeur ----------
+  function ouvrirEditeur(a) {
+    const est = a || {};
+    questionsEnCours = Array.isArray(est.questions) ? JSON.parse(JSON.stringify(est.questions)) : [];
+    $('inscrits').style.display = 'none';
+    $('editeur').style.display = '';
+    $('editeur').innerHTML =
+      '<div class="carte">'
+      + '<p class="carte-titre" style="margin-bottom:14px;">'
+      +   (a ? 'Modifier l\'activité' : 'Nouvelle activité') + '</p>'
+      + '<input type="hidden" id="fId" value="' + echapper(est.id || '') + '">'
+      + '<div class="champ"><label for="fTitre">Titre</label>'
+      +   '<input type="text" id="fTitre" maxlength="160" value="' + echapper(est.titre || '')
+      +   '" placeholder="Ex : Campagne de consultations à Ouakam"></div>'
+      + '<div class="champ"><label for="fDesc">Description</label>'
+      +   '<textarea id="fDesc" maxlength="1500" placeholder="Ce que l\'on attend des inscrits, le déroulé, les conditions…">'
+      +   echapper(est.description || '') + '</textarea></div>'
+      + '<div class="grille">'
+      +   '<div class="champ"><label for="fLieu">Lieu</label>'
+      +     '<input type="text" id="fLieu" maxlength="160" value="' + echapper(est.lieu || '') + '"></div>'
+      +   '<div class="champ"><label for="fDate">Date de l\'activité</label>'
+      +     '<input type="date" id="fDate" value="' + echapper(est.date_activite || '') + '"></div>'
+      + '</div>'
+      + '<div class="grille-3">'
+      +   '<div class="champ"><label for="fPlaces">Nombre de places</label>'
+      +     '<input type="number" id="fPlaces" min="1" value="' + (est.places ?? '') + '" placeholder="Vide = illimité"></div>'
+      +   '<div class="champ"><label for="fNonMembres">Dont réservées aux non-membres</label>'
+      +     '<input type="number" id="fNonMembres" min="0" value="' + (est.places_non_membres ?? 0) + '"></div>'
+      +   '<div class="champ"><label for="fLimite">Date limite d\'inscription</label>'
+      +     '<input type="date" id="fLimite" value="' + echapper(est.date_limite || '') + '"></div>'
+      + '</div>'
+      + '<p class="aide">Les places non réservées reviennent aux membres. Si un groupe ne remplit pas sa part, '
+      +   'les places libres vont à l\'autre, dans l\'ordre d\'arrivée : aucune place ne reste vide.</p>'
+      + '<p class="carte-titre" style="font-size:0.95rem;margin:18px 0 10px;">Questions posées aux inscrits</p>'
+      + '<p class="aide">Le nom, le téléphone, l\'e-mail et la localité sont toujours demandés. '
+      +   'Ajoutez ici ce qui est propre à cette activité.</p>'
+      + '<div id="questions"></div>'
+      + '<button class="btn btn-ligne btn-sm" id="btnAjoutQ"><i class="ti ti-plus"></i> Ajouter une question</button>'
+      + '<div style="margin-top:20px;" class="actions">'
+      +   '<button class="btn btn-primary" id="btnEnregistrer"><i class="ti ti-check"></i> Enregistrer</button>'
+      +   '<button class="btn btn-ligne" id="btnAnnuler">Annuler</button>'
+      + '</div>'
+      + '<p class="msg" id="msgEditeur"></p>'
+      + '</div>';
+
+    rendreQuestions();
+    $('btnAjoutQ').addEventListener('click', () => {
+      questionsEnCours.push({ id: 'q' + (questionsEnCours.length + 1), label: '', type: 'texte', obligatoire: false, options: [] });
+      rendreQuestions();
+    });
+    $('btnEnregistrer').addEventListener('click', soumettreEditeur);
+    $('btnAnnuler').addEventListener('click', () => { $('editeur').style.display = 'none'; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function rendreQuestions() {
+    if (!questionsEnCours.length) {
+      $('questions').innerHTML = '<p class="aide">Aucune question supplémentaire.</p>';
+      return;
+    }
+    $('questions').innerHTML = questionsEnCours.map((q, i) =>
+      '<div class="question"><div class="ligne">'
+      + '<div class="champ"><label>Question</label>'
+      +   '<input type="text" data-q="label" data-i="' + i + '" maxlength="200" value="'
+      +   echapper(q.label || '') + '" placeholder="Ex : Avez-vous déjà participé à une campagne ?"></div>'
+      + '<div class="champ"><label>Type</label><select data-q="type" data-i="' + i + '">'
+      +   '<option value="texte"' + (q.type === 'texte' ? ' selected' : '') + '>Réponse courte</option>'
+      +   '<option value="long"' + (q.type === 'long' ? ' selected' : '') + '>Réponse longue</option>'
+      +   '<option value="choix"' + (q.type === 'choix' ? ' selected' : '') + '>Liste de choix</option>'
+      + '</select></div>'
+      + '<div class="champ"><label>Obligatoire</label>'
+      +   '<input type="checkbox" data-q="obligatoire" data-i="' + i + '"' + (q.obligatoire ? ' checked' : '')
+      +   ' style="width:auto;"></div>'
+      + '<button class="q-suppr" data-suppr="' + i + '" title="Supprimer"><i class="ti ti-trash"></i></button>'
+      + '</div>'
+      + (q.type === 'choix'
+          ? '<div class="champ" style="margin-top:10px;"><label>Choix possibles, séparés par une virgule</label>'
+            + '<input type="text" data-q="options" data-i="' + i + '" value="'
+            + echapper((q.options || []).join(', ')) + '" placeholder="Oui, Non, Peut-être"></div>'
+          : '')
+      + '</div>').join('');
+
+    $('questions').querySelectorAll('[data-q]').forEach(ch => {
+      ch.addEventListener('change', () => {
+        const i = Number(ch.dataset.i);
+        const cle = ch.dataset.q;
+        if (cle === 'obligatoire') questionsEnCours[i].obligatoire = ch.checked;
+        else if (cle === 'options') {
+          questionsEnCours[i].options = ch.value.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          questionsEnCours[i][cle] = ch.value;
+          if (cle === 'type') rendreQuestions();
+        }
+      });
+    });
+    $('questions').querySelectorAll('[data-suppr]').forEach(b =>
+      b.addEventListener('click', () => {
+        questionsEnCours.splice(Number(b.dataset.suppr), 1);
+        rendreQuestions();
+      }));
+  }
+
+  async function enregistrerActivite(a) {
+    const { data, error } = await supabaseClient.rpc('activite_enregistrer', {
+      p_id: a.id || null,
+      p_titre: a.titre,
+      p_description: a.description || null,
+      p_lieu: a.lieu || null,
+      p_date_activite: a.date_activite || null,
+      p_places: a.places ?? null,
+      p_places_non_membres: a.places_non_membres || 0,
+      p_date_limite: a.date_limite || null,
+      p_questions: a.questions || [],
+      p_is_open: a.is_open,
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function soumettreEditeur() {
+    const msg = $('msgEditeur');
+    msg.className = 'msg';
+    msg.textContent = '';
+
+    const places = $('fPlaces').value ? Number($('fPlaces').value) : null;
+    const nonMembres = Number($('fNonMembres').value || 0);
+    if (!$('fTitre').value.trim()) {
+      msg.className = 'msg error'; msg.textContent = 'Le titre est obligatoire.'; return;
+    }
+    // Le même contrôle existe en base ; ici il évite un aller-retour et
+    // dit la chose au moment où elle se corrige.
+    if (places !== null && nonMembres > places) {
+      msg.className = 'msg error';
+      msg.textContent = 'Les places réservées aux non-membres (' + nonMembres
+        + ') dépassent le total des places (' + places + ').';
+      return;
+    }
+    if (questionsEnCours.some(q => !String(q.label || '').trim())) {
+      msg.className = 'msg error'; msg.textContent = 'Une question est sans intitulé.'; return;
+    }
+
+    const bouton = $('btnEnregistrer');
+    bouton.disabled = true;
+    try {
+      await enregistrerActivite({
+        id: $('fId').value || null,
+        titre: $('fTitre').value.trim(),
+        description: $('fDesc').value.trim(),
+        lieu: $('fLieu').value.trim(),
+        date_activite: $('fDate').value || null,
+        places: places,
+        places_non_membres: nonMembres,
+        date_limite: $('fLimite').value || null,
+        questions: questionsEnCours.map((q, i) => ({
+          id: q.id || ('q' + (i + 1)),
+          label: String(q.label).trim(),
+          type: q.type || 'texte',
+          obligatoire: !!q.obligatoire,
+          options: q.type === 'choix' ? (q.options || []) : undefined,
+        })),
+        is_open: true,
+      });
+      $('editeur').style.display = 'none';
+      await chargerActivites();
+    } catch (e) {
+      msg.className = 'msg error';
+      msg.textContent = 'Enregistrement impossible : ' + (e.message || e);
+    } finally {
+      bouton.disabled = false;
+    }
+  }
+
+  // ---------- Inscrits ----------
+  async function voirInscrits(id) {
+    activiteOuverte = activites.find(a => a.id === id);
+    if (!activiteOuverte) return;
+    $('editeur').style.display = 'none';
+    $('inscrits').style.display = '';
+    $('inscrits').innerHTML = '<p class="loading">Chargement des inscrits…</p>';
+    try {
+      const { data, error } = await supabaseClient.rpc('activite_classement', { p_activite_id: id });
+      if (error) throw error;
+      classementCourant = data || [];
+      rendreInscrits();
+    } catch (e) {
+      $('inscrits').innerHTML = '<p class="vide"><i class="ti ti-alert-triangle"></i>'
+        + 'Impossible de charger les inscrits.</p>';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function rendreInscrits() {
+    const a = activiteOuverte;
+    const retenus = classementCourant.filter(i => i.retenu && i.statut !== 'desiste');
+    const attente = classementCourant.filter(i => !i.retenu && i.statut !== 'desiste');
+    const desistes = classementCourant.filter(i => i.statut === 'desiste');
+    const membres = retenus.filter(i => i.est_membre).length;
+
+    let corps = '';
+    const ligne = (i, classe) =>
+      '<tr class="' + classe + '">'
+      + '<td class="rang" data-libelle="Rang :">' + i.rang + '</td>'
+      + '<td data-libelle="Nom :"><b>' + echapper(i.nom) + '</b>'
+      +   (i.membre_nom && i.membre_nom !== i.nom
+            ? '<br><span style="font-size:0.8rem;opacity:.7;">compte : ' + echapper(i.membre_nom) + '</span>' : '')
+      + '</td>'
+      + '<td data-libelle="Statut :"><span class="etiq ' + (i.est_membre ? 'etiq-membre">Membre' : '">Non-membre') + '</span></td>'
+      + '<td data-libelle="Téléphone :">' + echapper(i.telephone) + '</td>'
+      + '<td data-libelle="Localité :">' + echapper(i.localite || '-') + '</td>'
+      + '<td data-libelle="Inscrit le :">' + heureFr(i.created_at) + '</td>'
+      + '<td data-libelle="Réponses :">' + reponsesLisibles(i.reponses) + '</td>'
+      + '<td data-libelle="Action :">'
+      +   '<select data-statut="' + i.id + '" style="border:1.5px solid var(--line);border-radius:8px;'
+      +     'padding:5px 8px;font-family:var(--body);font-size:0.8rem;background:var(--paper);color:var(--ink);">'
+      +     ['inscrit', 'present', 'absent', 'desiste'].map(s =>
+              '<option value="' + s + '"' + (i.statut === s ? ' selected' : '') + '>'
+              + ({ inscrit: 'Inscrit', present: 'Présent', absent: 'Absent', desiste: 'Désisté' })[s]
+              + '</option>').join('')
+      +   '</select>'
+      + '</td></tr>';
+
+    if (retenus.length) {
+      corps += '<tr class="separateur"><td colspan="8">Retenus (' + retenus.length + ')</td></tr>';
+      corps += retenus.map(i => ligne(i, '')).join('');
+    }
+    if (attente.length) {
+      corps += '<tr class="separateur"><td colspan="8">Liste d\'attente (' + attente.length + ')</td></tr>';
+      corps += attente.map(i => ligne(i, 'ligne-attente')).join('');
+    }
+    if (desistes.length) {
+      corps += '<tr class="separateur"><td colspan="8">Désistements (' + desistes.length + ')</td></tr>';
+      corps += desistes.map(i => ligne(i, 'ligne-desiste')).join('');
+    }
+
+    $('inscrits').innerHTML =
+      '<button class="btn btn-ligne btn-sm" id="btnRetourListe" style="margin-bottom:16px;">'
+      + '<i class="ti ti-arrow-left"></i> Toutes les activités</button>'
+      + '<div class="carte">'
+      +   '<p class="carte-titre">' + echapper(a.titre) + '</p>'
+      +   '<p class="carte-meta">'
+      +     '<span><i class="ti ti-users"></i>' + (retenus.length + attente.length) + ' inscrit(s)</span>'
+      +     '<span><i class="ti ti-check"></i>' + retenus.length + ' retenu(s)'
+      +       (a.places ? ' sur ' + a.places + ' place(s)' : '') + '</span>'
+      +     '<span><i class="ti ti-id-badge-2"></i>' + membres + ' membre(s) parmi les retenus</span>'
+      +     (attente.length ? '<span><i class="ti ti-hourglass"></i>' + attente.length + ' en attente</span>' : '')
+      +   '</p>'
+      +   '<div class="actions">'
+      +     '<button class="btn btn-ligne btn-sm" id="btnCsv"><i class="ti ti-download"></i> Exporter en CSV</button>'
+      +     '<button class="btn btn-ligne btn-sm" id="btnRafraichir"><i class="ti ti-refresh"></i> Rafraîchir</button>'
+      +   '</div>'
+      + '</div>'
+      + (classementCourant.length
+          ? '<div class="table-wrap"><table><thead><tr>'
+            + '<th>Rang</th><th>Nom</th><th>Statut</th><th>Téléphone</th><th>Localité</th>'
+            + '<th>Inscrit le</th><th>Réponses</th><th>Action</th>'
+            + '</tr></thead><tbody>' + corps + '</tbody></table></div>'
+          : '<p class="vide"><i class="ti ti-user-off"></i>Personne ne s\'est encore inscrit.</p>');
+
+    $('btnRetourListe').addEventListener('click', () => {
+      $('inscrits').style.display = 'none';
+      activiteOuverte = null;
+    });
+    if ($('btnCsv')) $('btnCsv').addEventListener('click', exporterCsv);
+    if ($('btnRafraichir')) $('btnRafraichir').addEventListener('click', () => voirInscrits(a.id));
+    $('inscrits').querySelectorAll('[data-statut]').forEach(sel =>
+      sel.addEventListener('change', async () => {
+        try {
+          await supabaseClient.rpc('activite_marquer', {
+            p_inscription_id: sel.dataset.statut, p_statut: sel.value, p_note: null,
+          });
+          await voirInscrits(a.id);
+        } catch (e) { alert('Impossible de changer ce statut.'); }
+      }));
+  }
+
+  function reponsesLisibles(r) {
+    if (!r || typeof r !== 'object') return '-';
+    const paires = Object.entries(r);
+    if (!paires.length) return '-';
+    const questions = Array.isArray(activiteOuverte.questions) ? activiteOuverte.questions : [];
+    return paires.map(([cle, val]) => {
+      const q = questions.find(x => x.id === cle);
+      return '<span style="display:block;font-size:0.8rem;">'
+        + '<span style="opacity:.65;">' + echapper(q ? q.label : cle) + ' : </span>'
+        + echapper(val) + '</span>';
+    }).join('');
+  }
+
+  function exporterCsv() {
+    const a = activiteOuverte;
+    const questions = Array.isArray(a.questions) ? a.questions : [];
+    const entetes = ['Rang', 'Retenu', 'Nom', 'Membre', 'Telephone', 'E-mail', 'Localite',
+      'Inscrit le', 'Statut'].concat(questions.map(q => q.label));
+    const lignes = [entetes].concat(classementCourant.map(i => [
+      i.rang,
+      i.statut === 'desiste' ? 'Desiste' : (i.retenu ? 'Oui' : 'Liste d attente'),
+      i.nom,
+      i.est_membre ? 'Oui' : 'Non',
+      i.telephone,
+      i.email || '',
+      i.localite || '',
+      heureFr(i.created_at),
+      i.statut,
+    ].concat(questions.map(q => (i.reponses && i.reponses[q.id]) || ''))));
+
+    // Le BOM en tete, le point-virgule en separateur : c'est ce qu'attend
+    // Excel en francais pour ouvrir le fichier en colonnes, accents compris.
+    const contenu = '﻿' + lignes.map(l =>
+      l.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+    const lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([contenu], { type: 'text/csv;charset=utf-8;' }));
+    lien.download = 'inscriptions-' + a.titre.toLowerCase().replace(/[^a-z0-9]+/gi, '-').slice(0, 40) + '.csv';
+    lien.click();
+    URL.revokeObjectURL(lien.href);
+  }
+
+  (async () => {
+    const profile = await requireAdmin('connexion.html');
+    if (!profile) return;
+    $('loadingMsg').style.display = 'none';
+    $('pageContent').style.display = '';
+    $('btnNouvelle').addEventListener('click', () => ouvrirEditeur(null));
+    await chargerActivites();
+  })();
+</script>
+</body>
+</html>

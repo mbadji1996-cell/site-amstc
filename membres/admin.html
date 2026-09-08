@@ -268,6 +268,15 @@
         </div>
       </a>
 
+      <a class="admin-card" href="activites-admin.html">
+        <div class="admin-card-icon"><i class="ti ti-list-numbers"></i></div>
+        <div>
+          <p class="admin-card-label">Inscriptions aux activit&eacute;s</p>
+          <p class="admin-card-sub">Formulaire public, ordre d'arriv&eacute;e</p>
+        </div>
+        <span class="admin-card-badge" id="badgeActivites" style="display:none;"></span>
+      </a>
+
       <a class="admin-card" href="whatsapp-boite.html">
         <div class="admin-card-icon"><i class="ti ti-messages"></i></div>
         <div>
@@ -441,6 +450,14 @@
       const { count } = await supabaseClient
         .from('dons').select('id', { count: 'exact', head: true }).eq('status', 'en_attente');
       setBadge('badgeDons', count ?? 0);
+    } catch(e) {}
+
+    // Activites dont les inscriptions sont ouvertes : la pastille
+    // rappelle qu'une liste est en train de se remplir.
+    try {
+      const { count } = await supabaseClient
+        .from('activites').select('id', { count: 'exact', head: true }).eq('is_open', true);
+      setBadge('badgeActivites', count ?? 0);
     } catch(e) {}
 
     // Messages WhatsApp non lus. Un membre qui ecrit attend une reponse

@@ -109,6 +109,10 @@
       "href": "agenda.html"
     },
     {
+      "label": "S'inscrire à une activité",
+      "href": "activites.html"
+    },
+    {
       "label": "Demander une campagne",
       "href": "demande-campagne.html"
     }

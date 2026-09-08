@@ -1239,6 +1239,65 @@ plus rien.
 > messages reçus APRÈS le redéploiement du webhook y figureront. Les
 > échanges passés restent dans le salon Telegram.
 
+## 4septvicies. Inscriptions à une activité (`activites.html`, `membres/activites-admin.html`)
+
+Un formulaire public - l'équivalent d'un Google Form hébergé par le site -
+pour ouvrir les inscriptions à une campagne ou à une activité, en gardant
+l'ordre d'arrivée et en privilégiant les membres.
+
+**L'identité est fixe, les questions sont libres.** Nom, téléphone, e-mail
+et localité sont toujours demandés : ce sont eux qui dédoublonnent, qui
+rattachent à un compte et qui permettent de rappeler quelqu'un. Les
+questions propres à l'activité s'ajoutent dans l'éditeur (réponse courte,
+réponse longue, liste de choix). Un constructeur de formulaire entièrement
+libre a été écarté : sans téléphone garanti, plus de dédoublonnage ni de
+reconnaissance des membres.
+
+**La règle des places.** On fixe un total, et une part **réservée aux
+non-membres** ; tout le reste revient aux membres. Si un groupe ne remplit
+pas sa part, les places libres vont à l'autre, dans l'ordre d'arrivée -
+aucune place ne reste vide. Sans total, tout le monde est retenu et l'ordre
+sert seulement d'historique.
+
+**La position affichée est PROVISOIRE, et la page le dit.** Un membre
+inscrit plus tard passe devant un non-membre inscrit tôt, dès lors que le
+quota des non-membres est atteint. L'annoncer dès l'inscription évite qu'on
+l'apprenne le jour de l'activité.
+
+**Un membre est reconnu de deux façons**, et à la LECTURE : il était
+connecté en s'inscrivant, ou son téléphone correspond à un profil
+(`telephone_cle`, phase 78). À la lecture, donc : quelqu'un qui crée son
+compte la semaine suivante devient membre pour cette activité aussi.
+
+**La liste des inscrits n'est jamais publique.** Le formulaire est ouvert à
+tous, la liste porte des noms et des numéros : seuls les administrateurs la
+lisent. La page publique ne connaît que le NOMBRE d'inscrits, par une
+fonction dédiée.
+
+**Côté administration** : créer et modifier une activité, clore ou rouvrir
+les inscriptions, voir la liste séparée en *retenus* / *liste d'attente* /
+*désistements*, marquer présent, absent ou désisté - un désistement libère
+aussitôt la place pour le suivant - et exporter en CSV pour l'équipe de
+terrain.
+
+### Déploiement
+
+1. Studio (instance **amstc**) > SQL Editor > coller
+   `supabase/phase106-inscriptions-activites.sql` > Run. Les contrôles en
+   fin de fichier n'écrivent rien.
+2. Rien à déployer côté fonctions Edge : tout passe par des fonctions SQL.
+3. La page publique est atteignable par le menu **Nos activités >
+   S'inscrire à une activité**, et par lien direct
+   `activites.html?id=<identifiant>` - c'est ce lien qu'on partage sur
+   WhatsApp pour une activité précise.
+
+> **Le formulaire est public, donc exposé.** N'importe qui peut envoyer une
+> inscription, comme pour `demande-campagne.html`. Le numéro unique par
+> activité empêche le même inscrit deux fois, mais rien n'empêche
+> aujourd'hui quelqu'un d'inscrire des numéros inventés. Si cela se
+> produit, la réponse est un contrôle côté serveur (limite par adresse IP,
+> ou code envoyé par WhatsApp) - à faire seulement si le besoin apparaît.
+
 ## 5. Configurer l'e-mail d'expédition (optionnel pour démarrer)
 
 Supabase envoie déjà les e-mails de confirmation d'inscription et de
