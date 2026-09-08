@@ -133,19 +133,66 @@ var REGIONS_SENEGAL = [
   'Thiès', 'Ziguinchor'
 ];
 
+// Hors Sénégal. Un membre installé à Lyon choisit « Autre » et écrit sa
+// ville ET son pays dans la localité, restée libre : « Lyon, France ».
+//
+// Volontairement HORS de REGIONS_SENEGAL, qui sert aussi à déduire une
+// région depuis une localité (regionNormalisee) - et « Autre » ne se
+// déduit de rien. La liste de SAISIE, elle, les réunit.
+var REGION_AUTRE = 'Autre';
+var REGIONS_SAISIE = REGIONS_SENEGAL.concat([REGION_AUTRE]);
+
+// Ce que la localité doit contenir quand la région est « Autre ». Sans
+// cet indice, un membre écrit « Lyon » et sa carte ne dit pas le pays.
+var INDICE_LOCALITE_AUTRE = 'Ville et pays - ex : Lyon, France';
+
 /**
- * Remplit un <select> avec les quatorze régions, précédées d'une option
- * vide. Conserve la valeur actuelle si elle est connue.
+ * Remplit un <select> avec les quatorze régions puis « Autre »,
+ * précédées d'une option vide. Conserve la valeur actuelle si elle est
+ * connue.
  */
 function remplirSelectRegions(select, valeurActuelle) {
   if (!select) return;
   select.innerHTML = '<option value="">- Choisir -</option>'
-    + REGIONS_SENEGAL.map(function (r) {
+    + REGIONS_SAISIE.map(function (r) {
         return '<option value="' + r + '">' + r + '</option>';
       }).join('');
-  if (valeurActuelle && REGIONS_SENEGAL.indexOf(valeurActuelle) !== -1) {
+  if (valeurActuelle && REGIONS_SAISIE.indexOf(valeurActuelle) !== -1) {
     select.value = valeurActuelle;
   }
+}
+
+/**
+ * Fait suivre l'indice du champ localité au choix de la région.
+ *
+ * L'indice d'origine du champ est CONSERVÉ et remis dès qu'on revient
+ * à une région sénégalaise : chaque formulaire garde le sien, celui de
+ * l'inscription n'étant pas celui de l'écran des cartes.
+ */
+function brancherIndiceLocalite(select, champ) {
+  if (!select || !champ) return;
+  var indiceOrigine = champ.placeholder || '';
+  var majIndice = function () {
+    champ.placeholder = select.value === REGION_AUTRE
+      ? INDICE_LOCALITE_AUTRE : indiceOrigine;
+  };
+  select.addEventListener('change', majIndice);
+  majIndice();
+}
+
+/**
+ * « Localité, Région » pour l'affichage et pour la carte imprimée.
+ *
+ * « Autre » n'est pas un lieu : c'est le choix d'un membre hors du
+ * Sénégal, dont la localité porte déjà la ville et le pays. L'ajouter
+ * donnerait « Lyon, France, Autre ».
+ */
+function localiteEtRegion(ville, region) {
+  var r = String(region == null ? '' : region).trim();
+  return [
+    String(ville == null ? '' : ville).trim(),
+    r === REGION_AUTRE ? '' : r
+  ].filter(Boolean).join(', ');
 }
 
 // Graphies officielles des localités sénégalaises les plus courantes,

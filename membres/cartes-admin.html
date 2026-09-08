@@ -958,6 +958,8 @@
       const carte = allCards.find(c => c.id === expandedEditId);
       remplirSelectRegions(document.getElementById('editRegion-' + expandedEditId),
                            carte ? (carte.region || '') : '');
+      brancherIndiceLocalite(document.getElementById('editRegion-' + expandedEditId),
+                             document.getElementById('editCity-' + expandedEditId));
       // Annees proposees : de deux ans en arriere a l'an prochain, comme
       // sur la fiche membre.
       const selAnnee = document.getElementById('editCotisAnnee-' + expandedEditId);
@@ -1263,6 +1265,8 @@
     form.classList.toggle('open');
     if (form.classList.contains('open')) {
       remplirSelectRegions(document.getElementById('newCardRegion'));
+      brancherIndiceLocalite(document.getElementById('newCardRegion'),
+                             document.getElementById('newCardCity'));
     } else {
       ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity', 'newCardRegion']
         .forEach(id => document.getElementById(id).value = '');

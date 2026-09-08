@@ -344,6 +344,8 @@
     // assets/js/localites.js). Celui de l'écran de complétion est rempli
     // au moment où le profil est chargé, avec sa valeur actuelle.
     remplirSelectRegions(document.getElementById("region"));
+    brancherIndiceLocalite(document.getElementById("region"),
+                           document.getElementById("city"));
 
     // Casse des noms et des localités, corrigée à la sortie du champ sur
     // LES DEUX formulaires de la page : celui de l'inscription et celui de
@@ -603,6 +605,8 @@
     document.getElementById("cDomainAutre").value = p.domain_autre || "";
     document.getElementById("cSpecialty").value = p.specialty || "";
     remplirSelectRegions(document.getElementById("cRegion"), p.region || "");
+    brancherIndiceLocalite(document.getElementById("cRegion"),
+                           document.getElementById("cCity"));
     document.getElementById("cCity").value = p.city || "";
     if (p.photo_url) afficherPhoto(p.photo_url);
     sel.value = p.member_since || ANNEE_COURANTE;

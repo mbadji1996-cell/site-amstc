@@ -622,6 +622,8 @@
     document.getElementById('eDomainAutre').value = p.domain_autre || '';
     document.getElementById('eMemberSince').value = p.member_since || currentYear;
     remplirSelectRegions(document.getElementById('eRegion'), p.region || '');
+    brancherIndiceLocalite(document.getElementById('eRegion'),
+                           document.getElementById('eCity'));
     document.getElementById('eCity').value = p.city || '';
     document.getElementById('domainAutreGroup').style.display = p.domain === 'autre' ? '' : 'none';
 

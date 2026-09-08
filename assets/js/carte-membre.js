@@ -241,10 +241,9 @@ async function dessinerCarteMembre(p) {
   const validite = p.card_valid_until
     ? Math.min(anneeCourante, p.card_valid_until) + ' - ' + p.card_valid_until
     : '-';
-  const localite = [
-    String(p.city || '').trim(),
-    String(p.region || '').trim(),
-  ].filter(Boolean).join(', ') || '-';
+  // « Autre » (hors Sénégal) ne s'ajoute pas : la localité porte déjà
+  // la ville et le pays, et la carte dirait « Lyon, France, Autre ».
+  const localite = localiteEtRegion(p.city, p.region) || '-';
   // Le drapeau dit si le champ accepte l'abréviation en initiales : les
   // noms oui, le reste non (voir carteAjusterTexte).
   const champs = [

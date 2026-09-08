@@ -1200,9 +1200,10 @@
     btn.textContent = willOpen ? 'Masquer' : 'Détails';
   }
 
-  // « Localité, Région », comme sur la carte imprimée.
+  // « Localité, Région », comme sur la carte imprimée - et par la même
+  // fonction, pour que les deux ne divergent pas sur le cas « Autre ».
   function localiteComplete(p){
-    return [p.city, p.region].filter(x => String(x || '').trim()).join(', ');
+    return localiteEtRegion(p.city, p.region);
   }
 
   /**
@@ -1263,6 +1264,8 @@
       <p class="assign-msg" id="idMsg-${esc(memberId)}"></p>`;
 
     remplirSelectRegions(document.getElementById('idRegion-' + memberId), p.region || '');
+    brancherIndiceLocalite(document.getElementById('idRegion-' + memberId),
+                           document.getElementById('idCity-' + memberId));
     // Le formulaire étant reconstruit à chaque ouverture, les écouteurs
     // le sont aussi : aucun risque d'empilement.
     brancherNormalisation(document.getElementById('idFirst-' + memberId), normaliserPrenom);
