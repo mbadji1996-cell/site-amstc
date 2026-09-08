@@ -161,7 +161,18 @@
   const DOMAIN_LABELS = {
     medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux',
+    // Sans cette entrée, la pastille affichait la clé brute : « autre »,
+    // en minuscules, au milieu de libellés capitalisés.
+    autre: 'Autres',
   };
+
+  // L'ordre des filtres est VOULU. Il suivait jusqu'ici l'ordre
+  // d'arrivée des membres dans la réponse du serveur - donc aucun
+  // ordre, et il changeait au gré des adhésions.
+  const ORDRE_DOMAINES = [
+    'medecine', 'pharmacie', 'odontologie',
+    'soins_infirmiers', 'soins_obstetricaux', 'autre',
+  ];
   let allMembers = [], currentFilter = 'all', allDomains = [], searchQuery = '';
 
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -233,7 +244,13 @@
     // serveur (nom de famille) paraissait aléatoire à l'écran.
     const cleAlpha = m => [m.first_name, m.last_name].filter(Boolean).join(' ') || m.full_name || '';
     allMembers.sort((a, b) => cleAlpha(a).localeCompare(cleAlpha(b), 'fr', { sensitivity: 'base' }));
-    allDomains = [...new Set(allMembers.map(m => m.domain).filter(Boolean))];
+    // Seuls les domaines effectivement représentés reçoivent une
+    // pastille : une pastille qui ne rendrait aucun membre n'apprend
+    // rien. Un domaine hors de l'ordre prévu n'est pas perdu pour
+    // autant - il passe à la fin plutôt que de disparaître.
+    const presents = new Set(allMembers.map(m => m.domain).filter(Boolean));
+    allDomains = ORDRE_DOMAINES.filter(d => presents.has(d))
+      .concat([...presents].filter(d => !ORDRE_DOMAINES.includes(d)));
     const row = document.getElementById('filterRow');
     allDomains.forEach(d => {
       const btn = document.createElement('button');

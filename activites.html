@@ -56,6 +56,12 @@
 
   .carte{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
     padding:22px 24px; margin-bottom:16px;}
+  /* La couverture deborde le padding de la carte pour toucher ses
+     bords : une image en tete se lit mieux sans marge autour. */
+  .couverture{display:block; width:calc(100% + 48px); margin:-22px -24px 16px;
+    max-height:220px; object-fit:cover;
+    border-radius:var(--radius) var(--radius) 0 0;}
+  @media (max-width:560px){ .couverture{width:calc(100% + 32px); margin:-18px -16px 14px;} }
   .carte-titre{font-family:var(--display); font-size:1.12rem; font-weight:600;
     color:var(--text-heading); margin-bottom:6px;}
   .carte-meta{display:flex; flex-wrap:wrap; gap:8px 16px; font-size:0.85rem;
@@ -155,6 +161,20 @@
     ));
   }
 
+  // Bucket public (phase 108) : l'adresse se compose sans appel reseau
+  // et sans compte - c'est ce qui permet de l'afficher ici.
+  function urlCouverture(chemin) {
+    if (!chemin) return '';
+    const { data } = supabaseClient.storage.from('activite-couvertures').getPublicUrl(chemin);
+    return (data && data.publicUrl) || '';
+  }
+
+  function imageCarte(a) {
+    const url = urlCouverture(a.image_path);
+    return url ? '<img class="couverture" src="' + echapper(url)
+      + '" alt="" loading="lazy">' : '';
+  }
+
   function dateFr(iso) {
     if (!iso) return '';
     return new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR',
@@ -200,6 +220,7 @@
         const n = comptes[a.id];
         const complet = a.places && n !== null && n >= a.places;
         return '<div class="carte">'
+          + imageCarte(a)
           + '<p class="carte-titre">' + echapper(a.titre) + '</p>'
           + '<p class="carte-meta">'
           +   (a.date_activite ? '<span><i class="ti ti-calendar"></i>' + echapper(dateFr(a.date_activite)) + '</span>' : '')
@@ -268,6 +289,7 @@
       '<button class="btn btn-ligne" id="retourListe" style="margin-bottom:18px;">'
       + '<i class="ti ti-arrow-left"></i> Toutes les activités</button>'
       + '<div class="carte">'
+      +   imageCarte(a)
       +   '<p class="carte-titre">' + echapper(a.titre) + '</p>'
       +   '<p class="carte-meta">'
       +     (a.date_activite ? '<span><i class="ti ti-calendar"></i>' + echapper(dateFr(a.date_activite)) + '</span>' : '')

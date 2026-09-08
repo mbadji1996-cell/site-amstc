@@ -75,6 +75,13 @@
   .aide{font-size:0.78rem;color:var(--text-muted,#5A6C60);margin-top:-8px;margin-bottom:14px;line-height:1.5;}
 
   /* Le constructeur de questions : une ligne par question. */
+  .couverture{display:block;width:100%;max-height:190px;object-fit:cover;
+    border-radius:10px;border:1px solid var(--line);margin-bottom:10px;}
+  .couverture-vignette{width:70px;height:48px;object-fit:cover;border-radius:8px;
+    border:1px solid var(--line);flex-shrink:0;}
+  .carte-haut{display:flex;gap:12px;align-items:flex-start;}
+  .btn-danger{background:none;border:1.5px solid #B23B3B;color:#B23B3B;}
+
   .question{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;
     background:var(--paper);}
   .question .ligne{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end;}
@@ -174,7 +181,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  // Bucket PUBLIC (phase 108) : la couverture s'affiche sur la page
+  // publique, devant des visiteurs sans compte. getPublicUrl ne fait
+  // aucun appel réseau, elle compose l'adresse.
+  const BUCKET_COUVERTURE = 'activite-couvertures';
+  function urlCouverture(chemin) {
+    if (!chemin) return '';
+    const { data } = supabaseClient.storage.from(BUCKET_COUVERTURE).getPublicUrl(chemin);
+    return (data && data.publicUrl) || '';
+  }
+
   let activites = [];
+  let fichierCouverture = null;      // choisi mais pas encore envoyé
+  let cheminCouvertureInitial = null; // celui de l'activité en cours d'édition
+  let couvertureRetiree = false;
   let questionsEnCours = [];
   let activiteOuverte = null;   // celle dont on regarde les inscrits
   let classementCourant = [];
@@ -220,6 +240,12 @@
     $('liste').innerHTML = activites.map(a => {
       const membres = a.places === null ? null : Math.max(0, a.places - (a.places_non_membres || 0));
       return '<div class="carte">'
+        + '<div class="carte-haut">'
+        + (a.image_path
+            ? '<img class="couverture-vignette" src="' + echapper(urlCouverture(a.image_path))
+              + '" alt="" loading="lazy">'
+            : '')
+        + '<div style="flex:1;min-width:0;">'
         + '<p class="carte-titre">' + echapper(a.titre) + '</p>'
         + '<p class="carte-meta">'
         +   '<span class="etiq ' + (a.is_open ? 'etiq-ouvert">Ouverte' : 'etiq-ferme">Fermée') + '</span>'
@@ -241,7 +267,9 @@
                          : '<i class="ti ti-lock-open"></i> Rouvrir') + '</button>'
         +   '<a class="btn btn-ligne btn-sm" href="../activites.html?id=' + a.id + '" target="_blank" rel="noopener">'
         +     '<i class="ti ti-external-link"></i> Page publique</a>'
-        + '</div></div>';
+        +   '<button class="btn btn-danger btn-sm" data-supprimer="' + a.id + '">'
+        +     '<i class="ti ti-trash"></i> Supprimer</button>'
+        + '</div></div></div></div>';
     }).join('');
 
     $('liste').querySelectorAll('[data-voir]').forEach(b =>
@@ -250,6 +278,8 @@
       b.addEventListener('click', () => ouvrirEditeur(activites.find(a => a.id === b.dataset.modifier))));
     $('liste').querySelectorAll('[data-bascule]').forEach(b =>
       b.addEventListener('click', () => basculerOuverture(activites.find(a => a.id === b.dataset.bascule))));
+    $('liste').querySelectorAll('[data-supprimer]').forEach(b =>
+      b.addEventListener('click', () => supprimer(activites.find(a => a.id === b.dataset.supprimer))));
   }
 
   async function basculerOuverture(a) {
@@ -262,10 +292,47 @@
     } catch (e) { alert('Impossible de modifier cette activité.'); }
   }
 
+  // La suppression emporte les inscriptions (ON DELETE CASCADE) : la
+  // confirmation annonce leur NOMBRE. « Supprimer ? » et « supprimer,
+  // avec ses 12 inscriptions ? » ne sont pas la même question.
+  async function supprimer(a) {
+    if (!a) return;
+    let inscrits = 0;
+    try {
+      const { data } = await supabaseClient.rpc('activite_compte', { p_activite_id: a.id });
+      inscrits = Number(data) || 0;
+    } catch (e) { /* le compte est un confort, pas une condition */ }
+
+    const avertissement = inscrits
+      ? '\n\nSes ' + inscrits + ' inscription(s) seront supprimées avec elle. '
+        + 'Exportez la liste en CSV d\'abord si vous en avez besoin.'
+      : '';
+    if (!confirm('Supprimer définitivement « ' + a.titre + ' » ?' + avertissement)) return;
+
+    try {
+      // L'image part AVANT : après la suppression en base, son chemin
+      // serait perdu et le fichier resterait orphelin pour toujours.
+      if (a.image_path) {
+        await supabaseClient.storage.from(BUCKET_COUVERTURE).remove([a.image_path]);
+      }
+      await supabaseClient.rpc('activite_supprimer', { p_id: a.id });
+      if (activiteOuverte && activiteOuverte.id === a.id) {
+        $('inscrits').style.display = 'none';
+        activiteOuverte = null;
+      }
+      await chargerActivites();
+    } catch (e) {
+      alert('Suppression impossible : ' + (e.message || e));
+    }
+  }
+
   // ---------- Éditeur ----------
   function ouvrirEditeur(a) {
     const est = a || {};
     questionsEnCours = Array.isArray(est.questions) ? JSON.parse(JSON.stringify(est.questions)) : [];
+    fichierCouverture = null;
+    cheminCouvertureInitial = est.image_path || null;
+    couvertureRetiree = false;
     $('inscrits').style.display = 'none';
     $('editeur').style.display = '';
     $('editeur').innerHTML =
@@ -276,6 +343,11 @@
       + '<div class="champ"><label for="fTitre">Titre</label>'
       +   '<input type="text" id="fTitre" maxlength="160" value="' + echapper(est.titre || '')
       +   '" placeholder="Ex : Campagne de consultations à Ouakam"></div>'
+      + '<div class="champ"><label>Image de couverture</label>'
+      +   '<div id="apercuCouv"></div>'
+      +   '<input type="file" id="fImage" accept="image/*">'
+      +   '<p class="aide" style="margin:8px 0 0;">Affichée en tête de la page publique. '
+      +     'Un format paysage se présente le mieux.</p></div>'
       + '<div class="champ"><label for="fDesc">Description</label>'
       +   '<textarea id="fDesc" maxlength="1500" placeholder="Ce que l\'on attend des inscrits, le déroulé, les conditions…">'
       +   echapper(est.description || '') + '</textarea></div>'
@@ -308,6 +380,12 @@
       + '</div>';
 
     rendreQuestions();
+    rendreCouverture();
+    $('fImage').addEventListener('change', (ev) => {
+      fichierCouverture = ev.target.files[0] || null;
+      if (fichierCouverture) couvertureRetiree = false;
+      rendreCouverture();
+    });
     $('btnAjoutQ').addEventListener('click', () => {
       questionsEnCours.push({ id: 'q' + (questionsEnCours.length + 1), label: '', type: 'texte', obligatoire: false, options: [] });
       rendreQuestions();
@@ -315,6 +393,27 @@
     $('btnEnregistrer').addEventListener('click', soumettreEditeur);
     $('btnAnnuler').addEventListener('click', () => { $('editeur').style.display = 'none'; });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // L'aperçu montre soit le fichier qu'on vient de choisir, soit la
+  // couverture déjà enregistrée - jamais les deux, et jamais rien quand
+  // on vient de la retirer.
+  function rendreCouverture() {
+    const zone = $('apercuCouv');
+    if (!zone) return;
+    let src = '';
+    if (fichierCouverture) src = URL.createObjectURL(fichierCouverture);
+    else if (cheminCouvertureInitial && !couvertureRetiree) src = urlCouverture(cheminCouvertureInitial);
+    if (!src) { zone.innerHTML = ''; return; }
+    zone.innerHTML = '<img class="couverture" src="' + echapper(src) + '" alt="Couverture">'
+      + '<button type="button" class="btn btn-ligne btn-sm" id="btnRetirerCouv" '
+      + 'style="margin-bottom:10px;"><i class="ti ti-x"></i> Retirer l\'image</button>';
+    $('btnRetirerCouv').addEventListener('click', () => {
+      fichierCouverture = null;
+      couvertureRetiree = true;
+      $('fImage').value = '';
+      rendreCouverture();
+    });
   }
 
   function rendreQuestions() {
@@ -366,6 +465,7 @@
 
   async function enregistrerActivite(a) {
     const { data, error } = await supabaseClient.rpc('activite_enregistrer', {
+      p_image_path: a.image_path ?? null,
       p_id: a.id || null,
       p_titre: a.titre,
       p_description: a.description || null,
@@ -406,7 +506,27 @@
     const bouton = $('btnEnregistrer');
     bouton.disabled = true;
     try {
+      // Le fichier part d'abord : si le dépôt échoue, rien n'est
+      // enregistré et l'activité ne se retrouve pas avec le chemin
+      // d'une image qui n'existe pas.
+      let cheminImage = couvertureRetiree ? null : cheminCouvertureInitial;
+      if (fichierCouverture) {
+        const ext = (fichierCouverture.name.split('.').pop() || 'jpg').toLowerCase();
+        const chemin = crypto.randomUUID() + '.' + ext;
+        const { error: erreurDepot } = await supabaseClient.storage
+          .from(BUCKET_COUVERTURE).upload(chemin, fichierCouverture);
+        if (erreurDepot) throw erreurDepot;
+        cheminImage = chemin;
+      }
+      // L'ancienne image remplacée ou retirée ne doit pas rester
+      // orpheline dans le stockage.
+      if (cheminCouvertureInitial && cheminCouvertureInitial !== cheminImage) {
+        await supabaseClient.storage.from(BUCKET_COUVERTURE)
+          .remove([cheminCouvertureInitial]);
+      }
+
       await enregistrerActivite({
+        image_path: cheminImage,
         id: $('fId').value || null,
         titre: $('fTitre').value.trim(),
         description: $('fDesc').value.trim(),
