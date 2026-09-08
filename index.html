@@ -405,15 +405,21 @@
      une simple flexbox, et le survol ne fait plus qu'agrandir la carte
      visée. Les voisines ne bougent plus.
 
-     `flex:1 1 0` avec un maximum de 11rem : à sept cartes, 77rem ne
-     tiennent pas dans les 64rem de la scène, elles se partagent donc la
+     `flex:1 1 0` avec un maximum de 11rem : à huit cartes, 88rem ne
+     tiennent pas dans les 72rem de la scène, elles se partagent donc la
      largeur à égalité. Le rapport hauteur/largeur est tenu par
      aspect-ratio plutôt que par une hauteur fixe, sinon les photos
-     s'écrasaient à mesure que les cartes rétrécissaient. */
+     s'écrasaient à mesure que les cartes rétrécissaient.
+
+     La scène est passée de 64 à 72rem en même temps que la huitième
+     carte : à largeur constante, huit cartes seraient tombées de 133 à
+     114 px. Le bloc qui les contient fait 1329 px sur un écran de
+     1400 - mesuré - les 1152 px de 72rem y tiennent sans déborder, et
+     `width:100%` les ramène à la largeur disponible en dessous. */
   .fan-wrap{ display:none; flex-direction:column; align-items:center; gap:22px; padding:20px 0 6px; }
   .fan-stage{
     display:flex; justify-content:center; align-items:center; gap:1rem;
-    width:100%; max-width:64rem; margin:0 auto;
+    width:100%; max-width:72rem; margin:0 auto;
     /* De l'air au-dessus et en dessous : sans cela, la carte agrandie au
        survol venait mordre le titre de la section. */
     padding:1.2rem 0;
@@ -427,14 +433,11 @@
      ombre, sans déplacer aucune autre. Le z-index la fait passer devant
      ses voisines, que le grossissement finit par chevaucher. */
   .fan-card:hover{ transform:scale(1.12); box-shadow:0 20px 44px rgba(0,0,0,0.30); z-index:5; }
-  /* Entre 900 et 1100 px, sept cartes sur une ligne tombent à 108 px de
-     large : un visage n'y est plus lisible, et l'agrandissement au survol
-     n'a plus rien à mettre en avant. On retire les deux extrêmes - le
-     retrait étant symétrique, la carte du milieu reste la même, celle que
-     le compteur désigne et qui porte son nom. */
-  @media (max-width:1100px){
-    .fan-card:first-child, .fan-card:last-child{ display:none; }
-  }
+  /* Le nombre de cartes affichées entre 900 et 1100 px se décide en
+     JavaScript (fanNbFiches), et non ici : masquer les deux extrêmes en
+     CSS rendait DÉFINITIVEMENT invisibles deux des huit présidents, pour
+     qui la pagination est éteinte - il n'y avait plus aucune flèche pour
+     aller les chercher. */
   .fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
   .fan-name{
     position:absolute; left:0; right:0; bottom:0; padding:22px 8px 10px;
@@ -1756,28 +1759,49 @@
   // la largeur de la fenêtre, et un recalcul de TOUTES les cartes à chaque
   // survol pour écarter les voisines. Le CSS fait désormais le travail, et
   // ce fichier n'a plus qu'à décider QUI est visible.
-  const FAN_MAX = 7;
-  const FAN_HALF = 3;
+  const FAN_MAX = 8;
+  // Entre 900 et 1100 px, huit fiches sur une ligne tombent sous 110 px de
+  // large : un visage n'y est plus lisible, et l'agrandissement au survol
+  // n'a plus rien à mettre en avant. On en montre six.
+  //
+  // Ce choix est fait ICI et non en CSS. Masquer deux fiches par
+  // « display:none » semblait plus simple, mais la pagination, elle, se
+  // décide en JavaScript : pour les huit présidents, elle s'éteint (huit
+  // fiches suffisent), et le CSS masquait alors deux personnes que plus
+  // aucune flèche ne permettait d'atteindre. Le nombre de fiches doit
+  // donc être connu de la fonction qui décide s'il faut paginer.
+  const FAN_ETROIT = window.matchMedia('(max-width:1100px)');
+  function fanNbFiches(){ return FAN_ETROIT.matches ? 6 : FAN_MAX; }
 
   function setupFanCarousel(stage, prevBtn, nextBtn, counterEl, list){
     if (!stage || !Array.isArray(list) || list.length === 0) return;
     const total = list.length;
-    const paginated = total > FAN_MAX;
-    let center = paginated ? FAN_HALF : total >> 1;
-    const slotCount = paginated ? FAN_MAX : total;
-    const centerSlot = slotCount >> 1;
+    // « center » est l'INDICE, dans la liste, de la fiche mise au milieu.
+    // Il survit aux changements de largeur : on garde la même personne
+    // sous les yeux quand la fenêtre passe de huit fiches à six.
+    let center = total >> 1;
 
-    function visibleMap(centerIdx){
+    function disposition(){
+      const slots = Math.min(fanNbFiches(), total);
+      return { slots, centerSlot: slots >> 1, paginated: total > slots };
+    }
+
+    function visibleMap(centerIdx, d){
       const map = new Map();
-      if (!paginated) { list.forEach((_, i) => map.set(i, i)); return map; }
-      for (let slot = 0; slot < FAN_MAX; slot++){
-        map.set(((centerIdx + slot - FAN_HALF) % total + total) % total, slot);
+      if (!d.paginated) { list.forEach((_, i) => map.set(i, i)); return map; }
+      for (let slot = 0; slot < d.slots; slot++){
+        map.set(((centerIdx + slot - d.centerSlot) % total + total) % total, slot);
       }
       return map;
     }
 
     function render(){
-      const map = visibleMap(center);
+      const d = disposition();
+      const centerSlot = d.centerSlot;
+      const paginated = d.paginated;
+      if (prevBtn) prevBtn.style.display = paginated ? '' : 'none';
+      if (nextBtn) nextBtn.style.display = paginated ? '' : 'none';
+      const map = visibleMap(center, d);
       const entries = [];
       map.forEach((slot, idx) => entries.push({ idx, slot }));
       entries.sort((a, b) => a.slot - b.slot);
@@ -1822,7 +1846,9 @@
     function stopAuto(){ if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
     function startAuto(){
       stopAuto();
-      if (!paginated || reduceMotion) return;
+      // Le défilement n'a de sens que s'il reste des fiches à montrer -
+      // et cela dépend de la largeur, d'où la relecture à chaque départ.
+      if (!disposition().paginated || reduceMotion) return;
       autoTimer = setInterval(() => { center = (center + 1) % total; render(); }, 5000);
     }
 
@@ -1834,11 +1860,12 @@
       stage.addEventListener('focusout', startAuto);
       if (prevBtn) prevBtn.addEventListener('click', () => { center = (center - 1 + total) % total; render(); startAuto(); });
       if (nextBtn) nextBtn.addEventListener('click', () => { center = (center + 1) % total; render(); startAuto(); });
-      // Plus d'écoute du redimensionnement : la ligne se réajuste seule
-      // par la flexbox. L'ancien éventail, lui, devait tout recalculer.
+      // Seul le FRANCHISSEMENT du seuil est écouté, pas chaque pixel de
+      // redimensionnement : la ligne se réajuste d'elle-même par la
+      // flexbox, mais passer de huit fiches à six change QUI est visible
+      // et s'il faut encore des flèches.
+      FAN_ETROIT.addEventListener('change', () => { render(); startAuto(); });
     }
-    if (prevBtn) prevBtn.style.display = paginated ? '' : 'none';
-    if (nextBtn) nextBtn.style.display = paginated ? '' : 'none';
     render();
     startAuto();
   }
