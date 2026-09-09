@@ -1795,48 +1795,96 @@
       return map;
     }
 
+    // UNE CARTE PAR PERSONNE, construite une seule fois et gardée.
+    //
+    // Le carrousel avançait toutes les 5 secondes en vidant la scène
+    // (`innerHTML = ''`) et en recréant huit cartes neuves. Or un tour
+    // ne change qu'UNE personne sur huit : les sept autres étaient
+    // détruites puis reconstruites à l'identique, avec des <img> neufs
+    // que le navigateur devait recharger et redécoder. D'où un
+    // clignotement à chaque tour.
+    //
+    // Les cartes sont donc mémorisées par indice. Un tour ne fabrique
+    // plus qu'une carte - celle qui entre - et se contente de
+    // RÉORDONNER les autres : déplacer un nœud ne recharge pas son
+    // image. Les cartes sorties de l'écran restent en mémoire, prêtes à
+    // revenir sans un octet de réseau ; au pire 41 pour les pionniers.
+    const cartes = new Map();
+
+    function creerCarte(p){
+      const name = typeof p === 'string' ? p : (p.name || '');
+      const photo = typeof p === 'string' ? '' : (p.photo || '');
+      // « mandate » pour les présidents, « fonction » pour les pionniers -
+      // setupFanCarousel sert les deux listes, chacune avec son propre nom
+      // de champ.
+      const mandate = typeof p === 'string' ? '' : (p.mandate || p.fonction || '');
+      const card = document.createElement('div');
+      card.className = 'fan-card';
+      // Le contenu est posé par propriété et non par interpolation HTML :
+      // plus rien à échapper, donc plus rien à oublier d'échapper.
+      let visuel;
+      if (photo) {
+        visuel = document.createElement('img');
+        visuel.src = photo;
+        visuel.alt = name;
+        visuel.loading = 'lazy';
+        visuel.draggable = false;
+      } else {
+        visuel = document.createElement('div');
+        visuel.className = 'pio-avatar-fallback';
+        visuel.textContent = memberInitials(name);
+      }
+      card.appendChild(visuel);
+      if (name) {
+        const label = document.createElement('div');
+        label.className = 'fan-name';
+        label.textContent = name;
+        if (mandate) {
+          const sub = document.createElement('span');
+          sub.className = 'fan-name-sub';
+          sub.textContent = mandate;
+          label.appendChild(sub);
+        }
+        card.appendChild(label);
+      }
+      return card;
+    }
+
+    function carteDe(idx){
+      let card = cartes.get(idx);
+      if (!card) { card = creerCarte(list[idx]); cartes.set(idx, card); }
+      return card;
+    }
+
     function render(){
       const d = disposition();
-      const centerSlot = d.centerSlot;
-      const paginated = d.paginated;
-      if (prevBtn) prevBtn.style.display = paginated ? '' : 'none';
-      if (nextBtn) nextBtn.style.display = paginated ? '' : 'none';
+      if (prevBtn) prevBtn.style.display = d.paginated ? '' : 'none';
+      if (nextBtn) nextBtn.style.display = d.paginated ? '' : 'none';
       const map = visibleMap(center, d);
       const entries = [];
       map.forEach((slot, idx) => entries.push({ idx, slot }));
       entries.sort((a, b) => a.slot - b.slot);
-      stage.innerHTML = '';
-      entries.forEach(({ idx, slot }) => {
-        const p = list[idx];
-        const name = typeof p === 'string' ? p : (p.name || '');
-        const photo = typeof p === 'string' ? '' : (p.photo || '');
-        // « mandate » pour les présidents, « fonction » pour les pionniers -
-        // setupFanCarousel sert les deux listes, chacune avec son propre nom
-        // de champ.
-        const mandate = typeof p === 'string' ? '' : (p.mandate || p.fonction || '');
-        const card = document.createElement('div');
-        card.className = 'fan-card';
-        // La carte centrale garde son nom affiché en permanence.
-        if (slot === centerSlot) card.classList.add('centre');
-        card.dataset.slot = String(slot);
-        card.innerHTML = photo
-          ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">`
-          : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`;
-        if (name) {
-          const label = document.createElement('div');
-          label.className = 'fan-name';
-          label.textContent = name;
-          if (mandate) {
-            const sub = document.createElement('span');
-            sub.className = 'fan-name-sub';
-            sub.textContent = mandate;
-            label.appendChild(sub);
-          }
-          card.appendChild(label);
-        }
-        stage.appendChild(card);
+      const elements = entries.map(e => carteDe(e.idx));
+      // La carte du milieu garde son nom affiché en permanence. La classe
+      // se déplace d'une carte à l'autre au fil des tours, elle est donc
+      // reposée à chaque fois - sur toutes, pour l'enlever à la sortante.
+      elements.forEach((card, i) => {
+        card.classList.toggle('centre', entries[i].slot === d.centerSlot);
       });
-      if (counterEl) counterEl.textContent = paginated ? `${center + 1} / ${total}` : '';
+      // Déplace les nœuds déjà présents au lieu de les recréer.
+      stage.replaceChildren(...elements);
+      nbAffiche = d.slots;
+      if (counterEl) counterEl.textContent = d.paginated ? `${center + 1} / ${total}` : '';
+    }
+
+    // Ne redessine QUE si le nombre de fiches change vraiment. Sans ce
+    // garde, chaque pixel de redimensionnement rejouerait le rendu et
+    // relancerait le défilement automatique.
+    let nbAffiche = null;
+    function surLargeur(){
+      if (Math.min(fanNbFiches(), total) === nbAffiche) return;
+      render();
+      startAuto();
     }
 
     // Défilement automatique (comme les autres carrousels du site) : avance
@@ -1860,11 +1908,23 @@
       stage.addEventListener('focusout', startAuto);
       if (prevBtn) prevBtn.addEventListener('click', () => { center = (center - 1 + total) % total; render(); startAuto(); });
       if (nextBtn) nextBtn.addEventListener('click', () => { center = (center + 1) % total; render(); startAuto(); });
-      // Seul le FRANCHISSEMENT du seuil est écouté, pas chaque pixel de
-      // redimensionnement : la ligne se réajuste d'elle-même par la
-      // flexbox, mais passer de huit fiches à six change QUI est visible
-      // et s'il faut encore des flèches.
-      FAN_ETROIT.addEventListener('change', () => { render(); startAuto(); });
+      // La LARGEUR des cartes se règle seule par la flexbox ; leur NOMBRE,
+      // non - et il décide aussi s'il faut des flèches. On redessine donc
+      // au franchissement du seuil, mais seulement à ce moment-là :
+      // « surLargeur » ne fait rien tant que le nombre de fiches ne change
+      // pas, ce qui laisse un redimensionnement ordinaire sans effet.
+      //
+      // DEUX SIGNAUX pour un seul besoin, et c'est délibéré : « change »
+      // sur la media query est le signal juste, mais il ne part pas
+      // partout (il ne part pas du tout sous l'émulation de fenêtre qui a
+      // servi à vérifier cette page). « resize » part toujours. Le garde
+      // ci-dessus rend le doublon inoffensif.
+      FAN_ETROIT.addEventListener('change', surLargeur);
+      let minuteurLargeur = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(minuteurLargeur);
+        minuteurLargeur = setTimeout(surLargeur, 150);
+      });
     }
     render();
     startAuto();
