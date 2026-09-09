@@ -1,26 +1,4 @@
 {
-  "footer_pages": [
-    {
-      "label": "Bilans annuels",
-      "href": "rapports/"
-    },
-    {
-      "label": "Guide de navigation",
-      "href": "guide"
-    },
-    {
-      "label": "Demander une campagne",
-      "href": "demande-campagne"
-    },
-    {
-      "label": "Faire un don",
-      "href": "don"
-    },
-    {
-      "label": "Se connecter",
-      "href": "membres/connexion"
-    }
-  ],
   "lien_youtube": "https://www.youtube.com/@amstc",
   "contact_phone": "+221 77 535 19 12",
   "nav_decouvrir": [

@@ -592,7 +592,11 @@
 
   /* ===== Footer ===== */
   footer{background:var(--green-deep); color:rgba(246,247,241,0.85); padding:64px 0 28px;}
-  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px;}
+  /* Trois colonnes depuis le retrait de la colonne « Pages ». La
+     premiere est passee de 1.4fr a 2.2fr : sans cela, la description de
+     l'association gardait sa largeur d'avant et la place liberee
+     restait vide. */
+  .footer-grid{display:grid; grid-template-columns:2.2fr 1fr 1fr; gap:40px; margin-bottom:40px;}
   .footer-grid > div{min-width:0;}
   @media (max-width:780px){ .footer-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);} }
   footer h5{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:16px;}
@@ -1336,16 +1340,6 @@
         <span class="recepisse" id="cms-recepisse">Récépissé n° 022909/MISP/DGAT/DLPL/DAPA</span>
       </div>
       <div>
-        <h5>Pages</h5>
-        <ul id="footer-pages-list">
-          <li><a href="rapports/">Bilans annuels</a></li>
-          <li><a href="guide">Guide de navigation</a></li>
-          <li><a href="demande-campagne">Demander une campagne</a></li>
-          <li><a href="don">Faire un don</a></li>
-          <li><a href="membres/connexion">Se connecter</a></li>
-        </ul>
-      </div>
-      <div>
         <h5>Contact</h5>
         <ul>
           <li id="cms-contact-phone">Tél. : [à compléter]</li>
@@ -1360,6 +1354,7 @@
     <div class="footer-bottom">
       <span>© <span id="year"></span> AMSTC - Tous droits réservés.</span>
       <span>
+        <a href="guide">Guide d'utilisation</a> ·
         <a href="confidentialite">Politique de confidentialité</a> ·
         <a href="cgu">Conditions d'utilisation</a>
       </span>
@@ -2248,13 +2243,6 @@
     }
     renderNavLinks('nav-menu-decouvrir', data.nav_decouvrir);
     renderNavLinks('nav-menu-activites', data.nav_activites);
-    if (Array.isArray(data.footer_pages) && data.footer_pages.length > 0) {
-      const list = document.getElementById('footer-pages-list');
-      if (list) list.innerHTML = data.footer_pages.map(i => {
-        const external = /^https?:\/\//.test(i.href || '');
-        return `<li><a href="${esc(i.href)}"${external ? ' target="_blank" rel="noopener"' : ''}>${esc(i.label)}</a></li>`;
-      }).join('');
-    }
     if (data.contact_email) {
       const emailLink = document.getElementById('cms-contact-email');
       emailLink.textContent = data.contact_email;

@@ -226,7 +226,7 @@ collections:
             hint: "Liens du sous-menu 'Découvrir l'AMSTC', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
             fields:
               - { label: "Texte affiché", name: "label", widget: "string" }
-              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
 
           - label: "Sous-menu 'Nos activités'"
             name: "nav_activites"
@@ -234,15 +234,7 @@ collections:
             hint: "Liens du sous-menu 'Nos activités', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
             fields:
               - { label: "Texte affiché", name: "label", widget: "string" }
-              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
-
-          - label: "Liens du pied de page (colonne 'Pages')"
-            name: "footer_pages"
-            widget: "list"
-            hint: "L'ordre ici définit l'ordre d'affichage dans le pied de page du site."
-            fields:
-              - { label: "Texte affiché", name: "label", widget: "string" }
-              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites.html), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
 
           - { label: "E-mail de contact (pied de page)", name: "contact_email", widget: "string", pattern: ['^[^\s@]+@[^\s@]+\.[^\s@]+$', "Adresse e-mail invalide."] }
 
