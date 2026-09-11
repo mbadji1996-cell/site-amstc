@@ -23,6 +23,10 @@
     }
     var btn = document.querySelector(".theme-toggle-btn");
     if (btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    // L'entree de menu annonce l'action, pas l'etat : en clair elle
+    // propose « Mode sombre ».
+    var mot = document.querySelector(".menu-extra-theme .menu-extra-mot");
+    if (mot) mot.textContent = theme === "dark" ? "Mode clair" : "Mode sombre";
   }
 
   function currentTheme() {
@@ -43,6 +47,49 @@
       applyTheme(currentTheme() === "dark" ? "light" : "dark", true);
     });
     document.body.appendChild(btn);
+    creerEntreeMenu();
+  }
+
+  function creerEntreeMenu() {
+    if (document.querySelector(".menu-extra-theme")) return;
+    var e = document.createElement("button");
+    e.type = "button";
+    e.className = "menu-extra menu-extra-theme";
+    // Une icone de contraste, lisible dans les deux themes - plutot que
+    // le couple soleil/lune du bouton flottant, dont l'affichage depend
+    // de regles propres a ce bouton.
+    e.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor"/></svg>'
+      + '<span class="menu-extra-mot">' + (currentTheme() === "dark" ? "Mode clair" : "Mode sombre") + '</span>';
+    e.addEventListener("click", function () {
+      applyTheme(currentTheme() === "dark" ? "light" : "dark", true);
+    });
+    poserDansMenu(e, "a-menu-theme");
+  }
+
+  // Sous 880 px, le bouton flottant cede la place a une entree de menu
+  // (voir dark-mode.css). Deux menus existent : celui du site public
+  // (#navLinks) et celui de l'espace membres (.member-nav-panel). Le
+  // second est construit par member-nav.js, qui peut passer APRES nous -
+  // d'ou l'observation du DOM plutot qu'un simple querySelector.
+  function poserDansMenu(el, marqueur) {
+    function essayer() {
+      var c = document.querySelector("#navLinks, .member-nav-panel");
+      if (!c) return false;
+      c.appendChild(el);
+      // Le marqueur autorise le CSS a masquer le bouton flottant. Il
+      // n'est pose qu'ICI, une fois l'entree REELLEMENT en place :
+      // 28 des 71 pages n'ont aucun menu, et masquer le bouton sur la
+      // seule foi de la largeur d'ecran y rendrait la fonction
+      // inatteignable.
+      document.documentElement.classList.add(marqueur);
+      return true;
+    }
+    if (essayer()) return;
+    if (!window.MutationObserver) return;
+    var obs = new MutationObserver(function () { if (essayer()) obs.disconnect(); });
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+    setTimeout(function () { obs.disconnect(); }, 5000);
   }
 
   // Le thème initial est déjà posé par le script anti-flash inline

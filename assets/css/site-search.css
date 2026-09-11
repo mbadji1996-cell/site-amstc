@@ -144,3 +144,9 @@
 @media print {
   .site-search-btn, .site-search-overlay { display: none; }
 }
+
+/* Sous 880 px, la recherche quitte le bord de l'ecran pour le menu
+   (site-search.js pose l'entree). Voir dark-mode.css, meme seuil. */
+@media (max-width: 880px) {
+  :root.a-menu-recherche .site-search-btn { display: none; }
+}

@@ -81,9 +81,29 @@
     document.body.appendChild(btn);
     document.body.appendChild(overlay);
 
+    // Entree de menu : sous 880 px, elle remplace le bouton flottant.
+    var entree = document.createElement("button");
+    entree.type = "button";
+    entree.className = "menu-extra menu-extra-recherche";
+    entree.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'
+      + '<span class="menu-extra-mot">Rechercher</span>';
+    poserDansMenu(entree, "a-menu-recherche");
+
     var input = overlay.querySelector(".site-search-input");
     var results = overlay.querySelector(".site-search-results");
     var closeBtn = overlay.querySelector(".site-search-close");
+
+    entree.addEventListener("click", function () {
+      // Le menu se referme derriere nous : la recherche prend tout
+      // l'ecran, et deux couches ouvertes l'une sur l'autre piegeraient
+      // la touche « retour ».
+      var menu = document.getElementById("navLinks");
+      if (menu) menu.classList.remove("open");
+      var panneau = document.querySelector(".member-nav-panel.open");
+      if (panneau) panneau.classList.remove("open");
+      open();
+    });
 
     function open() {
       overlay.classList.add("open");
@@ -146,4 +166,30 @@
   } else {
     document.addEventListener("DOMContentLoaded", createUI);
   }
+
+  // Sous 880 px, le bouton flottant cede la place a une entree de menu
+  // (voir dark-mode.css). Deux menus existent : celui du site public
+  // (#navLinks) et celui de l'espace membres (.member-nav-panel). Le
+  // second est construit par member-nav.js, qui peut passer APRES nous -
+  // d'ou l'observation du DOM plutot qu'un simple querySelector.
+  function poserDansMenu(el, marqueur) {
+    function essayer() {
+      var c = document.querySelector("#navLinks, .member-nav-panel");
+      if (!c) return false;
+      c.appendChild(el);
+      // Le marqueur autorise le CSS a masquer le bouton flottant. Il
+      // n'est pose qu'ICI, une fois l'entree REELLEMENT en place :
+      // 28 des 71 pages n'ont aucun menu, et masquer le bouton sur la
+      // seule foi de la largeur d'ecran y rendrait la fonction
+      // inatteignable.
+      document.documentElement.classList.add(marqueur);
+      return true;
+    }
+    if (essayer()) return;
+    if (!window.MutationObserver) return;
+    var obs = new MutationObserver(function () { if (essayer()) obs.disconnect(); });
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+    setTimeout(function () { obs.disconnect(); }, 5000);
+  }
+
 })();

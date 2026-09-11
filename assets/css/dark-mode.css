@@ -128,3 +128,62 @@
   .defilement { right: 14px; }
   .defilement-btn { width: 44px; height: 44px; }
 }
+
+/* ===== Un seul bouton flottant sur telephone =====
+   Mesure sur 375 x 812 : les quatre pastilles empilees occupaient 206 px,
+   soit le QUART de la hauteur de l'ecran, et deux d'entre elles mordaient
+   sur le bouton « Faire un don » du hero - 14 px, 10 % de sa largeur.
+
+   Sous 880 px, seule la fleche « remonter en haut » reste : c'est la seule
+   dont l'usage soit frequent et le geste penible a remplacer. Le theme et
+   la recherche passent dans le menu, ou l'on va deja chercher ce genre de
+   reglage. La fleche « descendre » disparait : sur une page d'accueil elle
+   mene au pied de page, et elle avait ete pensee pour les longs cours de
+   l'espace membres - elle y reste, au-dessus de 880 px.
+
+   880 px et non 1180 : c'est le seuil auquel le menu de l'espace membres
+   passe en panneau. Choisir le seuil du site public aurait cache le bouton
+   de theme sur des pages membres dont le menu n'existe pas encore. */
+@media (max-width: 880px) {
+  /* « a-menu-theme » n'est pose par theme-toggle.js que si l'entree a
+     TROUVE un menu. 28 des 71 pages n'en ont aucun - page de don, ecran
+     de connexion, mentions legales : le bouton y reste, faute de quoi la
+     bascule clair/sombre deviendrait inatteignable sur telephone. */
+  :root.a-menu-theme .theme-toggle-btn { display: none; }
+  /* La fleche « descendre », elle, part partout : sur une page d'accueil
+     elle mene au pied de page, et rien ne la remplace parce que rien ne
+     la reclame. */
+  .defilement-bas { display: none; }
+}
+
+/* ===== Entrees ajoutees au menu (theme, recherche) =====
+   Posees par theme-toggle.js et site-search.js. Invisibles tant que les
+   boutons flottants sont la : les deux ne doivent jamais coexister. */
+.menu-extra { display: none; }
+
+@media (max-width: 880px) {
+  /* Site public : meme rythme que les liens du menu deroulant. */
+  .nav-links .menu-extra {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    padding: 14px 28px; border: 0; border-top: 1px solid var(--line);
+    background: none; color: var(--ink);
+    font-family: inherit; font-size: 0.9rem; font-weight: 500;
+    text-align: left; cursor: pointer;
+  }
+  .nav-links .menu-extra svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* Espace membres : le panneau est vert fonce, les entrees y sont en
+     capitales et en chasse fixe - on s'aligne sur .member-nav-panel a. */
+  .member-nav-panel .menu-extra {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    padding: 11px 14px; border: 0; border-radius: 8px; background: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.6); text-align: left; cursor: pointer;
+  }
+  .member-nav-panel .menu-extra svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .member-nav-panel .menu-extra:hover,
+  .member-nav-panel .menu-extra:focus-visible {
+    color: #FFFFFF; background: rgba(255,255,255,0.06);
+  }
+}
