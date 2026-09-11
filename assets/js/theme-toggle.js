@@ -72,9 +72,57 @@
   // (#navLinks) et celui de l'espace membres (.member-nav-panel). Le
   // second est construit par member-nav.js, qui peut passer APRES nous -
   // d'ou l'observation du DOM plutot qu'un simple querySelector.
+  // A DEFAUT DE MENU, l'entete. 28 pages n'ont ni la barre du site public
+  // ni les onglets de l'espace membres ; 23 d'entre elles ont un <header>,
+  // ou le theme et la recherche tiennent en icones, en haut a droite.
+  //
+  // POSITION ABSOLUE, et non un enfant de la rangee. Le premier essai
+  // rendait flexbox le conteneur interieur de l'entete : cela marche quand
+  // il ne porte qu'un logo, mais les bilans annuels y empilent logo,
+  // sur-titre, titre et sous-titre - tout s'est retrouve sur une ligne et
+  // la page debordait a 375 px. Poser la barre par-dessus ne touche a
+  // aucune mise en page.
+  //
+  // Un entete qui porte deja un bouton a droite (la boite WhatsApp) lui
+  // reserve sa place : la barre se decale vers la gauche.
+  function barreEntete() {
+    var entete = document.querySelector("header");
+    // Cinq pages n ont pas d entete du tout : mentions legales, CGU, 404
+    // et le guide. On se rabat sur leur conteneur de tete, avec une
+    // variante CLAIRE - ces pages n ont pas le bandeau vert, et des icones
+    // blanches y seraient invisibles.
+    var clair = false;
+    if (!entete) {
+      entete = document.querySelector(".box, .shell, body > .wrap, main > .wrap");
+      clair = true;
+    }
+    if (!entete) return null;
+    var barre = entete.querySelector(".outils-entete");
+    if (barre) return barre;
+    barre = document.createElement("div");
+    barre.className = "outils-entete" + (clair ? " outils-clair" : "");
+    if (getComputedStyle(entete).position === "static") entete.style.position = "relative";
+    // Largeur a reserver pour ce qui occupe deja le bord droit.
+    var occupe = 0;
+    var bord = entete.getBoundingClientRect().right;
+    var controles = entete.querySelectorAll("a, button");
+    for (var i = 0; i < controles.length; i++) {
+      var r = controles[i].getBoundingClientRect();
+      // Un CONTROLE, pas un bloc : le logo de certaines pages est un lien
+      // qui occupe toute la largeur, et son bord droit touche celui de
+      // l entete sans rien occuper a droite. Sans la borne de largeur, la
+      // barre etait repoussee hors de l ecran (constate sur /don).
+      if (r.width && r.width < 160 && bord - r.right < 90) occupe = Math.max(occupe, bord - r.left);
+    }
+    if (occupe) barre.style.right = (occupe + 12) + "px";
+    entete.appendChild(barre);
+    entete.classList.add("a-outils-entete");
+    return barre;
+  }
+
   function poserDansMenu(el, marqueur) {
     function essayer() {
-      var c = document.querySelector("#navLinks, .member-nav-panel");
+      var c = document.querySelector("#navLinks, .member-nav-panel") || barreEntete();
       if (!c) return false;
       c.appendChild(el);
       // Le marqueur autorise le CSS a masquer le bouton flottant. Il
