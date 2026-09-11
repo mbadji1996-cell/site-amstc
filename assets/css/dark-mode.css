@@ -49,6 +49,11 @@
   --text-accent: #F0C955;
   --surface: #182019;
   --text-muted: #9BB0A2;
+  /* L alternance des sections de l accueil a sa propre variable depuis que
+     le fond du site est blanc. Elle DOIT etre redefinie ici : sans cette
+     ligne, les six sections alternees restaient en #F6F7F1 - six bandes
+     blanches en plein theme sombre. Constate a la mesure, pas a l oeil. */
+  --section-alt: #17211A;
 }
 
 /* ===== Bouton flottant (créé dynamiquement par theme-toggle.js) ===== */

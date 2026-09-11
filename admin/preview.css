@@ -7,7 +7,9 @@
   --green-deep:#06441C;
   --gold:#F8B718;
   --gold-deep:#AA7B11;
-  --paper:#F6F7F1;
+  /* Aligne sur le site : fond blanc depuis le 11/09/2026. L apercu du CMS
+     doit montrer ce que verra le lecteur, pas ce que voyait le site d avant. */
+  --paper:#FFFFFF;
 }
 
 body{

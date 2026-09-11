@@ -52,10 +52,15 @@
     --green-deep:#06441C;
     --gold:#F8B718;
     --gold-deep:#AA7B11;
-    --paper:#F6F7F1;
+    --paper:#FFFFFF;
     --paper-alt:#ECEFE3;
+    /* L'alternance des sections a SA variable, et ne partage plus rien
+       avec --paper-alt. Celle-ci sert surtout de remplissage a des
+       composants - jauges, etiquettes, badges, reserves d'image - qui
+       disparaitraient si on l'eclaircissait pour les seules sections. */
+    --section-alt:#F6F7F1;
     --white:#FFFFFF;
-    --line: rgba(6,68,28,0.14);
+    --line: rgba(6,68,28,0.22);
     --shadow: 0 12px 32px rgba(6,68,28,0.10);
     --radius: 14px;
     --maxw: 1400px;   /* meme largeur que l'espace membres : une seule regle pour tout le site */
@@ -239,7 +244,7 @@
   .intro-card a{font-weight:600; font-size:0.92rem; color:var(--green); border-bottom:1.5px solid var(--gold);}
 
   section{padding:80px 0;}
-  .section-alt{background:var(--paper-alt);}
+  .section-alt{background:var(--section-alt);}
   .section-head{max-width:660px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(1.6rem,3vw,2.3rem);}
   .section-head p:not(.eyebrow){color:var(--text-muted); margin-top:14px; font-size:1.02rem;}
@@ -627,7 +632,7 @@
 
   /* ===== Blocs personnalisables (sections libres) ===== */
   .custom-section{padding:60px 0;}
-  .custom-section.alt{background:var(--paper-alt);}
+  .custom-section.alt{background:var(--section-alt);}
 
   .tx-img-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
   .tx-img-grid.reverse .tx-img-media{order:-1;}
