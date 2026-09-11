@@ -81,19 +81,17 @@
     document.body.appendChild(btn);
     document.body.appendChild(overlay);
 
-    // Entree de menu : sous 880 px, elle remplace le bouton flottant.
+    // Entree posee dans le menu ET dans l'entete : le bouton flottant
+    // disparait a toutes les largeurs. « open » est declaree plus bas
+    // dans cette meme fonction - une declaration, donc hissee : on peut
+    // s'y brancher des maintenant.
+    function fabriquerEntree() {
     var entree = document.createElement("button");
     entree.type = "button";
     entree.className = "menu-extra menu-extra-recherche";
     entree.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'
       + '<span class="menu-extra-mot">Rechercher</span>';
-    poserDansMenu(entree, "a-menu-recherche");
-
-    var input = overlay.querySelector(".site-search-input");
-    var results = overlay.querySelector(".site-search-results");
-    var closeBtn = overlay.querySelector(".site-search-close");
-
     entree.addEventListener("click", function () {
       // Le menu se referme derriere nous : la recherche prend tout
       // l'ecran, et deux couches ouvertes l'une sur l'autre piegeraient
@@ -104,6 +102,13 @@
       if (panneau) panneau.classList.remove("open");
       open();
     });
+    return entree;
+    }
+    poserOutil(fabriquerEntree, "a-menu-recherche");
+
+    var input = overlay.querySelector(".site-search-input");
+    var results = overlay.querySelector(".site-search-results");
+    var closeBtn = overlay.querySelector(".site-search-close");
 
     function open() {
       overlay.classList.add("open");
@@ -220,22 +225,41 @@
     return barre;
   }
 
-  function poserDansMenu(el, marqueur) {
-    function essayer() {
-      var c = document.querySelector("#navLinks, .member-nav-panel") || barreEntete();
-      if (!c) return false;
-      c.appendChild(el);
-      // Le marqueur autorise le CSS a masquer le bouton flottant. Il
-      // n'est pose qu'ICI, une fois l'entree REELLEMENT en place :
-      // 28 des 71 pages n'ont aucun menu, et masquer le bouton sur la
-      // seule foi de la largeur d'ecran y rendrait la fonction
-      // inatteignable.
+  // DEUX EMPLACEMENTS, pas un. Sur telephone, un menu est le bon endroit
+  // pour un reglage ; sur ordinateur, le menu est une rangee horizontale
+  // de rubriques, ou une bascule de theme detonnerait - l'entete convient
+  // mieux. Les pages qui ont un menu recoivent donc les DEUX, et le CSS
+  // montre l'un ou l'autre selon la largeur.
+  //
+  // « fabrique » et non un element tout fait : il en faut un par
+  // emplacement, un noeud ne pouvant etre a deux endroits a la fois.
+  //
+  // Le marqueur autorise le CSS a masquer le bouton flottant. Il n'est
+  // pose qu'une fois un exemplaire REELLEMENT en place : la page du CMS
+  // n'offre aucun ancrage, et l'y masquer sur la seule foi de la largeur
+  // rendrait la fonction inatteignable.
+  function poserOutil(fabrique, marqueur) {
+    var barre = barreEntete();
+    if (barre) {
+      barre.appendChild(fabrique());
+      document.documentElement.classList.add(marqueur);
+    }
+
+    function poserDansMenu() {
+      var menu = document.querySelector("#navLinks, .member-nav-panel");
+      if (!menu) return false;
+      menu.appendChild(fabrique());
+      // L'entete devient un COMPLEMENT : le menu le releve sous 880 px.
+      if (barre) barre.classList.add("outils-complement");
       document.documentElement.classList.add(marqueur);
       return true;
     }
-    if (essayer()) return;
+    if (poserDansMenu()) return;
+    // Le panneau de l'espace membres est construit par member-nav.js, qui
+    // peut passer APRES nous - d'ou l'observation plutot qu'un simple
+    // querySelector.
     if (!window.MutationObserver) return;
-    var obs = new MutationObserver(function () { if (essayer()) obs.disconnect(); });
+    var obs = new MutationObserver(function () { if (poserDansMenu()) obs.disconnect(); });
     obs.observe(document.documentElement, { childList: true, subtree: true });
     setTimeout(function () { obs.disconnect(); }, 5000);
   }

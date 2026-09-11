@@ -144,17 +144,12 @@
    880 px et non 1180 : c'est le seuil auquel le menu de l'espace membres
    passe en panneau. Choisir le seuil du site public aurait cache le bouton
    de theme sur des pages membres dont le menu n'existe pas encore. */
-@media (max-width: 880px) {
-  /* « a-menu-theme » n'est pose par theme-toggle.js que si l'entree a
-     TROUVE un menu. 28 des 71 pages n'en ont aucun - page de don, ecran
-     de connexion, mentions legales : le bouton y reste, faute de quoi la
-     bascule clair/sombre deviendrait inatteignable sur telephone. */
-  :root.a-menu-theme .theme-toggle-btn { display: none; }
-  /* La fleche « descendre », elle, part partout : sur une page d'accueil
-     elle mene au pied de page, et rien ne la remplace parce que rien ne
-     la reclame. */
-  .defilement-bas { display: none; }
-}
+/* « a-menu-theme » n'est pose par theme-toggle.js que si un exemplaire a
+   TROUVE sa place - entete ou menu. La page du CMS n'offre aucun ancrage :
+   le bouton y reste, faute de quoi la bascule clair/sombre deviendrait
+   inatteignable. La regle vaut a TOUTES les largeurs depuis que la barre
+   d'entete existe aussi sur ordinateur. */
+:root.a-menu-theme .theme-toggle-btn { display: none; }
 
 /* ===== Entrees ajoutees au menu (theme, recherche) =====
    Posees par theme-toggle.js et site-search.js. Invisibles tant que les
@@ -197,44 +192,46 @@
    certains de ces entetes empilent un titre entier, qu'une flexbox aurait
    mis sur une seule ligne - constate sur les bilans annuels, page debordee
    a 375 px. Ici, aucune mise en page existante n'est modifiee. */
-/* Au-dessus de 880 px, la barre n existe pas : ses boutons sont deja au
-   bord de l ecran. Le conteneur est masque explicitement plutot que laisse
-   a une hauteur nulle - un bloc vide pleine largeur dans un entete est une
-   surprise qui attend son heure. */
-.outils-entete { display: none; }
-
-@media (max-width: 880px) {
-  .outils-entete {
-    position: absolute; top: 14px; right: 20px; z-index: 5;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .outils-entete .menu-extra {
-    display: flex; align-items: center; justify-content: center;
-    width: 38px; height: 38px; padding: 0;
-    border: 1px solid rgba(255,255,255,0.22); border-radius: 50%;
-    background: rgba(255,255,255,0.10); color: #F6F7F1;
-    cursor: pointer;
-  }
-  .outils-entete .menu-extra:hover { background: rgba(255,255,255,0.20); }
-
-  /* Variante CLAIRE : les cinq pages sans entete (mentions legales, CGU,
-     404, guide) n ont pas le bandeau vert - des icones blanches y seraient
-     invisibles. On reprend le style des boutons flottants, qui vivent deja
-     sur ce fond. */
-  .outils-clair .menu-extra {
-    border-color: var(--line); background: var(--surface); color: var(--green-deep);
-    box-shadow: var(--shadow);
-  }
-  .outils-clair .menu-extra:hover { background: var(--surface); border-color: var(--green); }
-  :root[data-theme="dark"] .outils-clair .menu-extra { color: var(--text-accent); }
-  .outils-entete .menu-extra:focus-visible { outline: 2px solid #F8B718; outline-offset: 2px; }
-  .outils-entete .menu-extra svg { width: 18px; height: 18px; }
-  /* Le mot reste lu par les lecteurs d'ecran, mais l'icone suffit a l'oeil
-     dans une rangee d'entete deja chargee. */
-  .outils-entete .menu-extra-mot {
-    position: absolute; width: 1px; height: 1px;
-    margin: -1px; padding: 0; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-  }
+/* La barre vit a TOUTES les largeurs : le theme et la recherche ont quitte
+   le bord de l ecran partout, pas seulement sur telephone. Sur les pages
+   qui ont aussi un menu, elle porte « outils-complement » et c est le menu
+   qui la releve sous 880 px (regle plus bas). */
+.outils-entete {
+  position: absolute; top: 14px; right: 20px; z-index: 5;
+  display: flex; align-items: center; gap: 8px;
 }
+
+/* Un menu couvre deja ces outils sur telephone : deux acces au meme
+   reglage a dix pixels l un de l autre n aident personne. */
+@media (max-width: 880px) {
+  .outils-complement { display: none; }
+}
+
+.outils-entete .menu-extra {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; padding: 0;
+  border: 1px solid rgba(255,255,255,0.22); border-radius: 50%;
+  background: rgba(255,255,255,0.10); color: #F6F7F1;
+  cursor: pointer;
+}
+.outils-entete .menu-extra:hover { background: rgba(255,255,255,0.20); }
+.outils-entete .menu-extra:focus-visible { outline: 2px solid #F8B718; outline-offset: 2px; }
+.outils-entete .menu-extra svg { width: 18px; height: 18px; }
+/* Le mot reste lu par les lecteurs d'ecran, mais l'icone suffit a l'oeil
+   dans une rangee d'entete deja chargee. */
+.outils-entete .menu-extra-mot {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Variante CLAIRE : quatre pages n'ont pas d'entete (mentions legales,
+   CGU, 404, guide) et donc pas le bandeau vert - des icones blanches y
+   seraient invisibles. On reprend le style des boutons flottants, qui
+   vivent deja sur ce fond. */
+.outils-clair .menu-extra {
+  border-color: var(--line); background: var(--surface); color: var(--green-deep);
+  box-shadow: var(--shadow);
+}
+.outils-clair .menu-extra:hover { background: var(--surface); border-color: var(--green); }
+:root[data-theme="dark"] .outils-clair .menu-extra { color: var(--text-accent); }

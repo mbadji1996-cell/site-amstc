@@ -25,8 +25,12 @@
     if (btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
     // L'entree de menu annonce l'action, pas l'etat : en clair elle
     // propose « Mode sombre ».
-    var mot = document.querySelector(".menu-extra-theme .menu-extra-mot");
-    if (mot) mot.textContent = theme === "dark" ? "Mode clair" : "Mode sombre";
+    // TOUS les exemplaires : il y en a deux sur les pages qui ont un
+    // menu - l'entree de menu et l'icone d'entete.
+    var mots = document.querySelectorAll(".menu-extra-theme .menu-extra-mot");
+    for (var i = 0; i < mots.length; i++) {
+      mots[i].textContent = theme === "dark" ? "Mode clair" : "Mode sombre";
+    }
   }
 
   function currentTheme() {
@@ -52,6 +56,10 @@
 
   function creerEntreeMenu() {
     if (document.querySelector(".menu-extra-theme")) return;
+    poserOutil(fabriquerEntree, "a-menu-theme");
+  }
+
+  function fabriquerEntree() {
     var e = document.createElement("button");
     e.type = "button";
     e.className = "menu-extra menu-extra-theme";
@@ -64,7 +72,7 @@
     e.addEventListener("click", function () {
       applyTheme(currentTheme() === "dark" ? "light" : "dark", true);
     });
-    poserDansMenu(e, "a-menu-theme");
+    return e;
   }
 
   // Sous 880 px, le bouton flottant cede la place a une entree de menu
@@ -120,22 +128,41 @@
     return barre;
   }
 
-  function poserDansMenu(el, marqueur) {
-    function essayer() {
-      var c = document.querySelector("#navLinks, .member-nav-panel") || barreEntete();
-      if (!c) return false;
-      c.appendChild(el);
-      // Le marqueur autorise le CSS a masquer le bouton flottant. Il
-      // n'est pose qu'ICI, une fois l'entree REELLEMENT en place :
-      // 28 des 71 pages n'ont aucun menu, et masquer le bouton sur la
-      // seule foi de la largeur d'ecran y rendrait la fonction
-      // inatteignable.
+  // DEUX EMPLACEMENTS, pas un. Sur telephone, un menu est le bon endroit
+  // pour un reglage ; sur ordinateur, le menu est une rangee horizontale
+  // de rubriques, ou une bascule de theme detonnerait - l'entete convient
+  // mieux. Les pages qui ont un menu recoivent donc les DEUX, et le CSS
+  // montre l'un ou l'autre selon la largeur.
+  //
+  // « fabrique » et non un element tout fait : il en faut un par
+  // emplacement, un noeud ne pouvant etre a deux endroits a la fois.
+  //
+  // Le marqueur autorise le CSS a masquer le bouton flottant. Il n'est
+  // pose qu'une fois un exemplaire REELLEMENT en place : la page du CMS
+  // n'offre aucun ancrage, et l'y masquer sur la seule foi de la largeur
+  // rendrait la fonction inatteignable.
+  function poserOutil(fabrique, marqueur) {
+    var barre = barreEntete();
+    if (barre) {
+      barre.appendChild(fabrique());
+      document.documentElement.classList.add(marqueur);
+    }
+
+    function poserDansMenu() {
+      var menu = document.querySelector("#navLinks, .member-nav-panel");
+      if (!menu) return false;
+      menu.appendChild(fabrique());
+      // L'entete devient un COMPLEMENT : le menu le releve sous 880 px.
+      if (barre) barre.classList.add("outils-complement");
       document.documentElement.classList.add(marqueur);
       return true;
     }
-    if (essayer()) return;
+    if (poserDansMenu()) return;
+    // Le panneau de l'espace membres est construit par member-nav.js, qui
+    // peut passer APRES nous - d'ou l'observation plutot qu'un simple
+    // querySelector.
     if (!window.MutationObserver) return;
-    var obs = new MutationObserver(function () { if (essayer()) obs.disconnect(); });
+    var obs = new MutationObserver(function () { if (poserDansMenu()) obs.disconnect(); });
     obs.observe(document.documentElement, { childList: true, subtree: true });
     setTimeout(function () { obs.disconnect(); }, 5000);
   }

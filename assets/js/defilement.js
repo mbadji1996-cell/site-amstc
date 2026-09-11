@@ -1,12 +1,17 @@
 /* ============================================================
    Défilement rapide - AMSTC
-   Deux flèches flottantes, au-dessus du bouton de thème : remonter tout
-   en haut, descendre tout en bas. Sur des cours de dix-huit sections ou
-   des listes de membres, le pouce fatigue avant la fin.
+   Une flèche flottante : remonter tout en haut. Sur des cours de
+   dix-huit sections ou des listes de membres, le pouce fatigue avant
+   la fin.
 
-   Elles n'apparaissent que si la page est assez longue pour en avoir
-   besoin (plus d'un écran et demi), et chacune se cache quand elle ne
-   sert à rien : « haut » disparaît en haut de page, « bas » en bas.
+   Elle n'apparaît que si la page est assez longue pour en avoir besoin
+   (plus d'un écran et demi), et s'efface en haut de page, où elle ne
+   mènerait nulle part.
+
+   UNE SECONDE FLÈCHE, « descendre tout en bas », a existé ici. Elle a
+   été retirée le 11/09/2026 : sur une page d'accueil elle menait au pied
+   de page, et à la souris la barre de défilement fait le même travail
+   d'un geste. Le coin de l'écran ne porte plus qu'un bouton.
    Créées ici, sans markup à ajouter : une page n'a qu'à charger ce
    script (comme theme-toggle.js). Le style vit dans dark-mode.css, déjà
    chargé partout, pour suivre le thème.
@@ -38,16 +43,7 @@
   haut.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V6"/><path d="M6 12l6-6 6 6"/><path d="M5 3h14"/></svg>';
   haut.addEventListener("click", function () { aller(0); });
 
-  var bas = document.createElement("button");
-  bas.type = "button";
-  bas.className = "defilement-btn defilement-bas";
-  bas.setAttribute("aria-label", "Descendre tout en bas");
-  bas.title = "Tout en bas";
-  bas.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13"/><path d="M6 12l6 6 6-6"/><path d="M5 21h14"/></svg>';
-  bas.addEventListener("click", function () { aller(hauteurPage()); });
-
   boite.appendChild(haut);
-  boite.appendChild(bas);
 
   // Le coin bas-droit est partagé : bouton de thème partout, bouton de
   // recherche sur le site public. Les flèches se posent AU-DESSUS du plus
@@ -84,7 +80,6 @@
     boite.classList.toggle("visible", longue);
     boite.setAttribute("aria-hidden", longue ? "false" : "true");
     haut.classList.toggle("inutile", y < 200);
-    bas.classList.toggle("inutile", y + v >= h - 200);
     tick = false;
   }
   function planifier() {
