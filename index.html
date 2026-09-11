@@ -281,46 +281,63 @@
   .register-arrow{color:var(--text-accent); font-size:1.2rem; justify-self:end;}
 
   /* ===== Timeline (réalisations) ===== */
-  .timeline{border-left:2px solid var(--line); margin-left:8px;}
+  /* ===== Frise =====
+     TELEPHONE D'ABORD : un trait a gauche, les entrees en dessous. Sur
+     grand ecran seulement, le trait passe au centre et les entrees
+     alternent de part et d'autre (voir la requete plus bas). A 375 px,
+     deux demi-colonnes feraient 160 px chacune et chaque entree
+     tiendrait sur huit lignes. */
+  .timeline{position:relative; border-left:2px solid var(--line); margin-left:8px;}
   .tl-item{position:relative; padding:0 0 34px 28px;}
   .tl-item:last-child{padding-bottom:0;}
   .tl-item::before{
-    content:""; position:absolute; left:-7px; top:4px; width:12px; height:12px; border-radius:50%;
-    background:var(--gold); border:2px solid var(--paper);
+    content:""; position:absolute; left:-7px; top:8px; width:12px; height:12px; border-radius:50%;
+    background:var(--gold);
+    /* L'anneau prend la couleur de la SECTION, pas celle de la page :
+       la frise vit dans une section alternee, et un anneau blanc y
+       dessinerait un halo. */
+    border:3px solid var(--section-alt, var(--paper));
   }
-  .tl-year{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-bottom:4px; display:block;}
-  .tl-item h4{font-family:var(--display); font-size:1.1rem; color:var(--text-heading); margin-bottom:6px;}
+  /* L'annee en pastille : elle se lit comme un reperage, pas comme une
+     ligne de texte de plus. */
+  .tl-year{
+    display:inline-block; background:var(--green-deep); color:#FFFFFF;
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em;
+    padding:5px 13px; border-radius:999px; margin-bottom:10px;
+  }
+  :root[data-theme="dark"] .tl-year{background:var(--surface); color:var(--text-accent); border:1px solid var(--line);}
+  .tl-item h4{font-family:var(--display); font-size:1.24rem; color:var(--text-heading); margin-bottom:8px;}
   .tl-item p{font-size:0.94rem; color:var(--text-muted); max-width:60ch;}
   .tl-item div p{font-size:0.94rem; color:var(--text-muted); max-width:60ch; margin:0;}
   .tl-item div ul, .tl-item div ol{font-size:0.94rem; color:var(--text-muted); max-width:60ch; margin:0; padding-left:1.2em;}
   .tl-item div li{margin-bottom:6px;}
   .tl-item div li:last-child{margin-bottom:0;}
 
-  /* ===== Logo flottant en 3D à côté de "Notre histoire" (desktop) ===== */
-  /* Ne couvre que l'entête + la frise : s'arrête avant le bloc Pionniers pour ne jamais gêner son défilement. */
-  .historique-grid{display:grid; grid-template-columns:1fr; gap:0;}
-  .historique-watermark-col{display:none;}
-  @media (min-width:1101px){
-    .historique-grid{grid-template-columns:1fr 340px; gap:24px;}
-    .historique-watermark-col{display:block;}
+  @media (min-width:900px){
+    /* Le trait quitte le bord pour le centre : il devient un axe, et les
+       entrees se rangent a sa droite et a sa gauche. */
+    .timeline{border-left:0; margin-left:0;}
+    .timeline::before{
+      content:""; position:absolute; left:50%; top:6px; bottom:6px;
+      width:2px; margin-left:-1px; background:var(--line);
+    }
+    .tl-item{width:50%; padding:0 48px 52px 0; text-align:right;}
+    .tl-item::before{left:auto; right:-8px;}
+    /* Une entree sur deux passe a droite de l'axe. */
+    .tl-item:nth-child(even){margin-left:50%; padding:0 0 52px 48px; text-align:left;}
+    .tl-item:nth-child(even)::before{right:auto; left:-8px;}
+    /* Les paragraphes ne peuvent plus compter sur 60ch : la demi-colonne
+       est plus etroite, et une largeur en ch la ferait deborder. */
+    .tl-item p, .tl-item div p, .tl-item div ul, .tl-item div ol{max-width:100%;}
+    /* Une liste alignee a droite serait illisible : ses puces se
+       decaleraient a chaque ligne. Elle reste cadree a gauche. */
+    .tl-item div ul, .tl-item div ol{text-align:left; display:inline-block;}
   }
-  .historique-watermark-sticky{
-    position:sticky; top:380px;
-    display:flex; align-items:center; justify-content:center;
-    perspective:1400px; pointer-events:none;
-  }
-  .historique-watermark{
-    width:800px; height:auto;
-    filter:drop-shadow(0 26px 32px rgba(6,68,28,0.30));
-    transform-style:preserve-3d;
-    animation:historiqueFloat 6s ease-in-out infinite;
-  }
-  @keyframes historiqueFloat{
-    0%, 100%{ transform:rotateY(-20deg) rotateX(8deg) translateY(0); }
-    50%{ transform:rotateY(-14deg) rotateX(4deg) translateY(-18px); }
-  }
-  :root[data-theme="dark"] .historique-watermark{filter:drop-shadow(0 26px 32px rgba(0,0,0,0.5));}
-  @media (prefers-reduced-motion:reduce){ .historique-watermark{animation:none;} }
+
+  /* Le logo flottant en 3D qui accompagnait « Notre histoire » a ete
+     retire le 11/09/2026 avec sa colonne de 340 px : il prenait un quart
+     de la largeur utile sans rien apprendre, et la frise en alternance
+     a besoin de toute la place. */
 
   /* ===== Founders ===== */
   .founders-box{
@@ -1144,8 +1161,7 @@
   <!-- ===== HISTORIQUE / RÉALISATIONS ===== -->
   <section class="section-alt" id="historique">
     <div class="wrap">
-      <div class="historique-grid">
-        <div class="historique-main">
+      <div class="historique-main">
           <div class="section-head reveal">
             <p class="eyebrow" id="cms-history-eyebrow">Notre histoire</p>
             <h2 id="cms-history-title">Une décennie d'engagement</h2>
@@ -1157,12 +1173,6 @@
             <div class="tl-item reveal"><span class="tl-year">2020 - 2022</span><h4>Reprise après la pandémie</h4><div><p>Activités suspendues en 2020 en raison de la COVID-19, puis relancées dès 2021 : Grand Ndogou Social, rencontres semestrielles, couverture médicale du centenaire de la disparition de Cheikh Seydil Hadji Malick Sy et du Gamou 2022.</p></div></div>
             <div class="tl-item reveal"><span class="tl-year">2023 - 2024</span><h4>Constitution en association indépendante</h4><div><p>Assemblée constitutive le 11 novembre 2023, puis Assemblée Générale Extraordinaire le 17 février 2024 : l'AMSTC adopte des statuts propres et devient une association sénégalaise indépendante, apolitique et confessionnelle, à but non lucratif.</p></div></div>
           </div>
-        </div>
-        <div class="historique-watermark-col">
-          <div class="historique-watermark-sticky">
-            <img class="historique-watermark" src="assets/logo-mark-only.png" alt="" aria-hidden="true">
-          </div>
-        </div>
       </div>
 
       <div class="historique-sub" id="pioneersBlock" style="display:none;">
