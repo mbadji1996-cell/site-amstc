@@ -755,6 +755,13 @@
   "foundingDate": "2014",
   "areaServed": "Sénégal",
   "email": "contact@amstc.org",
+  "telephone": "+221775351912",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Sacré Coeur 3, Villa N°9867",
+    "addressLocality": "Dakar",
+    "addressCountry": "SN"
+  },
   "sameAs": [
     "https://www.facebook.com/amstc2.0",
     "https://www.instagram.com/amstc2.0"
@@ -1361,7 +1368,8 @@
       <div>
         <h5>Contact</h5>
         <ul>
-          <li id="cms-contact-phone">Tél. : [à compléter]</li>
+          <li id="cms-contact-address">Sacré Coeur 3, Villa N°9867, Dakar, Sénégal</li>
+          <li id="cms-contact-phone">Tél. : +221 77 535 19 12</li>
           <li><a href="mailto:contact@amstc.org" id="cms-contact-email">contact@amstc.org</a></li>
         </ul>
       </div>
@@ -2233,6 +2241,7 @@
     if (data.recepisse) document.getElementById('cms-recepisse').textContent = data.recepisse;
     if (data.ninea) document.getElementById('cms-ninea').textContent = data.ninea;
     if (data.contact_phone) document.getElementById('cms-contact-phone').textContent = 'Tél. : ' + data.contact_phone;
+    if (data.contact_address) document.getElementById('cms-contact-address').textContent = data.contact_address;
     const SOCIAL_ICONS = {
       facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>',
       instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.07.05 1.79.22 2.43.46.66.25 1.21.6 1.76 1.15.55.55.9 1.1 1.15 1.76.24.64.41 1.36.46 2.43.05 1.06.06 1.42.06 4.14s-.01 3.08-.06 4.14c-.05 1.07-.22 1.79-.46 2.43a4.9 4.9 0 0 1-1.15 1.76 4.9 4.9 0 0 1-1.76 1.15c-.64.24-1.36.41-2.43.46-1.06.05-1.42.06-4.14.06s-3.08-.01-4.14-.06c-1.07-.05-1.79-.22-2.43-.46a4.9 4.9 0 0 1-1.76-1.15 4.9 4.9 0 0 1-1.15-1.76c-.24-.64-.41-1.36-.46-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.12c.05-1.07.22-1.79.46-2.43.25-.66.6-1.21 1.15-1.76A4.9 4.9 0 0 1 5.43 2.54c.64-.24 1.36-.41 2.43-.46C8.92 2.01 9.28 2 12 2Zm0 1.8c-2.67 0-2.99.01-4.04.06-.86.04-1.33.18-1.64.3-.41.16-.71.35-1.02.66-.31.31-.5.6-.66 1.02-.12.31-.26.78-.3 1.64-.05 1.05-.06 1.37-.06 4.04s.01 2.99.06 4.04c.04.86.18 1.33.3 1.64.16.41.35.71.66 1.02.31.31.6.5 1.02.66.31.12.78.26 1.64.3 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.86-.04 1.33-.18 1.64-.3.41-.16.71-.35 1.02-.66.31-.31.5-.6.66-1.02.12-.31.26-.78.3-1.64.05-1.05.06-1.37.06-4.04s-.01-2.99-.06-4.04c-.04-.86-.18-1.33-.3-1.64a1.73 1.73 0 0 0-.66-1.02 1.73 1.73 0 0 0-1.02-.66c-.31-.12-.78-.26-1.64-.3C14.99 3.81 14.67 3.8 12 3.8Zm0 3.06a5.14 5.14 0 1 1 0 10.28 5.14 5.14 0 0 1 0-10.28Zm0 1.8a3.34 3.34 0 1 0 0 6.68 3.34 3.34 0 0 0 0-6.68Zm5.34-1.99a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/></svg>',

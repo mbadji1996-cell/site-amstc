@@ -1271,10 +1271,11 @@
     doc.text('PAIEMENT CONFIRMÉ', 36, y + 6, { align: 'center' });
 
     doc.setTextColor(140, 150, 143); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
-    doc.text('Reçu généré électroniquement depuis l\'espace membres - amstc.org', W / 2, 200, { align: 'center' });
+    doc.text('Reçu généré électroniquement depuis l\'espace membres - amstc.org', W / 2, 195, { align: 'center' });
     // Le recu peut etre presente a un tiers : l'identite legale de
     // l'association y figure en entier.
-    doc.text('Association Médico-Sociale des Talibés Cheikh - NINEA 013359139', W / 2, 205, { align: 'center' });
+    doc.text('Association Médico-Sociale des Talibés Cheikh - NINEA 013359139', W / 2, 200, { align: 'center' });
+    doc.text('Sacré Coeur 3, Villa N°9867, Dakar, Sénégal', W / 2, 205, { align: 'center' });
 
     doc.save('recu-' + numeroRecu + '.pdf');
   }
