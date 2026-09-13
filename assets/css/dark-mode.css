@@ -240,3 +240,50 @@
 }
 .outils-clair .menu-extra:hover { background: var(--surface); border-color: var(--green); }
 :root[data-theme="dark"] .outils-clair .menu-extra { color: var(--text-accent); }
+
+/* ===== Liens « Retour » : des boutons, plus des etiquettes =====
+   En petites capitales mono espacees, « RETOUR A L'ACCUEIL » se lisait
+   comme un intitule de section : rien ne disait qu'on pouvait cliquer.
+   Meme dessin que les boutons a contour du site (« Se connecter »), en
+   plus petit - un bouton secondaire, pas un appel a l'action.
+
+   « a.back » et non « .back » : chaque page garde son propre « .back{} »
+   pour les MARGES, et cette regle-ci, plus specifique, l'emporte sur tout
+   le reste sans dependre de l'ordre de chargement. */
+a.back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--body, 'Inter', -apple-system, sans-serif);
+  font-weight: 600; font-size: 0.86rem; line-height: 1.2;
+  text-transform: none; letter-spacing: normal; text-decoration: none;
+  padding: 9px 18px 9px 14px; border-radius: 999px;
+  border: 1.5px solid var(--green, #17763B); color: var(--green, #17763B);
+  background: transparent; opacity: 1;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+/* La fleche est dessinee ici, identique partout : le HTML en portait
+   trois formes differentes, et deux pages n'en avaient aucune. Un masque
+   prend la couleur du texte, survol compris. */
+a.back::before {
+  content: ""; width: 15px; height: 15px; flex-shrink: 0;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5'/%3E%3Cpath d='M11 18l-6-6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5'/%3E%3Cpath d='M11 18l-6-6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+a.back:hover, a.back:focus-visible {
+  background: var(--green, #17763B); color: #FFFFFF; opacity: 1;
+}
+a.back:focus-visible { outline: 3px solid var(--gold, #F8B718); outline-offset: 2px; }
+/* En theme sombre, --green devient un vert clair : du blanc dessus ne se
+   lirait pas. Le texte prend le fond de la page. */
+:root[data-theme="dark"] a.back:hover,
+:root[data-theme="dark"] a.back:focus-visible { color: var(--paper, #0E1712); }
+
+/* Sur les en-tetes vert fonce de l'espace membres, le vert du contour
+   disparaitrait dans le fond : contour et texte passent en blanc. */
+.hero-inner a.back { border-color: rgba(255,255,255,0.45); color: #FFFFFF; }
+.hero-inner a.back:hover,
+.hero-inner a.back:focus-visible { background: rgba(255,255,255,0.14); border-color: #FFFFFF; color: #FFFFFF; }
+
+/* Les bilans annuels masquaient le lien a l'impression avec « .back »,
+   que la regle ci-dessus supplante : il faut le redire au meme niveau. */
+@media print { a.back { display: none; } }

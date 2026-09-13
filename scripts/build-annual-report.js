@@ -136,7 +136,7 @@ const html = `<!DOCTYPE html>
 </header>
 
 <div class="wrap">
-  <a class="back" href="./">← Retour aux bilans annuels</a>
+  <a class="back" href="./">Retour aux bilans annuels</a>
   <div class="toolbar" id="printToolbar" style="display:none;">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
   </div>
@@ -228,7 +228,7 @@ const indexHtml = `<!DOCTYPE html>
 </header>
 
 <div class="wrap">
-  <a class="back" href="../actualites">← Retour aux réalisations</a>
+  <a class="back" href="../actualites">Retour aux réalisations</a>
   <div class="year-list">
 ${years.map(y => `    <a class="year-card" href="${y}">Bilan ${y} <span>Voir →</span></a>`).join('\n')}
   </div>
