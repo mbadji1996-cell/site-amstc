@@ -78,6 +78,12 @@
   .form-message.pending{background:#FEF6E4; color:var(--gold-deep); display:block;}
   .alt-link{text-align:center; font-size:0.9rem; color:var(--text-muted); margin-top:8px;}
   .alt-link a{color:var(--green); font-weight:600;}
+  /* Un bouton habille en lien : la deconnexion est une action, pas une
+     adresse, mais elle doit rester discrete a cote de l'enregistrement. */
+  .sortie-completion{margin-top:18px;}
+  .sortie-completion button{background:none; border:0; padding:0; font:inherit; font-weight:600;
+    color:var(--green); cursor:pointer; text-decoration:underline; text-underline-offset:3px;}
+  .sortie-completion button:disabled{opacity:0.6; cursor:wait;}
   .or-divider{display:flex; align-items:center; gap:14px; margin:22px 0; color:#8A9E8F; font-size:0.85rem;}
   .or-divider::before,.or-divider::after{content:""; flex:1; height:1px; background:var(--line);}
   .btn-google{background:var(--surface); color:var(--ink); border:1.5px solid var(--line); margin-top:0; gap:10px;}
@@ -133,8 +139,10 @@
 
   <!-- Complétion obligatoire : affichée à la place de tout le reste quand
        une session existe avec un profil incomplet (compte Google, ou
-       formulaire interrompu). Impossible à contourner : pas de lien de
-       sortie, l'enregistrement est la seule issue. -->
+       formulaire interrompu). On ne peut pas ENTRER dans l'espace membres
+       sans l'avoir remplie - mais on peut en SORTIR : sans le lien de
+       déconnexion en bas, la page de connexion renvoyait ici à chaque
+       visite, et il devenait impossible de partir ou de changer de compte. -->
   <div class="card" id="completionCard" style="display:none;">
     <h2 style="font-family:var(--display);font-size:1.15rem;color:var(--text-heading);margin-bottom:6px;">Complétez votre inscription</h2>
     <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:18px;">
@@ -208,6 +216,8 @@
 
     <button class="btn btn-primary" id="cSaveBtn" type="button" onclick="enregistrerCompletion()" style="margin-top:18px;">Enregistrer et continuer</button>
     <div class="form-message" id="cMessage"></div>
+    <p class="alt-link sortie-completion">Ce n'est pas le bon compte, ou vous préférez finir plus tard ?
+      <button type="button" id="cSortieBtn" onclick="abandonnerCompletion()">Se déconnecter</button></p>
   </div>
 
   <div class="card" id="signupCard" style="display:none;">
@@ -615,6 +625,16 @@
     }
     cAjusterAnnee();
     document.getElementById("completionCard").style.display = "";
+  }
+
+  // Ferme la session et ramene a l'accueil. Les informations deja saisies
+  // restent en base : a la prochaine connexion avec ce compte, l'ecran de
+  // completion les presentera pre-remplies.
+  async function abandonnerCompletion() {
+    const btn = document.getElementById("cSortieBtn");
+    btn.disabled = true;
+    try { await signOut(); } catch (e) { /* on part quand meme */ }
+    window.location.href = "../";
   }
 
   async function enregistrerCompletion() {
