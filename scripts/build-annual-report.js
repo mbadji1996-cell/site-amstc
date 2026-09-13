@@ -148,6 +148,7 @@ ${itemsHtml}
   <footer>
     <p>Association Médico-Sociale des Talibés Cheikh (AMSTC)</p>
     <p>Récépissé n° 022909/MISP/DGAT/DLPL/DAPA</p>
+    <p>NINEA : 013359139</p>
     <p>Généré automatiquement depuis amstc.org</p>
   </footer>
 </div>

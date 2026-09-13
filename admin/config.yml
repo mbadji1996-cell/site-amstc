@@ -240,6 +240,7 @@ collections:
 
           - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
           - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
+          - { label: "NINEA (pied de page)", name: "ninea", widget: "string", required: false }
           - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
           - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
           - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
@@ -363,7 +364,7 @@ collections:
           - { label: "Texte - Don en nature", name: "nature_text", widget: "text", required: false }
           - { label: "Titre - Don institutionnel", name: "institution_title", widget: "string", required: false }
           - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text", required: false }
-          - { label: "Note de confiance (récépissé)", name: "trust_note", widget: "string", required: false }
+          - { label: "Note de confiance (récépissé, NINEA)", name: "trust_note", widget: "string", required: false }
 
       - name: "popup-annonce"
         label: "Annonce plein écran (pop-up)"

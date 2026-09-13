@@ -631,6 +631,9 @@
     border-radius:8px; padding:10px 14px; display:inline-block; margin-top:6px;
     max-width:100%; overflow-wrap:break-word; word-break:break-word;
   }
+  /* Recepisse et NINEA cote a cote, et l'un sous l'autre quand la
+     colonne est trop etroite pour les deux. */
+  .recepisse + .recepisse{margin-left:6px;}
   .footer-bottom{
     border-top:1px solid rgba(246,247,241,0.14); padding-top:24px; display:flex; justify-content:space-between;
     flex-wrap:wrap; gap:12px; font-size:0.82rem; color:rgba(246,247,241,0.55);
@@ -1353,6 +1356,7 @@
         <img src="assets/logo-mark-sm.png" alt="AMSTC" class="logo-img">
         <p id="cms-footer-description">Association Médico-Sociale des Talibés Cheikh - association sénégalaise apolitique, confessionnelle et sans but lucratif.</p>
         <span class="recepisse" id="cms-recepisse">Récépissé n° 022909/MISP/DGAT/DLPL/DAPA</span>
+        <span class="recepisse" id="cms-ninea">NINEA : 013359139</span>
       </div>
       <div>
         <h5>Contact</h5>
@@ -2227,6 +2231,7 @@
     // Pied de page
     if (data.footer_description) document.getElementById('cms-footer-description').textContent = data.footer_description;
     if (data.recepisse) document.getElementById('cms-recepisse').textContent = data.recepisse;
+    if (data.ninea) document.getElementById('cms-ninea').textContent = data.ninea;
     if (data.contact_phone) document.getElementById('cms-contact-phone').textContent = 'Tél. : ' + data.contact_phone;
     const SOCIAL_ICONS = {
       facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>',
