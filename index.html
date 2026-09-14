@@ -1510,8 +1510,15 @@
   // cles sont calculees ici pour suivre la vraie courbe. Photos : Page
   // d'accueil > 1. En-tete > Photos du couloir ; a defaut, celles-ci.
   const DEFAULT_HERO_IMAGES = ["assets/hero-couloir/01.jpg", "assets/hero-couloir/02.jpg", "assets/hero-couloir/03.jpg", "assets/hero-couloir/04.jpg", "assets/hero-couloir/05.jpg", "assets/hero-couloir/06.jpg", "assets/hero-couloir/07.jpg", "assets/hero-couloir/08.jpg", "assets/hero-couloir/09.jpg", "assets/hero-couloir/10.jpg", "assets/hero-couloir/11.jpg", "assets/hero-couloir/12.jpg"];
-  const COULOIR = { perspective:30, largeur:18, hauteur:25, rayon:0.4, tailleNaissance:2.6, tailleSortie:46,
-                    railNaissance:-11, railSortie:44, ouverture:3.3, tourNaissance:6, tourSortie:28, etapes:24 };
+  // PERSPECTIVE ET ROTATION MODEREES. Les reglages d origine (perspective
+  // 30, rotation 6 -> 28 degres) deformaient les photos : la plus grande
+  // carte arrivait avec son bord proche 1,70 fois plus haut que son bord
+  // lointain, et les visages s etiraient. A 60 et 3 -> 12 degres, l ecart
+  // tombe a 1,12. La taille et la position des cartes a l ecran ne
+  // changent pas : elles derivent de la taille apparente, pas de la
+  // perspective.
+  const COULOIR = { perspective:60, largeur:18, hauteur:25, rayon:0.4, tailleNaissance:2.6, tailleSortie:46,
+                    railNaissance:-11, railSortie:44, ouverture:3.3, tourNaissance:3, tourSortie:12, etapes:24 };
   const COULOIR_CARTES = 9;   // par rangee : plus dense, pas plus rapide
   const COULOIR_DUREE = 22;   // secondes pour traverser le couloir (18 dans l'original : ralenti)
   const COULOIR_AXE = 55;     // point de fuite par defaut, en % du hero - voir placerAxeCouloir
