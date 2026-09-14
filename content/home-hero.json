@@ -1,18 +1,11 @@
 {
   "mission_title": "Fédérer les acteurs de la santé autour d'une même cause",
   "hero_slideshow": [
-    "assets/hero-couloir/01.jpg",
-    "assets/hero-couloir/02.jpg",
-    "assets/hero-couloir/03.jpg",
-    "assets/hero-couloir/04.jpg",
-    "assets/hero-couloir/05.jpg",
-    "assets/hero-couloir/06.jpg",
-    "assets/hero-couloir/07.jpg",
-    "assets/hero-couloir/08.jpg",
-    "assets/hero-couloir/09.jpg",
-    "assets/hero-couloir/10.jpg",
-    "assets/hero-couloir/11.jpg",
-    "assets/hero-couloir/12.jpg"
+    "assets/hero-photo.jpg",
+    "assets/hero-photo-2.jpg",
+    "assets/hero-photo-3.jpg",
+    "assets/hero-photo-4.jpg",
+    "assets/hero-photo-5.jpg"
   ],
   "eyebrow": "Depuis 2014",
   "intro_cards": [
@@ -57,5 +50,5 @@
       "text": "S’aider mutuellement dans la religion et dans la tarikha Tidjane"
     }
   ],
-  "hero_subtitle": "Professionnels de santé, étudiants et acteurs du social, ensemble pour l'accès aux soins des populations du Sénégal."
+  "hero_subtitle": "L'Association Médico-Sociale des Talibés Cheikh (AMSTC) fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins aux populations et participer au développement socio-sanitaire du Sénégal."
 }
