@@ -184,20 +184,44 @@
   }
 
   /* ===== Hero ===== */
-  .hero{position:relative; overflow:hidden; height:100vh; display:flex; align-items:center; isolation:isolate;}
-  .hero-bg{position:absolute; inset:0; z-index:-2; background:var(--green-deep);}
-  .hero-bg-slide{
-    position:absolute; inset:0; background-size:cover; background-position:center;
-    opacity:0; transition:opacity 1.8s ease;
-  }
-  .hero-bg-slide.is-active{opacity:1;}
-  .hero-overlay{
-    position:absolute; inset:0; z-index:-1;
-    background:linear-gradient(180deg, rgba(6,68,28,0.80) 0%, rgba(6,68,28,0.60) 45%, rgba(6,68,28,0.88) 100%);
-  }
-  /* 760px (au lieu de 700) : laisse respirer la pastille d'événement sous
-     les boutons sans forcer son passage à la ligne. */
-  .hero-grid{max-width:760px;}
+  /* Hauteur : l'ecran moins l'entete collante (77 px sur ordinateur, 78
+     sur telephone, mesures), pour que les boutons ancres en bas du hero
+     restent visibles sans defiler. --axe : hauteur du point de fuite,
+     recalculee par le script (voir placerAxeCouloir). */
+  /* padding:0 : les sections recoivent 80 px en haut et en bas. L ancien
+     hero centrait son contenu et ne le montrait pas ; ici, ces 160 px
+     etaient pris sur la bande du couloir. */
+  .hero{position:relative; overflow:hidden; isolation:isolate; min-height:600px; --axe:55%; padding:0;
+    height:calc(100vh - 78px); height:calc(100svh - 78px);
+    container-type:inline-size;
+    background:radial-gradient(ellipse at 50% 55%, #0A3A1C 0%, #041F0E 72%);}
+  /* ===== Couloir d'images =====
+     Deux rangees de cartes arrivent du fond vers le lecteur. La
+     perspective fait tout : en avancant, une carte grandit ET s'ecarte du
+     point de fuite. Toutes les longueurs sont en cqw (pourcentage de la
+     largeur du hero), donc le couloir garde ses proportions a toute
+     taille d'ecran. Geometrie reprise du composant image-stream-hero. */
+  .hero-couloir{position:absolute; inset:0; z-index:-2; pointer-events:none;}
+  .hero-rails{position:absolute; inset:0; transform-style:preserve-3d;}
+  .hero-carte{position:absolute; left:50%; overflow:hidden; backface-visibility:hidden;}
+  .hero-carte img{width:100%; height:100%; object-fit:cover; display:block;}
+  /* Hors de l'ecran, les 18 cartes s'arretent : une animation 3D continue
+     fatigue la batterie des telephones d'entree de gamme. Mise en PAUSE
+     et non retiree, pour que le couloir reste plein au retour. */
+  .hero.hors-champ .hero-carte{animation-play-state:paused;}
+  @media (prefers-reduced-motion:reduce){ .hero-carte{animation-play-state:paused;} }
+  /* Voile sombre en haut et en bas : sans lui, le titre blanc se perd
+     dans les photos claires. Il ne s'eclaircit qu'autour de l'axe, la ou
+     aucun texte ne se trouve. */
+  .hero-overlay{position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(180deg, rgba(4,31,14,0.94) 0%, rgba(4,31,14,0.94) calc(var(--axe) - 26%),
+      rgba(4,31,14,0.2) calc(var(--axe) - 12%), rgba(4,31,14,0.2) calc(var(--axe) + 12%),
+      rgba(4,31,14,0.94) calc(var(--axe) + 26%), rgba(4,31,14,0.94) 100%);}
+  /* Titre en haut, boutons en bas : la bande du milieu appartient au
+     couloir. 760px laisse respirer la pastille d'evenement sous les
+     boutons sans forcer son passage a la ligne. */
+  .hero-grid{position:relative; height:100%; max-width:760px; display:flex; flex-direction:column;
+    align-items:center; justify-content:space-between; text-align:center; padding-top:7vh; padding-bottom:6vh;}
   /* Pastille événement phare : compte à rebours visible dès l'arrivée,
      cliquable vers la section complète plus bas. Alimentée par le même
      script que la section (masquée tant que rien n'est actif). */
@@ -218,14 +242,14 @@
     .hero-event-label{font-size:0.85rem;line-height:1.35;flex:1 1 100%;flex-basis:calc(100% - 22px);}
     .hero-event-count{font-size:0.8rem;margin-left:19px;}
   }
-  .hero .eyebrow{color:var(--gold);}
+  .hero .eyebrow{color:var(--gold); justify-content:center;}
   .hero .eyebrow::before{background:var(--gold);}
   .hero h1{color:var(--white); font-size:clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px;}
   .hero h1 em{font-style:normal; color:var(--gold);}
-  .hero p, .hero div#cms-hero-subtitle{font-size:1.08rem; color:rgba(246,247,241,0.88); max-width:52ch; margin-bottom:32px;}
+  .hero p, .hero div#cms-hero-subtitle{font-size:1.02rem; color:rgba(246,247,241,0.88); max-width:52ch; margin:0 auto 20px;}
   .hero div#cms-hero-subtitle p{margin-bottom:10px;}
   .hero div#cms-hero-subtitle img{max-width:100%; border-radius:10px; margin:10px 0;}
-  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap; justify-content:center;}
 
   /* ===== Three-card intro ===== */
   .intro{padding:90px 0;}
@@ -808,24 +832,30 @@
 <main id="main">
 
   <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
+  <section class="hero" id="hero">
+    <div class="hero-couloir" aria-hidden="true"><div class="hero-rails" id="heroRails"></div></div>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="wrap hero-grid">
-      <p class="eyebrow" id="cms-eyebrow">Depuis 2014 - Association Médico-Sociale des Talibés Cheikh</p>
-      <h1 id="cms-hero-title">La santé pour tous, <em>notre objectif !</em></h1>
-      <div id="cms-hero-subtitle"><p>L'AMSTC fédère professionnels de santé, étudiants et acteurs du social autour d'un objectif commun : améliorer l'accès aux soins des talibés et participer au développement socio-sanitaire du Sénégal.</p></div>
-      <div class="hero-ctas">
-        <a href="membres/connexion" class="btn btn-gold">Se connecter</a>
-        <a href="don" class="btn btn-ghost">Faire un don</a>
+      <div class="hero-haut">
+        <p class="eyebrow" id="cms-eyebrow">Depuis 2014</p>
+        <!-- La phrase vit en haut avec le titre : en bas, elle faisait monter
+             le bloc des boutons jusque sur l'axe du couloir. -->
+        <h1 id="cms-hero-title">La santé pour tous, <em>notre objectif !</em></h1>
+        <div id="cms-hero-subtitle"><p>Professionnels de santé, étudiants et acteurs du social, ensemble pour l'accès aux soins des populations du Sénégal.</p></div>
       </div>
-      <!-- Pastille événement phare : remplie par le script de la section
-           #evenement-phare, invisible tant qu'aucun événement n'est actif. -->
-      <a class="hero-event" id="heroEvent" href="#evenement-phare" aria-label="Voir le suivi de l'événement">
-        <span class="hero-event-dot"></span>
-        <span class="hero-event-label" id="heroEventLabel"></span>
-        <span class="hero-event-count" id="heroEventCount"></span>
-      </a>
+      <div class="hero-bas">
+        <div class="hero-ctas">
+          <a href="membres/connexion" class="btn btn-gold">Se connecter</a>
+          <a href="don" class="btn btn-ghost">Faire un don</a>
+        </div>
+        <!-- Pastille événement phare : remplie par le script de la section
+             #evenement-phare, invisible tant qu'aucun événement n'est actif. -->
+        <a class="hero-event" id="heroEvent" href="#evenement-phare" aria-label="Voir le suivi de l'événement">
+          <span class="hero-event-dot"></span>
+          <span class="hero-event-label" id="heroEventLabel"></span>
+          <span class="hero-event-count" id="heroEventCount"></span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -1474,34 +1504,98 @@
   document.addEventListener('click', closeAllDropdowns);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllDropdowns(); });
 
-  // ===== Diaporama de fond du hero =====
-  // Repli si aucune photo n'est choisie dans le CMS (Page d'accueil > 1. En-tête > Photos du diaporama)
-  const DEFAULT_HERO_IMAGES = [
-    "assets/hero-photo.jpg",
-    "assets/hero-photo-2.jpg",
-    "assets/hero-photo-3.jpg",
-    "assets/hero-photo-4.jpg",
-    "assets/hero-photo-5.jpg"
-  ];
-  function initHeroSlideshow(images){
-    const bg = document.getElementById('heroBg');
+  // ===== Couloir d'images du hero =====
+  // Transpose du composant « image-stream-hero » (21st.dev), sans React.
+  // Deux rangees de cartes glissent du fond vers le lecteur ; les images-
+  // cles sont calculees ici pour suivre la vraie courbe. Photos : Page
+  // d'accueil > 1. En-tete > Photos du couloir ; a defaut, celles-ci.
+  const DEFAULT_HERO_IMAGES = ["assets/hero-couloir/01.jpg", "assets/hero-couloir/02.jpg", "assets/hero-couloir/03.jpg", "assets/hero-couloir/04.jpg", "assets/hero-couloir/05.jpg", "assets/hero-couloir/06.jpg", "assets/hero-couloir/07.jpg", "assets/hero-couloir/08.jpg", "assets/hero-couloir/09.jpg", "assets/hero-couloir/10.jpg", "assets/hero-couloir/11.jpg", "assets/hero-couloir/12.jpg"];
+  const COULOIR = { perspective:30, largeur:18, hauteur:25, rayon:0.4, tailleNaissance:2.6, tailleSortie:46,
+                    railNaissance:-11, railSortie:44, ouverture:3.3, tourNaissance:6, tourSortie:28, etapes:24 };
+  const COULOIR_CARTES = 9;   // par rangee : plus dense, pas plus rapide
+  const COULOIR_DUREE = 22;   // secondes pour traverser le couloir (18 dans l'original : ralenti)
+  const COULOIR_AXE = 55;     // point de fuite par defaut, en % du hero - voir placerAxeCouloir
+
+  // Place le point de fuite au milieu de l'espace libre entre le bloc du
+  // haut (titre, phrase) et celui du bas (boutons, pastille). Fige a 55 %,
+  // il tombait sous le texte des qu'un ecran etait court ou la phrase du
+  // CMS longue. Borne entre 40 et 72 % pour rester dans le hero.
+  function placerAxeCouloir(){
+    const hero = document.getElementById('hero');
+    const haut = hero && hero.querySelector('.hero-haut');
+    const bas = hero && hero.querySelector('.hero-bas');
+    if (!hero || !haut || !bas) return;
+    const h = hero.getBoundingClientRect();
+    if (!h.height) return;
+    const milieu = (haut.getBoundingClientRect().bottom + bas.getBoundingClientRect().top) / 2;
+    const pct = Math.min(72, Math.max(40, (milieu - h.top) / h.height * 100));
+    hero.style.setProperty('--axe', pct.toFixed(1) + '%');
+  }
+  let minuteurAxe = null;
+  window.addEventListener('resize', () => { clearTimeout(minuteurAxe); minuteurAxe = setTimeout(placerAxeCouloir, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placerAxeCouloir);
+
+  function couloirImagesCles(dir, nom){
+    const P = COULOIR, pas = [];
+    for (let e = 0; e <= P.etapes; e++) {
+      const u = e / P.etapes;
+      // Taille apparente geometrique : deux cartes voisines gardent le meme
+      // rapport de taille, et le ruban reste plein aux deux bouts.
+      const echelle = (P.tailleNaissance / P.hauteur) * Math.pow(P.tailleSortie / P.tailleNaissance, u);
+      const z = P.perspective * (1 - 1 / echelle);
+      const rail = P.railSortie - (P.railSortie - P.railNaissance) * Math.pow(1 - u, P.ouverture);
+      const tour = P.tourNaissance + (P.tourSortie - P.tourNaissance) * u;
+      pas.push((u * 100).toFixed(2) + '%{transform:translate3d(' + (dir * rail).toFixed(2) + 'cqw,0,' +
+               z.toFixed(2) + 'cqw) rotateY(' + (-dir * tour).toFixed(2) + 'deg)}');
+    }
+    return '@keyframes ' + nom + '{' + pas.join('') + '}';
+  }
+
+  function initHeroCouloir(images){
+    // A chaque appel, meme si le couloir existe deja : le texte du CMS
+    // vient peut-etre d'arriver et de changer la hauteur des blocs.
+    placerAxeCouloir();
+    const rails = document.getElementById('heroRails');
     const list = Array.isArray(images) && images.length > 0 ? images : DEFAULT_HERO_IMAGES;
-    if (!bg || bg.children.length > 0 || list.length === 0) return;
-    list.forEach((src, i) => {
-      const slide = document.createElement('div');
-      slide.className = 'hero-bg-slide' + (i === 0 ? ' is-active' : '');
-      slide.style.backgroundImage = `url('${src}')`;
-      bg.appendChild(slide);
+    if (!rails || rails.children.length > 0 || list.length === 0) return;
+    const scene = rails.parentElement;
+    scene.style.perspective = COULOIR.perspective + 'cqw';
+    scene.style.perspectiveOrigin = '50% var(--axe)';
+    const style = document.createElement('style');
+    style.textContent = couloirImagesCles(1, 'heroCouloirD') + couloirImagesCles(-1, 'heroCouloirG');
+    document.head.appendChild(style);
+    const P = COULOIR;
+    ['heroCouloirD', 'heroCouloirG'].forEach(nom => {
+      for (let i = 0; i < COULOIR_CARTES; i++) {
+        const carte = document.createElement('div');
+        carte.className = 'hero-carte';
+        carte.style.cssText = 'top:var(--axe);width:' + P.largeur + 'cqw;height:' + P.hauteur + 'cqw;' +
+          'margin-left:' + (-P.largeur / 2) + 'cqw;margin-top:' + (-P.hauteur / 2) + 'cqw;' +
+          // Proprietes UNE A UNE et jamais le raccourci « animation: » : il
+          // remettrait animation-play-state a « running » en style en ligne,
+          // et ni la pause hors champ ni « reduire les animations » ne
+          // pourraient plus agir.
+          'border-radius:' + P.rayon + 'cqw;animation-name:' + nom + ';animation-duration:' + COULOIR_DUREE + 's;' +
+          'animation-timing-function:linear;animation-iteration-count:infinite;' +
+          // Delai negatif : chaque carte part deja en route, le couloir est
+          // plein des la premiere image.
+          'animation-delay:' + (-(i * COULOIR_DUREE) / COULOIR_CARTES) + 's;';
+        const img = document.createElement('img');
+        img.src = list[i % list.length];
+        img.alt = '';
+        img.decoding = 'async';
+        img.draggable = false;
+        carte.appendChild(img);
+        rails.appendChild(carte);
+      }
     });
-    const slides = bg.querySelectorAll('.hero-bg-slide');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (slides.length <= 1 || reduceMotion) return;
-    let idx = 0;
-    setInterval(() => {
-      slides[idx].classList.remove('is-active');
-      idx = (idx + 1) % slides.length;
-      slides[idx].classList.add('is-active');
-    }, 5000);
+    // Pause hors champ (condition 3) : voir .hero.hors-champ dans le style.
+    const hero = document.getElementById('hero');
+    if (hero && 'IntersectionObserver' in window) {
+      new IntersectionObserver(entrees => {
+        hero.classList.toggle('hors-champ', !entrees[0].isIntersecting);
+      }).observe(hero);
+    }
   }
 
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
@@ -2106,7 +2200,7 @@
     document.querySelector('footer').classList.add('is-ready');
   }
   setTimeout(revealPage, 2500);
-  setTimeout(() => initHeroSlideshow(), 2500);
+  setTimeout(() => initHeroCouloir(), 2500);
 
   // ===== Effets d'apparition au défilement =====
   let scrollRevealObserver;
@@ -2298,10 +2392,10 @@
     // Témoignages
     renderTemoignages(data);
 
-    initHeroSlideshow(data.hero_slideshow);
+    initHeroCouloir(data.hero_slideshow);
     revealPage();
     initScrollReveal();
-  }).catch(() => { initHeroSlideshow(); revealPage(); initScrollReveal(); });
+  }).catch(() => { initHeroCouloir(); revealPage(); initScrollReveal(); });
 
   // ===== Heures de prière (gérées via le CMS) =====
   function renderPrayerTimes(data){
