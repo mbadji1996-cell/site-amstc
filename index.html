@@ -868,13 +868,11 @@
   .media-year-btn:hover{border-color:var(--green);}
   .media-year-btn:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
   .media-year-btn.is-active{background:var(--green); border-color:var(--green); color:var(--white);}
-  .media-year-count{font-size:0.7rem; font-weight:500; opacity:0.65;}
 
   /* Barre au-dessus de la mosaique : annee choisie et nombre de photos. */
   .media-bar{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
     padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid var(--line);}
   .media-bar-annee{font-family:var(--display); font-weight:600; font-size:1.15rem; color:var(--text-heading);}
-  .media-bar-nombre{font-family:var(--mono); font-size:0.78rem; color:var(--text-muted);}
 
   /* Mosaique (maquette 1A) : grille de 12 colonnes. La 1re photo occupe
      6 colonnes sur 2 rangees, les 4 suivantes 3 colonnes, les 2 d'apres
@@ -2477,8 +2475,7 @@
         btn.addEventListener('click', () => openLightbox(photos, Number(btn.dataset.index), btn));
       });
       if (barEl) {
-        barEl.innerHTML = `<span class="media-bar-annee">${esc(annee.year)}</span>`
-          + `<span class="media-bar-nombre">${photos.length} photo${photos.length > 1 ? 's' : ''}</span>`;
+        barEl.innerHTML = `<span class="media-bar-annee">${esc(annee.year)}</span>`;
       }
       if (actionsEl) {
         if (photos.length > MEDIA_VISIBLES) {
@@ -2496,7 +2493,7 @@
       }
     }
     tabsEl.innerHTML = annees.map((y, i) => `
-      <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}" aria-pressed="${i === 0}">${esc(y.year)}<span class="media-year-count">${y.photos.length}</span></button>
+      <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}" aria-pressed="${i === 0}">${esc(y.year)}</button>
     `).join('');
     tabsEl.querySelectorAll('.media-year-btn').forEach(btn => {
       btn.addEventListener('click', () => {
