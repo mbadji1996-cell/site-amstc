@@ -1,22 +1,21 @@
 {
   "mission_title": "Fédérer les acteurs de la santé autour d'une même cause",
+  "intro_title": "Ensemble pour un *avenir meilleur*",
   "hero_slideshow": [
     "/assets/hero-photo.jpg",
     "/assets/hero-soins-01.jpg",
     "/assets/hero-photo-2.jpg",
     "/assets/hero-soins-02.jpg",
     "/assets/hero-photo-3.jpg",
-    "/assets/hero-soins-03.jpg",
+    "/assets/uploads/img_20240120_111037_908.jpg",
     "/assets/hero-photo-5.jpg",
     "/assets/hero-soins-04.jpg",
-    "/assets/hero-photo-6.jpg",
-    "/assets/hero-soins-05.jpg",
+    "/assets/uploads/img-20181104-wa0047.jpg",
+    "/assets/uploads/0a2a1346.jpg",
     "/assets/hero-photo-7.jpg",
     "/assets/hero-photo-4.jpg"
   ],
   "eyebrow": "Depuis 2014",
-  "intro_eyebrow": "Notre engagement",
-  "intro_title": "Ensemble pour un *avenir meilleur*",
   "intro_subtitle": "Depuis 2014, étudiants et professionnels de la santé se mobilisent pour rapprocher les soins des populations, de la consultation gratuite à la formation des soignants.",
   "intro_cards": [
     {
@@ -46,6 +45,7 @@
   "mission_p1": "L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines - chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux - autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.",
   "mission_p2": "L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.",
   "mission_eyebrow": "Notre mission",
+  "intro_eyebrow": "Notre engagement",
   "emblem_items": [
     {
       "title": "Santé",
