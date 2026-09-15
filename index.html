@@ -228,11 +228,7 @@
   .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
 
   /* ===== Cartes d'intro « Notre engagement » ===== */
-  .intro{padding:90px 0; position:relative; isolation:isolate; overflow:hidden;}
-  .intro::before, .intro::after{content:""; position:absolute; z-index:-1; border-radius:50%; pointer-events:none;}
-  .intro::before{left:-110px; bottom:-120px; width:280px; height:280px; background:rgba(23,118,59,0.06);}
-  .intro::after{right:-150px; bottom:-190px; width:380px; height:380px; border:2px solid rgba(248,183,24,0.5);}
-  :root[data-theme="dark"] .intro::before{background:rgba(127,217,160,0.06);}
+  .intro{padding:90px 0;}
   /* En-tete aligne a gauche comme les autres sections (.section-head). */
   .intro-head h2 em{font-style:normal; color:var(--text-accent);}
   .intro-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
@@ -307,7 +303,6 @@
   .intro-illu .i-main{fill:var(--c-hand);}
   .intro-illu .i-poignet{fill:var(--c-cuff);}
   .intro-illu .i-trait{fill:none; stroke:var(--c-blob); stroke-width:2.5; stroke-linecap:round;}
-  .intro-rays{position:absolute; top:-6%; right:4%; width:24%; color:#F8B718;}
   @container (max-width:300px){
     .intro-in{grid-template-columns:minmax(0,1fr) 96px;}
     .intro-sep{display:none;}
@@ -1166,21 +1161,21 @@
       <div class="intro-grid" id="cms-intro-cards">
         <article class="intro-card reveal theme-vert"><div class="intro-in">
           <p class="intro-kicker"><span class="intro-badge">01</span><span class="intro-sep" aria-hidden="true"></span><span>Identité</span></p>
-          <div class="intro-art" aria-hidden="true"><img src="assets/intro/identite.jpg" alt="" loading="lazy" width="600" height="600"><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <div class="intro-art" aria-hidden="true"><img src="assets/intro/identite.jpg" alt="" loading="lazy" width="600" height="600"></div>
           <h3>Qui sommes-nous ?</h3>
           <div class="intro-text"><p>Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».</p></div>
           <a class="intro-cta" href="#qui-sommes-nous">En savoir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div></article>
         <article class="intro-card reveal theme-or"><div class="intro-in">
           <p class="intro-kicker"><span class="intro-badge">02</span><span class="intro-sep" aria-hidden="true"></span><span>Actions</span></p>
-          <div class="intro-art" aria-hidden="true"><img src="assets/intro/actions.jpg" alt="" loading="lazy" width="600" height="600"><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <div class="intro-art" aria-hidden="true"><img src="assets/intro/actions.jpg" alt="" loading="lazy" width="600" height="600"></div>
           <h3>Que faisons-nous ?</h3>
           <div class="intro-text"><p>Consultations gratuites, couvertures sanitaires, dons de sang et de médicaments et enseignements post-universitaires.</p></div>
           <a class="intro-cta" href="#nos-actions">Voir nos actions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div></article>
         <article class="intro-card reveal theme-menthe"><div class="intro-in">
           <p class="intro-kicker"><span class="intro-badge">03</span><span class="intro-sep" aria-hidden="true"></span><span>Engagement</span></p>
-          <div class="intro-art intro-art-svg" aria-hidden="true"><svg class="intro-illu" viewBox="0 0 120 120"><path class="i-feuille" d="M30 106c-12-8-18-24-12-44 16 6 24 20 22 38z"/><path class="i-coeur" d="M60 60c-3-2-22-13-22-28a11 11 0 0 1 22-5 11 11 0 0 1 22 5c0 15-19 26-22 28z"/><rect class="i-poignet" x="10" y="76" width="15" height="32" rx="3"/><path class="i-main" d="M25 80c9-5 17-8 27-8h16c5 0 8 3 8 6.5S73 85 68 85H58l22 1 19-13c3-2 7-1 8 2 1 2 0 5-2 7L84 100c-4 3-9 5-15 5H25z"/><path class="i-trait" d="M56 85.5h13"/></svg><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <div class="intro-art intro-art-svg" aria-hidden="true"><svg class="intro-illu" viewBox="0 0 120 120"><path class="i-feuille" d="M30 106c-12-8-18-24-12-44 16 6 24 20 22 38z"/><path class="i-coeur" d="M60 60c-3-2-22-13-22-28a11 11 0 0 1 22-5 11 11 0 0 1 22 5c0 15-19 26-22 28z"/><rect class="i-poignet" x="10" y="76" width="15" height="32" rx="3"/><path class="i-main" d="M25 80c9-5 17-8 27-8h16c5 0 8 3 8 6.5S73 85 68 85H58l22 1 19-13c3-2 7-1 8 2 1 2 0 5-2 7L84 100c-4 3-9 5-15 5H25z"/><path class="i-trait" d="M56 85.5h13"/></svg></div>
           <h3>Comment participer ?</h3>
           <div class="intro-text"><p>Chaque don finance directement une campagne de consultation ou une campagne caritative.</p></div>
           <a class="intro-cta" href="don">Faire un don<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -2260,7 +2255,6 @@
       const THEMES = ['theme-vert', 'theme-or', 'theme-menthe'];
       const IMAGES = ['assets/intro/identite.jpg', 'assets/intro/actions.jpg', ''];
       const FLECHE = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg>";
-      const RAYONS = "<svg class=\"intro-rays\" viewBox=\"0 0 40 40\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\"><path d=\"M20 4v10\"/><path d=\"M7 10l6 7\"/><path d=\"M34 10l-7 7\"/></svg>";
       const COEUR = "<svg class=\"intro-illu\" viewBox=\"0 0 120 120\"><path class=\"i-feuille\" d=\"M30 106c-12-8-18-24-12-44 16 6 24 20 22 38z\"/><path class=\"i-coeur\" d=\"M60 60c-3-2-22-13-22-28a11 11 0 0 1 22-5 11 11 0 0 1 22 5c0 15-19 26-22 28z\"/><rect class=\"i-poignet\" x=\"10\" y=\"76\" width=\"15\" height=\"32\" rx=\"3\"/><path class=\"i-main\" d=\"M25 80c9-5 17-8 27-8h16c5 0 8 3 8 6.5S73 85 68 85H58l22 1 19-13c3-2 7-1 8 2 1 2 0 5-2 7L84 100c-4 3-9 5-15 5H25z\"/><path class=\"i-trait\" d=\"M56 85.5h13\"/></svg>";
       document.getElementById('cms-intro-cards').innerHTML = data.intro_cards.map((c, i) => {
         const m = String(c.num || '').match(/^\s*(\d+)\s*-?\s*(.*)$/);
@@ -2272,7 +2266,7 @@
         return `
         <article class="intro-card reveal ${THEMES[i % 3]}"><div class="intro-in">
           <p class="intro-kicker"><span class="intro-badge">${esc(numero)}</span>${libelle ? `<span class="intro-sep" aria-hidden="true"></span><span>${esc(libelle)}</span>` : ''}</p>
-          <div class="intro-art${img ? '' : ' intro-art-svg'}" aria-hidden="true">${art}${RAYONS}</div>
+          <div class="intro-art${img ? '' : ' intro-art-svg'}" aria-hidden="true">${art}</div>
           <h3>${esc(c.title)}</h3>
           <div class="intro-text">${md(c.text)}</div>
           <a class="intro-cta" href="${esc(c.link_href)}">${esc(lien)}${FLECHE}</a>
