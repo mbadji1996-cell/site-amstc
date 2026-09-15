@@ -8,26 +8,29 @@
     "assets/hero-photo-5.jpg"
   ],
   "eyebrow": "Depuis 2014",
+  "intro_eyebrow": "Notre engagement",
+  "intro_title": "Ensemble pour un *avenir meilleur*",
+  "intro_subtitle": "Depuis 2014, étudiants et professionnels de la santé se mobilisent pour rapprocher les soins des populations, de la consultation gratuite à la formation des soignants.",
   "intro_cards": [
     {
       "num": "01 - Identité",
       "title": "Qui sommes-nous ?",
       "text": "Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».",
-      "link_text": "En savoir plus →",
+      "link_text": "En savoir plus",
       "link_href": "#qui-sommes-nous"
     },
     {
       "num": "02 - Actions",
       "title": "Que faisons-nous ?",
-      "text": "Consultations gratuites, , couvertures sanitaires, dons de sang et de médicaments et enseignements post-universitaires.",
-      "link_text": "Voir nos actions →",
+      "text": "Consultations gratuites, couvertures sanitaires, dons de sang et de médicaments et enseignements post-universitaires.",
+      "link_text": "Voir nos actions",
       "link_href": "#nos-actions"
     },
     {
       "num": "03 - Engagement",
       "title": "Comment participer ?",
       "text": "Chaque don finance directement une campagne de consultation ou une campagne caritative.",
-      "link_text": "Faire un don →",
+      "link_text": "Faire un don",
       "link_href": "don"
     }
   ],

@@ -227,21 +227,102 @@
   .hero div#cms-hero-subtitle img{max-width:100%; border-radius:10px; margin:10px 0;}
   .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
 
-  /* ===== Three-card intro ===== */
-  .intro{padding:90px 0;}
+  /* ===== Cartes d'intro « Notre engagement » ===== */
+  .intro{padding:90px 0; position:relative; isolation:isolate; overflow:hidden;}
+  .intro::before, .intro::after{content:""; position:absolute; z-index:-1; border-radius:50%; pointer-events:none;}
+  .intro::before{left:-110px; bottom:-120px; width:280px; height:280px; background:rgba(23,118,59,0.06);}
+  .intro::after{right:-150px; bottom:-190px; width:380px; height:380px; border:2px solid rgba(248,183,24,0.5);}
+  :root[data-theme="dark"] .intro::before{background:rgba(127,217,160,0.06);}
+  .intro-head{text-align:center; max-width:760px; margin:0 auto 48px;}
+  .intro-head .eyebrow{justify-content:center;}
+  .intro-head .eyebrow::after{content:""; width:22px; height:1px; background:var(--gold-deep);}
+  .intro-head h2{font-size:clamp(1.7rem,3.2vw,2.5rem);}
+  .intro-head h2 em{font-style:normal; color:var(--text-accent);}
+  .intro-sub{color:var(--text-muted); margin-top:14px; font-size:1.04rem;}
   .intro-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
   @media (max-width:880px){ .intro-grid{grid-template-columns:1fr;} }
+
+  /* Teintes : chaque carte porte ses couleurs dans des variables. */
   .intro-card{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:30px 28px;
+    --c-tint:#F2F8F3; --c-line:rgba(23,118,59,0.14); --c-soft:rgba(23,118,59,0.12); --c-ink:#17763B;
+    --c-blob:#CFE8D6; --c-hand:#06441C; --c-cuff:#17763B;
+    --c-btn:#06441C; --c-btn-hover:#0B5A27; --c-btn-ink:#FFFFFF;
+    container-type:inline-size;
+    background:var(--c-tint); border:1px solid var(--c-line); border-radius:20px; padding:26px 24px;
+    box-shadow:0 8px 28px rgba(6,68,28,0.06);
     transition:transform .2s ease, box-shadow .2s ease;
   }
+  .intro-card.theme-or{
+    --c-tint:#FFF8EA; --c-line:rgba(170,123,17,0.18); --c-soft:rgba(248,183,24,0.24); --c-ink:#8A6410;
+    --c-blob:#FCDC8A; --c-btn:#F8B718; --c-btn-hover:#E5A70C; --c-btn-ink:#06441C;
+  }
+  .intro-card.theme-menthe{--c-tint:#F0F7F4; --c-blob:#D5EDDF; --c-btn:#17763B; --c-btn-hover:#12622F;}
+  :root[data-theme="dark"] .intro-card{
+    --c-tint:#15231A; --c-line:rgba(127,217,160,0.16); --c-soft:rgba(127,217,160,0.14); --c-ink:#7FD9A0;
+    --c-blob:rgba(127,217,160,0.22); --c-hand:#7FD9A0; --c-cuff:#35B872;
+    box-shadow:none;
+  }
+  :root[data-theme="dark"] .intro-card.theme-or{
+    --c-tint:#262113; --c-line:rgba(240,201,85,0.2); --c-soft:rgba(240,201,85,0.16); --c-ink:#F0C955;
+    --c-blob:rgba(240,201,85,0.28);
+  }
+  :root[data-theme="dark"] .intro-card.theme-menthe{--c-tint:#132420;}
   .intro-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
-  .intro-card .num{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-bottom:14px; display:block;}
-  .intro-card h3{font-size:1.25rem; margin-bottom:10px;}
-  .intro-card p{color:var(--text-muted); font-size:0.96rem; margin-bottom:18px;}
-  .intro-card div p{color:var(--text-muted); font-size:0.96rem; margin-bottom:12px;}
+
+  /* Carte etroite : illustration a cote du badge et du titre. */
+  .intro-in{
+    height:100%; display:grid; column-gap:14px;
+    grid-template-columns:minmax(0,1fr) 124px; grid-template-rows:auto auto 1fr auto;
+    grid-template-areas:"head art" "title art" "text text" "cta cta";
+  }
+  .intro-kicker{grid-area:head; align-self:start; display:flex; align-items:center; flex-wrap:wrap; gap:10px;
+    font-size:0.88rem; font-weight:600; color:var(--c-ink);}
+  .intro-badge{min-width:46px; height:32px; padding:0 12px; border-radius:999px; background:var(--c-soft);
+    display:inline-flex; align-items:center; justify-content:center; font-family:var(--display); font-size:0.86rem;}
+  .intro-sep{width:18px; height:1.5px; background:currentColor; opacity:0.45;}
+  .intro-card h3{grid-area:title; align-self:end; font-size:1.3rem; margin:16px 0 10px;}
+  .intro-text{grid-area:text;}
+  .intro-text p{color:var(--text-muted); font-size:0.95rem; margin-bottom:12px;}
+  .intro-text a{color:var(--green); border-bottom:1.5px solid var(--gold);}
   .intro-card img, .emblem-row img, .tl-item img, .register-desc img{max-width:100%; border-radius:8px; margin:8px 0;}
-  .intro-card a{font-weight:600; font-size:0.92rem; color:var(--green); border-bottom:1.5px solid var(--gold);}
+  .intro-cta{
+    grid-area:cta; justify-self:start; margin-top:8px;
+    display:inline-flex; align-items:center; gap:10px; padding:11px 20px; border-radius:999px;
+    background:var(--c-btn); color:var(--c-btn-ink); font-weight:600; font-size:0.92rem;
+    transition:background .18s ease;
+  }
+  .intro-cta svg{width:16px; height:16px; flex:none; transition:transform .18s ease;}
+  .intro-cta:hover{background:var(--c-btn-hover);}
+  .intro-cta:hover svg{transform:translateX(3px);}
+  .intro-cta:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+  /* Illustration : tache de couleur, photo detouree en tache, trois rayons. */
+  .intro-art{grid-area:art; position:relative; width:100%; aspect-ratio:1; align-self:start; justify-self:end;}
+  .intro-art::before{content:""; position:absolute; inset:2% 14% 10% -8%; background:var(--c-blob);
+    border-radius:58% 42% 55% 45% / 48% 58% 42% 52%; transform:rotate(-10deg);}
+  .intro-card .intro-art img{position:relative; width:84%; height:84%; margin:10% 0 0 12%; max-width:none; object-fit:cover;
+    border-radius:42% 58% 46% 54% / 55% 45% 55% 45%; box-shadow:0 10px 24px rgba(6,68,28,0.16);}
+  .theme-or .intro-art::before{inset:4% -6% 4% 18%; border-radius:45% 55% 60% 40% / 55% 40% 60% 45%; transform:rotate(12deg);}
+  .intro-card.theme-or .intro-art img{margin:10% 0 0 4%; border-radius:55% 45% 40% 60% / 45% 55% 45% 55%;}
+  .intro-art-svg::before{inset:4%; border-radius:50% 46% 52% 48% / 48% 52% 46% 50%;}
+  .intro-illu{position:relative; display:block; width:100%; height:100%;}
+  .intro-illu .i-feuille{fill:var(--c-cuff); opacity:0.28;}
+  .intro-illu .i-coeur{fill:#F8B718;}
+  .intro-illu .i-main{fill:var(--c-hand);}
+  .intro-illu .i-poignet{fill:var(--c-cuff);}
+  .intro-illu .i-trait{fill:none; stroke:var(--c-blob); stroke-width:2.5; stroke-linecap:round;}
+  .intro-rays{position:absolute; top:-6%; right:4%; width:24%; color:#F8B718;}
+  @container (max-width:300px){
+    .intro-in{grid-template-columns:minmax(0,1fr) 96px;}
+    .intro-sep{display:none;}
+  }
+  /* Carte large : illustration en colonne a droite, comme la maquette. */
+  @container (min-width:560px){
+    .intro-in{grid-template-columns:minmax(0,1fr) 40%; column-gap:22px; align-content:center;
+      grid-template-rows:auto auto auto auto; grid-template-areas:"head art" "title art" "text art" "cta art";}
+    .intro-art{align-self:center; max-width:250px;}
+    .intro-card h3{font-size:1.5rem; align-self:start;}
+  }
 
   section{padding:80px 0;}
   .section-alt{background:var(--section-alt);}
@@ -1080,24 +1161,34 @@
 
   <!-- ===== THREE-CARD INTRO ===== -->
   <section class="intro">
-    <div class="wrap intro-grid" id="cms-intro-cards">
-      <div class="intro-card reveal">
-        <span class="num">01 - Identité</span>
-        <h3>Qui sommes-nous ?</h3>
-        <div><p>Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».</p></div>
-        <a href="#qui-sommes-nous">En savoir plus →</a>
+    <div class="wrap">
+      <div class="intro-head reveal">
+        <p class="eyebrow" id="cms-intro-eyebrow">Notre engagement</p>
+        <h2 id="cms-intro-title">Ensemble pour un <em>avenir meilleur</em></h2>
+        <p class="intro-sub" id="cms-intro-subtitle">Depuis 2014, étudiants et professionnels de la santé se mobilisent pour rapprocher les soins des populations, de la consultation gratuite à la formation des soignants.</p>
       </div>
-      <div class="intro-card reveal">
-        <span class="num">02 - Actions</span>
-        <h3>Que faisons-nous ?</h3>
-        <div><p>Consultations gratuites, dons de sang et de médicaments, couvertures sanitaires et enseignements post-universitaires.</p></div>
-        <a href="#nos-actions">Voir nos actions →</a>
-      </div>
-      <div class="intro-card reveal">
-        <span class="num">03 - Engagement</span>
-        <h3>Comment participer ?</h3>
-        <div><p>Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation.</p></div>
-        <a href="don">Faire un don →</a>
+      <div class="intro-grid" id="cms-intro-cards">
+        <article class="intro-card reveal theme-vert"><div class="intro-in">
+          <p class="intro-kicker"><span class="intro-badge">01</span><span class="intro-sep" aria-hidden="true"></span><span>Identité</span></p>
+          <div class="intro-art" aria-hidden="true"><img src="assets/intro/identite.jpg" alt="" loading="lazy" width="600" height="600"><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <h3>Qui sommes-nous ?</h3>
+          <div class="intro-text"><p>Une association apolitique et sans but lucratif, née de l'engagement d'étudiants en santé se reconnaissant comme « talibé Cheikh ».</p></div>
+          <a class="intro-cta" href="#qui-sommes-nous">En savoir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div></article>
+        <article class="intro-card reveal theme-or"><div class="intro-in">
+          <p class="intro-kicker"><span class="intro-badge">02</span><span class="intro-sep" aria-hidden="true"></span><span>Actions</span></p>
+          <div class="intro-art" aria-hidden="true"><img src="assets/intro/actions.jpg" alt="" loading="lazy" width="600" height="600"><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <h3>Que faisons-nous ?</h3>
+          <div class="intro-text"><p>Consultations gratuites, couvertures sanitaires, dons de sang et de médicaments et enseignements post-universitaires.</p></div>
+          <a class="intro-cta" href="#nos-actions">Voir nos actions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div></article>
+        <article class="intro-card reveal theme-menthe"><div class="intro-in">
+          <p class="intro-kicker"><span class="intro-badge">03</span><span class="intro-sep" aria-hidden="true"></span><span>Engagement</span></p>
+          <div class="intro-art intro-art-svg" aria-hidden="true"><svg class="intro-illu" viewBox="0 0 120 120"><path class="i-feuille" d="M30 106c-12-8-18-24-12-44 16 6 24 20 22 38z"/><path class="i-coeur" d="M60 60c-3-2-22-13-22-28a11 11 0 0 1 22-5 11 11 0 0 1 22 5c0 15-19 26-22 28z"/><rect class="i-poignet" x="10" y="76" width="15" height="32" rx="3"/><path class="i-main" d="M25 80c9-5 17-8 27-8h16c5 0 8 3 8 6.5S73 85 68 85H58l22 1 19-13c3-2 7-1 8 2 1 2 0 5-2 7L84 100c-4 3-9 5-15 5H25z"/><path class="i-trait" d="M56 85.5h13"/></svg><svg class="intro-rays" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 4v10"/><path d="M7 10l6 7"/><path d="M34 10l-7 7"/></svg></div>
+          <h3>Comment participer ?</h3>
+          <div class="intro-text"><p>Chaque don finance directement une campagne de consultation ou une campagne caritative.</p></div>
+          <a class="intro-cta" href="don">Faire un don<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div></article>
       </div>
     </div>
   </section>
@@ -2163,15 +2254,34 @@
     if (data.hero_subtitle) document.getElementById('cms-hero-subtitle').innerHTML = md(data.hero_subtitle);
 
     // 3 cartes d'introduction
+    // En-tete des cartes : la partie entre asterisques passe en or.
+    if (data.intro_eyebrow) document.getElementById('cms-intro-eyebrow').textContent = data.intro_eyebrow;
+    if (data.intro_title) document.getElementById('cms-intro-title').innerHTML = esc(data.intro_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.intro_subtitle) document.getElementById('cms-intro-subtitle').textContent = data.intro_subtitle;
     if (Array.isArray(data.intro_cards)) {
-      document.getElementById('cms-intro-cards').innerHTML = data.intro_cards.map(c => `
-        <div class="intro-card reveal">
-          <span class="num">${esc(c.num)}</span>
+      // « 01 - Identite » donne le badge 01 et le libelle Identite. Sans image
+      // dans le CMS : photo par defaut, ou le coeur dans la main.
+      const THEMES = ['theme-vert', 'theme-or', 'theme-menthe'];
+      const IMAGES = ['assets/intro/identite.jpg', 'assets/intro/actions.jpg', ''];
+      const FLECHE = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg>";
+      const RAYONS = "<svg class=\"intro-rays\" viewBox=\"0 0 40 40\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\"><path d=\"M20 4v10\"/><path d=\"M7 10l6 7\"/><path d=\"M34 10l-7 7\"/></svg>";
+      const COEUR = "<svg class=\"intro-illu\" viewBox=\"0 0 120 120\"><path class=\"i-feuille\" d=\"M30 106c-12-8-18-24-12-44 16 6 24 20 22 38z\"/><path class=\"i-coeur\" d=\"M60 60c-3-2-22-13-22-28a11 11 0 0 1 22-5 11 11 0 0 1 22 5c0 15-19 26-22 28z\"/><rect class=\"i-poignet\" x=\"10\" y=\"76\" width=\"15\" height=\"32\" rx=\"3\"/><path class=\"i-main\" d=\"M25 80c9-5 17-8 27-8h16c5 0 8 3 8 6.5S73 85 68 85H58l22 1 19-13c3-2 7-1 8 2 1 2 0 5-2 7L84 100c-4 3-9 5-15 5H25z\"/><path class=\"i-trait\" d=\"M56 85.5h13\"/></svg>";
+      document.getElementById('cms-intro-cards').innerHTML = data.intro_cards.map((c, i) => {
+        const m = String(c.num || '').match(/^\s*(\d+)\s*-?\s*(.*)$/);
+        const numero = m ? m[1] : String(i + 1).padStart(2, '0');
+        const libelle = m ? m[2] : String(c.num || '');
+        const img = c.image || IMAGES[i] || '';
+        const art = img ? `<img src="${esc(img)}" alt="" loading="lazy" width="600" height="600">` : COEUR;
+        const lien = String(c.link_text || '').replace(/\s*→\s*$/, '');
+        return `
+        <article class="intro-card reveal ${THEMES[i % 3]}"><div class="intro-in">
+          <p class="intro-kicker"><span class="intro-badge">${esc(numero)}</span>${libelle ? `<span class="intro-sep" aria-hidden="true"></span><span>${esc(libelle)}</span>` : ''}</p>
+          <div class="intro-art${img ? '' : ' intro-art-svg'}" aria-hidden="true">${art}${RAYONS}</div>
           <h3>${esc(c.title)}</h3>
-          <div>${md(c.text)}</div>
-          <a href="${esc(c.link_href)}">${esc(c.link_text)}</a>
-        </div>
-      `).join('');
+          <div class="intro-text">${md(c.text)}</div>
+          <a class="intro-cta" href="${esc(c.link_href)}">${esc(lien)}${FLECHE}</a>
+        </div></article>`;
+      }).join('');
     }
 
     // Mission

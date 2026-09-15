@@ -34,15 +34,20 @@ collections:
             hint: "Photos affichées en fondu enchaîné en arrière-plan du hero. Format paysage recommandé. Laissez vide pour utiliser les photos par défaut."
             field: { label: "Photo", name: "image", widget: "image" }
 
+          - { label: "Cartes d'intro - accroche", name: "intro_eyebrow", widget: "string", required: false }
+          - { label: "Cartes d'intro - titre", name: "intro_title", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Ensemble pour un *avenir meilleur*" }
+          - { label: "Cartes d'intro - sous-titre", name: "intro_subtitle", widget: "text", required: false }
+
           - label: "Les 3 cartes d'introduction"
             name: "intro_cards"
             widget: "list"
             fields:
-              - { label: "Numéro / catégorie", name: "num", widget: "string", hint: "Ex: 01, 02, 03…" }
+              - { label: "Numéro / catégorie", name: "num", widget: "string", hint: "Ex: 01 - Identité. Le numéro va dans la pastille, le reste à côté." }
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Texte", name: "text", widget: "markdown" }
-              - { label: "Texte du lien", name: "link_text", widget: "string" }
+              - { label: "Texte du bouton", name: "link_text", widget: "string", hint: "La flèche est ajoutée automatiquement." }
               - { label: "Lien (URL ou #ancre)", name: "link_href", widget: "string" }
+              - { label: "Illustration", name: "image", widget: "image", required: false, hint: "Photo carrée, un soignant ou un membre en action. Laissez vide pour l'illustration par défaut." }
 
           - { label: "Accroche de la section mission", name: "mission_eyebrow", widget: "string" }
           - { label: "Titre de la section mission", name: "mission_title", widget: "string" }
