@@ -702,21 +702,17 @@
   .impact-label{font-size:0.92rem; color:rgba(255,255,255,0.75);}
 
   /* ===== Témoignages ===== */
-  /* Pas de largeur maximale propre : le carrousel occupe toute la largeur du
-     contenu (.wrap), pour que les flèches se placent aux extrémités et que
-     les fiches soient aussi larges que possible. */
+  /* Trois cartes sur PC : le temoignage actif au centre, en vert, entre ses
+     deux voisins en blanc sur le fond de la section. Une seule sur mobile. */
   .temoignage-carousel{display:flex; align-items:center; gap:24px; margin:0 auto;}
-  .temoignage-stage{flex:1; min-width:0;}
-  /* Deux témoignages par ligne ; une seule colonne dès que la place manque. */
-  .temoignage-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:stretch;}
-  /* Page ne contenant qu'une fiche (nombre impair de témoignages) : on la
-     centre au lieu de la laisser collée à gauche. */
-  .temoignage-grid.solo{grid-template-columns:minmax(0,520px); justify-content:center;}
-  @media (max-width:860px){ .temoignage-grid{grid-template-columns:minmax(0,1fr);} }
+  .temoignage-stage{flex:1; min-width:0; padding:14px 0 6px;}
+  .temoignage-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; align-items:stretch;}
+  .temoignage-grid.n2{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .temoignage-grid.n1{grid-template-columns:minmax(0,560px); justify-content:center;}
   .tc-arrow{
     flex-shrink:0; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
     color:var(--text-heading); display:flex; align-items:center; justify-content:center; cursor:pointer;
-    transition:border-color .15s ease, transform .15s ease;
+    box-shadow:0 4px 14px rgba(6,68,28,0.08); transition:border-color .15s ease, transform .15s ease;
   }
   .tc-arrow:hover{border-color:var(--green); transform:translateY(-2px);}
   .tc-arrow svg{width:20px; height:20px;}
@@ -725,40 +721,50 @@
   .tc-dot.active{width:24px; background:var(--green);}
 
   .temoignage-card{
+    position:relative; display:flex; flex-direction:column; gap:18px; text-align:left;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:26px 26px 24px; display:flex; flex-direction:column; gap:16px; text-align:left; position:relative;
+    padding:26px 26px 22px; box-shadow:0 10px 30px rgba(6,68,28,0.06); cursor:pointer;
     animation:temoignageZoomIn .4s ease;
-    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .2s ease;
   }
-  .temoignage-card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10); border-color:var(--green);}
-  @keyframes temoignageZoomIn{ from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
-
-  /* En-tête : photo, nom et rôle sur une même ligne (voir modèle fourni). */
-  .temoignage-head{display:flex; align-items:center; gap:14px;}
-  .temoignage-avatar{width:54px; height:54px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+  .temoignage-card:not(.est-active):hover{transform:translateY(-4px); border-color:var(--green);}
+  .temoignage-card:focus-visible{outline:3px solid var(--gold); outline-offset:3px;}
+  @keyframes temoignageZoomIn{ from{opacity:0; transform:scale(0.96);} to{opacity:1; transform:scale(1);} }
+  /* Carte active : vert de la charte, fige pour rester fonce en theme sombre. */
+  .temoignage-card.est-active{
+    cursor:default; border-color:transparent; transform:translateY(-8px);
+    background:linear-gradient(150deg, #17763B 0%, #06441C 100%);
+    box-shadow:0 22px 44px rgba(6,68,28,0.28);
+  }
+  .temoignage-quote{position:absolute; top:20px; right:22px; width:34px; height:34px; color:var(--gold); opacity:0.35;}
+  .temoignage-card.est-active .temoignage-quote{opacity:0.9;}
+  .temoignage-quote svg{width:100%; height:100%; fill:currentColor;}
+  .temoignage-text{flex:1; font-size:0.98rem; font-style:italic; color:var(--ink); line-height:1.75; margin:0; padding-right:34px;}
+  .temoignage-card.est-active .temoignage-text{color:#FFFFFF;}
+  .temoignage-foot{display:flex; align-items:center; gap:12px; padding-top:16px; border-top:1px solid var(--line);}
+  .temoignage-card.est-active .temoignage-foot{border-top-color:rgba(255,255,255,0.18);}
+  .temoignage-avatar{width:46px; height:46px; border-radius:50%; object-fit:cover; flex-shrink:0;}
   .temoignage-avatar-fallback{
-    width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1rem;
+    width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:0.95rem;
   }
+  .temoignage-card.est-active .temoignage-avatar, .temoignage-card.est-active .temoignage-avatar-fallback{box-shadow:0 0 0 2px var(--gold);}
   .temoignage-head-text{min-width:0; flex:1;}
-  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:1rem; color:var(--text-heading); line-height:1.3;}
-  .temoignage-author-role{font-size:0.85rem; color:var(--text-muted); line-height:1.35; margin-top:2px;}
-  .temoignage-badge{
-    font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em;
-    padding:3px 10px; border-radius:999px; flex-shrink:0; align-self:flex-start;
-  }
-  .temoignage-badge.beneficiaire{background:#E1F5EE; color:#0F6E56;}
-  .temoignage-badge.membre{background:var(--paper-alt); color:var(--green);}
+  .temoignage-author-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--text-heading); line-height:1.3;}
+  .temoignage-author-role{font-size:0.82rem; color:var(--green); line-height:1.35; margin-top:2px;}
+  .temoignage-card.est-active .temoignage-author-name{color:#FFFFFF;}
+  .temoignage-card.est-active .temoignage-author-role{color:#FFE3A0;}
 
-  .temoignage-quote-mark{font-family:var(--display); font-size:2.4rem; line-height:0.6; color:var(--gold); opacity:0.4; display:block;}
-  .temoignage-text{font-size:0.99rem; font-style:italic; color:var(--ink); line-height:1.7; margin:0;}
-
+  /* Telephone : la carte prend toute la largeur, les fleches passent dessous. */
   @media (max-width:640px){
-    .temoignage-carousel{gap:6px;}
-    .tc-arrow{width:36px; height:36px;}
-    .tc-arrow svg{width:16px; height:16px;}
-    .temoignage-card{padding:22px 18px;}
-    .temoignage-badge{display:none;}
+    .temoignage-carousel{flex-wrap:wrap; justify-content:center; gap:14px 16px;}
+    .temoignage-stage{flex:0 0 100%; order:-1; padding-top:4px;}
+    .tc-arrow{width:40px; height:40px;}
+    .tc-arrow svg{width:18px; height:18px;}
+    .temoignage-card{padding:22px 18px 18px;}
+    .temoignage-card.est-active{transform:none;}
+    .temoignage-quote{width:28px; height:28px; top:16px; right:16px;}
+    .temoignage-text{padding-right:26px;}
   }
 
   /* ===== CTA banner ===== */
@@ -2821,14 +2827,18 @@
   }
 
   // ===== Témoignages (carrousel) =====
+  // L'index designe le temoignage ACTIF. Sur PC on affiche son precedent,
+  // lui-meme au centre (en vert) et son suivant, en boucle ; sur mobile,
+  // l'actif seul.
   let temoignagesList = [];
   let temoignageIndex = 0;
   let temoignageAutoplayTimer = null;
   const temoignageReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TEMOIGNAGES_MOBILE = window.matchMedia('(max-width:860px)');
+  const GUILLEMET_TEMOIGNAGE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7H6.5A2.5 2.5 0 0 0 4 9.5V13h4.5v4L10 13V7zM20 7h-3.5A2.5 2.5 0 0 0 14 9.5V13h4.5v4L20 13V7z"/></svg>';
 
-  // Temps de lecture proportionnel à la longueur du texte (~18 caractères/
-  // seconde, une vitesse de lecture confortable), avec une marge fixe pour
-  // le temps de regarder la photo/le nom, et des bornes min/max raisonnables.
+  // Temps de lecture proportionnel a la longueur du texte (~18 caracteres/
+  // seconde), avec une marge fixe et des bornes min/max raisonnables.
   function temoignageReadDelay(quote){
     const len = (quote || '').length;
     return Math.min(15000, Math.max(5000, 2200 + (len / 18) * 1000));
@@ -2836,17 +2846,11 @@
 
   function startTemoignageAutoplay(){
     stopTemoignageAutoplay();
-    if (temoignageReduceMotion || temoignagePages() <= 1) return;
-    // La page affiche deux témoignages : on laisse le temps de lire le plus long.
-    const pageCourante = temoignagesDeLaPage(temoignageIndex);
-    const plusLong = pageCourante.reduce((m, t) => Math.max(m, (t.quote || '').length), 0);
-    const delay = temoignageReadDelay('x'.repeat(plusLong));
+    if (temoignageReduceMotion || temoignagesList.length <= 1) return;
+    const actif = temoignagesList[temoignageIndex] || {};
     temoignageAutoplayTimer = setTimeout(() => {
-      // Vérifie l'état :hover directement plutôt que de compter sur un
-      // événement mouseenter : si la page défile sous un curseur déjà
-      // immobile, aucun mouseenter ne se déclenche, donc s'appuyer
-      // uniquement sur cet événement raterait ce cas. Idem au clavier
-      // (focus-within couvre les flèches prev/next).
+      // Etat :hover / :focus-within lu directement : un curseur deja immobile
+      // sous une page qui defile ne declenche aucun mouseenter.
       const carousel = document.querySelector('.temoignage-carousel');
       if (carousel && (carousel.matches(':hover') || carousel.matches(':focus-within'))) {
         temoignageAutoplayTimer = null;
@@ -2854,7 +2858,7 @@
         return;
       }
       goToTemoignage(temoignageIndex + 1);
-    }, delay);
+    }, temoignageReadDelay(actif.quote));
   }
 
   function stopTemoignageAutoplay(){
@@ -2874,12 +2878,13 @@
     if (data.temoignages_title) document.getElementById('cms-temoignages-title').textContent = data.temoignages_title;
     setOptionalSubtitle('cms-temoignages-subtitle', data.temoignages_subtitle);
 
-    // Les flèches ne servent que s'il y a plus d'une page de deux témoignages.
-    const multi = temoignagePages() > 1;
+    const multi = temoignagesList.length > 1;
     document.getElementById('tcPrev').style.display = multi ? '' : 'none';
     document.getElementById('tcNext').style.display = multi ? '' : 'none';
 
-    temoignageIndex = 0;
+    // Avec trois temoignages ou plus, le premier est au centre des le depart :
+    // on commence donc par le deuxieme pour que le premier soit a gauche.
+    temoignageIndex = temoignagesList.length >= 3 && !TEMOIGNAGES_MOBILE.matches ? 1 : 0;
     renderTemoignageSlide();
     renderTemoignageDots();
     startTemoignageAutoplay();
@@ -2891,34 +2896,39 @@
       carousel.addEventListener('mouseleave', startTemoignageAutoplay);
       carousel.addEventListener('focusin', stopTemoignageAutoplay);
       carousel.addEventListener('focusout', startTemoignageAutoplay);
+      // Une carte blanche cliquee (ou validee au clavier) devient l'active.
+      stage.addEventListener('click', (e) => {
+        const carte = e.target.closest('.temoignage-card:not(.est-active)');
+        if (carte) goToTemoignage(Number(carte.dataset.index));
+      });
+      stage.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const carte = e.target.closest('.temoignage-card:not(.est-active)');
+        if (carte) { e.preventDefault(); goToTemoignage(Number(carte.dataset.index)); }
+      });
     }
   }
 
-  // L'index du carrousel désigne une page, pas un témoignage. Deux par page
-  // sur ordinateur, un seul sur mobile (même seuil que la bascule CSS en une
-  // colonne, pour éviter deux fiches empilées sur un petit écran).
-  const TEMOIGNAGES_MOBILE = window.matchMedia('(max-width:860px)');
-
-  function temoignagesParPage(){
-    return TEMOIGNAGES_MOBILE.matches ? 1 : 2;
+  // Indices affiches, de gauche a droite.
+  function temoignagesVisibles(){
+    const n = temoignagesList.length;
+    const i = temoignageIndex;
+    if (TEMOIGNAGES_MOBILE.matches || n === 1) return [i];
+    if (n === 2) return [0, 1];
+    return [(i - 1 + n) % n, i, (i + 1) % n];
   }
 
-  function temoignagePages(){
-    return Math.max(1, Math.ceil(temoignagesList.length / temoignagesParPage()));
-  }
-
-  function temoignagesDeLaPage(page){
-    const parPage = temoignagesParPage();
-    const debut = page * parPage;
-    return temoignagesList.slice(debut, debut + parPage);
-  }
-
-  function carteTemoignage(t){
-    const type = t.author_type === 'beneficiaire' ? 'beneficiaire' : 'membre';
-    const typeLabel = type === 'beneficiaire' ? 'Bénéficiaire' : 'Membre';
+  function carteTemoignage(idx){
+    const t = temoignagesList[idx];
+    const active = idx === temoignageIndex;
+    const attributs = active
+      ? ''
+      : ` role="button" tabindex="0" aria-label="Afficher le témoignage de ${esc(t.author_name)}"`;
     return `
-      <div class="temoignage-card">
-        <div class="temoignage-head">
+      <article class="temoignage-card${active ? ' est-active' : ''}" data-index="${idx}"${attributs}>
+        <span class="temoignage-quote">${GUILLEMET_TEMOIGNAGE}</span>
+        <p class="temoignage-text">${esc(t.quote)}</p>
+        <div class="temoignage-foot">
           ${t.photo
             ? `<img class="temoignage-avatar" src="${esc(t.photo)}" alt="${esc(t.author_name)}" loading="lazy">`
             : `<div class="temoignage-avatar-fallback">${esc(memberInitials(t.author_name))}</div>`}
@@ -2926,62 +2936,41 @@
             <div class="temoignage-author-name">${esc(t.author_name)}</div>
             ${t.author_role ? `<div class="temoignage-author-role">${esc(t.author_role)}</div>` : ''}
           </div>
-          <span class="temoignage-badge ${type}">${typeLabel}</span>
         </div>
-        <div>
-          <span class="temoignage-quote-mark" aria-hidden="true">"</span>
-          <p class="temoignage-text">${esc(t.quote)}</p>
-        </div>
-      </div>
+      </article>
     `;
-  }
-
-  // Ramène l'index dans les bornes : le nombre de pages change avec la
-  // largeur d'écran (2 témoignages par page sur ordinateur, 1 sur mobile),
-  // et un index devenu hors bornes afficherait une page vide.
-  function clampTemoignageIndex(){
-    const pages = temoignagePages();
-    if (temoignageIndex >= pages || temoignageIndex < 0) temoignageIndex = 0;
   }
 
   function renderTemoignageSlide(){
     const stage = document.getElementById('cms-temoignages-grid');
-    clampTemoignageIndex();
-    const cartes = temoignagesDeLaPage(temoignageIndex);
-    const solo = cartes.length === 1 && temoignagesParPage() > 1 ? ' solo' : '';
-    stage.innerHTML = `<div class="temoignage-grid${solo}">${cartes.map(carteTemoignage).join('')}</div>`;
+    if (temoignageIndex >= temoignagesList.length || temoignageIndex < 0) temoignageIndex = 0;
+    const visibles = temoignagesVisibles();
+    stage.innerHTML = `<div class="temoignage-grid n${visibles.length}">${visibles.map(carteTemoignage).join('')}</div>`;
   }
 
   function renderTemoignageDots(){
     const dots = document.getElementById('tcDots');
     if (!dots) return;
-    clampTemoignageIndex();
-    const pages = temoignagePages();
-    if (pages <= 1) { dots.innerHTML = ''; return; }
-    dots.innerHTML = Array.from({ length: pages }, (_, i) =>
-      `<button class="tc-dot${i === temoignageIndex ? ' active' : ''}" data-index="${i}" aria-label="Témoignages ${i + 1}"></button>`
+    const n = temoignagesList.length;
+    if (n <= 1) { dots.innerHTML = ''; return; }
+    dots.innerHTML = Array.from({ length: n }, (_, i) =>
+      `<button class="tc-dot${i === temoignageIndex ? ' active' : ''}" data-index="${i}" aria-label="Témoignage ${i + 1}"></button>`
     ).join('');
   }
 
   function goToTemoignage(newIndex){
-    const pages = temoignagePages();
-    temoignageIndex = (newIndex + pages) % pages;
+    const n = temoignagesList.length;
+    if (!n) return;
+    temoignageIndex = (newIndex + n) % n;
     renderTemoignageSlide();
     renderTemoignageDots();
     startTemoignageAutoplay();
   }
 
-  // Passage mobile <-> ordinateur : le nombre de témoignages par page change,
-  // donc l'index de page courant n'a plus le même sens. On repart de la
-  // première page plutôt que d'afficher une page vide.
+  // Passage mobile <-> ordinateur : on garde le meme temoignage actif, seul
+  // le nombre de cartes autour change.
   const onTemoignageBreakpoint = () => {
     if (!temoignagesList.length) return;
-    temoignageIndex = 0;
-    const multi = temoignagePages() > 1;
-    const prev = document.getElementById('tcPrev');
-    const next = document.getElementById('tcNext');
-    if (prev) prev.style.display = multi ? '' : 'none';
-    if (next) next.style.display = multi ? '' : 'none';
     renderTemoignageSlide();
     renderTemoignageDots();
     startTemoignageAutoplay();
