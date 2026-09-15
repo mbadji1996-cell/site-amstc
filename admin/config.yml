@@ -109,8 +109,15 @@ collections:
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Texte", name: "text", widget: "markdown" }
 
-          - { label: "Titre - Les Pionniers", name: "pioneers_title", widget: "string", default: "Les Pionniers" }
+          - { label: "Accroche - Les Pionniers", name: "pioneers_title", widget: "string", default: "Les Pionniers" }
+          - { label: "Titre - Les Pionniers", name: "pioneers_accroche", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Des visages, une même *ambition*" }
           - { label: "Sous-titre - Les Pionniers", name: "pioneers_subtitle", widget: "string", required: false }
+          - label: "Valeurs - Les Pionniers"
+            name: "pioneers_valeurs"
+            widget: "list"
+            required: false
+            hint: "Affichées sous le sous-titre avec une icône : Excellence (étoile), Solidarité (groupe), Service (pousse). Laissez vide pour les masquer."
+            field: { label: "Valeur", name: "valeur", widget: "string" }
           - label: "Disposition - Les Pionniers"
             name: "pioneers_layout"
             widget: "select"
@@ -130,7 +137,8 @@ collections:
               - { label: "Fonction actuelle", name: "fonction", widget: "string", required: false,
                   hint: "Ex : Directeur du CHR de Kolda, ou Anesthésiste - Réanimateur." }
 
-          - { label: "Titre - Anciens présidents", name: "presidents_title", widget: "string", default: "Nos anciens présidents" }
+          - { label: "Accroche - Présidents", name: "presidents_title", widget: "string", default: "Nos Présidents" }
+          - { label: "Titre - Présidents", name: "presidents_accroche", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Ils ont conduit *l'association*" }
           - { label: "Sous-titre - Anciens présidents", name: "presidents_subtitle", widget: "string", required: false }
           - label: "Liste des anciens présidents"
             name: "presidents"
@@ -141,6 +149,7 @@ collections:
               - { label: "Photo", name: "photo", widget: "image", required: false }
               - { label: "Nom", name: "name", widget: "string" }
               - { label: "Mandat (ex: 3e Président, 2018-2019)", name: "mandate", widget: "string" }
+              - { label: "Président en exercice", name: "actuel", widget: "boolean", required: false, default: false, hint: "Cochez pour le seul président actuel : sa photo porte une couronne dorée et la mention En exercice." }
 
       - name: "gouvernance"
         label: "4. Organisation"

@@ -487,7 +487,32 @@
   }
   .historique-sub{margin-top:56px;}
   .historique-sub-heading{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); margin-bottom:18px;}
-  .historique-sub-subtitle{color:var(--text-muted); font-size:0.98rem; max-width:60ch; margin:-8px 0 20px;}
+  .historique-sub-subtitle{color:var(--text-muted); font-size:0.98rem; max-width:68ch; margin:0 0 18px;}
+  /* En-tete des blocs Pionniers / Presidents : accroche, titre, valeurs. */
+  .sub-accroche{font-size:clamp(1.5rem,2.8vw,2.1rem); margin-bottom:12px;}
+  .sub-accroche em{font-style:normal; color:var(--text-accent);}
+  .sub-valeurs{list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:10px 0; margin:4px 0 8px;}
+  .sub-valeurs::before{content:""; width:28px; height:2px; background:var(--gold); border-radius:2px; margin-right:16px;}
+  .sub-valeurs li{display:inline-flex; align-items:center; gap:10px; font-size:0.92rem; font-weight:500; color:var(--text-heading); padding:0 18px;}
+  .sub-valeurs li + li{border-left:1px solid var(--line);}
+  .sub-valeurs li:first-child{padding-left:0;}
+  /* Telephone : les valeurs passent sur deux lignes ; un separateur en
+     debut de ligne n'aurait plus de sens. */
+  @media (max-width:560px){
+    .sub-valeurs{gap:10px 18px;}
+    .sub-valeurs::before{display:none;}
+    .sub-valeurs li, .sub-valeurs li:first-child{padding:0;}
+    .sub-valeurs li + li{border-left:none;}
+  }
+  .sub-valeur-icone{width:34px; height:34px; border-radius:50%; background:rgba(23,118,59,0.1); color:var(--green); display:grid; place-items:center;}
+  :root[data-theme="dark"] .sub-valeur-icone{background:rgba(127,217,160,0.12);}
+  .sub-valeur-icone svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
+  /* Couronne du president en exercice (cartes PC et bande mobile). */
+  .badge-actuel{position:absolute; top:10px; right:10px; z-index:2; width:34px; height:34px; border-radius:50%;
+    background:var(--gold); color:var(--green-deep); display:grid; place-items:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);}
+  .badge-actuel svg{width:19px; height:19px; fill:currentColor;}
+  .chip-actuel{display:inline-block; margin-bottom:6px; padding:2px 8px; border-radius:999px; background:var(--gold); color:var(--green-deep);
+    font-family:var(--mono); font-size:0.6rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;}
   /* ===== Bureau Exécutif : carrousel en vedette ===== */
   .exec-carousel{position:relative; margin:0 auto;}
   .exec-track-wrap{overflow:hidden; border-radius:var(--radius); padding:2px;}
@@ -538,20 +563,26 @@
   .pio-marquee::-webkit-scrollbar{display:none;}
   .pio-marquee:active{cursor:grabbing;}
   .pio-track{display:flex; gap:30px; width:max-content; padding:6px 0;}
+  /* Vignette-portrait de la bande mobile (pionniers et presidents) : photo
+     pleine carte, nom en surimpression sur un degrade, trait dore. */
   .pio-item{
-    flex:0 0 auto; width:190px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
+    position:relative; flex:0 0 auto; width:180px; aspect-ratio:11/15; border-radius:var(--radius); overflow:hidden;
+    background:var(--paper-alt); box-shadow:var(--shadow); transition:transform .2s ease;
   }
-  .pio-item:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
-  .pio-avatar{width:100%; aspect-ratio:1/1; border-radius:10px; overflow:hidden; background:var(--paper-alt); margin-bottom:14px;}
+  .pio-item:hover{transform:translateY(-4px);}
+  .pio-item.est-actuel{box-shadow:0 0 0 2px var(--gold), var(--shadow);}
+  .pio-avatar{position:absolute; inset:0;}
   .pio-avatar img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
   .pio-avatar-fallback{
     width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     background:var(--green-deep); color:var(--gold); font-family:var(--display); font-weight:600; font-size:1.6rem;
   }
-  .pio-item-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
-  .pio-item-fonction{font-size:0.78rem; color:var(--text-muted); line-height:1.3; margin-top:3px;}
-  @media (max-width:560px){ .pio-item{width:160px;} }
+  .pio-caption{position:absolute; left:0; right:0; bottom:0; padding:40px 12px 12px; color:#fff;
+    background:linear-gradient(180deg, transparent, rgba(6,30,15,0.88) 62%);}
+  .pio-item-name{display:block; font-family:var(--display); font-weight:600; font-size:0.9rem; line-height:1.25;}
+  .pio-item-fonction{display:block; font-family:var(--mono); font-size:0.66rem; opacity:0.85; line-height:1.3; margin-top:3px;}
+  .pio-caption::after, .fan-name::after{content:""; display:block; width:24px; height:3px; border-radius:2px; background:var(--gold); margin-top:7px;}
+  @media (max-width:560px){ .pio-item{width:156px;} }
 
   /* ===== Pionniers / Présidents (PC uniquement) : carrousel en ligne =====
      Remplace la bande sur souris/trackpad (voir media query plus bas) ;
@@ -598,19 +629,24 @@
      qui la pagination est éteinte - il n'y avait plus aucune flèche pour
      aller les chercher. */
   .fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
+  .fan-card.est-actuel{box-shadow:0 0 0 2px var(--gold), var(--shadow);}
+  /* Le nom est toujours visible, comme sur la maquette : on reconnait
+     chaque visage sans devoir le survoler. */
   .fan-name{
-    position:absolute; left:0; right:0; bottom:0; padding:22px 8px 10px;
-    background:linear-gradient(180deg, transparent, rgba(6,68,28,0.9) 60%);
-    color:#fff; font-family:var(--display); font-weight:600; font-size:0.82rem; text-align:center;
-    line-height:1.25; opacity:0; transition:opacity .25s ease; pointer-events:none;
+    position:absolute; left:0; right:0; bottom:0; padding:40px 12px 12px;
+    background:linear-gradient(180deg, transparent, rgba(6,30,15,0.86) 62%);
+    color:#fff; font-family:var(--display); font-weight:600; font-size:0.82rem; text-align:left;
+    line-height:1.25; pointer-events:none; transition:background .3s ease;
   }
-  .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.68rem; opacity:0.85; margin-top:3px;}
-  .fan-card:hover .fan-name{ opacity:1; }
-  /* La carte au centre porte toujours son nom : c'est celle que le
-     compteur désigne et sur laquelle l'œil se pose. Sans cela, il fallait
-     survoler chaque photo pour savoir qui l'on regarde. */
-  .fan-card.centre .fan-name{ opacity:1; }
-  .fan-controls{ display:flex; align-items:center; gap:16px; }
+  .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.64rem; opacity:0.85; margin-top:3px;}
+  /* La carte du centre - celle que le compteur designe - est mise en
+     avant : liseré dore, legere avance, fond vert soutenu, nom plus grand. */
+  .fan-card.centre{transform:scale(1.06); box-shadow:0 0 0 2px var(--gold), 0 22px 44px rgba(6,68,28,0.28); z-index:3;}
+  .fan-card.centre:hover{transform:scale(1.12);}
+  .fan-card.centre .fan-name{background:linear-gradient(180deg, transparent, rgba(6,68,28,0.96) 55%); font-size:0.95rem;}
+  .fan-row{display:flex; align-items:center; gap:14px; width:100%; max-width:77rem; margin:0 auto;}
+  .fan-row .fan-stage{flex:1 1 auto; min-width:0;}
+  .fan-arrow{box-shadow:var(--shadow);}
   .fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
 
   /* ===== Anciens présidents : bande auto-défilante en boucle, scrollable manuellement ===== */
@@ -623,20 +659,6 @@
   .pres-marquee::-webkit-scrollbar{display:none;}
   .pres-marquee:active{cursor:grabbing;}
   .pres-track{display:flex; gap:20px; width:max-content; padding:6px 0;}
-  .pres-card{
-    flex:0 0 auto; width:190px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:16px; text-align:center; transition:transform .2s ease, box-shadow .2s ease;
-  }
-  .pres-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
-  .pres-card img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin-bottom:14px; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
-  .pres-card-fallback{
-    width:100%; aspect-ratio:1/1; border-radius:10px; margin-bottom:14px;
-    background:var(--green-deep); color:var(--gold); display:flex; align-items:center; justify-content:center;
-    font-family:var(--display); font-weight:600; font-size:1.6rem;
-  }
-  .pres-card-name{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--ink); line-height:1.25;}
-  .pres-card-mandate{font-weight:700; font-size:0.82rem; color:var(--green); margin-top:5px; line-height:1.3;}
-  @media (max-width:560px){ .pres-card{width:160px;} }
 
   /* Sur PC (souris/trackpad), Pionniers et Présidents s'affichent en
      carrousel de cartes plutôt qu'en bande défilante - le glisser tactile
@@ -1348,8 +1370,10 @@
       </div>
 
       <div class="historique-sub" id="pioneersBlock" style="display:none;">
-        <h4 class="historique-sub-heading" id="cms-pioneers-title">Les Pionniers</h4>
+        <p class="eyebrow" id="cms-pioneers-title">Les Pionniers</p>
+        <h3 class="sub-accroche" id="cms-pioneers-accroche">Des visages, une même <em>ambition</em></h3>
         <p class="historique-sub-subtitle" id="cms-pioneers-subtitle" style="display:none;"></p>
+        <ul class="sub-valeurs" id="cms-pioneers-valeurs"><li><span class="sub-valeur-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg></span>Excellence</li><li><span class="sub-valeur-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5a3 3 0 0 1 0 6M21 20a5 5 0 0 0-4-5"/></svg></span>Solidarité</li><li><span class="sub-valeur-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20v-7"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/><path d="M7 20h10"/></svg></span>Service</li></ul>
         <div class="founders-box reveal" id="pioneersListWrap">
           <div class="founders-list" id="cms-pioneers-list"></div>
         </div>
@@ -1357,28 +1381,29 @@
           <div class="pio-track" id="cms-pioneers-track"></div>
         </div>
         <div class="fan-wrap reveal" id="pioneersFanWrap">
-          <div class="fan-stage" id="cms-pioneers-fan-stage"></div>
-          <div class="fan-controls">
-            <button class="exec-arrow" id="pioneersFanPrev" aria-label="Pionnier précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <span class="fan-counter" id="cms-pioneers-fan-counter"></span>
-            <button class="exec-arrow" id="pioneersFanNext" aria-label="Pionnier suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="fan-row">
+            <button class="exec-arrow fan-arrow" id="pioneersFanPrev" aria-label="Pionnier précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="fan-stage" id="cms-pioneers-fan-stage"></div>
+            <button class="exec-arrow fan-arrow" id="pioneersFanNext" aria-label="Pionnier suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
+          <span class="fan-counter" id="cms-pioneers-fan-counter"></span>
         </div>
       </div>
 
       <div class="historique-sub" id="presidentsBlock" style="display:none;">
-        <h4 class="historique-sub-heading" id="cms-presidents-title">Nos anciens présidents</h4>
+        <p class="eyebrow" id="cms-presidents-title">Nos Présidents</p>
+        <h3 class="sub-accroche" id="cms-presidents-accroche">Ils ont conduit <em>l'association</em></h3>
         <p class="historique-sub-subtitle" id="cms-presidents-subtitle" style="display:none;"></p>
         <div class="pres-marquee reveal" id="presidentsMarqueeWrap">
           <div class="pres-track" id="cms-presidents-track"></div>
         </div>
         <div class="fan-wrap reveal" id="presidentsFanWrap">
-          <div class="fan-stage" id="cms-presidents-fan-stage"></div>
-          <div class="fan-controls">
-            <button class="exec-arrow" id="presidentsFanPrev" aria-label="Président précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <span class="fan-counter" id="cms-presidents-fan-counter"></span>
-            <button class="exec-arrow" id="presidentsFanNext" aria-label="Président suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="fan-row">
+            <button class="exec-arrow fan-arrow" id="presidentsFanPrev" aria-label="Président précédent" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="fan-stage" id="cms-presidents-fan-stage"></div>
+            <button class="exec-arrow fan-arrow" id="presidentsFanNext" aria-label="Président suivant" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
+          <span class="fan-counter" id="cms-presidents-fan-counter"></span>
         </div>
       </div>
     </div>
@@ -1943,6 +1968,44 @@
   // la largeur de la fenêtre, et un recalcul de TOUTES les cartes à chaque
   // survol pour écarter les voisines. Le CSS fait désormais le travail, et
   // ce fichier n'a plus qu'à décider QUI est visible.
+  // President en exercice : case « actuel » du CMS ; a defaut, le mot
+  // « actuel » ou « en exercice » dans le mandat. Une case decochee
+  // l'emporte sur le mot.
+  function estActuel(p){
+    if (!p || typeof p !== 'object') return false;
+    if (p.actuel === true) return true;
+    if (p.actuel === false) return false;
+    return /\bactuel|en exercice/i.test(p.mandate || '');
+  }
+  const COURONNE = "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 8.5l4.6 3.8L12 5l4.4 7.3L21 8.5l-1.8 9H4.8z\"/><rect x=\"4.8\" y=\"18.6\" width=\"14.4\" height=\"2.2\" rx=\"1\"/></svg>";
+  function badgeCouronne(){
+    const b = document.createElement('span');
+    b.className = 'badge-actuel';
+    b.title = 'Président en exercice';
+    b.innerHTML = COURONNE;
+    return b;
+  }
+  // Vignette-portrait de la bande mobile, commune aux pionniers et aux
+  // presidents (sous-titre : fonction ou mandat).
+  function vignetteHtml(p, avecCouronne){
+    const name = typeof p === 'string' ? p : (p.name || '');
+    const photo = typeof p === 'string' ? '' : (p.photo || '');
+    const sous = typeof p === 'string' ? '' : (p.mandate || p.fonction || '');
+    const actuel = avecCouronne && estActuel(p);
+    return `
+          <div class="pio-item${actuel ? ' est-actuel' : ''}">
+            <div class="pio-avatar">
+              ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
+            </div>
+            ${actuel ? `<span class="badge-actuel" title="Président en exercice">${COURONNE}</span>` : ''}
+            <div class="pio-caption">
+              ${actuel ? '<span class="chip-actuel">En exercice</span>' : ''}
+              ${name ? `<span class="pio-item-name">${esc(name)}</span>` : ''}
+              ${sous ? `<span class="pio-item-fonction">${esc(sous)}</span>` : ''}
+            </div>
+          </div>`;
+  }
+
   const FAN_MAX = 8;
   // Entre 900 et 1100 px, huit fiches sur une ligne tombent sous 110 px de
   // large : un visage n'y est plus lisible, et l'agrandissement au survol
@@ -1957,7 +2020,7 @@
   const FAN_ETROIT = window.matchMedia('(max-width:1100px)');
   function fanNbFiches(){ return FAN_ETROIT.matches ? 6 : FAN_MAX; }
 
-  function setupFanCarousel(stage, prevBtn, nextBtn, counterEl, list){
+  function setupFanCarousel(stage, prevBtn, nextBtn, counterEl, list, avecCouronne){
     if (!stage || !Array.isArray(list) || list.length === 0) return;
     const total = list.length;
     // « center » est l'INDICE, dans la liste, de la fiche mise au milieu.
@@ -2004,6 +2067,8 @@
       const mandate = typeof p === 'string' ? '' : (p.mandate || p.fonction || '');
       const card = document.createElement('div');
       card.className = 'fan-card';
+      const actuel = avecCouronne && estActuel(p);
+      if (actuel) card.classList.add('est-actuel');
       // Le contenu est posé par propriété et non par interpolation HTML :
       // plus rien à échapper, donc plus rien à oublier d'échapper.
       let visuel;
@@ -2019,6 +2084,7 @@
         visuel.textContent = memberInitials(name);
       }
       card.appendChild(visuel);
+      if (actuel) card.appendChild(badgeCouronne());
       if (name) {
         const label = document.createElement('div');
         label.className = 'fan-name';
@@ -2028,6 +2094,12 @@
           sub.className = 'fan-name-sub';
           sub.textContent = mandate;
           label.appendChild(sub);
+        }
+        if (actuel) {
+          const chip = document.createElement('span');
+          chip.className = 'chip-actuel';
+          chip.textContent = 'En exercice';
+          label.prepend(chip, document.createElement('br'));
         }
         card.appendChild(label);
       }
@@ -2136,20 +2208,7 @@
 
     if (useCards) {
       if (fanStage) setupFanCarousel(fanStage, fanPrev, fanNext, fanCounter, list);
-      const itemsHtml = list.map(p => {
-        const name = typeof p === 'string' ? p : (p.name || '');
-        const photo = typeof p === 'string' ? '' : (p.photo || '');
-        const fonction = typeof p === 'string' ? '' : (p.fonction || '');
-        return `
-          <div class="pio-item">
-            <div class="pio-avatar">
-              ${photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" draggable="false">` : `<div class="pio-avatar-fallback">${esc(memberInitials(name))}</div>`}
-            </div>
-            ${name ? `<div class="pio-item-name">${esc(name)}</div>` : ''}
-            ${fonction ? `<div class="pio-item-fonction">${esc(fonction)}</div>` : ''}
-          </div>
-        `;
-      }).join('');
+      const itemsHtml = list.map(p => vignetteHtml(p, false)).join('');
       // Doublé pour boucler le défilement sans coupure visible (scrollLeft -= moitié)
       track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
       if (list.length > 1) setupInfiniteMarquee(marqueeWrap, track, 34);
@@ -2174,14 +2233,8 @@
     if (!block || !marqueeWrap || !track) return;
     if (!Array.isArray(list) || list.length === 0) { block.style.display = 'none'; return; }
     block.style.display = '';
-    if (fanStage) setupFanCarousel(fanStage, fanPrev, fanNext, fanCounter, list);
-    const itemsHtml = list.map(p => `
-      <div class="pres-card">
-        ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" draggable="false">` : `<div class="pres-card-fallback">${esc(memberInitials(p.name))}</div>`}
-        <div class="pres-card-name">${esc(p.name)}</div>
-        <div class="pres-card-mandate">${esc(p.mandate || '')}</div>
-      </div>
-    `).join('');
+    if (fanStage) setupFanCarousel(fanStage, fanPrev, fanNext, fanCounter, list, true);
+    const itemsHtml = list.map(p => vignetteHtml(p, true)).join('');
     // Doublé pour boucler le défilement sans coupure visible (scrollLeft -= moitié)
     track.innerHTML = list.length > 1 ? itemsHtml + itemsHtml : itemsHtml;
     if (list.length > 1) setupInfiniteMarquee(marqueeWrap, track, 34);
@@ -2418,10 +2471,26 @@
         </div>
       `).join('');
     }
+    // Titre avec partie en or (asterisques) et valeurs a icones.
+    const poserAccroche = (id, t) => { if (t) document.getElementById(id).innerHTML = esc(t).replace(/\*([^*]+)\*/g, '<em>$1</em>'); };
     if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
+    poserAccroche('cms-pioneers-accroche', data.pioneers_accroche);
+    if (Array.isArray(data.pioneers_valeurs)) {
+      const ICONES_VALEURS = {"excellence": "<path d=\"M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z\"/>", "solidarite": "<circle cx=\"9\" cy=\"8\" r=\"3\"/><path d=\"M3 20a6 6 0 0 1 12 0\"/><path d=\"M16 5a3 3 0 0 1 0 6M21 20a5 5 0 0 0-4-5\"/>", "service": "<path d=\"M12 20v-7\"/><path d=\"M12 13c0-4 3-6 7-6 0 4-3 6-7 6z\"/><path d=\"M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z\"/><path d=\"M7 20h10\"/>", "autre": "<circle cx=\"12\" cy=\"12\" r=\"4\"/>"};
+      const cle = v => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const ul = document.getElementById('cms-pioneers-valeurs');
+      const valeurs = data.pioneers_valeurs.map(v => typeof v === 'string' ? v : (v && v.valeur) || '').filter(Boolean);
+      ul.style.display = valeurs.length ? '' : 'none';
+      ul.innerHTML = valeurs.map(v => {
+        const k = cle(v);
+        const icone = ICONES_VALEURS[/excell/.test(k) ? 'excellence' : /solidar/.test(k) ? 'solidarite' : /servi/.test(k) ? 'service' : 'autre'];
+        return `<li><span class="sub-valeur-icone" aria-hidden="true"><svg viewBox="0 0 24 24">${icone}</svg></span>${esc(v)}</li>`;
+      }).join('');
+    }
     setOptionalSubtitle('cms-pioneers-subtitle', data.pioneers_subtitle);
     renderPioneers(data.pioneers, data.pioneers_layout);
     if (data.presidents_title) document.getElementById('cms-presidents-title').textContent = data.presidents_title;
+    poserAccroche('cms-presidents-accroche', data.presidents_accroche);
     setOptionalSubtitle('cms-presidents-subtitle', data.presidents_subtitle);
     renderPresidents(data.presidents);
 
