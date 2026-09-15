@@ -31,7 +31,7 @@ collections:
           - label: "Photos du diaporama (fond du hero)"
             name: "hero_slideshow"
             widget: "list"
-            hint: "Photos affichées en fondu enchaîné en arrière-plan du hero. Format paysage recommandé. Laissez vide pour utiliser les photos par défaut."
+            hint: "Photos en arrière-plan du hero, 6 s chacune avec un zoom lent. Alternez une photo de groupe et une photo de soins. Format paysage, 1600 px de large au moins. Laissez vide pour utiliser les photos par défaut."
             field: { label: "Photo", name: "image", widget: "image" }
 
           - { label: "Cartes d'intro - accroche", name: "intro_eyebrow", widget: "string", required: false }
