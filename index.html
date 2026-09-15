@@ -566,7 +566,7 @@
   /* Vignette-portrait de la bande mobile (pionniers et presidents) : photo
      pleine carte, nom en surimpression sur un degrade, trait dore. */
   .pio-item{
-    position:relative; flex:0 0 auto; width:180px; aspect-ratio:11/15; border-radius:var(--radius); overflow:hidden;
+    position:relative; flex:0 0 auto; width:220px; aspect-ratio:4/5; border-radius:var(--radius); overflow:hidden;
     background:var(--paper-alt); box-shadow:var(--shadow); transition:transform .2s ease;
   }
   .pio-item:hover{transform:translateY(-4px);}
@@ -582,7 +582,8 @@
   .pio-item-name{display:block; font-family:var(--display); font-weight:600; font-size:0.9rem; line-height:1.25;}
   .pio-item-fonction{display:block; font-family:var(--mono); font-size:0.66rem; opacity:0.85; line-height:1.3; margin-top:3px;}
   .pio-caption::after, .fan-name::after{content:""; display:block; width:24px; height:3px; border-radius:2px; background:var(--gold); margin-top:7px;}
-  @media (max-width:560px){ .pio-item{width:156px;} }
+  @media (max-width:560px){ .pio-item{width:200px;} }
+  .pio-avatar img{object-position:center 20%;}
 
   /* ===== Pionniers / Présidents (PC uniquement) : carrousel en ligne =====
      Remplace la bande sur souris/trackpad (voir media query plus bas) ;
@@ -608,14 +609,14 @@
      `width:100%` les ramène à la largeur disponible en dessous. */
   .fan-wrap{ display:none; flex-direction:column; align-items:center; gap:22px; padding:20px 0 6px; }
   .fan-stage{
-    display:flex; justify-content:center; align-items:center; gap:1rem;
-    width:100%; max-width:72rem; margin:0 auto;
+    display:flex; justify-content:center; align-items:center; gap:1.4rem;
+    width:100%; max-width:82rem; margin:0 auto;
     /* De l'air au-dessus et en dessous : sans cela, la carte agrandie au
        survol venait mordre le titre de la section. */
     padding:1.2rem 0;
   }
   .fan-card{
-    position:relative; flex:1 1 0; max-width:11rem; aspect-ratio:11/15;
+    position:relative; flex:1 1 0; max-width:15rem; aspect-ratio:4/5;
     border-radius:14px; overflow:hidden; box-shadow:var(--shadow); cursor:pointer;
     transition:transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease;
   }
@@ -628,23 +629,23 @@
      CSS rendait DÉFINITIVEMENT invisibles deux des huit présidents, pour
      qui la pagination est éteinte - il n'y avait plus aucune flèche pour
      aller les chercher. */
-  .fan-card img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
+  .fan-card img{width:100%; height:100%; object-fit:cover; object-position:center 20%; display:block; -webkit-user-drag:none; user-drag:none; pointer-events:none;}
   .fan-card.est-actuel{box-shadow:0 0 0 2px var(--gold), var(--shadow);}
   /* Le nom est toujours visible, comme sur la maquette : on reconnait
      chaque visage sans devoir le survoler. */
   .fan-name{
-    position:absolute; left:0; right:0; bottom:0; padding:40px 12px 12px;
-    background:linear-gradient(180deg, transparent, rgba(6,30,15,0.86) 62%);
-    color:#fff; font-family:var(--display); font-weight:600; font-size:0.82rem; text-align:left;
+    position:absolute; left:0; right:0; bottom:0; padding:40px 16px 14px;
+    background:linear-gradient(180deg, transparent 0%, rgba(6,30,15,0.62) 45%, rgba(6,30,15,0.92) 100%);
+    color:#fff; font-family:var(--display); font-weight:600; font-size:1rem; text-align:left;
     line-height:1.25; pointer-events:none; transition:background .3s ease;
   }
-  .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.64rem; opacity:0.85; margin-top:3px;}
+  .fan-name-sub{display:block; font-family:var(--mono); font-weight:500; font-size:0.74rem; opacity:0.9; margin-top:4px;}
   /* La carte du centre - celle que le compteur designe - est mise en
      avant : liseré dore, legere avance, fond vert soutenu, nom plus grand. */
   .fan-card.centre{transform:scale(1.06); box-shadow:0 0 0 2px var(--gold), 0 22px 44px rgba(6,68,28,0.28); z-index:3;}
   .fan-card.centre:hover{transform:scale(1.12);}
-  .fan-card.centre .fan-name{background:linear-gradient(180deg, transparent, rgba(6,68,28,0.96) 55%); font-size:0.95rem;}
-  .fan-row{display:flex; align-items:center; gap:14px; width:100%; max-width:77rem; margin:0 auto;}
+  .fan-card.centre .fan-name{background:linear-gradient(180deg, transparent, rgba(6,68,28,0.96) 55%); font-size:1.1rem;}
+  .fan-row{display:flex; align-items:center; gap:18px; width:100%; max-width:88rem; margin:0 auto;}
   .fan-row .fan-stage{flex:1 1 auto; min-width:0;}
   .fan-arrow{box-shadow:var(--shadow);}
   .fan-counter{ font-family:var(--mono); font-size:0.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
@@ -2073,7 +2074,10 @@
           </div>`;
   }
 
-  const FAN_MAX = 8;
+  // Cinq fiches a la fois : a huit, chaque carte tombait a 130 px de large,
+  // trop petite pour lire un visage et un nom. Nombre impair pour garder
+  // une carte au centre.
+  const FAN_MAX = 5;
   // Entre 900 et 1100 px, huit fiches sur une ligne tombent sous 110 px de
   // large : un visage n'y est plus lisible, et l'agrandissement au survol
   // n'a plus rien à mettre en avant. On en montre six.
@@ -2085,7 +2089,7 @@
   // aucune flèche ne permettait d'atteindre. Le nombre de fiches doit
   // donc être connu de la fonction qui décide s'il faut paginer.
   const FAN_ETROIT = window.matchMedia('(max-width:1100px)');
-  function fanNbFiches(){ return FAN_ETROIT.matches ? 6 : FAN_MAX; }
+  function fanNbFiches(){ return FAN_ETROIT.matches ? 3 : FAN_MAX; }
 
   function setupFanCarousel(stage, prevBtn, nextBtn, counterEl, list, avecCouronne){
     if (!stage || !Array.isArray(list) || list.length === 0) return;
