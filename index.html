@@ -517,9 +517,17 @@
   .exec-carousel{position:relative; margin:0 auto;}
   .exec-track-wrap{overflow:hidden; border-radius:var(--radius); padding:2px;}
   .exec-track{display:flex; transition:transform .5s cubic-bezier(.4,0,.2,1);}
-  /* Une diapositive = une page de deux fiches côte à côte. */
+  /* Une diapositive = une page de fiches côte à côte : trois sur PC, deux
+     entre 860 et 1100 px (le nombre se décide en JavaScript, execParPage). */
   .exec-page{flex:0 0 100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:stretch;}
-  .exec-page.solo{grid-template-columns:minmax(0,620px); justify-content:center;}
+  .exec-page.p3{grid-template-columns:repeat(3,minmax(0,1fr));}
+  /* Dernière page incomplète : les fiches gardent leur largeur et se centrent. */
+  .exec-page.p2.incomplet{grid-template-columns:repeat(var(--n),calc((100% - 20px) / 2)); justify-content:center;}
+  .exec-page.p3.incomplet{grid-template-columns:repeat(var(--n),calc((100% - 40px) / 3)); justify-content:center;}
+  /* À trois par page, la photo rétrécit pour laisser la place au texte. */
+  .exec-page.p3 .exec-slide{grid-template-columns:130px 1fr; gap:18px; padding:22px;}
+  .exec-page.p3 .exec-slide-name{font-size:1.12rem;}
+  .exec-page.p3 .exec-slide-detail{font-size:0.9rem;}
   .exec-slide{
     display:grid; grid-template-columns:190px 1fr; gap:26px; align-items:center;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px;
@@ -1864,14 +1872,17 @@
   let execTimer = null, execIndex = 0, execCount = 0, execInited = false;
   let execMembers = [];
 
-  // Deux fiches par page sur ordinateur, une seule sur mobile (même seuil que
-  // la bascule CSS en une colonne). execCount compte des pages, pas des membres.
+  // Trois fiches par page sur PC, deux entre 860 et 1100 px, une seule sur
+  // mobile (même seuil que la bascule CSS en une colonne). execCount compte
+  // des pages, pas des membres.
   const EXEC_MOBILE = window.matchMedia('(max-width:860px)');
-  function execParPage(){ return EXEC_MOBILE.matches ? 1 : 2; }
+  const EXEC_MOYEN = window.matchMedia('(max-width:1100px)');
+  function execParPage(){ return EXEC_MOBILE.matches ? 1 : (EXEC_MOYEN.matches ? 2 : 3); }
 
   function carteExec(m, i, total){
-    const role = m.role || '';
-    const commission = m.commission || '';
+    // trim : une commission saisie « » (un espace) affichait « Président · ».
+    const role = (m.role || '').trim();
+    const commission = (m.commission || '').trim();
     const roleLine = (commission && role.toLowerCase() !== commission.toLowerCase())
       ? `${esc(role)} · ${esc(commission)}`
       : esc(role || commission);
@@ -1897,14 +1908,15 @@
     if (!track || !dots || execMembers.length === 0) return;
 
     const parPage = execParPage();
+    execParPageAffiche = parPage;
     const total = execMembers.length;
     execCount = Math.max(1, Math.ceil(total / parPage));
 
     const pages = [];
     for (let p = 0; p < execCount; p++) {
       const lot = execMembers.slice(p * parPage, p * parPage + parPage);
-      const solo = lot.length === 1 && parPage > 1 ? ' solo' : '';
-      pages.push(`<div class="exec-page${solo}">${lot.map((m, k) => carteExec(m, p * parPage + k, total)).join('')}</div>`);
+      const incomplet = lot.length < parPage && parPage > 1;
+      pages.push(`<div class="exec-page p${parPage}${incomplet ? ' incomplet' : ''}"${incomplet ? ` style="--n:${lot.length}"` : ''}>${lot.map((m, k) => carteExec(m, p * parPage + k, total)).join('')}</div>`);
     }
     track.innerHTML = pages.join('');
 
@@ -1915,9 +1927,23 @@
   }
 
   // Changement de format : le nombre de pages change, on reconstruit.
-  const onExecBreakpoint = () => { if (execMembers.length) renderTeam(); };
-  if (EXEC_MOBILE.addEventListener) EXEC_MOBILE.addEventListener('change', onExecBreakpoint);
-  else EXEC_MOBILE.addListener(onExecBreakpoint);
+  // Ne reconstruit que si le nombre de fiches par page change vraiment.
+  let execParPageAffiche = null;
+  const onExecBreakpoint = () => {
+    if (!execMembers.length || execParPage() === execParPageAffiche) return;
+    renderTeam();
+  };
+  [EXEC_MOBILE, EXEC_MOYEN].forEach(mq => {
+    if (mq.addEventListener) mq.addEventListener('change', onExecBreakpoint);
+    else mq.addListener(onExecBreakpoint);
+  });
+  // « change » ne part pas partout (pas sous l'émulation de fenêtre) :
+  // « resize » sert de filet, le garde ci-dessus rend le doublon inoffensif.
+  let execMinuteurLargeur = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(execMinuteurLargeur);
+    execMinuteurLargeur = setTimeout(onExecBreakpoint, 150);
+  });
 
   function goToExec(i){
     const track = document.getElementById('cms-team-track');
