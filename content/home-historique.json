@@ -28,17 +28,17 @@
   ],
   "history_subtitle": "De l'association étudiante à l'organisation médico-sociale reconnue par les autorités sénégalaises.",
   "presidents_subtitle": "Par leur vision, leur leadership et leur dévouement au service de la communauté, nos présidents successifs ont forgé l'identité de notre association et posé les fondations de son rayonnement durable.",
+  "pioneers_accroche": "*Ils ont bâti* l'association",
   "presidents_title": "Nos Présidents",
-  "presidents_accroche": "Ils ont conduit *l'association*",
-  "history_title": "Plus d'une décennie d'engagement",
-  "pioneers_layout": "cartes",
-  "pioneers_title": "Les Pionniers",
-  "pioneers_accroche": "Des visages, une même *ambition*",
   "pioneers_valeurs": [
     "Excellence",
     "Solidarité",
     "Service"
   ],
+  "history_title": "Plus d'une décennie d'engagement",
+  "presidents_accroche": "Ils ont dirigé *l'association*",
+  "pioneers_layout": "cartes",
+  "pioneers_title": "Les Pionniers",
   "presidents": [
     {
       "name": "Abdou Khadre KANE",
@@ -77,7 +77,7 @@
     },
     {
       "name": "Serigne Babacar SECK",
-      "mandate": "8e Président et actuel président",
+      "mandate": "8e Président",
       "photo": "/assets/uploads/présidents-08.png",
       "actuel": true
     }
