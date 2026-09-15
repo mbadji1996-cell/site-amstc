@@ -2,7 +2,7 @@
 title: "Couverture médicale du Gamou de Tivaouane 2023"
 date: 2023-09-27
 excerpt: "731 personnes consultées, 64 soignants bénévoles et quatre postes de soins : retour sur les 48 heures de couverture médicale assurées par l'AMSTC lors du Gamou de Tivaouane 2023."
-image: /assets/uploads/importes/2023-09-27-couverture-medicale-gamou-tivaouane-2023/image-01.jpg
+image: /assets/uploads/2023-09-27-couverture-medicale-gamou-tivaouane-202-couverture.jpg
 ---
 
 <style>
@@ -86,7 +86,7 @@ Tivaouane 2023.</p>
   <div class="g-chiffre"><b>48 h</b><span>de couverture</span></div>
 </div>
 
-<div class="galerie g2"><figure class=""><img src="/assets/uploads/importes/2023-09-27-couverture-medicale-gamou-tivaouane-2023/image-01.jpg" alt="L'equipe de l'AMSTC mobilisee a Tivaouane" loading="lazy"></figure><figure class=""><img src="/assets/uploads/importes/2023-09-27-couverture-medicale-gamou-tivaouane-2023/image-02.jpg" alt="Le poste de pharmacie, sous la tente" loading="lazy"></figure></div>
+<div class="galerie g2"><figure class=""><img src="/assets/uploads/2023-09-27-couverture-medicale-gamou-tivaouane-202-couverture.jpg" alt="L'equipe de l'AMSTC mobilisee a Tivaouane" loading="lazy"></figure><figure class=""><img src="/assets/uploads/importes/2023-09-27-couverture-medicale-gamou-tivaouane-2023/image-02.jpg" alt="Le poste de pharmacie, sous la tente" loading="lazy"></figure></div>
 
 <h2>Quatre postes, deux journées</h2>
 <p>À l'occasion du Mawloud 2023, l'Association Médico-Sociale des Talibés Cheikh a assuré

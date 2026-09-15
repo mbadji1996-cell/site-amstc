@@ -31,6 +31,8 @@ collections:
           - label: "Photos du diaporama (fond du hero)"
             name: "hero_slideshow"
             widget: "list"
+            media_folder: "/assets"
+            public_folder: "/assets"
             summary: "{{fields.image}}"
             hint: "Photos en arrière-plan du hero, 6 s chacune avec un zoom lent. Alternez une photo de groupe et une photo de soins. Format paysage, 1600 px de large au moins. Laissez vide pour utiliser les photos par défaut."
             field: { label: "Photo", name: "image", widget: "image" }
@@ -130,6 +132,8 @@ collections:
           - label: "Les Pionniers (membres fondateurs)"
             name: "pioneers"
             widget: "list"
+            media_folder: "/assets/pioneers"
+            public_folder: "/assets/pioneers"
             hint: "L'ordre ici définit l'ordre d'affichage sur le site. Laissez la liste vide pour masquer ce bloc."
             summary: "{{fields.name}}"
             fields:
@@ -163,6 +167,8 @@ collections:
           - label: "Membres du Bureau Exécutif"
             name: "members"
             widget: "list"
+            media_folder: "/assets/team"
+            public_folder: "/assets/team"
             hint: "Un membre par fiche. L'ordre ici définit l'ordre d'affichage sur le site."
             summary: "{{fields.name}}"
             fields:
@@ -331,6 +337,8 @@ collections:
           - label: "Photos de fond (diaporama)"
             name: "impact_slideshow"
             widget: "list"
+            media_folder: "/assets/impact-fond"
+            public_folder: "/assets/impact-fond"
             summary: "{{fields.image}}"
             hint: "Photos en fondu enchaîné derrière les chiffres, sous un voile vert. Format paysage, soignants en consultation. Environ 200 Ko par photo. Évitez les patients et les enfants reconnaissables. Laissez vide pour utiliser les photos par défaut."
             field: { label: "Photo", name: "image", widget: "image" }

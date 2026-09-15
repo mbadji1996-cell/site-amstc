@@ -2,7 +2,7 @@
 title: "Gamou de Tivaouane 2026 : bilan de la couverture médicale"
 date: 2026-08-30
 excerpt: "875 consultations sur six sites de Tivaouane, en deux jours, et un registre tenu pour la première fois sur une plateforme numérique"
-image: /assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-01.jpg
+image: /assets/uploads/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-cou-couverture.jpg
 ---
 
 <style>
@@ -91,7 +91,7 @@ image: /assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-c
   </div>
 </div>
 <div class="page">
-  <div class="triptyque"><figure class=""><img src="/assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-01.jpg" alt="Le poste de saisie, sous la tente, au premier jour" loading="lazy" style="max-width: 100%; height: auto;"></figure><figure class=""><img src="/assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-02.jpg" alt="Deux membres de l’équipe devant le tableau de bord" loading="lazy" style="max-width: 100%; height: auto;"></figure><figure class=""><img src="/assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-03.jpg" alt="Consultation et dispensation, côte à côte" loading="lazy" style="max-width: 100%; height: auto;"></figure></div>
+  <div class="triptyque"><figure class=""><img src="/assets/uploads/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-cou-couverture.jpg" alt="Le poste de saisie, sous la tente, au premier jour" loading="lazy" style="max-width: 100%; height: auto;"></figure><figure class=""><img src="/assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-02.jpg" alt="Deux membres de l’équipe devant le tableau de bord" loading="lazy" style="max-width: 100%; height: auto;"></figure><figure class=""><img src="/assets/uploads/importes/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-couverture-medicale/image-03.jpg" alt="Consultation et dispensation, côte à côte" loading="lazy" style="max-width: 100%; height: auto;"></figure></div>
 </div>
 <div class="registre">
   <div class="page">

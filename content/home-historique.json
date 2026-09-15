@@ -107,12 +107,12 @@
     },
     {
       "name": "Dr Bineta GUEYE",
-      "photo": "/assets/uploads/dr-bineta-gueye-idh-cardio.jpg",
+      "photo": "/assets/pioneers/dr-bineta-gueye-idh-cardio.jpg",
       "fonction": "Cardiologue - Ancien Interne"
     },
     {
       "name": "Dr Demba Tahirou DIOP",
-      "photo": "/assets/uploads/dr-demba.jpeg",
+      "photo": "/assets/pioneers/dr-demba.jpeg",
       "fonction": "Anesthésiste - Réanimateur"
     },
     {
@@ -121,7 +121,7 @@
     },
     {
       "name": "Dr Ababacar SOUMARE",
-      "photo": "/assets/uploads/dr-ababacar-soumare.jpg"
+      "photo": "/assets/pioneers/dr-ababacar-soumare.jpg"
     },
     {
       "name": "Dr Ndeye Seynabou NIANG",
@@ -134,7 +134,7 @@
     },
     {
       "name": "Feue Dr Ndeye Yaga CISSE",
-      "photo": "/assets/uploads/1002164697.jpg",
+      "photo": "/assets/pioneers/1002164697.jpg",
       "fonction": "Gériatrie - Gérontologie"
     },
     {
@@ -194,7 +194,7 @@
       "fonction": "Dentiste"
     },
     {
-      "photo": "/assets/uploads/bouba.jpg",
+      "photo": "/assets/pioneers/bouba.jpg",
       "name": "Dr El Hadji Boubacar GUEYE (Buba)",
       "fonction": "Médecine du travail"
     },
@@ -205,7 +205,7 @@
     },
     {
       "name": "Dr Mouhamadou Habib DIOP",
-      "photo": "/assets/uploads/habib.jpg",
+      "photo": "/assets/pioneers/habib.jpg",
       "fonction": "Centre de santé Mamadou DIOP"
     },
     {
@@ -228,13 +228,13 @@
       "fonction": "Pharmacien"
     },
     {
-      "photo": "/assets/uploads/dr-ndèye-codou-faye-med.jpg",
+      "photo": "/assets/pioneers/dr-ndèye-codou-faye-med.jpg",
       "name": "Dr Ndèye Codou FAYE",
       "fonction": "Médecin généraliste"
     },
     {
       "name": "Dr El Hadji Babacar Fall",
-      "photo": "/assets/uploads/dr-el-hadji-babacar-fall.jpg",
+      "photo": "/assets/pioneers/dr-el-hadji-babacar-fall.jpg",
       "fonction": "Biologiste"
     },
     {
@@ -244,35 +244,35 @@
     },
     {
       "name": "Dr Bacary BA",
-      "photo": "/assets/uploads/dr-bacary-ba.jpg",
+      "photo": "/assets/pioneers/dr-bacary-ba.jpg",
       "fonction": "Néphrologue - Ancien Interne"
     },
     {
       "name": "Dr Youssoupha KASSE",
-      "photo": "/assets/uploads/dr-youssoupha-kasse.jpg",
+      "photo": "/assets/pioneers/dr-youssoupha-kasse.jpg",
       "fonction": "Radiologue - Ancien Interne"
     },
     {
       "name": "Pap Alaaji Maalik Mbay",
-      "photo": "/assets/uploads/présidents-03.png"
+      "photo": "/assets/pioneers/présidents-03.png"
     },
     {
       "name": "Dr Massogui Bathily",
-      "photo": "/assets/uploads/dr-massogui.jpg",
+      "photo": "/assets/pioneers/dr-massogui.jpg",
       "fonction": "Pharmacien"
     },
     {
       "name": "Dr Ibrahima SECK",
-      "photo": "/assets/uploads/dr-ibrahima-seck.jpg",
+      "photo": "/assets/pioneers/dr-ibrahima-seck.jpg",
       "fonction": "Dentiste"
     },
     {
       "name": "Dr Babacar SEYE",
-      "photo": "/assets/uploads/dr-babacar-seye.jpg",
+      "photo": "/assets/pioneers/dr-babacar-seye.jpg",
       "fonction": "Anesthésie - Réanimation"
     },
     {
-      "photo": "/assets/uploads/dr-pape-mor-sarr.jpeg",
+      "photo": "/assets/pioneers/dr-pape-mor-sarr.jpeg",
       "name": "Dr Pape Mor SARR",
       "fonction": "Spécialiste en santé publique"
     }
