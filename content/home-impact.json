@@ -25,11 +25,11 @@
     }
   ],
   "impact_slideshow": [
-    "assets/impact-fond/01.jpg",
-    "assets/impact-fond/02.jpg",
-    "assets/impact-fond/03.jpg",
-    "assets/impact-fond/04.jpg",
-    "assets/impact-fond/05.jpg",
-    "assets/impact-fond/06.jpg"
+    "/assets/impact-fond/01.jpg",
+    "/assets/impact-fond/02.jpg",
+    "/assets/impact-fond/03.jpg",
+    "/assets/impact-fond/04.jpg",
+    "/assets/impact-fond/05.jpg",
+    "/assets/impact-fond/06.jpg"
   ]
 }

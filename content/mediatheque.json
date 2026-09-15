@@ -7,23 +7,23 @@
       "year": "2026",
       "photos": [
         {
-          "image": "assets/uploads/2026-gamou-louga-01.jpg",
+          "image": "/assets/uploads/2026-gamou-louga-01.jpg",
           "legende": "Couverture médicale du Gamou de Louga 2026"
         },
         {
-          "image": "assets/uploads/2026-gamou-louga-02.jpg",
+          "image": "/assets/uploads/2026-gamou-louga-02.jpg",
           "legende": "Couverture médicale du Gamou de Louga 2026"
         },
         {
-          "image": "assets/uploads/2026-gamou-louga-03.jpg",
+          "image": "/assets/uploads/2026-gamou-louga-03.jpg",
           "legende": "Couverture médicale du Gamou de Louga 2026"
         },
         {
-          "image": "assets/uploads/2026-jssci-01.jpg",
+          "image": "/assets/uploads/2026-jssci-01.jpg",
           "legende": "JSSCI 2026"
         },
         {
-          "image": "assets/uploads/2026-jssci-02.jpg",
+          "image": "/assets/uploads/2026-jssci-02.jpg",
           "legende": "JSSCI 2026"
         },
         {
@@ -31,19 +31,19 @@
           "legende": "JSSCI 2026"
         },
         {
-          "image": "assets/uploads/2026-jssci-04.jpg",
+          "image": "/assets/uploads/2026-jssci-04.jpg",
           "legende": "JSSCI 2026"
         },
         {
-          "image": "assets/uploads/2026-nemekou-daara-6-tivaouane-01.jpg",
+          "image": "/assets/uploads/2026-nemekou-daara-6-tivaouane-01.jpg",
           "legende": "Nemekou Daara, étape 6 à Tivaouane 2026"
         },
         {
-          "image": "assets/uploads/2026-nemekou-daara-6-tivaouane-02.jpg",
+          "image": "/assets/uploads/2026-nemekou-daara-6-tivaouane-02.jpg",
           "legende": "Nemekou Daara, étape 6 à Tivaouane 2026"
         },
         {
-          "image": "assets/uploads/2026-nemekou-daara-6-tivaouane-03.jpg",
+          "image": "/assets/uploads/2026-nemekou-daara-6-tivaouane-03.jpg",
           "legende": "Nemekou Daara, étape 6 à Tivaouane 2026"
         },
         {
@@ -51,7 +51,7 @@
           "legende": "Nemekou Daara, étape 6 à Tivaouane 2026"
         },
         {
-          "image": "assets/uploads/2026-nemekou-daara-6-tivaouane-04.jpg",
+          "image": "/assets/uploads/2026-nemekou-daara-6-tivaouane-04.jpg",
           "legende": "Nemekou Daara, étape 6 à Tivaouane 2026"
         },
         {
@@ -108,51 +108,51 @@
       "year": "2025",
       "photos": [
         {
-          "image": "assets/uploads/2025-accueil-nouveaux-01.jpg",
+          "image": "/assets/uploads/2025-accueil-nouveaux-01.jpg",
           "legende": "Accueil des nouveaux bacheliers 2025"
         },
         {
-          "image": "assets/uploads/2025-accueil-nouveaux-02.jpg",
+          "image": "/assets/uploads/2025-accueil-nouveaux-02.jpg",
           "legende": "Accueil des nouveaux bacheliers 2025"
         },
         {
-          "image": "assets/uploads/2025-gamou-01.jpg",
+          "image": "/assets/uploads/2025-gamou-01.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2025"
         },
         {
-          "image": "assets/uploads/2025-gamou-02.jpg",
+          "image": "/assets/uploads/2025-gamou-02.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2025"
         },
         {
-          "image": "assets/uploads/2025-jssci-01.jpg",
+          "image": "/assets/uploads/2025-jssci-01.jpg",
           "legende": "JSSCI 2025"
         },
         {
-          "image": "assets/uploads/2025-jssci-02.jpg",
+          "image": "/assets/uploads/2025-jssci-02.jpg",
           "legende": "JSSCI 2025"
         },
         {
-          "image": "assets/uploads/2025-masterclass-sur-la-gale-01.jpg",
+          "image": "/assets/uploads/2025-masterclass-sur-la-gale-01.jpg",
           "legende": "Masterclass sur la gale 2025"
         },
         {
-          "image": "assets/uploads/2025-masterclass-sur-la-gale-02.jpg",
+          "image": "/assets/uploads/2025-masterclass-sur-la-gale-02.jpg",
           "legende": "Masterclass sur la gale 2025"
         },
         {
-          "image": "assets/uploads/2025-ndogou-social-01.jpg",
+          "image": "/assets/uploads/2025-ndogou-social-01.jpg",
           "legende": "Ndogou Social 2025"
         },
         {
-          "image": "assets/uploads/2025-ndogou-social-02.jpg",
+          "image": "/assets/uploads/2025-ndogou-social-02.jpg",
           "legende": "Ndogou Social 2025"
         },
         {
-          "image": "assets/uploads/2025-visite-a-l-iressef-01.jpg",
+          "image": "/assets/uploads/2025-visite-a-l-iressef-01.jpg",
           "legende": "Visite à l'IRESSEF 2025"
         },
         {
-          "image": "assets/uploads/2025-visite-a-l-iressef-02.jpg",
+          "image": "/assets/uploads/2025-visite-a-l-iressef-02.jpg",
           "legende": "Visite à l'IRESSEF 2025"
         },
         {
@@ -209,7 +209,7 @@
       "year": "2024",
       "photos": [
         {
-          "image": "assets/uploads/2024-ag-ordinaire-06-mars-01.jpg",
+          "image": "/assets/uploads/2024-ag-ordinaire-06-mars-01.jpg",
           "legende": "Assemblée générale ordinaire, 6 mars 2024"
         },
         {
@@ -217,35 +217,35 @@
           "legende": "Ndogou Social 2024"
         },
         {
-          "image": "assets/uploads/2024-gamou-01.jpg",
+          "image": "/assets/uploads/2024-gamou-01.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2024"
         },
         {
-          "image": "assets/uploads/2024-gamou-daya-diop-01.jpg",
+          "image": "/assets/uploads/2024-gamou-daya-diop-01.jpg",
           "legende": "Couverture médicale du Gamou de Daya Diop 2024"
         },
         {
-          "image": "assets/uploads/2024-gamou-louga-01.jpg",
+          "image": "/assets/uploads/2024-gamou-louga-01.jpg",
           "legende": "Couverture médicale du Gamou de Louga 2024"
         },
         {
-          "image": "assets/uploads/2024-jssci-01.jpg",
+          "image": "/assets/uploads/2024-jssci-01.jpg",
           "legende": "JSSCI 2024"
         },
         {
-          "image": "assets/uploads/2024-jssci-02.jpg",
+          "image": "/assets/uploads/2024-jssci-02.jpg",
           "legende": "JSSCI 2024"
         },
         {
-          "image": "assets/uploads/2024-ndogou-sociale-01.jpg",
+          "image": "/assets/uploads/2024-ndogou-sociale-01.jpg",
           "legende": "Ndogou Social 2024"
         },
         {
-          "image": "assets/uploads/2024-ndogou-sociale-02.jpg",
+          "image": "/assets/uploads/2024-ndogou-sociale-02.jpg",
           "legende": "Ndogou Social 2024"
         },
         {
-          "image": "assets/uploads/2024-shooting-blouses-01.jpg",
+          "image": "/assets/uploads/2024-shooting-blouses-01.jpg",
           "legende": "Séance photo en blouse 2024"
         },
         {
@@ -310,27 +310,27 @@
       "year": "2023",
       "photos": [
         {
-          "image": "assets/uploads/2023-gamou-ndar-01.jpg",
+          "image": "/assets/uploads/2023-gamou-ndar-01.jpg",
           "legende": "Couverture médicale du Gamou de Ndar 2023"
         },
         {
-          "image": "assets/uploads/2023-gamou-ndar-02.jpg",
+          "image": "/assets/uploads/2023-gamou-ndar-02.jpg",
           "legende": "Couverture médicale du Gamou de Ndar 2023"
         },
         {
-          "image": "assets/uploads/2023-jssci-don-de-sang-01.jpg",
+          "image": "/assets/uploads/2023-jssci-don-de-sang-01.jpg",
           "legende": "JSSCI 2023, don de sang"
         },
         {
-          "image": "assets/uploads/2023-jssci-don-de-sang-02.jpg",
+          "image": "/assets/uploads/2023-jssci-don-de-sang-02.jpg",
           "legende": "JSSCI 2023, don de sang"
         },
         {
-          "image": "assets/uploads/2023-jssci-match-de-foot-01.jpg",
+          "image": "/assets/uploads/2023-jssci-match-de-foot-01.jpg",
           "legende": "JSSCI 2023, match de football"
         },
         {
-          "image": "assets/uploads/2023-jssci-match-de-foot-02.jpg",
+          "image": "/assets/uploads/2023-jssci-match-de-foot-02.jpg",
           "legende": "JSSCI 2023, match de football"
         },
         {
@@ -338,15 +338,15 @@
           "legende": "Couverture médicale du Gamou de Ndar 2023"
         },
         {
-          "image": "assets/uploads/2023-jssci-symposium-02.jpg",
+          "image": "/assets/uploads/2023-jssci-symposium-02.jpg",
           "legende": "JSSCI 2023, symposium"
         },
         {
-          "image": "assets/uploads/2023-jssci-yendu-01.jpg",
+          "image": "/assets/uploads/2023-jssci-yendu-01.jpg",
           "legende": "JSSCI 2023, yendu"
         },
         {
-          "image": "assets/uploads/2023-jssci-yendu-02.jpg",
+          "image": "/assets/uploads/2023-jssci-yendu-02.jpg",
           "legende": "JSSCI 2023, yendu"
         },
         {
@@ -354,7 +354,7 @@
           "legende": "JSSCI 2023, symposium"
         },
         {
-          "image": "assets/uploads/2023-jssci-symposium-03.jpg",
+          "image": "/assets/uploads/2023-jssci-symposium-03.jpg",
           "legende": "JSSCI 2023, symposium"
         },
         {
@@ -411,7 +411,7 @@
       "year": "2022",
       "photos": [
         {
-          "image": "assets/uploads/2022-gamou-01.jpg",
+          "image": "/assets/uploads/2022-gamou-01.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2022"
         },
         {
@@ -419,11 +419,11 @@
           "legende": "Couverture médicale du Gamou de Tivaouane 2022"
         },
         {
-          "image": "assets/uploads/2022-gamou-03.jpg",
+          "image": "/assets/uploads/2022-gamou-03.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2022"
         },
         {
-          "image": "assets/uploads/2022-gamou-04.jpg",
+          "image": "/assets/uploads/2022-gamou-04.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2022"
         },
         {
@@ -439,19 +439,19 @@
           "legende": "Ndogou Social 2022"
         },
         {
-          "image": "assets/uploads/2022-ndogou-social-03.jpg",
+          "image": "/assets/uploads/2022-ndogou-social-03.jpg",
           "legende": "Ndogou Social 2022"
         },
         {
-          "image": "assets/uploads/2022-ndogou-social-04.jpg",
+          "image": "/assets/uploads/2022-ndogou-social-04.jpg",
           "legende": "Ndogou Social 2022"
         },
         {
-          "image": "assets/uploads/2022-ndogou-social-05.jpg",
+          "image": "/assets/uploads/2022-ndogou-social-05.jpg",
           "legende": "Ndogou Social 2022"
         },
         {
-          "image": "assets/uploads/2022-gamou-06.jpg",
+          "image": "/assets/uploads/2022-gamou-06.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2022"
         },
         {
@@ -512,51 +512,51 @@
       "year": "2021",
       "photos": [
         {
-          "image": "assets/uploads/2021-ndogou-social-01.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-01.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-02.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-02.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-03.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-03.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-04.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-04.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-05.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-05.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-06.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-06.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-07.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-07.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-08.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-08.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-09.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-09.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-10.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-10.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-11.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-11.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
-          "image": "assets/uploads/2021-ndogou-social-12.jpg",
+          "image": "/assets/uploads/2021-ndogou-social-12.jpg",
           "legende": "Ndogou Social 2021"
         },
         {
@@ -613,39 +613,39 @@
       "year": "2020",
       "photos": [
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-01.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-01.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-02.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-02.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-03.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-03.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-04.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-04.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-05.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-05.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-atelier-de-secourisme-01.jpg",
+          "image": "/assets/uploads/2020-atelier-de-secourisme-01.jpg",
           "legende": "Atelier de secourisme 2020"
         },
         {
-          "image": "assets/uploads/2020-atelier-de-secourisme-02.jpg",
+          "image": "/assets/uploads/2020-atelier-de-secourisme-02.jpg",
           "legende": "Atelier de secourisme 2020"
         },
         {
-          "image": "assets/uploads/2020-1ere-rencontre-semestrielle-06.jpg",
+          "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-06.jpg",
           "legende": "1re rencontre semestrielle 2020"
         },
         {
-          "image": "assets/uploads/2020-atelier-de-secourisme-03.jpg",
+          "image": "/assets/uploads/2020-atelier-de-secourisme-03.jpg",
           "legende": "Atelier de secourisme 2020"
         },
         {
@@ -670,43 +670,43 @@
       "year": "2019",
       "photos": [
         {
-          "image": "assets/uploads/2019-accueil-nouveaux-bacheliers-01.jpg",
+          "image": "/assets/uploads/2019-accueil-nouveaux-bacheliers-01.jpg",
           "legende": "Accueil des nouveaux bacheliers 2019"
         },
         {
-          "image": "assets/uploads/2019-consultation-daara-serigne-mor-diop-01.jpg",
+          "image": "/assets/uploads/2019-consultation-daara-serigne-mor-diop-01.jpg",
           "legende": "Consultations au daara Serigne Mor Diop 2019"
         },
         {
-          "image": "assets/uploads/2019-don-de-sang-01.jpg",
+          "image": "/assets/uploads/2019-don-de-sang-01.jpg",
           "legende": "Don de sang 2019"
         },
         {
-          "image": "assets/uploads/2019-epu-sur-hta-01.jpg",
+          "image": "/assets/uploads/2019-epu-sur-hta-01.jpg",
           "legende": "EPU sur l'hypertension artérielle 2019"
         },
         {
-          "image": "assets/uploads/2019-epu-sur-la-deontologie-medicale-01.jpg",
+          "image": "/assets/uploads/2019-epu-sur-la-deontologie-medicale-01.jpg",
           "legende": "EPU sur la déontologie médicale 2019"
         },
         {
-          "image": "assets/uploads/2019-gamou-01.jpg",
+          "image": "/assets/uploads/2019-gamou-01.jpg",
           "legende": "Couverture médicale du Gamou de Tivaouane 2019"
         },
         {
-          "image": "assets/uploads/2019-gamou-mame-seyni-gueye-ouakam-01.jpg",
+          "image": "/assets/uploads/2019-gamou-mame-seyni-gueye-ouakam-01.jpg",
           "legende": "Gamou de Mame Seyni Guèye à Ouakam 2019"
         },
         {
-          "image": "assets/uploads/2019-mariage-bineta-kane-dia-pionniere-de-l-amstc-01.jpg",
+          "image": "/assets/uploads/2019-mariage-bineta-kane-dia-pionniere-de-l-amstc-01.jpg",
           "legende": ""
         },
         {
-          "image": "assets/uploads/2019-ndogou-social-01.jpg",
+          "image": "/assets/uploads/2019-ndogou-social-01.jpg",
           "legende": "Ndogou Social 2019"
         },
         {
-          "image": "assets/uploads/2019-these-el-hadji-babacar-fall-pionnier-de-l-amstc-01.jpg",
+          "image": "/assets/uploads/2019-these-el-hadji-babacar-fall-pionnier-de-l-amstc-01.jpg",
           "legende": ""
         },
         {
@@ -779,7 +779,7 @@
           "legende": "Ndogou Social 2018"
         },
         {
-          "image": "assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-03.jpg",
+          "image": "/assets/uploads/2018-mariage-marieme-ndiaye-pionniere-de-l-amstc-03.jpg",
           "legende": ""
         },
         {
@@ -807,7 +807,7 @@
           "legende": "Ndogou Social 2018"
         },
         {
-          "image": "assets/uploads/2018-ndogou-social-05.jpg",
+          "image": "/assets/uploads/2018-ndogou-social-05.jpg",
           "legende": "Ndogou Social 2018"
         },
         {
@@ -876,7 +876,7 @@
           "legende": "Ndogou Social 2017"
         },
         {
-          "image": "assets/uploads/2017-ndogou-social-02.jpg",
+          "image": "/assets/uploads/2017-ndogou-social-02.jpg",
           "legende": "Ndogou Social 2017"
         },
         {
@@ -904,11 +904,11 @@
           "legende": "Ndogou Social 2017"
         },
         {
-          "image": "assets/uploads/2017-ndogou-social-09.jpg",
+          "image": "/assets/uploads/2017-ndogou-social-09.jpg",
           "legende": "Ndogou Social 2017"
         },
         {
-          "image": "assets/uploads/2017-ndogou-social-10.jpg",
+          "image": "/assets/uploads/2017-ndogou-social-10.jpg",
           "legende": "Ndogou Social 2017"
         },
         {
@@ -916,7 +916,7 @@
           "legende": "Ndogou Social 2017"
         },
         {
-          "image": "assets/uploads/2017-ndogou-social-12.jpg",
+          "image": "/assets/uploads/2017-ndogou-social-12.jpg",
           "legende": "Ndogou Social 2017"
         },
         {
@@ -973,51 +973,51 @@
       "year": "2016",
       "photos": [
         {
-          "image": "assets/uploads/515446063_10225371609592277_2887868482953476497_n.jpg",
+          "image": "/assets/uploads/515446063_10225371609592277_2887868482953476497_n.jpg",
           "legende": "Réunion avec l'association Sope Dabakh, 24 janvier 2016"
         },
         {
-          "image": "assets/uploads/516466219_10225370821852584_2566811346745709769_n.jpg",
+          "image": "/assets/uploads/516466219_10225370821852584_2566811346745709769_n.jpg",
           "legende": "Réunion avec l'association Sope Dabakh, 24 janvier 2016"
         },
         {
-          "image": "assets/uploads/515680658_10225369147330722_9123658159698400534_n.jpg",
+          "image": "/assets/uploads/515680658_10225369147330722_9123658159698400534_n.jpg",
           "legende": "Don de sang, 6 janvier 2016"
         },
         {
-          "image": "assets/uploads/515064394_10225369148410749_7358238761617475865_n.jpg",
+          "image": "/assets/uploads/515064394_10225369148410749_7358238761617475865_n.jpg",
           "legende": "Don de sang, 6 janvier 2016"
         },
         {
-          "image": "assets/uploads/515332094_10225382396381940_7380117706067278244_n.jpg",
+          "image": "/assets/uploads/515332094_10225382396381940_7380117706067278244_n.jpg",
           "legende": "Journée de consultation, 13 avril 2016"
         },
         {
-          "image": "assets/uploads/514342282_10225382398301988_2526175118490596684_n.jpg",
+          "image": "/assets/uploads/514342282_10225382398301988_2526175118490596684_n.jpg",
           "legende": "Journée de consultation, 13 avril 2016"
         },
         {
-          "image": "assets/uploads/515700085_10225384005022155_1803004801210943328_n.jpg",
+          "image": "/assets/uploads/515700085_10225384005022155_1803004801210943328_n.jpg",
           "legende": "Journée de consultation dans un daara, 24 avril 2016"
         },
         {
-          "image": "assets/uploads/514345517_10225384008022230_3479298808260593059_n.jpg",
+          "image": "/assets/uploads/514345517_10225384008022230_3479298808260593059_n.jpg",
           "legende": "Journée de consultation dans un daara, 24 avril 2016"
         },
         {
-          "image": "assets/uploads/515005405_10225393388976748_4053554951551139219_n.jpg",
+          "image": "/assets/uploads/515005405_10225393388976748_4053554951551139219_n.jpg",
           "legende": "Ndogou Social, 16 juin 2016"
         },
         {
-          "image": "assets/uploads/497814645_4084723761797425_974811302342433891_n.jpg",
+          "image": "/assets/uploads/497814645_4084723761797425_974811302342433891_n.jpg",
           "legende": "Ndogou Social, 16 juin 2016"
         },
         {
-          "image": "assets/uploads/2016-don-de-sang-du-06-janvier-01.jpg",
+          "image": "/assets/uploads/2016-don-de-sang-du-06-janvier-01.jpg",
           "legende": "Don de sang, 6 janvier 2016"
         },
         {
-          "image": "assets/uploads/2016-journee-de-consultation-13-avril-01.jpg",
+          "image": "/assets/uploads/2016-journee-de-consultation-13-avril-01.jpg",
           "legende": "Journée de consultation, 13 avril 2016"
         },
         {
@@ -1078,11 +1078,11 @@
           "legende": ""
         },
         {
-          "image": "assets/uploads/514401456_10225338817132486_7158066160728409114_n.jpg",
+          "image": "/assets/uploads/514401456_10225338817132486_7158066160728409114_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/515318774_10225338818092510_8754572321376982107_n.jpg",
+          "image": "/assets/uploads/515318774_10225338818092510_8754572321376982107_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
@@ -1090,7 +1090,7 @@
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/517353170_10236764502322630_4886127003510111312_n.jpg",
+          "image": "/assets/uploads/517353170_10236764502322630_4886127003510111312_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
@@ -1098,23 +1098,23 @@
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/494195521_4068877840048684_8291257447008202339_n.jpg",
+          "image": "/assets/uploads/494195521_4068877840048684_8291257447008202339_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/515273423_10225338816612473_2543970973708109751_n.jpg",
+          "image": "/assets/uploads/515273423_10225338816612473_2543970973708109751_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/516189248_25028085820113439_3326819383390011194_n.jpg",
+          "image": "/assets/uploads/516189248_25028085820113439_3326819383390011194_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/516564084_10236764503722665_4598295353263717397_n.jpg",
+          "image": "/assets/uploads/516564084_10236764503722665_4598295353263717397_n.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
-          "image": "assets/uploads/2015-ndogou-social-09-juillet-01.jpg",
+          "image": "/assets/uploads/2015-ndogou-social-09-juillet-01.jpg",
           "legende": "Ndogou Social, 9 juillet 2015"
         },
         {
@@ -1191,11 +1191,11 @@
           "legende": "Ndogou Social, 18 juillet 2014"
         },
         {
-          "image": "assets/uploads/2014-ndogou-social-18-juillet-01.jpg",
+          "image": "/assets/uploads/2014-ndogou-social-18-juillet-01.jpg",
           "legende": "Ndogou Social, 18 juillet 2014"
         },
         {
-          "image": "assets/uploads/2014-ndogou-social-18-juillet-02.jpg",
+          "image": "/assets/uploads/2014-ndogou-social-18-juillet-02.jpg",
           "legende": "Ndogou Social, 18 juillet 2014"
         },
         {

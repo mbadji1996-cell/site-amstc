@@ -85,24 +85,24 @@
   "pioneers": [
     {
       "name": "Abdou Khadre KANE",
-      "photo": "assets/pioneers/01-abdou-khadre-kane.jpg"
+      "photo": "/assets/pioneers/01-abdou-khadre-kane.jpg"
     },
     {
       "name": "Dr Ndeye Marame WADE",
-      "photo": "assets/pioneers/02-ndeye-marame-wade.jpg"
+      "photo": "/assets/pioneers/02-ndeye-marame-wade.jpg"
     },
     {
       "name": "Dr Makhan DANFAKHA",
-      "photo": "assets/pioneers/03-makhan.jpg",
+      "photo": "/assets/pioneers/03-makhan.jpg",
       "fonction": "Directeur du CHR de Kolda"
     },
     {
       "name": "Dr Mame Fatou Ballé NIANG",
-      "photo": "assets/pioneers/04-mame-fatou-balle-niang.jpg"
+      "photo": "/assets/pioneers/04-mame-fatou-balle-niang.jpg"
     },
     {
       "name": "Dr Racine Ly",
-      "photo": "assets/pioneers/05-racine-ly.jpg",
+      "photo": "/assets/pioneers/05-racine-ly.jpg",
       "fonction": "Pharmacien"
     },
     {
@@ -139,7 +139,7 @@
     },
     {
       "name": "Dr Souleymane DIATTA",
-      "photo": "assets/pioneers/21-xulio.jpg",
+      "photo": "/assets/pioneers/21-xulio.jpg",
       "fonction": "Urgentiste - SAMU Kaolack"
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       "name": "El Hadji Malick GUEYE",
-      "photo": "assets/pioneers/09-el-hadji-malick-gueye.jpg",
+      "photo": "/assets/pioneers/09-el-hadji-malick-gueye.jpg",
       "fonction": "Biologiste - CNTS"
     },
     {
@@ -157,7 +157,7 @@
     },
     {
       "name": "Dr Mar FALL Dabakh",
-      "photo": "assets/pioneers/07-mar-fall-dabakh.jpg",
+      "photo": "/assets/pioneers/07-mar-fall-dabakh.jpg",
       "fonction": "Pharmacien - Spécialiste en Supply Chain"
     },
     {
@@ -166,7 +166,7 @@
     },
     {
       "name": "Dr Mouhamadou Mansour BA",
-      "photo": "assets/pioneers/19-mansour.jpg",
+      "photo": "/assets/pioneers/19-mansour.jpg",
       "fonction": "Pharmacien Titulaire Pharmacie Thiellal Odobéré"
     },
     {
@@ -175,22 +175,22 @@
     },
     {
       "name": "Dr Mbaye SOW",
-      "photo": "assets/pioneers/13-mbaye-sow.jpg",
+      "photo": "/assets/pioneers/13-mbaye-sow.jpg",
       "fonction": "Urgentiste - SAMU Kolda"
     },
     {
       "name": "Dr Fatou Faye FALL",
-      "photo": "assets/pioneers/12-fatou-faye-fall.jpg",
+      "photo": "/assets/pioneers/12-fatou-faye-fall.jpg",
       "fonction": "Pharmacienne"
     },
     {
       "name": "Dr Kaoussou A. BODIAN",
-      "photo": "assets/pioneers/11-kaoussou.jpg",
+      "photo": "/assets/pioneers/11-kaoussou.jpg",
       "fonction": "Orthopédiste - Traumatologue"
     },
     {
       "name": "Dr Aida NDOUR",
-      "photo": "assets/pioneers/06-aida-ndour.jpg",
+      "photo": "/assets/pioneers/06-aida-ndour.jpg",
       "fonction": "Dentiste"
     },
     {
@@ -200,7 +200,7 @@
     },
     {
       "name": "Dr Bineta Kane DIA",
-      "photo": "assets/pioneers/08-bineta-kane-dia.jpg",
+      "photo": "/assets/pioneers/08-bineta-kane-dia.jpg",
       "fonction": "Dentiste"
     },
     {
@@ -210,21 +210,21 @@
     },
     {
       "name": "Dr Ndèye Mariètou DANFAKHA",
-      "photo": "assets/pioneers/18-ndeye-marietou-danfakha.jpg",
+      "photo": "/assets/pioneers/18-ndeye-marietou-danfakha.jpg",
       "fonction": "Gériatrie - Gérontologie"
     },
     {
       "name": "Dr Arona NDIAYE",
-      "photo": "assets/pioneers/15-arone-ndiaye.jpg"
+      "photo": "/assets/pioneers/15-arone-ndiaye.jpg"
     },
     {
       "name": "Dr Amayel KANE",
-      "photo": "assets/pioneers/10-amayel.jpg",
+      "photo": "/assets/pioneers/10-amayel.jpg",
       "fonction": "Anatomie et Cytologie Pathologique"
     },
     {
       "name": "Ismaila DIAGNE",
-      "photo": "assets/pioneers/17-ismaila-diagne.jpg",
+      "photo": "/assets/pioneers/17-ismaila-diagne.jpg",
       "fonction": "Pharmacien"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "name": "Dr Ndeye Adele GUEYE",
-      "photo": "assets/pioneers/20-adele.jpg",
+      "photo": "/assets/pioneers/20-adele.jpg",
       "fonction": "Interne - Psychiatrie"
     },
     {
