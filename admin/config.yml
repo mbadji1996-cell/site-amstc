@@ -67,7 +67,7 @@ collections:
         file: "content/home-actions.json"
         fields:
           - { label: "Accroche", name: "actions_eyebrow", widget: "string" }
-          - { label: "Titre de la section", name: "actions_title", widget: "string" }
+          - { label: "Titre de la section", name: "actions_title", widget: "string", hint: "Mettez entre astérisques la partie en or : Le registre de nos *interventions*" }
           - { label: "Sous-titre", name: "actions_subtitle", widget: "text" }
 
           - label: "Liste des actions (registre)"
@@ -77,7 +77,19 @@ collections:
             fields:
               - { label: "Titre", name: "title", widget: "string" }
               - { label: "Description", name: "text", widget: "markdown" }
-              - { label: "Étiquette (ex: Médical, Formation...)", name: "tag", widget: "string" }
+              - { label: "Étiquette (ex: Médical, Social, Formation)", name: "tag", widget: "string", hint: "La petite icône suit le libellé : Médical, Social ou Formation." }
+              - label: "Icône"
+                name: "icon"
+                widget: "select"
+                required: false
+                hint: "Laissez vide pour la choisir d'après le titre."
+                options:
+                  - { label: "Stéthoscope (consultations)", value: "stethoscope" }
+                  - { label: "Poste de santé (couvertures)", value: "hopital" }
+                  - { label: "Goutte de sang (dons)", value: "sang" }
+                  - { label: "Toque (enseignements)", value: "diplome" }
+                  - { label: "Équipe (formations internes)", value: "equipe" }
+                  - { label: "Cœur (solidarité)", value: "coeur" }
               - { label: "Lien (URL ou #ancre)", name: "href", widget: "string" }
 
       - name: "historique"
