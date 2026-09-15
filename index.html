@@ -516,7 +516,15 @@
   }
 
   /* ===== Chiffres d'impact ===== */
-  #impact{background:var(--green-deep); padding:80px 0;}
+  #impact{position:relative; isolation:isolate; overflow:hidden; background:var(--green-deep); padding:80px 0;}
+  /* Diaporama de consultations en fond, sous un voile vert. Opacite 0.88 :
+     la plus faible qui garde l'or du sur-titre et des icones a 4,5:1 sur
+     les parties claires des six photos (calcul au 95e centile). */
+  .impact-bg{position:absolute; inset:0; z-index:-2;}
+  .impact-bg-slide{position:absolute; inset:0; background-size:cover; background-position:center;
+    opacity:0; transition:opacity 1.8s ease;}
+  .impact-bg-slide.is-active{opacity:1;}
+  .impact-overlay{position:absolute; inset:0; z-index:-1; background:rgba(6,68,28,0.88);}
   #impact .eyebrow{color:var(--gold);}
   #impact .eyebrow::before{background:var(--gold);}
   #impact h2{color:var(--white);}
@@ -1158,6 +1166,8 @@
        Placés juste après "Nos actions" : le visiteur qui vient de lire ce que
        fait l'association voit aussitôt ce que cela représente. -->
   <section id="impact" style="display:none;">
+    <div class="impact-bg" id="impactBg" aria-hidden="true"></div>
+    <div class="impact-overlay" aria-hidden="true"></div>
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-impact-eyebrow">Notre impact</p>
@@ -2337,6 +2347,50 @@
     star: '<path d="M12 2.5l3 6.5 7 .9-5.2 4.8 1.4 6.9L12 17.9 5.8 21.6l1.4-6.9L2 9.9l7-.9 3-6.5Z"/>'
   };
 
+  // ===== Diaporama de fond des chiffres d'impact =====
+  // Photos de consultations : Page d'accueil > 11. Chiffres d'impact >
+  // Photos de fond ; a defaut, celles-ci.
+  const DEFAULT_IMPACT_IMAGES = ["assets/impact-fond/01.jpg", "assets/impact-fond/02.jpg", "assets/impact-fond/03.jpg", "assets/impact-fond/04.jpg", "assets/impact-fond/05.jpg", "assets/impact-fond/06.jpg"];
+  function initImpactSlideshow(images){
+    const bg = document.getElementById('impactBg');
+    const section = document.getElementById('impact');
+    const list = Array.isArray(images) && images.length > 0 ? images : DEFAULT_IMPACT_IMAGES;
+    if (!bg || !section || bg.children.length > 0 || list.length === 0) return;
+    const slides = list.map((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'impact-bg-slide' + (i === 0 ? ' is-active' : '');
+      bg.appendChild(slide);
+      return { el: slide, src };
+    });
+    // Chargement differe : la section est loin sous le pli, ses photos ne
+    // sont demandees qu'a son approche.
+    let chargees = false, visible = false;
+    const charger = () => {
+      if (chargees) return;
+      chargees = true;
+      slides.forEach(s => { s.el.style.backgroundImage = `url('${s.src}')`; });
+    };
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entrees => {
+        visible = entrees[0].isIntersecting;
+        if (visible) charger();
+      }, { rootMargin: '400px 0px' }).observe(section);
+    } else {
+      charger();
+      visible = true;
+    }
+    if (slides.length <= 1 || reduceMotion) return;
+    let idx = 0;
+    setInterval(() => {
+      // Pas de fondu hors de l'ecran : rien a voir, et rien a redessiner.
+      if (!visible) return;
+      slides[idx].el.classList.remove('is-active');
+      idx = (idx + 1) % slides.length;
+      slides[idx].el.classList.add('is-active');
+    }, 6000);
+  }
+
   function renderImpact(data){
     const section = document.getElementById('impact');
     const grid = document.getElementById('cms-impact-grid');
@@ -2345,6 +2399,7 @@
     const stats = Array.isArray(data.impact_stats) ? data.impact_stats.filter(s => s && s.number) : [];
     if (stats.length === 0) { section.style.display = 'none'; return; }
     section.style.display = '';
+    initImpactSlideshow(data.impact_slideshow);
 
     if (data.impact_eyebrow) document.getElementById('cms-impact-eyebrow').textContent = data.impact_eyebrow;
     if (data.impact_title) document.getElementById('cms-impact-title').textContent = data.impact_title;
