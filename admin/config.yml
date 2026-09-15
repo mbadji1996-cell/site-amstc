@@ -217,11 +217,12 @@ collections:
                       - { label: "Légende", name: "caption", widget: "string", required: false }
 
       - name: "actualites_section"
-        label: "6. Nos réalisations récentes"
+        label: "6. Nos récentes activités"
         file: "content/home-actualites.json"
         fields:
-          - { label: "Accroche", name: "actus_eyebrow", widget: "string", default: "Réalisations" }
-          - { label: "Titre de la section", name: "actus_title", widget: "string", default: "Nos réalisations récentes" }
+          - { label: "Accroche", name: "actus_eyebrow", widget: "string", default: "Activités" }
+          - { label: "Titre de la section", name: "actus_title", widget: "string", default: "Nos récentes *activités*", hint: "Mettez entre astérisques la partie en or. Les 3 cartes affichent automatiquement les dernières réalisations et formations, avec leur image de couverture." }
+          - { label: "Sous-titre", name: "actus_subtitle", widget: "string", required: false }
 
       - name: "cta_footer"
         label: "7. Bandeau de mise en avant"

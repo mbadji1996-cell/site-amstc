@@ -379,6 +379,44 @@
     .register-arrow{grid-column:3; grid-row:2; width:36px; height:36px;}
   }
 
+  /* ===== Nos récentes activités : réalisations et formations ===== */
+  .activites-head{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px 24px; max-width:none;}
+  .activites-head > div{max-width:660px;}
+  .activites-liens{display:flex; flex-wrap:wrap; gap:10px;}
+  .activites-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px;}
+  @media (max-width:880px){ .activites-grid{grid-template-columns:1fr;} }
+  .activite-card{
+    --a-soft:#EEF5F0; --a-ink:#06441C; --a-cover:#EAF4ED;
+    display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .activite-card.type-formation{--a-soft:#FFF4D6; --a-ink:#7A5A0C; --a-cover:#FFF8EA;}
+  :root[data-theme="dark"] .activite-card{--a-soft:rgba(127,217,160,0.12); --a-ink:#7FD9A0; --a-cover:#15231A;}
+  :root[data-theme="dark"] .activite-card.type-formation{--a-soft:rgba(240,201,85,0.14); --a-ink:#F0C955; --a-cover:#262113;}
+  .activite-card:hover{transform:translateY(-4px); box-shadow:var(--shadow); border-color:var(--green);}
+  .activite-card:focus-visible{outline:3px solid var(--gold); outline-offset:3px;}
+  .activite-cover{display:block; aspect-ratio:16/9; background:var(--a-cover); overflow:hidden;}
+  .activite-cover img{width:100%; height:100%; object-fit:cover; transition:transform .4s ease;}
+  .activite-card:hover .activite-cover img{transform:scale(1.04);}
+  .activite-cover-vide{display:grid; place-items:center;}
+  .activite-card .activite-cover-vide img{width:64px; height:64px; object-fit:contain; opacity:0.85; transform:none;}
+  .activite-body{display:flex; flex-direction:column; align-items:flex-start; gap:10px; padding:20px 22px 22px; flex:1;}
+  .activite-date{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:0.78rem; color:var(--text-muted);}
+  .activite-date svg, .activite-tag svg, .activite-suite svg{fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round;}
+  .activite-date svg{width:16px; height:16px; stroke-width:1.8; color:var(--text-accent);}
+  .activite-tags{display:flex; flex-wrap:wrap; gap:6px;}
+  .activite-tag{display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 8px; border-radius:999px;
+    background:var(--a-soft); color:var(--a-ink); font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase;}
+  .activite-tag svg{width:14px; height:14px; stroke-width:2;}
+  .activite-reserve{background:rgba(6,68,28,0.08); color:var(--text-heading);}
+  .activite-card h3{font-size:1.15rem; line-height:1.3;}
+  .activite-extrait{color:var(--text-muted); font-size:0.94rem;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+  .activite-suite{margin-top:auto; display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+    background:var(--a-soft); color:var(--a-ink); font-weight:600; font-size:0.88rem;}
+  .activite-suite svg{width:15px; height:15px; stroke-width:2.2; transition:transform .18s ease;}
+  .activite-card:hover .activite-suite svg{transform:translateX(3px);}
+
   /* ===== Timeline (réalisations) ===== */
   /* ===== Frise =====
      TELEPHONE D'ABORD : un trait a gauche, les entrees en dessous. Sur
@@ -1370,20 +1408,24 @@
   <!-- ===== SECTIONS PERSONNALISÉES (blocs libres) ===== -->
   <div id="cms-custom-sections"></div>
 
-  <!-- ===== DERNIÈRES ACTUALITÉS ===== -->
+  <!-- ===== NOS RÉCENTES ACTIVITÉS (réalisations + formations) ===== -->
   <section class="section-alt" id="actus">
     <div class="wrap">
-      <div class="section-head reveal" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+      <div class="section-head activites-head reveal">
         <div>
-          <p class="eyebrow" id="cms-actus-eyebrow">Réalisations</p>
-          <h2 id="cms-actus-title">Nos réalisations récentes</h2>
+          <p class="eyebrow" id="cms-actus-eyebrow">Activités</p>
+          <h2 id="cms-actus-title">Nos récentes <em>activités</em></h2>
+          <p id="cms-actus-subtitle">Les dernières réalisations et formations de l'association.</p>
         </div>
-        <a href="actualites" class="btn btn-outline">Toutes nos réalisations</a>
+        <div class="activites-liens">
+          <a href="actualites" class="btn btn-outline">Toutes nos réalisations</a>
+          <a href="formations" class="btn btn-outline">Nos formations</a>
+        </div>
       </div>
-      <div class="intro-grid" id="actus-grid">
+      <div class="activites-grid" id="actus-grid">
         <p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Chargement…</p>
       </div>
-      <noscript><p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos réalisations, ou consultez <a href="actualites">la page dédiée</a>.</p></noscript>
+      <noscript><p style="color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;">Activez JavaScript pour voir nos activités, ou consultez <a href="actualites">nos réalisations</a> et <a href="formations">nos formations</a>.</p></noscript>
     </div>
   </section>
 
@@ -2391,7 +2433,8 @@
 
     // Réalisations
     if (data.actus_eyebrow) document.getElementById('cms-actus-eyebrow').textContent = data.actus_eyebrow;
-    if (data.actus_title) document.getElementById('cms-actus-title').textContent = data.actus_title;
+    if (data.actus_title) document.getElementById('cms-actus-title').innerHTML = esc(data.actus_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.actus_subtitle) document.getElementById('cms-actus-subtitle').textContent = data.actus_subtitle;
 
     // Bandeau de don
     if (data.cta_title) document.getElementById('cms-cta-title').textContent = data.cta_title;
@@ -2864,26 +2907,51 @@
       });
   })();
 
-  // Charge les 3 dernières actualités
+  // Nos recentes activites : les 3 plus recentes entre realisations et
+  // formations. Un index qui ne charge pas n'empeche pas l'autre de s'afficher.
   async function loadLatestActus() {
     const grid = document.getElementById("actus-grid");
+    const SOURCES = [
+      { file: "content/actualites-index.json", type: "realisation", libelle: "Réalisation", page: "article" },
+      { file: "content/formations-index.json", type: "formation", libelle: "Formation", page: "formation" }
+    ];
+    const CALENDRIER = "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"2.5\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/></svg>";
+    const ICONES = { realisation: "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 3v5a4 4 0 0 0 8 0V3\"/><path d=\"M9 12v2a5 5 0 0 0 10 0v-1\"/><circle cx=\"19\" cy=\"11\" r=\"2\"/></svg>", formation: "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z\"/><path d=\"M12 6v14.5\"/></svg>" };
+    const FLECHE = "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg>";
+    const horodatage = a => { const t = Date.parse(a.date || ''); return isNaN(t) ? 0 : t; };
     try {
-      const res = await fetch("content/actualites-index.json");
-      if (!res.ok) throw new Error();
-      const articles = await res.json();
-      const latest = articles.slice(0, 3);
-      if (latest.length === 0) { grid.innerHTML = '<p style="color:var(--text-muted);">Aucun article publié pour le moment.</p>'; return; }
-      grid.innerHTML = latest.map(a => `
-        <a class="intro-card reveal" href="article?slug=${encodeURIComponent(a.slug)}" style="display:block;">
-          <span class="num">${formatDatePeriode(a)}</span>
-          ${a.reserve ? '<span style="display:inline-block;font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;background:rgba(6,68,28,0.08);color:var(--green-deep);border-radius:999px;padding:3px 8px;margin-bottom:6px;">🔒 Réservé aux membres</span>' : ''}
-          <h3>${esc(a.title || 'Sans titre')}</h3>
-          <p>${esc(a.excerpt || '')}</p>
-        </a>
-      `).join("");
+      const lots = await Promise.allSettled(SOURCES.map(src =>
+        fetch(src.file).then(r => { if (!r.ok) throw new Error(); return r.json(); })
+          .then(liste => (Array.isArray(liste) ? liste : []).map(a => ({ ...a, _src: src })))
+      ));
+      if (lots.every(l => l.status !== 'fulfilled')) throw new Error();
+      const latest = lots.flatMap(l => l.status === 'fulfilled' ? l.value : [])
+        .sort((a, b) => horodatage(b) - horodatage(a))
+        .slice(0, 3);
+      if (latest.length === 0) { grid.innerHTML = '<p style="color:var(--text-muted);">Aucune activité publiée pour le moment.</p>'; return; }
+      grid.innerHTML = latest.map(a => {
+        const src = a._src;
+        const couverture = a.image
+          ? `<span class="activite-cover"><img src="${esc(a.image)}" alt="" loading="lazy" decoding="async"></span>`
+          : `<span class="activite-cover activite-cover-vide"><img src="assets/logo-mark-sm.png" alt="" width="64" height="64" loading="lazy"></span>`;
+        return `
+        <a class="activite-card type-${src.type} reveal" href="${src.page}?slug=${encodeURIComponent(a.slug)}">
+          ${couverture}
+          <span class="activite-body">
+            <span class="activite-date">${CALENDRIER}${esc(formatDatePeriode(a))}</span>
+            <span class="activite-tags">
+              <span class="activite-tag">${ICONES[src.type]}${src.libelle}</span>
+              ${a.reserve ? '<span class="activite-tag activite-reserve">Réservé aux membres</span>' : ''}
+            </span>
+            <h3>${esc(a.title || 'Sans titre')}</h3>
+            ${a.excerpt ? `<span class="activite-extrait">${esc(a.excerpt)}</span>` : ''}
+            <span class="activite-suite">Lire la suite${FLECHE}</span>
+          </span>
+        </a>`;
+      }).join("");
       initScrollReveal();
     } catch (e) {
-      grid.innerHTML = '<p style="color:var(--text-muted);">Réalisations indisponibles pour le moment.</p>';
+      grid.innerHTML = '<p style="color:var(--text-muted);">Activités indisponibles pour le moment.</p>';
     }
   }
   loadLatestActus();
