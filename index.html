@@ -891,24 +891,63 @@
 
   /* ===== Vie spirituelle : heures de prière, verset et hadith ===== */
   .spirit-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; align-items:stretch;}
+  @media (max-width:900px){ .spirit-grid{grid-template-columns:1fr;} }
   .prayer-card, .spirit-card{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:28px; display:flex; flex-direction:column;
+    display:flex; flex-direction:column; overflow:hidden;
   }
-  .prayer-period{font-family:var(--mono); font-size:0.76rem; color:var(--text-muted); text-align:center; margin-bottom:18px; text-transform:uppercase; letter-spacing:0.04em;}
-  .prayer-list{display:flex; flex-direction:column;}
-  .prayer-row{display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--line);}
+  .spirit-grid svg{fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+
+  /* Carte des heures : bandeau vert, puis une ligne par priere. */
+  .prayer-head{display:flex; align-items:center; gap:14px; padding:18px 22px; background:var(--green-deep); color:#fff;}
+  .prayer-head-icone{flex:none; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.14); display:grid; place-items:center;}
+  .prayer-head-icone svg{width:20px; height:20px;}
+  .prayer-head-texte{flex:1; min-width:0;}
+  .prayer-head-titre{display:block; font-family:var(--display); font-weight:600; font-size:1.02rem;}
+  .prayer-period{display:block; font-family:var(--mono); font-size:0.66rem; line-height:1.5; color:rgba(255,255,255,0.8); margin-top:3px;}
+  .prayer-ville{flex:none; display:inline-flex; align-items:center; gap:5px; font-size:0.86rem; font-weight:600;}
+  .prayer-ville svg{width:16px; height:16px; color:var(--gold);}
+  /* Telephone : la ville passe sous le texte pour laisser la place aux periodes. */
+  @media (max-width:480px){
+    .prayer-head{flex-wrap:wrap; row-gap:8px;}
+    .prayer-head-texte{flex:1 1 calc(100% - 56px);}
+    .prayer-ville{margin-left:56px;}
+  }
+  .prayer-list{display:flex; flex-direction:column; padding:8px 22px 14px;}
+  .prayer-row{display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--line);}
   .prayer-row:last-child{border-bottom:none;}
-  .prayer-row-label{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.98rem;}
-  .prayer-row-time{font-family:var(--mono); font-weight:700; color:var(--green); font-size:1rem;}
+  .prayer-row-icone{flex:none; width:40px; height:40px; border-radius:50%; background:rgba(23,118,59,0.09); color:var(--green); display:grid; place-items:center;}
+  :root[data-theme="dark"] .prayer-row-icone{background:rgba(127,217,160,0.12);}
+  .prayer-row-icone svg{width:20px; height:20px;}
+  .prayer-row-label{flex:1; font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.98rem;}
+  .prayer-row-time{font-family:var(--mono); font-weight:700; color:var(--green); font-size:0.95rem; background:rgba(23,118,59,0.09); padding:5px 12px; border-radius:999px;}
+  :root[data-theme="dark"] .prayer-row-time{background:rgba(127,217,160,0.12);}
+  .prayer-row-prochaine{display:none; margin-left:6px; padding:2px 7px; border-radius:999px; vertical-align:middle;
+    background:var(--gold); color:var(--green-deep); font-family:var(--mono); font-size:0.58rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;}
+  /* Prochaine priere (heure de Dakar) : pastille doree. */
+  .prayer-row.est-prochaine .prayer-row-prochaine{display:inline;}
+  .prayer-row.est-prochaine .prayer-row-icone{background:var(--gold); color:var(--green-deep);}
+  .prayer-row.est-prochaine .prayer-row-time{background:var(--gold); color:var(--green-deep);}
   .prayer-empty{color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px 0;}
 
-  .spirit-card-label{font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-accent); margin-bottom:16px;}
-  .spirit-arabic{font-family:'Amiri', serif; font-size:1.5rem; line-height:2.1; color:var(--text-heading); margin-bottom:16px; text-align:right;}
-  .spirit-french{font-size:0.94rem; color:var(--ink); line-height:1.7; flex:1;}
-  .spirit-ref{font-family:var(--mono); font-size:0.76rem; color:var(--text-muted); margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
-
-  @media (max-width:900px){ .spirit-grid{grid-template-columns:1fr;} }
+  /* Verset / Hadith : en-tete a icone et filet dore. */
+  .spirit-card{padding:24px 26px;}
+  .spirit-card-head{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .spirit-card-icone{flex:none; width:40px; height:40px; border-radius:50%; background:var(--green-deep); color:#fff; display:grid; place-items:center;}
+  .spirit-card-icone svg{width:19px; height:19px;}
+  .spirit-card-label{font-family:var(--mono); font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-heading); margin:0;}
+  .spirit-orn{flex:1; min-width:24px; height:10px; position:relative;
+    background:linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent) center/100% 1px no-repeat;}
+  .spirit-orn::after{content:""; position:absolute; left:50%; top:50%; width:7px; height:7px; background:var(--surface);
+    border:1.5px solid var(--gold); transform:translate(-50%,-50%) rotate(45deg);}
+  .spirit-arabic{font-family:'Amiri', serif; font-size:1.55rem; line-height:2.1; color:var(--text-heading); margin-bottom:16px; text-align:right;}
+  .spirit-traduction{display:flex; gap:14px; align-items:flex-start; flex:1;}
+  .spirit-guillemet{flex:none; width:34px; height:34px; border-radius:50%; background:var(--green-deep); color:var(--gold); display:grid; place-items:center;}
+  .spirit-guillemet svg{width:16px; height:16px; fill:currentColor; stroke:none;}
+  .spirit-french{font-size:0.94rem; color:var(--ink); line-height:1.75; flex:1;}
+  .spirit-ref{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:0.76rem; color:var(--text-muted); margin-top:18px; padding-top:14px; border-top:1px solid var(--line);}
+  .spirit-ref svg{flex:none; width:16px; height:16px; color:var(--green);}
+  .spirit-ref:empty{display:none;}
 </style>
 <script type="application/ld+json">
 {
@@ -1523,22 +1562,44 @@
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-prayer-eyebrow">Vie spirituelle</p>
         <h2 id="cms-prayer-title">Heures de prière</h2>
+        <p id="cms-prayer-subtitle">Consultez chaque semaine les horaires de prière et nourrissez votre esprit avec le Coran et la Sunna.</p>
       </div>
       <div class="spirit-grid">
         <div class="prayer-card reveal">
-          <p class="prayer-period" id="cms-prayer-period"></p>
+          <div class="prayer-head">
+            <span class="prayer-head-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>
+            <span class="prayer-head-texte">
+              <span class="prayer-head-titre">Cette semaine</span>
+              <span class="prayer-period" id="cms-prayer-period"></span>
+            </span>
+            <span class="prayer-ville"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="cms-prayer-city">Dakar</span></span>
+          </div>
           <div class="prayer-list" id="cms-prayer-list"></div>
         </div>
         <div class="spirit-card reveal">
-          <p class="spirit-card-label">Verset de la semaine</p>
+          <div class="spirit-card-head">
+            <span class="spirit-card-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/></svg></span>
+            <p class="spirit-card-label">Verset de la semaine</p>
+            <span class="spirit-orn" aria-hidden="true"></span>
+          </div>
           <p class="spirit-arabic" id="verseArabic" dir="rtl" lang="ar"></p>
-          <p class="spirit-french" id="verseFrench">Chargement…</p>
-          <p class="spirit-ref" id="verseRef"></p>
+          <div class="spirit-traduction">
+            <span class="spirit-guillemet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7H6.5A2.5 2.5 0 0 0 4 9.5V13h4.5v4L10 13V7zM20 7h-3.5A2.5 2.5 0 0 0 14 9.5V13h4.5v4L20 13V7z"/></svg></span>
+            <p class="spirit-french" id="verseFrench">Chargement…</p>
+          </div>
+          <p class="spirit-ref"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/></svg><span id="verseRef"></span></p>
         </div>
         <div class="spirit-card reveal">
-          <p class="spirit-card-label">Hadith de la semaine</p>
-          <p class="spirit-french" id="hadithFrench">Chargement…</p>
-          <p class="spirit-ref" id="hadithRef"></p>
+          <div class="spirit-card-head">
+            <span class="spirit-card-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V11M20 21V11M3 21h18"/><path d="M8 21v-6a4 4 0 0 1 8 0v6"/><path d="M7 11c0-3 2.2-4.5 5-6.5 2.8 2 5 3.5 5 6.5"/><path d="M12 2.5v2"/></svg></span>
+            <p class="spirit-card-label">Hadith de la semaine</p>
+            <span class="spirit-orn" aria-hidden="true"></span>
+          </div>
+          <div class="spirit-traduction">
+            <span class="spirit-guillemet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7H6.5A2.5 2.5 0 0 0 4 9.5V13h4.5v4L10 13V7zM20 7h-3.5A2.5 2.5 0 0 0 14 9.5V13h4.5v4L20 13V7z"/></svg></span>
+            <p class="spirit-french" id="hadithFrench">Chargement…</p>
+          </div>
+          <p class="spirit-ref"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/></svg><span id="hadithRef"></span></p>
         </div>
       </div>
     </div>
@@ -2566,6 +2627,8 @@
     // Heures de prière
     if (data.prayer_eyebrow) document.getElementById('cms-prayer-eyebrow').textContent = data.prayer_eyebrow;
     if (data.prayer_title) document.getElementById('cms-prayer-title').textContent = data.prayer_title;
+    if (data.prayer_subtitle) document.getElementById('cms-prayer-subtitle').textContent = data.prayer_subtitle;
+    if (data.prayer_city) document.getElementById('cms-prayer-city').textContent = data.prayer_city;
     renderPrayerTimes(data);
 
     // Chiffres d'impact
@@ -2580,25 +2643,64 @@
   }).catch(() => { initHeroSlideshow(); revealPage(); initScrollReveal(); });
 
   // ===== Heures de prière (gérées via le CMS) =====
+  // Icone deduite du nom de la priere (wolof ou arabe). La prochaine priere,
+  // a l'heure de Dakar, est mise en avant et recalculee chaque minute.
+  const ICONES_PRIERES = {"aube": "<path d=\"M3 18h18M6 14.5a6 6 0 0 1 12 0\"/><path d=\"M12 5v2.5M4.9 8.4l1.6 1.6M19.1 8.4l-1.6 1.6\"/>", "lever": "<path d=\"M3 18h18M7.5 18a4.5 4.5 0 0 1 9 0\"/><path d=\"M12 7v4M9.5 9.5 12 7l2.5 2.5\"/>", "soleil": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4\"/>", "apresmidi": "<path d=\"M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0\"/><path d=\"M12 6.5v2M5.5 9.5l1.4 1.4M18.5 9.5l-1.4 1.4\"/>", "coucher": "<path d=\"M3 18h18M7.5 18a4.5 4.5 0 0 1 9 0\"/><path d=\"M12 11V7M9.5 8.5 12 11l2.5-2.5\"/>", "lune": "<path d=\"M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z\"/>", "horloge": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>"};
+  function iconePriere(label){
+    const t = String(label || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (/fadj|fajr|subh/.test(t)) return 'aube';
+    if (/souba|sobh|chourouk|shuruq/.test(t)) return 'lever';
+    if (/tisbar|dhuhr|dohr|zuhr/.test(t)) return 'soleil';
+    if (/takussan|asr/.test(t)) return 'apresmidi';
+    if (/timis|maghrib/.test(t)) return 'coucher';
+    if (/guewe|isha|icha/.test(t)) return 'lune';
+    return 'horloge';
+  }
+  function minutesDakar(){
+    const p = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Africa/Dakar', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+    const v = type => Number((p.find(x => x.type === type) || {}).value || 0);
+    return v('hour') * 60 + v('minute');
+  }
+  let minuteurPrieres = null;
+  function marquerProchainePriere(){
+    const rows = [...document.querySelectorAll('#cms-prayer-list .prayer-row')];
+    if (rows.length === 0) return;
+    const maintenant = minutesDakar();
+    const avenir = rows.filter(r => Number(r.dataset.min) > maintenant);
+    const prochaine = avenir.length ? avenir[0] : rows.reduce((a, b) => Number(a.dataset.min) <= Number(b.dataset.min) ? a : b);
+    rows.forEach(r => r.classList.toggle('est-prochaine', r === prochaine && prochaine.dataset.min !== ''));
+  }
   function renderPrayerTimes(data){
     const periodEl = document.getElementById('cms-prayer-period');
     const listEl = document.getElementById('cms-prayer-list');
     if (!periodEl || !listEl) return;
 
-    const period = [data.prayer_period_hijri, data.prayer_period_gregorian].filter(Boolean).join(' · ');
-    periodEl.textContent = period;
+    // Une ligne par calendrier : hijri, puis gregorien.
+    periodEl.replaceChildren(...[data.prayer_period_hijri, data.prayer_period_gregorian].filter(Boolean).map(t => {
+      const ligne = document.createElement('span');
+      ligne.style.display = 'block';
+      ligne.textContent = t;
+      return ligne;
+    }));
 
     const times = Array.isArray(data.prayer_times) ? data.prayer_times.filter(t => t && t.label && t.time) : [];
     if (times.length === 0) {
       listEl.innerHTML = '<p class="prayer-empty">Horaires à venir.</p>';
       return;
     }
-    listEl.innerHTML = times.map(t => `
-      <div class="prayer-row">
-        <span class="prayer-row-label">${esc(t.label)}</span>
+    listEl.innerHTML = times.map(t => {
+      const m = String(t.time).match(/(\d{1,2})\s*[hH:.]\s*(\d{2})/);
+      const min = m ? Number(m[1]) * 60 + Number(m[2]) : '';
+      return `
+      <div class="prayer-row" data-min="${min}">
+        <span class="prayer-row-icone" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONES_PRIERES[iconePriere(t.label)]}</svg></span>
+        <span class="prayer-row-label">${esc(t.label)} <span class="prayer-row-prochaine">Prochaine</span></span>
         <span class="prayer-row-time">${esc(t.time)}</span>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
+    marquerProchainePriere();
+    clearInterval(minuteurPrieres);
+    minuteurPrieres = setInterval(marquerProchainePriere, 60000);
   }
 
   // ===== Chiffres d'impact (comptage animé à l'entrée dans l'écran) =====

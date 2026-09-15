@@ -1,6 +1,8 @@
 {
   "prayer_eyebrow": "Vie spirituelle",
   "prayer_title": "Heures de prière",
+  "prayer_subtitle": "Consultez chaque semaine les horaires de prière et nourrissez votre esprit avec le Coran et la Sunna.",
+  "prayer_city": "Dakar",
   "prayer_period_hijri": "du 21 au 27 Rabi' Al-Awwal 1448H",
   "prayer_period_gregorian": "du Vendredi 04 au Jeudi 10 Septembre 2026",
   "prayer_times": [
