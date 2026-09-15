@@ -293,7 +293,11 @@ collections:
               - label: "Photos"
                 name: "photos"
                 widget: "list"
-                field: { label: "Photo", name: "image", widget: "image" }
+                summary: "{{fields.legende}}"
+                hint: "Les 7 premières forment la mosaïque (la 1re en grand) ; les suivantes s'affichent avec « Voir les N photos »."
+                fields:
+                  - { label: "Photo", name: "image", widget: "image" }
+                  - { label: "Légende", name: "legende", widget: "string", required: false, hint: "Facultatif. Ex : Consultation au daara de Ndiassane, Gamou 2026. Laissez vide pour ne rien afficher." }
 
       - name: "prieres"
         label: "10. Heures de prière"

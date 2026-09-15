@@ -858,23 +858,68 @@
   .gallery-caption{font-size:0.8rem; color:var(--text-muted); margin-top:6px; text-align:center;}
 
   /* ===== Médiathèque ===== */
-  .media-years{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;}
+  .media-years{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px;}
   .media-year-btn{
-    font-family:var(--mono); font-size:0.85rem; font-weight:500; letter-spacing:0.04em;
-    padding:10px 22px; border-radius:999px; border:1.5px solid var(--line); background:var(--surface);
-    color:var(--ink); cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+    display:inline-flex; align-items:baseline; gap:6px;
+    font-family:var(--mono); font-size:0.9rem; font-weight:600; padding:9px 18px; border-radius:999px;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--text-heading); cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, color .15s ease;
   }
   .media-year-btn:hover{border-color:var(--green);}
+  .media-year-btn:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
   .media-year-btn.is-active{background:var(--green); border-color:var(--green); color:var(--white);}
+  .media-year-count{font-size:0.7rem; font-weight:500; opacity:0.65;}
 
-  .media-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
-  .media-item{border:none; padding:0; border-radius:10px; overflow:hidden; aspect-ratio:4/3; cursor:pointer; display:block;}
+  /* Barre au-dessus de la mosaique : annee choisie et nombre de photos. */
+  .media-bar{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid var(--line);}
+  .media-bar-annee{font-family:var(--display); font-weight:600; font-size:1.15rem; color:var(--text-heading);}
+  .media-bar-nombre{font-family:var(--mono); font-size:0.78rem; color:var(--text-muted);}
+
+  /* Mosaique (maquette 1A) : grille de 12 colonnes. La 1re photo occupe
+     6 colonnes sur 2 rangees, les 4 suivantes 3 colonnes, les 2 d'apres
+     6 colonnes ; au-dela (photos depliees), 3 colonnes chacune. */
+  .media-grid{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); grid-auto-rows:190px; gap:14px;}
+  .media-item{
+    position:relative; grid-column:span 3; border:none; padding:0; margin:0; border-radius:var(--radius);
+    overflow:hidden; cursor:pointer; display:block; background:var(--paper-alt); text-align:left;
+  }
+  .media-item.m-grande{grid-column:span 6; grid-row:span 2;}
+  .media-item.m-large{grid-column:span 6;}
+  .media-item.m-cachee{display:none;}
+  .media-grid.est-deplie .media-item.m-cachee{display:block;}
   .media-item img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease;}
-  .media-item:hover img{transform:scale(1.06);}
-  @media (max-width:880px){ .media-grid{grid-template-columns:repeat(2,1fr);} }
-  @media (max-width:560px){ .media-grid{grid-template-columns:1fr;} }
+  .media-item:hover img{transform:scale(1.05);}
+  .media-item:focus-visible{outline:3px solid var(--gold); outline-offset:3px;}
+  /* Legende : seulement si elle est remplie dans le CMS. */
+  .media-legende{
+    position:absolute; left:0; right:0; bottom:0; padding:28px 14px 11px; pointer-events:none;
+    background:linear-gradient(180deg, transparent, rgba(6,30,15,0.82) 70%);
+    color:#fff; font-size:0.84rem; font-weight:500; line-height:1.35;
+  }
+  .media-item.m-grande .media-legende{font-size:0.95rem; padding:40px 18px 14px;}
+  .media-actions{display:flex; justify-content:flex-start; margin-top:22px;}
+  @media (max-width:880px){
+    .media-grid{grid-template-columns:repeat(6,minmax(0,1fr)); grid-auto-rows:170px; gap:12px;}
+    .media-item.m-large{grid-column:span 3;}
+  }
+  @media (max-width:560px){
+    /* Treize annees sur plusieurs lignes prenaient 235 px avant la premiere
+       photo : une seule ligne qui defile au doigt. */
+    .media-years{flex-wrap:nowrap; overflow-x:auto; gap:8px; margin-inline:-28px; padding:2px 28px 6px;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+    .media-years::-webkit-scrollbar{display:none;}
+    .media-year-btn{flex:none; padding:8px 14px;}
+    .media-grid{grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:140px; gap:10px;}
+    .media-item, .media-item.m-large{grid-column:span 1;}
+    .media-item.m-grande{grid-column:span 2; grid-row:span 2;}
+    .media-legende{font-size:0.76rem; padding:22px 10px 8px;}
+  }
 
   /* ===== Visionneuse médiathèque (lightbox) ===== */
+  .lightbox-caption{position:absolute; left:50%; bottom:58px; transform:translateX(-50%); width:min(70ch, calc(100% - 40px));
+    margin:0; text-align:center; color:#fff; font-size:0.95rem; line-height:1.45; text-shadow:0 1px 3px rgba(0,0,0,0.6);}
+  .lightbox-caption:empty{display:none;}
   .lightbox{
     position:fixed; inset:0; z-index:4000;
     background:rgba(6,20,12,0.92);
@@ -1557,7 +1602,9 @@
         <p id="cms-media-subtitle">Un aperçu de nos actions de terrain, année après année.</p>
       </div>
       <div class="media-years reveal" id="cms-media-tabs"></div>
+      <div class="media-bar reveal" id="cms-media-bar" aria-live="polite"></div>
       <div class="media-grid reveal" id="cms-media-grid"></div>
+      <div class="media-actions" id="cms-media-actions"></div>
     </div>
   </section>
 
@@ -1566,6 +1613,7 @@
     <button class="lightbox-nav lightbox-prev" type="button" aria-label="Photo précédente">‹</button>
     <img id="mediaLightboxImg" src="" alt="">
     <button class="lightbox-nav lightbox-next" type="button" aria-label="Photo suivante">›</button>
+    <p class="lightbox-caption" id="mediaLightboxCaption"></p>
     <span class="lightbox-counter" id="mediaLightboxCounter"></span>
   </div>
 
@@ -2343,8 +2391,14 @@
   let lightboxIndex = 0;
   let lightboxTrigger = null;
 
+  // Une photo est { src, legende } ; une chaine seule reste acceptee.
   function renderLightbox(){
-    mediaLightboxImg.src = lightboxPhotos[lightboxIndex];
+    const p = lightboxPhotos[lightboxIndex];
+    const photo = typeof p === 'string' ? { src: p, legende: '' } : p;
+    mediaLightboxImg.src = photo.src;
+    mediaLightboxImg.alt = photo.legende || '';
+    const legende = document.getElementById('mediaLightboxCaption');
+    if (legende) legende.textContent = photo.legende || '';
     mediaLightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
   }
   function openLightbox(photos, index, triggerEl){
@@ -2383,35 +2437,76 @@
   // les photos sont simplement placées dans l'ordre dans une grille CSS
   // classique, sans décalage entre colonnes. Un clic ouvre la photo en
   // entier dans la visionneuse plein écran.
+  // Mosaique : 7 photos visibles (1 grande, 4 petites, 2 larges), le reste
+  // derriere « Voir les N photos ». Legende facultative par photo.
+  const MEDIA_VISIBLES = 7;
+  function photoMedia(p){
+    if (typeof p === 'string') return { src: p, legende: '' };
+    return { src: (p && p.image) || '', legende: String((p && p.legende) || '').trim() };
+  }
   function renderMediaYears(mediaYears){
     const section = document.getElementById('mediatheque');
     const tabsEl = document.getElementById('cms-media-tabs');
     const gridEl = document.getElementById('cms-media-grid');
+    const barEl = document.getElementById('cms-media-bar');
+    const actionsEl = document.getElementById('cms-media-actions');
     if (!section || !tabsEl || !gridEl) return;
-    if (!Array.isArray(mediaYears) || mediaYears.length === 0) { section.style.display = 'none'; return; }
+    const annees = Array.isArray(mediaYears)
+      ? mediaYears.map(y => ({ year: y.year, photos: (Array.isArray(y.photos) ? y.photos : []).map(photoMedia).filter(p => p.src) }))
+          .filter(y => y.photos.length)
+      : [];
+    if (annees.length === 0) { section.style.display = 'none'; return; }
 
-    let currentPhotos = [];
-
-    function renderGrid(photos){
-      currentPhotos = Array.isArray(photos) ? photos : [];
-      gridEl.innerHTML = currentPhotos.map((src, i) => `
-        <button type="button" class="media-item" data-index="${i}"><img src="${esc(src)}" alt="" loading="lazy"></button>
-      `).join('');
-      gridEl.querySelectorAll('.media-item').forEach(btn => {
-        btn.addEventListener('click', () => openLightbox(currentPhotos, Number(btn.dataset.index), btn));
-      });
+    function classeMosaique(i){
+      if (i === 0) return ' m-grande';
+      if (i === 5 || i === 6) return ' m-large';
+      return '';
     }
-    tabsEl.innerHTML = mediaYears.map((y, i) => `
-      <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}">${esc(y.year)}</button>
+    function renderGrid(annee){
+      const photos = annee.photos;
+      gridEl.classList.remove('est-deplie');
+      gridEl.innerHTML = photos.map((p, i) => {
+        const alt = p.legende || `Photo ${i + 1} de ${annee.year}`;
+        return `
+        <button type="button" class="media-item${classeMosaique(i)}${i >= MEDIA_VISIBLES ? ' m-cachee' : ''}" data-index="${i}" aria-label="Agrandir : ${esc(alt)}">
+          <img src="${esc(p.src)}" alt="${esc(p.legende)}" loading="lazy">
+          ${p.legende ? `<span class="media-legende">${esc(p.legende)}</span>` : ''}
+        </button>`;
+      }).join('');
+      gridEl.querySelectorAll('.media-item').forEach(btn => {
+        btn.addEventListener('click', () => openLightbox(photos, Number(btn.dataset.index), btn));
+      });
+      if (barEl) {
+        barEl.innerHTML = `<span class="media-bar-annee">${esc(annee.year)}</span>`
+          + `<span class="media-bar-nombre">${photos.length} photo${photos.length > 1 ? 's' : ''}</span>`;
+      }
+      if (actionsEl) {
+        if (photos.length > MEDIA_VISIBLES) {
+          actionsEl.innerHTML = `<button type="button" class="btn btn-outline" aria-expanded="false">Voir les ${photos.length} photos</button>`;
+          const bouton = actionsEl.querySelector('button');
+          bouton.addEventListener('click', () => {
+            const deplie = gridEl.classList.toggle('est-deplie');
+            bouton.setAttribute('aria-expanded', String(deplie));
+            bouton.textContent = deplie ? 'Réduire' : `Voir les ${photos.length} photos`;
+            if (!deplie) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        } else {
+          actionsEl.innerHTML = '';
+        }
+      }
+    }
+    tabsEl.innerHTML = annees.map((y, i) => `
+      <button type="button" class="media-year-btn${i === 0 ? ' is-active' : ''}" data-index="${i}" aria-pressed="${i === 0}">${esc(y.year)}<span class="media-year-count">${y.photos.length}</span></button>
     `).join('');
     tabsEl.querySelectorAll('.media-year-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        tabsEl.querySelectorAll('.media-year-btn').forEach(b => b.classList.remove('is-active'));
+        tabsEl.querySelectorAll('.media-year-btn').forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
         btn.classList.add('is-active');
-        renderGrid(mediaYears[Number(btn.dataset.index)].photos);
+        btn.setAttribute('aria-pressed', 'true');
+        renderGrid(annees[Number(btn.dataset.index)]);
       });
     });
-    renderGrid(mediaYears[0].photos);
+    renderGrid(annees[0]);
   }
 
   // Évite d'afficher brièvement le texte par défaut avant que le contenu du CMS soit chargé
