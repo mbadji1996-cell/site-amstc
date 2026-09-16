@@ -246,6 +246,39 @@
     .pf-onglets{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;}
     .pf-onglet{flex:none;}
   }
+  /* ===== Contenu des cartes Statut et Cotisation ===== */
+  .pf-faits{list-style:none; display:flex; flex-direction:column; border-top:1px solid var(--line); margin-top:2px;}
+  .pf-fait{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    padding:9px 0; border-bottom:1px solid var(--line); font-size:0.85rem;}
+  .pf-fait:last-child{border-bottom:none;}
+  .pf-fait-label{color:var(--text-muted);}
+  .pf-fait-valeur{color:var(--text-heading); font-weight:600; text-align:right;}
+  .pf-fait-valeur.alerte{color:#B23B3B;}
+  :root[data-theme="dark"] .pf-fait-valeur.alerte{color:#F29A8E;}
+  .pf-fait-valeur.attente{color:#8A6209;}
+  :root[data-theme="dark"] .pf-fait-valeur.attente{color:#F0C955;}
+  .pf-telecharger{white-space:nowrap; font-size:0.85rem; padding:12px 16px;}
+
+  .pf-cotis-chiffre{display:flex; align-items:baseline; gap:8px;}
+  .pf-cotis-nombre{font-family:var(--display); font-size:2rem; font-weight:700; color:var(--text-heading); line-height:1;}
+  .pf-cotis-sur{font-size:0.88rem; color:var(--text-muted);}
+  .pf-cotis-piste{height:8px; border-radius:999px; background:rgba(170,123,17,0.18); overflow:hidden;}
+  :root[data-theme="dark"] .pf-cotis-piste{background:rgba(248,183,24,0.16);}
+  .pf-cotis-piste span{display:block; height:100%; width:0; border-radius:999px; background:#AA7B11;}
+  :root[data-theme="dark"] .pf-cotis-piste span{background:#F0C955;}
+  .pf-mois{display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:6px;}
+  .pf-mois span{
+    display:flex; align-items:center; justify-content:center; height:28px; border-radius:7px;
+    font-size:0.68rem; font-weight:600; color:var(--text-muted);
+    border:1px dashed rgba(170,123,17,0.45); background:rgba(255,255,255,0.6);
+  }
+  :root[data-theme="dark"] .pf-mois span{background:transparent;}
+  .pf-mois span.paye{background:#F8B718; border:1px solid #F8B718; color:#06441C;}
+  .pf-mois span.courant{border:1.5px solid #06441C; color:var(--text-heading);}
+  :root[data-theme="dark"] .pf-mois span.courant{border-color:#F0C955;}
+  .pf-mois span.paye.courant{border-color:#06441C;}
+  .pf-cotis-etat{font-size:0.85rem; color:var(--text-heading); font-weight:600;}
+  .pf-cotis-tarif{font-size:0.8rem; color:var(--text-muted);}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -316,8 +349,14 @@
         </div>
         <p class="pf-statut-ligne" id="mcStatus">…</p>
         <p class="pf-statut-num" id="mcNumeroLigne"></p>
+        <ul class="pf-faits">
+          <li class="pf-fait"><span class="pf-fait-label">Membre depuis</span><span class="pf-fait-valeur" id="pfDepuis">-</span></li>
+          <li class="pf-fait"><span class="pf-fait-label">Fin de validité</span><span class="pf-fait-valeur" id="pfFin">-</span></li>
+          <li class="pf-fait"><span class="pf-fait-label">Renouvellement</span><span class="pf-fait-valeur" id="pfRenouv">-</span></li>
+          <li class="pf-fait" id="pfAttenteLigne" style="display:none;"><span class="pf-fait-label">Paiement</span><span class="pf-fait-valeur attente">En attente de validation</span></li>
+        </ul>
         <button class="pf-telecharger" id="downloadCardBtn" onclick="downloadCardPdf()">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 10.5l4 4 4-4M4.5 19.5h15"/></svg> Télécharger ma carte (PDF)
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 10.5l4 4 4-4M4.5 19.5h15"/></svg> Télécharger en PDF
           <span class="pf-fin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></span>
         </button>
       </div>
@@ -328,6 +367,14 @@
           <p class="pf-carte-titre">Votre cotisation</p>
         </div>
         <p class="pf-carte-texte">Restez à jour pour bénéficier de tous les avantages de l'AMSTC.</p>
+        <div class="pf-cotis-chiffre">
+          <span class="pf-cotis-nombre" id="pfCotisNombre">-</span>
+          <span class="pf-cotis-sur" id="pfCotisSur">mois payés</span>
+        </div>
+        <div class="pf-cotis-piste"><span id="pfCotisJauge"></span></div>
+        <div class="pf-mois" id="pfMois" aria-label="Mois payés cette année"></div>
+        <p class="pf-cotis-etat" id="pfCotisEtat"></p>
+        <p class="pf-cotis-tarif">1 000 FCFA par mois · Wave ou Orange Money</p>
         <button type="button" class="pf-bouton pf-bouton-or" onclick="ouvrirSection('cotis')">
           Voir mes cotisations <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>
         </button>
@@ -837,7 +884,33 @@
     }
   }
 
+  // Faits de la carte Statut : tout vient du profil deja charge.
+  function remplirFaitsStatut(p) {
+    const depuis = document.getElementById('pfDepuis');
+    const fin = document.getElementById('pfFin');
+    const renouv = document.getElementById('pfRenouv');
+    if (!depuis) return;
+    depuis.textContent = p.member_since || '-';
+    const cvu = parseInt(p.card_valid_until, 10);
+    if (!cvu) {
+      fin.textContent = 'Non définie';
+      renouv.textContent = 'À faire'; renouv.className = 'pf-fait-valeur alerte';
+      return;
+    }
+    fin.textContent = '31 déc. ' + cvu;
+    const restant = cvu - currentYear;
+    if (restant < 0) {
+      renouv.textContent = 'À faire'; renouv.className = 'pf-fait-valeur alerte';
+    } else if (restant === 0) {
+      renouv.textContent = 'Avant le 31 déc.'; renouv.className = 'pf-fait-valeur attente';
+    } else {
+      renouv.textContent = 'Dans ' + restant + ' an' + (restant > 1 ? 's' : '');
+      renouv.className = 'pf-fait-valeur';
+    }
+  }
+
   function renderCardValidityStatus(p) {
+    remplirFaitsStatut(p);
     const statusEl = document.getElementById('mcStatus');
     const pill = document.getElementById('mcStatusPill');
     const cvu = p.card_valid_until;
@@ -1259,6 +1332,8 @@
 
   function renderValidityHistory(rows) {
     paiementsValidite = rows;
+    const attente = document.getElementById('pfAttenteLigne');
+    if (attente) attente.style.display = rows.some(r => r.status === 'pending') ? '' : 'none';
     const el = document.getElementById('validityHistory');
     if (rows.length === 0) {
       el.innerHTML = '<p style="font-size:0.85rem;color:#8A9E8F;font-family:var(--mono);">Aucun paiement de validité enregistré.</p>';
@@ -1316,6 +1391,38 @@
   function updateCotisSummary(paidMonths) {
     document.getElementById('cotisSummary').textContent =
       `${paidMonths.length}/12 mois payés (${currentYear})`;
+    remplirCarteCotisation(paidMonths);
+  }
+
+  // Carte Cotisation : l'annee en cours d'un coup d'oeil.
+  const MOIS_COMPLETS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function remplirCarteCotisation(paidMonths) {
+    const nombre = document.getElementById('pfCotisNombre');
+    if (!nombre) return;
+    const payes = paidMonths.length;
+    const moisCourant = new Date().getMonth() + 1;
+    nombre.textContent = payes + '/12';
+    document.getElementById('pfCotisSur').textContent = 'mois payés en ' + currentYear;
+    document.getElementById('pfCotisJauge').style.width = Math.round(payes / 12 * 100) + '%';
+    document.getElementById('pfMois').innerHTML = MONTH_NAMES.map((nom, i) => {
+      const m = i + 1;
+      const classes = [paidMonths.includes(m) ? 'paye' : '', m === moisCourant ? 'courant' : ''].join(' ').trim();
+      const etat = paidMonths.includes(m) ? 'payé' : 'non payé';
+      return `<span class="${classes}" title="${nom} : ${etat}">${nom}</span>`;
+    }).join('');
+    // Le premier mois non paye jusqu'au mois courant : c'est celui a regler.
+    let du = 0;
+    for (let m = 1; m <= moisCourant; m++) { if (!paidMonths.includes(m)) { du = m; break; } }
+    const etat = document.getElementById('pfCotisEtat');
+    if (payes === 12) etat.textContent = 'Année entièrement réglée, merci !';
+    else if (du === 0) etat.textContent = 'À jour pour ce mois-ci.';
+    else {
+      const retard = [];
+      for (let m = 1; m <= moisCourant; m++) if (!paidMonths.includes(m)) retard.push(m);
+      etat.textContent = retard.length > 1
+        ? retard.length + ' mois à régler, à partir ' + (/^[aeiou]/.test(MOIS_COMPLETS[du - 1]) ? "d'" : 'de ') + MOIS_COMPLETS[du - 1] + '.'
+        : 'Prochain mois à régler : ' + MOIS_COMPLETS[du - 1] + '.';
+    }
   }
 
   async function loadCotisations(userId) {
