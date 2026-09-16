@@ -152,6 +152,10 @@
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
   @media(max-width:500px){.result-stats{gap:16px;}.result-btns{flex-direction:column;align-items:center;}}
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .btn-primary{color:#06280F;}
+  :root[data-theme="dark"] .opt-btn.selected .opt-letter{color:#06280F;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">

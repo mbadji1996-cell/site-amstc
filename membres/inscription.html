@@ -67,7 +67,10 @@
   .rester input{width:auto; margin:0; accent-color:var(--green); cursor:pointer;}
   .alt-link{text-align:center; font-size:0.9rem; color:var(--text-muted); margin-top:8px;}
   .alt-link a{color:var(--green); font-weight:600;}
-  .or-divider{display:flex; align-items:center; gap:14px; margin:22px 0; color:#8A9E8F; font-size:0.85rem;}
+  .or-divider{display:flex; align-items:center; gap:14px; margin:22px 0; color:var(--text-muted); font-size:0.85rem;}
+  /* Or fonce en clair (5,59) : #AA7B11 ne tenait que 3,78. */
+  :root:not([data-theme="dark"]){--text-accent:#8A6209;}
+  :root:not([data-theme="dark"]) .eyebrow::before{background:#8A6209;}
   .or-divider::before,.or-divider::after{content:""; flex:1; height:1px; background:var(--line);}
   .btn-google{background:var(--surface); color:var(--ink); border:1.5px solid var(--line); margin-top:0; gap:10px;}
   .btn-google:hover{background:var(--paper-alt); color:var(--ink);}

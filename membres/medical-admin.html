@@ -130,6 +130,10 @@
   .import-html-bloc{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;background:var(--paper-alt);}
   .import-html-ligne{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
   .import-html-ligne input[type=file]{font-size:0.86rem;}
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .main-tab.active{color:#06280F;}
+  :root[data-theme="dark"] .btn-primary{color:#06280F;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">

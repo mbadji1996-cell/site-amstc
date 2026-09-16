@@ -167,6 +167,11 @@
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
   @media(max-width:480px){.products-grid{grid-template-columns:1fr 1fr;}.header-inner{padding:14px 16px;}.signout-btn{padding:7px 12px;}.cart-btn{padding:8px 12px;}}
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .btn-add{color:#3A2A04;}
+  :root[data-theme="dark"] .btn-checkout{color:#3A2A04;}
+  :root[data-theme="dark"] .btn-confirm{color:#3A2A04;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>

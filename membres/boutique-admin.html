@@ -90,7 +90,7 @@
   .s-pending{background:#FEF6E4;color:var(--gold-deep);}
   .s-paid{background:#EAF3DE;color:#3B6D11;}
   .s-processing{background:var(--amber-light);color:var(--amber-dark);}
-  .s-shipped{background:#E6F1FB;color:#185FA5;}
+  .s-shipped{background:#E3F1E7;color:#12622F;}
   .s-cancelled{background:#FDEEEE;color:#B23B3B;}
   .order-items{font-size:0.78rem;color:var(--text-muted);}
   .order-total{font-family:var(--mono);font-weight:600;color:var(--amber-dark);}
@@ -162,6 +162,11 @@
     .stack-mobile .empty-row td{display:block;text-align:center;}
     .stack-mobile .empty-row td::before{display:none;}
   }
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .main-tab.active{color:#3A2A04;}
+  :root[data-theme="dark"] .btn-primary{color:#3A2A04;}
+  :root[data-theme="dark"] .filter-btn.active{color:#3A2A04;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">

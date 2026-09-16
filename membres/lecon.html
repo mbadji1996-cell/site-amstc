@@ -108,6 +108,9 @@
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
 
   @media(max-width:600px){.lesson-content{padding:22px 18px;}}
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .btn-primary{color:#06280F;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">

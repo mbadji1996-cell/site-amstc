@@ -52,8 +52,10 @@
   .hero-chips{display:flex;gap:8px;flex-wrap:wrap;}
   .hchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:7px 14px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.7rem;color:rgba(255,255,255,0.7);}
   .hchip strong{color:var(--white);}
-  .hchip.done{border-color:rgba(29,158,117,0.4);color:#7EDED3;}
-  .hchip.done strong{color:#5DCAA5;}
+  .hchip.done{border-color:rgba(23,118,59,0.35);color:#12622F;}
+  :root[data-theme="dark"] .hchip.done{color:#7FD9A0;}
+  .hchip.done strong{color:#06441C;}
+  :root[data-theme="dark"] .hchip.done strong{color:#A8E6BE;}
 
   /* Hero tab bar */
   .cat-tabs{display:flex;gap:0;border-top:1px solid rgba(255,255,255,0.08);margin-top:0;}

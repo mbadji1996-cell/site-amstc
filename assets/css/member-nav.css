@@ -250,7 +250,7 @@ html .hero h1, html .hero-name{color:var(--text-heading, #06441C);}
 html .hero-sub{color:var(--text-muted, #5A6C60);}
 html .hero .back, html .hero-inner .back{color:#17763B;}
 html .hero .back:hover, html .hero-inner .back:hover{color:var(--text-heading, #06441C);}
-:root[data-theme="dark"] html .hero .back{color:#7FD9A0;}
+:root[data-theme="dark"] .hero .back, :root[data-theme="dark"] .hero-inner .back{color:#7FD9A0;}
 /* Chiffres du centre d'administration et jetons du Daara. */
 html .hstat{background:var(--surface, #FFFFFF); border-color:var(--line, rgba(6,68,28,0.16)); backdrop-filter:none;}
 html .hstat-val{color:var(--text-heading, #06441C);}
@@ -525,3 +525,33 @@ html .course-card:hover{
 html .module-card-accent{display:none;}
 /* Sous-titres trop pales (#8A9E8F : 2,9 sur blanc). */
 html .admin-card-sub, html .topic-meta{color:var(--text-muted, #5A6C60);}
+
+
+/* ===== Couleurs des rubriques : vert et jaune de la charte =====
+   Quatorze pages avaient leur gamme (bleu medical, turquoise Daara, violet
+   forum, indigo annuaire, ambre boutique, rose mediatheque). Les variables
+   sont redefinies ici ; html:root l'emporte sur le :root des pages. */
+html:root{
+  --blue-light:#E3F1E7; --blue:#17763B; --blue-dark:#12622F; --blue-deeper:#06441C;
+  --teal-light:#E3F1E7; --teal:#17763B; --teal-dark:#12622F; --teal-deeper:#06441C;
+  --violet-light:#E3F1E7; --violet:#17763B; --violet-dark:#12622F; --violet-deeper:#06441C;
+  --indigo-light:#E3F1E7; --indigo:#17763B; --indigo-dark:#12622F; --indigo-deeper:#06441C;
+  --amber-light:#FEF1D1; --amber:#D9A21B; --amber-dark:#8A6209; --amber-deeper:#5C4206;
+  --rose-light:#FEF1D1; --rose:#D9A21B; --rose-dark:#8A6209; --rose-deeper:#5C4206;
+}
+/* En sombre, les fonds pastel devenaient des aplats clairs sur fond noir. */
+html:root[data-theme="dark"]{
+  /* En sombre, -dark et -deeper (surtout du texte) passent en tons clairs ;
+     les boutons qui les prennent en fond recoivent un texte fonce, page par page. */
+  --blue-light:rgba(127,217,160,0.14); --blue:#17763B; --blue-dark:#7FD9A0; --blue-deeper:#A8E6BE;
+  --teal-light:rgba(127,217,160,0.14); --teal:#17763B; --teal-dark:#7FD9A0; --teal-deeper:#A8E6BE;
+  --violet-light:rgba(127,217,160,0.14); --violet:#17763B; --violet-dark:#7FD9A0; --violet-deeper:#A8E6BE;
+  --indigo-light:rgba(127,217,160,0.14); --indigo:#17763B; --indigo-dark:#7FD9A0; --indigo-deeper:#A8E6BE;
+  --amber-light:rgba(248,183,24,0.16); --amber:#D9A21B; --amber-dark:#F0C955; --amber-deeper:#F7D88A;
+  --rose-light:rgba(248,183,24,0.16); --rose:#D9A21B; --rose-dark:#F0C955; --rose-deeper:#F7D88A;
+}
+
+/* Intitules or (--text-accent) : #AA7B11 ne tient que 3,78 sur blanc et
+   moins encore sur les fonds sable. En clair, l'espace membre prend l'or
+   fonce (5,59) ; le theme sombre garde sa valeur. */
+html:root:not([data-theme="dark"]){--text-accent:#8A6209;}

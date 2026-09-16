@@ -89,6 +89,9 @@
   .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#8A9E8F;pointer-events:none;}
   .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
   .search-clear.show{display:block;}
+  /* Boutons sur couleur de rubrique, theme sombre : le fond passe en ton
+     clair (member-nav.css), le texte blanc n'y tiendrait pas. */
+  :root[data-theme="dark"] .btn-primary{color:#06280F;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
