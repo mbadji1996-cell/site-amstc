@@ -389,6 +389,25 @@ collections:
                   - { label: "Membre", value: "membre" }
               - { label: "Photo", name: "photo", widget: "image", required: false }
 
+      - name: "connexion"
+        label: "Page de connexion (espace membres)"
+        file: "content/connexion.json"
+        fields:
+          - { label: "Titre", name: "titre", widget: "string", default: "Connexion" }
+          - { label: "Texte sous le titre", name: "intro", widget: "string", required: false }
+          - { label: "Accroche sur la photo", name: "photo_accroche", widget: "string", required: false }
+          - { label: "Texte sous l'accroche", name: "photo_texte", widget: "text", required: false }
+          - label: "Photos du panneau (diaporama)"
+            name: "photos"
+            widget: "list"
+            required: false
+            summary: "{{fields.image}}"
+            media_folder: "/assets"
+            public_folder: "/assets"
+            hint: "Photos affichées à droite du formulaire, en fondu enchaîné (6 s chacune). Format portrait de préférence, 1200 px de large au minimum. Liste vide : les photos par défaut sont conservées."
+            fields:
+              - { label: "Photo", name: "image", widget: "image" }
+
       - name: "don"
         label: "Faire un don (page dédiée don.html)"
         file: "content/don.json"

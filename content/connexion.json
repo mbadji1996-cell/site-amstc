@@ -1,0 +1,26 @@
+{
+  "titre": "Connexion",
+  "intro": "Accédez à votre espace membre.",
+  "photo_accroche": "Servir l'humain, élever les âmes",
+  "photo_texte": "Formations, actualités et vie de l'association, réunies dans votre espace membre.",
+  "photos": [
+    {
+      "image": "/assets/hero-soins-02.jpg"
+    },
+    {
+      "image": "/assets/hero-photo-7.jpg"
+    },
+    {
+      "image": "/assets/hero-soins-04.jpg"
+    },
+    {
+      "image": "/assets/hero-photo-6.jpg"
+    },
+    {
+      "image": "/assets/hero-soins-01.jpg"
+    },
+    {
+      "image": "/assets/hero-photo-2.jpg"
+    }
+  ]
+}
