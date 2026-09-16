@@ -46,7 +46,8 @@
   .ma-titre{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;color:var(--text-heading);line-height:1.2;}
   .ma-intro{color:var(--text-muted);font-size:0.95rem;margin-top:6px;}
   .ma-chiffres{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));}
-  @media(min-width:760px){ .ma-chiffres{grid-template-columns:repeat(5,minmax(0,1fr));} }
+  @media(min-width:760px){ .ma-chiffres{grid-template-columns:repeat(3,minmax(0,1fr));} }
+  @media(min-width:1180px){ .ma-chiffres{grid-template-columns:repeat(6,minmax(0,1fr));} }
   .ma-chiffre{
     display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;min-width:0;
     background:var(--surface);border:1px solid var(--line);cursor:pointer;text-align:left;
@@ -153,6 +154,9 @@
   .ma-page.actif{background:#06441C;border-color:#06441C;color:#FFFFFF;}
   :root[data-theme="dark"] .ma-page.actif{background:#17763B;border-color:#17763B;}
   .ma-page:disabled{opacity:0.45;cursor:default;}
+  .ma-outils{font-size:0.84rem;color:var(--text-muted);margin:-6px 2px 14px;line-height:1.6;}
+  .ma-outils a{color:var(--green);font-weight:600;}
+  :root[data-theme="dark"] .ma-outils a{color:#7FD9A0;}
   .ma-vide{padding:40px 10px;text-align:center;color:var(--text-muted);font-size:0.9rem;}
 
   /* Telephone et tablette : chaque ligne devient une carte. */
@@ -264,9 +268,13 @@
           <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.6a3.2 3.2 0 0 1 0 5.8M18 15.5a6 6 0 0 1 3.2 4"/></svg></span>
           <span><span class="ma-chiffre-label">Total</span><span class="ma-chiffre-val" id="chTotal">-</span></span>
         </button>
-        <button type="button" class="ma-chiffre" data-filtre="actif">
-          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg></span>
+        <button type="button" class="ma-chiffre" data-filtre="comptes-actifs" title="Comptes validés et non désactivés, comme dans le Centre d'administration">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span>
           <span><span class="ma-chiffre-label">Membres actifs</span><span class="ma-chiffre-val" id="chActifs">-</span></span>
+        </button>
+        <button type="button" class="ma-chiffre" data-filtre="actif" title="Membres actifs dont la carte est valable cette année">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg></span>
+          <span><span class="ma-chiffre-label">Cartes à jour</span><span class="ma-chiffre-val" id="chAJour">-</span></span>
         </button>
         <button type="button" class="ma-chiffre" data-filtre="en-attente">
           <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
@@ -292,7 +300,8 @@
         <label for="filtreStatut">Statut</label>
         <select id="filtreStatut">
           <option value="">Tous</option>
-          <option value="actif">Actif</option>
+          <option value="comptes-actifs">Membres actifs (comptes validés)</option>
+          <option value="actif">Carte à jour</option>
           <option value="en-attente">En attente (inscriptions et réclamations)</option>
           <option value="inscription">Inscription à valider</option>
           <option value="reclamation">Réclamation à confirmer</option>
@@ -315,6 +324,11 @@
         Ajouter une carte
       </a>
     </div>
+
+    <p class="ma-outils">Outils avancés :
+      <a href="cartes-admin?outil=1">import Excel, restriction d'accès et réclamations des cartes</a> ·
+      <a href="validation?outil=1">rôles d'administration, comptes refusés et demandes d'année d'adhésion</a>
+    </p>
 
     <section class="ma-liste">
       <div class="ma-liste-tete">
@@ -391,7 +405,7 @@
   const DOMAINES = { medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux' };
   const STATUTS = {
-    'actif':       { label: 'Actif', cls: 'ok' },
+    'actif':       { label: 'Carte à jour', cls: 'ok' },
     'inscription': { label: 'Inscription à valider', cls: 'attente' },
     'reclamation': { label: 'Réclamation à confirmer', cls: 'attente' },
     'expiree':     { label: 'Carte expirée', cls: 'alerte' },
@@ -528,6 +542,22 @@
     selAnnee.value = garderA; selRegion.value = garderR;
   }
 
+  // Chaque option du filtre Statut porte son effectif : « pourquoi si peu
+  // de cartes a jour ? » se lit directement dans la liste.
+  function majEffectifsStatut() {
+    const sel = document.getElementById('filtreStatut');
+    const compte = {
+      '': lignes.length,
+      'comptes-actifs': lignes.filter(estCompteActif).length,
+      'en-attente': lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length,
+    };
+    Object.keys(STATUTS).forEach(k => { compte[k] = lignes.filter(l => l.statut === k).length; });
+    [...sel.options].forEach(o => {
+      if (!o.dataset.libelle) o.dataset.libelle = o.textContent;
+      if (o.value in compte) o.textContent = o.dataset.libelle + ' (' + compte[o.value] + ')';
+    });
+  }
+
   function lignesFiltrees() {
     const statut = document.getElementById('filtreStatut').value;
     const annee = document.getElementById('filtreAnnee').value;
@@ -535,7 +565,8 @@
     const q = sansAccent(document.getElementById('recherche').value.trim());
     return lignes.filter(l => {
       if (statut === 'en-attente' && l.statut !== 'inscription' && l.statut !== 'reclamation') return false;
-      if (statut && statut !== 'en-attente' && l.statut !== statut) return false;
+      if (statut === 'comptes-actifs' && !estCompteActif(l)) return false;
+      if (statut && statut !== 'en-attente' && statut !== 'comptes-actifs' && l.statut !== statut) return false;
       if (annee === 'aucune' ? !!l.annee : (annee && String(l.annee) !== annee)) return false;
       if (region === 'aucune' ? !!l.region : (region && l.region !== region)) return false;
       if (!q) return true;
@@ -543,9 +574,17 @@
     });
   }
 
+  // Meme definition que le Centre d'administration : compte valide, et pas
+  // desactive. La validite de la carte est un autre sujet (Cartes a jour).
+  function estCompteActif(l) {
+    return l.type === 'compte' && l.p.status === 'approved' && l.p.is_active !== false;
+  }
+
   function majChiffres() {
     document.getElementById('chTotal').textContent = lignes.length;
-    document.getElementById('chActifs').textContent = lignes.filter(l => l.statut === 'actif').length;
+    document.getElementById('chActifs').textContent = lignes.filter(estCompteActif).length;
+    document.getElementById('chAJour').textContent = lignes.filter(l => l.statut === 'actif').length;
+    majEffectifsStatut();
     document.getElementById('chAttente').textContent = lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length;
     document.getElementById('chNonReclame').textContent = lignes.filter(l => l.statut === 'non-reclame').length;
     const courant = document.getElementById('filtreStatut').value;

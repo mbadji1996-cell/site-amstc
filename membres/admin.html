@@ -170,14 +170,16 @@
 
     <p class="section-label"><i class="ti ti-layout-grid"></i> Panneaux de gestion</p>
     <div class="admin-grid">
-      <!-- Nouvelle page qui reunit comptes et cartes. « Membres » et « Cartes
-           de Membres » restent disponibles le temps de la valider. -->
+      <!-- Comptes et cartes reunis. « Membres » (validation) et « Cartes de
+           Membres » (cartes-admin) y redirigent ; leurs outils avances restent
+           joignables depuis la page. -->
       <a class="admin-card" href="membres-admin">
         <div class="admin-card-icon"><i class="ti ti-users-group"></i></div>
         <div>
           <p class="admin-card-label">Membres et cartes</p>
-          <p class="admin-card-sub">Comptes, cartes et cotisations réunis - nouveau</p>
+          <p class="admin-card-sub">Comptes, cartes, réclamations et cotisations</p>
         </div>
+        <span class="admin-card-badge" id="badgeMembresCartes" style="display:none;"></span>
       </a>
       <a class="admin-card" href="adhesion-admin">
         <div class="admin-card-icon"><i class="ti ti-credit-card"></i></div>
@@ -186,22 +188,6 @@
           <p class="admin-card-sub">Frais d'adhésion & cotisations mensuelles</p>
         </div>
         <span class="admin-card-badge" id="badgePayments" style="display:none;"></span>
-      </a>
-      <a class="admin-card" href="cartes-admin">
-        <div class="admin-card-icon"><i class="ti ti-id-badge-2"></i></div>
-        <div>
-          <p class="admin-card-label">Cartes de Membres</p>
-          <p class="admin-card-sub">Import & réclamations</p>
-        </div>
-        <span class="admin-card-badge" id="badgeCartes" style="display:none;"></span>
-      </a>
-      <a class="admin-card" href="validation">
-        <div class="admin-card-icon"><i class="ti ti-users"></i></div>
-        <div>
-          <p class="admin-card-label">Membres</p>
-          <p class="admin-card-sub">Gestion des comptes</p>
-        </div>
-        <span class="admin-card-badge" id="badgeMembers" style="display:none;"></span>
       </a>
       <a class="admin-card" href="medical-admin">
         <div class="admin-card-icon"><i class="ti ti-stethoscope"></i></div>
@@ -395,6 +381,9 @@
   })();
 
   async function loadStats() {
+    // Inscriptions + reclamations de carte en attente : une seule pastille
+    // sur « Membres et cartes », qui traite les deux.
+    let attenteMembresCartes = 0;
     const year = new Date().getFullYear();
 
     // Comptes en attente
@@ -402,7 +391,8 @@
       const { count } = await supabaseClient
         .from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pending');
       setStat('statPendingMembers', count ?? 0, true);
-      setBadge('badgeMembers', count ?? 0);
+      attenteMembresCartes += count ?? 0;
+      setBadge('badgeMembresCartes', attenteMembresCartes);
     } catch(e) { document.getElementById('statPendingMembers').textContent = '-'; }
 
     // Membres actifs
@@ -435,7 +425,8 @@
     try {
       const { count } = await supabaseClient
         .from('member_cards').select('id', { count: 'exact', head: true }).eq('claim_status', 'pending');
-      setBadge('badgeCartes', count ?? 0);
+      attenteMembresCartes += count ?? 0;
+      setBadge('badgeMembresCartes', attenteMembresCartes);
     } catch(e) {}
 
     // Participations aux collectes en attente (phase55 ; table absente tant
