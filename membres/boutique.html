@@ -230,8 +230,8 @@
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
-    <div class="search-wrap">
-      <input class="search-input" id="searchInput" type="text" placeholder="Rechercher un article…" oninput="onSearch()">
+    <div class="search-wrap" data-recherche-cacher>
+      <input class="search-input" id="searchInput" data-recherche-page type="text" placeholder="Rechercher un article…" oninput="onSearch()">
       <i class="ti ti-search search-icon" id="searchIcon"></i>
       <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="ti ti-x"></i></button>
     </div>

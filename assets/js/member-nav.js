@@ -275,7 +275,10 @@
 // <header> existe deja sur les 43 pages : on le remplit, rien a changer
 // dans leur HTML.
 (function () {
-  var entete = document.querySelector('header .header-inner');
+  // Deux structures d'entete coexistent : .header-inner (la plupart des
+  // pages) et .header-wrap (onze pages). Sans la seconde, ces pages
+  // n'avaient jamais recu la barre commune.
+  var entete = document.querySelector('header .header-inner, header .header-wrap');
   var onglets = document.querySelector('.member-tabs .member-tabs-inner');
   if (!entete || !onglets) return;
 
@@ -354,6 +357,34 @@
     items[vise].classList.add('vise');
     items[vise].scrollIntoView({ block: 'nearest' });
   }
+  // ---- Page qui a sa propre recherche : la barre du haut la remplace ----
+  // Un seul champ par page. Le champ de la page reste dans le document (son
+  // filtre le lit) mais disparait ; la saisie du haut y est recopiee.
+  var champsPage = document.querySelectorAll('[data-recherche-page]');
+  var champPage = champsPage.length === 1 ? champsPage[0] : null;
+  if (champPage) {
+    var aide = champPage.getAttribute('placeholder') || 'Rechercher\u2026';
+    champ.setAttribute('placeholder', aide);
+    champ.setAttribute('aria-label', champPage.getAttribute('aria-label') || aide);
+    champ.removeAttribute('role');
+    champ.removeAttribute('aria-expanded');
+    champ.removeAttribute('aria-autocomplete');
+    champ.removeAttribute('aria-controls');
+    (champPage.closest('[data-recherche-cacher]') || champPage).classList.add('ms-recherche-reprise');
+    var transmettre = function () {
+      champPage.value = champ.value;
+      champPage.dispatchEvent(new Event('input', { bubbles: true }));
+      champPage.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+    };
+    champ.addEventListener('input', transmettre);
+    // Le type « search » offre une croix d'effacement : elle declenche
+    // « search » et pas toujours « input ».
+    champ.addEventListener('search', transmettre);
+    champ.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') e.preventDefault();
+      if (e.key === 'Escape') { champ.value = ''; transmettre(); }
+    });
+  } else {
   champ.addEventListener('input', dessiner);
   champ.addEventListener('focus', function () { if (champ.value.trim() !== '') dessiner(); });
   champ.addEventListener('keydown', function (e) {
@@ -366,6 +397,7 @@
       if (cible) { e.preventDefault(); window.location.href = cible.getAttribute('href'); }
     }
   });
+  }
   document.addEventListener('click', function (e) {
     if (!barre.contains(e.target)) fermer();
   });

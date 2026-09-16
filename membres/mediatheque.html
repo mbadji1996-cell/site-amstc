@@ -121,8 +121,8 @@
 </div>
 
 <div class="wrap">
-  <div class="search-wrap" id="rechercheWrap" style="display:none;">
-    <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un album, une année…" oninput="onRecherche()">
+  <div class="search-wrap" id="rechercheWrap" style="display:none;" data-recherche-cacher>
+    <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un album, une année…" oninput="onRecherche()">
     <span class="search-icon" id="rechercheIcon">&#128269;</span>
     <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
   </div>

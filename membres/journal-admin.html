@@ -90,8 +90,8 @@
   <a class="back" href="admin">Centre d'administration</a>
   <h1>Journal d'administration</h1>
   <p class="intro">Qui a fait quoi, et quand. Réservé au Super Administrateur : ce journal sert notamment à suivre l'action des administrateurs.</p>
-  <div class="search-wrap">
-    <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un nom, une action…" oninput="onRecherche()">
+  <div class="search-wrap" data-recherche-cacher>
+    <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un nom, une action…" oninput="onRecherche()">
     <span class="search-icon" id="rechercheIcon">&#128269;</span>
     <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
   </div>

@@ -212,7 +212,7 @@
   /* La marque est passee dans la colonne : le logo du bandeau ferait double
      emploi. Le reste du style clair de la barre vaut a toutes les largeurs
      (voir plus bas), pas seulement ici. */
-  html.a-rail .header-inner{padding-top:12px; padding-bottom:12px;}
+  html.a-rail .header-inner, html.a-rail header .header-wrap{padding-top:12px; padding-bottom:12px;}
 
   /* L'assistant est ancre en bas a gauche : il se retrouvait sous la
      colonne. On le decale de sa largeur. */
@@ -316,7 +316,7 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
      la recherche et les outils deviennent enfants directs de la barre : le
      logo et les outils se partagent la premiere ligne, la recherche prend
      la seconde. */
-  html header .header-inner{flex-wrap:wrap; gap:12px 10px;}
+  html header .header-inner, html header .header-wrap{flex-wrap:wrap; gap:12px 10px;}
   .ms-barre{display:contents;}
   .ms-outils{order:1;}
   .ms-recherche{order:2; flex-basis:100%; max-width:none;}
@@ -555,3 +555,15 @@ html:root[data-theme="dark"]{
    moins encore sur les fonds sable. En clair, l'espace membre prend l'or
    fonce (5,59) ; le theme sombre garde sa valeur. */
 html:root:not([data-theme="dark"]){--text-accent:#8A6209;}
+
+
+/* Recherche de la page reprise par la barre du haut : le champ d'origine
+   (ou son bloc) est masque. !important parce que certaines pages
+   reaffichent le bloc par script une fois leurs donnees chargees. */
+.ms-recherche-reprise{display:none !important;}
+
+/* Entetes en .header-wrap (onze pages) : memes dimensions que .header-inner,
+   sans quoi la barre du haut n'avait pas la meme hauteur d'une page a l'autre. */
+html header{padding:0;}
+html header .header-wrap{max-width:1400px; margin:0 auto; padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between;}

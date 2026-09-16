@@ -113,8 +113,8 @@
   <h1>Réalisations</h1>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
-  <div class="search-wrap">
-    <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un titre, un mot-clé…" oninput="onRecherche()">
+  <div class="search-wrap" data-recherche-cacher>
+    <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un titre, un mot-clé…" oninput="onRecherche()">
     <span class="search-icon" id="rechercheIcon">&#128269;</span>
     <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
   </div>
