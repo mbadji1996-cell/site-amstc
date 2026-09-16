@@ -95,6 +95,17 @@
   .add-card-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
   .add-card-row input{flex:1;min-width:130px;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);}
   .add-card-row input:focus{outline:none;border-color:var(--green);}
+  /* Fiche de creation : chaque champ porte son etiquette. */
+  .add-card-grille{display:grid;gap:12px 14px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));}
+  .add-card-champ{display:flex;flex-direction:column;gap:5px;min-width:0;}
+  .add-card-champ label{font-size:0.74rem;font-weight:600;color:var(--text-muted);}
+  .add-card-champ label .requis{color:#B23B3B;}
+  .add-card-champ input,.add-card-champ select{
+    width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;
+    font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);
+  }
+  .add-card-champ input:focus,.add-card-champ select:focus{outline:none;border-color:var(--green);}
+  .add-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
   .status-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;white-space:nowrap;}
   .status-badge.unclaimed{background:var(--paper-alt);color:var(--text-muted);}
   .status-badge.pending{background:#FEF6E4;color:var(--gold-deep);}
@@ -307,12 +318,45 @@
       </div>
 
       <div class="add-card-form" id="addCardForm">
-        <div class="add-card-row">
-          <input type="text" id="newCardName" placeholder="Nom complet">
-          <input type="text" id="newCardPhone" placeholder="Téléphone">
-          <input type="number" id="newCardSince" placeholder="Année d'adhésion">
-          <input type="text" id="newCardCity" placeholder="Localité">
-          <select id="newCardRegion" title="Région"></select>
+        <div class="add-card-grille">
+          <div class="add-card-champ">
+            <label for="newCardName">Nom complet <span class="requis">*</span></label>
+            <input type="text" id="newCardName" placeholder="Prénom et nom">
+          </div>
+          <div class="add-card-champ">
+            <label for="newCardPhone">Téléphone <span class="requis">*</span></label>
+            <input type="text" id="newCardPhone" placeholder="+221 77 000 00 00">
+          </div>
+          <div class="add-card-champ">
+            <label for="newCardDomain">Domaine</label>
+            <select id="newCardDomain" onchange="onNewCardDomainChange()">
+              <option value="">- Choisir -</option>
+              <option value="medecine">Médecine</option>
+              <option value="pharmacie">Pharmacie</option>
+              <option value="odontologie">Odontologie</option>
+              <option value="soins_infirmiers">Soins infirmiers</option>
+              <option value="soins_obstetricaux">Soins obstétricaux</option>
+              <option value="autre">Autres à préciser</option>
+            </select>
+          </div>
+          <div class="add-card-champ" id="newCardDomainAutreChamp" style="display:none;">
+            <label for="newCardDomainAutre">Précisez le domaine</label>
+            <input type="text" id="newCardDomainAutre" placeholder="Ex : Kinésithérapie">
+          </div>
+          <div class="add-card-champ">
+            <label for="newCardSince">Année d'adhésion</label>
+            <select id="newCardSince"></select>
+          </div>
+          <div class="add-card-champ">
+            <label for="newCardCity">Localité</label>
+            <input type="text" id="newCardCity" placeholder="Ouakam, Darou Salam…">
+          </div>
+          <div class="add-card-champ">
+            <label for="newCardRegion">Région</label>
+            <select id="newCardRegion"></select>
+          </div>
+        </div>
+        <div class="add-card-actions">
           <button class="btn btn-confirm" onclick="submitAddCard()"><i class="ti ti-check"></i> Créer</button>
           <button class="btn btn-reject" onclick="toggleAddCardForm()">Annuler</button>
         </div>
@@ -1260,16 +1304,34 @@
     await loadAll();
   }
 
+  // Annees proposees : de l'annee en cours a 2010, la plus recente d'abord.
+  // Elle fixe le numero de carte (AMSTC-annee-rang).
+  function remplirAnneesAdhesion(select) {
+    const annee = new Date().getFullYear();
+    let options = '';
+    for (let a = annee; a >= 2010; a--) options += `<option value="${a}">${a}</option>`;
+    select.innerHTML = options;
+    select.value = String(annee);
+  }
+
+  function onNewCardDomainChange() {
+    document.getElementById('newCardDomainAutreChamp').style.display =
+      document.getElementById('newCardDomain').value === 'autre' ? '' : 'none';
+  }
+
   function toggleAddCardForm() {
     const form = document.getElementById('addCardForm');
     form.classList.toggle('open');
     if (form.classList.contains('open')) {
+      remplirAnneesAdhesion(document.getElementById('newCardSince'));
       remplirSelectRegions(document.getElementById('newCardRegion'));
       brancherIndiceLocalite(document.getElementById('newCardRegion'),
                              document.getElementById('newCardCity'));
     } else {
-      ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity', 'newCardRegion']
+      ['newCardName', 'newCardPhone', 'newCardSince', 'newCardCity', 'newCardRegion',
+       'newCardDomain', 'newCardDomainAutre']
         .forEach(id => document.getElementById(id).value = '');
+      onNewCardDomainChange();
       document.getElementById('addCardMsg').textContent = '';
       document.getElementById('addCardMsg').className = 'assign-msg';
     }
@@ -1281,10 +1343,18 @@
     const memberSinceRaw = document.getElementById('newCardSince').value;
     const city = localiteLibelle(document.getElementById('newCardCity').value);
     const region = document.getElementById('newCardRegion').value || null;
+    const domain = document.getElementById('newCardDomain').value || null;
+    const domain_autre = domain === 'autre'
+      ? (document.getElementById('newCardDomainAutre').value.trim() || null) : null;
     const msg = document.getElementById('addCardMsg');
 
     if (!full_name || !phone) {
       msg.textContent = 'Le nom et le téléphone sont obligatoires.';
+      msg.className = 'assign-msg error';
+      return;
+    }
+    if (domain === 'autre' && !domain_autre) {
+      msg.textContent = 'Précisez le domaine.';
       msg.className = 'assign-msg error';
       return;
     }
@@ -1296,11 +1366,11 @@
     // Voir l'import Excel : sans la colonne (phase68 non exécutée), la
     // création échouerait entièrement. On réessaie sans la région.
     let { error } = await supabaseClient.from('member_cards').insert({
-      full_name, phone, member_since, city: city || null, region, card_number,
+      full_name, phone, member_since, city: city || null, region, card_number, domain, domain_autre,
     });
     if (error && /region/i.test(error.message || '')) {
       ({ error } = await supabaseClient.from('member_cards').insert({
-        full_name, phone, member_since, city: city || null, card_number,
+        full_name, phone, member_since, city: city || null, card_number, domain, domain_autre,
       }));
     }
 

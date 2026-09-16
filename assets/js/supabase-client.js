@@ -136,6 +136,11 @@ async function getCurrentProfile() {
     .eq("id", session.user.id)
     .single();
   if (error) return null;
+  // La barre du haut (member-nav.js) a besoin du nom et des initiales, sans
+  // refaire la requete. Publie ici et non dans une garde : les pages
+  // d'administration passent par requireAdmin, et affichaient « Membre ».
+  window.profilMembre = data;
+  window.dispatchEvent(new CustomEvent("membre-pret", { detail: data }));
   return data;
 }
 
@@ -173,10 +178,6 @@ async function requireApprovedMember(redirectTo = "connexion") {
     window.location.href = "profil?completer=1";
     return null;
   }
-  // La barre du haut (member-nav.js) a besoin du nom et des initiales, sans
-  // refaire la requete : le profil est publie des qu'il est sur.
-  window.profilMembre = profile;
-  window.dispatchEvent(new CustomEvent("membre-pret", { detail: profile }));
   return profile;
 }
 
