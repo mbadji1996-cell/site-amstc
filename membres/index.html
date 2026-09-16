@@ -117,6 +117,29 @@
   .ann-modal-foot{padding:16px 26px 22px;}
   .ann-close-btn{width:100%;background:var(--green);color:var(--white);border:none;padding:12px;border-radius:999px;font-size:0.9rem;font-weight:600;cursor:pointer;}
   .ann-close-btn:hover{background:var(--green-deep);}
+  /* ===== Reprise de formation et agenda (inspires du prototype) ===== */
+  .reprise-grid{display:grid; gap:16px; margin-bottom:28px;}
+  @media (min-width:820px){ .reprise-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);} }
+  .reprise-card{
+    display:flex; flex-direction:column; gap:10px; padding:22px 24px; border-radius:12px;
+    background:linear-gradient(150deg, #17763B 0%, #06441C 100%); color:#fff;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .reprise-card:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(6,68,28,0.24);}
+  .reprise-card:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+  /* Or clair : sur le vert, var(--gold) ne donnait que 3,19:1 pour ce petit texte. */
+  .reprise-label{font-family:var(--mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:#FFE3A0;}
+  .reprise-titre{font-family:var(--display); font-weight:600; font-size:1.18rem; line-height:1.25;}
+  .reprise-meta{font-size:0.85rem; color:rgba(255,255,255,0.82);}
+  .reprise-barre{display:block; height:8px; border-radius:999px; background:rgba(255,255,255,0.22); overflow:hidden; margin-top:4px;}
+  .reprise-barre span{display:block; height:100%; background:var(--gold); border-radius:999px;}
+  .reprise-suite{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.9rem; color:#FFE3A0;}
+  .agenda-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px;}
+  .agenda-ligne{display:grid; grid-template-columns:62px minmax(0,1fr); gap:14px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--line);}
+  .agenda-ligne:last-child{border-bottom:none; padding-bottom:0;}
+  .agenda-jour{font-family:var(--mono); font-size:0.74rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-accent);}
+  .agenda-titre{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--text-heading); line-height:1.3;}
+  .agenda-lieu{font-size:0.82rem; color:var(--text-muted); margin-top:2px;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -175,6 +198,22 @@
     <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
 
     <div class="card-status-banner profile-incomplete" id="profileBanner" style="display:none;"></div>
+
+    <!-- Reprise de formation et agenda : chaque bloc reste masque tant qu'il
+         n'a rien a montrer, pour ne pas laisser un cadre vide. -->
+    <div class="reprise-grid">
+      <a class="reprise-card" id="repriseCard" href="#" style="display:none;">
+        <span class="reprise-label"><i class="ti ti-player-play"></i> Reprendre</span>
+        <span class="reprise-titre" id="repriseTitre"></span>
+        <span class="reprise-meta" id="repriseMeta"></span>
+        <span class="reprise-barre"><span id="repriseJauge" style="width:0%"></span></span>
+        <span class="reprise-suite">Continuer <i class="ti ti-arrow-right"></i></span>
+      </a>
+      <div class="agenda-card" id="agendaCard" style="display:none;">
+        <p class="section-label"><i class="ti ti-calendar-event"></i> Prochaines activités</p>
+        <div id="agendaListe"></div>
+      </div>
+    </div>
 
     <div id="adminSection" style="display:none;margin-bottom:32px;">
       <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
@@ -416,6 +455,77 @@
     el.style.display = "";
   }
 
+  // ===== Reprise de formation =====
+  // Le cours commence le plus recemment et non termine, qu'il vienne du Daara
+  // ou des enseignements medicaux. Une requete qui echoue (table vide, droits
+  // insuffisants) laisse simplement le bloc masque.
+  async function chargerReprise(userId) {
+    const secours = function () { return { data: [] }; };
+    const passe = function (r) { return r; };
+    const [daara, medical] = await Promise.all([
+      supabaseClient.from("daara_progress")
+        .select("progress_pct, updated_at, daara_courses(id, title)")
+        .eq("user_id", userId).lt("progress_pct", 100)
+        .order("updated_at", { ascending: false }).limit(1).then(passe, secours),
+      supabaseClient.from("medical_progress")
+        .select("progress_pct, updated_at, medical_lessons(id, title)")
+        .eq("user_id", userId).lt("progress_pct", 100)
+        .order("updated_at", { ascending: false }).limit(1).then(passe, secours),
+    ]);
+    const pistes = [];
+    ((daara && daara.data) || []).forEach(function (p) {
+      if (!p.daara_courses) return;
+      pistes.push({
+        titre: p.daara_courses.title, pct: p.progress_pct || 0, quand: p.updated_at,
+        href: "cours?id=" + encodeURIComponent(p.daara_courses.id), espace: "Espace Daara",
+      });
+    });
+    ((medical && medical.data) || []).forEach(function (p) {
+      if (!p.medical_lessons) return;
+      pistes.push({
+        titre: p.medical_lessons.title, pct: p.progress_pct || 0, quand: p.updated_at,
+        href: "lecon?id=" + encodeURIComponent(p.medical_lessons.id), espace: "Enseignements m\u00e9dicaux",
+      });
+    });
+    if (pistes.length === 0) return;
+    pistes.sort(function (a, b) { return String(b.quand || "").localeCompare(String(a.quand || "")); });
+    const reprise = pistes[0];
+    const carte = document.getElementById("repriseCard");
+    carte.href = reprise.href;
+    document.getElementById("repriseTitre").textContent = reprise.titre;
+    document.getElementById("repriseMeta").textContent = reprise.espace + " \u00b7 " + reprise.pct + " % parcouru";
+    document.getElementById("repriseJauge").style.width = Math.max(2, Math.min(100, reprise.pct)) + "%";
+    carte.style.display = "";
+  }
+
+  // ===== Prochaines activites =====
+  // Activites a venir et ouvertes. Le lien mene a la page publique des
+  // activites, qui sait ouvrir une activite par son identifiant.
+  async function chargerAgenda() {
+    const aujourdhui = new Date().toISOString().slice(0, 10);
+    const reponse = await supabaseClient.from("activites")
+      .select("id, titre, lieu, date_activite")
+      .eq("is_open", true).gte("date_activite", aujourdhui)
+      .order("date_activite", { ascending: true }).limit(4)
+      .then(function (r) { return r; }, function () { return { data: [] }; });
+    const liste = (reponse && reponse.data) || [];
+    if (liste.length === 0) return;
+    const jour = function (iso) {
+      try {
+        return new Date(iso + "T12:00:00").toLocaleDateString("fr-FR",
+          { weekday: "short", day: "2-digit", month: "short" });
+      } catch (e) { return iso || ""; }
+    };
+    document.getElementById("agendaListe").innerHTML = liste.map(function (a) {
+      return '<a class="agenda-ligne" href="../activites?id=' + encodeURIComponent(a.id) + '">'
+        + '<span class="agenda-jour">' + esc(jour(a.date_activite)) + '</span>'
+        + '<span><span class="agenda-titre">' + esc(a.titre || "Activit\u00e9") + '</span>'
+        + (a.lieu ? '<span class="agenda-lieu">' + esc(a.lieu) + '</span>' : '')
+        + '</span></a>';
+    }).join("");
+    document.getElementById("agendaCard").style.display = "";
+  }
+
   (async () => {
     const result = await requireActiveMember("connexion");
     if (!result) return;
@@ -428,6 +538,10 @@
     const name = profile.full_name || profile.email || "Membre";
     const first = name.split(" ")[0];
     document.getElementById("welcomeName").textContent = "Bonjour, " + first + " 👋";
+
+    // Blocs facultatifs : ils ne doivent jamais empecher l'affichage du reste.
+    chargerReprise(profile.id).catch(function () {});
+    chargerAgenda().catch(function () {});
     document.getElementById("welcomeSub").textContent = "Bienvenue dans votre espace membre AMSTC.";
     document.getElementById("avatarEl").textContent =
       name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
