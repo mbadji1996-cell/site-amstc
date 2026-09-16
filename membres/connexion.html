@@ -73,6 +73,43 @@
   .btn-google:hover{background:var(--paper-alt); color:var(--ink);}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+  /* ===== Mise en page en deux colonnes : formulaire et panneau photo ===== */
+  .connexion{max-width:1240px; margin:0 auto; padding:0 28px 48px;}
+  .colonne-form{width:100%; max-width:520px; margin:0 auto;}
+  .colonne-photo{display:none;}
+  @media (min-width:980px){
+    .connexion{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:56px; align-items:center; padding:40px 28px 64px;}
+    .colonne-form{margin:0; max-width:540px;}
+    .colonne-photo{
+      display:block; position:relative; overflow:hidden; border-radius:var(--radius);
+      aspect-ratio:3/4; max-height:78vh; box-shadow:var(--shadow); background:var(--green-deep);
+    }
+  }
+  .photo-slides{position:absolute; inset:0;}
+  .photo-slide{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    opacity:0; transition:opacity 1.4s ease; will-change:opacity, transform;
+  }
+  .photo-slide.is-active{opacity:1;}
+  /* Memes mouvements que le hero : zoom avant, zoom arriere, glissements. */
+  .photo-slide.cx-a{animation:cxA 8s ease-out forwards;}
+  .photo-slide.cx-b{animation:cxB 8s ease-out forwards;}
+  .photo-slide.cx-c{animation:cxC 8s ease-in-out forwards;}
+  .photo-slide.cx-d{animation:cxD 8s ease-in-out forwards;}
+  @keyframes cxA{ from{transform:scale(1.02);} to{transform:scale(1.16);} }
+  @keyframes cxB{ from{transform:scale(1.16) translate(-2%,-1%);} to{transform:scale(1.04) translate(1%,1%);} }
+  @keyframes cxC{ from{transform:scale(1.12) translate(3%,0);} to{transform:scale(1.12) translate(-3%,0);} }
+  @keyframes cxD{ from{transform:scale(1.12) translate(0,2.5%);} to{transform:scale(1.04) translate(0,-1.5%);} }
+  .photo-voile{position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,68,28,0) 38%, rgba(6,68,28,0.88) 100%);}
+  .photo-texte{position:absolute; left:30px; right:30px; bottom:28px; color:var(--white);}
+  .photo-accroche{font-family:var(--display); font-weight:600; font-size:1.35rem; line-height:1.25;}
+  .photo-sous{font-size:0.92rem; color:rgba(255,255,255,0.85); margin-top:8px; max-width:38ch;}
+  .photo-progress{position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(255,255,255,0.18);}
+  .photo-progress span{display:block; height:100%; width:0; background:var(--gold); animation:cxProgress 6s linear forwards;}
+  @keyframes cxProgress{ from{width:0;} to{width:100%;} }
+  @media (prefers-reduced-motion: reduce){ .photo-progress{display:none;} }
+  /* Le bouton Google passe en tete : il ne doit plus coller au titre. */
+  .btn-google{margin-top:4px;}
 </style>
 </head>
 <body>
@@ -83,56 +120,72 @@
   </div>
 </header>
 
-<div class="wrap">
-  <a class="back" href="../">Retour à l'accueil</a>
+<div class="connexion">
+  <div class="colonne-form">
+    <div class="form-inner">
+      <a class="back" href="../">Retour à l'accueil</a>
 
-  <p class="eyebrow">Espace Membres</p>
-  <h1>Connexion</h1>
-  <p class="intro">Accédez à votre espace membre.</p>
+      <p class="eyebrow">Espace Membres</p>
+      <h1>Connexion</h1>
+      <p class="intro">Accédez à votre espace membre.</p>
 
-  <div class="card">
-    <form id="loginForm">
+      <!-- Bouton Google - nécessite d'activer le provider Google dans Supabase Dashboard
+      → Authentication → Providers → Google, et d'ajouter
+      https://amstc.org/membres/connexion.html dans URL Configuration → Redirect URLs -->
+      <button class="btn btn-google" id="googleBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.658 14.017 17.64 11.71 17.64 9.2z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+      <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+      </svg>
+      Se connecter avec Google
+      </button>
+
+      <div class="form-message" id="googleMessage"></div>
+
+      <div class="or-divider"><span>ou</span></div>
+
+      <div class="card">
+      <form id="loginForm">
       <label for="email">E-mail</label>
       <input type="email" id="email" name="email" required autocomplete="email">
 
       <label for="password">Mot de passe</label>
       <div class="password-field">
-        <input type="password" id="password" name="password" required autocomplete="current-password">
-        <button type="button" class="toggle-password" data-target="password" aria-label="Afficher le mot de passe">
-          <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
-          <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.8 21.8 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        </button>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
+      <button type="button" class="toggle-password" data-target="password" aria-label="Afficher le mot de passe">
+      <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+      <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.8 21.8 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      </button>
       </div>
 
       <label class="rester" for="resterConnecte">
-        <input type="checkbox" id="resterConnecte">
-        Rester connecté sur cet appareil
+      <input type="checkbox" id="resterConnecte">
+      Rester connecté sur cet appareil
       </label>
 
       <button type="submit" class="btn" id="submitBtn">Se connecter</button>
       <div class="form-message" id="formMessage"></div>
-    </form>
+      </form>
+      </div>
+
+      <p class="alt-link" style="margin-top:24px;"><a href="mot-de-passe-oublie">Mot de passe oublié ?</a></p>
+      <p class="alt-link">Pas encore de compte ? <a href="inscription">S'inscrire</a></p>
+    </div>
   </div>
 
-  <div class="or-divider"><span>ou</span></div>
-
-  <!-- Bouton Google - nécessite d'activer le provider Google dans Supabase Dashboard
-       → Authentication → Providers → Google, et d'ajouter
-       https://amstc.org/membres/connexion.html dans URL Configuration → Redirect URLs -->
-  <button class="btn btn-google" id="googleBtn" type="button">
-    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.658 14.017 17.64 11.71 17.64 9.2z"/>
-      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-      <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
-      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
-    </svg>
-    Se connecter avec Google
-  </button>
-
-  <div class="form-message" id="googleMessage"></div>
-
-  <p class="alt-link" style="margin-top:24px;"><a href="mot-de-passe-oublie">Mot de passe oublié ?</a></p>
-  <p class="alt-link">Pas encore de compte ? <a href="inscription">S'inscrire</a></p>
+  <!-- Panneau photo : diaporama anime, comme le hero de l'accueil.
+       Masque sous 980 px pour ne pas repousser le formulaire. -->
+  <aside class="colonne-photo" aria-hidden="true">
+    <div class="photo-slides" id="photoSlides"></div>
+    <div class="photo-voile"></div>
+    <div class="photo-texte">
+      <p class="photo-accroche">Servir l'humain, élever les âmes</p>
+      <p class="photo-sous">Formations, actualités et vie de l'association, réunies dans votre espace membre.</p>
+    </div>
+    <div class="photo-progress"><span></span></div>
+  </aside>
 </div>
 
 <footer>
@@ -340,6 +393,68 @@
     }
     // Si pas d'erreur, Supabase redirige vers Google - pas besoin de ré-activer le bouton.
   });
+</script>
+
+<script>
+  // Diaporama du panneau photo : meme principe que le hero de l'accueil.
+  // Pour changer les photos, il suffit de remplacer cette liste.
+  (function(){
+    const PHOTOS = [
+      "/assets/hero-soins-02.jpg",
+      "/assets/hero-photo-7.jpg",
+      "/assets/hero-soins-04.jpg",
+      "/assets/hero-photo-6.jpg",
+      "/assets/hero-soins-01.jpg",
+      "/assets/hero-photo-2.jpg"
+    ];
+    const EFFETS = ["cx-a", "cx-b", "cx-c", "cx-d"];
+    const DUREE = 6000;
+    const conteneur = document.getElementById("photoSlides");
+    if (!conteneur || PHOTOS.length === 0) return;
+    const slides = PHOTOS.map(function (src) {
+      const el = document.createElement("div");
+      el.className = "photo-slide";
+      el.dataset.src = src;
+      conteneur.appendChild(el);
+      return el;
+    });
+    const charger = function (i) {
+      const el = slides[i % slides.length];
+      if (el && !el.style.backgroundImage) el.style.backgroundImage = "url('" + el.dataset.src + "')";
+    };
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const barre = document.querySelector(".photo-progress span");
+    function activer(i) {
+      const el = slides[i];
+      charger(i);
+      charger(i + 1);
+      el.classList.remove.apply(el.classList, EFFETS);
+      if (!reduceMotion) {
+        void el.offsetWidth;
+        el.classList.add(EFFETS[i % EFFETS.length]);
+      }
+      el.classList.add("is-active");
+      if (barre && !reduceMotion) {
+        barre.style.animation = "none";
+        void barre.offsetWidth;
+        barre.style.animation = "";
+      }
+    }
+    activer(0);
+    if (slides.length <= 1 || reduceMotion) return;
+    let idx = 0;
+    setInterval(function () {
+      const precedente = slides[idx];
+      precedente.classList.remove("is-active");
+      idx = (idx + 1) % slides.length;
+      activer(idx);
+      setTimeout(function () {
+        if (!precedente.classList.contains("is-active")) {
+          precedente.classList.remove.apply(precedente.classList, EFFETS);
+        }
+      }, 1600);
+    }, DUREE);
+  })();
 </script>
 
 </body>
