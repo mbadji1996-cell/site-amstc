@@ -227,15 +227,11 @@
   .tb-section-ic svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
   .tb-section-titre{font-family:var(--display); font-size:1.18rem; font-weight:600; color:var(--text-heading);}
 
-  /* Pastilles d'icones teintees, par rotation de quatre tons de la charte. */
-  .espaces-grid .espace-card:nth-child(4n+1) .espace-icon{background:rgba(23,118,59,0.11); color:#12622F;}
-  .espaces-grid .espace-card:nth-child(4n+2) .espace-icon{background:rgba(248,183,24,0.2); color:#8A6209;}
-  .espaces-grid .espace-card:nth-child(4n+3) .espace-icon{background:rgba(6,68,28,0.1); color:#06441C;}
-  .espaces-grid .espace-card:nth-child(4n+4) .espace-icon{background:rgba(90,108,96,0.16); color:#41544A;}
-  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+1) .espace-icon{background:rgba(127,217,160,0.14); color:#7FD9A0;}
-  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+2) .espace-icon{background:rgba(248,183,24,0.18); color:#F0C955;}
-  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+3) .espace-icon{background:rgba(127,217,160,0.1); color:#7FD9A0;}
-  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+4) .espace-icon{background:rgba(255,255,255,0.09); color:#9BB0A2;}
+  /* Pastilles d'icones : jaune et vert en alternance. */
+  .espaces-grid .espace-card:nth-child(odd) .espace-icon{background:rgba(248,183,24,0.2); color:#8A6209;}
+  .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(23,118,59,0.12); color:#12622F;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(odd) .espace-icon{background:rgba(248,183,24,0.18); color:#F0C955;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(127,217,160,0.14); color:#7FD9A0;}
   .espace-card[hidden]{display:none;}
   .tb-rien{font-size:0.9rem; color:var(--text-muted); padding:10px 2px;}
 </style>
