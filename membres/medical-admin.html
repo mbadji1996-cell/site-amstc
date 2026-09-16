@@ -112,7 +112,7 @@
   .qs-section{margin-top:20px;border-top:2px dashed var(--line);padding-top:18px;}
   .qs-label{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent);margin-bottom:12px;}
   .q-item{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;position:relative;}
-  .q-item-num{font-family:var(--mono);font-size:0.65rem;color:#8A9E8F;margin-bottom:8px;}
+  .q-item-num{font-family:var(--mono);font-size:0.65rem;color:var(--text-muted, #5A6C60);margin-bottom:8px;}
   .q-row{display:flex;gap:8px;align-items:flex-start;}
   .q-row input{flex:1;}
   .btn-remove-q{background:var(--bad-bg,#FDEEEE);border:none;border-radius:6px;padding:6px 8px;cursor:pointer;color:#B23B3B;font-size:14px;flex-shrink:0;}
@@ -195,7 +195,7 @@
         <button class="cat-tab" id="lcat-soins_infirmiers" onclick="setLessonCat('soins_infirmiers')"><i class="ti ti-nurse"></i> Soins infirmiers et obstétricales</button>
       </div>
       <div class="toolbar">
-        <span style="font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;" id="lessonCount">0 leçon(s)</span>
+        <span style="font-family:var(--mono);font-size:0.78rem;color:var(--text-muted, #5A6C60);" id="lessonCount">0 leçon(s)</span>
         <button class="btn btn-primary" onclick="openLessonModal(null)"><i class="ti ti-plus"></i> Nouvelle leçon</button>
       </div>
       <div class="items-grid" id="lessonsList"></div>
@@ -210,7 +210,7 @@
         <button class="cat-tab" id="qcat-soins_infirmiers" onclick="setQuizCat('soins_infirmiers')"><i class="ti ti-nurse"></i> Soins infirmiers et obstétricales</button>
       </div>
       <div class="toolbar">
-        <span style="font-family:var(--mono);font-size:0.78rem;color:#8A9E8F;" id="quizCount">0 quiz</span>
+        <span style="font-family:var(--mono);font-size:0.78rem;color:var(--text-muted, #5A6C60);" id="quizCount">0 quiz</span>
         <button class="btn btn-primary" onclick="openQuizModal(null)"><i class="ti ti-plus"></i> Nouveau quiz</button>
       </div>
       <div class="items-grid" id="quizzesList"></div>
@@ -337,7 +337,7 @@
           <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importerQuizExcel(event)">
         </label>
       </div>
-      <p style="font-size:0.75rem;color:#8A9E8F;margin-top:8px;">
+      <p style="font-size:0.75rem;color:var(--text-muted, #5A6C60);margin-top:8px;">
         Import : téléchargez le modèle, remplissez une ligne par question (4 réponses obligatoires,
         bonne réponse A, B, C ou D), puis importez. Les questions s'ajoutent ci-dessus pour relecture
         avant l'enregistrement.

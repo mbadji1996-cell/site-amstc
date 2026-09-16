@@ -50,7 +50,7 @@
   /* Stats row */
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
   .stat-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
-  .stat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;margin-bottom:4px;}
+  .stat-label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted, #5A6C60);margin-bottom:4px;}
   .stat-val{font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--text-heading);}
 
   /* Filters */
@@ -61,7 +61,7 @@
   /* Table */
   .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
   table{width:100%;border-collapse:collapse;}
-  th{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;padding:11px 16px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
+  th{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted, #5A6C60);padding:11px 16px;text-align:left;border-bottom:1px solid var(--line);background:var(--paper);}
   td{padding:13px 16px;font-size:0.87rem;border-bottom:1px solid var(--paper-alt);vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:var(--paper);}
@@ -78,9 +78,9 @@
   .btn-reject:hover{background:#f5c0c0;}
   .btn:disabled{opacity:0.4;cursor:not-allowed;}
   .member-name{font-weight:600;color:var(--text-heading);}
-  .member-email{font-size:0.78rem;color:#8A9E8F;}
+  .member-email{font-size:0.78rem;color:var(--text-muted, #5A6C60);}
   .ref-code{font-family:var(--mono);font-size:0.8rem;color:var(--text-muted);}
-  .empty-row td{text-align:center;color:#8A9E8F;font-family:var(--mono);font-size:0.82rem;padding:32px;}
+  .empty-row td{text-align:center;color:var(--text-muted, #5A6C60);font-family:var(--mono);font-size:0.82rem;padding:32px;}
   .loading-msg{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
@@ -94,7 +94,7 @@
     .stack-mobile tbody tr{border-bottom:1px solid var(--line);padding:6px 0 10px;}
     .stack-mobile tbody tr:last-child{border-bottom:none;}
     .stack-mobile td{border-bottom:none;padding:4px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-    .stack-mobile td::before{content:attr(data-label);font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:#8A9E8F;flex-shrink:0;}
+    .stack-mobile td::before{content:attr(data-label);font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted, #5A6C60);flex-shrink:0;}
     .stack-mobile td.td-member{display:block;padding-top:12px;}
     .stack-mobile td.td-member::before{display:none;}
     .stack-mobile td.td-act-cell{display:block;padding-top:8px;}
@@ -292,7 +292,7 @@
         <td data-label="Montant" style="font-family:var(--mono);">${p.amount_fcfa.toLocaleString('fr-FR')} F</td>
         <td data-label="Méthode">${methods[p.payment_method] || '-'}</td>
         <td data-label="Référence"><span class="ref-code">${escHtml(p.payment_reference || '-')}</span></td>
-        <td data-label="Date" style="color:#8A9E8F;font-size:0.8rem;">${dateStr}</td>
+        <td data-label="Date" style="color:var(--text-muted, #5A6C60);font-size:0.8rem;">${dateStr}</td>
         <td data-label="Statut"><span class="badge s-${p.status}">${statusLabel[p.status]}</span></td>
         <td class="td-act-cell">
           <div class="td-actions">
