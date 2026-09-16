@@ -7,20 +7,86 @@
 const SUPABASE_URL = "https://api.amstc.org";
 const SUPABASE_ANON_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg3MTA2MCwiZXhwIjo0OTQwNTQ0NjYwLCJyb2xlIjoiYW5vbiJ9.At_rHwK9bgTh4eoh1ykkLGaPiVXpZBpXxtgDb_allaM";
 
-// Session en sessionStorage (et non localStorage, le défaut) : fermer
-// l'onglet déconnecte réellement. Un membre sur un poste partagé avait
-// retrouvé son compte ouvert après avoir fermé la page. Contrepartie
-// assumée : chaque nouvel onglet demande une connexion.
+// OU la session est-elle rangee, et pour combien de temps ? Le membre le
+// decide a la connexion, avec la case « Rester connecte sur cet appareil ».
+//
+// Sans la case : sessionStorage, donc fermer l'onglet deconnecte vraiment.
+// Un membre sur un poste partage avait retrouve son compte ouvert apres
+// avoir ferme la page - d'ou ce choix par defaut, conserve.
+// Avec la case : localStorage, la session survit a la fermeture du
+// navigateur, sur cet appareil seulement.
+//
+// L'adaptateur relit la preference A CHAQUE ACCES au lieu de figer un
+// stockage a la creation du client : la case est cochee apres le
+// chargement de ce fichier, et la session doit alors partir au bon endroit.
+const CLE_RESTER_CONNECTE = "amstc-rester-connecte";
+
+function resterConnecte() {
+  try {
+    return localStorage.getItem(CLE_RESTER_CONNECTE) === "1";
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Appelee par la page de connexion, avant de demander la session. */
+function definirResterConnecte(actif) {
+  try {
+    if (actif) {
+      localStorage.setItem(CLE_RESTER_CONNECTE, "1");
+      return;
+    }
+    localStorage.removeItem(CLE_RESTER_CONNECTE);
+    // Le membre renonce a rester connecte : le jeton ecrit lors d'une
+    // precedente visite doit partir du disque. Sans cela il y dormait,
+    // inutilise par le site mais toujours valable cote serveur.
+    const aEffacer = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const cle = localStorage.key(i);
+      if (cle && cle.indexOf("sb-") === 0) aEffacer.push(cle);
+    }
+    aEffacer.forEach((cle) => localStorage.removeItem(cle));
+  } catch (e) { /* stockage indisponible */ }
+}
+
+const stockageSession = {
+  getItem(cle) {
+    try {
+      return (resterConnecte() ? localStorage : sessionStorage).getItem(cle);
+    } catch (e) {
+      return null;
+    }
+  },
+  setItem(cle, valeur) {
+    try {
+      const garder = resterConnecte();
+      (garder ? localStorage : sessionStorage).setItem(cle, valeur);
+      // Jamais deux copies : sinon decocher la case laisserait derriere
+      // elle une session encore valable en localStorage.
+      (garder ? sessionStorage : localStorage).removeItem(cle);
+    } catch (e) { /* stockage indisponible */ }
+  },
+  removeItem(cle) {
+    try {
+      localStorage.removeItem(cle);
+      sessionStorage.removeItem(cle);
+    } catch (e) { /* stockage indisponible */ }
+  },
+};
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { storage: window.sessionStorage },
+  auth: { storage: stockageSession },
 });
 
-// Purge les sessions déjà enregistrées en localStorage par l'ancienne
-// configuration : sans cela, elles resteraient valides indéfiniment.
-try {
-  localStorage.removeItem("sb-api-auth-token");
-  localStorage.removeItem("sb-api-auth-token-user");
-} catch (e) { /* stockage indisponible */ }
+// Sessions laissees en localStorage par l'ancienne configuration : elles
+// resteraient valables indefiniment. On ne les purge que si le membre n'a
+// pas demande a rester connecte.
+if (!resterConnecte()) {
+  try {
+    localStorage.removeItem("sb-api-auth-token");
+    localStorage.removeItem("sb-api-auth-token-user");
+  } catch (e) { /* stockage indisponible */ }
+}
 
 // ===== Aide partagée entre les pages membres/*.html =====
 
