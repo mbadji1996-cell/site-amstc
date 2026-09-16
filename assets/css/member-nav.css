@@ -149,3 +149,76 @@
 :root[data-theme="dark"] .sommaire-mobile>summary::after{color:rgba(255,255,255,0.5);}
 :root[data-theme="dark"] .sommaire-mobile nav a{color:#E8F1EC;}
 :root[data-theme="dark"] .sommaire-mobile nav a:hover{background:#17211A;}
+
+
+/* ===== Barre laterale de l'espace membre (>= 1024 px) =====
+   Treize onglets dans un ruban horizontal se lisaient mal et debordaient.
+   Au-dela de 1024 px, member-nav.js remplace le ruban par une colonne
+   fixe a gauche : chaque destination a sa ligne, son icone et son etat.
+   Sous 1024 px la colonne disparait et le ruban reprend sa place, avec
+   le menu hamburger deja en service - rien ne change sur telephone. */
+.ms-rail{display:none;}
+
+@media (min-width:1024px){
+  :root{--ms-rail:252px;}
+  html.a-rail body{padding-left:var(--ms-rail);}
+  html.a-rail .member-tabs{display:none;}
+
+  .ms-rail{
+    display:flex; flex-direction:column; gap:4px;
+    position:fixed; left:0; top:0; bottom:0; width:var(--ms-rail); z-index:50;
+    background:#06441C; border-right:1px solid rgba(255,255,255,0.09);
+    padding:18px 14px 22px; overflow-y:auto; overscroll-behavior:contain;
+  }
+  .ms-marque{display:block; padding:6px 8px 20px;}
+  /* Le logo est sombre a l'origine : sur le vert il passe en blanc. */
+  .ms-marque img{height:44px; width:auto; display:block; filter:brightness(0) invert(1);}
+
+  .ms-liens{display:flex; flex-direction:column; gap:2px;}
+  .ms-lien{
+    display:flex; align-items:center; gap:12px; width:100%;
+    padding:11px 13px; border-radius:10px; border:0; background:none; cursor:pointer;
+    font-family:var(--body,'Inter',sans-serif); font-size:0.9rem; font-weight:500; text-align:left;
+    color:rgba(255,255,255,0.68); text-decoration:none; line-height:1.3;
+    transition:background .15s ease, color .15s ease;
+  }
+  .ms-lien:hover{background:rgba(255,255,255,0.09); color:#FFFFFF;}
+  .ms-lien:focus-visible{outline:2px solid #F8B718; outline-offset:-2px;}
+  /* La page ouverte est une pastille pleine : c'est le seul repere de
+     position une fois le ruban d'onglets retire. Un vert plus clair se
+     detacherait mal du fond, d'ou l'or - deja la couleur de l'onglet actif. */
+  .ms-lien.active{background:#F8B718; color:#06441C; font-weight:600;}
+  .ms-lien.active:hover{background:#F8B718; color:#06441C;}
+
+  .ms-ic{flex:none; width:20px; height:20px; display:block;}
+  .ms-ic svg{width:20px; height:20px; display:block; fill:none; stroke:currentColor;
+    stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+  .ms-texte{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+
+  .ms-chev{flex:none; width:7px; height:7px; margin-right:2px;
+    border-right:1.6px solid currentColor; border-bottom:1.6px solid currentColor;
+    transform:rotate(45deg) translate(-2px,-2px); transition:transform .18s ease;}
+  .ms-groupe.ouvert .ms-chev{transform:rotate(-135deg) translate(-2px,-2px);}
+  .ms-sous{display:none; margin:2px 0 6px 20px; padding-left:12px;
+    border-left:1.5px solid rgba(255,255,255,0.16); flex-direction:column; gap:1px;}
+  .ms-groupe.ouvert .ms-sous{display:flex;}
+  .ms-sous-lien{
+    display:block; padding:8px 11px; border-radius:8px; text-decoration:none;
+    font-size:0.85rem; color:rgba(255,255,255,0.62); line-height:1.3;
+  }
+  .ms-sous-lien:hover{background:rgba(255,255,255,0.09); color:#FFFFFF;}
+  .ms-sous-lien.active{color:#F8B718; font-weight:600; background:rgba(248,183,24,0.14);}
+
+  /* Le bandeau vert perd sa raison d'etre : la marque est passee dans la
+     colonne. Il devient une barre claire, comme sur la maquette. */
+  html.a-rail header{background:var(--surface,#FFFFFF); border-bottom:1px solid var(--line,rgba(6,68,28,0.16));}
+  html.a-rail header .logo-img{display:none;}
+  html.a-rail .header-inner{padding-top:12px; padding-bottom:12px; justify-content:flex-end;}
+  html.a-rail .signout-btn{color:var(--text-muted,#5A6C60); border-color:var(--line,rgba(6,68,28,0.16));}
+  html.a-rail .signout-btn:hover{border-color:#17763B; color:#17763B;}
+
+  /* L'assistant est ancre en bas a gauche : il se retrouvait sous la
+     colonne. On le decale de sa largeur. */
+  html.a-rail .assistant-bouton,
+  html.a-rail .assistant-panneau{left:calc(var(--ms-rail) + 18px);}
+}

@@ -140,3 +140,128 @@
   tabs.appendChild(panel);
   tabs.classList.add('has-mobile-nav');
 })();
+
+
+// ===== Barre laterale de l'espace membre (>= 1024 px) =====
+// Construite a partir des memes onglets : aucune page n'a eu a changer.
+// Les icones sont en SVG plutot qu'en police Tabler, que onze pages
+// membres ne chargent pas.
+(function () {
+  var tabs = document.querySelector('.member-tabs');
+  if (!tabs) return;
+  var inner = tabs.querySelector('.member-tabs-inner');
+  if (!inner || inner.children.length === 0) return;
+
+  // L'icone est choisie sur la destination et non sur l'intitule : les
+  // liens sont identiques d'une page a l'autre, les libelles non.
+  var ICONES = {
+    '': 'M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z',
+    'index': 'M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z',
+    'profil': 'M3 6.5h18v11H3zM7 10.5h4M7 13.5h6M16.5 9.5h2M16.5 12.5h2',
+    'formations': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
+    'daara': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
+    'actualites': 'M4 20V11M10 20V4M16 20v-6M3 20h18',
+    'documents': 'M6.5 3h7l4.5 4.5V21h-11.5zM13.5 3v4.5H18',
+    'boutique': 'M6 7.5h12L19 21H5zM9.2 7.5V5.6a2.8 2.8 0 0 1 5.6 0v1.9',
+    'collectes': 'M12 20.5s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8.6a4.1 4.1 0 0 1 7.5 2.5c0 4.8-7.5 9.4-7.5 9.4z',
+    'forum': 'M4 5h16v10.5H9.5L4 19.5zM8 9h8M8 12h5',
+    'annuaire': 'M5 3.5h14v17H5zM5 8H3M5 12H3M5 16H3M12 11.2a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2zM8.6 17a3.4 3.4 0 0 1 6.8 0',
+    'mediatheque': 'M3.5 5.5h17v13h-17zM3.5 15l4.5-4 3.5 3 3-2.5 6 5M15.5 9.6a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z',
+    'admin': 'M12 3.5 19.5 6v5.6c0 4.2-3.1 7.4-7.5 8.9-4.4-1.5-7.5-4.7-7.5-8.9V6z',
+    'bibliotheque': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
+    'medical': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8'
+  };
+  var ICONE_DEFAUT = 'M4 6h16M4 12h16M4 18h16';
+
+  function cle(href) {
+    var h = String(href || '').split('?')[0].split('#')[0];
+    h = h.replace(/\/$/, '');
+    h = h.split('/').pop() || '';
+    return h.replace(/\.html$/, '');
+  }
+  function icone(href) {
+    var d = ICONES[cle(href)] || ICONE_DEFAUT;
+    var svg = '<svg viewBox="0 0 24 24" aria-hidden="true">';
+    var morceaux = d.split('M');
+    for (var i = 1; i < morceaux.length; i++) svg += '<path d="M' + morceaux[i] + '"/>';
+    return '<span class="ms-ic">' + svg + '</span>';
+  }
+
+  var rail = document.createElement('aside');
+  rail.className = 'ms-rail';
+  rail.setAttribute('aria-label', "Navigation de l'espace membre");
+
+  var premier = inner.querySelector('.member-tab');
+  var marque = document.createElement('a');
+  marque.className = 'ms-marque';
+  marque.href = premier ? premier.getAttribute('href') : './';
+  marque.innerHTML = '<img src="../assets/logo-horizontal-sm.png" alt="AMSTC">';
+  rail.appendChild(marque);
+
+  var liste = document.createElement('nav');
+  liste.className = 'ms-liens';
+
+  var elements = inner.children;
+  for (var i = 0; i < elements.length; i++) {
+    var el = elements[i];
+
+    if (el.classList.contains('member-groupe')) {
+      var parent = el.querySelector('.member-tab-parent');
+      if (!parent) continue;
+      var groupe = document.createElement('div');
+      groupe.className = 'ms-groupe';
+      var bouton = document.createElement('button');
+      bouton.type = 'button';
+      bouton.className = 'ms-lien ms-parent';
+      bouton.setAttribute('aria-expanded', 'false');
+      var libelle = (parent.textContent || '').trim();
+      var sousLiens = el.querySelectorAll('.member-sous-lien');
+      var premierSous = sousLiens.length ? sousLiens[0].getAttribute('href') : '';
+      bouton.innerHTML = icone(premierSous) + '<span class="ms-texte"></span><span class="ms-chev" aria-hidden="true"></span>';
+      bouton.querySelector('.ms-texte').textContent = libelle;
+
+      var sous = document.createElement('div');
+      sous.className = 'ms-sous';
+      var actifDedans = false;
+      for (var j = 0; j < sousLiens.length; j++) {
+        var sa = document.createElement('a');
+        sa.className = 'ms-sous-lien';
+        sa.href = sousLiens[j].getAttribute('href');
+        sa.textContent = (sousLiens[j].textContent || '').trim();
+        if (sousLiens[j].classList.contains('active')) { sa.classList.add('active'); actifDedans = true; }
+        sous.appendChild(sa);
+      }
+      // Le groupe s'ouvre de lui-meme quand on est sur une de ses pages :
+      // sinon la barre laterale n'indiquerait plus ou l'on se trouve.
+      if (actifDedans || parent.classList.contains('active')) {
+        groupe.classList.add('ouvert');
+        bouton.setAttribute('aria-expanded', 'true');
+      }
+      bouton.addEventListener('click', function (g, b) {
+        return function () {
+          var ouvert = g.classList.toggle('ouvert');
+          b.setAttribute('aria-expanded', String(ouvert));
+        };
+      }(groupe, bouton));
+
+      groupe.appendChild(bouton);
+      groupe.appendChild(sous);
+      liste.appendChild(groupe);
+      continue;
+    }
+
+    if (el.classList.contains('member-tab')) {
+      var a = document.createElement('a');
+      a.className = 'ms-lien' + (el.classList.contains('active') ? ' active' : '');
+      a.href = el.getAttribute('href');
+      a.innerHTML = icone(a.getAttribute('href')) + '<span class="ms-texte"></span>';
+      a.querySelector('.ms-texte').textContent = (el.textContent || '').trim();
+      if (el.classList.contains('active')) a.setAttribute('aria-current', 'page');
+      liste.appendChild(a);
+    }
+  }
+
+  rail.appendChild(liste);
+  document.body.appendChild(rail);
+  document.documentElement.classList.add('a-rail');
+})();

@@ -135,11 +135,155 @@
   .reprise-barre span{display:block; height:100%; background:var(--gold); border-radius:999px;}
   .reprise-suite{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.9rem; color:#FFE3A0;}
   .agenda-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px;}
-  .agenda-ligne{display:grid; grid-template-columns:62px minmax(0,1fr); gap:14px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--line);}
+  .agenda-ligne{display:grid; grid-template-columns:110px minmax(0,1fr); gap:16px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--line);}
+  .agenda-titre,.agenda-lieu{display:block;}
   .agenda-ligne:last-child{border-bottom:none; padding-bottom:0;}
-  .agenda-jour{font-family:var(--mono); font-size:0.74rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-accent);}
+  .agenda-jour{font-family:var(--mono); font-size:0.74rem; letter-spacing:0.04em; text-transform:uppercase; color:#8A6209;}
+  :root[data-theme="dark"] .agenda-jour{color:var(--text-accent);}
   .agenda-titre{font-family:var(--display); font-weight:600; font-size:0.96rem; color:var(--text-heading); line-height:1.3;}
   .agenda-lieu{font-size:0.82rem; color:var(--text-muted); margin-top:2px;}
+
+  /* ===== Barre du haut : recherche, annonces, membre ===== */
+  .header-inner{flex-wrap:wrap; gap:14px;}
+  .tb-recherche{
+    flex:1 1 280px; max-width:430px; margin-right:auto;
+    display:flex; align-items:center; gap:10px; padding:9px 16px;
+    border:1.5px solid var(--line); border-radius:999px; background:var(--paper-alt);
+  }
+  .tb-recherche:focus-within{border-color:var(--green); background:var(--surface);}
+  .tb-recherche svg{width:17px; height:17px; flex:none; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round;}
+  .tb-recherche input{
+    flex:1; min-width:0; border:none; background:none; outline:none;
+    font-family:var(--body); font-size:0.88rem; color:var(--ink);
+  }
+  .tb-cloche{
+    position:relative; width:38px; height:38px; flex:none; border-radius:50%;
+    border:1px solid var(--line); background:var(--surface); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color:var(--text-muted);
+  }
+  .tb-cloche:hover{border-color:var(--green); color:var(--green);}
+  .tb-cloche svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+  .tb-point{position:absolute; top:7px; right:8px; width:8px; height:8px; border-radius:50%;
+    background:#C0392B; border:2px solid var(--surface); display:none;}
+  .tb-point.visible{display:block;}
+  .tb-membre{display:flex; align-items:center; gap:9px; font-size:0.88rem; font-weight:600; color:var(--text-heading);}
+  /* Le bandeau vert d'origine servait de fond au logo blanc : sans lui, la
+     barre passe en clair et ses elements reprennent les couleurs du texte. */
+  header{background:var(--surface); border-bottom:1px solid var(--line);}
+  header .logo-img{filter:none;}
+  .signout-btn{color:var(--text-muted); border-color:var(--line);}
+  .signout-btn:hover{border-color:var(--green); color:var(--green);}
+
+  /* ===== Banniere ===== */
+  .tb-banniere{
+    position:relative; overflow:hidden; border-radius:16px; margin-bottom:24px;
+    background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
+    padding:36px 38px; min-height:232px; display:flex; align-items:center;
+  }
+  .tb-ban-photo{
+    position:absolute; right:0; top:0; bottom:0; width:54%;
+    background-size:cover; background-position:center 30%;
+    -webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 30%, #000 68%);
+    mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 30%, #000 68%);
+  }
+  .tb-ban-texte{position:relative; z-index:1; max-width:min(560px, 58%);}
+  .tb-eyebrow{
+    font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.14em;
+    color:#FFE3A0; display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  }
+  .tb-eyebrow::before{content:""; width:20px; height:1.5px; background:#FFE3A0;}
+  .tb-titre{font-family:var(--display); font-size:clamp(1.65rem,3.4vw,2.35rem); font-weight:700;
+    color:#FFFFFF; line-height:1.15;}
+  .tb-intro{color:rgba(255,255,255,0.86); font-size:0.94rem; margin-top:10px; max-width:52ch;}
+  .tb-pastilles{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;}
+  .tb-pastille{
+    display:inline-flex; align-items:center; gap:9px; padding:8px 16px; border-radius:999px;
+    font-size:0.83rem; font-weight:600; color:#FFFFFF;
+    background:rgba(255,255,255,0.13); border:1px solid rgba(255,255,255,0.24);
+  }
+  .tb-pastille-etat{background:rgba(248,183,24,0.2); border-color:rgba(248,183,24,0.5); color:#FFE3A0;}
+  .tb-pastille svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  @media(max-width:860px){
+    .tb-banniere{padding:28px 24px; min-height:0;}
+    .tb-ban-photo{display:none;}
+    .tb-ban-texte{max-width:none;}
+  }
+
+  /* ===== Rangee : progression, administration, aide =====
+     auto-fit et non des colonnes fixes : une carte masquee (pas
+     d'administration pour un membre, pas de formation commencee) disparait
+     sans laisser de trou, et la piste vide se replie d'elle-meme. */
+  .tb-rangee{display:grid; gap:16px; margin-bottom:24px;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));}
+  .tb-carte{
+    min-width:0; display:flex; flex-direction:column; gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+    transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  a.tb-carte:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(6,68,28,0.1); transform:translateY(-2px);}
+  a.tb-carte:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .tb-carte-tete{display:flex; align-items:center; gap:12px;}
+  .tb-carte-ic{
+    width:42px; height:42px; flex:none; border-radius:11px; display:grid; place-items:center;
+    background:rgba(23,118,59,0.1); color:#12622F;
+  }
+  :root[data-theme="dark"] .tb-carte-ic{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+  .tb-carte-ic svg{width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+  .tb-carte-label{font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.12em; color:#8A6209;}
+  :root[data-theme="dark"] .tb-carte-label{color:var(--text-accent);}
+  .tb-carte-titre{font-family:var(--display); font-size:1.08rem; font-weight:600; color:var(--text-heading); line-height:1.25; margin-top:2px;}
+  .tb-carte-sous{font-size:0.85rem; color:var(--text-muted); line-height:1.45;}
+  .tb-carte-fleche{margin-left:auto; flex:none; color:#8A9E8F;}
+  .tb-carte-fleche svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+
+  /* La progression est la carte principale : des qu'il y a la place pour
+     quatre pistes, elle en prend deux. */
+  .tb-progression{background:rgba(23,118,59,0.055); border-color:rgba(23,118,59,0.2);}
+  @media(min-width:1180px){ .tb-progression{grid-column:span 2;} }
+  :root[data-theme="dark"] .tb-progression{background:rgba(127,217,160,0.07); border-color:rgba(127,217,160,0.2);}
+  .tb-prog-jauge{display:flex; align-items:center; gap:14px;}
+  .tb-prog-piste{flex:1; height:8px; border-radius:999px; background:rgba(6,68,28,0.13); overflow:hidden;}
+  :root[data-theme="dark"] .tb-prog-piste{background:rgba(255,255,255,0.15);}
+  .tb-prog-piste span{display:block; height:100%; border-radius:999px; background:#17763B;}
+  :root[data-theme="dark"] .tb-prog-piste span{background:#35B872;}
+  .tb-prog-pct{font-family:var(--mono); font-size:0.82rem; font-weight:600; color:var(--text-heading); flex:none;}
+  .tb-prog-btn{
+    align-self:flex-start; display:inline-flex; align-items:center; gap:9px;
+    padding:11px 20px; border-radius:999px; background:#06441C; color:#FFFFFF;
+    font-size:0.88rem; font-weight:600;
+  }
+  :root[data-theme="dark"] .tb-prog-btn{background:#17763B;}
+  .tb-progression:hover .tb-prog-btn{background:#17763B;}
+  .tb-prog-btn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .tb-aide .tb-carte-ic{background:rgba(248,183,24,0.18); color:#8A6209;}
+  :root[data-theme="dark"] .tb-aide .tb-carte-ic{background:rgba(248,183,24,0.2); color:#F0C955;}
+  .tb-aide-lien{
+    align-self:flex-start; display:inline-flex; align-items:center; gap:8px; margin-top:auto;
+    padding:9px 17px; border-radius:999px; border:1.5px solid var(--line);
+    font-size:0.85rem; font-weight:600; color:var(--text-heading);
+  }
+  .tb-aide-lien:hover{border-color:var(--green); color:var(--green);}
+  .tb-aide-lien svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+
+  /* ===== Titre de section avec pastille ===== */
+  .tb-section-tete{display:flex; align-items:center; gap:13px; margin:0 0 16px;}
+  .tb-section-ic{width:38px; height:38px; flex:none; border-radius:11px; display:grid; place-items:center;
+    background:#06441C; color:#F8B718;}
+  :root[data-theme="dark"] .tb-section-ic{background:#17763B;}
+  .tb-section-ic svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+  .tb-section-titre{font-family:var(--display); font-size:1.18rem; font-weight:600; color:var(--text-heading);}
+
+  /* Pastilles d'icones teintees, par rotation de quatre tons de la charte. */
+  .espaces-grid .espace-card:nth-child(4n+1) .espace-icon{background:rgba(23,118,59,0.11); color:#12622F;}
+  .espaces-grid .espace-card:nth-child(4n+2) .espace-icon{background:rgba(248,183,24,0.2); color:#8A6209;}
+  .espaces-grid .espace-card:nth-child(4n+3) .espace-icon{background:rgba(6,68,28,0.1); color:#06441C;}
+  .espaces-grid .espace-card:nth-child(4n+4) .espace-icon{background:rgba(90,108,96,0.16); color:#41544A;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+1) .espace-icon{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+2) .espace-icon{background:rgba(248,183,24,0.18); color:#F0C955;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+3) .espace-icon{background:rgba(127,217,160,0.1); color:#7FD9A0;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(4n+4) .espace-icon{background:rgba(255,255,255,0.09); color:#9BB0A2;}
+  .espace-card[hidden]{display:none;}
+  .tb-rien{font-size:0.9rem; color:var(--text-muted); padding:10px 2px;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -151,8 +295,20 @@
 <header>
   <div class="header-inner">
     <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <!-- La recherche filtre les espaces listes plus bas : c'est ce qu'elle
+         sait faire, et son intitule le dit. -->
+    <form class="tb-recherche" role="search" onsubmit="return false;">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <input type="search" id="rechercheEspaces" placeholder="Rechercher un espace…" aria-label="Rechercher un espace">
+    </form>
     <div class="header-right" id="headerRight" style="display:none;">
-      <div class="avatar" id="avatarEl">?</div>
+      <button type="button" class="tb-cloche" id="clocheBtn" aria-label="Annonces">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16S18 14 18 9z"/><path d="M13.7 19a2 2 0 0 1-3.4 0"/></svg><span class="tb-point" id="clochePoint"></span>
+      </button>
+      <div class="tb-membre">
+        <div class="avatar" id="avatarEl">?</div>
+        <span id="membreNom">Membre</span>
+      </div>
       <button class="signout-btn" id="signoutBtn">Se déconnecter</button>
     </div>
   </div>
@@ -185,50 +341,81 @@
 
 <div id="pageContent" style="display:none;">
 
-  <div class="hero">
-    <div class="hero-inner">
-      <p class="hero-label">Espace Membres</p>
-      <h1 class="hero-name" id="welcomeName">Bonjour</h1>
-      <p class="hero-sub" id="welcomeSub">Bienvenue dans votre espace membre AMSTC.</p>
-    </div>
-  </div>
-
   <div class="page-body">
+
+    <!-- Banniere : photo et textes viennent de content/espace-membre.json. -->
+    <section class="tb-banniere">
+      <div class="tb-ban-photo" id="tbPhoto"></div>
+      <div class="tb-ban-texte">
+        <p class="tb-eyebrow" id="tbEyebrow">Espace Membres</p>
+        <h1 class="tb-titre"><span id="welcomeName">Bonjour</span> <span aria-hidden="true">👋</span></h1>
+        <p class="tb-intro" id="welcomeSub">Bienvenue dans votre espace membre AMSTC.</p>
+        <div class="tb-pastilles">
+          <span class="tb-pastille tb-pastille-etat" id="pastilleEtat"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg> <span id="pastilleEtatTexte">Membre actif</span></span>
+          <span class="tb-pastille" id="pastilleDepuis" style="display:none;"></span>
+        </div>
+      </div>
+    </section>
 
     <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
 
     <div class="card-status-banner profile-incomplete" id="profileBanner" style="display:none;"></div>
 
-    <!-- Reprise de formation et agenda : chaque bloc reste masque tant qu'il
-         n'a rien a montrer, pour ne pas laisser un cadre vide. -->
-    <div class="reprise-grid">
-      <a class="reprise-card" id="repriseCard" href="#" style="display:none;">
-        <span class="reprise-label"><i class="ti ti-player-play"></i> Reprendre</span>
-        <span class="reprise-titre" id="repriseTitre"></span>
-        <span class="reprise-meta" id="repriseMeta"></span>
-        <span class="reprise-barre"><span id="repriseJauge" style="width:0%"></span></span>
-        <span class="reprise-suite">Continuer <i class="ti ti-arrow-right"></i></span>
+    <!-- Chaque carte reste masquee tant qu'elle n'a rien a montrer : pas de
+         formation commencee, pas de droits d'administration. -->
+    <div class="tb-rangee">
+
+      <a class="tb-carte tb-progression" id="repriseCard" href="#" style="display:none;">
+        <div class="tb-carte-tete">
+          <span class="tb-carte-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8"/></svg></span>
+          <span style="min-width:0;">
+            <span class="tb-carte-label" style="display:block;">Votre progression</span>
+            <span class="tb-carte-titre" style="display:block;" id="repriseTitre"></span>
+            <span class="tb-carte-sous" style="display:block;" id="repriseMeta"></span>
+          </span>
+        </div>
+        <div class="tb-prog-jauge">
+          <span class="tb-prog-piste"><span id="repriseJauge" style="width:0%"></span></span>
+          <span class="tb-prog-pct" id="reprisePct">0 %</span>
+        </div>
+        <span class="tb-prog-btn">Continuer la formation <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </a>
-      <div class="agenda-card" id="agendaCard" style="display:none;">
-        <p class="section-label"><i class="ti ti-calendar-event"></i> Prochaines activités</p>
-        <div id="agendaListe"></div>
+
+      <a class="tb-carte" id="adminSection" href="admin" style="display:none;">
+        <div class="tb-carte-tete">
+          <span class="tb-carte-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 19.5 6v5.6c0 4.2-3.1 7.4-7.5 8.9-4.4-1.5-7.5-4.7-7.5-8.9V6z"/><path d="M9.5 12.2l1.8 1.8 3.4-3.6"/></svg></span>
+          <span class="tb-carte-label">Administration</span>
+          <span class="tb-carte-fleche"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+        <p class="tb-carte-titre">Centre d'administration</p>
+        <p class="tb-carte-sous">Membres, contenus, boutique, adhésions…</p>
+      </a>
+
+      <div class="tb-carte tb-aide">
+        <div class="tb-carte-tete">
+          <span class="tb-carte-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 17.5a6 6 0 1 1 5.6 0v1.7a1.5 1.5 0 0 1-1.5 1.5h-2.6a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M9.8 17.5h4.4"/></svg></span>
+          <span class="tb-carte-titre" id="aideTitre">Besoin d'aide ?</span>
+        </div>
+        <p class="tb-carte-sous" id="aideTexte">Une question, un problème ? Notre équipe est là pour vous.</p>
+        <a class="tb-aide-lien" id="aideLien" href="../guide.html"><span id="aideLienTexte">Consulter le guide</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
+
     </div>
 
-    <div id="adminSection" style="display:none;margin-bottom:32px;">
-      <p class="section-label"><i class="ti ti-settings"></i> Administration</p>
-      <a class="admin-card" href="admin" style="max-width:360px;">
-        <div class="admin-card-icon" style="background:rgba(248,183,24,0.15);color:var(--text-accent);"><i class="ti ti-shield-lock"></i></div>
-        <div>
-          <p class="admin-card-label">Centre d'administration</p>
-          <p class="admin-card-sub">Membres, contenus, boutique, adhésions…</p>
-        </div>
-        <i class="ti ti-arrow-right" style="margin-left:auto;color:#c0ccc5;"></i>
-      </a>
+    <div class="agenda-card" id="agendaCard" style="display:none;margin-bottom:26px;">
+      <div class="tb-section-tete">
+        <span class="tb-section-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg></span>
+        <p class="tb-section-titre">Prochaines activités</p>
+      </div>
+      <div id="agendaListe"></div>
     </div>
 
     <div id="espacesSection">
-      <p class="section-label"><i class="ti ti-layout-grid"></i> Vos espaces</p>
+      <div class="tb-section-tete">
+        <span class="tb-section-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg></span>
+        <p class="tb-section-titre">Vos espaces</p>
+      </div>
+      <p class="tb-rien" id="rechercheVide" style="display:none;">Aucun espace ne correspond à votre recherche.</p>
       <div class="espaces-grid">
 
         <!-- En tête, toujours : c'est la raison première de venir ici. -->
@@ -382,6 +569,30 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  // ===== Contenu editable (content/espace-membre.json) =====
+  // Charge des le depart, en parallele de la verification de session : le
+  // tableau de bord garde ses textes d'origine si le fichier manque.
+  let contenuTb = {};
+  const contenuPret = (async function () {
+    try {
+      const r = await fetch("../content/espace-membre.json", { cache: "no-store" });
+      if (r.ok) contenuTb = await r.json();
+    } catch (e) { /* valeurs par defaut */ }
+    const poser = function (id, valeur) {
+      const el = document.getElementById(id);
+      if (el && valeur) el.textContent = valeur;
+    };
+    poser("tbEyebrow", contenuTb.accroche);
+    poser("aideTitre", contenuTb.aide_titre);
+    poser("aideTexte", contenuTb.aide_texte);
+    poser("aideLienTexte", contenuTb.aide_lien_texte);
+    if (contenuTb.aide_lien) document.getElementById("aideLien").href = contenuTb.aide_lien;
+    if (contenuTb.image) {
+      const photo = document.getElementById("tbPhoto");
+      if (photo) photo.style.backgroundImage = 'url("' + String(contenuTb.image).replace(/"/g, "") + '")';
+    }
+  })();
+
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   // Empêche le défilement de la page en arrière-plan pendant que le modal
@@ -495,8 +706,45 @@
     document.getElementById("repriseTitre").textContent = reprise.titre;
     document.getElementById("repriseMeta").textContent = reprise.espace + " \u00b7 " + reprise.pct + " % parcouru";
     document.getElementById("repriseJauge").style.width = Math.max(2, Math.min(100, reprise.pct)) + "%";
+    document.getElementById("reprisePct").textContent = Math.round(reprise.pct) + " %";
     carte.style.display = "";
   }
+
+  // ===== Pastilles d'etat de la banniere =====
+  // L'etat de la carte est deja calcule pour le bandeau d'alerte ; on le
+  // redit ici en un mot, et l'annee d'adhesion a cote quand elle est connue.
+  function remplirPastilles(profile, etat) {
+    const texte = etat === "blocked" ? "Accès suspendu"
+      : etat === "grace" ? "Carte expirée" : "Membre actif";
+    document.getElementById("pastilleEtatTexte").textContent = texte;
+    let annee = profile.member_since;
+    if (!annee && profile.created_at) annee = String(profile.created_at).slice(0, 4);
+    if (annee) {
+      const el = document.getElementById("pastilleDepuis");
+      el.textContent = "Membre depuis " + annee;
+      el.style.display = "";
+    }
+  }
+
+  // ===== Recherche : filtre les cartes « Vos espaces » =====
+  (function () {
+    const champ = document.getElementById("rechercheEspaces");
+    if (!champ) return;
+    const sansAccent = function (t) {
+      return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+    champ.addEventListener("input", function () {
+      const q = sansAccent(champ.value).trim();
+      const cartes = document.querySelectorAll(".espaces-grid .espace-card");
+      let visibles = 0;
+      cartes.forEach(function (c) {
+        const trouve = q === "" || sansAccent(c.textContent).indexOf(q) !== -1;
+        c.hidden = !trouve;
+        if (trouve) visibles++;
+      });
+      document.getElementById("rechercheVide").style.display = visibles === 0 ? "" : "none";
+    });
+  })();
 
   // ===== Prochaines activites =====
   // Activites a venir et ouvertes. Le lien mene a la page publique des
@@ -537,12 +785,17 @@
 
     const name = profile.full_name || profile.email || "Membre";
     const first = name.split(" ")[0];
-    document.getElementById("welcomeName").textContent = "Bonjour, " + first + " 👋";
+    await contenuPret;
+    document.getElementById("welcomeName").textContent =
+      (contenuTb.salutation || "Bonjour") + ", " + first;
+    document.getElementById("membreNom").textContent = first;
+    remplirPastilles(profile, result.state);
 
     // Blocs facultatifs : ils ne doivent jamais empecher l'affichage du reste.
     chargerReprise(profile.id).catch(function () {});
     chargerAgenda().catch(function () {});
-    document.getElementById("welcomeSub").textContent = "Bienvenue dans votre espace membre AMSTC.";
+    document.getElementById("welcomeSub").textContent =
+      contenuTb.texte || "Bienvenue dans votre espace membre AMSTC.";
     document.getElementById("avatarEl").textContent =
       name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
 
@@ -571,7 +824,10 @@
       // qu'une nouvelle annonce épinglée s'affiche quand même si l'admin en
       // ajoute une pendant que le membre est encore sur le site.
       const signature = data.map(a => a.id).sort().join(",");
-      if (sessionStorage.getItem("amstc-ann-seen") === signature) return;
+      // Les annonces deja fermees ne rouvrent pas d'elles-memes, mais la
+      // cloche doit quand meme pouvoir les rappeler : on prepare le contenu
+      // dans tous les cas et on n'ouvre que si elles sont nouvelles.
+      const dejaVues = sessionStorage.getItem("amstc-ann-seen") === signature;
 
       const paths = data.map(a => a.image_path).filter(Boolean);
       let imgUrlMap = {};
@@ -587,14 +843,28 @@
           ${a.body ? `<p class="ann-item-text">${esc(a.body)}</p>` : ""}
         </div>
       `).join("");
-      lockBodyScroll();
+      document.getElementById("clochePoint").classList.add("visible");
       const overlay = document.getElementById("annOverlay");
       overlay.dataset.signature = signature;
+      if (dejaVues) return;
+      lockBodyScroll();
       overlay.classList.add("open");
     } catch (e) {
       // Silencieux : l'absence d'annonces ne doit jamais bloquer le tableau de bord.
     }
   }
+
+  // La cloche rappelle les annonces preparees ; sans annonce, elle le dit.
+  document.getElementById("clocheBtn").addEventListener("click", () => {
+    const overlay = document.getElementById("annOverlay");
+    const corps = document.getElementById("annModalBody");
+    if (!corps.innerHTML.trim()) {
+      corps.innerHTML = '<div class="ann-item"><p class="ann-item-text">Aucune annonce pour le moment.</p></div>';
+    }
+    document.getElementById("clochePoint").classList.remove("visible");
+    lockBodyScroll();
+    overlay.classList.add("open");
+  });
 
   document.getElementById("annCloseBtn").addEventListener("click", () => {
     const overlay = document.getElementById("annOverlay");

@@ -389,6 +389,21 @@ collections:
                   - { label: "Membre", value: "membre" }
               - { label: "Photo", name: "photo", widget: "image", required: false }
 
+      - name: "espace_membre"
+        label: "Tableau de bord de l'espace membres"
+        file: "content/espace-membre.json"
+        media_folder: "/assets"
+        public_folder: "/assets"
+        fields:
+          - { label: "Accroche au-dessus du titre", name: "accroche", widget: "string", required: false, default: "Espace Membres" }
+          - { label: "Salutation", name: "salutation", widget: "string", required: false, default: "Bonjour", hint: "Le prénom du membre est ajouté après, suivi d'un emoji. Exemple : « Bonjour, Awa »." }
+          - { label: "Texte de bienvenue", name: "texte", widget: "text", required: false }
+          - { label: "Photo de la bannière", name: "image", widget: "image", required: false, hint: "Affichée à droite de la bannière, en fondu vers le vert. Format paysage, 1600 px de large au minimum." }
+          - { label: "Carte d'aide - titre", name: "aide_titre", widget: "string", required: false }
+          - { label: "Carte d'aide - texte", name: "aide_texte", widget: "text", required: false }
+          - { label: "Carte d'aide - intitulé du bouton", name: "aide_lien_texte", widget: "string", required: false }
+          - { label: "Carte d'aide - adresse du bouton", name: "aide_lien", widget: "string", required: false, hint: "Exemple : ../guide.html" }
+
       - name: "connexion"
         label: "Page de connexion (espace membres)"
         file: "content/connexion.json"
