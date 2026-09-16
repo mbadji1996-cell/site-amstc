@@ -235,8 +235,9 @@ html header .logo-img{filter:none;}
 /* Le logo ne disparait que la ou la colonne le reprend : sous 1024 px il
    reste la seule marque de la page. */
 @media(min-width:1024px){ html.a-rail header .logo-img{display:none;} }
-html .signout-btn{color:var(--text-muted, #5A6C60); border-color:var(--line, rgba(6,68,28,0.16));}
-html .signout-btn:hover{border-color:#17763B; color:#17763B;}
+/* Deconnexion en or de la charte, texte vert profond (6,36). */
+html .signout-btn{background:#F8B718; color:#06441C; border-color:#F8B718; font-weight:600;}
+html .signout-btn:hover{background:#AA7B11; border-color:#AA7B11; color:#FFFFFF;}
 /* Le panier de la boutique vivait sur le vert. */
 html .cart-btn{background:var(--paper-alt, #ECEFE3); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-heading, #06441C);}
 html .cart-btn:hover{background:var(--surface, #FFFFFF); border-color:#17763B;}

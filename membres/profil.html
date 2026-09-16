@@ -542,7 +542,7 @@
             <p class="pf-carte-titre">Besoin d'aide ?</p>
           </div>
           <p class="pf-carte-texte">Notre équipe est disponible pour vous accompagner dans vos démarches.</p>
-          <a class="pf-bouton pf-bouton-vert" id="pfSupport" href="mailto:contact@amstc.org">
+          <a class="pf-bouton pf-bouton-vert" id="pfSupport" href="https://wa.me/221775351912" target="_blank" rel="noopener">
             Contacter le support <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>
           </a>
           <ul class="pf-contacts">
@@ -690,10 +690,14 @@
         tel.textContent = d.contact_phone;
         tel.href = 'tel:' + String(d.contact_phone).replace(/\s+/g, '');
       }
+      // Le support passe par WhatsApp, sur le numero de l'association.
+      if (d.contact_phone && support) {
+        const chiffres = String(d.contact_phone).replace(/\D/g, '');
+        if (chiffres.length >= 9) support.href = 'https://wa.me/' + chiffres;
+      }
       if (d.contact_email && mail) {
         mail.textContent = d.contact_email;
         mail.href = 'mailto:' + d.contact_email;
-        if (support) support.href = 'mailto:' + d.contact_email;
       }
       if (d.contact_address && adresse) adresse.textContent = d.contact_address;
     } catch (e) { /* les coordonnees par defaut restent affichees */ }
