@@ -172,7 +172,7 @@
   }
   .ms-marque{display:block; padding:6px 8px 20px;}
   /* Le logo est sombre a l'origine : sur le vert il passe en blanc. */
-  .ms-marque img{height:44px; width:auto; display:block; filter:brightness(0) invert(1);}
+  .ms-marque img{width:min(100%, 176px); height:auto; display:block; filter:brightness(0) invert(1);}
 
   .ms-liens{display:flex; flex-direction:column; gap:2px;}
   .ms-lien{
