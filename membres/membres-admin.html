@@ -154,9 +154,6 @@
   .ma-page.actif{background:#06441C;border-color:#06441C;color:#FFFFFF;}
   :root[data-theme="dark"] .ma-page.actif{background:#17763B;border-color:#17763B;}
   .ma-page:disabled{opacity:0.45;cursor:default;}
-  .ma-outils{font-size:0.84rem;color:var(--text-muted);margin:-6px 2px 14px;line-height:1.6;}
-  .ma-outils a{color:var(--green);font-weight:600;}
-  :root[data-theme="dark"] .ma-outils a{color:#7FD9A0;}
   .ma-vide{padding:40px 10px;text-align:center;color:var(--text-muted);font-size:0.9rem;}
 
   /* Telephone et tablette : chaque ligne devient une carte. */
@@ -216,6 +213,80 @@
   .md-liens a{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--green);}
   :root[data-theme="dark"] .md-liens a{color:#7FD9A0;}
   body.md-bloque{overflow:hidden;}
+
+  /* ===== Barre d'outils ===== */
+  .ma-outils{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;}
+  .ma-outil{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;cursor:pointer;
+    border:1.5px solid var(--line);background:var(--surface);color:var(--text-heading);
+    font-family:var(--body);font-size:0.84rem;font-weight:600;white-space:nowrap;}
+  .ma-outil:hover{border-color:var(--green);}
+  .ma-outil:disabled{opacity:0.55;cursor:wait;}
+  .ma-outil .ic{width:16px;height:16px;}
+  .ma-outil .pastille{min-width:20px;height:20px;padding:0 6px;border-radius:999px;display:inline-grid;place-items:center;
+    background:#B23B3B;color:#FFFFFF;font-size:0.7rem;font-weight:700;}
+  .ma-outil .pastille.zero{background:var(--paper-alt);color:var(--text-muted);}
+  .ma-outil.restriction-on{border-color:rgba(178,59,59,0.45);color:#9B2C2C;background:#FDEEEE;}
+  .ma-outil.restriction-off{border-color:rgba(23,118,59,0.35);}
+  :root[data-theme="dark"] .ma-outil.restriction-on{background:rgba(242,154,142,0.12);color:#F29A8E;}
+
+  /* ===== Fenetres d'outils ===== */
+  .mo-voile{position:fixed;inset:0;z-index:1600;background:rgba(6,28,14,0.55);display:none;
+    align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+  .mo-voile.ouvert{display:flex;}
+  .mo-boite{width:min(900px,100%);background:var(--surface);border-radius:16px;box-shadow:0 24px 60px rgba(6,28,14,0.35);}
+  .mo-tete{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line);}
+  .mo-titre{font-family:var(--display);font-size:1.12rem;font-weight:700;color:var(--text-heading);}
+  .mo-tete .ma-bouton{margin-left:auto;}
+  .mo-corps{padding:18px 22px 24px;}
+  .mo-note{font-size:0.86rem;color:var(--text-muted);line-height:1.55;margin-bottom:12px;}
+  .mo-note code{font-family:var(--mono);font-size:0.8rem;background:var(--paper-alt);padding:1px 6px;border-radius:5px;color:var(--text-heading);}
+  .mo-ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:12px 0;border-bottom:1px solid var(--line);}
+  .mo-ligne:last-child{border-bottom:0;}
+  .mo-table-zone{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0;max-height:360px;overflow-y:auto;}
+  .mo-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+  .mo-table th{position:sticky;top:0;background:var(--paper-alt);text-align:left;padding:8px 10px;font-size:0.74rem;color:var(--text-muted);white-space:nowrap;}
+  .mo-table td{padding:8px 10px;border-top:1px solid var(--line);}
+  .mo-table tr.ignoree td{opacity:0.55;}
+  .mo-table tr.a-verifier td{background:rgba(248,183,24,0.1);}
+  .mo-resume{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+  .mo-resume span{padding:5px 10px;border-radius:999px;background:var(--paper-alt);font-size:0.8rem;color:var(--text-heading);}
+  .mo-textarea{width:100%;min-height:140px;padding:12px;border:1.5px solid var(--line);border-radius:10px;
+    font-family:var(--mono);font-size:0.84rem;background:var(--surface);color:var(--ink);resize:vertical;}
+  .mo-fichier{display:block;width:100%;padding:18px;border:2px dashed var(--line);border-radius:12px;background:var(--paper-alt);
+    font-family:var(--body);font-size:0.88rem;color:var(--text-heading);}
+  .mo-bandeau{padding:12px 14px;border-radius:10px;background:#E3F1E7;color:#12622F;font-size:0.88rem;margin-bottom:12px;}
+  :root[data-theme="dark"] .mo-bandeau{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+
+  /* ===== Onglets de la fiche ===== */
+  .md-onglets{display:flex;gap:2px;padding:0 12px;border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:none;}
+  .md-onglets::-webkit-scrollbar{display:none;}
+  .md-onglet{padding:12px 9px;border:0;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;
+    font-family:var(--body);font-size:0.84rem;font-weight:600;color:var(--text-muted);}
+  .md-onglet:hover{color:var(--text-heading);}
+  .md-onglet.actif{color:var(--text-heading);border-bottom-color:var(--gold);}
+  .md-grille{display:grid;gap:10px 12px;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .md-grille .plein{grid-column:1 / -1;}
+  @media(max-width:460px){ .md-grille{grid-template-columns:minmax(0,1fr);} }
+  .md-champ{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .md-champ label{font-size:0.74rem;font-weight:600;color:var(--text-muted);}
+  .md-champ input,.md-champ select,.md-champ textarea{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;
+    font-family:var(--body);font-size:0.88rem;background:var(--surface);color:var(--ink);}
+  .md-champ input:focus,.md-champ select:focus,.md-champ textarea:focus{outline:none;border-color:var(--green);}
+  :root[data-theme="dark"] .md-champ select option{background:#182019;color:#E8F1EC;}
+  .md-cases{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:10px;}
+  .md-cases label{display:flex;align-items:center;justify-content:center;height:34px;border-radius:8px;cursor:pointer;
+    border:1.5px dashed var(--line);font-size:0.76rem;font-weight:600;color:var(--text-muted);user-select:none;}
+  .md-cases label.paye{background:var(--gold);border:1.5px solid var(--gold);color:#06441C;}
+  .md-cases input{position:absolute;opacity:0;pointer-events:none;}
+  .md-cases label:focus-within{outline:2px solid var(--green);outline-offset:1px;}
+  .md-message.ok{color:#12622F;}
+  :root[data-theme="dark"] .md-message.ok{color:#7FD9A0;}
+  .md-alerte{padding:10px 12px;border-radius:10px;background:#FEF1D1;color:#6B4B07;font-size:0.84rem;line-height:1.5;margin-top:10px;}
+  :root[data-theme="dark"] .md-alerte{background:rgba(248,183,24,0.14);color:#F0C955;}
+  .md-lien-copie{display:flex;gap:8px;margin-top:8px;}
+  .md-lien-copie input{flex:1;min-width:0;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:var(--mono);font-size:0.78rem;background:var(--paper-alt);color:var(--ink);}
+  .role-tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:0.72rem;font-weight:600;background:var(--paper-alt);color:var(--text-heading);margin:4px 4px 0 0;}
 </style>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
@@ -291,6 +362,34 @@
       </div>
     </div>
 
+    <!-- Outils : tout ce que faisaient Gestion des membres et Cartes de membres
+         en dehors de la fiche d'une personne. -->
+    <div class="ma-outils" id="outils">
+      <button type="button" class="ma-outil" data-outil="importer">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14V4M8 7.5l4-4 4 4M4.5 19.5h15"/></svg> Importer des cartes
+      </button>
+      <button type="button" class="ma-outil" data-outil="imprimer" id="outilImprimer">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 5 9h14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 19 17h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/></svg>
+        <span id="texteImprimer">Imprimer les cartes (PDF)</span>
+      </button>
+      <button type="button" class="ma-outil" data-outil="annees">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
+        Demandes d'année <span class="pastille zero" id="pastilleAnnees">0</span>
+      </button>
+      <button type="button" class="ma-outil" data-outil="refuses">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/></svg>
+        Comptes refusés <span class="pastille zero" id="pastilleRefuses">0</span>
+      </button>
+      <button type="button" class="ma-outil" data-outil="admins" id="outilAdmins" style="display:none;">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 19.5 6v5.6c0 4.2-3.1 7.4-7.5 8.9-4.4-1.5-7.5-4.7-7.5-8.9V6z"/></svg>
+        Administrateurs <span class="pastille zero" id="pastilleAdmins">0</span>
+      </button>
+      <button type="button" class="ma-outil" data-outil="restriction" id="outilRestriction">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
+        <span id="texteRestriction">Restriction d'accès : …</span>
+      </button>
+    </div>
+
     <div class="ma-filtres">
       <div class="ma-recherche" data-recherche-cacher>
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
@@ -319,16 +418,11 @@
         <label for="filtreRegion">Région</label>
         <select id="filtreRegion"><option value="">Toutes</option></select>
       </div>
-      <a class="btn btn-vert" href="cartes-admin?ajouter=1">
+      <button type="button" class="btn btn-vert" data-outil="ajouter">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8.5" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M22 11h-6"/></svg>
         Ajouter une carte
-      </a>
+      </button>
     </div>
-
-    <p class="ma-outils">Outils avancés :
-      <a href="cartes-admin?outil=1">import Excel, restriction d'accès et réclamations des cartes</a> ·
-      <a href="validation?outil=1">rôles d'administration, comptes refusés et demandes d'année d'adhésion</a>
-    </p>
 
     <section class="ma-liste">
       <div class="ma-liste-tete">
@@ -340,6 +434,9 @@
           <span id="texteSelection">Aucune sélection</span>
           <button type="button" id="toutFiltre">Tout sélectionner</button>
           <button type="button" id="rienSelection" style="display:none;">Désélectionner</button>
+          <button type="button" class="btn btn-contour" id="exporterPdf" title="Exporter en PDF">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3h7l4.5 4.5V21h-11.5zM13.5 3v4.5H18"/></svg> PDF
+          </button>
           <button type="button" class="btn btn-or" id="exporter">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 10.5l4 4 4-4M4.5 19.5h15"/></svg>
             <span id="texteExport">Exporter la liste</span>
@@ -374,11 +471,26 @@
   </div>
 </div>
 
+<!-- Fiche d'une personne -->
 <div class="md-voile" id="mdVoile"></div>
 <aside class="md-panneau" id="mdPanneau" role="dialog" aria-modal="true" aria-labelledby="mdNom">
   <div class="md-tete" id="mdTete"></div>
+  <div class="md-onglets" id="mdOnglets" role="tablist"></div>
   <div class="md-corps" id="mdCorps"></div>
 </aside>
+
+<!-- Fenetre des outils (import, demandes d'annee, refuses, administrateurs, ajout de carte) -->
+<div class="mo-voile" id="moVoile">
+  <div class="mo-boite" role="dialog" aria-modal="true" aria-labelledby="moTitre">
+    <div class="mo-tete">
+      <h2 class="mo-titre" id="moTitre"></h2>
+      <button type="button" class="ma-bouton" id="moFermer" aria-label="Fermer">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="mo-corps" id="moCorps"></div>
+  </div>
+</div>
 
 <footer style="padding:40px 0;text-align:center;">
   <a href="../" style="color:var(--green);font-family:var(--mono);font-size:0.78rem;">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
@@ -387,12 +499,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/localites.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/garde-whatsapp.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script src="../assets/js/carte-membre.js"></script>
 <script>
   // ============================================================================
   // Membres et cartes : comptes (profiles) et cartes (member_cards) sur une
-  // seule liste. Aucune fonction nouvelle en base : la page reprend les appels
-  // deja utilises par « Gestion des membres » et « Cartes de membres ».
+  // seule liste, avec tous les outils de l'ancienne « Gestion des membres »
+  // et de l'ancienne « Cartes de membres ». Aucune fonction nouvelle en
+  // base : chaque action reprend l'appel qu'utilisaient ces deux pages.
   //
   // Une ligne par personne :
   //  - un compte, avec sa carte s'il en porte une (reclamation comprise) ;
@@ -402,8 +520,12 @@
   const ANNEE = new Date().getFullYear();
   const PAR_PAGE = 25;
   const MOIS = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  const MOIS_NOMS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const DOMAINES = { medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
     soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux' };
+  // Domaines ouvrant droit a un acces sur consultations-amstc.org.
+  const DOMAINES_CONSULT = ['medecine', 'pharmacie', 'odontologie', 'soins_infirmiers', 'soins_obstetricaux'];
+  const SIGNATURE = '\n\n©AMSTC';
   const STATUTS = {
     'actif':       { label: 'Carte à jour', cls: 'ok' },
     'inscription': { label: 'Inscription à valider', cls: 'attente' },
@@ -413,17 +535,43 @@
     'non-reclame': { label: 'Non réclamée', cls: 'neutre' },
     'desactive':   { label: 'Désactivé', cls: 'neutre' },
   };
+  // Fonction au Bureau Executif (phase52) : repere sur les comptes.
+  const COMMISSIONS = ['Secrétaire général', 'Commission Sociale', 'Commission Pédagogique',
+    'Relations extérieures', 'Commission Organisation', 'Presse & Information',
+    'Commission Finance', 'Commission Féminine', 'Comité des Sages'];
+  const FONCTIONS = ['Président', 'Présidente', 'Vice-président', 'Vice-présidente',
+    'Secrétaire général', 'Adjoint', 'Adjointe', 'Commissaire aux comptes', 'Coordinateur'];
+  // Rappels individuels (phase57). « Compte active » reste apres les
+  // rappels : la premiere entree est celle choisie par defaut.
+  const TYPES_RAPPEL = [
+    ['carte_expiree', 'Carte expirée'],
+    ['carte_expire_bientot', 'Carte à renouveler bientôt'],
+    ['cotisation_retard', 'Cotisations en retard'],
+    ['compte_active', 'Compte activé - se connecter'],
+    ['libre', 'Message libre'],
+  ];
 
-  let lignes = [];                // toutes les lignes construites
-  let cotisations = {};           // user_id -> mois payes (annee en cours)
-  let cartesLibres = [];          // cartes non reclamees
-  let membresSansCarte = [];      // comptes valides sans carte
+  let moi = null;                  // profil de l'administrateur connecte
+  let estSuperAdmin = false;
+  let lignes = [];
+  let comptesParId = {};
+  let cotisations = {};            // user_id -> mois payes (annee en cours)
+  let cotisationsAnnees = {};      // annee -> (user_id -> mois payes)
+  let cartesLibres = [];
+  let membresSansCarte = [];
+  let demandesAnnee = [];
+  let refuses = [];
+  let doublons = {};               // compte en attente -> doublons probables
+  let restrictionActive = false;
   let page = 1;
   const selection = new Set();
   let ficheOuverte = null;
+  let ongletFiche = 'apercu';
+  let messageFiche = null;         // { texte, ok } affiche apres rechargement
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const sansAccent = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const $ = id => document.getElementById(id);
   const ICONE = {
     oeil: '<svg class="ic" viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
     crayon: '<svg class="ic" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
@@ -431,10 +579,8 @@
     tel: '<svg class="ic" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2C10.9 19 5 13.1 4.5 5.7A2 2 0 0 1 6.5 3.5z"/></svg>',
     mail: '<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>',
     fermer: '<svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-    lien: '<svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
   };
 
-  // Meme convention que l'annuaire : un numero local recoit l'indicatif 221.
   function lienWhatsApp(tel) {
     let d = String(tel || '').replace(/\D/g, '');
     if (!d) return null;
@@ -450,32 +596,83 @@
   function initiales(nom) {
     return String(nom || '?').split(/\s+/).filter(Boolean).map(m => m[0]).slice(0, 2).join('').toUpperCase() || '?';
   }
+  function roleLabel(role) {
+    if (role === 'super_admin') return 'Super Administrateur';
+    if (role === 'admin') return 'Administrateur';
+    return 'Membre';
+  }
+  function fonctionLabel(p) {
+    return [String(p.fonction || '').trim(), String(p.commission || '').trim()].filter(Boolean).join(' - ');
+  }
+  function dateLongue(d) {
+    return d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  }
+  // Le detail d'une erreur de fonction Edge est dans le corps de la reponse.
+  async function detailErreurEdge(error) {
+    let detail = error.message || '';
+    try { const corps = await error.context.json(); if (corps && corps.error) detail = corps.error; } catch (e) { /* message brut */ }
+    return detail;
+  }
+  // Presse-papiers : navigator.clipboard n'existe qu'en HTTPS et peut etre
+  // refuse apres une attente reseau ; repli par zone de texte temporaire.
+  async function copier(texte) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(texte); return true; }
+    } catch (e) { /* repli */ }
+    try {
+      const zone = document.createElement('textarea');
+      zone.value = texte; zone.style.position = 'fixed'; zone.style.top = '-1000px';
+      document.body.appendChild(zone); zone.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(zone);
+      return ok;
+    } catch (e) { return false; }
+  }
+  // Garde-fou WhatsApp (garde-whatsapp.js) : confirmation au-dela du seuil
+  // quotidien. A appeler AVANT toute ouverture de fenetre.
+  function whatsappAutorise(tel) {
+    return typeof gardeWhatsAppAutorise !== 'function' || gardeWhatsAppAutorise(tel);
+  }
 
-  // ------------------------------------------------------------------ donnees
+  // ======================================================================
+  // Donnees
+  // ======================================================================
   async function charger() {
-    const [comptesRes, cartesRes, cotisRes, paieValRes, paieCotisRes] = await Promise.all([
+    const [comptesRes, cartesRes, cotisRes, paieValRes, paieCotisRes, anneesRes, refusesRes, doublonsRes, restrictionRes] = await Promise.all([
       supabaseClient.from('profiles').select('*').in('status', ['pending', 'approved']),
       supabaseClient.from('member_cards')
-        .select('id, full_name, phone, city, region, domain, domain_autre, member_since, card_number, claim_status, claimed_by, expiry_hint'),
+        .select('id, title, full_name, phone, city, region, domain, domain_autre, specialty, member_since, card_number, claim_status, claimed_by, expiry_hint, cotisations_hint'),
       supabaseClient.rpc('cotisations_membres', { p_year: ANNEE }),
       supabaseClient.from('card_validity_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabaseClient.from('cotisation_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseClient.rpc('member_since_requests_pending'),
+      supabaseClient.from('profiles').select('id, full_name, email, created_at').eq('status', 'rejected').order('created_at', { ascending: false }).limit(50),
+      // Fonction absente (phase78 non executee) : pas de repere de doublon.
+      supabaseClient.rpc('doublons_probables_en_attente'),
+      supabaseClient.from('app_settings').select('restriction_cartes_active, updated_at').limit(1).maybeSingle(),
     ]);
     if (comptesRes.error || cartesRes.error) {
-      document.getElementById('corpsTable').innerHTML =
-        '<tr><td colspan="9" class="ma-vide">Impossible de charger les membres : '
+      $('corpsTable').innerHTML = '<tr><td colspan="9" class="ma-vide">Impossible de charger les membres : '
         + esc((comptesRes.error || cartesRes.error).message) + '</td></tr>';
       return;
     }
     cotisations = {};
     (cotisRes.error ? [] : (cotisRes.data || [])).forEach(c => { cotisations[c.user_id] = c.months_paid || []; });
-    const nbPaiements = (paieValRes.count || 0) + (paieCotisRes.count || 0);
-    document.getElementById('chPaiements').textContent = (paieValRes.error && paieCotisRes.error) ? '-' : nbPaiements;
+    cotisationsAnnees = { [ANNEE]: cotisations };
+    $('chPaiements').textContent = (paieValRes.error && paieCotisRes.error) ? '-' : (paieValRes.count || 0) + (paieCotisRes.count || 0);
+
+    demandesAnnee = anneesRes.error ? [] : (anneesRes.data || []);
+    refuses = refusesRes.error ? [] : (refusesRes.data || []);
+    doublons = {};
+    if (!doublonsRes.error && Array.isArray(doublonsRes.data)) {
+      doublonsRes.data.forEach(d => { (doublons[d.attente_id] = doublons[d.attente_id] || []).push(d); });
+    }
+    majRestriction(restrictionRes);
 
     const comptes = comptesRes.data || [];
     const cartes = cartesRes.data || [];
-    // Une personne peut avoir une carte confirmee ou une reclamation en
-    // cours : la confirmee l'emporte.
+    comptesParId = {};
+    comptes.forEach(p => { comptesParId[p.id] = p; });
     const carteDe = {};
     cartes.filter(c => c.claimed_by).forEach(c => {
       const deja = carteDe[c.claimed_by];
@@ -489,12 +686,12 @@
       .sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
     membresSansCarte = lignes.filter(l => l.type === 'compte' && l.statut === 'sans-carte');
 
+    majPastilles();
     remplirFiltres();
     majChiffres();
     afficher();
     if (ficheOuverte) {
-      const l = lignes.find(x => x.id === ficheOuverte);
-      if (l) ouvrirFiche(l.id); else fermerFiche();
+      if (lignes.some(x => x.id === ficheOuverte)) ouvrirFiche(ficheOuverte, ongletFiche); else fermerFiche();
     }
   }
 
@@ -505,8 +702,8 @@
     if (p.status === 'pending') statut = 'inscription';
     else if (carte && carte.claim_status === 'pending') statut = 'reclamation';
     else if (p.is_active === false) statut = 'desactive';
-    // legacy_card_number fait foi pour la possession d'une carte (voir
-    // Gestion des membres) : toutes les voies d'attribution le renseignent.
+    // legacy_card_number fait foi pour la possession d'une carte : toutes
+    // les voies d'attribution le renseignent.
     else if (!p.legacy_card_number) statut = 'sans-carte';
     else if (!p.card_valid_until || p.card_valid_until < ANNEE) statut = 'expiree';
     else statut = 'actif';
@@ -522,16 +719,31 @@
 
   function construireCarte(c) {
     return {
-      id: 'c-' + c.id, type: 'carte', c, statut: 'non-reclame', nom: c.full_name || '(sans nom)',
+      id: 'c-' + c.id, type: 'carte', c, statut: 'non-reclame', nom: [c.title, c.full_name].filter(Boolean).join(' ') || '(sans nom)',
       domaine: domaineDe(c), numero: c.card_number || '', region: c.region || '', ville: c.city || '',
       tel: c.phone || '', email: '', photo: '', annee: c.member_since || '', validite: c.expiry_hint || '', mois: null,
     };
   }
 
-  // ------------------------------------------------------------------ filtres
+  function estCompteActif(l) {
+    return l.type === 'compte' && l.p.status === 'approved' && l.p.is_active !== false;
+  }
+
+  function majPastilles() {
+    const pose = (id, n) => { const el = $(id); el.textContent = n; el.classList.toggle('zero', !n); };
+    pose('pastilleAnnees', demandesAnnee.length);
+    $('pastilleRefuses').textContent = refuses.length;
+    $('pastilleRefuses').classList.add('zero');
+    const admins = lignes.filter(l => l.type === 'compte' && ['admin', 'super_admin'].includes(l.p.role));
+    $('pastilleAdmins').textContent = admins.length;
+    $('pastilleAdmins').classList.add('zero');
+  }
+
+  // ======================================================================
+  // Filtres, chiffres, liste
+  // ======================================================================
   function remplirFiltres() {
-    const selAnnee = document.getElementById('filtreAnnee');
-    const selRegion = document.getElementById('filtreRegion');
+    const selAnnee = $('filtreAnnee'), selRegion = $('filtreRegion');
     const garderA = selAnnee.value, garderR = selRegion.value;
     const annees = [...new Set(lignes.map(l => l.annee).filter(Boolean))].sort((a, b) => b - a);
     const regions = [...new Set(lignes.map(l => l.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
@@ -542,27 +754,9 @@
     selAnnee.value = garderA; selRegion.value = garderR;
   }
 
-  // Chaque option du filtre Statut porte son effectif : « pourquoi si peu
-  // de cartes a jour ? » se lit directement dans la liste.
-  function majEffectifsStatut() {
-    const sel = document.getElementById('filtreStatut');
-    const compte = {
-      '': lignes.length,
-      'comptes-actifs': lignes.filter(estCompteActif).length,
-      'en-attente': lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length,
-    };
-    Object.keys(STATUTS).forEach(k => { compte[k] = lignes.filter(l => l.statut === k).length; });
-    [...sel.options].forEach(o => {
-      if (!o.dataset.libelle) o.dataset.libelle = o.textContent;
-      if (o.value in compte) o.textContent = o.dataset.libelle + ' (' + compte[o.value] + ')';
-    });
-  }
-
   function lignesFiltrees() {
-    const statut = document.getElementById('filtreStatut').value;
-    const annee = document.getElementById('filtreAnnee').value;
-    const region = document.getElementById('filtreRegion').value;
-    const q = sansAccent(document.getElementById('recherche').value.trim());
+    const statut = $('filtreStatut').value, annee = $('filtreAnnee').value, region = $('filtreRegion').value;
+    const q = sansAccent($('recherche').value.trim());
     return lignes.filter(l => {
       if (statut === 'en-attente' && l.statut !== 'inscription' && l.statut !== 'reclamation') return false;
       if (statut === 'comptes-actifs' && !estCompteActif(l)) return false;
@@ -574,24 +768,24 @@
     });
   }
 
-  // Meme definition que le Centre d'administration : compte valide, et pas
-  // desactive. La validite de la carte est un autre sujet (Cartes a jour).
-  function estCompteActif(l) {
-    return l.type === 'compte' && l.p.status === 'approved' && l.p.is_active !== false;
-  }
-
   function majChiffres() {
-    document.getElementById('chTotal').textContent = lignes.length;
-    document.getElementById('chActifs').textContent = lignes.filter(estCompteActif).length;
-    document.getElementById('chAJour').textContent = lignes.filter(l => l.statut === 'actif').length;
-    majEffectifsStatut();
-    document.getElementById('chAttente').textContent = lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length;
-    document.getElementById('chNonReclame').textContent = lignes.filter(l => l.statut === 'non-reclame').length;
-    const courant = document.getElementById('filtreStatut').value;
+    $('chTotal').textContent = lignes.length;
+    $('chActifs').textContent = lignes.filter(estCompteActif).length;
+    $('chAJour').textContent = lignes.filter(l => l.statut === 'actif').length;
+    $('chAttente').textContent = lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length;
+    $('chNonReclame').textContent = lignes.filter(l => l.statut === 'non-reclame').length;
+    const courant = $('filtreStatut').value;
     document.querySelectorAll('.ma-chiffre[data-filtre]').forEach(b => b.classList.toggle('actif', b.dataset.filtre === courant));
+    // Chaque option du filtre Statut porte son effectif.
+    const compte = { '': lignes.length, 'comptes-actifs': lignes.filter(estCompteActif).length,
+      'en-attente': lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length };
+    Object.keys(STATUTS).forEach(k => { compte[k] = lignes.filter(l => l.statut === k).length; });
+    [...$('filtreStatut').options].forEach(o => {
+      if (!o.dataset.libelle) o.dataset.libelle = o.textContent;
+      if (o.value in compte) o.textContent = o.dataset.libelle + ' (' + compte[o.value] + ')';
+    });
   }
 
-  // ------------------------------------------------------------------ liste
   function avatarHtml(l) {
     if (l.photo) return `<span class="ma-avatar"><img src="${esc(l.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent='${esc(initiales(l.nom))}'"></span>`;
     return `<span class="ma-avatar${l.type === 'carte' ? ' carte' : ''}">${esc(initiales(l.nom))}</span>`;
@@ -603,20 +797,16 @@
     if (page > pagesTotal) page = pagesTotal;
     const debut = (page - 1) * PAR_PAGE;
     const visibles = filtrees.slice(debut, debut + PAR_PAGE);
-    document.getElementById('compteListe').textContent = '(' + filtrees.length + ')';
-    document.getElementById('enteteCotis').textContent = 'Cotis. ' + ANNEE;
+    $('compteListe').textContent = '(' + filtrees.length + ')';
+    $('enteteCotis').textContent = 'Cotis. ' + ANNEE;
 
-    const corps = document.getElementById('corpsTable');
-    if (visibles.length === 0) {
-      corps.innerHTML = '<tr><td colspan="9" class="ma-vide">Aucun membre ne correspond à ces critères.</td></tr>';
-    } else {
-      corps.innerHTML = visibles.map(l => {
+    $('corpsTable').innerHTML = visibles.length === 0
+      ? '<tr><td colspan="9" class="ma-vide">Aucun membre ne correspond à ces critères.</td></tr>'
+      : visibles.map(l => {
         const st = STATUTS[l.statut];
         const wa = lienWhatsApp(l.tel);
-        // Le numero a sa colonne : la ligne du dessous ne porte que le domaine.
         const sous = l.domaine || (l.type === 'carte' ? 'Carte sans compte' : '');
         const cotis = l.mois === null ? '<span class="cotis vide">-</span>' : `<span class="cotis">${l.mois.length}/12</span>`;
-        const outil = lienOutil(l);
         return `<tr>
           <td class="col-case"><input type="checkbox" class="ma-case" data-id="${esc(l.id)}" ${selection.has(l.id) ? 'checked' : ''} aria-label="Sélectionner ${esc(l.nom)}"></td>
           <td class="col-membre"><div class="ma-membre">${avatarHtml(l)}<div style="min-width:0;">
@@ -632,23 +822,21 @@
           <td class="col-info" data-label="Cotisations ${ANNEE}">${cotis}</td>
           <td class="col-actions"><div class="ma-actions">
             ${wa ? `<a class="ma-bouton or" href="${esc(wa)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp ${esc(l.nom)}">${ICONE.wa}</a>` : ''}
-            <button type="button" class="ma-bouton" data-fiche="${esc(l.id)}" title="Voir la fiche" aria-label="Voir la fiche de ${esc(l.nom)}">${ICONE.oeil}</button>
-            <a class="ma-bouton" href="${esc(outil.href)}" title="${esc(outil.titre)}" aria-label="${esc(outil.titre)}">${ICONE.crayon}</a>
+            <button type="button" class="ma-bouton" data-fiche="${esc(l.id)}" data-onglet="apercu" title="Voir la fiche" aria-label="Voir la fiche de ${esc(l.nom)}">${ICONE.oeil}</button>
+            <button type="button" class="ma-bouton" data-fiche="${esc(l.id)}" data-onglet="modifier" title="Modifier" aria-label="Modifier ${esc(l.nom)}">${ICONE.crayon}</button>
           </div></td>
         </tr>`;
       }).join('');
-    }
 
     const fin = Math.min(debut + PAR_PAGE, filtrees.length);
-    document.getElementById('texteAffichage').textContent = filtrees.length
+    $('texteAffichage').textContent = filtrees.length
       ? `Affichage de ${debut + 1} à ${fin} sur ${filtrees.length} membre${filtrees.length > 1 ? 's' : ''}` : '';
     afficherPages(pagesTotal);
     majSelection(filtrees, visibles);
   }
 
   function afficherPages(total) {
-    const nums = new Set([1, total, page - 1, page, page + 1].filter(n => n >= 1 && n <= total));
-    const tri = [...nums].sort((a, b) => a - b);
+    const tri = [...new Set([1, total, page - 1, page, page + 1].filter(n => n >= 1 && n <= total))].sort((a, b) => a - b);
     let html = `<button type="button" class="ma-page" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} aria-label="Page précédente">‹</button>`;
     let prec = 0;
     tri.forEach(n => {
@@ -657,93 +845,525 @@
       prec = n;
     });
     html += `<button type="button" class="ma-page" data-page="${page + 1}" ${page === total ? 'disabled' : ''} aria-label="Page suivante">›</button>`;
-    document.getElementById('pages').innerHTML = total > 1 ? html : '';
+    $('pages').innerHTML = total > 1 ? html : '';
   }
 
-  // Outil complet : tout ce que la fiche ne fait pas (identite, rappels,
-  // fonctions, suppression...) reste dans les pages specialisees.
-  function lienOutil(l) {
-    if (l.type === 'carte') return { href: 'cartes-admin?q=' + encodeURIComponent(l.nom), titre: 'Modifier dans Cartes de membres' };
-    return { href: 'validation?q=' + encodeURIComponent(l.email || l.nom), titre: 'Modifier dans Gestion des membres' };
-  }
-
-  // ------------------------------------------------------------------ selection
   function majSelection(filtrees, visibles) {
     filtrees = filtrees || lignesFiltrees();
     visibles = visibles || [];
     const n = selection.size;
-    document.getElementById('texteSelection').textContent = n === 0 ? 'Aucune sélection' : n + ' sélectionné' + (n > 1 ? 's' : '');
-    document.getElementById('rienSelection').style.display = n ? '' : 'none';
-    document.getElementById('toutFiltre').textContent = 'Tout sélectionner (' + filtrees.length + ')';
-    document.getElementById('texteExport').textContent = n ? 'Exporter la sélection (' + n + ')' : 'Exporter la liste (' + filtrees.length + ')';
-    const entete = document.getElementById('caseEntete');
+    $('texteSelection').textContent = n === 0 ? 'Aucune sélection' : n + ' sélectionné' + (n > 1 ? 's' : '');
+    $('rienSelection').style.display = n ? '' : 'none';
+    $('toutFiltre').textContent = 'Tout sélectionner (' + filtrees.length + ')';
+    $('texteExport').textContent = n ? 'Exporter la sélection (' + n + ')' : 'Exporter la liste (' + filtrees.length + ')';
+    const cartesImprimables = lignesCiblees().filter(l => l.type === 'compte' && l.p.legacy_card_number).length;
+    $('texteImprimer').textContent = 'Imprimer les cartes (' + cartesImprimables + ')';
+    const entete = $('caseEntete');
     const cochees = visibles.filter(l => selection.has(l.id)).length;
     entete.checked = visibles.length > 0 && cochees === visibles.length;
     entete.indeterminate = cochees > 0 && cochees < visibles.length;
   }
 
-  // ------------------------------------------------------------------ export
-  function exporter() {
-    const source = selection.size ? lignes.filter(l => selection.has(l.id)) : lignesFiltrees();
-    if (source.length === 0) { alert('Aucun membre à exporter.'); return; }
-    const donnees = source.map(l => {
+  // La selection, si elle existe ; sinon toute la liste filtree.
+  function lignesCiblees() {
+    return selection.size ? lignes.filter(l => selection.has(l.id)) : lignesFiltrees();
+  }
+
+  // ======================================================================
+  // Export Excel et PDF, impression des cartes
+  // ======================================================================
+  function donneesExport() {
+    return lignesCiblees().map(l => {
       const p = l.p || {};
       return {
-        'Nom complet': l.nom,
-        'Titre': p.title || '',
-        'Prénom': p.first_name || '',
-        'Nom': p.last_name || '',
-        'Statut': STATUTS[l.statut].label,
-        'Type': l.type === 'carte' ? 'Carte sans compte' : 'Compte',
-        'N° carte': l.numero,
-        "Année d'adhésion": l.annee,
-        'Fin de validité': l.validite,
+        'Nom complet': l.nom, 'Titre': p.title || (l.c && l.c.title) || '', 'Prénom': p.first_name || '', 'Nom': p.last_name || '',
+        'Statut': STATUTS[l.statut].label, 'Type': l.type === 'carte' ? 'Carte sans compte' : 'Compte',
+        'N° carte': l.numero, "Année d'adhésion": l.annee, 'Fin de validité': l.validite,
         ['Cotisations ' + ANNEE]: l.mois === null ? '' : l.mois.length + '/12',
-        'Téléphone': l.tel,
-        'E-mail': l.email,
-        'Domaine': l.domaine,
-        'Spécialité': p.specialty || '',
-        'Région': l.region,
-        'Localité': l.ville,
-        'Rôle': p.role === 'super_admin' ? 'Super Administrateur' : p.role === 'admin' ? 'Administrateur' : (l.type === 'compte' ? 'Membre' : ''),
+        'Téléphone': l.tel, 'E-mail': l.email, 'Domaine': l.domaine, 'Spécialité': p.specialty || (l.c && l.c.specialty) || '',
+        'Région': l.region, 'Localité': l.ville,
+        'Rôle': l.type === 'compte' ? roleLabel(p.role) : '', 'Fonction': l.type === 'compte' ? fonctionLabel(p) : '',
         'Inscrit le': p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
       };
     });
+  }
+  const nomFichier = ext => 'membres-et-cartes-amstc-' + new Date().toISOString().slice(0, 10) + '.' + ext;
+
+  function exporterExcel() {
+    const donnees = donneesExport();
+    if (donnees.length === 0) { alert('Aucun membre à exporter.'); return; }
     const ws = XLSX.utils.json_to_sheet(donnees);
-    ws['!cols'] = Object.keys(donnees[0]).map(k => ({
-      wch: Math.min(40, Math.max(k.length, ...donnees.map(d => String(d[k]).length)) + 2),
-    }));
+    ws['!cols'] = Object.keys(donnees[0]).map(k => ({ wch: Math.min(40, Math.max(k.length, ...donnees.map(d => String(d[k]).length)) + 2) }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Membres');
-    XLSX.writeFile(wb, 'membres-et-cartes-amstc-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    XLSX.writeFile(wb, nomFichier('xlsx'));
   }
 
-  // ------------------------------------------------------------------ fiche
+  function exporterPdf() {
+    const donnees = donneesExport().map(d => ({
+      'Nom': d['Nom complet'], 'Statut': d['Statut'], 'N° carte': d['N° carte'], 'Adhésion': d["Année d'adhésion"],
+      'Validité': d['Fin de validité'], ['Cotis. ' + ANNEE]: d['Cotisations ' + ANNEE], 'Téléphone': d['Téléphone'],
+      'E-mail': d['E-mail'], 'Domaine': d['Domaine'], 'Région': d['Région'], 'Localité': d['Localité'],
+    }));
+    if (donnees.length === 0) { alert('Aucun membre à exporter.'); return; }
+    const doc = new jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    doc.setFontSize(13);
+    doc.text('AMSTC - Membres et cartes', 14, 12);
+    doc.setFontSize(9); doc.setTextColor(110);
+    doc.text(donnees.length + ' ligne(s) - export du ' + dateLongue(new Date()), 14, 18);
+    doc.autoTable({ startY: 22, head: [Object.keys(donnees[0])], body: donnees.map(d => Object.values(d)),
+      styles: { fontSize: 7, cellPadding: 1.3 }, headStyles: { fillColor: [6, 68, 28] }, margin: { left: 8, right: 8 } });
+    doc.save(nomFichier('pdf'));
+  }
+
+  // Une carte par page (85 x 55 mm), dessinee par le moteur partage
+  // (carte-membre.js) : rendu identique a la carte du profil.
+  async function imprimerCartes(bouton) {
+    const liste = lignesCiblees().filter(l => l.type === 'compte' && l.p.legacy_card_number).map(l => l.p);
+    if (liste.length === 0) {
+      alert("Aucun membre avec carte dans la sélection ou la liste affichée.\n\nFiltrez ou cochez les membres voulus, ou créez d'abord les cartes manquantes.");
+      return;
+    }
+    if (!confirm("Générer le PDF d'impression de " + liste.length + ' carte(s), une par page (85 x 55 mm) ?')) return;
+    bouton.disabled = true;
+    const texte = $('texteImprimer'), libelle = texte.textContent;
+    try {
+      const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: [85, 55] });
+      for (let i = 0; i < liste.length; i++) {
+        texte.textContent = 'Carte ' + (i + 1) + ' / ' + liste.length + '…';
+        const image = await carteJpegDataUrl(liste[i]);
+        if (i > 0) doc.addPage([85, 55], 'landscape');
+        doc.addImage(image, 'JPEG', 0, 0, 85, 55);
+      }
+      doc.save('cartes-membres-amstc-' + new Date().toISOString().slice(0, 10) + '.pdf');
+    } catch (e) {
+      alert('Génération impossible : ' + e.message);
+    }
+    bouton.disabled = false;
+    texte.textContent = libelle;
+  }
+
+  // ======================================================================
+  // Restriction d'acces aux contenus reserves
+  // ======================================================================
+  function majRestriction(res) {
+    const bouton = $('outilRestriction');
+    if (!res || res.error || !res.data) {
+      $('texteRestriction').textContent = 'Restriction d\'accès : indisponible';
+      bouton.disabled = true;
+      return;
+    }
+    restrictionActive = !!res.data.restriction_cartes_active;
+    $('texteRestriction').textContent = 'Restriction d\'accès : ' + (restrictionActive ? 'activée' : 'désactivée');
+    bouton.classList.toggle('restriction-on', restrictionActive);
+    bouton.classList.toggle('restriction-off', !restrictionActive);
+    bouton.title = (restrictionActive
+      ? 'Les membres dont la carte est expirée depuis plus de 2 mois n\'ont plus accès aux contenus réservés.'
+      : 'Aucune coupure d\'accès : les cartes expirées gardent l\'accès aux contenus réservés.')
+      + (res.data.updated_at ? ' Dernière modification : ' + new Date(res.data.updated_at).toLocaleString('fr-FR') : '');
+  }
+
+  async function basculerRestriction(bouton) {
+    const suivant = !restrictionActive;
+    if (!confirm(suivant
+      ? "Activer la restriction coupe immédiatement l'accès aux Formations, Réalisations et Documents officiels réservés pour tout membre dont la carte est expirée depuis plus de 2 mois.\n\nÀ faire après une campagne de renouvellement. Continuer ?"
+      : "Désactiver la restriction rouvre immédiatement l'accès aux contenus réservés pour tous les membres, même carte expirée. Continuer ?")) return;
+    bouton.disabled = true;
+    const { error } = await supabaseClient.from('app_settings')
+      .update({ restriction_cartes_active: suivant, updated_at: new Date().toISOString() }).eq('id', true);
+    bouton.disabled = false;
+    if (error) { alert('Erreur : ' + error.message); return; }
+    majRestriction(await supabaseClient.from('app_settings').select('restriction_cartes_active, updated_at').limit(1).maybeSingle());
+  }
+
+  // ======================================================================
+  // Fenetres d'outils
+  // ======================================================================
+  function ouvrirOutil(titre, html) {
+    $('moTitre').textContent = titre;
+    $('moCorps').innerHTML = html;
+    $('moVoile').classList.add('ouvert');
+    document.body.classList.add('md-bloque');
+  }
+  function fermerOutil() {
+    $('moVoile').classList.remove('ouvert');
+    if (!ficheOuverte) document.body.classList.remove('md-bloque');
+  }
+
+  function outilDemandesAnnee() {
+    ouvrirOutil("Demandes de changement d'année d'adhésion", `
+      <p class="mo-note">Demandées par les membres depuis leur profil. L'année d'adhésion détermine le numéro de carte : l'accepter renumérote la carte.</p>
+      ${demandesAnnee.length === 0 ? '<p class="ma-vide">Aucune demande en attente.</p>' : demandesAnnee.map(r => `
+        <div class="mo-ligne">
+          <div>
+            <p class="ma-nom">${esc(r.full_name || '(nom non renseigné)')}</p>
+            <p class="ma-sous">${esc(r.email || '')}${r.card_number ? ' · Carte ' + esc(r.card_number) : ''}</p>
+            <p class="ma-sous">Demande du ${esc(dateLongue(r.created_at))} : ${r.previous_year ? esc(r.previous_year) : 'non renseignée'} → <strong>${esc(r.requested_year)}</strong></p>
+            <p class="md-message" data-msg-demande="${esc(r.request_id)}"></p>
+          </div>
+          <div class="md-actions">
+            <button type="button" class="btn btn-vert" data-demande="${esc(r.request_id)}" data-accepter="1">Accepter</button>
+            <button type="button" class="btn btn-rouge" data-demande="${esc(r.request_id)}" data-accepter="0">Refuser</button>
+          </div>
+        </div>`).join('')}`);
+  }
+
+  async function traiterDemandeAnnee(bouton) {
+    const id = bouton.dataset.demande, accepter = bouton.dataset.accepter === '1';
+    const ligne = bouton.closest('.mo-ligne');
+    const msg = ligne.querySelector('[data-msg-demande]');
+    ligne.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    const { data: nouveauNumero, error } = await supabaseClient.rpc('review_member_since_request', { request_id: id, approve: accepter });
+    if (error) {
+      msg.className = 'md-message erreur'; msg.textContent = 'Erreur : ' + error.message;
+      ligne.querySelectorAll('button').forEach(b => { b.disabled = false; });
+      return;
+    }
+    msg.className = 'md-message ok';
+    msg.textContent = accepter ? (nouveauNumero ? 'Année appliquée. Nouveau numéro de carte : ' + nouveauNumero : 'Année appliquée.') : 'Demande refusée.';
+    await charger();
+  }
+
+  function outilRefuses() {
+    ouvrirOutil('Comptes refusés', `
+      <p class="mo-note">Les 50 derniers comptes dont l'inscription a été refusée.</p>
+      ${refuses.length === 0 ? '<p class="ma-vide">Aucun compte refusé.</p>' : refuses.map(p => `
+        <div class="mo-ligne">
+          <div><p class="ma-nom">${esc(p.full_name || '(nom non renseigné)')}</p><p class="ma-sous">${esc(p.email || '')}</p></div>
+          <span class="ma-sous">Inscrit le ${esc(dateLongue(p.created_at))}</span>
+        </div>`).join('')}`);
+  }
+
+  function outilAdmins() {
+    const admins = lignes.filter(l => l.type === 'compte' && ['admin', 'super_admin'].includes(l.p.role));
+    ouvrirOutil("Droits d'administration", `
+      <p class="mo-note">Réservé au Super Administrateur. Pour nommer un administrateur, ouvrez la fiche du membre, onglet « Rôle ».</p>
+      ${admins.length === 0 ? '<p class="ma-vide">Aucun administrateur.</p>' : admins.map(l => `
+        <div class="mo-ligne">
+          <div>
+            <p class="ma-nom">${esc(l.nom)}</p>
+            <p class="ma-sous">${esc(l.email)}</p>
+            <span class="role-tag">${esc(roleLabel(l.p.role))}</span>${fonctionLabel(l.p) ? `<span class="role-tag">${esc(fonctionLabel(l.p))}</span>` : ''}
+          </div>
+          <button type="button" class="btn btn-contour" data-fiche-outil="${esc(l.id)}">Ouvrir la fiche</button>
+        </div>`).join('')}`);
+  }
+
+  // ---- Ajout d'une carte ----
+  const OPTIONS_DOMAINE = [['', '- Choisir -']].concat(Object.entries(DOMAINES)).concat([['autre', 'Autres à préciser']]);
+  function optionsDomaine(choisi) {
+    return OPTIONS_DOMAINE.map(([v, l]) => `<option value="${esc(v)}"${(choisi || '') === v ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  }
+  function optionsAnnees(debut, fin, choisie) {
+    let html = '';
+    for (let a = fin; a >= debut; a--) html += `<option value="${a}"${Number(choisie) === a ? ' selected' : ''}>${a}</option>`;
+    return html;
+  }
+
+  function outilAjouterCarte() {
+    ouvrirOutil('Ajouter une carte', `
+      <p class="mo-note">Pour un membre qui n'a pas encore de compte. Le numéro (AMSTC-année-rang) est attribué d'après l'année d'adhésion ; la carte pourra ensuite être attribuée ou envoyée en invitation.</p>
+      <div class="md-grille">
+        <div class="md-champ"><label for="acNom">Nom complet *</label><input type="text" id="acNom" placeholder="Prénom et nom"></div>
+        <div class="md-champ"><label for="acTel">Téléphone *</label><input type="text" id="acTel" placeholder="+221 77 000 00 00"></div>
+        <div class="md-champ"><label for="acDomaine">Domaine</label><select id="acDomaine">${optionsDomaine('')}</select></div>
+        <div class="md-champ" id="acAutreChamp" style="display:none;"><label for="acAutre">Précisez le domaine</label><input type="text" id="acAutre"></div>
+        <div class="md-champ"><label for="acAnnee">Année d'adhésion</label><select id="acAnnee">${optionsAnnees(2010, ANNEE, ANNEE)}</select></div>
+        <div class="md-champ"><label for="acRegion">Région</label><select id="acRegion"></select></div>
+        <div class="md-champ"><label for="acVille">Localité</label><input type="text" id="acVille" placeholder="Ouakam, Darou Salam…"></div>
+      </div>
+      <div class="md-actions" style="margin-top:16px;"><button type="button" class="btn btn-vert" id="acCreer">Créer la carte</button></div>
+      <p class="md-message" id="acMsg"></p>`);
+    remplirSelectRegions($('acRegion'));
+    brancherIndiceLocalite($('acRegion'), $('acVille'));
+    brancherNormalisation($('acVille'), localiteLibelle);
+    $('acDomaine').addEventListener('change', () => { $('acAutreChamp').style.display = $('acDomaine').value === 'autre' ? '' : 'none'; });
+    $('acCreer').addEventListener('click', creerCarte);
+  }
+
+  async function prochainRang(annee) {
+    const prefixe = `AMSTC-${annee}-`;
+    const { data } = await supabaseClient.from('member_cards').select('card_number')
+      .like('card_number', prefixe + '%').order('card_number', { ascending: false }).limit(1);
+    const dernier = data && data[0] && data[0].card_number;
+    const m = dernier && dernier.match(/-(\d+)$/);
+    return m ? parseInt(m[1], 10) + 1 : 1;
+  }
+
+  async function creerCarte() {
+    const msg = $('acMsg');
+    const full_name = $('acNom').value.trim(), phone = $('acTel').value.trim();
+    const domain = $('acDomaine').value || null;
+    const domain_autre = domain === 'autre' ? ($('acAutre').value.trim() || null) : null;
+    msg.className = 'md-message erreur';
+    if (!full_name || !phone) { msg.textContent = 'Le nom et le téléphone sont obligatoires.'; return; }
+    if (domain === 'autre' && !domain_autre) { msg.textContent = 'Précisez le domaine.'; return; }
+    const member_since = parseInt($('acAnnee').value, 10) || null;
+    const annee = member_since || ANNEE;
+    const card_number = `AMSTC-${annee}-${String(await prochainRang(annee)).padStart(3, '0')}`;
+    const ligne = { full_name, phone, member_since, city: localiteLibelle($('acVille').value) || null,
+      region: $('acRegion').value || null, card_number, domain, domain_autre };
+    let { error } = await supabaseClient.from('member_cards').insert(ligne);
+    // Base sans colonne region (phase68 non executee) : on reessaie sans.
+    if (error && /region/i.test(error.message || '')) {
+      const sans = Object.assign({}, ligne); delete sans.region;
+      ({ error } = await supabaseClient.from('member_cards').insert(sans));
+    }
+    if (error) { msg.textContent = 'Erreur : ' + error.message; return; }
+    msg.className = 'md-message ok';
+    msg.textContent = 'Carte ' + card_number + ' créée.';
+    await charger();
+    setTimeout(fermerOutil, 1200);
+  }
+
+  // ---- Import de cartes : fichier Excel ou collage de texte ----
+  // Filiere du tableur -> domaine / specialite. Cles sans accents ni majuscules.
+  const FILIERES = {
+    'medecine': { domain: 'medecine' }, 'medecin': { domain: 'medecine' },
+    'pharmacie': { domain: 'pharmacie' }, 'biologie': { domain: 'pharmacie', specialty: 'Biologie' },
+    'chirurgie dentaire': { domain: 'odontologie' }, 'dentaire': { domain: 'odontologie' },
+    'infirmiere': { domain: 'soins_infirmiers' }, 'infirmier': { domain: 'soins_infirmiers' },
+    'infirmiere de bloc': { domain: 'soins_infirmiers', specialty: 'Infirmière de bloc' },
+    'sage femme': { domain: 'soins_obstetricaux' },
+    'psychiatrie': { domain: 'medecine', specialty: 'Psychiatrie' },
+    'pediatrie': { domain: 'medecine', specialty: 'Pédiatrie' },
+    'chirurgie generale': { domain: 'medecine', specialty: 'Chirurgie générale' },
+    'oncologie chirugicale': { domain: 'medecine', specialty: 'Oncologie chirurgicale' },
+    'oncologie chirurgicale': { domain: 'medecine', specialty: 'Oncologie chirurgicale' },
+  };
+  const cleNormale = s => sansAccent(String(s || '')).replace(/ﬁ/g, 'fi').replace(/ﬂ/g, 'fl').trim();
+  function filiereVersDomaine(brut) {
+    return FILIERES[cleNormale(brut)] || { domain: 'autre', domain_autre: String(brut || '').trim() };
+  }
+  // « Dr » et « Pr » sont gardes comme titre ; « M. », « Mme », « Me » sont
+  // simplement retires du prenom (le site ne propose plus que Dr et Pr).
+  function extraireTitre(prenomBrut) {
+    const s = String(prenomBrut || '').trim();
+    const m = s.match(/^(Dr|Pr|Mme|Me|M\.)\.?\s+(.+)$/i);
+    if (!m) return { title: null, prenom: s };
+    let t = m[1][0].toUpperCase() + m[1].slice(1).toLowerCase();
+    if (t === 'M') t = 'M.';
+    return { title: ['M.', 'Mme', 'Me'].includes(t) ? null : t, prenom: m[2].trim() };
+  }
+  let lignesImport = [];
+
+  function outilImporter() {
+    ouvrirOutil('Importer des cartes', `
+      <div class="md-onglets" style="padding:0;margin:-6px 0 14px;">
+        <button type="button" class="md-onglet actif" data-import="excel">Fichier Excel</button>
+        <button type="button" class="md-onglet" data-import="texte">Collage de texte</button>
+      </div>
+      <div id="importExcel">
+        <p class="mo-note">Colonnes attendues, dans n'importe quel ordre (seuls les intitulés comptent) :
+          <code>Prénom · Nom · Filière · Téléphone · Localité · Région · Validité</code>.
+          « Validité » au format <code>AAAA - AAAA</code> (adhésion - fin de validité). « Région » est facultative :
+          absente ou non reconnue, elle est déduite de la localité quand c'est possible. « Dr » et « Pr » en tête du
+          prénom deviennent le titre ; « M. », « Mme » et « Me » sont retirés.</p>
+        <div id="importBandeau"></div>
+        <input type="file" class="mo-fichier" id="importFichier" accept=".xlsx,.xls">
+        <div id="importApercu" style="display:none;">
+          <div class="mo-resume" id="importResume"></div>
+          <div class="mo-table-zone"><table class="mo-table">
+            <thead><tr><th>Nom</th><th>Téléphone</th><th>Domaine</th><th>Validité</th><th>Localité</th><th>Région</th><th></th></tr></thead>
+            <tbody id="importLignes"></tbody></table></div>
+          <div class="md-actions"><button type="button" class="btn btn-vert" id="importValider">Importer les lignes valides</button></div>
+          <p class="md-message" id="importMsg"></p>
+        </div>
+      </div>
+      <div id="importTexte" style="display:none;">
+        <p class="mo-note">Une ligne par membre, séparée par des points-virgules : <code>Nom complet; Téléphone; Année d'adhésion; Ville</code>.
+          Les deux derniers champs sont facultatifs. Le numéro de carte est attribué automatiquement.</p>
+        <textarea class="mo-textarea" id="importZone" placeholder="Mouhamed Badji; 77 123 45 67; 2018; Dakar&#10;Fatou Diop; 78 987 65 43; 2020;"></textarea>
+        <div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-vert" id="importTexteValider">Importer</button></div>
+        <p class="md-message" id="importTexteMsg"></p>
+      </div>`);
+    lignesImport = [];
+    $('importFichier').addEventListener('change', lireFichierExcel);
+    $('importValider').addEventListener('click', importerExcel);
+    $('importTexteValider').addEventListener('click', importerTexte);
+  }
+
+  function lireFichierExcel(e) {
+    const fichier = e.target.files[0];
+    if (!fichier) return;
+    const lecteur = new FileReader();
+    lecteur.onload = ev => {
+      const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+      analyserExcel(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' }));
+    };
+    lecteur.readAsArrayBuffer(fichier);
+  }
+
+  function analyserExcel(brut) {
+    lignesImport = [];
+    if (brut.length >= 2) {
+      const entetes = brut[0].map(cleNormale);
+      const col = nom => entetes.indexOf(nom);
+      const c = { prenom: col('prenom'), nom: col('nom'), filiere: col('filiere'), tel: col('telephone'),
+        localite: col('localite'), region: col('region'), validite: col('validite') };
+      const cellule = (r, i) => (i !== -1 ? String(r[i] || '').trim() : '');
+      lignesImport = brut.slice(1).filter(r => r.some(x => String(x || '').trim() !== '')).map(r => {
+        const { title, prenom } = extraireTitre(cellule(r, c.prenom));
+        const nom = cellule(r, c.nom);
+        const filiereBrute = cellule(r, c.filiere);
+        const f = filiereVersDomaine(filiereBrute);
+        const v = cellule(r, c.validite).match(/(\d{4})\s*-\s*(\d{4})/);
+        const ville = cellule(r, c.localite), regionBrute = cellule(r, c.region);
+        const region = regionNormalisee(regionBrute) || regionNormalisee(ville);
+        return {
+          full_name: [title, normaliserPrenom(prenom), normaliserNom(nom)].filter(Boolean).join(' '),
+          phone: cellule(r, c.tel) || null, city: localiteLibelle(ville) || null,
+          region, region_brute: regionBrute, region_douteuse: !!regionBrute && !regionNormalisee(regionBrute),
+          title, domain: f.domain, domain_autre: f.domain_autre || null, specialty: f.specialty || null,
+          member_since: v ? parseInt(v[1], 10) : null, expiry_hint: v ? parseInt(v[2], 10) : null,
+          ignoree: !cellule(r, c.tel) || !nom, a_verifier: f.domain === 'autre',
+        };
+      });
+    }
+    const apercu = $('importApercu');
+    if (lignesImport.length === 0) { apercu.style.display = 'none'; return; }
+    apercu.style.display = '';
+    const valides = lignesImport.filter(l => !l.ignoree);
+    $('importResume').innerHTML = `<span><strong>${lignesImport.length}</strong> lignes</span>
+      <span><strong>${valides.length}</strong> importables</span>
+      <span><strong>${lignesImport.length - valides.length}</strong> ignorées (nom ou téléphone manquant)</span>
+      <span><strong>${valides.filter(l => l.a_verifier).length}</strong> domaine à vérifier</span>
+      ${valides.some(l => l.region_douteuse) ? `<span><strong>${valides.filter(l => l.region_douteuse).length}</strong> région non reconnue</span>` : ''}`;
+    $('importLignes').innerHTML = lignesImport.map(l => `
+      <tr class="${l.ignoree ? 'ignoree' : (l.a_verifier ? 'a-verifier' : '')}">
+        <td>${esc(l.full_name || '-')}</td><td>${esc(l.phone || '-')}</td>
+        <td>${esc(l.domain === 'autre' ? (l.domain_autre || 'Autre') : (DOMAINES[l.domain] || l.domain) + (l.specialty ? ' · ' + l.specialty : ''))}</td>
+        <td>${esc([l.member_since, l.expiry_hint].filter(Boolean).join(' → ') || '-')}</td>
+        <td>${esc(l.city || '-')}</td>
+        <td>${l.region_douteuse ? esc(l.region_brute) + ' ?' + (l.region ? ' → ' + esc(l.region) : '') : esc(l.region || '-')}</td>
+        <td>${l.ignoree ? 'Ignorée' : (l.a_verifier ? 'À vérifier' : '')}</td>
+      </tr>`).join('');
+  }
+
+  async function numeroter(liste) {
+    const rangs = {};
+    for (const l of liste) {
+      const annee = l.member_since || ANNEE;
+      if (!(annee in rangs)) rangs[annee] = await prochainRang(annee);
+      l.card_number = `AMSTC-${annee}-${String(rangs[annee]++).padStart(3, '0')}`;
+    }
+    return liste;
+  }
+
+  async function importerExcel() {
+    const msg = $('importMsg'), bouton = $('importValider');
+    const valides = lignesImport.filter(l => !l.ignoree);
+    if (valides.length === 0) { msg.className = 'md-message erreur'; msg.textContent = 'Aucune ligne importable.'; return; }
+    bouton.disabled = true;
+    const lignesBase = await numeroter(valides.map(l => ({
+      full_name: l.full_name, phone: l.phone, city: l.city, region: l.region, title: l.title,
+      domain: l.domain, domain_autre: l.domain_autre, specialty: l.specialty,
+      member_since: l.member_since, expiry_hint: l.expiry_hint,
+    })));
+    let { error } = await supabaseClient.from('member_cards').insert(lignesBase);
+    if (error && /region/i.test(error.message || '')) {
+      ({ error } = await supabaseClient.from('member_cards').insert(lignesBase.map(x => { const c = Object.assign({}, x); delete c.region; return c; })));
+    }
+    bouton.disabled = false;
+    if (error) { msg.className = 'md-message erreur'; msg.textContent = 'Erreur : ' + error.message; return; }
+    $('importBandeau').innerHTML = `<p class="mo-bandeau">${lignesBase.length} carte(s) importée(s) le ${esc(new Date().toLocaleString('fr-FR'))}.</p>`;
+    $('importApercu').style.display = 'none';
+    $('importFichier').value = '';
+    lignesImport = [];
+    await charger();
+  }
+
+  async function importerTexte() {
+    const msg = $('importTexteMsg'), bouton = $('importTexteValider');
+    const brut = $('importZone').value.trim();
+    msg.className = 'md-message erreur';
+    if (!brut) { msg.textContent = 'Collez au moins une ligne.'; return; }
+    const liste = [];
+    for (const ligne of brut.split('\n').map(x => x.trim()).filter(Boolean)) {
+      const [full_name, phone, since, city] = ligne.split(';').map(x => x.trim());
+      if (!full_name || !phone) { msg.textContent = `Ligne invalide (nom et téléphone obligatoires) : « ${ligne} »`; return; }
+      liste.push({ full_name, phone, member_since: since ? parseInt(since, 10) || null : null, city: city || null });
+    }
+    bouton.disabled = true;
+    const { error } = await supabaseClient.from('member_cards').insert(await numeroter(liste));
+    bouton.disabled = false;
+    if (error) { msg.textContent = 'Erreur : ' + error.message; return; }
+    msg.className = 'md-message ok';
+    msg.textContent = liste.length + ' carte(s) importée(s).';
+    $('importZone').value = '';
+    await charger();
+  }
+
+  // ======================================================================
+  // Fiche d'une personne
+  // ======================================================================
+  function ongletsPour(l) {
+    if (l.type === 'carte') return [['apercu', 'Aperçu'], ['modifier', 'Modifier la carte']];
+    if (l.p.status === 'pending') return [['apercu', 'Aperçu'], ['messages', 'Messages']];
+    const o = [['apercu', 'Aperçu'], ['modifier', 'Modifier'], ['cotisations', 'Cotisations'], ['messages', 'Messages'], ['acces', 'Accès']];
+    if (estSuperAdmin) o.push(['role', 'Rôle']);
+    return o;
+  }
+
   function ligneFiche(label, valeur) {
     return `<div class="md-ligne"><span>${esc(label)}</span><span>${valeur}</span></div>`;
   }
 
-  function ouvrirFiche(id) {
+  function ouvrirFiche(id, onglet) {
     const l = lignes.find(x => x.id === id);
     if (!l) return;
+    if (ficheOuverte !== id) messageFiche = null;
     ficheOuverte = id;
+    const onglets = ongletsPour(l);
+    ongletFiche = onglets.some(o => o[0] === onglet) ? onglet : 'apercu';
     const st = STATUTS[l.statut];
-    const wa = lienWhatsApp(l.tel);
-    document.getElementById('mdTete').innerHTML = `${avatarHtml(l)}
+    $('mdTete').innerHTML = `${avatarHtml(l)}
       <div style="min-width:0;">
         <p class="ma-nom" id="mdNom" style="font-size:1.05rem;">${esc(l.nom)}</p>
         <p class="ma-sous">${esc(l.domaine || (l.type === 'carte' ? 'Carte sans compte' : ''))}</p>
         <span class="statut ${st.cls}" style="margin-top:6px;">${esc(st.label)}</span>
       </div>
       <button type="button" class="ma-bouton md-fermer" id="mdFermer" aria-label="Fermer la fiche">${ICONE.fermer}</button>`;
+    $('mdOnglets').innerHTML = onglets.map(([v, t]) =>
+      `<button type="button" class="md-onglet${v === ongletFiche ? ' actif' : ''}" role="tab" aria-selected="${v === ongletFiche}" data-onglet-fiche="${v}">${esc(t)}</button>`).join('');
+    const rendus = { apercu: ficheApercu, modifier: l.type === 'carte' ? ficheModifierCarte : ficheModifierCompte,
+      cotisations: ficheCotisations, messages: ficheMessages, acces: ficheAcces, role: ficheRole };
+    $('mdCorps').innerHTML = (messageFiche ? `<p class="md-message ${messageFiche.ok ? 'ok' : 'erreur'}" style="margin:12px 0 0;">${esc(messageFiche.texte)}</p>` : '')
+      + rendus[ongletFiche](l);
+    apresRenduFiche(l);
+    $('mdVoile').classList.add('ouvert');
+    $('mdPanneau').classList.add('ouvert');
+    document.body.classList.add('md-bloque');
+  }
 
+  function fermerFiche() {
+    ficheOuverte = null; messageFiche = null;
+    $('mdVoile').classList.remove('ouvert');
+    $('mdPanneau').classList.remove('ouvert');
+    document.body.classList.remove('md-bloque');
+  }
+
+  // Recharge les donnees et rouvre la fiche au meme onglet, avec un message.
+  async function apresAction(texte, ok = true) {
+    messageFiche = { texte, ok };
+    await charger();
+  }
+  function erreurFiche(id, texte) {
+    const el = $(id);
+    if (el) { el.className = 'md-message erreur'; el.textContent = texte; }
+  }
+
+  // ---- Apercu ----
+  function ficheApercu(l) {
+    const wa = lienWhatsApp(l.tel);
     let html = '<div class="md-bloc"><p class="md-bloc-titre">Coordonnées</p>'
       + ligneFiche('Téléphone', l.tel ? esc(l.tel) + (wa ? ` · <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : '') : '-')
       + ligneFiche('E-mail', l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '-')
       + ligneFiche('Localité', esc([l.ville, l.region].filter(Boolean).join(', ') || '-'))
-      + (l.p && l.p.created_at ? ligneFiche('Inscrit le', esc(new Date(l.p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }))) : '')
+      + (l.p && l.p.specialty ? ligneFiche('Spécialité', esc(l.p.specialty)) : '')
+      + (l.p && l.p.created_at ? ligneFiche('Inscrit le', esc(dateLongue(l.p.created_at))) : '')
+      + (l.p ? ligneFiche('Rôle', esc(roleLabel(l.p.role)) + (fonctionLabel(l.p) ? ' · ' + esc(fonctionLabel(l.p)) : '')) : '')
       + '</div>';
-
     html += '<div class="md-bloc"><p class="md-bloc-titre">Adhésion et carte</p>'
       + ligneFiche('N° carte', `<span class="ma-mono">${esc(l.numero || '-')}</span>`)
       + ligneFiche("Année d'adhésion", esc(l.annee || '-'))
@@ -752,33 +1372,25 @@
       html += ligneFiche('Cotisations ' + ANNEE, esc(l.mois.length + '/12'))
         + '<div class="md-mois">' + MOIS.map((m, i) => `<span class="${l.mois.includes(i + 1) ? 'paye' : ''}">${m}</span>`).join('') + '</div>';
     }
+    const demande = l.p && demandesAnnee.find(d => d.user_id === l.p.id);
+    if (demande) {
+      html += `<div class="md-alerte">Changement d'année demandé : ${demande.previous_year ? esc(demande.previous_year) : 'non renseignée'} → <strong>${esc(demande.requested_year)}</strong>.
+        <div class="md-actions" style="margin-top:8px;">
+          <button type="button" class="btn btn-vert" data-act="demande-accepter" data-demande="${esc(demande.request_id)}">Accepter</button>
+          <button type="button" class="btn btn-rouge" data-act="demande-refuser" data-demande="${esc(demande.request_id)}">Refuser</button></div></div>`;
+    }
     html += '</div>';
-
-    html += '<div class="md-bloc"><p class="md-bloc-titre">Actions</p>' + actionsHtml(l) + '<p class="md-message" id="mdMessage"></p></div>';
-
-    const liens = [];
-    if (l.type === 'compte') liens.push(`<a href="validation?q=${encodeURIComponent(l.email || l.nom)}">${ICONE.lien} Identité, rôle, rappels et cotisations : Gestion des membres</a>`);
-    if (l.type === 'carte' || l.carte) liens.push(`<a href="cartes-admin?q=${encodeURIComponent(l.nom)}">${ICONE.lien} Numéro, validité et domaine de la carte : Cartes de membres</a>`);
-    html += '<div class="md-bloc"><p class="md-bloc-titre">Outils complets</p><div class="md-liens">' + liens.join('') + '</div></div>';
-
-    document.getElementById('mdCorps').innerHTML = html;
-    document.getElementById('mdVoile').classList.add('ouvert');
-    document.getElementById('mdPanneau').classList.add('ouvert');
-    document.body.classList.add('md-bloque');
-    document.getElementById('mdFermer').focus();
+    html += '<div class="md-bloc"><p class="md-bloc-titre">Actions</p>' + actionsRapides(l) + '<p class="md-message" id="mdMessage"></p></div>';
+    return html;
   }
 
-  function fermerFiche() {
-    ficheOuverte = null;
-    document.getElementById('mdVoile').classList.remove('ouvert');
-    document.getElementById('mdPanneau').classList.remove('ouvert');
-    document.body.classList.remove('md-bloque');
-  }
-
-  function actionsHtml(l) {
+  function actionsRapides(l) {
     const blocs = [];
     if (l.statut === 'inscription') {
-      blocs.push(`<div class="md-actions">
+      (doublons[l.p.id] || []).forEach(d => blocs.push(`<div class="md-alerte">Doublon probable : ${esc(d.motif)} que
+        <strong>${esc(d.existant_nom || '(sans nom)')}</strong> (${esc(d.existant_email || '')}), déjà membre. S'il s'agit de la même
+        personne, refusez cette inscription et invitez-la à se connecter avec son compte existant.</div>`));
+      blocs.push(`<div class="md-actions" style="margin-top:10px;">
         <button type="button" class="btn btn-vert" data-act="approuver">Approuver l'inscription</button>
         <button type="button" class="btn btn-rouge" data-act="refuser">Refuser</button></div>`);
     }
@@ -794,145 +1406,646 @@
         <p class="md-note">Ou lui attribuer une carte existante non réclamée :</p>
         <div class="md-form"><select id="mdCarte"><option value="">Choisir une carte…</option>
         ${cartesLibres.map(c => `<option value="${esc(c.id)}">${esc(c.full_name)}${c.member_since ? ' · ' + esc(c.member_since) : ''}${c.city ? ' · ' + esc(c.city) : ''}</option>`).join('')}
-        </select><input type="number" id="mdAnnee" value="${ANNEE}" title="Année de fin de validité" aria-label="Année de fin de validité">
+        </select><input type="number" id="mdAnnee" value="${ANNEE}" aria-label="Année de fin de validité" title="Année de fin de validité">
         <button type="button" class="btn btn-contour" data-act="attribuer-carte">Attribuer</button></div>`);
     }
     if (l.statut === 'non-reclame') {
       blocs.push(`<p class="md-note">Attribuer cette carte à un membre inscrit qui n'en a pas :</p>
-        <div class="md-form"><select id="mdMembre"><option value="">Choisir un membre…</option>
+        <div class="md-form"><select id="mdMembre"><option value="">${membresSansCarte.length ? 'Choisir un membre…' : 'Aucun membre sans carte'}</option>
         ${membresSansCarte.map(m => `<option value="${esc(m.p.id)}">${esc(m.nom)}${m.email ? ' · ' + esc(m.email) : ''}</option>`).join('')}
-        </select><input type="number" id="mdAnnee" value="${esc(l.c.expiry_hint || ANNEE)}" title="Année de fin de validité" aria-label="Année de fin de validité">
-        <button type="button" class="btn btn-contour" data-act="attribuer-membre">Attribuer</button></div>`
-        + (lienWhatsApp(l.tel) ? `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-or" data-act="inviter">Inviter par WhatsApp à activer son accès</button></div>` : ''));
+        </select><input type="number" id="mdAnnee" value="${esc(l.c.expiry_hint || ANNEE)}" aria-label="Année de fin de validité" title="Année de fin de validité">
+        <button type="button" class="btn btn-contour" data-act="attribuer-membre">Attribuer</button></div>
+        <p class="md-note" style="margin-top:14px;">Ou inviter le porteur à activer son accès. « Copier le lien » évite d'ouvrir une nouvelle conversation WhatsApp : collez-le dans une discussion existante.</p>
+        <div class="md-actions" style="margin-top:8px;">
+          ${lienWhatsApp(l.tel) ? '<button type="button" class="btn btn-or" data-act="inviter">Inviter par WhatsApp</button>' : ''}
+          <button type="button" class="btn btn-contour" data-act="copier-invitation">Copier le lien d'invitation</button></div>`);
     }
-    if (l.type === 'compte' && l.p.status === 'approved') {
-      blocs.push(l.p.is_active === false
-        ? `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-contour" data-act="reactiver">Réactiver le compte</button></div>`
-        : `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-rouge" data-act="desactiver">Désactiver le compte</button></div>`);
+    if (l.type === 'compte' && l.p.status === 'approved' && !blocs.length) {
+      blocs.push('<p class="md-note">Aucune action en attente. Les modifications, cotisations, messages et accès sont dans les onglets ci-dessus.</p>');
     }
-    return blocs.join('') || '<p class="md-note">Aucune action rapide pour ce statut.</p>';
+    return blocs.join('');
   }
 
+  // ---- Modifier un compte ----
+  function ficheModifierCompte(l) {
+    const p = l.p;
+    const titres = ['', 'Dr', 'Pr'].map(v => `<option value="${v}"${(p.title || '') === v ? ' selected' : ''}>${v || 'Aucune'}</option>`).join('');
+    return `
+      <div class="md-bloc"><p class="md-bloc-titre">Identité</p>
+        <p class="md-note" style="margin:0 0 10px;">Ces informations partent telles quelles sur la carte imprimée.</p>
+        <div class="md-grille">
+          <div class="md-champ"><label for="fTitre">Civilité</label><select id="fTitre">${titres}</select></div>
+          <div class="md-champ"></div>
+          <div class="md-champ"><label for="fPrenom">Prénom *</label><input type="text" id="fPrenom" value="${esc(p.first_name || '')}"></div>
+          <div class="md-champ"><label for="fNom">Nom *</label><input type="text" id="fNom" value="${esc(p.last_name || '')}"></div>
+          <div class="md-champ"><label for="fDomaine">Domaine</label><select id="fDomaine">${optionsDomaine(p.domain)}</select></div>
+          <div class="md-champ" id="fAutreChamp"${p.domain === 'autre' ? '' : ' style="display:none;"'}><label for="fAutre">Préciser</label><input type="text" id="fAutre" value="${esc(p.domain_autre || '')}"></div>
+          <div class="md-champ plein"><label for="fSpecialite">Spécialité</label><input type="text" id="fSpecialite" value="${esc(p.specialty || '')}"></div>
+          <div class="md-champ"><label for="fRegion">Région</label><select id="fRegion"></select></div>
+          <div class="md-champ"><label for="fVille">Localité</label><input type="text" id="fVille" value="${esc(p.city || '')}"></div>
+        </div>
+        <div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-vert" data-act="identite">Enregistrer l'identité</button></div>
+        <p class="md-message" id="msgIdentite"></p>
+      </div>
+      <div class="md-bloc"><p class="md-bloc-titre">Téléphone (WhatsApp)</p>
+        <div class="md-form" style="margin-top:0;"><input type="text" id="fTel" value="${esc(p.phone || '')}" placeholder="+221 77 000 0000">
+          <button type="button" class="btn btn-contour" data-act="telephone">Enregistrer</button></div>
+        <p class="md-message" id="msgTel">${p.phone ? '' : 'Sans numéro, ce membre ne peut pas être prévenu par WhatsApp.'}</p>
+      </div>
+      <div class="md-bloc"><p class="md-bloc-titre">Adhésion et validité</p>
+        <div class="md-grille">
+          <div class="md-champ"><label for="fAdhesion">Année d'adhésion</label><input type="number" id="fAdhesion" value="${esc(p.member_since || '')}"></div>
+          <div class="md-champ"><label for="fValidite">Fin de validité de la carte</label><input type="number" id="fValidite" value="${esc(p.card_valid_until || '')}"></div>
+        </div>
+        <p class="md-note">Changer l'année d'adhésion renumérote la carte.</p>
+        <div class="md-actions" style="margin-top:10px;"><button type="button" class="btn btn-contour" data-act="annees">Enregistrer</button></div>
+        <p class="md-message" id="msgAnnees"></p>
+      </div>
+      ${l.carte ? `<div class="md-bloc"><p class="md-bloc-titre">Numéro de carte</p>
+        <div class="md-form" style="margin-top:0;"><input type="text" id="fNumero" value="${esc(l.carte.card_number || '')}">
+          <button type="button" class="btn btn-contour" data-act="numero">Enregistrer</button></div>
+        <p class="md-note">À n'utiliser que pour corriger un numéro erroné : il est reporté sur la fiche du membre.</p>
+        <p class="md-message" id="msgNumero"></p></div>` : ''}`;
+  }
+
+  // ---- Modifier une carte sans compte ----
+  function ficheModifierCarte(l) {
+    const c = l.c;
+    const hint = c.cotisations_hint || {};
+    const mois = Array.isArray(hint[ANNEE]) ? hint[ANNEE] : [];
+    return `
+      <div class="md-bloc"><p class="md-bloc-titre">Carte</p>
+        <div class="md-grille">
+          <div class="md-champ plein"><label for="cNom">Nom complet *</label><input type="text" id="cNom" value="${esc(c.full_name || '')}"></div>
+          <div class="md-champ"><label for="cTel">Téléphone</label><input type="text" id="cTel" value="${esc(c.phone || '')}"></div>
+          <div class="md-champ"><label for="cNumero">N° de carte</label><input type="text" id="cNumero" value="${esc(c.card_number || '')}"></div>
+          <div class="md-champ"><label for="cAdhesion">Année d'adhésion</label><input type="number" id="cAdhesion" value="${esc(c.member_since || '')}"></div>
+          <div class="md-champ"><label for="cValidite">Fin de validité</label><input type="number" id="cValidite" value="${esc(c.expiry_hint || '')}"></div>
+          <div class="md-champ"><label for="cDomaine">Domaine</label><select id="cDomaine">${optionsDomaine(c.domain)}</select></div>
+          <div class="md-champ" id="cAutreChamp"${c.domain === 'autre' ? '' : ' style="display:none;"'}><label for="cAutre">Précisez le domaine</label><input type="text" id="cAutre" value="${esc(c.domain_autre || '')}"></div>
+          <div class="md-champ"><label for="cRegion">Région</label><select id="cRegion"></select></div>
+          <div class="md-champ"><label for="cVille">Localité</label><input type="text" id="cVille" value="${esc(c.city || '')}"></div>
+        </div>
+      </div>
+      <div class="md-bloc"><p class="md-bloc-titre">Cotisations déjà réglées</p>
+        <div class="md-champ" style="max-width:160px;"><label for="cAnneeCotis">Année</label><select id="cAnneeCotis">${optionsAnnees(ANNEE - 2, ANNEE + 1, ANNEE)}</select></div>
+        <div class="md-cases" id="cMois">${casesMois(mois)}</div>
+        <p class="md-note">Reprises sur la fiche du membre quand la carte lui sera attribuée.</p>
+        <div class="md-actions" style="margin-top:14px;">
+          <button type="button" class="btn btn-vert" data-act="carte-enregistrer">Enregistrer la carte</button>
+          <button type="button" class="btn btn-rouge" data-act="carte-supprimer">Supprimer la carte</button></div>
+        <p class="md-message" id="msgCarte"></p>
+      </div>`;
+  }
+
+  function casesMois(payes) {
+    return MOIS.map((m, i) => `<label class="${payes.includes(i + 1) ? 'paye' : ''}" title="${esc(MOIS_NOMS[i])}">
+      <input type="checkbox" value="${i + 1}"${payes.includes(i + 1) ? ' checked' : ''}>${m}</label>`).join('');
+  }
+  const moisCoches = id => [...document.querySelectorAll('#' + id + ' input:checked')].map(x => parseInt(x.value, 10));
+
+  // ---- Cotisations d'un compte ----
+  function ficheCotisations(l) {
+    return `<div class="md-bloc"><p class="md-bloc-titre">Cotisations mensuelles</p>
+      <div class="md-form" style="margin-top:0;">
+        <select id="kAnnee" style="flex:0 0 120px;" aria-label="Année">${optionsAnnees(2014, ANNEE, ANNEE)}</select>
+        <button type="button" class="btn btn-contour" data-act="cotis-tout">Tout cocher</button>
+        <button type="button" class="btn btn-contour" data-act="cotis-rien">Tout décocher</button>
+      </div>
+      <div class="md-cases" id="kMois">${casesMois(l.mois || [])}</div>
+      <p class="md-note">Cochez les mois déjà réglés, y compris ceux payés avant la mise en service du site.</p>
+      <div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-vert" data-act="cotis-enregistrer">Enregistrer les cotisations</button></div>
+      <p class="md-message" id="msgCotis"></p></div>`;
+  }
+
+  // ---- Messages ----
+  function typesRappelPour(p) {
+    const carteValide = (Number(p.card_valid_until) || 0) >= ANNEE;
+    const payes = cotisations[p.id] || [];
+    let aJour = true;
+    for (let m = 1; m <= new Date().getMonth() + 1; m++) if (!payes.includes(m)) { aJour = false; break; }
+    return TYPES_RAPPEL.filter(([v]) => {
+      if (v === 'carte_expiree') return !carteValide;
+      if (v === 'carte_expire_bientot') return carteValide;
+      if (v === 'cotisation_retard') return !aJour;
+      return true;
+    });
+  }
+
+  function ficheMessages(l) {
+    const p = l.p;
+    const wa = lienWhatsApp(p.phone);
+    if (p.status === 'pending') {
+      return `<div class="md-bloc"><p class="md-bloc-titre">Nouvel adhérent</p>
+        <p class="md-note" style="margin:0 0 10px;">Messages envoyés avant l'approbation, sur WhatsApp : présentation de l'association, ou rappel des conditions d'adhésion.</p>
+        ${wa ? `<div class="md-actions">
+          <button type="button" class="btn btn-or" data-act="presenter">Présenter l'AMSTC</button>
+          <button type="button" class="btn btn-contour" data-act="rappel-paiement">Rappel paiement</button></div>`
+        : '<p class="md-note">Ce compte n\'a pas de numéro WhatsApp.</p>'}</div>`;
+    }
+    return `<div class="md-bloc"><p class="md-bloc-titre">Prévenir le membre</p>
+      <div class="md-champ"><label for="rType">Message</label>
+        <select id="rType">${typesRappelPour(p).map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('')}</select></div>
+      <div class="md-champ" id="rLibreZone" style="display:none;margin-top:10px;"><label for="rTexte">Votre message</label><textarea id="rTexte" rows="4"></textarea></div>
+      <div class="md-actions" style="margin-top:12px;">
+        <button type="button" class="btn btn-or" data-act="rappel-whatsapp"${wa ? '' : ' disabled title="Ce membre n\'a pas de numéro"'}>Ouvrir WhatsApp</button>
+        <button type="button" class="btn btn-contour" data-act="rappel-email"${p.email ? '' : ' disabled title="Ce membre n\'a pas d\'adresse e-mail"'}>Envoyer par e-mail</button>
+      </div>
+      <p class="md-message" id="msgRappel">WhatsApp s'ouvre avec le message pré-rempli, à vous de l'envoyer ; l'e-mail part immédiatement.</p></div>`;
+  }
+
+  function blocAdhesion() {
+    return '1. Carte de membre (obligatoire) : *2 000 F*, valable 2 ans.\n'
+      + '2. Cotisation annuelle : *12 000 F* (1 000 F/mois), payable en plusieurs tranches.\n\n'
+      + '*Règlement à la Commission finances :*\nWave : 78 828 32 16\nOrange Money : 78 867 96 23\n\n'
+      + "Une fois le paiement effectué, *envoyez-moi la capture d'écran de la transaction ici, sur WhatsApp* : "
+      + 'elle sert de justificatif pour valider votre adhésion.';
+  }
+  function textePresentation(prenom) {
+    return (prenom ? 'Bonjour ' + prenom + ',\n\n' : 'Bonjour,\n\n')
+      + 'Bienvenue ! Votre inscription sur amstc.org est bien enregistrée.\n\n'
+      + "L'*AMSTC* (Association Médico-Sociale des Talibés Cheikh) est une association apolitique, confessionnelle et sans but lucratif, "
+      + 'fondée en 2014 par des étudiants tidianes de la FMPO. Elle rassemble les acteurs du domaine socio-sanitaire et tout sympathisant '
+      + 'se reconnaissant comme « talibé Cheikh ».\n\n'
+      + '*Nos objectifs :*\n- promouvoir la santé communautaire et contribuer au développement socio-sanitaire du pays ;\n'
+      + '- veiller à la formation de nos membres, en santé comme en social et en leadership ;\n- nous entraider dans la religion et la tarikha.\n\n'
+      + '*Nos moyens d\'action :*\n- couvertures sanitaires d\'événements religieux\n- campagnes de consultations médicales et de sensibilisation\n'
+      + '- dons de médicaments et de denrées\n- enseignements post-universitaires\n- ziaras\n\n'
+      + '*Comment adhérer :*\n' + blocAdhesion() + "\n\nÀ très bientôt dans l'espace membres !" + SIGNATURE;
+  }
+  function texteRappelPaiement(prenom) {
+    return (prenom ? 'Bonjour ' + prenom + ',\n\n' : 'Bonjour,\n\n')
+      + "Petit rappel pour finaliser votre adhésion à l'AMSTC :\n\n" + blocAdhesion() + '\n\nMerci !' + SIGNATURE;
+  }
+
+  // ---- Acces ----
+  function ficheAcces(l) {
+    const p = l.p;
+    const consult = p.consultation_user_id
+      ? `<p class="md-message ok">Accès consultations créé${p.consultation_linked_at ? ' le ' + esc(dateLongue(p.consultation_linked_at)) : ''} et actif.</p>`
+      : (DOMAINES_CONSULT.includes(p.domain)
+        ? `<p class="md-note" style="margin:0 0 10px;">L'accès est créé automatiquement à l'approbation. S'il tarde, forcez sa création.</p>
+           <div class="md-actions"><button type="button" class="btn btn-contour" data-act="consultations">Créer l'accès maintenant</button></div>`
+        : '<p class="md-note">Pas d\'accès consultations : ce domaine n\'est pas un métier de santé (la plateforme contient des données de patients).</p>');
+    const peutSupprimer = estSuperAdmin && p.is_active === false && p.role !== 'super_admin' && p.id !== (moi && moi.id);
+    return `
+      <div class="md-bloc"><p class="md-bloc-titre">Mot de passe</p>
+        <p class="md-note" style="margin:0 0 10px;">Envoie un lien de réinitialisation par e-mail et le rend disponible ici pour WhatsApp.</p>
+        <div class="md-actions"><button type="button" class="btn btn-contour" data-act="reinitialiser">Envoyer un lien de réinitialisation</button></div>
+        <div id="zoneReinit"></div>
+      </div>
+      <div class="md-bloc"><p class="md-bloc-titre">consultations-amstc.org</p>${consult}<p class="md-message" id="msgConsult"></p><div id="zoneConsult"></div></div>
+      <div class="md-bloc"><p class="md-bloc-titre">Compte</p>
+        <div class="md-actions">
+          ${p.is_active === false
+            ? '<button type="button" class="btn btn-contour" data-act="reactiver">Réactiver le compte</button>'
+            : '<button type="button" class="btn btn-rouge" data-act="desactiver">Désactiver le compte</button>'}
+          ${peutSupprimer ? '<button type="button" class="btn btn-rouge" data-act="supprimer">Supprimer définitivement</button>' : ''}
+        </div>
+        ${estSuperAdmin && p.is_active !== false ? '<p class="md-note">La suppression définitive n\'est proposée qu\'une fois le compte désactivé.</p>' : ''}
+        <p class="md-message" id="msgCompte"></p>
+      </div>`;
+  }
+
+  // ---- Role (Super Administrateur) ----
+  function ficheRole(l) {
+    const p = l.p;
+    const soi = moi && p.id === moi.id;
+    const opt = (liste, choisi) => ['<option value="">- Aucune -</option>']
+      .concat(liste.map(v => `<option value="${esc(v)}"${v === choisi ? ' selected' : ''}>${esc(v)}</option>`)).join('');
+    let droit = '';
+    if (soi) droit = '<p class="md-note">C\'est votre compte.</p>';
+    else if (p.role === 'super_admin') droit = '<p class="md-note">Super Administrateur.</p>';
+    else if (p.role === 'admin') droit = '<button type="button" class="btn btn-rouge" data-act="revoquer">Révoquer les droits d\'administration</button>';
+    else droit = '<button type="button" class="btn btn-vert" data-act="promouvoir">Nommer administrateur</button>';
+    return `
+      <div class="md-bloc"><p class="md-bloc-titre">Droits d'administration</p>
+        <p style="margin-bottom:10px;"><span class="role-tag">${esc(roleLabel(p.role))}</span></p>
+        <div class="md-actions">${droit}</div><p class="md-message" id="msgRole"></p></div>
+      <div class="md-bloc"><p class="md-bloc-titre">Fonction au Bureau Exécutif</p>
+        <p class="md-note" style="margin:0 0 10px;">Repère affiché dans l'annuaire. Laissez les deux sur « Aucune » pour retirer la fonction.</p>
+        <div class="md-grille">
+          <div class="md-champ"><label for="bFonction">Fonction</label><select id="bFonction">${opt(FONCTIONS, String(p.fonction || ''))}</select></div>
+          <div class="md-champ"><label for="bCommission">Commission</label><select id="bCommission">${opt(COMMISSIONS, String(p.commission || ''))}</select></div>
+        </div>
+        <div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-contour" data-act="fonction">Enregistrer la fonction</button></div>
+        <p class="md-message" id="msgFonction"></p></div>`;
+  }
+
+  // Branchements qui ne peuvent se faire qu'une fois le HTML pose.
+  function apresRenduFiche(l) {
+    if (ongletFiche === 'modifier' && l.type === 'compte') {
+      remplirSelectRegions($('fRegion'), l.p.region || '');
+      brancherIndiceLocalite($('fRegion'), $('fVille'));
+      brancherNormalisation($('fPrenom'), normaliserPrenom);
+      brancherNormalisation($('fNom'), normaliserNom);
+      brancherNormalisation($('fVille'), localiteLibelle);
+      $('fDomaine').addEventListener('change', () => { $('fAutreChamp').style.display = $('fDomaine').value === 'autre' ? '' : 'none'; });
+    }
+    if (ongletFiche === 'modifier' && l.type === 'carte') {
+      remplirSelectRegions($('cRegion'), l.c.region || '');
+      brancherIndiceLocalite($('cRegion'), $('cVille'));
+      $('cDomaine').addEventListener('change', () => { $('cAutreChamp').style.display = $('cDomaine').value === 'autre' ? '' : 'none'; });
+      $('cAnneeCotis').addEventListener('change', () => {
+        const hint = l.c.cotisations_hint || {}, a = parseInt($('cAnneeCotis').value, 10);
+        $('cMois').innerHTML = casesMois(Array.isArray(hint[a]) ? hint[a] : []);
+      });
+    }
+    if (ongletFiche === 'cotisations') {
+      $('kAnnee').addEventListener('change', async () => {
+        const a = parseInt($('kAnnee').value, 10);
+        if (!cotisationsAnnees[a]) {
+          const { data, error } = await supabaseClient.rpc('cotisations_membres', { p_year: a });
+          cotisationsAnnees[a] = {};
+          if (!error) (data || []).forEach(c => { cotisationsAnnees[a][c.user_id] = c.months_paid || []; });
+        }
+        $('kMois').innerHTML = casesMois(cotisationsAnnees[a][l.p.id] || []);
+      });
+    }
+    if (ongletFiche === 'messages' && l.p && l.p.status === 'approved') {
+      $('rType').addEventListener('change', () => { $('rLibreZone').style.display = $('rType').value === 'libre' ? '' : 'none'; });
+    }
+  }
+
+  // ======================================================================
+  // Actions de la fiche
+  // ======================================================================
   async function agir(act, bouton) {
     const l = lignes.find(x => x.id === ficheOuverte);
     if (!l) return;
-    const msg = document.getElementById('mdMessage');
-    msg.className = 'md-message'; msg.textContent = '';
-    const annee = () => parseInt((document.getElementById('mdAnnee') || {}).value, 10);
-    let res = null;
+    const msg = $('mdMessage');
+    if (msg) { msg.className = 'md-message'; msg.textContent = ''; }
+    const annee = () => parseInt(($('mdAnnee') || {}).value, 10);
+    let res = null, reussite = '';
 
+    // -- Apercu --
     if (act === 'approuver' || act === 'refuser') {
-      if (act === 'refuser' && !confirm('Refuser l\'inscription de ' + l.nom + ' ?')) return;
+      if (act === 'refuser' && !confirm("Refuser l'inscription de " + l.nom + ' ?')) return;
       res = await supabaseClient.rpc('approve_or_reject_user', { target_user_id: l.p.id, new_status: act === 'approuver' ? 'approved' : 'rejected' });
+      reussite = act === 'approuver' ? 'Inscription approuvée.' : 'Inscription refusée.';
     } else if (act === 'confirmer-reclamation') {
-      if (!annee()) { msg.className = 'md-message erreur'; msg.textContent = "Indiquez l'année de fin de validité."; return; }
+      if (!annee()) return erreurFiche('mdMessage', "Indiquez l'année de fin de validité.");
       res = await supabaseClient.rpc('confirm_member_card_claim', { card_id: l.carte.id, expiry_year: annee() });
+      reussite = 'Réclamation confirmée.';
     } else if (act === 'refuser-reclamation') {
       if (!confirm('Refuser cette réclamation et remettre la carte dans le pool ?')) return;
       res = await supabaseClient.rpc('reject_member_card_claim', { card_id: l.carte.id });
+      reussite = 'Réclamation refusée.';
     } else if (act === 'creer-carte') {
-      if (!confirm('Créer une carte de membre pour ' + l.nom + ' ?\n\nLe numéro est généré depuis son année d\'adhésion et la carte est rattachée à son compte.')) return;
+      if (!confirm('Créer une carte de membre pour ' + l.nom + " ?\n\nLe numéro est généré depuis son année d'adhésion et la carte est rattachée à son compte.")) return;
       res = await supabaseClient.rpc('creer_carte_membre', { member_id: l.p.id });
+      reussite = 'Carte créée' + (res && res.data ? ' : ' + res.data : '') + '.';
     } else if (act === 'attribuer-carte' || act === 'attribuer-membre') {
-      const carteId = act === 'attribuer-carte' ? document.getElementById('mdCarte').value : l.c.id;
-      const membreId = act === 'attribuer-membre' ? document.getElementById('mdMembre').value : l.p.id;
-      if (!carteId || !membreId) { msg.className = 'md-message erreur'; msg.textContent = act === 'attribuer-carte' ? 'Choisissez une carte.' : 'Choisissez un membre.'; return; }
-      if (!annee()) { msg.className = 'md-message erreur'; msg.textContent = "Indiquez l'année de fin de validité."; return; }
+      const carteId = act === 'attribuer-carte' ? $('mdCarte').value : l.c.id;
+      const membreId = act === 'attribuer-membre' ? $('mdMembre').value : l.p.id;
+      if (!carteId || !membreId) return erreurFiche('mdMessage', act === 'attribuer-carte' ? 'Choisissez une carte.' : 'Choisissez un membre.');
+      if (!annee()) return erreurFiche('mdMessage', "Indiquez l'année de fin de validité.");
       res = await supabaseClient.rpc('assign_member_card', { card_id: carteId, member_id: membreId, expiry_year: annee() });
       // La ligne « carte » disparait une fois attribuee : la fiche suit le membre.
       if (!res.error && act === 'attribuer-membre') ficheOuverte = 'p-' + membreId;
-    } else if (act === 'desactiver' || act === 'reactiver') {
-      if (act === 'desactiver' && !confirm('Désactiver le compte de ' + l.nom + ' ? Il ne pourra plus se connecter.')) return;
-      res = await supabaseClient.rpc('set_user_active', { target_user_id: l.p.id, active: act === 'reactiver' });
-    } else if (act === 'inviter') {
-      // Fenetre ouverte pendant le clic : ouverte apres l'appel reseau, elle
-      // serait bloquee sur telephone.
-      const fenetre = window.open('about:blank', '_blank');
+      reussite = 'Carte attribuée.';
+    } else if (act === 'demande-accepter' || act === 'demande-refuser') {
+      res = await supabaseClient.rpc('review_member_since_request', { request_id: bouton.dataset.demande, approve: act === 'demande-accepter' });
+      reussite = act === 'demande-accepter' ? ('Année appliquée' + (res && res.data ? '. Nouveau numéro : ' + res.data : '') + '.') : 'Demande refusée.';
+    } else if (act === 'inviter' || act === 'copier-invitation') {
+      let fenetre = null;
+      if (act === 'inviter') {
+        // Garde-fou et fenetre AVANT l'appel reseau : un refus ne laisse pas de
+        // jeton inutile, et une fenetre ouverte apres une attente serait bloquee.
+        if (!whatsappAutorise(l.tel)) return;
+        fenetre = window.open('about:blank', '_blank');
+      }
       const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: l.c.id });
       if (error) {
         if (fenetre) fenetre.close();
-        msg.className = 'md-message erreur'; msg.textContent = 'Invitation impossible : ' + error.message;
-        return;
+        return erreurFiche('mdMessage', error.code === 'PGRST202' ? "Le script supabase/phase59-invitation-carte.sql n'a pas encore été exécuté." : 'Invitation impossible : ' + error.message);
       }
       const inv = Array.isArray(data) ? data[0] : data;
       const lien = window.location.origin + '/membres/invitation?jeton=' + encodeURIComponent(inv.jeton);
+      if (act === 'copier-invitation') {
+        if (!(await copier(lien))) window.prompt("Copiez ce lien d'invitation :", lien);
+        messageFiche = { texte: "Lien d'invitation copié : collez-le dans une conversation existante.", ok: true };
+        return ouvrirFiche(l.id, ongletFiche);
+      }
       const prenom = String(inv.full_name || l.nom).trim().split(/\s+/)[0] || '';
       const texte = (prenom ? 'Bonjour ' + prenom + ',' : 'Bonjour,') + '\n\n'
         + "L'AMSTC a désormais son site internet : amstc.org\n\n"
         + "Vous y disposez d'un espace membre personnel, où vous retrouverez votre carte de membre"
         + (inv.card_number ? ' (' + inv.card_number + ')' : '')
         + ", l'annuaire des membres, les formations, la médiathèque et le forum de l'association.\n\n"
-        + 'Activez votre accès en ouvrant ce lien :\n' + lien + '\n\nIl est personnel et valable 30 jours.\n\n©AMSTC';
+        + 'Activez votre accès en ouvrant ce lien :\n' + lien + '\n\nIl est personnel et valable 30 jours.' + SIGNATURE;
       const url = lienWhatsApp(l.tel) + '?text=' + encodeURIComponent(texte);
-      if (fenetre) fenetre.location.href = url; else window.location.href = url;
-      msg.textContent = 'Invitation créée et message WhatsApp ouvert.';
+      if (fenetre) fenetre.location.href = url; else window.open(url, '_blank', 'noopener');
+      messageFiche = { texte: 'Invitation créée et message WhatsApp ouvert.', ok: true };
+      return ouvrirFiche(l.id, ongletFiche);
+    }
+
+    // -- Modifier (compte) --
+    else if (act === 'identite') {
+      const prenom = $('fPrenom').value.trim(), nom = $('fNom').value.trim();
+      if (!prenom || !nom) return erreurFiche('msgIdentite', 'Le prénom et le nom sont obligatoires.');
+      res = await supabaseClient.rpc('admin_modifier_membre', {
+        target_user_id: l.p.id, p_title: $('fTitre').value || null,
+        p_first_name: normaliserPrenom(prenom), p_last_name: normaliserNom(nom),
+        p_domain: $('fDomaine').value, p_domain_autre: $('fAutre').value.trim() || null,
+        p_specialty: $('fSpecialite').value.trim() || null,
+        p_city: localiteLibelle($('fVille').value.trim()) || null, p_region: $('fRegion').value || null,
+      });
+      if (res.error) return erreurFiche('msgIdentite', res.error.code === 'PGRST202' ? "Le script supabase/phase67-admin-modifier-membre.sql n'a pas encore été exécuté." : res.error.message);
+      return apresAction('Identité corrigée. La carte reprendra ces valeurs.');
+    } else if (act === 'telephone') {
+      res = await supabaseClient.rpc('set_member_phone', { target_user_id: l.p.id, new_phone: $('fTel').value.trim() || null });
+      if (res.error) return erreurFiche('msgTel', res.error.code === 'PGRST202' ? "Le script supabase/phase62-telephone-membre.sql n'a pas encore été exécuté." : res.error.message);
+      return apresAction(res.data ? 'Numéro enregistré.' : 'Numéro retiré.');
+    } else if (act === 'annees') {
+      const since = $('fAdhesion').value.trim(), fin = $('fValidite').value.trim();
+      res = await supabaseClient.rpc('set_member_years', { member_id: l.p.id,
+        new_member_since: since ? parseInt(since, 10) : null, new_card_valid_until: fin ? parseInt(fin, 10) : null });
+      if (res.error) return erreurFiche('msgAnnees', 'Erreur : ' + res.error.message);
+      return apresAction(res.data ? 'Enregistré. Nouveau numéro de carte : ' + res.data : 'Enregistré.');
+    } else if (act === 'numero') {
+      const c = l.carte, p = l.p;
+      const base = { card_id: c.id, new_full_name: c.full_name, new_phone: c.phone, new_card_number: $('fNumero').value.trim(),
+        new_member_since: c.member_since || null, new_city: c.city || null };
+      // Validite et cotisations envoyees a l'identique : seul le numero change.
+      const complet = Object.assign({}, base, { new_region: c.region || '', new_expiry: p.card_valid_until || null,
+        new_cotis_annee: ANNEE, new_cotis_mois: cotisations[p.id] || [] });
+      res = await supabaseClient.rpc('update_member_card', complet);
+      if (res.error && res.error.code === 'PGRST202') res = await supabaseClient.rpc('update_member_card', base);
+      if (res.error) return erreurFiche('msgNumero', 'Erreur : ' + res.error.message);
+      return apresAction('Numéro de carte enregistré.');
+    }
+
+    // -- Modifier (carte sans compte) --
+    else if (act === 'carte-enregistrer') {
+      const c = l.c;
+      const domaine = $('cDomaine').value || null;
+      const domaineAutre = domaine === 'autre' ? ($('cAutre').value.trim() || null) : null;
+      if (!$('cNom').value.trim()) return erreurFiche('msgCarte', 'Le nom est obligatoire.');
+      if (domaine === 'autre' && !domaineAutre) return erreurFiche('msgCarte', 'Précisez le domaine.');
+      const since = $('cAdhesion').value.trim(), fin = $('cValidite').value.trim();
+      const base = { card_id: c.id, new_full_name: $('cNom').value, new_phone: $('cTel').value, new_card_number: $('cNumero').value,
+        new_member_since: since ? parseInt(since, 10) : null, new_city: localiteLibelle($('cVille').value) };
+      const complet = Object.assign({}, base, { new_region: $('cRegion').value || '', new_expiry: fin ? parseInt(fin, 10) : null,
+        new_cotis_annee: parseInt($('cAnneeCotis').value, 10), new_cotis_mois: moisCoches('cMois') });
+      let phase77Absente = false;
+      res = await supabaseClient.rpc('update_member_card', complet);
+      if (res.error && res.error.code === 'PGRST202') { phase77Absente = true; res = await supabaseClient.rpc('update_member_card', base); }
+      if (res.error) return erreurFiche('msgCarte', 'Erreur : ' + res.error.message);
+      // Le domaine n'est pas porte par update_member_card : ecriture directe.
+      const maj = { domain: domaine, domain_autre: domaineAutre };
+      if (phase77Absente) maj.region = $('cRegion').value || null;
+      const { error: e2 } = await supabaseClient.from('member_cards').update(maj).eq('id', c.id);
+      if (e2) return erreurFiche('msgCarte', "Carte enregistrée, mais le domaine n'a pas pu l'être : " + e2.message);
+      return apresAction(phase77Absente
+        ? 'Carte enregistrée, mais validité et cotisations IGNORÉES : exécutez supabase/phase77-carte-validite-cotisations.sql.'
+        : (res.data ? "Enregistré. L'année ayant changé, la carte est renumérotée : " + res.data : 'Carte enregistrée.'), !phase77Absente);
+    } else if (act === 'carte-supprimer') {
+      if (!confirm('Supprimer définitivement cette carte ? Cette action ne modifie aucun compte.')) return;
+      res = await supabaseClient.from('member_cards').delete().eq('id', l.c.id);
+      if (res.error) return erreurFiche('msgCarte', 'Erreur : ' + res.error.message);
+      fermerFiche();
+      return charger();
+    }
+
+    // -- Cotisations --
+    else if (act === 'cotis-tout' || act === 'cotis-rien') {
+      document.querySelectorAll('#kMois input').forEach(x => { x.checked = act === 'cotis-tout'; x.parentNode.classList.toggle('paye', x.checked); });
+      return;
+    } else if (act === 'cotis-enregistrer') {
+      const a = parseInt($('kAnnee').value, 10);
+      res = await supabaseClient.rpc('set_cotisations_membre', { p_user_id: l.p.id, p_year: a, p_months: moisCoches('kMois') });
+      if (res.error) return erreurFiche('msgCotis', res.error.code === 'PGRST202' ? "Le script supabase/phase58-etat-cotisations-admin.sql n'a pas encore été exécuté." : 'Erreur : ' + res.error.message);
+      delete cotisationsAnnees[a];
+      return apresAction('Enregistré : ' + (res.data || moisCoches('kMois')).length + '/12 mois en ' + a + '.');
+    }
+
+    // -- Messages --
+    else if (act === 'presenter' || act === 'rappel-paiement') {
+      if (!whatsappAutorise(l.p.phone)) return;
+      const prenom = (l.p.first_name || String(l.p.full_name || '').trim().split(/\s+/)[0] || '').trim();
+      window.open(lienWhatsApp(l.p.phone) + '?text=' + encodeURIComponent((act === 'presenter' ? textePresentation : texteRappelPaiement)(prenom)), '_blank', 'noopener');
+      return;
+    } else if (act === 'rappel-email' || act === 'rappel-whatsapp') {
+      const type = $('rType').value;
+      const message = type === 'libre' ? ($('rTexte').value || '').trim() : null;
+      const out = $('msgRappel');
+      if (type === 'libre' && !message) return erreurFiche('msgRappel', 'Saisissez votre message.');
+      const erreurRappel = e => e.code === 'PGRST202' ? "Le script supabase/phase57-rappel-individuel.sql n'a pas encore été exécuté."
+        : (/Type de rappel inconnu/i.test(e.message || '') ? "Ce message n'existe pas encore dans la base : exécutez supabase/phase65-rappel-compte-active.sql." : 'Erreur : ' + e.message);
+      if (act === 'rappel-email') {
+        out.className = 'md-message'; out.textContent = 'Envoi en cours…';
+        res = await supabaseClient.rpc('envoyer_rappel_membre', { p_user_id: l.p.id, p_type: type, p_message: message });
+        if (res.error) return erreurFiche('msgRappel', erreurRappel(res.error));
+        out.className = 'md-message ok'; out.textContent = 'E-mail envoyé.';
+        return;
+      }
+      if (!whatsappAutorise(l.p.phone)) { out.textContent = 'Ouverture annulée.'; return; }
+      const fenetre = window.open('about:blank', '_blank');
+      // Le texte vient du serveur : e-mail et WhatsApp disent la meme chose.
+      res = await supabaseClient.rpc('texte_rappel_membre', { p_user_id: l.p.id, p_type: type, p_message: message });
+      if (res.error) { if (fenetre) fenetre.close(); return erreurFiche('msgRappel', erreurRappel(res.error)); }
+      const t = Array.isArray(res.data) ? res.data[0] : res.data;
+      const prenom = (l.p.first_name || '').trim();
+      const url = lienWhatsApp(l.p.phone) + '?text=' + encodeURIComponent((prenom ? 'Bonjour ' + prenom + ',\n\n' : 'Bonjour,\n\n') + (t.corps || ''));
+      if (fenetre) fenetre.location.href = url; else window.open(url, '_blank', 'noopener');
+      out.className = 'md-message ok'; out.textContent = 'WhatsApp ouvert : vérifiez le message puis envoyez-le.';
+      supabaseClient.rpc('tracer_rappel_whatsapp', { p_user_id: l.p.id, p_type: type });
       return;
     }
 
-    if (res && res.error) {
-      msg.className = 'md-message erreur';
-      msg.textContent = 'Erreur : ' + res.error.message;
+    // -- Acces --
+    else if (act === 'reinitialiser') {
+      if (!confirm('Envoyer un lien de réinitialisation de mot de passe à ' + l.nom + ' ?\n\nLe lien partira par e-mail, et vous pourrez aussi le transmettre par WhatsApp.')) return;
+      bouton.disabled = true;
+      const zone = $('zoneReinit');
+      zone.innerHTML = '<p class="md-message">Génération du lien…</p>';
+      const { data, error } = await supabaseClient.functions.invoke('admin-reset-link', {
+        body: { member_id: l.p.id, redirect_to: window.location.origin + window.location.pathname.replace(/[^/]*$/, 'reinitialiser') },
+      });
+      bouton.disabled = false;
+      if (error) { zone.innerHTML = `<p class="md-message erreur">Erreur : ${esc(await detailErreurEdge(error))}</p>`; return; }
+      const nom = (data.full_name || data.first_name || '').trim();
+      const wa = lienWhatsApp(data.phone || l.p.phone);
+      const texte = (nom ? 'Bonjour ' + nom + ',' : 'Bonjour,') + '\n\n'
+        + "Voici votre lien pour définir un nouveau mot de passe sur l'espace membres de l'AMSTC :\n\n" + data.action_link + '\n\n'
+        + "Ce lien est personnel et expire rapidement : utilisez-le sans tarder. Si vous n'êtes pas à l'origine de cette demande, ignorez ce message." + SIGNATURE;
+      zone.innerHTML = `<p class="md-message ${data.email_sent ? 'ok' : 'erreur'}">${data.email_sent
+          ? 'E-mail envoyé à ' + esc(data.email) + '.'
+          : "L'e-mail n'a pas pu être envoyé" + (data.email_error ? ' (' + esc(data.email_error) + ')' : '') + ' : transmettez le lien par WhatsApp ou copiez-le.'}</p>
+        <div class="md-lien-copie"><input type="text" readonly value="${esc(data.action_link)}" id="lienReinit"><button type="button" class="btn btn-contour" data-act="copier-reinit">Copier</button></div>
+        ${wa ? `<div class="md-actions" style="margin-top:8px;"><a class="btn btn-or" href="${esc(wa)}?text=${encodeURIComponent(texte)}" target="_blank" rel="noopener">Envoyer par WhatsApp</a></div>` : ''}
+        <p class="md-note">Le même lien vaut pour l'e-mail et WhatsApp. Il est à usage unique et expire vite.</p>`;
       return;
+    } else if (act === 'copier-reinit') {
+      const ok = await copier($('lienReinit').value);
+      bouton.textContent = ok ? 'Copié' : 'Copie impossible';
+      return;
+    } else if (act === 'consultations') {
+      if (!confirm('Créer un compte sur consultations-amstc.org pour ' + l.nom + ' ?\n\nLe compte sera immédiatement actif.')) return;
+      bouton.disabled = true;
+      const out = $('msgConsult');
+      out.className = 'md-message'; out.textContent = 'Création du compte…';
+      const { data, error } = await supabaseClient.functions.invoke('provision-consultation-user', { body: { member_id: l.p.id } });
+      if (error) { bouton.disabled = false; return erreurFiche('msgConsult', 'Erreur : ' + await detailErreurEdge(error)); }
+      bouton.style.display = 'none';
+      out.className = 'md-message ok';
+      if (data.already_existed) {
+        out.textContent = 'Un compte existait déjà côté consultations avec cet e-mail : il a été rattaché à ce membre. Le membre garde son mot de passe.';
+        return;
+      }
+      const nom = (l.p.full_name || l.p.first_name || '').trim();
+      const entete = (nom ? 'Bonjour ' + nom + ',' : 'Bonjour,') + '\n\nVotre compte AMSTC vous donne désormais accès à deux sites :\n\n'
+        + "1. amstc.org - l'espace membres de l'association\n2. consultations-amstc.org - la plateforme de consultations\n\n";
+      const suite = data.password_synced
+        ? "C'est le MÊME compte pour les deux : même adresse e-mail, même mot de passe. Rien de nouveau à créer, ni à retenir."
+        : "C'est le MÊME compte pour les deux. Comme vous vous connectez à amstc.org avec Google, utilisez également le bouton « Continuer avec Google » sur consultations-amstc.org, avec la même adresse.";
+      out.textContent = data.password_synced
+        ? 'Compte créé et actif : même e-mail et même mot de passe que sur amstc.org.'
+        : 'Compte créé et actif : ce membre se connecte avec Google, il utilisera le même bouton sur consultations-amstc.org.';
+      const wa = lienWhatsApp(l.p.phone);
+      if (wa) $('zoneConsult').innerHTML = `<div class="md-actions" style="margin-top:8px;"><a class="btn btn-or" href="${esc(wa)}?text=${encodeURIComponent(entete + suite + SIGNATURE)}" target="_blank" rel="noopener">Prévenir le membre par WhatsApp</a></div>`;
+      return;
+    } else if (act === 'desactiver' || act === 'reactiver') {
+      if (act === 'desactiver' && !confirm('Désactiver le compte de ' + l.nom + ' ? Il ne pourra plus se connecter.')) return;
+      res = await supabaseClient.rpc('set_user_active', { target_user_id: l.p.id, active: act === 'reactiver' });
+      if (res.error) return erreurFiche('msgCompte', 'Erreur : ' + res.error.message);
+      return apresAction(act === 'reactiver' ? 'Compte réactivé.' : 'Compte désactivé.');
+    } else if (act === 'supprimer') {
+      if (!confirm('Supprimer définitivement le compte de ' + l.nom + " ?\n\nCE QUI EST SUPPRIMÉ : le compte, son accès au site, et le décompte des mois cotisés.\n\n"
+        + "CE QUI EST CONSERVÉ : ses paiements, ses commandes et ses messages du forum, qui n'afficheront plus d'auteur. Sa carte de membre redevient attribuable.\n\nCette action est IRRÉVERSIBLE.")) return;
+      if (prompt('Pour confirmer, tapez SUPPRIMER en majuscules :') !== 'SUPPRIMER') return;
+      res = await supabaseClient.rpc('delete_member', { target_user_id: l.p.id });
+      if (res.error) return erreurFiche('msgCompte', 'Erreur : ' + res.error.message);
+      fermerFiche();
+      return charger();
     }
+
+    // -- Role --
+    else if (act === 'promouvoir' || act === 'revoquer') {
+      if (act === 'revoquer' && !confirm("Révoquer les droits d'administration de " + l.nom + ' ?')) return;
+      res = await supabaseClient.rpc('set_user_role', { target_user_id: l.p.id, new_role: act === 'promouvoir' ? 'admin' : 'user' });
+      if (res.error) return erreurFiche('msgRole', 'Erreur : ' + res.error.message);
+      return apresAction(act === 'promouvoir' ? 'Nommé administrateur.' : 'Droits révoqués.');
+    } else if (act === 'fonction') {
+      res = await supabaseClient.rpc('set_member_fonction', { target_user_id: l.p.id,
+        new_fonction: $('bFonction').value || null, new_commission: $('bCommission').value || null });
+      if (res.error) return erreurFiche('msgFonction', res.error.code === 'PGRST202' ? "Le script supabase/phase52-fonctions-bureau.sql n'a pas encore été exécuté." : 'Erreur : ' + res.error.message);
+      return apresAction('Fonction enregistrée.');
+    }
+
+    if (res && res.error) return erreurFiche('mdMessage', 'Erreur : ' + res.error.message);
     if (bouton) bouton.disabled = true;
-    await charger();
+    await apresAction(reussite || 'Enregistré.');
   }
 
-  // ------------------------------------------------------------------ ecouteurs
+  // ======================================================================
+  // Ecouteurs
+  // ======================================================================
   ['filtreStatut', 'filtreAnnee', 'filtreRegion'].forEach(id =>
-    document.getElementById(id).addEventListener('change', () => { page = 1; majChiffres(); afficher(); }));
-  document.getElementById('recherche').addEventListener('input', () => { page = 1; afficher(); });
-  document.getElementById('chiffres').addEventListener('click', e => {
+    $(id).addEventListener('change', () => { page = 1; majChiffres(); afficher(); }));
+  $('recherche').addEventListener('input', () => { page = 1; afficher(); });
+  $('chiffres').addEventListener('click', e => {
     const b = e.target.closest('.ma-chiffre[data-filtre]');
     if (!b) return;
-    document.getElementById('filtreStatut').value = b.dataset.filtre;
+    $('filtreStatut').value = b.dataset.filtre;
     page = 1; majChiffres(); afficher();
   });
-  document.getElementById('pages').addEventListener('click', e => {
+  $('pages').addEventListener('click', e => {
     const b = e.target.closest('[data-page]');
     if (!b || b.disabled) return;
     page = parseInt(b.dataset.page, 10);
     afficher();
     document.querySelector('.ma-liste').scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
-  document.getElementById('corpsTable').addEventListener('change', e => {
+  $('corpsTable').addEventListener('change', e => {
     const c = e.target.closest('.ma-case[data-id]');
     if (!c) return;
     if (c.checked) selection.add(c.dataset.id); else selection.delete(c.dataset.id);
     const filtrees = lignesFiltrees();
     majSelection(filtrees, filtrees.slice((page - 1) * PAR_PAGE, page * PAR_PAGE));
   });
-  document.getElementById('corpsTable').addEventListener('click', e => {
+  $('corpsTable').addEventListener('click', e => {
     const b = e.target.closest('[data-fiche]');
-    if (b) ouvrirFiche(b.dataset.fiche);
+    if (b) ouvrirFiche(b.dataset.fiche, b.dataset.onglet);
   });
-  document.getElementById('caseEntete').addEventListener('change', e => {
+  $('caseEntete').addEventListener('change', e => {
     const filtrees = lignesFiltrees();
-    const visibles = filtrees.slice((page - 1) * PAR_PAGE, page * PAR_PAGE);
-    visibles.forEach(l => e.target.checked ? selection.add(l.id) : selection.delete(l.id));
+    filtrees.slice((page - 1) * PAR_PAGE, page * PAR_PAGE).forEach(l => e.target.checked ? selection.add(l.id) : selection.delete(l.id));
     afficher();
   });
-  document.getElementById('toutFiltre').addEventListener('click', () => { lignesFiltrees().forEach(l => selection.add(l.id)); afficher(); });
-  document.getElementById('rienSelection').addEventListener('click', () => { selection.clear(); afficher(); });
-  document.getElementById('exporter').addEventListener('click', exporter);
-  document.getElementById('mdVoile').addEventListener('click', fermerFiche);
-  document.getElementById('mdPanneau').addEventListener('click', e => {
-    if (e.target.closest('#mdFermer')) { fermerFiche(); return; }
+  $('toutFiltre').addEventListener('click', () => { lignesFiltrees().forEach(l => selection.add(l.id)); afficher(); });
+  $('rienSelection').addEventListener('click', () => { selection.clear(); afficher(); });
+  $('exporter').addEventListener('click', exporterExcel);
+  $('exporterPdf').addEventListener('click', exporterPdf);
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-outil]');
+    if (!b) return;
+    const outil = b.dataset.outil;
+    if (outil === 'importer') outilImporter();
+    else if (outil === 'imprimer') imprimerCartes(b);
+    else if (outil === 'annees') outilDemandesAnnee();
+    else if (outil === 'refuses') outilRefuses();
+    else if (outil === 'admins') outilAdmins();
+    else if (outil === 'restriction') basculerRestriction(b);
+    else if (outil === 'ajouter') outilAjouterCarte();
+  });
+  $('moFermer').addEventListener('click', fermerOutil);
+  $('moVoile').addEventListener('click', e => {
+    if (e.target === $('moVoile')) { fermerOutil(); return; }
+    const onglet = e.target.closest('[data-import]');
+    if (onglet) {
+      document.querySelectorAll('[data-import]').forEach(x => x.classList.toggle('actif', x === onglet));
+      $('importExcel').style.display = onglet.dataset.import === 'excel' ? '' : 'none';
+      $('importTexte').style.display = onglet.dataset.import === 'texte' ? '' : 'none';
+      return;
+    }
+    const demande = e.target.closest('[data-demande]');
+    if (demande) { traiterDemandeAnnee(demande); return; }
+    const fiche = e.target.closest('[data-fiche-outil]');
+    if (fiche) { fermerOutil(); ouvrirFiche(fiche.dataset.ficheOutil, 'role'); }
+  });
+
+  $('mdVoile').addEventListener('click', fermerFiche);
+  $('mdOnglets').addEventListener('click', e => {
+    const b = e.target.closest('[data-onglet-fiche]');
+    if (b) { messageFiche = null; ouvrirFiche(ficheOuverte, b.dataset.ongletFiche); }
+  });
+  $('mdTete').addEventListener('click', e => { if (e.target.closest('#mdFermer')) fermerFiche(); });
+  $('mdCorps').addEventListener('click', e => {
     const b = e.target.closest('[data-act]');
     if (b) agir(b.dataset.act, b);
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ficheOuverte) fermerFiche(); });
+  $('mdCorps').addEventListener('change', e => {
+    const c = e.target.closest('.md-cases input');
+    if (c) c.parentNode.classList.toggle('paye', c.checked);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if ($('moVoile').classList.contains('ouvert')) fermerOutil();
+    else if (ficheOuverte) fermerFiche();
+  });
 
   (async () => {
-    const profil = await requireAdmin('connexion');
-    if (!profil) return;
-    document.getElementById('loadingMsg').style.display = 'none';
-    document.getElementById('pageContent').style.display = '';
-    document.getElementById('signoutBtn').style.display = '';
+    moi = await requireAdmin('connexion');
+    if (!moi) return;
+    estSuperAdmin = moi.role === 'super_admin';
+    if (estSuperAdmin) $('outilAdmins').style.display = '';
+    $('loadingMsg').style.display = 'none';
+    $('pageContent').style.display = '';
+    $('signoutBtn').style.display = '';
+    // Arrivee avec ?q= : la personne est deja recherchee.
+    const q = new URLSearchParams(window.location.search).get('q');
+    if (q) {
+      $('recherche').value = q;
+      document.addEventListener('DOMContentLoaded', () => { const barre = $('rechercheEspaces'); if (barre) barre.value = q; });
+      const barre = $('rechercheEspaces'); if (barre) barre.value = q;
+    }
     await charger();
   })();
 
-  document.getElementById('signoutBtn').addEventListener('click', async () => {
+  $('signoutBtn').addEventListener('click', async () => {
     await signOut();
     window.location.href = 'connexion';
   });

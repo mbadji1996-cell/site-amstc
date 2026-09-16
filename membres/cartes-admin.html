@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <script>
-  // Remplacee par « Membres et cartes » (membres-admin). La page reste
-  // ouvrable depuis celle-ci : ?q= (une personne), ?ajouter= (nouvelle
-  // carte) ou ?outil= (outils avances qui n'y sont pas encore).
+  // Remplacee par « Membres et cartes » (membres-admin), qui en reprend
+  // tous les outils. Seul ?ancien=1 permet encore de l'ouvrir, en secours.
   (function () {
     var p = new URLSearchParams(window.location.search);
-    if (!p.has("q") && !p.has("ajouter") && !p.has("outil")) window.location.replace("membres-admin");
+    var q = p.get("q");
+    if (!p.has("ancien")) window.location.replace("membres-admin" + (q ? "?q=" + encodeURIComponent(q) : ""));
   })();
 </script>
 <script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
