@@ -1854,6 +1854,9 @@
     if (!profile) return;
 
     currentUserId = profile.id;
+    // Arrivee depuis « Membres et cartes » : la personne est deja recherchee.
+    const qUrl = new URLSearchParams(window.location.search).get('q');
+    if (qUrl) document.getElementById('memberSearchInput').value = qUrl;
     isSuperAdmin = profile.role === "super_admin";
     if (isSuperAdmin) document.getElementById("superAdminSection").style.display = "";
 

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/css/dark-mode.css">
+<script src="../assets/js/theme-toggle.js" defer></script>
+<script src="../assets/js/defilement.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membres et cartes - Admin AMSTC</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.18);
+    --radius:14px;
+    --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--green-deep);}
+  .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo-img{height:36px;}
+  .signout-btn{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;background:none;border:1px solid var(--line);border-radius:999px;padding:7px 15px;cursor:pointer;}
+
+  .wrap{max-width:1400px;margin:0 auto;padding:0 28px 64px;}
+  .loading-msg{font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);padding:80px 0;text-align:center;}
+  .ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ===== En-tete : titre et chiffres ===== */
+  .ma-tete{display:grid;gap:22px;padding:26px 0 22px;align-items:center;}
+  /* Cinq chiffres ne tiennent pas a cote du titre sans l'ecraser : ils
+     passent dessous, sur toute la largeur. */
+  .back{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;border:1.5px solid var(--line);font-size:0.84rem;font-weight:600;color:var(--green);margin-bottom:12px;}
+  .back:hover{border-color:var(--green);}
+  :root[data-theme="dark"] .back{color:#7FD9A0;}
+  .ma-titre{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;color:var(--text-heading);line-height:1.2;}
+  .ma-intro{color:var(--text-muted);font-size:0.95rem;margin-top:6px;}
+  .ma-chiffres{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));}
+  @media(min-width:760px){ .ma-chiffres{grid-template-columns:repeat(5,minmax(0,1fr));} }
+  .ma-chiffre{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;min-width:0;
+    background:var(--surface);border:1px solid var(--line);cursor:pointer;text-align:left;
+    font-family:var(--body);color:inherit;transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .ma-chiffre:hover{border-color:var(--gold);}
+  .ma-chiffre.actif{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green);}
+  .ma-chiffre-ic{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;}
+  .ma-chiffre:nth-child(odd) .ma-chiffre-ic{background:rgba(23,118,59,0.12);color:#12622F;}
+  .ma-chiffre:nth-child(even) .ma-chiffre-ic{background:rgba(248,183,24,0.2);color:#8A6209;}
+  :root[data-theme="dark"] .ma-chiffre:nth-child(odd) .ma-chiffre-ic{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+  :root[data-theme="dark"] .ma-chiffre:nth-child(even) .ma-chiffre-ic{background:rgba(248,183,24,0.18);color:#F0C955;}
+  .ma-chiffre-label{display:block;font-size:0.76rem;color:var(--text-muted);line-height:1.25;}
+  .ma-chiffre-val{display:block;font-family:var(--display);font-size:1.35rem;font-weight:700;color:var(--text-heading);line-height:1.2;}
+
+  /* ===== Filtres ===== */
+  .ma-filtres{
+    display:grid;gap:12px;padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);margin-bottom:18px;
+    grid-template-columns:minmax(0,1fr);
+  }
+  /* La recherche est reprise par la barre du haut (member-nav.js) : la grille
+     ne compte que les trois listes et le bouton. */
+  @media(min-width:760px){ .ma-filtres{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  @media(min-width:1180px){ .ma-filtres{grid-template-columns:repeat(3,minmax(0,1fr)) auto;} }
+  .ma-recherche{display:flex;align-items:center;gap:10px;padding:0 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper-alt);}
+  .ma-recherche input{flex:1;min-width:0;border:0;background:none;outline:none;padding:11px 0;font-family:var(--body);font-size:0.9rem;color:var(--ink);}
+  .ma-filtre{display:flex;flex-direction:column;gap:2px;padding:6px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);}
+  .ma-filtre label{font-size:0.7rem;font-weight:600;color:var(--text-muted);}
+  .ma-filtre select{border:0;background:none;font-family:var(--body);font-size:0.9rem;color:var(--ink);outline:none;cursor:pointer;width:100%;}
+  :root[data-theme="dark"] .ma-filtre select option{background:#182019;color:#E8F1EC;}
+  .ma-filtre:focus-within{border-color:var(--green);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:999px;border:0;cursor:pointer;font-family:var(--body);font-size:0.88rem;font-weight:600;white-space:nowrap;}
+  .btn-vert{background:#06441C;color:#FFFFFF;}
+  .btn-vert:hover{background:#17763B;}
+  :root[data-theme="dark"] .btn-vert{background:#17763B;}
+  .btn-or{background:var(--gold);color:#06441C;}
+  .btn-or:hover{background:#8A6209;color:#FFFFFF;}
+  .btn-contour{background:var(--surface);color:var(--text-heading);border:1.5px solid var(--line);}
+  .btn-contour:hover{border-color:var(--green);}
+  .btn-rouge{background:#FDEEEE;color:#9B2C2C;border:1.5px solid rgba(178,59,59,0.35);}
+  .btn-rouge:hover{border-color:#B23B3B;}
+  :root[data-theme="dark"] .btn-rouge{background:rgba(242,154,142,0.12);color:#F29A8E;}
+  .btn:disabled{opacity:0.55;cursor:not-allowed;}
+
+  /* ===== Liste ===== */
+  .ma-liste{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 10px 12px;}
+  .ma-liste-tete{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:4px 4px 14px;}
+  .ma-liste-titre{font-family:var(--display);font-size:1.08rem;font-weight:600;color:var(--text-heading);display:flex;align-items:center;gap:10px;}
+  .ma-liste-titre span{color:var(--text-muted);font-weight:500;}
+  .ma-selection{font-size:0.84rem;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .ma-selection button:not(.btn){background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--green);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  :root[data-theme="dark"] .ma-selection button:not(.btn){color:#7FD9A0;}
+  table.ma-table{width:100%;border-collapse:collapse;}
+  .ma-table th{font-size:0.74rem;font-weight:600;color:var(--text-muted);text-align:left;padding:10px 8px;background:var(--paper-alt);white-space:nowrap;}
+  .ma-table th:first-child{border-radius:10px 0 0 10px;}
+  .ma-table th:last-child{border-radius:0 10px 10px 0;}
+  .ma-table td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:0.86rem;}
+  .ma-table tr:last-child td{border-bottom:0;}
+  .ma-table tbody tr:hover td{background:rgba(23,118,59,0.035);}
+  :root[data-theme="dark"] .ma-table tbody tr:hover td{background:rgba(255,255,255,0.03);}
+  .ma-case{width:18px;height:18px;accent-color:var(--green);cursor:pointer;}
+  .ma-membre{display:flex;align-items:center;gap:10px;min-width:0;}
+  .ma-avatar{width:38px;height:38px;flex:none;border-radius:50%;overflow:hidden;display:grid;place-items:center;
+    background:rgba(248,183,24,0.22);color:#8A6209;font-size:0.8rem;font-weight:700;}
+  .ma-avatar img{width:100%;height:100%;object-fit:cover;}
+  .ma-avatar.carte{background:rgba(23,118,59,0.12);color:#12622F;}
+  :root[data-theme="dark"] .ma-avatar{background:rgba(248,183,24,0.18);color:#F0C955;}
+  :root[data-theme="dark"] .ma-avatar.carte{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+  .ma-nom{font-weight:600;color:var(--text-heading);line-height:1.3;}
+  .ma-table td.col-membre{min-width:185px;}
+  .ma-region{display:block;white-space:nowrap;}
+  .ma-contact span{max-width:160px;}
+  /* Filet de securite entre 980 et 1180 px : la liste defile plutot que de
+     deborder de la page. */
+  .ma-table-zone{overflow-x:auto;}
+  .ma-sous{font-size:0.78rem;color:var(--text-muted);line-height:1.35;}
+  .ma-mono{font-family:var(--mono);font-size:0.8rem;color:var(--text-heading);white-space:nowrap;}
+  .ma-contact{display:flex;flex-direction:column;gap:2px;font-size:0.8rem;color:var(--text-muted);min-width:0;}
+  .ma-contact span{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ma-contact .ic{width:14px;height:14px;}
+  .ma-actions{display:flex;gap:6px;justify-content:flex-end;}
+  .ma-bouton{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--text-heading);}
+  .ma-bouton:hover{border-color:var(--green);color:var(--green);}
+  .ma-bouton.or{background:rgba(248,183,24,0.18);color:#8A6209;border-color:transparent;}
+  :root[data-theme="dark"] .ma-bouton.or{color:#F0C955;}
+
+  .statut{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:0.76rem;font-weight:600;white-space:nowrap;}
+  .statut::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .statut.ok{background:#E3F1E7;color:#12622F;}
+  .statut.attente{background:#FEF1D1;color:#7A5608;}
+  .statut.alerte{background:#FDEEEE;color:#9B2C2C;}
+  .statut.neutre{background:var(--paper-alt);color:#4B5C51;}
+  :root[data-theme="dark"] .statut.ok{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+  :root[data-theme="dark"] .statut.attente{background:rgba(248,183,24,0.16);color:#F0C955;}
+  :root[data-theme="dark"] .statut.alerte{background:rgba(242,154,142,0.14);color:#F29A8E;}
+  :root[data-theme="dark"] .statut.neutre{background:rgba(255,255,255,0.08);color:#C3D2C8;}
+  .cotis{font-family:var(--mono);font-size:0.8rem;color:var(--text-heading);}
+  .cotis.vide{color:var(--text-muted);}
+
+  .ma-pied{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 4px 4px;font-size:0.84rem;color:var(--text-muted);}
+  .ma-pages{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .ma-page{min-width:34px;height:34px;padding:0 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--body);font-size:0.84rem;color:var(--text-heading);}
+  .ma-page:hover:not(:disabled){border-color:var(--green);}
+  .ma-page.actif{background:#06441C;border-color:#06441C;color:#FFFFFF;}
+  :root[data-theme="dark"] .ma-page.actif{background:#17763B;border-color:#17763B;}
+  .ma-page:disabled{opacity:0.45;cursor:default;}
+  .ma-vide{padding:40px 10px;text-align:center;color:var(--text-muted);font-size:0.9rem;}
+
+  /* Telephone et tablette : chaque ligne devient une carte. */
+  @media(max-width:980px){
+    .ma-table thead{display:none;}
+    .ma-table, .ma-table tbody{display:block;}
+    .ma-table tr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;align-items:center;
+      padding:14px 4px;border-bottom:1px solid var(--line);}
+    .ma-table tr:last-child{border-bottom:0;}
+    .ma-table td{display:block;padding:0;border:0;}
+    .ma-table td.col-case{grid-row:1;grid-column:1;}
+    .ma-table td.col-membre{grid-row:1;grid-column:2;}
+    /* Les boutons passent sous la fiche : a cote du nom, ils l'ecrasaient. */
+    .ma-table td.col-actions{grid-column:2 / -1;order:9;}
+    .ma-table td.col-actions .ma-actions{justify-content:flex-start;margin-top:4px;}
+    .ma-table td.col-info{grid-column:2 / -1;font-size:0.82rem;}
+    .ma-table td.col-membre{min-width:0;}
+    .ma-table td.col-info[data-label]::before{content:attr(data-label) " : ";color:var(--text-muted);font-size:0.76rem;}
+    .ma-table td.col-info .ma-region, .ma-table td.col-info .ma-sous{display:inline;}
+    .ma-table td.col-info .ma-sous::before{content:" · ";}
+    .ma-table td.col-info.masque-mobile{display:none;}
+    .ma-table tbody tr:hover td{background:none;}
+  }
+
+  /* ===== Fiche detaillee ===== */
+  .md-voile{position:fixed;inset:0;background:rgba(6,28,14,0.5);z-index:1500;display:none;}
+  .md-voile.ouvert{display:block;}
+  .md-panneau{position:fixed;top:0;right:0;bottom:0;width:min(500px,100%);z-index:1501;background:var(--surface);
+    box-shadow:-20px 0 50px rgba(6,28,14,0.25);transform:translateX(100%);transition:transform .22s ease;
+    display:flex;flex-direction:column;}
+  .md-panneau.ouvert{transform:none;}
+  .md-tete{display:flex;align-items:center;gap:14px;padding:20px 22px;border-bottom:1px solid var(--line);}
+  .md-tete .ma-avatar{width:54px;height:54px;font-size:0.95rem;}
+  .md-fermer{margin-left:auto;align-self:flex-start;}
+  .md-corps{padding:6px 22px 30px;overflow-y:auto;flex:1;}
+  .md-bloc{padding:16px 0;border-bottom:1px solid var(--line);}
+  .md-bloc:last-child{border-bottom:0;}
+  .md-bloc-titre{font-size:0.72rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-accent);margin-bottom:10px;}
+  .md-ligne{display:flex;justify-content:space-between;gap:14px;padding:5px 0;font-size:0.88rem;}
+  .md-ligne span:first-child{color:var(--text-muted);}
+  .md-ligne span:last-child{color:var(--text-heading);font-weight:600;text-align:right;overflow-wrap:anywhere;}
+  .md-ligne a{color:var(--green);}
+  :root[data-theme="dark"] .md-ligne a{color:#7FD9A0;}
+  .md-mois{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-top:8px;}
+  .md-mois span{display:grid;place-items:center;height:26px;border-radius:6px;font-size:0.68rem;font-weight:600;
+    color:var(--text-muted);border:1px dashed var(--line);}
+  .md-mois span.paye{background:var(--gold);border:1px solid var(--gold);color:#06441C;}
+  .md-actions{display:flex;flex-wrap:wrap;gap:8px;}
+  .md-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;}
+  .md-form select,.md-form input{flex:1 1 180px;min-width:0;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;
+    font-family:var(--body);font-size:0.86rem;background:var(--surface);color:var(--ink);}
+  .md-form input[type=number]{flex:0 0 96px;}
+  .md-note{font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.45;}
+  .md-message{font-size:0.84rem;margin-top:8px;}
+  .md-message.erreur{color:#B23B3B;}
+  .md-liens{display:flex;flex-direction:column;gap:8px;}
+  .md-liens a{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--green);}
+  :root[data-theme="dark"] .md-liens a{color:#7FD9A0;}
+  body.md-bloque{overflow:hidden;}
+</style>
+<link rel="stylesheet" href="../assets/css/member-nav.css">
+<script src="../assets/js/member-nav.js" defer></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
+  </div>
+</header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
+    <div class="member-groupe">
+      <button type="button" class="member-tab member-tab-parent" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
+      <div class="member-sous-menu">
+        <a class="member-sous-lien" href="formations">Formations</a>
+        <a class="member-sous-lien" href="daara">Daara</a>
+        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
+        <a class="member-sous-lien" href="bibliotheque">Bibliothèque</a>
+      </div>
+    </div>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <p class="loading-msg" id="loadingMsg">Vérification des droits…</p>
+
+  <div id="pageContent" style="display:none;">
+
+    <div class="ma-tete">
+      <div>
+        <a class="back" href="admin"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Centre d'administration</a>
+        <h1 class="ma-titre">Membres et cartes</h1>
+        <p class="ma-intro">Comptes et cartes de membre réunis : une ligne par personne, avec son statut, sa carte et ses cotisations.</p>
+      </div>
+      <div class="ma-chiffres" id="chiffres">
+        <button type="button" class="ma-chiffre" data-filtre="">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.6a3.2 3.2 0 0 1 0 5.8M18 15.5a6 6 0 0 1 3.2 4"/></svg></span>
+          <span><span class="ma-chiffre-label">Total</span><span class="ma-chiffre-val" id="chTotal">-</span></span>
+        </button>
+        <button type="button" class="ma-chiffre" data-filtre="actif">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg></span>
+          <span><span class="ma-chiffre-label">Membres actifs</span><span class="ma-chiffre-val" id="chActifs">-</span></span>
+        </button>
+        <button type="button" class="ma-chiffre" data-filtre="en-attente">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+          <span><span class="ma-chiffre-label">En attente</span><span class="ma-chiffre-val" id="chAttente">-</span></span>
+        </button>
+        <button type="button" class="ma-chiffre" data-filtre="non-reclame">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18"/></svg></span>
+          <span><span class="ma-chiffre-label">Cartes non réclamées</span><span class="ma-chiffre-val" id="chNonReclame">-</span></span>
+        </button>
+        <a class="ma-chiffre" href="adhesion-admin">
+          <span class="ma-chiffre-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18M16.5 14.5h2"/></svg></span>
+          <span><span class="ma-chiffre-label">Paiements à valider</span><span class="ma-chiffre-val" id="chPaiements">-</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ma-filtres">
+      <div class="ma-recherche" data-recherche-cacher>
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input type="search" id="recherche" data-recherche-page placeholder="Nom, N° carte, téléphone, e-mail…" aria-label="Rechercher un membre">
+      </div>
+      <div class="ma-filtre">
+        <label for="filtreStatut">Statut</label>
+        <select id="filtreStatut">
+          <option value="">Tous</option>
+          <option value="actif">Actif</option>
+          <option value="en-attente">En attente (inscriptions et réclamations)</option>
+          <option value="inscription">Inscription à valider</option>
+          <option value="reclamation">Réclamation à confirmer</option>
+          <option value="expiree">Carte expirée</option>
+          <option value="sans-carte">Sans carte</option>
+          <option value="non-reclame">Carte non réclamée</option>
+          <option value="desactive">Compte désactivé</option>
+        </select>
+      </div>
+      <div class="ma-filtre">
+        <label for="filtreAnnee">Année d'adhésion</label>
+        <select id="filtreAnnee"><option value="">Toutes</option></select>
+      </div>
+      <div class="ma-filtre">
+        <label for="filtreRegion">Région</label>
+        <select id="filtreRegion"><option value="">Toutes</option></select>
+      </div>
+      <a class="btn btn-vert" href="cartes-admin?ajouter=1">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8.5" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M22 11h-6"/></svg>
+        Ajouter une carte
+      </a>
+    </div>
+
+    <section class="ma-liste">
+      <div class="ma-liste-tete">
+        <h2 class="ma-liste-titre">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.6a3.2 3.2 0 0 1 0 5.8M18 15.5a6 6 0 0 1 3.2 4"/></svg>
+          Liste des membres <span id="compteListe">(0)</span>
+        </h2>
+        <div class="ma-selection">
+          <span id="texteSelection">Aucune sélection</span>
+          <button type="button" id="toutFiltre">Tout sélectionner</button>
+          <button type="button" id="rienSelection" style="display:none;">Désélectionner</button>
+          <button type="button" class="btn btn-or" id="exporter">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 10.5l4 4 4-4M4.5 19.5h15"/></svg>
+            <span id="texteExport">Exporter la liste</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="ma-table-zone">
+      <table class="ma-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="ma-case" id="caseEntete" aria-label="Sélectionner la page"></th>
+            <th>Membre</th>
+            <th>N° carte</th>
+            <th>Statut</th>
+            <th>Région</th>
+            <th>Contact</th>
+            <th>Adhésion</th>
+            <th id="enteteCotis">Cotisations</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="corpsTable"><tr><td colspan="9" class="ma-vide">Chargement…</td></tr></tbody>
+      </table>
+      </div>
+
+      <div class="ma-pied">
+        <span id="texteAffichage"></span>
+        <div class="ma-pages" id="pages"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="md-voile" id="mdVoile"></div>
+<aside class="md-panneau" id="mdPanneau" role="dialog" aria-modal="true" aria-labelledby="mdNom">
+  <div class="md-tete" id="mdTete"></div>
+  <div class="md-corps" id="mdCorps"></div>
+</aside>
+
+<footer style="padding:40px 0;text-align:center;">
+  <a href="../" style="color:var(--green);font-family:var(--mono);font-size:0.78rem;">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/localites.js"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+  // ============================================================================
+  // Membres et cartes : comptes (profiles) et cartes (member_cards) sur une
+  // seule liste. Aucune fonction nouvelle en base : la page reprend les appels
+  // deja utilises par « Gestion des membres » et « Cartes de membres ».
+  //
+  // Une ligne par personne :
+  //  - un compte, avec sa carte s'il en porte une (reclamation comprise) ;
+  //  - une carte non reclamee, qui n'a pas encore de compte.
+  // ============================================================================
+
+  const ANNEE = new Date().getFullYear();
+  const PAR_PAGE = 25;
+  const MOIS = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  const DOMAINES = { medecine: 'Médecine', pharmacie: 'Pharmacie', odontologie: 'Odontologie',
+    soins_infirmiers: 'Soins infirmiers', soins_obstetricaux: 'Soins obstétricaux' };
+  const STATUTS = {
+    'actif':       { label: 'Actif', cls: 'ok' },
+    'inscription': { label: 'Inscription à valider', cls: 'attente' },
+    'reclamation': { label: 'Réclamation à confirmer', cls: 'attente' },
+    'expiree':     { label: 'Carte expirée', cls: 'alerte' },
+    'sans-carte':  { label: 'Sans carte', cls: 'neutre' },
+    'non-reclame': { label: 'Non réclamée', cls: 'neutre' },
+    'desactive':   { label: 'Désactivé', cls: 'neutre' },
+  };
+
+  let lignes = [];                // toutes les lignes construites
+  let cotisations = {};           // user_id -> mois payes (annee en cours)
+  let cartesLibres = [];          // cartes non reclamees
+  let membresSansCarte = [];      // comptes valides sans carte
+  let page = 1;
+  const selection = new Set();
+  let ficheOuverte = null;
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const sansAccent = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const ICONE = {
+    oeil: '<svg class="ic" viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    crayon: '<svg class="ic" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
+    wa: '<svg class="ic" viewBox="0 0 24 24"><path d="M4 20l1.3-3.8A8 8 0 1 1 8 19z"/><path d="M9.2 9.3c.3 2.3 2.2 4.3 4.5 4.7l1.2-1.1 1.9.9-.4 1.6c-3.8.2-7.3-3.3-7.3-7.1l1.6-.4.9 1.9z"/></svg>',
+    tel: '<svg class="ic" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2C10.9 19 5 13.1 4.5 5.7A2 2 0 0 1 6.5 3.5z"/></svg>',
+    mail: '<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>',
+    fermer: '<svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    lien: '<svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
+  };
+
+  // Meme convention que l'annuaire : un numero local recoit l'indicatif 221.
+  function lienWhatsApp(tel) {
+    let d = String(tel || '').replace(/\D/g, '');
+    if (!d) return null;
+    if (d.startsWith('00')) d = d.slice(2);
+    if (d.length <= 9) d = '221' + d;
+    return 'https://wa.me/' + d;
+  }
+  function domaineDe(o) {
+    if (!o || !o.domain) return '';
+    if (o.domain === 'autre') return o.domain_autre || 'Autre';
+    return DOMAINES[o.domain] || o.domain;
+  }
+  function initiales(nom) {
+    return String(nom || '?').split(/\s+/).filter(Boolean).map(m => m[0]).slice(0, 2).join('').toUpperCase() || '?';
+  }
+
+  // ------------------------------------------------------------------ donnees
+  async function charger() {
+    const [comptesRes, cartesRes, cotisRes, paieValRes, paieCotisRes] = await Promise.all([
+      supabaseClient.from('profiles').select('*').in('status', ['pending', 'approved']),
+      supabaseClient.from('member_cards')
+        .select('id, full_name, phone, city, region, domain, domain_autre, member_since, card_number, claim_status, claimed_by, expiry_hint'),
+      supabaseClient.rpc('cotisations_membres', { p_year: ANNEE }),
+      supabaseClient.from('card_validity_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseClient.from('cotisation_payments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    ]);
+    if (comptesRes.error || cartesRes.error) {
+      document.getElementById('corpsTable').innerHTML =
+        '<tr><td colspan="9" class="ma-vide">Impossible de charger les membres : '
+        + esc((comptesRes.error || cartesRes.error).message) + '</td></tr>';
+      return;
+    }
+    cotisations = {};
+    (cotisRes.error ? [] : (cotisRes.data || [])).forEach(c => { cotisations[c.user_id] = c.months_paid || []; });
+    const nbPaiements = (paieValRes.count || 0) + (paieCotisRes.count || 0);
+    document.getElementById('chPaiements').textContent = (paieValRes.error && paieCotisRes.error) ? '-' : nbPaiements;
+
+    const comptes = comptesRes.data || [];
+    const cartes = cartesRes.data || [];
+    // Une personne peut avoir une carte confirmee ou une reclamation en
+    // cours : la confirmee l'emporte.
+    const carteDe = {};
+    cartes.filter(c => c.claimed_by).forEach(c => {
+      const deja = carteDe[c.claimed_by];
+      if (!deja || (deja.claim_status !== 'confirmed' && c.claim_status === 'confirmed')) carteDe[c.claimed_by] = c;
+    });
+    cartesLibres = cartes.filter(c => c.claim_status === 'unclaimed')
+      .sort((a, b) => String(a.full_name).localeCompare(String(b.full_name), 'fr', { sensitivity: 'base' }));
+
+    lignes = comptes.map(p => construireCompte(p, carteDe[p.id] || null))
+      .concat(cartesLibres.map(construireCarte))
+      .sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
+    membresSansCarte = lignes.filter(l => l.type === 'compte' && l.statut === 'sans-carte');
+
+    remplirFiltres();
+    majChiffres();
+    afficher();
+    if (ficheOuverte) {
+      const l = lignes.find(x => x.id === ficheOuverte);
+      if (l) ouvrirFiche(l.id); else fermerFiche();
+    }
+  }
+
+  function construireCompte(p, carte) {
+    const nom = p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email || '(sans nom)';
+    const numero = p.legacy_card_number || (carte && carte.card_number) || '';
+    let statut;
+    if (p.status === 'pending') statut = 'inscription';
+    else if (carte && carte.claim_status === 'pending') statut = 'reclamation';
+    else if (p.is_active === false) statut = 'desactive';
+    // legacy_card_number fait foi pour la possession d'une carte (voir
+    // Gestion des membres) : toutes les voies d'attribution le renseignent.
+    else if (!p.legacy_card_number) statut = 'sans-carte';
+    else if (!p.card_valid_until || p.card_valid_until < ANNEE) statut = 'expiree';
+    else statut = 'actif';
+    return {
+      id: 'p-' + p.id, type: 'compte', p, carte, statut, nom,
+      domaine: domaineDe(p), numero, region: p.region || '', ville: p.city || '',
+      tel: p.phone || '', email: p.email || '', photo: p.photo_url || '',
+      annee: p.member_since || (carte && carte.member_since) || '',
+      validite: p.card_valid_until || (carte && carte.expiry_hint) || '',
+      mois: p.status === 'approved' ? (cotisations[p.id] || []) : null,
+    };
+  }
+
+  function construireCarte(c) {
+    return {
+      id: 'c-' + c.id, type: 'carte', c, statut: 'non-reclame', nom: c.full_name || '(sans nom)',
+      domaine: domaineDe(c), numero: c.card_number || '', region: c.region || '', ville: c.city || '',
+      tel: c.phone || '', email: '', photo: '', annee: c.member_since || '', validite: c.expiry_hint || '', mois: null,
+    };
+  }
+
+  // ------------------------------------------------------------------ filtres
+  function remplirFiltres() {
+    const selAnnee = document.getElementById('filtreAnnee');
+    const selRegion = document.getElementById('filtreRegion');
+    const garderA = selAnnee.value, garderR = selRegion.value;
+    const annees = [...new Set(lignes.map(l => l.annee).filter(Boolean))].sort((a, b) => b - a);
+    const regions = [...new Set(lignes.map(l => l.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+    selAnnee.innerHTML = '<option value="">Toutes</option>' + annees.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('')
+      + (lignes.some(l => !l.annee) ? '<option value="aucune">Non renseignée</option>' : '');
+    selRegion.innerHTML = '<option value="">Toutes</option>' + regions.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('')
+      + (lignes.some(l => !l.region) ? '<option value="aucune">Non renseignée</option>' : '');
+    selAnnee.value = garderA; selRegion.value = garderR;
+  }
+
+  function lignesFiltrees() {
+    const statut = document.getElementById('filtreStatut').value;
+    const annee = document.getElementById('filtreAnnee').value;
+    const region = document.getElementById('filtreRegion').value;
+    const q = sansAccent(document.getElementById('recherche').value.trim());
+    return lignes.filter(l => {
+      if (statut === 'en-attente' && l.statut !== 'inscription' && l.statut !== 'reclamation') return false;
+      if (statut && statut !== 'en-attente' && l.statut !== statut) return false;
+      if (annee === 'aucune' ? !!l.annee : (annee && String(l.annee) !== annee)) return false;
+      if (region === 'aucune' ? !!l.region : (region && l.region !== region)) return false;
+      if (!q) return true;
+      return sansAccent([l.nom, l.numero, l.tel, l.email, l.ville, l.region, l.domaine].join(' ')).includes(q);
+    });
+  }
+
+  function majChiffres() {
+    document.getElementById('chTotal').textContent = lignes.length;
+    document.getElementById('chActifs').textContent = lignes.filter(l => l.statut === 'actif').length;
+    document.getElementById('chAttente').textContent = lignes.filter(l => l.statut === 'inscription' || l.statut === 'reclamation').length;
+    document.getElementById('chNonReclame').textContent = lignes.filter(l => l.statut === 'non-reclame').length;
+    const courant = document.getElementById('filtreStatut').value;
+    document.querySelectorAll('.ma-chiffre[data-filtre]').forEach(b => b.classList.toggle('actif', b.dataset.filtre === courant));
+  }
+
+  // ------------------------------------------------------------------ liste
+  function avatarHtml(l) {
+    if (l.photo) return `<span class="ma-avatar"><img src="${esc(l.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent='${esc(initiales(l.nom))}'"></span>`;
+    return `<span class="ma-avatar${l.type === 'carte' ? ' carte' : ''}">${esc(initiales(l.nom))}</span>`;
+  }
+
+  function afficher() {
+    const filtrees = lignesFiltrees();
+    const pagesTotal = Math.max(1, Math.ceil(filtrees.length / PAR_PAGE));
+    if (page > pagesTotal) page = pagesTotal;
+    const debut = (page - 1) * PAR_PAGE;
+    const visibles = filtrees.slice(debut, debut + PAR_PAGE);
+    document.getElementById('compteListe').textContent = '(' + filtrees.length + ')';
+    document.getElementById('enteteCotis').textContent = 'Cotis. ' + ANNEE;
+
+    const corps = document.getElementById('corpsTable');
+    if (visibles.length === 0) {
+      corps.innerHTML = '<tr><td colspan="9" class="ma-vide">Aucun membre ne correspond à ces critères.</td></tr>';
+    } else {
+      corps.innerHTML = visibles.map(l => {
+        const st = STATUTS[l.statut];
+        const wa = lienWhatsApp(l.tel);
+        // Le numero a sa colonne : la ligne du dessous ne porte que le domaine.
+        const sous = l.domaine || (l.type === 'carte' ? 'Carte sans compte' : '');
+        const cotis = l.mois === null ? '<span class="cotis vide">-</span>' : `<span class="cotis">${l.mois.length}/12</span>`;
+        const outil = lienOutil(l);
+        return `<tr>
+          <td class="col-case"><input type="checkbox" class="ma-case" data-id="${esc(l.id)}" ${selection.has(l.id) ? 'checked' : ''} aria-label="Sélectionner ${esc(l.nom)}"></td>
+          <td class="col-membre"><div class="ma-membre">${avatarHtml(l)}<div style="min-width:0;">
+            <p class="ma-nom">${esc(l.nom)}</p><p class="ma-sous">${esc(sous)}</p></div></div></td>
+          <td class="col-info masque-mobile" data-label="N° carte"><span class="ma-mono">${esc(l.numero || '-')}</span></td>
+          <td class="col-info" data-label="Statut"><span class="statut ${st.cls}">${esc(st.label)}</span></td>
+          <td class="col-info" data-label="Région">${l.region || l.ville ? `<span class="ma-region">${esc(l.region || l.ville)}</span>${l.region && l.ville ? `<span class="ma-sous">${esc(l.ville)}</span>` : ''}` : '-'}</td>
+          <td class="col-info masque-mobile"><div class="ma-contact">
+            ${l.tel ? `<span>${ICONE.tel}${esc(l.tel)}</span>` : ''}
+            ${l.email ? `<span>${ICONE.mail}${esc(l.email)}</span>` : ''}
+            ${!l.tel && !l.email ? '<span>-</span>' : ''}</div></td>
+          <td class="col-info" data-label="Adhésion">${esc(l.annee || '-')}</td>
+          <td class="col-info" data-label="Cotisations ${ANNEE}">${cotis}</td>
+          <td class="col-actions"><div class="ma-actions">
+            ${wa ? `<a class="ma-bouton or" href="${esc(wa)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp ${esc(l.nom)}">${ICONE.wa}</a>` : ''}
+            <button type="button" class="ma-bouton" data-fiche="${esc(l.id)}" title="Voir la fiche" aria-label="Voir la fiche de ${esc(l.nom)}">${ICONE.oeil}</button>
+            <a class="ma-bouton" href="${esc(outil.href)}" title="${esc(outil.titre)}" aria-label="${esc(outil.titre)}">${ICONE.crayon}</a>
+          </div></td>
+        </tr>`;
+      }).join('');
+    }
+
+    const fin = Math.min(debut + PAR_PAGE, filtrees.length);
+    document.getElementById('texteAffichage').textContent = filtrees.length
+      ? `Affichage de ${debut + 1} à ${fin} sur ${filtrees.length} membre${filtrees.length > 1 ? 's' : ''}` : '';
+    afficherPages(pagesTotal);
+    majSelection(filtrees, visibles);
+  }
+
+  function afficherPages(total) {
+    const nums = new Set([1, total, page - 1, page, page + 1].filter(n => n >= 1 && n <= total));
+    const tri = [...nums].sort((a, b) => a - b);
+    let html = `<button type="button" class="ma-page" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} aria-label="Page précédente">‹</button>`;
+    let prec = 0;
+    tri.forEach(n => {
+      if (n - prec > 1) html += '<span aria-hidden="true">…</span>';
+      html += `<button type="button" class="ma-page${n === page ? ' actif' : ''}" data-page="${n}" ${n === page ? 'aria-current="page"' : ''}>${n}</button>`;
+      prec = n;
+    });
+    html += `<button type="button" class="ma-page" data-page="${page + 1}" ${page === total ? 'disabled' : ''} aria-label="Page suivante">›</button>`;
+    document.getElementById('pages').innerHTML = total > 1 ? html : '';
+  }
+
+  // Outil complet : tout ce que la fiche ne fait pas (identite, rappels,
+  // fonctions, suppression...) reste dans les pages specialisees.
+  function lienOutil(l) {
+    if (l.type === 'carte') return { href: 'cartes-admin?q=' + encodeURIComponent(l.nom), titre: 'Modifier dans Cartes de membres' };
+    return { href: 'validation?q=' + encodeURIComponent(l.email || l.nom), titre: 'Modifier dans Gestion des membres' };
+  }
+
+  // ------------------------------------------------------------------ selection
+  function majSelection(filtrees, visibles) {
+    filtrees = filtrees || lignesFiltrees();
+    visibles = visibles || [];
+    const n = selection.size;
+    document.getElementById('texteSelection').textContent = n === 0 ? 'Aucune sélection' : n + ' sélectionné' + (n > 1 ? 's' : '');
+    document.getElementById('rienSelection').style.display = n ? '' : 'none';
+    document.getElementById('toutFiltre').textContent = 'Tout sélectionner (' + filtrees.length + ')';
+    document.getElementById('texteExport').textContent = n ? 'Exporter la sélection (' + n + ')' : 'Exporter la liste (' + filtrees.length + ')';
+    const entete = document.getElementById('caseEntete');
+    const cochees = visibles.filter(l => selection.has(l.id)).length;
+    entete.checked = visibles.length > 0 && cochees === visibles.length;
+    entete.indeterminate = cochees > 0 && cochees < visibles.length;
+  }
+
+  // ------------------------------------------------------------------ export
+  function exporter() {
+    const source = selection.size ? lignes.filter(l => selection.has(l.id)) : lignesFiltrees();
+    if (source.length === 0) { alert('Aucun membre à exporter.'); return; }
+    const donnees = source.map(l => {
+      const p = l.p || {};
+      return {
+        'Nom complet': l.nom,
+        'Titre': p.title || '',
+        'Prénom': p.first_name || '',
+        'Nom': p.last_name || '',
+        'Statut': STATUTS[l.statut].label,
+        'Type': l.type === 'carte' ? 'Carte sans compte' : 'Compte',
+        'N° carte': l.numero,
+        "Année d'adhésion": l.annee,
+        'Fin de validité': l.validite,
+        ['Cotisations ' + ANNEE]: l.mois === null ? '' : l.mois.length + '/12',
+        'Téléphone': l.tel,
+        'E-mail': l.email,
+        'Domaine': l.domaine,
+        'Spécialité': p.specialty || '',
+        'Région': l.region,
+        'Localité': l.ville,
+        'Rôle': p.role === 'super_admin' ? 'Super Administrateur' : p.role === 'admin' ? 'Administrateur' : (l.type === 'compte' ? 'Membre' : ''),
+        'Inscrit le': p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(donnees);
+    ws['!cols'] = Object.keys(donnees[0]).map(k => ({
+      wch: Math.min(40, Math.max(k.length, ...donnees.map(d => String(d[k]).length)) + 2),
+    }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Membres');
+    XLSX.writeFile(wb, 'membres-et-cartes-amstc-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  }
+
+  // ------------------------------------------------------------------ fiche
+  function ligneFiche(label, valeur) {
+    return `<div class="md-ligne"><span>${esc(label)}</span><span>${valeur}</span></div>`;
+  }
+
+  function ouvrirFiche(id) {
+    const l = lignes.find(x => x.id === id);
+    if (!l) return;
+    ficheOuverte = id;
+    const st = STATUTS[l.statut];
+    const wa = lienWhatsApp(l.tel);
+    document.getElementById('mdTete').innerHTML = `${avatarHtml(l)}
+      <div style="min-width:0;">
+        <p class="ma-nom" id="mdNom" style="font-size:1.05rem;">${esc(l.nom)}</p>
+        <p class="ma-sous">${esc(l.domaine || (l.type === 'carte' ? 'Carte sans compte' : ''))}</p>
+        <span class="statut ${st.cls}" style="margin-top:6px;">${esc(st.label)}</span>
+      </div>
+      <button type="button" class="ma-bouton md-fermer" id="mdFermer" aria-label="Fermer la fiche">${ICONE.fermer}</button>`;
+
+    let html = '<div class="md-bloc"><p class="md-bloc-titre">Coordonnées</p>'
+      + ligneFiche('Téléphone', l.tel ? esc(l.tel) + (wa ? ` · <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : '') : '-')
+      + ligneFiche('E-mail', l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '-')
+      + ligneFiche('Localité', esc([l.ville, l.region].filter(Boolean).join(', ') || '-'))
+      + (l.p && l.p.created_at ? ligneFiche('Inscrit le', esc(new Date(l.p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }))) : '')
+      + '</div>';
+
+    html += '<div class="md-bloc"><p class="md-bloc-titre">Adhésion et carte</p>'
+      + ligneFiche('N° carte', `<span class="ma-mono">${esc(l.numero || '-')}</span>`)
+      + ligneFiche("Année d'adhésion", esc(l.annee || '-'))
+      + ligneFiche('Fin de validité', esc(l.validite || '-'));
+    if (l.mois !== null) {
+      html += ligneFiche('Cotisations ' + ANNEE, esc(l.mois.length + '/12'))
+        + '<div class="md-mois">' + MOIS.map((m, i) => `<span class="${l.mois.includes(i + 1) ? 'paye' : ''}">${m}</span>`).join('') + '</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="md-bloc"><p class="md-bloc-titre">Actions</p>' + actionsHtml(l) + '<p class="md-message" id="mdMessage"></p></div>';
+
+    const liens = [];
+    if (l.type === 'compte') liens.push(`<a href="validation?q=${encodeURIComponent(l.email || l.nom)}">${ICONE.lien} Identité, rôle, rappels et cotisations : Gestion des membres</a>`);
+    if (l.type === 'carte' || l.carte) liens.push(`<a href="cartes-admin?q=${encodeURIComponent(l.nom)}">${ICONE.lien} Numéro, validité et domaine de la carte : Cartes de membres</a>`);
+    html += '<div class="md-bloc"><p class="md-bloc-titre">Outils complets</p><div class="md-liens">' + liens.join('') + '</div></div>';
+
+    document.getElementById('mdCorps').innerHTML = html;
+    document.getElementById('mdVoile').classList.add('ouvert');
+    document.getElementById('mdPanneau').classList.add('ouvert');
+    document.body.classList.add('md-bloque');
+    document.getElementById('mdFermer').focus();
+  }
+
+  function fermerFiche() {
+    ficheOuverte = null;
+    document.getElementById('mdVoile').classList.remove('ouvert');
+    document.getElementById('mdPanneau').classList.remove('ouvert');
+    document.body.classList.remove('md-bloque');
+  }
+
+  function actionsHtml(l) {
+    const blocs = [];
+    if (l.statut === 'inscription') {
+      blocs.push(`<div class="md-actions">
+        <button type="button" class="btn btn-vert" data-act="approuver">Approuver l'inscription</button>
+        <button type="button" class="btn btn-rouge" data-act="refuser">Refuser</button></div>`);
+    }
+    if (l.statut === 'reclamation') {
+      blocs.push(`<p class="md-note">Ce membre a réclamé la carte ${esc(l.carte.card_number || '')} (${esc(l.carte.full_name || '')}).</p>
+        <div class="md-form"><label class="md-note" for="mdAnnee" style="margin:0;">Valide jusqu'en</label>
+        <input type="number" id="mdAnnee" value="${esc(l.carte.expiry_hint || ANNEE)}">
+        <button type="button" class="btn btn-vert" data-act="confirmer-reclamation">Confirmer</button>
+        <button type="button" class="btn btn-rouge" data-act="refuser-reclamation">Refuser</button></div>`);
+    }
+    if (l.statut === 'sans-carte') {
+      blocs.push(`<div class="md-actions"><button type="button" class="btn btn-vert" data-act="creer-carte">Créer une carte</button></div>
+        <p class="md-note">Ou lui attribuer une carte existante non réclamée :</p>
+        <div class="md-form"><select id="mdCarte"><option value="">Choisir une carte…</option>
+        ${cartesLibres.map(c => `<option value="${esc(c.id)}">${esc(c.full_name)}${c.member_since ? ' · ' + esc(c.member_since) : ''}${c.city ? ' · ' + esc(c.city) : ''}</option>`).join('')}
+        </select><input type="number" id="mdAnnee" value="${ANNEE}" title="Année de fin de validité" aria-label="Année de fin de validité">
+        <button type="button" class="btn btn-contour" data-act="attribuer-carte">Attribuer</button></div>`);
+    }
+    if (l.statut === 'non-reclame') {
+      blocs.push(`<p class="md-note">Attribuer cette carte à un membre inscrit qui n'en a pas :</p>
+        <div class="md-form"><select id="mdMembre"><option value="">Choisir un membre…</option>
+        ${membresSansCarte.map(m => `<option value="${esc(m.p.id)}">${esc(m.nom)}${m.email ? ' · ' + esc(m.email) : ''}</option>`).join('')}
+        </select><input type="number" id="mdAnnee" value="${esc(l.c.expiry_hint || ANNEE)}" title="Année de fin de validité" aria-label="Année de fin de validité">
+        <button type="button" class="btn btn-contour" data-act="attribuer-membre">Attribuer</button></div>`
+        + (lienWhatsApp(l.tel) ? `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-or" data-act="inviter">Inviter par WhatsApp à activer son accès</button></div>` : ''));
+    }
+    if (l.type === 'compte' && l.p.status === 'approved') {
+      blocs.push(l.p.is_active === false
+        ? `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-contour" data-act="reactiver">Réactiver le compte</button></div>`
+        : `<div class="md-actions" style="margin-top:12px;"><button type="button" class="btn btn-rouge" data-act="desactiver">Désactiver le compte</button></div>`);
+    }
+    return blocs.join('') || '<p class="md-note">Aucune action rapide pour ce statut.</p>';
+  }
+
+  async function agir(act, bouton) {
+    const l = lignes.find(x => x.id === ficheOuverte);
+    if (!l) return;
+    const msg = document.getElementById('mdMessage');
+    msg.className = 'md-message'; msg.textContent = '';
+    const annee = () => parseInt((document.getElementById('mdAnnee') || {}).value, 10);
+    let res = null;
+
+    if (act === 'approuver' || act === 'refuser') {
+      if (act === 'refuser' && !confirm('Refuser l\'inscription de ' + l.nom + ' ?')) return;
+      res = await supabaseClient.rpc('approve_or_reject_user', { target_user_id: l.p.id, new_status: act === 'approuver' ? 'approved' : 'rejected' });
+    } else if (act === 'confirmer-reclamation') {
+      if (!annee()) { msg.className = 'md-message erreur'; msg.textContent = "Indiquez l'année de fin de validité."; return; }
+      res = await supabaseClient.rpc('confirm_member_card_claim', { card_id: l.carte.id, expiry_year: annee() });
+    } else if (act === 'refuser-reclamation') {
+      if (!confirm('Refuser cette réclamation et remettre la carte dans le pool ?')) return;
+      res = await supabaseClient.rpc('reject_member_card_claim', { card_id: l.carte.id });
+    } else if (act === 'creer-carte') {
+      if (!confirm('Créer une carte de membre pour ' + l.nom + ' ?\n\nLe numéro est généré depuis son année d\'adhésion et la carte est rattachée à son compte.')) return;
+      res = await supabaseClient.rpc('creer_carte_membre', { member_id: l.p.id });
+    } else if (act === 'attribuer-carte' || act === 'attribuer-membre') {
+      const carteId = act === 'attribuer-carte' ? document.getElementById('mdCarte').value : l.c.id;
+      const membreId = act === 'attribuer-membre' ? document.getElementById('mdMembre').value : l.p.id;
+      if (!carteId || !membreId) { msg.className = 'md-message erreur'; msg.textContent = act === 'attribuer-carte' ? 'Choisissez une carte.' : 'Choisissez un membre.'; return; }
+      if (!annee()) { msg.className = 'md-message erreur'; msg.textContent = "Indiquez l'année de fin de validité."; return; }
+      res = await supabaseClient.rpc('assign_member_card', { card_id: carteId, member_id: membreId, expiry_year: annee() });
+      // La ligne « carte » disparait une fois attribuee : la fiche suit le membre.
+      if (!res.error && act === 'attribuer-membre') ficheOuverte = 'p-' + membreId;
+    } else if (act === 'desactiver' || act === 'reactiver') {
+      if (act === 'desactiver' && !confirm('Désactiver le compte de ' + l.nom + ' ? Il ne pourra plus se connecter.')) return;
+      res = await supabaseClient.rpc('set_user_active', { target_user_id: l.p.id, active: act === 'reactiver' });
+    } else if (act === 'inviter') {
+      // Fenetre ouverte pendant le clic : ouverte apres l'appel reseau, elle
+      // serait bloquee sur telephone.
+      const fenetre = window.open('about:blank', '_blank');
+      const { data, error } = await supabaseClient.rpc('creer_invitation_carte', { p_card_id: l.c.id });
+      if (error) {
+        if (fenetre) fenetre.close();
+        msg.className = 'md-message erreur'; msg.textContent = 'Invitation impossible : ' + error.message;
+        return;
+      }
+      const inv = Array.isArray(data) ? data[0] : data;
+      const lien = window.location.origin + '/membres/invitation?jeton=' + encodeURIComponent(inv.jeton);
+      const prenom = String(inv.full_name || l.nom).trim().split(/\s+/)[0] || '';
+      const texte = (prenom ? 'Bonjour ' + prenom + ',' : 'Bonjour,') + '\n\n'
+        + "L'AMSTC a désormais son site internet : amstc.org\n\n"
+        + "Vous y disposez d'un espace membre personnel, où vous retrouverez votre carte de membre"
+        + (inv.card_number ? ' (' + inv.card_number + ')' : '')
+        + ", l'annuaire des membres, les formations, la médiathèque et le forum de l'association.\n\n"
+        + 'Activez votre accès en ouvrant ce lien :\n' + lien + '\n\nIl est personnel et valable 30 jours.\n\n©AMSTC';
+      const url = lienWhatsApp(l.tel) + '?text=' + encodeURIComponent(texte);
+      if (fenetre) fenetre.location.href = url; else window.location.href = url;
+      msg.textContent = 'Invitation créée et message WhatsApp ouvert.';
+      return;
+    }
+
+    if (res && res.error) {
+      msg.className = 'md-message erreur';
+      msg.textContent = 'Erreur : ' + res.error.message;
+      return;
+    }
+    if (bouton) bouton.disabled = true;
+    await charger();
+  }
+
+  // ------------------------------------------------------------------ ecouteurs
+  ['filtreStatut', 'filtreAnnee', 'filtreRegion'].forEach(id =>
+    document.getElementById(id).addEventListener('change', () => { page = 1; majChiffres(); afficher(); }));
+  document.getElementById('recherche').addEventListener('input', () => { page = 1; afficher(); });
+  document.getElementById('chiffres').addEventListener('click', e => {
+    const b = e.target.closest('.ma-chiffre[data-filtre]');
+    if (!b) return;
+    document.getElementById('filtreStatut').value = b.dataset.filtre;
+    page = 1; majChiffres(); afficher();
+  });
+  document.getElementById('pages').addEventListener('click', e => {
+    const b = e.target.closest('[data-page]');
+    if (!b || b.disabled) return;
+    page = parseInt(b.dataset.page, 10);
+    afficher();
+    document.querySelector('.ma-liste').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+  document.getElementById('corpsTable').addEventListener('change', e => {
+    const c = e.target.closest('.ma-case[data-id]');
+    if (!c) return;
+    if (c.checked) selection.add(c.dataset.id); else selection.delete(c.dataset.id);
+    const filtrees = lignesFiltrees();
+    majSelection(filtrees, filtrees.slice((page - 1) * PAR_PAGE, page * PAR_PAGE));
+  });
+  document.getElementById('corpsTable').addEventListener('click', e => {
+    const b = e.target.closest('[data-fiche]');
+    if (b) ouvrirFiche(b.dataset.fiche);
+  });
+  document.getElementById('caseEntete').addEventListener('change', e => {
+    const filtrees = lignesFiltrees();
+    const visibles = filtrees.slice((page - 1) * PAR_PAGE, page * PAR_PAGE);
+    visibles.forEach(l => e.target.checked ? selection.add(l.id) : selection.delete(l.id));
+    afficher();
+  });
+  document.getElementById('toutFiltre').addEventListener('click', () => { lignesFiltrees().forEach(l => selection.add(l.id)); afficher(); });
+  document.getElementById('rienSelection').addEventListener('click', () => { selection.clear(); afficher(); });
+  document.getElementById('exporter').addEventListener('click', exporter);
+  document.getElementById('mdVoile').addEventListener('click', fermerFiche);
+  document.getElementById('mdPanneau').addEventListener('click', e => {
+    if (e.target.closest('#mdFermer')) { fermerFiche(); return; }
+    const b = e.target.closest('[data-act]');
+    if (b) agir(b.dataset.act, b);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ficheOuverte) fermerFiche(); });
+
+  (async () => {
+    const profil = await requireAdmin('connexion');
+    if (!profil) return;
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('pageContent').style.display = '';
+    document.getElementById('signoutBtn').style.display = '';
+    await charger();
+  })();
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'connexion';
+  });
+</script>
+
+</body>
+</html>

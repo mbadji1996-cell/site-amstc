@@ -693,6 +693,19 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+    // Arrivee depuis « Membres et cartes » : carte deja recherchee, ou
+    // formulaire d'ajout deja ouvert. La barre du haut reprend ce champ :
+    // elle recoit aussi la valeur.
+    const paramsUrl = new URLSearchParams(window.location.search);
+    if (paramsUrl.get('q')) {
+      document.getElementById('cardsFilter').value = paramsUrl.get('q');
+      const barre = document.getElementById('rechercheEspaces');
+      if (barre) barre.value = paramsUrl.get('q');
+    }
+    if (paramsUrl.get('ajouter') === '1') setTimeout(() => {
+      if (!document.getElementById('addCardForm').classList.contains('open')) toggleAddCardForm();
+      document.getElementById('addCardForm').scrollIntoView({ block: 'center' });
+    }, 0);
     await loadAll();
   })();
 
