@@ -392,8 +392,6 @@ collections:
       - name: "espace_membre"
         label: "Tableau de bord de l'espace membres"
         file: "content/espace-membre.json"
-        media_folder: "/assets"
-        public_folder: "/assets"
         fields:
           - { label: "Accroche au-dessus du titre", name: "accroche", widget: "string", required: false, default: "Espace Membres" }
           - { label: "Salutation", name: "salutation", widget: "string", required: false, default: "Bonjour", hint: "Le prénom du membre est ajouté après, suivi d'un emoji. Exemple : « Bonjour, Awa »." }
@@ -417,8 +415,6 @@ collections:
             widget: "list"
             required: false
             summary: "{{fields.image}}"
-            media_folder: "/assets"
-            public_folder: "/assets"
             hint: "Photos affichées à droite du formulaire, en fondu enchaîné (6 s chacune). Format portrait de préférence, 1200 px de large au minimum. Liste vide : les photos par défaut sont conservées."
             fields:
               - { label: "Photo", name: "image", widget: "image" }
