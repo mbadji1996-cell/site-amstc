@@ -552,10 +552,8 @@
   }
   .exec-slide.t-or{--e-tint:#FFF8EA; --e-line:rgba(170,123,17,0.18); --e-soft:rgba(248,183,24,0.24); --e-ink:#735309;}
   .exec-slide .exec-slide-num{color:var(--e-ink);}
-  .exec-slide.t-menthe{--e-tint:#F0F7F4;}
   :root[data-theme="dark"] .exec-slide{--e-tint:#15231A; --e-line:rgba(127,217,160,0.16); --e-soft:rgba(127,217,160,0.14); --e-ink:#7FD9A0;}
   :root[data-theme="dark"] .exec-slide.t-or{--e-tint:#262113; --e-line:rgba(240,201,85,0.2); --e-soft:rgba(240,201,85,0.16); --e-ink:#F0C955;}
-  :root[data-theme="dark"] .exec-slide.t-menthe{--e-tint:#132420;}
   .exec-slide .exec-slide-role{background:var(--e-soft); color:var(--e-ink);}
   .exec-slide-photo{width:100%; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:var(--paper-alt);}
   .exec-slide-photo img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -1999,7 +1997,7 @@
       ? `${esc(role)} · ${esc(commission)}`
       : esc(role || commission);
     return `
-      <div class="exec-slide ${['t-vert', 't-or', 't-menthe'][i % 3]}">
+      <div class="exec-slide ${['t-vert', 't-or'][i % 2]}">
         <div class="exec-slide-photo">
           ${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<div class="exec-slide-fallback">${esc(memberInitials(m.name))}</div>`}
         </div>
