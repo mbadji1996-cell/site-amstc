@@ -209,16 +209,144 @@
   .ms-sous-lien:hover{background:rgba(255,255,255,0.09); color:#FFFFFF;}
   .ms-sous-lien.active{color:#F8B718; font-weight:600; background:rgba(248,183,24,0.14);}
 
-  /* Le bandeau vert perd sa raison d'etre : la marque est passee dans la
-     colonne. Il devient une barre claire, comme sur la maquette. */
-  html.a-rail header{background:var(--surface,#FFFFFF); border-bottom:1px solid var(--line,rgba(6,68,28,0.16));}
-  html.a-rail header .logo-img{display:none;}
-  html.a-rail .header-inner{padding-top:12px; padding-bottom:12px; justify-content:flex-end;}
-  html.a-rail .signout-btn{color:var(--text-muted,#5A6C60); border-color:var(--line,rgba(6,68,28,0.16));}
-  html.a-rail .signout-btn:hover{border-color:#17763B; color:#17763B;}
+  /* La marque est passee dans la colonne : le logo du bandeau ferait double
+     emploi. Le reste du style clair de la barre vaut a toutes les largeurs
+     (voir plus bas), pas seulement ici. */
+  html.a-rail .header-inner{padding-top:12px; padding-bottom:12px;}
 
   /* L'assistant est ancre en bas a gauche : il se retrouvait sous la
      colonne. On le decale de sa largeur. */
   html.a-rail .assistant-bouton,
   html.a-rail .assistant-panneau{left:calc(var(--ms-rail) + 18px);}
 }
+
+
+/* ===== Coquille commune de l'espace membre =====
+   Fond de page vert tres clair : les cartes blanches se detachent, et le
+   vert franc reste ou il porte l'identite - la colonne de gauche. */
+html body{background:#F4F8F4;}
+:root[data-theme="dark"] body{background:var(--paper, #0E1710);}
+
+/* La barre du haut est claire partout, a toutes les largeurs : elle etait
+   verte parce qu'elle portait le logo blanc, lequel est passe dans la
+   colonne. */
+html header{background:var(--surface, #FFFFFF); border-bottom:1px solid var(--line, rgba(6,68,28,0.16));}
+html header .logo-img{filter:none;}
+/* Le logo ne disparait que la ou la colonne le reprend : sous 1024 px il
+   reste la seule marque de la page. */
+@media(min-width:1024px){ html.a-rail header .logo-img{display:none;} }
+html .signout-btn{color:var(--text-muted, #5A6C60); border-color:var(--line, rgba(6,68,28,0.16));}
+html .signout-btn:hover{border-color:#17763B; color:#17763B;}
+/* Le panier de la boutique vivait sur le vert. */
+html .cart-btn{background:var(--paper-alt, #ECEFE3); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-heading, #06441C);}
+html .cart-btn:hover{background:var(--surface, #FFFFFF); border-color:#17763B;}
+
+/* ===== Entete de page : plus de bandeau vert =====
+   Le titre se pose sur le fond clair. Les enfants prevus pour du blanc sur
+   vert reprennent les couleurs de texte de la charte. */
+html .hero{background:none; border-bottom:0; padding:26px 0 6px;}
+html .hero h1, html .hero-name{color:var(--text-heading, #06441C);}
+html .hero-sub{color:var(--text-muted, #5A6C60);}
+html .hero .back, html .hero-inner .back{color:#17763B;}
+html .hero .back:hover, html .hero-inner .back:hover{color:var(--text-heading, #06441C);}
+:root[data-theme="dark"] html .hero .back{color:#7FD9A0;}
+/* Chiffres du centre d'administration et jetons du Daara. */
+html .hstat{background:var(--surface, #FFFFFF); border-color:var(--line, rgba(6,68,28,0.16)); backdrop-filter:none;}
+html .hstat-val{color:var(--text-heading, #06441C);}
+html .hstat-lbl{color:var(--text-muted, #5A6C60);}
+html .hchip{background:var(--surface, #FFFFFF); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-muted, #5A6C60);}
+html .hchip strong{color:var(--text-heading, #06441C);}
+html .cat-tabs{border-top-color:var(--line, rgba(6,68,28,0.16));}
+html .cat-tab{color:var(--text-muted, #5A6C60);}
+html .cat-tab:hover:not(.active){color:var(--text-heading, #06441C);}
+/* Le vert d'eau de l'onglet actif du Daara etait prevu pour du fond vert :
+   sur clair il ne tient que 3,07 - on descend au ton fonce de la meme famille. */
+html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
+
+/* ===== Barre du haut : recherche, annonces, identite ===== */
+.ms-barre{display:flex; align-items:center; gap:14px; flex:1; min-width:0; flex-wrap:wrap;}
+.ms-recherche{
+  position:relative; flex:1 1 260px; max-width:440px;
+  display:flex; align-items:center; gap:10px; padding:9px 16px;
+  border:1.5px solid var(--line, rgba(6,68,28,0.16)); border-radius:999px;
+  background:var(--paper-alt, #ECEFE3);
+}
+.ms-recherche:focus-within{border-color:#17763B; background:var(--surface, #FFFFFF);}
+.ms-recherche > svg{width:17px; height:17px; flex:none; fill:none; stroke:var(--text-muted, #5A6C60); stroke-width:2; stroke-linecap:round;}
+.ms-recherche input{
+  flex:1; min-width:0; border:none; background:none; outline:none;
+  font-family:var(--body, 'Inter', sans-serif); font-size:0.88rem; color:var(--ink, #0B2E17);
+}
+.ms-suggestions{
+  display:none; position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:120;
+  background:var(--surface, #FFFFFF); border:1px solid var(--line, rgba(6,68,28,0.16));
+  border-radius:12px; box-shadow:var(--shadow, 0 12px 32px rgba(6,68,28,0.18));
+  padding:6px; max-height:320px; overflow-y:auto;
+}
+.ms-suggestions.ouvert{display:block;}
+.ms-suggestion{
+  display:block; width:100%; text-align:left; padding:10px 13px; border:0; background:none;
+  border-radius:9px; cursor:pointer; font-family:var(--body, 'Inter', sans-serif);
+  font-size:0.88rem; color:var(--text-heading, #06441C); text-decoration:none;
+}
+.ms-suggestion:hover, .ms-suggestion.vise{background:rgba(23,118,59,0.1);}
+:root[data-theme="dark"] .ms-suggestion:hover, :root[data-theme="dark"] .ms-suggestion.vise{background:rgba(127,217,160,0.14);}
+.ms-suggestion-vide{padding:10px 13px; font-size:0.86rem; color:var(--text-muted, #5A6C60);}
+.ms-outils{display:flex; align-items:center; gap:12px; margin-left:auto; flex:none;}
+.ms-cloche{
+  position:relative; width:38px; height:38px; flex:none; border-radius:50%;
+  border:1px solid var(--line, rgba(6,68,28,0.16)); background:var(--surface, #FFFFFF);
+  cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted, #5A6C60);
+}
+.ms-cloche:hover{border-color:#17763B; color:#17763B;}
+.ms-cloche svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+.ms-point{position:absolute; top:6px; right:7px; width:9px; height:9px; border-radius:50%;
+  background:#C0392B; border:2px solid var(--surface, #FFFFFF); display:none;}
+.ms-point.visible{display:block;}
+.ms-membre{display:flex; align-items:center; gap:9px; font-size:0.88rem; font-weight:600; color:var(--text-heading, #06441C);}
+.ms-avatar{
+  width:34px; height:34px; flex:none; border-radius:50%; background:var(--gold, #F8B718);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  font-size:12px; font-weight:700; color:#06441C;
+}
+.ms-avatar img{width:100%; height:100%; object-fit:cover;}
+@media(max-width:700px){
+  /* Trois lignes empilees faisaient une entete de 176 px. En display:contents
+     la recherche et les outils deviennent enfants directs de la barre : le
+     logo et les outils se partagent la premiere ligne, la recherche prend
+     la seconde. */
+  html header .header-inner{flex-wrap:wrap; gap:12px 10px;}
+  .ms-barre{display:contents;}
+  .ms-outils{order:1;}
+  .ms-recherche{order:2; flex-basis:100%; max-width:none;}
+  .ms-membre .ms-nom{display:none;}
+  /* Le bouton de deconnexion faisait 140 px : le logo et les outils ne
+     tenaient pas sur la meme ligne, l'entete montait a trois rangees. */
+  html .signout-btn{padding:6px 12px; font-size:0.62rem; letter-spacing:0.04em;}
+  /* Deux pixels manquaient encore : le logo descend d'un cran. */
+  html header .logo-img{height:32px;}
+  .ms-outils{gap:9px;}
+}
+
+/* ===== Annonces epinglees (partagees par toutes les pages) ===== */
+.ms-annonces{position:fixed; inset:0; z-index:2000; background:rgba(6,28,14,0.55);
+  display:none; align-items:center; justify-content:center; padding:20px;}
+.ms-annonces.ouvert{display:flex;}
+.ms-annonces-boite{background:var(--surface, #FFFFFF); border-radius:16px;
+  box-shadow:0 24px 60px rgba(6,68,28,0.35); max-width:480px; width:100%; max-height:85vh;
+  display:flex; flex-direction:column;}
+.ms-annonces-tete{padding:22px 26px 14px; border-bottom:1px solid var(--line, rgba(6,68,28,0.16));
+  display:flex; align-items:center; gap:10px;}
+.ms-annonces-tete svg{width:21px; height:21px; flex:none; fill:none; stroke:var(--text-accent, #AA7B11);
+  stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+.ms-annonces-titre{font-family:var(--display, 'Sora', sans-serif); font-size:1.1rem; font-weight:700; color:var(--text-heading, #06441C);}
+.ms-annonces-corps{padding:10px 26px; overflow-y:auto;}
+.ms-annonce{padding:16px 0; border-bottom:1px solid var(--paper-alt, #ECEFE3);}
+.ms-annonce:last-child{border-bottom:none;}
+.ms-annonce img{width:100%; max-height:220px; object-fit:cover; border-radius:10px; display:block; margin-bottom:12px;}
+.ms-annonce-titre{font-weight:600; font-size:0.95rem; color:var(--text-heading, #06441C); margin-bottom:6px;}
+.ms-annonce-texte{font-size:0.87rem; color:var(--text-muted, #5A6C60); white-space:pre-wrap;}
+.ms-annonces-pied{padding:16px 26px 22px;}
+.ms-annonces-ok{width:100%; background:#17763B; color:#FFFFFF; border:none; padding:12px;
+  border-radius:999px; font-size:0.9rem; font-weight:600; cursor:pointer;}
+.ms-annonces-ok:hover{background:#06441C;}

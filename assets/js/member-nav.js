@@ -265,3 +265,211 @@
   document.body.appendChild(rail);
   document.documentElement.classList.add('a-rail');
 })();
+
+
+// ===== Barre du haut de l'espace membre, commune a toutes les pages =====
+// Recherche des espaces, annonces epinglees, identite et deconnexion. Le
+// <header> existe deja sur les 43 pages : on le remplit, rien a changer
+// dans leur HTML.
+(function () {
+  var entete = document.querySelector('header .header-inner');
+  var onglets = document.querySelector('.member-tabs .member-tabs-inner');
+  if (!entete || !onglets) return;
+
+  function ech(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function sansAccent(t) {
+    return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // ---- Destinations : les memes que la navigation, sous-menus compris ----
+  var destinations = [];
+  onglets.querySelectorAll('.member-tab[href], .member-sous-lien[href]').forEach(function (a) {
+    destinations.push({ libelle: (a.textContent || '').trim(), href: a.getAttribute('href') });
+  });
+
+  var barre = document.createElement('div');
+  barre.className = 'ms-barre';
+  barre.innerHTML =
+    '<form class="ms-recherche" role="search" onsubmit="return false;">'
+    + '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>'
+    + '<input type="search" id="rechercheEspaces" autocomplete="off" role="combobox"'
+    + ' aria-expanded="false" aria-autocomplete="list" aria-controls="msSuggestions"'
+    + ' placeholder="Rechercher un espace\u2026" aria-label="Rechercher un espace">'
+    + '<div class="ms-suggestions" id="msSuggestions" role="listbox"></div>'
+    + '</form>'
+    + '<div class="ms-outils">'
+    + '<button type="button" class="ms-cloche" id="clocheBtn" aria-label="Annonces">'
+    + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16S18 14 18 9z"/>'
+    + '<path d="M13.7 19a2 2 0 0 1-3.4 0"/></svg><span class="ms-point" id="clochePoint"></span></button>'
+    + '<span class="ms-membre"><span class="ms-avatar" id="avatarEl">?</span>'
+    + '<span class="ms-nom" id="membreNom">Membre</span></span>'
+    + '</div>';
+  entete.appendChild(barre);
+
+  // Le bouton de deconnexion existait deja : il rejoint le groupe de droite
+  // plutot que d'etre reconstruit - il porte ses propres ecouteurs.
+  var outils = barre.querySelector('.ms-outils');
+  var deco = entete.querySelector('.signout-btn');
+  if (deco) outils.appendChild(deco);
+
+  // ---- Recherche : propose les destinations, Entree ouvre la premiere ----
+  var champ = barre.querySelector('#rechercheEspaces');
+  var liste = barre.querySelector('#msSuggestions');
+  var vise = -1;
+
+  function fermer() {
+    liste.classList.remove('ouvert');
+    champ.setAttribute('aria-expanded', 'false');
+    vise = -1;
+  }
+  function resultats() {
+    var q = sansAccent(champ.value).trim();
+    if (q === '') return [];
+    return destinations.filter(function (d) { return sansAccent(d.libelle).indexOf(q) !== -1; });
+  }
+  function dessiner() {
+    var trouves = resultats();
+    if (champ.value.trim() === '') { fermer(); return; }
+    liste.innerHTML = trouves.length
+      ? trouves.map(function (d) {
+          return '<a class="ms-suggestion" role="option" href="' + ech(d.href) + '">' + ech(d.libelle) + '</a>';
+        }).join('')
+      : '<p class="ms-suggestion-vide">Aucun espace ne correspond.</p>';
+    liste.classList.add('ouvert');
+    champ.setAttribute('aria-expanded', 'true');
+    vise = -1;
+  }
+  function deplacer(pas) {
+    var items = liste.querySelectorAll('.ms-suggestion');
+    if (items.length === 0) return;
+    if (vise >= 0) items[vise].classList.remove('vise');
+    vise = (vise + pas + items.length) % items.length;
+    items[vise].classList.add('vise');
+    items[vise].scrollIntoView({ block: 'nearest' });
+  }
+  champ.addEventListener('input', dessiner);
+  champ.addEventListener('focus', function () { if (champ.value.trim() !== '') dessiner(); });
+  champ.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); deplacer(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); deplacer(-1); }
+    else if (e.key === 'Escape') { fermer(); }
+    else if (e.key === 'Enter') {
+      var items = liste.querySelectorAll('.ms-suggestion');
+      var cible = vise >= 0 ? items[vise] : items[0];
+      if (cible) { e.preventDefault(); window.location.href = cible.getAttribute('href'); }
+    }
+  });
+  document.addEventListener('click', function (e) {
+    if (!barre.contains(e.target)) fermer();
+  });
+
+  // ---- Identite : publiee par supabase-client.js une fois la session sure ----
+  function poserMembre(profil) {
+    if (!profil) return;
+    var nom = profil.full_name || [profil.first_name, profil.last_name].filter(Boolean).join(' ')
+      || profil.email || 'Membre';
+    var prenom = profil.first_name || nom.split(' ')[0];
+    var elNom = document.getElementById('membreNom');
+    var elAvatar = document.getElementById('avatarEl');
+    if (elNom) elNom.textContent = prenom;
+    if (elAvatar && !elAvatar.dataset.rempli) {
+      elAvatar.dataset.rempli = '1';
+      elAvatar.textContent = nom.split(' ').map(function (p) { return p[0]; })
+        .filter(Boolean).slice(0, 2).join('').toUpperCase();
+    }
+  }
+  if (window.profilMembre) poserMembre(window.profilMembre);
+  window.addEventListener('membre-pret', function (e) { poserMembre(e.detail); });
+
+  // ---- Annonces epinglees ----
+  var voile = document.createElement('div');
+  voile.className = 'ms-annonces';
+  voile.id = 'msAnnonces';
+  voile.innerHTML =
+    '<div class="ms-annonces-boite">'
+    + '<div class="ms-annonces-tete">'
+    + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5v3a1.5 1.5 0 0 0 1.5 1.5H8l6 4V6.5l-6 4H5.5A1.5 1.5 0 0 0 4 12z"/>'
+    + '<path d="M17.5 9.2a4 4 0 0 1 0 5.6"/></svg>'
+    + '<p class="ms-annonces-titre">Annonces</p></div>'
+    + '<div class="ms-annonces-corps" id="msAnnoncesCorps"></div>'
+    + '<div class="ms-annonces-pied"><button type="button" class="ms-annonces-ok" id="msAnnoncesOk">Ok</button></div>'
+    + '</div>';
+  document.body.appendChild(voile);
+
+  var corps = voile.querySelector('#msAnnoncesCorps');
+  var point = barre.querySelector('#clochePoint');
+  var signatureVue = '';
+  var defilY = 0;
+
+  function bloquer() {
+    defilY = window.scrollY || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = -defilY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+  function debloquer() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    window.scrollTo(0, defilY);
+  }
+  function ouvrir() {
+    if (!corps.innerHTML.trim()) {
+      corps.innerHTML = '<div class="ms-annonce"><p class="ms-annonce-texte">Aucune annonce pour le moment.</p></div>';
+    }
+    point.classList.remove('visible');
+    bloquer();
+    voile.classList.add('ouvert');
+  }
+  function fermerAnnonces() {
+    if (signatureVue) { try { sessionStorage.setItem('amstc-ann-seen', signatureVue); } catch (e) {} }
+    voile.classList.remove('ouvert');
+    debloquer();
+  }
+  barre.querySelector('#clocheBtn').addEventListener('click', ouvrir);
+  voile.querySelector('#msAnnoncesOk').addEventListener('click', fermerAnnonces);
+  voile.addEventListener('click', function (e) { if (e.target === voile) fermerAnnonces(); });
+
+  // Les annonces deja fermees ne rouvrent pas d'elles-memes, mais la cloche
+  // doit pouvoir les rappeler : on prepare le contenu dans tous les cas.
+  (async function () {
+    if (typeof supabaseClient === 'undefined') return;
+    try {
+      var r = await supabaseClient.from('member_announcements')
+        .select('id,title,body,image_path').eq('is_pinned', true).eq('is_active', true)
+        .order('created_at', { ascending: false });
+      var data = r && r.data;
+      if (r && r.error) return;
+      if (!data || data.length === 0) return;
+
+      var signature = data.map(function (a) { return a.id; }).sort().join(',');
+      signatureVue = signature;
+      var dejaVues = false;
+      try { dejaVues = sessionStorage.getItem('amstc-ann-seen') === signature; } catch (e) {}
+
+      var chemins = data.map(function (a) { return a.image_path; }).filter(Boolean);
+      var urls = {};
+      if (chemins.length > 0) {
+        var s = await supabaseClient.storage.from('annonce-photos').createSignedUrls(chemins, 3600);
+        (s && s.data ? s.data : []).forEach(function (x) { if (x.signedUrl) urls[x.path] = x.signedUrl; });
+      }
+      corps.innerHTML = data.map(function (a) {
+        return '<div class="ms-annonce">'
+          + (a.image_path && urls[a.image_path] ? '<img src="' + ech(urls[a.image_path]) + '" alt="">' : '')
+          + (a.title ? '<p class="ms-annonce-titre">' + ech(a.title) + '</p>' : '')
+          + (a.body ? '<p class="ms-annonce-texte">' + ech(a.body) + '</p>' : '')
+          + '</div>';
+      }).join('');
+      point.classList.add('visible');
+      if (!dejaVues) { bloquer(); voile.classList.add('ouvert'); }
+    } catch (e) { /* l'absence d'annonces ne doit rien bloquer */ }
+  })();
+})();
