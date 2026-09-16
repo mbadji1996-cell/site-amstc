@@ -28,8 +28,12 @@
   }
 
   function equiper(input) {
-    // Champ déjà équipé, ici ou par la page elle-même.
+    // Champ déjà équipé, ici ou par la page elle-même. La page peut porter
+    // son bouton ailleurs que dans .password-field (connexion et inscription,
+    // champs à icône) : on reconnaît aussi un .toggle-password qui vise ce
+    // champ, sans quoi deux yeux s'affichaient côte à côte.
     if (input.closest(".champ-mdp") || input.closest(".password-field")) return;
+    if (input.id && document.querySelector('.toggle-password[data-target="' + input.id + '"]')) return;
 
     poserStyles();
     var enveloppe = document.createElement("div");

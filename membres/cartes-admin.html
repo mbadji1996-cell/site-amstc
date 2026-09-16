@@ -130,6 +130,9 @@
     color:var(--text-muted); background:var(--surface); transition:all .12s;}
   .mois-case input:checked + span{background:var(--green); border-color:var(--green); color:#fff;}
   .mois-compte{font-family:var(--mono); font-size:0.75rem; color:var(--text-accent); font-weight:700; margin-left:6px;}
+  /* Domaine dans la ligne de modification : liste a largeur bornee. */
+  .assign-inline select.edit-domaine{flex:0 1 240px; min-width:180px;}
+  .assign-inline input.edit-domaine-autre{width:auto; flex:1 1 200px; font-family:var(--body);}
   .edit-libelle{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
     letter-spacing:0.06em; color:var(--text-muted); white-space:nowrap;}
   .edit-annee{max-width:110px;}
@@ -786,7 +789,7 @@
     const [cardsRes, membersRes, yearReqRes, cotisRes] = await Promise.all([
       supabaseClient
         .from('member_cards')
-        .select('id, full_name, phone, city, region, member_since, card_number, claim_status, claimed_by, expiry_hint, cotisations_hint, profiles:claimed_by(full_name, email, card_valid_until)')
+        .select('id, full_name, phone, city, region, domain, domain_autre, member_since, card_number, claim_status, claimed_by, expiry_hint, cotisations_hint, profiles:claimed_by(full_name, email, card_valid_until)')
         .order('full_name'),
       supabaseClient.from('profiles').select('id, full_name, email').eq('status', 'approved').order('full_name'),
       supabaseClient.rpc('member_since_requests_pending'),
@@ -922,6 +925,14 @@
                   <input type="number" id="editSince-${c.id}" value="${c.member_since || ''}" placeholder="Depuis" title="Année d'adhésion">
                   <input type="text" id="editCity-${c.id}" value="${escHtml(c.city || '')}" placeholder="Localité">
                   <select id="editRegion-${c.id}" title="Région"></select>
+                </div>
+                <div class="assign-inline-row">
+                  <label class="edit-libelle" for="editDomain-${c.id}">Domaine</label>
+                  <select id="editDomain-${c.id}" class="edit-domaine" onchange="onEditDomainChange('${c.id}')">
+                    ${OPTIONS_DOMAINE.map(([v, l]) => `<option value="${v}"${(c.domain || '') === v ? ' selected' : ''}>${l}</option>`).join('')}
+                  </select>
+                  <input type="text" id="editDomainAutre-${c.id}" class="edit-domaine-autre" value="${escHtml(c.domain_autre || '')}"
+                         placeholder="Précisez le domaine"${c.domain === 'autre' ? '' : ' style="display:none;"'}>
                 </div>
                 <div class="assign-inline-row">
                   <label class="edit-libelle" for="editExpiry-${c.id}">Fin de validité</label>
@@ -1211,8 +1222,27 @@
     renderCardsTable();
   }
 
+  const OPTIONS_DOMAINE = [
+    ['', '- Choisir -'], ['medecine', 'Médecine'], ['pharmacie', 'Pharmacie'],
+    ['odontologie', 'Odontologie'], ['soins_infirmiers', 'Soins infirmiers'],
+    ['soins_obstetricaux', 'Soins obstétricaux'], ['autre', 'Autres à préciser'],
+  ];
+
+  function onEditDomainChange(id) {
+    document.getElementById('editDomainAutre-' + id).style.display =
+      document.getElementById('editDomain-' + id).value === 'autre' ? '' : 'none';
+  }
+
   async function saveCardEdit(id) {
     const msg = document.getElementById('editRowMsg-' + id);
+    const domaine = document.getElementById('editDomain-' + id).value || null;
+    const domaineAutre = domaine === 'autre'
+      ? (document.getElementById('editDomainAutre-' + id).value.trim() || null) : null;
+    if (domaine === 'autre' && !domaineAutre) {
+      msg.textContent = 'Précisez le domaine.';
+      msg.className = 'assign-msg error';
+      return;
+    }
     const since = document.getElementById('editSince-' + id).value.trim();
 
     const base = {
@@ -1244,6 +1274,15 @@
 
     if (error) {
       msg.textContent = 'Erreur : ' + error.message;
+      msg.className = 'assign-msg error';
+      return;
+    }
+
+    // Le domaine n'est pas porte par update_member_card : ecriture directe.
+    const { error: erreurDomaine } = await supabaseClient.from('member_cards')
+      .update({ domain: domaine, domain_autre: domaineAutre }).eq('id', id);
+    if (erreurDomaine) {
+      msg.textContent = 'Carte enregistrée, mais le domaine n\'a pas pu l\'être : ' + erreurDomaine.message;
       msg.className = 'assign-msg error';
       return;
     }
