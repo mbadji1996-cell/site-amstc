@@ -210,6 +210,13 @@
   .tb-progression:hover .tb-prog-btn{background:#17763B;}
   .tb-prog-btn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   .tb-aide .tb-carte-ic{background:rgba(248,183,24,0.18); color:#8A6209;}
+  /* Carte Administration : jaune de la charte, comme la carte Cotisation du profil. */
+  .tb-admin{background:#FEF6E4; border-color:rgba(248,183,24,0.5);}
+  a.tb-admin:hover{border-color:var(--gold);}
+  .tb-admin .tb-carte-ic{background:var(--gold); color:#06441C;}
+  .tb-admin .tb-carte-fleche{color:#8A6209;}
+  :root[data-theme="dark"] .tb-admin{background:rgba(248,183,24,0.1); border-color:rgba(248,183,24,0.3);}
+  :root[data-theme="dark"] .tb-admin .tb-carte-fleche{color:#F0C955;}
   :root[data-theme="dark"] .tb-aide .tb-carte-ic{background:rgba(248,183,24,0.2); color:#F0C955;}
   .tb-aide-lien{
     align-self:flex-start; display:inline-flex; align-items:center; gap:8px; margin-top:auto;
@@ -316,7 +323,7 @@
         <span class="tb-prog-btn">Continuer la formation <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </a>
 
-      <a class="tb-carte" id="adminSection" href="admin" style="display:none;">
+      <a class="tb-carte tb-admin" id="adminSection" href="admin" style="display:none;">
         <div class="tb-carte-tete">
           <span class="tb-carte-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 19.5 6v5.6c0 4.2-3.1 7.4-7.5 8.9-4.4-1.5-7.5-4.7-7.5-8.9V6z"/><path d="M9.5 12.2l1.8 1.8 3.4-3.6"/></svg></span>
           <span class="tb-carte-label">Administration</span>

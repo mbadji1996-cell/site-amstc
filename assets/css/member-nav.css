@@ -208,6 +208,9 @@
   }
   .ms-sous-lien:hover{background:rgba(255,255,255,0.09); color:#FFFFFF;}
   .ms-sous-lien.active{color:#F8B718; font-weight:600; background:rgba(248,183,24,0.14);}
+  /* Centre d'administration : detache du reste par un filet. */
+  .ms-lien-admin{margin-top:10px; position:relative;}
+  .ms-lien-admin::before{content:""; position:absolute; left:13px; right:13px; top:-6px; height:1px; background:rgba(255,255,255,0.14);}
 
   /* La marque est passee dans la colonne : le logo du bandeau ferait double
      emploi. Le reste du style clair de la barre vaut a toutes les largeurs

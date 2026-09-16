@@ -2,6 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>
+  // Pages retirees : les favoris des administrateurs menent a leur remplacante
+  // plutot qu'a une page introuvable.
+  (function () {
+    var p = window.location.pathname.replace(/\.html$/, "").replace(/\/$/, "");
+    if (/\/membres\/(validation|cartes-admin)$/.test(p)) window.location.replace("/membres/membres-admin");
+  })();
+</script>
 <script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="assets/css/dark-mode.css">
 <script src="assets/js/theme-toggle.js" defer></script>

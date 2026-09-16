@@ -1,6 +1,6 @@
 // ===== Moteur de dessin de la carte de membre (template officiel) =====
 // Partagé par membres/profil.html (carte à l'écran + PDF individuel) et
-// membres/validation.html (impression des cartes en lot). Un seul rendu,
+// membres/membres-admin.html (impression des cartes en lot). Un seul rendu,
 // sur canvas : bord dégradé or->vert, logo de l'association, pilule verte
 // CARTE DE MEMBRE, photo ronde cerclée (initiales en repli), QR code avec
 // le numéro dessous, champs Prénom / NOM / Filière / Localité / Tel /

@@ -1896,7 +1896,7 @@
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
   function md(s){ return s ? marked.parse(s) : ''; }
   // String() : esc() reçoit aussi des nombres (chiffres du direct) - même
-  // durcissement que membres/validation.html.
+  // durcissement que membres/membres-admin.html.
   function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   // Adresse externe saisie dans le CMS : sans "https://", le navigateur la

@@ -917,14 +917,15 @@
 
         <details class="page-card">
           <summary>
-            <span class="page-title">Membres</span>
-            <span class="page-path">/membres/validation</span>
+            <span class="page-title">Membres et cartes</span>
+            <span class="page-path">/membres/membres-admin</span>
             <span class="page-badges"><span class="badge admin">Admin</span></span>
             <span class="chev">▸</span>
           </summary>
           <div class="page-body">
-            <p>Approuver ou refuser les <strong>inscriptions en attente</strong> (badge « Nouvel adhérent » pour les distinguer) ; gérer les <strong>comptes approuvés</strong> (désactiver/réactiver, réinitialiser un mot de passe, voir les détails, attribuer une carte, corriger année d'adhésion / fin de validité) ; consulter les <strong>comptes refusés</strong> ; et, pour un Super Administrateur, nommer ou révoquer des administrateurs.</p>
-            <p>Dans les <strong>Détails</strong> d'un membre soignant approuvé (médecine, pharmacie, odontologie, soins infirmiers ou obstétricaux), le bouton <strong>« Créer l'accès consultations »</strong> lui ouvre un compte sur consultations-amstc.org sans double saisie : identité, téléphone et profession sont recopiés, et il se connecte là-bas avec <strong>le même e-mail et le même mot de passe</strong> qu'ici. Le compte créé est <strong>immédiatement actif</strong> (le membre choisit son site à sa première connexion) ; un compte qui existait déjà côté consultations est rattaché sans être réactivé. Cas particulier - membre inscrit via Google : la page affiche un lien « définir son mot de passe » à lui transmettre (bouton WhatsApp prérempli), et le bouton Google de consultations fonctionne aussi pour lui.</p>
+            <p>Comptes et cartes de membre réunis : une ligne par personne, avec son statut (carte à jour, inscription à valider, réclamation à confirmer, carte expirée, sans carte, non réclamée, désactivé), ses cotisations de l'année et ses coordonnées. Filtres par statut, année d'adhésion et région ; sélection et export Excel ou PDF.</p>
+            <p><strong>Fiche d'un membre</strong> : approuver une inscription, confirmer une réclamation, créer ou attribuer une carte, inviter le porteur d'une carte non réclamée ; corriger l'identité, le téléphone, l'année d'adhésion et la validité ; saisir les cotisations ; envoyer un rappel par WhatsApp ou e-mail ; réinitialiser le mot de passe, créer l'accès consultations, désactiver ou supprimer ; et, pour un Super Administrateur, les droits d'administration et la fonction au Bureau.</p>
+            <p><strong>Outils</strong> : import de cartes (Excel ou texte), impression des cartes en PDF, demandes de changement d'année, comptes refusés, administrateurs, et l'interrupteur de <strong>restriction d'accès</strong> qui décide si les cartes expirées depuis plus de 2 mois bloquent les contenus réservés.</p>
           </div>
         </details>
 
@@ -940,17 +941,6 @@
           </div>
         </details>
 
-        <details class="page-card">
-          <summary>
-            <span class="page-title">Cartes de Membres</span>
-            <span class="page-path">/membres/cartes-admin</span>
-            <span class="page-badges"><span class="badge admin">Admin</span></span>
-            <span class="chev">▸</span>
-          </summary>
-          <div class="page-body">
-            <p>Gestion des cartes historiques (avant la mise en ligne du site) : import en masse depuis un fichier Excel ou par collage de texte, réclamations en attente à confirmer, ajout manuel d'une carte, et un <strong>interrupteur global</strong> qui décide si les cartes expirées depuis plus de 2 mois bloquent réellement l'accès aux contenus réservés (utile à désactiver pendant une campagne de renouvellement).</p>
-          </div>
-        </details>
       </div>
 
       <div class="subsection" id="admin-contenu">

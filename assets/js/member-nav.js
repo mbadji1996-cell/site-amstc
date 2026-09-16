@@ -267,6 +267,41 @@
   rail.appendChild(liste);
   document.body.appendChild(rail);
   document.documentElement.classList.add('a-rail');
+
+  // ---- Centre d'administration, pour les seuls comptes admin ----
+  // Le role n'est connu qu'une fois le profil charge (evenement publie par
+  // supabase-client.js) : l'entree s'ajoute alors, dans la colonne comme
+  // dans le menu mobile. Les pages d'administration (admin, *-admin) la
+  // marquent active a la place du tableau de bord.
+  var pageCourante = (window.location.pathname.split('/').pop() || '').replace(/\.html$/, '');
+  var surPageAdmin = pageCourante === 'admin' || /-admin$/.test(pageCourante);
+  function ajouterEntreeAdmin(profil) {
+    if (!profil || ['admin', 'super_admin'].indexOf(profil.role) === -1) return;
+    if (liste.querySelector('.ms-lien-admin')) return;
+    if (surPageAdmin) {
+      liste.querySelectorAll('.ms-lien.active').forEach(function (a) {
+        a.classList.remove('active'); a.removeAttribute('aria-current');
+      });
+    }
+    var a = document.createElement('a');
+    a.className = 'ms-lien ms-lien-admin' + (surPageAdmin ? ' active' : '');
+    a.href = 'admin';
+    a.innerHTML = icone('admin') + '<span class="ms-texte">Centre d\u2019administration</span>';
+    if (surPageAdmin) a.setAttribute('aria-current', 'page');
+    liste.appendChild(a);
+
+    var panneau = document.querySelector('.member-nav-panel');
+    if (panneau && !panneau.querySelector('.mn-admin')) {
+      var m = document.createElement('a');
+      m.className = 'mn-admin' + (surPageAdmin ? ' active' : '');
+      m.href = 'admin';
+      m.textContent = 'Centre d\u2019administration';
+      if (surPageAdmin) panneau.querySelectorAll('a.active').forEach(function (x) { x.classList.remove('active'); });
+      panneau.appendChild(m);
+    }
+  }
+  if (window.profilMembre) ajouterEntreeAdmin(window.profilMembre);
+  window.addEventListener('membre-pret', function (e) { ajouterEntreeAdmin(e.detail); });
 })();
 
 
