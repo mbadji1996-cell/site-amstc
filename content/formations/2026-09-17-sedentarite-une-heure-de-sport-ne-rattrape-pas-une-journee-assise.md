@@ -71,6 +71,21 @@ reserve: false
 .html-importe .art .fig{padding: 12px 10px 10px;}
 .html-importe .art .recap{padding: 6px 18px 20px;}
 }
+
+/* Adaptation 1400 px (site AMSTC) */
+@media (min-width:1200px){
+  /* Le bloc s'aligne sur le conteneur du site plutot que sur son propre
+     retrait lateral. */
+  .html-importe .art{padding-left:0; padding-right:0;}
+  /* Colonne de lecture un peu plus large, schemas nettement plus grands. */
+  .html-importe .art p, .html-importe .art h2, .html-importe .art h3.q,
+  .html-importe .art blockquote, .html-importe .art .note,
+  .html-importe .art ul.ages, .html-importe .art .recap ol{max-width:860px;}
+  .html-importe .art .fig{max-width:980px;}
+  /* Blocs de donnees : toute la largeur disponible. */
+  .html-importe .art .fig.wide, .html-importe .art .duo,
+  .html-importe .art table.imc{max-width:none;}
+}
 </style>
 <div class="html-importe" style="position:relative;overflow:hidden">
 <div class="art">
