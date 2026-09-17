@@ -343,7 +343,8 @@
   }
 
   section{padding:80px 0;}
-  .section-alt{background:var(--section-alt); --fond-section:var(--section-alt);}
+  /* Fond alterne : degrade du blanc (haut) vers le beige (bas). */
+  .section-alt{background:linear-gradient(180deg, var(--paper) 0%, var(--section-alt) 100%); --fond-section:var(--section-alt);}
   .section-head{max-width:660px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(1.6rem,3vw,2.3rem);}
   .section-head p:not(.eyebrow){color:var(--text-muted); margin-top:14px; font-size:1.02rem;}
