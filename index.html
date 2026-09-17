@@ -369,6 +369,8 @@
 
   /* ===== Registre des actions : cartes a icones ===== */
   .section-head h2 em{font-style:normal; color:var(--text-accent);}
+  .cta-banner h2 em{font-style:normal;}
+  #impact h2 em, .cta-banner h2 em{color:var(--gold);}
   .register-list{display:grid; gap:14px;}
   .register-row{
     --r-icon:#06441C; --r-tile:#EAF4ED; --r-pill:#EEF5F0; --r-btn:#06441C; --r-btn-ink:#FFFFFF;
@@ -1897,6 +1899,8 @@
   }
 
   function mdInline(s){ return s ? marked.parseInline(s) : ''; }
+  // Titre avec partie en or : texte entre * ou ** dans le CMS.
+  function titreOr(s){ return esc(s).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>'); }
   function md(s){ return s ? marked.parse(s) : ''; }
   // String() : esc() reçoit aussi des nombres (chiffres du direct) - même
   // durcissement que membres/membres-admin.html.
@@ -2642,7 +2646,7 @@
     // 3 cartes d'introduction
     // En-tete des cartes : la partie entre asterisques passe en or.
     if (data.intro_eyebrow) document.getElementById('cms-intro-eyebrow').textContent = data.intro_eyebrow;
-    if (data.intro_title) document.getElementById('cms-intro-title').innerHTML = esc(data.intro_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
+    if (data.intro_title) document.getElementById('cms-intro-title').innerHTML = titreOr(data.intro_title);
     if (data.intro_subtitle) document.getElementById('cms-intro-subtitle').textContent = data.intro_subtitle;
     if (Array.isArray(data.intro_cards)) {
       // « 01 - Identite » donne le badge 01 et le libelle Identite. Sans image
@@ -2671,7 +2675,7 @@
 
     // Mission
     if (data.mission_eyebrow) document.getElementById('cms-mission-eyebrow').textContent = data.mission_eyebrow;
-    if (data.mission_title) document.getElementById('cms-mission-title').innerHTML = esc(data.mission_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
+    if (data.mission_title) document.getElementById('cms-mission-title').innerHTML = titreOr(data.mission_title);
     if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = md(data.mission_p1);
     if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = md(data.mission_p2);
     if (data.emblem_title) document.getElementById('cms-emblem-title').textContent = data.emblem_title;
@@ -2686,7 +2690,7 @@
 
     // Nos actions (registre)
     if (data.actions_eyebrow) document.getElementById('cms-actions-eyebrow').textContent = data.actions_eyebrow;
-    if (data.actions_title) document.getElementById('cms-actions-title').innerHTML = esc(data.actions_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
+    if (data.actions_title) document.getElementById('cms-actions-title').innerHTML = titreOr(data.actions_title);
     if (data.actions_subtitle) document.getElementById('cms-actions-subtitle').textContent = data.actions_subtitle;
     if (Array.isArray(data.actions)) {
       // Icone : champ « icon » du CMS, sinon deduite du titre ; icone de
@@ -2728,7 +2732,7 @@
 
     // Historique
     if (data.history_eyebrow) document.getElementById('cms-history-eyebrow').textContent = data.history_eyebrow;
-    if (data.history_title) document.getElementById('cms-history-title').textContent = data.history_title;
+    if (data.history_title) document.getElementById('cms-history-title').innerHTML = titreOr(data.history_title);
     if (data.history_subtitle) document.getElementById('cms-history-subtitle').textContent = data.history_subtitle;
     if (Array.isArray(data.timeline)) {
       document.getElementById('cms-timeline').innerHTML = data.timeline.map(t => `
@@ -2740,7 +2744,7 @@
       `).join('');
     }
     // Titre avec partie en or (asterisques) et valeurs a icones.
-    const poserAccroche = (id, t) => { if (t) document.getElementById(id).innerHTML = esc(t).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>'); };
+    const poserAccroche = (id, t) => { if (t) document.getElementById(id).innerHTML = titreOr(t); };
     if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
     poserAccroche('cms-pioneers-accroche', data.pioneers_accroche);
     if (Array.isArray(data.pioneers_valeurs)) {
@@ -2764,17 +2768,17 @@
 
     // Gouvernance
     if (data.gov_eyebrow) document.getElementById('cms-gov-eyebrow').textContent = data.gov_eyebrow;
-    if (data.gov_title) document.getElementById('cms-gov-title').textContent = data.gov_title;
+    if (data.gov_title) document.getElementById('cms-gov-title').innerHTML = titreOr(data.gov_title);
     if (data.gov_subtitle) document.getElementById('cms-gov-subtitle').textContent = data.gov_subtitle;
     renderTeam(data.members);
 
     // Réalisations
     if (data.actus_eyebrow) document.getElementById('cms-actus-eyebrow').textContent = data.actus_eyebrow;
-    if (data.actus_title) document.getElementById('cms-actus-title').innerHTML = esc(data.actus_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
+    if (data.actus_title) document.getElementById('cms-actus-title').innerHTML = titreOr(data.actus_title);
     if (data.actus_subtitle) document.getElementById('cms-actus-subtitle').textContent = data.actus_subtitle;
 
     // Bandeau de don
-    if (data.cta_title) document.getElementById('cms-cta-title').textContent = data.cta_title;
+    if (data.cta_title) document.getElementById('cms-cta-title').innerHTML = titreOr(data.cta_title);
     if (data.cta_text) document.getElementById('cms-cta-text').textContent = data.cta_text;
     if (data.cta_button_text) document.getElementById('cms-cta-button').textContent = data.cta_button_text;
     if (data.cta_button_href) document.getElementById('cms-cta-button').setAttribute('href', lienExterne(data.cta_button_href));
@@ -2827,13 +2831,13 @@
 
     // Médiathèque
     if (data.media_eyebrow) document.getElementById('cms-media-eyebrow').textContent = data.media_eyebrow;
-    if (data.media_title) document.getElementById('cms-media-title').textContent = data.media_title;
+    if (data.media_title) document.getElementById('cms-media-title').innerHTML = titreOr(data.media_title);
     if (data.media_subtitle) document.getElementById('cms-media-subtitle').textContent = data.media_subtitle;
     renderMediaYears(data.media_years);
 
     // Heures de prière
     if (data.prayer_eyebrow) document.getElementById('cms-prayer-eyebrow').textContent = data.prayer_eyebrow;
-    if (data.prayer_title) document.getElementById('cms-prayer-title').textContent = data.prayer_title;
+    if (data.prayer_title) document.getElementById('cms-prayer-title').innerHTML = titreOr(data.prayer_title);
     if (data.prayer_subtitle) document.getElementById('cms-prayer-subtitle').textContent = data.prayer_subtitle;
     if (data.prayer_city) document.getElementById('cms-prayer-city').textContent = data.prayer_city;
     renderPrayerTimes(data);
@@ -2977,7 +2981,7 @@
     initImpactSlideshow(data.impact_slideshow);
 
     if (data.impact_eyebrow) document.getElementById('cms-impact-eyebrow').textContent = data.impact_eyebrow;
-    if (data.impact_title) document.getElementById('cms-impact-title').textContent = data.impact_title;
+    if (data.impact_title) document.getElementById('cms-impact-title').innerHTML = titreOr(data.impact_title);
     setOptionalSubtitle('cms-impact-subtitle', data.impact_subtitle);
 
     grid.innerHTML = stats.map(s => `
@@ -3076,7 +3080,7 @@
     section.style.display = '';
 
     if (data.temoignages_eyebrow) document.getElementById('cms-temoignages-eyebrow').textContent = data.temoignages_eyebrow;
-    if (data.temoignages_title) document.getElementById('cms-temoignages-title').textContent = data.temoignages_title;
+    if (data.temoignages_title) document.getElementById('cms-temoignages-title').innerHTML = titreOr(data.temoignages_title);
     setOptionalSubtitle('cms-temoignages-subtitle', data.temoignages_subtitle);
 
     const multi = temoignagesList.length > 1;

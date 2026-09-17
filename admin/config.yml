@@ -100,7 +100,7 @@ collections:
         file: "content/home-historique.json"
         fields:
           - { label: "Accroche", name: "history_eyebrow", widget: "string" }
-          - { label: "Titre de la section", name: "history_title", widget: "string" }
+          - { label: "Titre de la section", name: "history_title", widget: "string", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "history_subtitle", widget: "text" }
 
           - label: "Frise chronologique"
@@ -161,7 +161,7 @@ collections:
         file: "content/home-gouvernance.json"
         fields:
           - { label: "Accroche", name: "gov_eyebrow", widget: "string" }
-          - { label: "Titre de la section", name: "gov_title", widget: "string" }
+          - { label: "Titre de la section", name: "gov_title", widget: "string", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "gov_subtitle", widget: "text" }
 
           - label: "Membres du Bureau Exécutif"
@@ -246,7 +246,7 @@ collections:
         label: "7. Bandeau de mise en avant"
         file: "content/home-cta-footer.json"
         fields:
-          - { label: "Titre du bandeau", name: "cta_title", widget: "string", hint: "Le grand bandeau illustré en bas de la page d'accueil, juste avant le pied de page. Son contenu est libre : plateforme, campagne, appel aux dons…" }
+          - { label: "Titre du bandeau", name: "cta_title", widget: "string", hint: "Partie en or entre astérisques (* ou **). Le grand bandeau illustré en bas de la page d'accueil, juste avant le pied de page. Son contenu est libre : plateforme, campagne, appel aux dons…" }
           - { label: "Texte du bandeau", name: "cta_text", widget: "text" }
           - { label: "Texte du bouton du bandeau", name: "cta_button_text", widget: "string", required: false, default: "Accéder à l'espace consultation" }
           - { label: "Lien du bouton du bandeau", name: "cta_button_href", widget: "string", required: false, hint: "URL complète (externe) ou #ancre interne à la page d'accueil.", default: "https://consultations-amstc.org" }
@@ -291,7 +291,7 @@ collections:
         file: "content/mediatheque.json"
         fields:
           - { label: "Accroche", name: "media_eyebrow", widget: "string" }
-          - { label: "Titre de la section", name: "media_title", widget: "string" }
+          - { label: "Titre de la section", name: "media_title", widget: "string", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "media_subtitle", widget: "text" }
           - label: "Dossiers par année"
             name: "media_years"
@@ -313,7 +313,7 @@ collections:
         file: "content/home-prieres.json"
         fields:
           - { label: "Accroche", name: "prayer_eyebrow", widget: "string", default: "Vie spirituelle" }
-          - { label: "Titre de la section", name: "prayer_title", widget: "string", default: "Heures de prière" }
+          - { label: "Titre de la section", name: "prayer_title", widget: "string", default: "Heures de prière", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "prayer_subtitle", widget: "string", required: false }
           - { label: "Ville des horaires", name: "prayer_city", widget: "string", default: "Dakar", required: false }
           - { label: "Période (date hijri)", name: "prayer_period_hijri", widget: "string", required: false, hint: "Ex : Du 02 au 08 Safar 1448H" }
@@ -332,7 +332,7 @@ collections:
         file: "content/home-impact.json"
         fields:
           - { label: "Accroche", name: "impact_eyebrow", widget: "string", default: "Notre impact" }
-          - { label: "Titre de la section", name: "impact_title", widget: "string", default: "Ce que nous accomplissons ensemble" }
+          - { label: "Titre de la section", name: "impact_title", widget: "string", default: "Ce que nous accomplissons ensemble", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "impact_subtitle", widget: "string", required: false }
           - label: "Photos de fond (diaporama)"
             name: "impact_slideshow"
@@ -369,7 +369,7 @@ collections:
         file: "content/home-temoignages.json"
         fields:
           - { label: "Accroche", name: "temoignages_eyebrow", widget: "string", default: "Témoignages" }
-          - { label: "Titre de la section", name: "temoignages_title", widget: "string", default: "Ce qu'ils en disent" }
+          - { label: "Titre de la section", name: "temoignages_title", widget: "string", default: "Ce qu'ils en disent", hint: "Mettez entre astérisques (* ou **) la partie en or" }
           - { label: "Sous-titre", name: "temoignages_subtitle", widget: "string", required: false }
           - label: "Témoignages"
             name: "temoignages_list"
