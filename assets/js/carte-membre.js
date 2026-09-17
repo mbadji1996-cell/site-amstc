@@ -171,7 +171,7 @@ async function dessinerCarteMembre(p) {
   // reproduit déjà exactement le haut du template, on le centre tel quel.
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
   try {
-    const logo = await carteChargerImage('../assets/logo-mark-sm.png');
+    const logo = await carteChargerImage('../assets/logo-horizontal-sm.png');
     const lh = 128 * s, lw = lh * (logo.naturalWidth / logo.naturalHeight);
     ctx.drawImage(logo, 640 * s - lw / 2, 52 * s, lw, lh);
   } catch (e) { /* logo indisponible : la carte reste valable */ }

@@ -128,7 +128,7 @@ const html = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
+    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapport annuel</p>
     <h1>Bilan des réalisations ${year}</h1>
     <p>${yearItems.length} réalisation${yearItems.length > 1 ? 's' : ''} - Association Médico-Sociale des Talibés Cheikh</p>
@@ -221,7 +221,7 @@ const indexHtml = `<!DOCTYPE html>
 
 <header>
   <div class="wrap">
-    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="report-logo"></a>
+    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapports</p>
     <h1>Bilans annuels</h1>
   </div>

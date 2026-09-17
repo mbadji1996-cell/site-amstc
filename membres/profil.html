@@ -295,7 +295,7 @@
 
 <header>
   <div class="header-inner">
-    <a href="../"><img src="../assets/logo-mark-sm.png" alt="AMSTC" class="logo-img"></a>
+    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
@@ -1521,7 +1521,7 @@
     doc.setFillColor(6, 68, 28);
     doc.rect(0, 0, W, 30, 'F');
     try {
-      const logo = await chargerImage('../assets/logo-mark-sm.png');
+      const logo = await chargerImage('../assets/logo-horizontal-sm.png');
       const c = document.createElement('canvas');
       c.width = logo.naturalWidth; c.height = logo.naturalHeight;
       const cctx = c.getContext('2d');

@@ -198,10 +198,9 @@
   var marque = document.createElement('a');
   marque.className = 'ms-marque';
   marque.href = premier ? premier.getAttribute('href') : './';
-  // logo-mark-sm.png est la version en largeur (marque a gauche, texte a
-  // droite, rapport 2,81) ; logo-horizontal-sm.png, malgre son nom, est
-  // la version carree empilee.
-  marque.innerHTML = '<img src="../assets/logo-mark-sm.png" alt="AMSTC">';
+  // Version en largeur : embleme a gauche, texte a droite. La version
+  // empilee (logo-empile-sm.png) serait trop haute pour la colonne.
+  marque.innerHTML = '<img src="../assets/logo-horizontal-sm.png" alt="AMSTC">';
   rail.appendChild(marque);
 
   var liste = document.createElement('nav');

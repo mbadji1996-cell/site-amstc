@@ -2,7 +2,7 @@
 
 ## Fichiers
 - `index.html` - page d'accueil complète
-- `assets/logo-horizontal.png`, `assets/logo-mark.png` - logos officiels AMSTC
+- `assets/logo-horizontal.png` (emblème à gauche, texte à droite), `assets/logo-empile.png` (carré, emblème au-dessus du texte) et `assets/logo-embleme.png` (emblème seul) - logos officiels AMSTC. Les versions `-sm` sont produites par `scripts/optimize-images.js`.
 - `CNAME` - requis par GitHub Pages pour pointer amstc.org vers le site
 
 Gardez la structure de dossiers telle quelle (assets/ à côté de index.html).

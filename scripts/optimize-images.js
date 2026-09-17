@@ -5,23 +5,23 @@ const ROOT = path.join(__dirname, '..');
 const asset = (f) => path.join(ROOT, 'assets', f);
 
 async function main() {
-  // logo-mark.png = the actual horizontal lockup (icon + "AMSTC" text), used in nav/footer/404
-  await sharp(asset('logo-mark.png'))
-    .resize({ width: 640 })
-    .png({ quality: 90, compressionLevel: 9 })
-    .toFile(asset('logo-mark-sm.png'));
-
-  // logo-horizontal.png = the actual square stacked lockup, used for favicon/admin CMS logo
+  // logo-horizontal.png : icon + "AMSTC" text side by side, used in nav/footer/404
   await sharp(asset('logo-horizontal.png'))
-    .resize({ width: 400 })
+    .resize({ width: 640 })
     .png({ quality: 90, compressionLevel: 9 })
     .toFile(asset('logo-horizontal-sm.png'));
 
+  // logo-empile.png : square stacked lockup, used for favicon/admin CMS logo
+  await sharp(asset('logo-empile.png'))
+    .resize({ width: 400 })
+    .png({ quality: 90, compressionLevel: 9 })
+    .toFile(asset('logo-empile-sm.png'));
+
   // Build a white silhouette of the horizontal lockup, for the OG/share image on a dark background
-  const origMeta = await sharp(asset('logo-mark.png')).metadata();
+  const origMeta = await sharp(asset('logo-horizontal.png')).metadata();
   const w = 720;
   const h = Math.round(origMeta.height * (w / origMeta.width));
-  const alpha = await sharp(asset('logo-mark.png')).resize({ width: w }).ensureAlpha().extractChannel('alpha').raw().toBuffer();
+  const alpha = await sharp(asset('logo-horizontal.png')).resize({ width: w }).ensureAlpha().extractChannel('alpha').raw().toBuffer();
   const white = await sharp({
     create: { width: w, height: h, channels: 3, background: { r: 255, g: 255, b: 255 } }
   }).raw().toBuffer();
@@ -44,7 +44,7 @@ async function main() {
     .jpeg({ quality: 88 })
     .toFile(asset('og-image.jpg'));
 
-  console.log('Done: logo-mark-sm.png, logo-horizontal-sm.png, og-image.jpg');
+  console.log('Done: logo-horizontal-sm.png, logo-empile-sm.png, og-image.jpg');
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
