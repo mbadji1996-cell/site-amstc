@@ -343,6 +343,10 @@
     + '<div class="ms-suggestions" id="msSuggestions" role="listbox"></div>'
     + '</form>'
     + '<div class="ms-outils">'
+    // Retour au site public, present sur toutes les pages de l'espace.
+    + '<a class="ms-site" href="/" title="Aller sur le site amstc.org">'
+    + '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>'
+    + '<path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg><span class="ms-site-texte">Voir le site</span></a>'
     + '<button type="button" class="ms-cloche" id="clocheBtn" aria-label="Annonces">'
     + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16S18 14 18 9z"/>'
     + '<path d="M13.7 19a2 2 0 0 1-3.4 0"/></svg><span class="ms-point" id="clochePoint"></span></button>'
