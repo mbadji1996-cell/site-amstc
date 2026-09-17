@@ -39,33 +39,103 @@
   }
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:36px 0 8px;}
-  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
-  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
-  .intro{color:var(--text-muted); font-size:1.02rem; margin-bottom:32px;}
-  /* Dossiers et sous-dossiers sont des DÉPLIANTS, repliés par défaut :
-     avec plusieurs dizaines de documents, une page qui affiche tout
-     oblige à faire défiler longtemps pour trouver le bon dossier. Le
-     titre reste visible, le contenu vient au clic. <details> le fait
-     nativement, clavier compris. */
-  .bib-section{padding:0; margin:0 0 10px; border:1.5px solid var(--line); border-radius:12px; background:var(--surface); overflow:hidden;}
+  .intro{color:var(--text-muted); font-size:1.02rem; margin-bottom:26px; max-width:70ch;}
+  /* ===== En-tete de page ===== */
+  .bib-fil{display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-muted); margin:30px 0 14px;}
+  .bib-fil a{color:var(--text-muted);}
+  .bib-fil a:hover{color:var(--green);}
+  .bib-tete{display:flex; align-items:center; gap:16px; margin-bottom:8px;}
+  .bib-tete-ic{width:52px; height:52px; flex:none; border-radius:14px; display:grid; place-items:center;
+    background:var(--green-deep); color:var(--gold); font-size:26px;}
+  h1{font-family:var(--display); font-weight:700; color:var(--text-heading); font-size:clamp(1.7rem,4vw,2.3rem); margin:0;}
+
+  /* ===== Barre d'outils : recherche, filtres, tri ===== */
+  .bib-outils{display:grid; grid-template-columns:minmax(260px,1.6fr) repeat(3, minmax(0,1fr)); gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:16px;}
+  /* Champ de recherche repris par la barre du haut : les trois listes se
+     repartissent alors toute la largeur - seulement la ou trois tiennent. */
+  @media(min-width:1101px){ .bib-outils:has(.ms-recherche-reprise){grid-template-columns:repeat(3, minmax(0,1fr));} }
+  @media(max-width:1100px){ .bib-outils{grid-template-columns:1fr 1fr;} }
+  @media(max-width:620px){ .bib-outils{grid-template-columns:1fr;} }
+  .bib-chercher{display:flex; align-items:center; gap:10px; padding:0 14px; min-width:0;
+    border:1.5px solid var(--line); border-radius:12px; background:var(--paper-alt);}
+  .bib-chercher:focus-within{border-color:var(--green); background:var(--surface);}
+  .bib-chercher .ti{color:var(--text-muted); font-size:18px; flex:none;}
+  .bib-chercher input{flex:1; min-width:0; border:0; outline:none; background:none; padding:13px 0;
+    font-family:var(--body); font-size:0.92rem; color:var(--ink);}
+  /* Meme boite que les listes de « Membres et cartes » : intitule au-dessus,
+     valeur en gras, fleche aux couleurs du site, pas de cadre natif. */
+  .bib-filtre{position:relative; display:flex; flex-direction:column; min-width:0;
+    border:1.5px solid var(--line); border-radius:12px; background:var(--surface);
+    transition:border-color .15s ease, box-shadow .15s ease;}
+  .bib-filtre:hover{border-color:var(--gold);}
+  .bib-filtre:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+  .bib-filtre label{position:absolute; left:14px; top:7px; font-size:0.68rem; font-weight:600;
+    color:var(--text-muted); pointer-events:none;}
+  .bib-filtre select{-webkit-appearance:none; -moz-appearance:none; appearance:none; width:100%;
+    border:0; border-radius:12px; outline:none; cursor:pointer; padding:24px 40px 8px 14px;
+    font-family:var(--body); font-size:0.9rem; font-weight:600; color:var(--text-heading);
+    background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317763B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center / 17px 17px;}
+  :root[data-theme="dark"] .bib-filtre select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FD9A0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+  :root[data-theme="dark"] .bib-filtre select option{background:#182019; color:#E8F1EC;}
+
+  /* ===== Trois compteurs ===== */
+  .bib-compteurs{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin-bottom:22px;}
+  @media(max-width:700px){ .bib-compteurs{grid-template-columns:1fr;} }
+  .bib-compteur{display:flex; align-items:center; gap:14px; padding:16px 18px;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;}
+  .bib-compteur-ic{width:42px; height:42px; flex:none; border-radius:12px; display:grid; place-items:center; font-size:21px;}
+  .bib-compteur:nth-child(1) .bib-compteur-ic{background:rgba(23,118,59,0.12); color:var(--green);}
+  .bib-compteur:nth-child(2) .bib-compteur-ic{background:rgba(23,118,59,0.12); color:var(--green);}
+  .bib-compteur:nth-child(3) .bib-compteur-ic{background:rgba(248,183,24,0.2); color:var(--text-accent);}
+  .bib-compteur-nombre{font-family:var(--display); font-size:1.5rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
+  .bib-compteur-label{font-size:0.86rem; color:var(--text-muted);}
+
+  /* ===== Corps : sections a gauche, recents a droite ===== */
+  .bib-corps{display:grid; grid-template-columns:minmax(0,1fr); gap:18px; align-items:start;}
+  @media(min-width:1280px){ .bib-corps{grid-template-columns:minmax(0,1fr) 300px;} }
+  .bib-recents{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px 16px 8px;}
+  @media(min-width:1280px){ .bib-recents{position:sticky; top:16px;} }
+  .bib-recents-titre{display:flex; align-items:center; gap:9px; font-family:var(--display); font-size:0.98rem;
+    font-weight:700; color:var(--text-heading); margin-bottom:10px;}
+  .bib-recents-titre .ti{color:var(--text-accent); font-size:18px;}
+  .bib-recent{display:flex; align-items:center; gap:11px; width:100%; text-align:left; padding:9px 4px;
+    border:0; border-top:1px solid var(--line); background:none; cursor:pointer;}
+  .bib-recent:first-of-type{border-top:0;}
+  .bib-recent:hover .bib-recent-titre{color:var(--green);}
+  .bib-recent img, .bib-recent .bib-recent-vide{width:34px; height:46px; flex:none; border-radius:5px; object-fit:cover; background:var(--paper-alt);}
+  .bib-recent .bib-recent-vide{display:grid; place-items:center; color:var(--text-accent); font-size:15px;}
+  .bib-recent-titre{font-size:0.86rem; font-weight:600; color:var(--text-heading); line-height:1.3;
+    display:block; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .bib-recent-date{font-family:var(--mono); font-size:0.68rem; color:var(--text-muted);}
+  .bib-recent .ti-chevron-right{margin-left:auto; color:var(--text-muted); font-size:16px;}
+
+  /* ===== Sections (dossiers) ===== */
+  /* Dossiers et sous-dossiers restent des DEPLIANTS : avec plusieurs
+     dizaines de documents, tout afficher oblige a defiler longtemps pour
+     trouver le bon dossier. <details> le fait nativement, clavier compris. */
+  .bib-section{padding:0; margin:0 0 14px; border:1px solid var(--line); border-radius:16px;
+    background:var(--surface); overflow:hidden;}
   .bib-section-title{
-    font-family:var(--display); font-size:1.08rem; font-weight:700; color:var(--text-heading);
-    margin:0; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer;
+    margin:0; padding:14px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;
     list-style:none; user-select:none;
   }
   .bib-section-title::-webkit-details-marker{display:none;}
-  .bib-section-title::before{
-    content:""; width:8px; height:8px; border-right:2px solid var(--text-accent); border-bottom:2px solid var(--text-accent);
-    transform:rotate(-45deg); transition:transform .18s; flex:none; margin-left:2px;
-  }
-  .bib-section[open] > .bib-section-title::before{transform:rotate(45deg);}
   .bib-section-title:hover{background:var(--paper-alt);}
   .bib-section-title:focus-visible{outline:2px solid var(--green); outline-offset:-2px;}
-  .bib-section-compte{margin-left:auto; font-family:var(--mono); font-size:0.72rem; color:var(--text-muted); font-weight:400; white-space:nowrap;}
+  .bib-sec-ic{width:40px; height:40px; flex:none; border-radius:12px; display:grid; place-items:center; font-size:20px;}
+  .bib-section:nth-of-type(odd) .bib-sec-ic{background:var(--green-deep); color:var(--gold);}
+  .bib-section:nth-of-type(even) .bib-sec-ic{background:var(--gold); color:var(--green-deep);}
+  .bib-sec-textes{min-width:0; flex:1;}
+  .bib-sec-nom{font-family:var(--display); font-size:1.08rem; font-weight:700; color:var(--text-heading);}
+  .bib-sec-sous{font-size:0.83rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .bib-section-compte{flex:none; font-family:var(--mono); font-size:0.7rem; color:var(--text-heading);
+    background:var(--paper-alt); border-radius:999px; padding:5px 11px; white-space:nowrap;}
+  .bib-chev{flex:none; color:var(--text-muted); font-size:18px; transition:transform .18s;}
+  .bib-section[open] > .bib-section-title .bib-chev{transform:rotate(180deg);}
   .bib-section-corps{padding:4px 18px 18px;}
-  /* Le sous-dossier se distingue du dossier par un décalage et un titre
-     plus discret : la hiérarchie se lit sans avoir à la deviner. */
+  /* Le sous-dossier se distingue du dossier par un decalage et un titre
+     plus discret : la hierarchie se lit sans avoir a la deviner. */
   .bib-sous-section{padding:0; margin:10px 0 0; border-left:2px solid var(--paper-alt);}
   .bib-sous-titre{
     font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent);
@@ -79,25 +149,52 @@
   .bib-sous-section[open] > .bib-sous-titre::before{transform:rotate(45deg);}
   .bib-sous-titre:hover{background:var(--paper-alt);}
   .bib-sous-corps{padding:4px 14px 12px;}
-  /* Un dossier ouvert laisse un peu d'air avant le premier sous-dossier. */
   .bib-section-corps > .book-grille + .bib-sous-section{margin-top:16px;}
   .bib-tout{display:flex; gap:14px; margin:0 0 12px;}
   .bib-tout button{background:none; border:0; padding:0; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); cursor:pointer;}
   .bib-tout button:hover{text-decoration:underline;}
-  .bib-filtres{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:22px;}
-  .bib-filtres input, .bib-filtres select{
-    padding:11px 14px; border:1.5px solid var(--line); border-radius:10px;
-    font-family:var(--body); font-size:0.92rem; background:var(--surface); color:var(--ink);
-  }
-  .bib-filtres input{flex:1; min-width:200px;}
-  .bib-filtres select{min-width:190px;}
-  .bib-filtres input:focus, .bib-filtres select:focus{outline:2px solid var(--green); outline-offset:1px; border-color:var(--green);}
-  .bib-compte{font-family:var(--mono); font-size:0.74rem; color:var(--text-muted); white-space:nowrap;}
-  /* Grille de cartes : jusqu'a quatre par rangee sur grand ecran, moins
-     a mesure que la place manque. auto-fill + minmax evite d'entretenir
-     une liste de points de rupture. */
-  .book-grille{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;}
+  .bib-resultat{font-family:var(--mono); font-size:0.74rem; color:var(--text-muted); margin-left:auto;}
+  /* Une section tres fournie n'affiche pas ses dizaines de cartes d'un
+     coup : douze, puis autant a chaque « Afficher plus ». */
+  .bib-plus{display:block; width:100%; margin:14px 0 0; padding:11px; border:1.5px solid var(--line);
+    border-radius:999px; background:var(--surface); cursor:pointer;
+    font-family:var(--body); font-size:0.85rem; font-weight:600; color:var(--text-heading);}
+  .bib-plus:hover{border-color:var(--green); color:var(--green);}
+
+  /* ===== Cartes ===== */
+  .book-grille{display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:14px;}
   .book-item{margin-bottom:0;}
+  .book-row{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px;
+    display:flex; flex-direction:column; gap:10px; height:100%;
+    transition:border-color .18s ease, box-shadow .18s ease;
+  }
+  .book-row:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(6,68,28,0.08);}
+  .book-main{display:flex; flex-direction:column; gap:10px; flex:1; min-width:0;}
+  .book-cover, .book-cover-placeholder{width:94px; height:128px; border-radius:8px; flex:none;
+    background:var(--paper-alt); align-self:center;}
+  .book-cover{object-fit:cover;}
+  .book-cover-placeholder{display:grid; place-items:center; color:var(--text-accent); font-size:28px;}
+  .book-etiq{display:inline-block; font-size:0.68rem; font-weight:600; color:#6B4B07;
+    background:rgba(248,183,24,0.22); border-radius:999px; padding:3px 9px; align-self:flex-start;}
+  :root[data-theme="dark"] .book-etiq{background:rgba(248,183,24,0.16); color:#F0C955;}
+  .book-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.98rem;
+    line-height:1.35; overflow-wrap:anywhere;}
+  .book-excerpt{color:var(--text-muted); font-size:0.86rem;}
+  .book-date{display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:0.72rem; color:var(--text-muted);}
+  .book-date .ti{font-size:14px;}
+  .btn-view{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    font-weight:600; font-size:0.84rem; padding:9px 16px; border-radius:999px; border:none; cursor:pointer;
+    background:var(--gold); color:var(--green-deep); flex-shrink:0; transition:opacity .15s ease;
+  }
+  .btn-view:hover{opacity:0.88;}
+  .btn-view:disabled{opacity:0.6; cursor:wait;}
+  .btn-share{display:flex; align-items:center; justify-content:center; gap:7px;
+    font-weight:600; font-size:0.82rem; padding:8px 16px; border-radius:999px; cursor:pointer;
+    background:var(--surface); color:var(--text-heading); border:1.5px solid var(--line); transition:border-color .18s;}
+  .btn-share:hover{border-color:var(--green); color:var(--green);}
+  .btn-view .ti, .btn-share .ti{font-size:15px;}
   /* Le visionneur ouvert prend TOUTE la largeur de la grille : un PDF
      dans une colonne de 260 px serait illisible. */
   /* Le document ouvert occupe TOUTE la page : le visionneur passe en
@@ -115,29 +212,6 @@
   /* La page derriere ne defile plus : seul le document repond au doigt
      ou a la molette. */
   body.lecture-ouverte{overflow:hidden;}
-  .book-row{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
-    display:flex; flex-direction:column; gap:14px; height:100%;
-  }
-  .book-main{display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; flex:1; min-width:0;}
-  .book-cover{width:110px; height:150px; object-fit:cover; border-radius:8px; flex-shrink:0; background:var(--paper-alt);}
-  .book-cover-placeholder{
-    width:110px; height:150px; border-radius:8px; flex-shrink:0; background:var(--paper-alt);
-    display:flex; align-items:center; justify-content:center; color:var(--text-accent); font-size:30px;
-  }
-  .book-title{overflow-wrap:anywhere;}
-  .book-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1.05rem;}
-  .book-excerpt{color:var(--text-muted); font-size:0.92rem; margin-top:4px;}
-  .book-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:6px;}
-  .btn-view{
-    font-weight:600; font-size:0.85rem; padding:10px 20px; border-radius:999px; border:none; cursor:pointer;
-    background:var(--gold); color:var(--green-deep); flex-shrink:0; transition:opacity .15s ease;
-  }
-  .btn-view:hover{opacity:0.88;}
-  .btn-view:disabled{opacity:0.6; cursor:wait;}
-  .btn-share{font-weight:600; font-size:0.82rem; padding:8px 18px; border-radius:999px; cursor:pointer;
-    background:var(--surface); color:var(--green); border:1.5px solid var(--line); transition:border-color .18s;}
-  .btn-share:hover{border-color:var(--green);}
   .book-viewer{
     border:1px solid var(--line); border-radius:var(--radius); margin-top:10px;
     padding-top:6px; background:var(--surface);
@@ -195,19 +269,67 @@
 </nav>
 
 <div class="wrap">
-  <a class="back" href="formations">Formations</a>
-  <p class="eyebrow">Espace Membres - Formations & Daara</p>
-  <h1><i class="ti ti-books"></i> Bibliothèque</h1>
+  <nav class="bib-fil" aria-label="Fil d'Ariane">
+    <a href="./" aria-label="Tableau de bord"><i class="ti ti-home"></i></a>
+    <span aria-hidden="true">/</span>
+    <a href="formations">Formations</a>
+    <span aria-hidden="true">/</span>
+    <span>Bibliothèque</span>
+  </nav>
+  <div class="bib-tete">
+    <span class="bib-tete-ic" aria-hidden="true"><i class="ti ti-books"></i></span>
+    <h1>Bibliothèque</h1>
+  </div>
   <p class="intro">Livres et documents réservés aux membres, consultables en ligne. Ce contenu n'est pas téléchargeable.</p>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
-  <div class="bib-filtres" id="bibFiltres" style="display:none;">
-    <input type="search" id="bibRecherche" data-recherche-page placeholder="Rechercher un titre…" aria-label="Rechercher dans la bibliothèque">
-    <select id="bibDossier" aria-label="Filtrer par dossier"></select>
-    <span class="bib-compte" id="bibCompte"></span>
+
+  <div id="bibFiltres" style="display:none;">
+    <div class="bib-outils">
+      <!-- La barre du haut reprend cette recherche et masque ce champ :
+           deux champs sur la meme page semaient le doute (choix valide). -->
+      <div class="bib-chercher" data-recherche-cacher>
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="search" id="bibRecherche" data-recherche-page placeholder="Rechercher un livre, une catégorie…" aria-label="Rechercher dans la bibliothèque">
+      </div>
+      <span class="bib-filtre"><label for="bibDossier">Catégorie</label>
+        <select id="bibDossier"></select></span>
+      <span class="bib-filtre"><label for="bibType">Type</label>
+        <select id="bibType"></select></span>
+      <span class="bib-filtre"><label for="bibTri">Trier par</label>
+        <select id="bibTri">
+          <option value="recent">Plus récents</option>
+          <option value="ancien">Plus anciens</option>
+          <option value="titre">Titre (A-Z)</option>
+        </select></span>
+    </div>
+    <div class="bib-compteurs">
+      <div class="bib-compteur">
+        <span class="bib-compteur-ic" aria-hidden="true"><i class="ti ti-books"></i></span>
+        <div><div class="bib-compteur-nombre" id="bibNbDocs">0</div>
+          <div class="bib-compteur-label">documents disponibles</div></div>
+      </div>
+      <div class="bib-compteur">
+        <span class="bib-compteur-ic" aria-hidden="true"><i class="ti ti-stack-2"></i></span>
+        <div><div class="bib-compteur-nombre" id="bibNbDossiers">0</div>
+          <div class="bib-compteur-label">catégories principales</div></div>
+      </div>
+      <div class="bib-compteur">
+        <span class="bib-compteur-ic" aria-hidden="true"><i class="ti ti-star"></i></span>
+        <div><div class="bib-compteur-nombre" id="bibNbNouveaux">0</div>
+          <div class="bib-compteur-label">nouveaux ce mois</div></div>
+      </div>
+    </div>
   </div>
-  <div id="list">
-    <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
+
+  <div class="bib-corps">
+    <div id="list">
+      <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
+    </div>
+    <aside class="bib-recents" id="bibRecents" style="display:none;">
+      <p class="bib-recents-titre"><i class="ti ti-clock-hour-4" aria-hidden="true"></i> Récemment ajoutés</p>
+      <div id="bibRecentsListe"></div>
+    </aside>
   </div>
 </div>
 
@@ -229,6 +351,11 @@
   // refait à chaque frappe dans la recherche, sans cette mémoire tout se
   // refermerait sous ses doigts.
   const ouverts = new Set();
+  // Combien de cartes chaque section montre : douze au depart, autant de
+  // plus a chaque « Afficher plus ». Une section tres fournie ne deroule
+  // pas ses trente cartes d'un coup.
+  const PAS = 12;
+  const affichees = new Map();
 
   async function chargerDossiers() {
     const { data, error } = await supabaseClient
@@ -240,6 +367,31 @@
     // s'affiche quand même : tous les documents sous « Autres documents ».
     dossiers = error ? [] : (data || []);
   }
+  // La base ne porte ni auteur ni type : le type se lit sur l'extension du
+  // fichier, ce que la liste « Type » filtre.
+  const TYPES = { pdf:"PDF", epub:"EPUB", doc:"Word", docx:"Word", xls:"Excel", xlsx:"Excel",
+    ppt:"Diaporama", pptx:"Diaporama", jpg:"Image", jpeg:"Image", png:"Image", webp:"Image",
+    mp3:"Audio", m4a:"Audio", mp4:"Vidéo" };
+  function typeDe(livre) {
+    const ext = String(livre.file_path || "").split(".").pop().toLowerCase();
+    return TYPES[ext] || "Autre";
+  }
+  const ICONES_TYPE = { PDF:"ti-file-type-pdf", EPUB:"ti-book", Word:"ti-file-type-doc",
+    Excel:"ti-file-spreadsheet", Diaporama:"ti-presentation", Image:"ti-photo",
+    Audio:"ti-headphones", "Vidéo":"ti-video", Autre:"ti-file" };
+
+  // Pastille d'une categorie : devinee sur son nom, faute de champ en base.
+  function iconeDossier(nom) {
+    const n = normaliserRecherche(nom);
+    if (/islam|coran|tarikha|religi/.test(n)) return "ti-building-mosque";
+    if (/medecin|sante|soin|clinique/.test(n)) return "ti-stethoscope";
+    if (/pharma|medicament/.test(n)) return "ti-pill";
+    if (/format|cours|enseign|pedagog/.test(n)) return "ti-school";
+    if (/administr|statut|reglement|proces/.test(n)) return "ti-file-description";
+    if (/urgence|secour/.test(n)) return "ti-first-aid-kit";
+    return "ti-folder";
+  }
+
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -286,6 +438,9 @@
     // ménage le limiteur de débit de bibliotheque_documents.
     tousLesLivres = data;
     remplirFiltreDossiers();
+    remplirFiltreTypes();
+    remplirCompteurs();
+    remplirRecents();
     document.getElementById("bibFiltres").style.display = "";
     afficherLivres();
 
@@ -293,19 +448,74 @@
     // l'onglet automatique peut etre bloque faute de geste de
     // l'utilisateur : le visionneur affiche alors le lien a toucher.
     const vise = new URLSearchParams(location.search).get("doc");
-    if (vise) {
-      const btn = document.querySelector('.btn-view[data-id="' + CSS.escape(vise) + '"]');
-      if (btn) {
-        // Le document est dans un dossier REPLIÉ : on déplie le chemin
-        // qui y mène (sous-dossier puis dossier), sinon le défilement
-        // viserait un élément invisible et le visionneur s'ouvrirait
-        // dans une boîte fermée.
-        let d = btn.closest("details");
-        while (d) { d.open = true; ouverts.add(d.dataset.cle); d = d.parentElement && d.parentElement.closest("details"); }
-        btn.closest(".book-item").scrollIntoView({ block: "center" });
-        toggleViewer(btn);
-      }
+    if (vise) ouvrirDocument(vise);
+  }
+
+  function remplirCompteurs() {
+    const mois = Date.now() - 30 * 24 * 3600 * 1000;
+    const racines = new Set(tousLesLivres.map(l => {
+      const d = dossiers.find(x => x.id === l.dossier_id);
+      return d ? (d.parent_id || d.id) : "";
+    }).filter(Boolean));
+    document.getElementById("bibNbDocs").textContent = tousLesLivres.length;
+    document.getElementById("bibNbDossiers").textContent = racines.size;
+    document.getElementById("bibNbNouveaux").textContent =
+      tousLesLivres.filter(l => l.created_at && new Date(l.created_at).getTime() >= mois).length;
+  }
+
+  // Les derniers documents parus, quel que soit le filtre en cours : c'est
+  // la reponse a « qu'est-ce qui est nouveau ? ».
+  function remplirRecents() {
+    const recents = [...tousLesLivres]
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      .slice(0, 6);
+    if (!recents.length) return;
+    document.getElementById("bibRecentsListe").innerHTML = recents.map(l => `
+      <button type="button" class="bib-recent" data-id="${esc(l.id)}">
+        ${l.cover_image
+          ? `<img src="${esc(l.cover_image)}" alt="" loading="lazy">`
+          : `<span class="bib-recent-vide" aria-hidden="true"><i class="ti ti-book-2"></i></span>`}
+        <span>
+          <span class="bib-recent-titre">${esc(l.title)}</span>
+          <span class="bib-recent-date">${formatDate(l.created_at)}</span>
+        </span>
+        <i class="ti ti-chevron-right" aria-hidden="true"></i>
+      </button>`).join("");
+    document.getElementById("bibRecents").style.display = "";
+    document.querySelectorAll(".bib-recent").forEach(b => {
+      b.addEventListener("click", () => ouvrirDocument(b.dataset.id));
+    });
+  }
+
+  /**
+   * Ouvre un document depuis n'importe quel point de la page : le dossier
+   * qui le contient est deplie, la carte amenee a l'ecran, le visionneur
+   * ouvert. Sert au panneau des recents et au lien de partage (?doc=).
+   */
+  function ouvrirDocument(id) {
+    let btn = document.querySelector('.btn-view[data-id="' + CSS.escape(id) + '"]');
+    // La carte peut etre au-dela du « Afficher plus » de sa section, ou
+    // cachee par un filtre : on remet la liste a plat avant de chercher.
+    if (!btn) {
+      document.getElementById("bibRecherche").value = "";
+      document.getElementById("bibDossier").value = "";
+      document.getElementById("bibType").value = "";
+      affichees.clear();
+      afficherLivres();
+      btn = document.querySelector('.btn-view[data-id="' + CSS.escape(id) + '"]');
     }
+    if (!btn) {
+      const livre = tousLesLivres.find(l => String(l.id) === String(id));
+      const cle = livre && livre.dossier_id ? livre.dossier_id : "autres";
+      affichees.set(cle, Infinity);
+      afficherLivres();
+      btn = document.querySelector('.btn-view[data-id="' + CSS.escape(id) + '"]');
+    }
+    if (!btn) return;
+    let d = btn.closest("details");
+    while (d) { d.open = true; ouverts.add(d.dataset.cle); d = d.parentElement && d.parentElement.closest("details"); }
+    btn.closest(".book-item").scrollIntoView({ block: "center" });
+    toggleViewer(btn);
   }
 
   // Recherche insensible à la casse et aux accents : « medecine » doit
@@ -323,7 +533,7 @@
   function remplirFiltreDossiers() {
     const sel = document.getElementById("bibDossier");
     const actuel = sel.value;
-    let html = '<option value="">Tous les dossiers</option>';
+    let html = '<option value="">Toutes les catégories</option>';
     dossiers.filter(d => !d.parent_id).forEach(d => {
       html += `<option value="${esc(d.id)}">${esc(d.nom)}</option>`;
       dossiers.filter(s => s.parent_id === d.id).forEach(s => {
@@ -340,6 +550,13 @@
     sel.value = [...sel.options].some(o => o.value === actuel) ? actuel : "";
   }
 
+  function remplirFiltreTypes() {
+    const sel = document.getElementById("bibType");
+    const presents = [...new Set(tousLesLivres.map(typeDe))].sort();
+    sel.innerHTML = '<option value="">Tous les types</option>'
+      + presents.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join("");
+  }
+
   function livresFiltres() {
     const q = normaliserRecherche(document.getElementById("bibRecherche").value);
     const choix = document.getElementById("bibDossier").value;
@@ -354,7 +571,11 @@
         dossiers.filter(d => d.parent_id === choix).map(d => d.id)));
     }
 
-    return tousLesLivres.filter(l => {
+    const type = document.getElementById("bibType").value;
+    const tri = document.getElementById("bibTri").value;
+
+    const gardes = tousLesLivres.filter(l => {
+      if (type && typeDe(l) !== type) return false;
       if (permis) {
         const cle = l.dossier_id || null;
         if (!permis.has(cle)) return false;
@@ -365,16 +586,21 @@
       // contient pas le mot.
       const d = dossiers.find(x => x.id === l.dossier_id);
       return normaliserRecherche(
-        [l.title, l.excerpt, d && d.nom].filter(Boolean).join(" ")
+        [l.title, l.excerpt, d && d.nom, typeDe(l)].filter(Boolean).join(" ")
       ).indexOf(q) !== -1;
     });
+
+    const date = (l) => new Date(l.created_at || 0).getTime();
+    if (tri === "ancien") gardes.sort((a, b) => date(a) - date(b));
+    else if (tri === "titre") gardes.sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "fr"));
+    else gardes.sort((a, b) => date(b) - date(a));
+    return gardes;
   }
 
   function afficherLivres() {
     const listEl = document.getElementById("list");
     const data = livresFiltres();
-    const compte = document.getElementById("bibCompte");
-    compte.textContent = data.length === tousLesLivres.length
+    const resume = data.length === tousLesLivres.length
       ? `${tousLesLivres.length} document(s)`
       : `${data.length} sur ${tousLesLivres.length}`;
 
@@ -422,25 +648,42 @@
       groupes.push({ cle: "autres", nom: "Autres documents", livres: livresDe(""), sous: [] });
     }
 
-    const carte = (book) => `
+    // L'etiquette porte la categorie du document - son dossier - comme sur
+    // la maquette ; a defaut, son type de fichier.
+    const carte = (book) => {
+      const d = dossiers.find(x => x.id === book.dossier_id);
+      const etiq = (d && d.nom) || typeDe(book);
+      return `
             <div class="book-item" data-id="${esc(book.id)}">
               <div class="book-row">
                 <div class="book-main">
                   ${book.cover_image
                     ? `<img class="book-cover" src="${esc(book.cover_image)}" alt="" loading="lazy">`
-                    : `<div class="book-cover-placeholder"><i class="ti ti-book-2"></i></div>`}
-                  <div>
-                    <div class="book-title">${esc(book.title)}</div>
-                    ${book.excerpt ? `<div class="book-excerpt">${esc(book.excerpt)}</div>` : ""}
-                    <div class="book-date">${formatDate(book.created_at)}</div>
-                  </div>
+                    : `<div class="book-cover-placeholder"><i class="ti ${esc(ICONES_TYPE[typeDe(book)] || "ti-book-2")}"></i></div>`}
+                  <span class="book-etiq">${esc(etiq)}</span>
+                  <div class="book-title">${esc(book.title)}</div>
+                  ${book.excerpt ? `<div class="book-excerpt">${esc(book.excerpt)}</div>` : ""}
+                  <div class="book-date"><i class="ti ti-calendar" aria-hidden="true"></i>${formatDate(book.created_at)}</div>
                 </div>
-                <button class="btn-view" data-path="${esc(book.file_path || "")}" data-id="${esc(book.id)}">Consulter</button>
-                <button class="btn-share" data-id="${esc(book.id)}" data-titre="${esc(book.title)}">Partager</button>
+                <button class="btn-view" data-path="${esc(book.file_path || "")}" data-id="${esc(book.id)}"><i class="ti ti-eye" aria-hidden="true"></i>Consulter</button>
+                <button class="btn-share" data-id="${esc(book.id)}" data-titre="${esc(book.title)}"><i class="ti ti-share-3" aria-hidden="true"></i>Partager</button>
               </div>
               <div class="book-viewer" id="viewer-${esc(book.id)}" style="display:none;"></div>
             </div>
           `;
+    };
+
+    // Une section affiche au plus PAS cartes, puis en montre autant a
+    // chaque clic sur « Afficher plus ».
+    const grille = (cle, livres) => {
+      const vus = affichees.get(cle) || PAS;
+      const montres = livres.slice(0, vus);
+      const reste = livres.length - montres.length;
+      return `<div class="book-grille">${montres.map(carte).join("")}</div>`
+        + (reste > 0
+            ? `<button type="button" class="bib-plus" data-plus="${esc(cle)}">Afficher plus (${reste} restant${reste > 1 ? "s" : ""})</button>`
+            : "");
+    };
 
     // Tout est REPLIÉ au départ. On déplie d'office quand l'utilisateur a
     // déjà dit ce qu'il cherche - une recherche tapée, un dossier
@@ -457,19 +700,38 @@
       <div class="bib-tout">
         <button type="button" id="bibToutOuvrir">Tout déplier</button>
         <button type="button" id="bibToutFermer">Tout replier</button>
+        <span class="bib-resultat">${esc(resume)}</span>
       </div>` + groupes.map(g => `
         <details class="bib-section" data-cle="${esc(g.cle)}"${estOuvert(g.cle) ? " open" : ""}>
-          <summary class="bib-section-title">${esc(g.nom)}<span class="bib-section-compte">${nb(g)} document(s)</span></summary>
+          <summary class="bib-section-title">
+            <span class="bib-sec-ic" aria-hidden="true"><i class="ti ${esc(iconeDossier(g.nom))}"></i></span>
+            <span class="bib-sec-textes">
+              <span class="bib-sec-nom">${esc(g.nom)}</span>
+              ${g.sous.length ? `<span class="bib-sec-sous">${esc(g.sous.map(x => x.nom).join(" \u00b7 "))}</span>` : ""}
+            </span>
+            <span class="bib-section-compte">${nb(g)} document${nb(g) > 1 ? "s" : ""}</span>
+            <i class="ti ti-chevron-down bib-chev" aria-hidden="true"></i>
+          </summary>
           <div class="bib-section-corps">
-            ${g.livres.length ? `<div class="book-grille">${g.livres.map(carte).join("")}</div>` : ""}
+            ${g.livres.length ? grille(g.cle, g.livres) : ""}
             ${g.sous.map(s => `
               <details class="bib-sous-section" data-cle="${esc(s.cle)}"${estOuvert(s.cle) ? " open" : ""}>
                 <summary class="bib-sous-titre">${esc(s.nom)}<span class="bib-section-compte">${s.livres.length}</span></summary>
-                <div class="bib-sous-corps"><div class="book-grille">${s.livres.map(carte).join("")}</div></div>
+                <div class="bib-sous-corps">${grille(s.cle, s.livres)}</div>
               </details>`).join("")}
           </div>
         </details>
       `).join("");
+
+    // « Afficher plus » : la section montre PAS cartes de plus, sans
+    // toucher au reste de la page.
+    listEl.querySelectorAll(".bib-plus").forEach(b => {
+      b.addEventListener("click", () => {
+        const cle = b.dataset.plus;
+        affichees.set(cle, (affichees.get(cle) || PAS) + PAS);
+        afficherLivres();
+      });
+    });
 
     // Mémoriser ce que l'utilisateur ouvre ou ferme, pour que taper une
     // lettre dans la recherche ne referme pas tout derrière lui.
@@ -578,8 +840,14 @@
 
   // Les champs sont statiques : les écouteurs se posent une fois, avant
   // même que les données n'arrivent.
-  document.getElementById("bibRecherche").addEventListener("input", afficherLivres);
-  document.getElementById("bibDossier").addEventListener("change", afficherLivres);
+  // Un changement de filtre repart de douze cartes par section : garder
+  // un « Afficher plus » deja etendu n'aurait pas de sens sur une autre
+  // liste.
+  function rafraichir() { affichees.clear(); afficherLivres(); }
+  document.getElementById("bibRecherche").addEventListener("input", rafraichir);
+  document.getElementById("bibDossier").addEventListener("change", rafraichir);
+  document.getElementById("bibType").addEventListener("change", rafraichir);
+  document.getElementById("bibTri").addEventListener("change", rafraichir);
 
   document.getElementById("signoutBtn").addEventListener("click", async () => {
     await signOut();
