@@ -517,10 +517,43 @@
         <span class="dossier-compte">${n} doc.</span>
         <span class="dossier-actions">
           <button type="button" class="btn-mini btn-edit" onclick="enregistrerDossier('${esc(d.id)}')">Enregistrer</button>
+          ${n ? `<button type="button" class="btn-mini" onclick="auteurDepuisDossier('${esc(d.id)}')"
+            title="Inscrire le nom de ce dossier comme auteur de ses documents">Auteur = ${esc(d.nom)}</button>` : ""}
           <button type="button" class="btn-mini btn-delete" onclick="supprimerDossier('${esc(d.id)}')" title="Supprimer ce dossier">&#128465; Supprimer</button>
         </span>
       </div>`;
     }).join("");
+  }
+
+  /**
+   * Inscrit le nom du dossier comme auteur de SES documents dont l'auteur
+   * est encore vide. Les fiches deja renseignees ne sont pas touchees :
+   * une correction faite a la main ne doit pas etre effacee par un clic.
+   */
+  async function auteurDepuisDossier(id) {
+    const d = dossiers.find(x => x.id === id);
+    if (!d) return;
+    const sansAuteur = tousLesDocs.filter(x => x.dossier_id === id && !(x.auteur || "").trim());
+    if (!sansAuteur.length) {
+      messageDossier(`Tous les documents de « ${d.nom} » ont deja un auteur.`, "success");
+      return;
+    }
+    if (!confirm(`Inscrire « ${d.nom} » comme auteur de ${sansAuteur.length} document(s) de ce dossier ?\n\n`
+      + `Les fiches qui portent deja un auteur ne changent pas.`)) return;
+
+    const { error } = await supabaseClient
+      .from("restricted_articles")
+      .update({ auteur: d.nom })
+      .eq("category", "bibliotheque")
+      .eq("dossier_id", id)
+      .in("id", sansAuteur.map(x => x.id));
+
+    if (error) {
+      messageDossier("Erreur : " + error.message, "error");
+      return;
+    }
+    messageDossier(`Auteur « ${d.nom} » inscrit sur ${sansAuteur.length} document(s).`, "success");
+    await loadItems();
   }
 
   function messageDossier(texte, type) {
