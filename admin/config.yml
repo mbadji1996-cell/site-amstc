@@ -53,7 +53,7 @@ collections:
               - { label: "Illustration", name: "image", widget: "image", required: false, hint: "Photo carrée, un soignant ou un membre en action. Laissez vide pour l'illustration par défaut." }
 
           - { label: "Accroche de la section mission", name: "mission_eyebrow", widget: "string" }
-          - { label: "Titre de la section mission", name: "mission_title", widget: "string" }
+          - { label: "Titre de la section mission", name: "mission_title", widget: "string", hint: "Mettez entre astérisques la partie en or : autour d'une *même cause*" }
           - { label: "Mission - paragraphe 1", name: "mission_p1", widget: "markdown" }
           - { label: "Mission - paragraphe 2", name: "mission_p2", widget: "markdown" }
           - { label: "Titre du bloc emblème", name: "emblem_title", widget: "string" }

@@ -351,6 +351,9 @@
   /* ===== Mission ===== */
   .mission-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
   @media (max-width:880px){ .mission-grid{grid-template-columns:1fr;} }
+  /* Titre et chapeau au meme gabarit que les en-tetes de section (.section-head). */
+  .mission-text h2{font-size:clamp(1.6rem,3vw,2.3rem); margin-bottom:14px;}
+  .mission-text h2 em{font-style:normal; color:var(--text-accent);}
   .mission-text p:not(.eyebrow){color:var(--text-muted); font-size:1.03rem; margin-bottom:16px;}
   .mission-text img{max-width:100%; border-radius:10px; margin:14px 0;}
   .mission-figure{
@@ -1409,7 +1412,7 @@
     <div class="wrap mission-grid">
       <div class="mission-text reveal">
         <p class="eyebrow" id="cms-mission-eyebrow">Notre mission</p>
-        <h2 id="cms-mission-title">Fédérer les acteurs de la santé autour d'une même cause</h2>
+        <h2 id="cms-mission-title">Fédérer les acteurs de la santé autour d'une <em>même cause</em></h2>
         <div id="cms-mission-p1"><p>L'AMSTC réunit des étudiants et professionnels de la santé et du social, ainsi que toute catégorie professionnelle utile à ces domaines - chercheurs, juristes, économistes, gestionnaires, sociologues, animateurs sociaux - autour d'un objectif commun : promouvoir la santé des populations et participer au développement socio-sanitaire du Sénégal.</p></div>
         <div id="cms-mission-p2"><p>L'association veille aussi à la bonne formation de ses membres en santé, en social et en leadership, et cultive l'entraide entre ses membres.</p></div>
         <a href="#nos-actions" class="btn btn-outline">Parcourir nos actions</a>
@@ -2668,7 +2671,7 @@
 
     // Mission
     if (data.mission_eyebrow) document.getElementById('cms-mission-eyebrow').textContent = data.mission_eyebrow;
-    if (data.mission_title) document.getElementById('cms-mission-title').textContent = data.mission_title;
+    if (data.mission_title) document.getElementById('cms-mission-title').innerHTML = esc(data.mission_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
     if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = md(data.mission_p1);
     if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = md(data.mission_p2);
     if (data.emblem_title) document.getElementById('cms-emblem-title').textContent = data.emblem_title;
