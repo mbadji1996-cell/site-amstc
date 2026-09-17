@@ -60,21 +60,31 @@
 
   /* Products grid */
   .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
-  .product-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s;}
-  .product-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1);transform:translateY(-3px);}
-  .product-img{position:relative;width:100%;aspect-ratio:1/1;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;}
+  .product-card{height:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s,border-color .18s;}
+  .product-card:hover{border-color:var(--gold);box-shadow:0 10px 26px rgba(6,68,28,0.1);transform:translateY(-3px);}
+  /* Carre a bords arrondis, quelle que soit la forme de la photo :
+     l'image est posee en absolu, la boite impose donc sa hauteur. */
+  .product-img{position:relative;width:100%;aspect-ratio:1/1;border-radius:12px;overflow:hidden;
+    background:var(--paper-alt);cursor:pointer;}
   .product-badge{position:absolute;top:10px;left:10px;background:var(--green);color:#FFFFFF;border-radius:999px;
     padding:4px 10px;font-size:0.68rem;font-weight:700;letter-spacing:0.02em;}
   .btn-favori{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
     background:var(--surface);color:var(--text-muted);cursor:pointer;display:grid;place-items:center;font-size:16px;}
   .btn-favori:hover{color:#C0392B;border-color:#C0392B;}
   .btn-favori.actif{color:#C0392B;border-color:#C0392B;}
-  .product-img img{width:100%;height:100%;object-fit:cover;}
-  .product-img .placeholder-icon{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:36px;color:var(--amber-dark);}
-  .product-body{padding:16px 18px;flex:1;display:flex;flex-direction:column;gap:6px;}
+  .product-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .product-img .placeholder-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-accent);}
+  /* Un survol montre qu'on peut cliquer pour voir la photo en entier. */
+  .product-card:hover .product-img img{transform:scale(1.03);}
+  .product-img img{transition:transform .25s ease;}
+  .product-body{padding:12px 4px 2px;flex:1;display:flex;flex-direction:column;gap:5px;}
   .product-cat{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber-dark);}
-  .product-name{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);}
-  .product-desc{font-size:0.82rem;color:var(--text-muted);flex:1;}
+  /* Deux lignes au plus pour le nom comme pour la description : sans cela
+     une carte au texte long depassait ses voisines de 120 px. */
+  .product-name{font-family:var(--display);font-size:0.98rem;font-weight:600;color:var(--text-heading);
+    line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .product-desc{font-size:0.82rem;color:var(--text-muted);flex:1;line-height:1.4;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .product-footer{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:10px;}
   .product-price{font-family:var(--mono);font-size:1.05rem;font-weight:700;color:var(--green);}
   :root[data-theme="dark"] .product-price{color:#7FD9A0;}
@@ -214,9 +224,12 @@
   #productDetailModal .modal{max-width:520px;padding:0;overflow:hidden;}
   .pd-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.9);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--ink);z-index:2;}
   .pd-close:hover{background:var(--surface);}
-  .carousel{position:relative;width:100%;aspect-ratio:4/3;background:var(--amber-light);overflow:hidden;}
+  /* La photo est montree ENTIERE - « contain » - : dans la boutique la
+     vignette recadre, mais qui ouvre la fiche veut voir l'article en
+     totalite, broderie et inscription comprises. */
+  .carousel{position:relative;width:100%;aspect-ratio:1/1;max-height:62vh;background:var(--paper-alt);overflow:hidden;}
   .carousel-track{display:flex;height:100%;transition:transform .3s ease;}
-  .carousel-track img{width:100%;height:100%;object-fit:cover;flex-shrink:0;}
+  .carousel-track img{width:100%;height:100%;object-fit:contain;flex-shrink:0;}
   .carousel-track .placeholder-icon{width:100%;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--amber-dark);}
   .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.85);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,0.15);}
   .carousel-arrow.left{left:10px;}
@@ -228,7 +241,12 @@
   .pd-body{padding:20px 24px 24px;}
   .pd-cat{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber-dark);}
   .pd-name{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text-heading);margin:4px 0 10px;}
-  .pd-desc{color:var(--text-muted);font-size:0.9rem;margin-bottom:16px;}
+  .pd-desc{color:var(--text-muted);font-size:0.9rem;margin-bottom:14px;}
+  .pd-faits{list-style:none;margin:0 0 16px;border-top:1px solid var(--line);}
+  .pd-fait{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:9px 0;border-bottom:1px solid var(--line);font-size:0.86rem;}
+  .pd-fait-label{color:var(--text-muted);}
+  .pd-fait-valeur{color:var(--text-heading);font-weight:600;text-align:right;}
 
   /* Success */
   #successState{text-align:center;padding:16px 0;}
@@ -381,6 +399,7 @@
       <p class="pd-cat" id="pdCat"></p>
       <p class="pd-name" id="pdName"></p>
       <p class="pd-desc" id="pdDesc"></p>
+      <ul class="pd-faits" id="pdFaits"></ul>
       <div class="product-footer">
         <span class="product-price" id="pdPrice"></span>
         <div id="pdAction"></div>
@@ -672,6 +691,19 @@
     document.getElementById('pdDesc').textContent = p.description || '';
     document.getElementById('pdDesc').style.display = p.description ? '' : 'none';
     document.getElementById('pdPrice').textContent = formatPrice(p.price_fcfa);
+
+    // Ce que la fiche sait de l'article, au-dela de son nom et de son prix.
+    const faits = [
+      ['Catégorie', p.category || ''],
+      ['Disponibilité', p.stock === null || p.stock === undefined
+        ? 'En stock'
+        : (p.stock > 0 ? p.stock + ' disponible' + (p.stock > 1 ? 's' : '') : 'Épuisé')],
+      ['Mis en ligne', p.created_at
+        ? new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+        : ''],
+    ].filter(([, v]) => v);
+    document.getElementById('pdFaits').innerHTML = faits.map(([l, v]) =>
+      `<li class="pd-fait"><span class="pd-fait-label">${escHtml(l)}</span><span class="pd-fait-valeur">${escHtml(String(v))}</span></li>`).join('');
 
     const outOfStock = p.stock !== null && p.stock === 0;
     const inCart = !!cart[p.id];
