@@ -343,7 +343,7 @@
   }
 
   section{padding:80px 0;}
-  .section-alt{background:var(--section-alt);}
+  .section-alt{background:var(--section-alt); --fond-section:var(--section-alt);}
   .section-head{max-width:660px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(1.6rem,3vw,2.3rem);}
   .section-head p:not(.eyebrow){color:var(--text-muted); margin-top:14px; font-size:1.02rem;}
@@ -465,7 +465,7 @@
     /* L'anneau prend la couleur de la SECTION, pas celle de la page :
        la frise vit dans une section alternee, et un anneau blanc y
        dessinerait un halo. */
-    border:3px solid var(--section-alt, var(--paper));
+    border:3px solid var(--fond-section, var(--paper));
   }
   /* L'annee en pastille : elle se lit comme un reperage, pas comme une
      ligne de texte de plus. */
@@ -1593,7 +1593,7 @@
   </section>
 
   <!-- ===== TÉMOIGNAGES ===== -->
-  <section id="temoignages" class="section-alt" style="display:none;">
+  <section id="temoignages" style="display:none;">
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-temoignages-eyebrow">Témoignages</p>
@@ -1618,7 +1618,7 @@
        il a d'abord annonce le don, il presente aujourd'hui la
        plateforme de consultations. D'ou des noms de champs neutres,
        cta_*, plutot qu'un nom qui vieillirait. -->
-  <section id="espace-consultation">
+  <section class="section-alt" id="espace-consultation">
     <div class="wrap">
       <div class="cta-banner reveal">
         <div class="cta-banner-bg" id="cta-banner-bg" style="background-image:url('assets/uploads/photo_39_2026-05-18_12-56-00.jpg')" aria-hidden="true"></div>
@@ -1635,7 +1635,7 @@
   </section>
 
   <!-- ===== MÉDIATHÈQUE ===== -->
-  <section class="section-alt" id="mediatheque">
+  <section id="mediatheque">
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-media-eyebrow">Médiathèque</p>
@@ -1659,7 +1659,7 @@
   </div>
 
   <!-- ===== VIE SPIRITUELLE : heures de prière, verset et hadith ===== -->
-  <section id="vie-spirituelle">
+  <section class="section-alt" id="vie-spirituelle">
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow" id="cms-prayer-eyebrow">Vie spirituelle</p>
@@ -2590,6 +2590,32 @@
     });
     renderGrid(annees[0]);
   }
+
+  // ===== Alternance des fonds =====
+  // Blanc puis beige, une section visible sur deux, apres le hero. Les
+  // sections a fond propre (hero, impact vert) et le bandeau d'evenement,
+  // qui prolonge le hero, sont sautees. Recalcule a
+  // chaque section masquee, affichee ou ajoutee par le CMS.
+  function alternerFonds(){
+    const sections = [...document.querySelectorAll('main > section, #cms-custom-sections > section')]
+      .filter(sec => !sec.matches('.hero, #evenement-phare, #impact') && getComputedStyle(sec).display !== 'none');
+    sections.forEach((sec, i) => {
+      sec.classList.remove('alt');
+      sec.classList.toggle('section-alt', i % 2 === 1);
+    });
+  }
+  // On n'observe que les sections elles-memes (pas leur contenu, qui bouge
+  // sans cesse : diaporamas, carrousel) et l'arrivee des blocs du CMS.
+  let alternanceEnAttente = false;
+  const observateurFonds = new MutationObserver(() => {
+    if (alternanceEnAttente) return;
+    alternanceEnAttente = true;
+    setTimeout(() => { alternanceEnAttente = false; alternerFonds(); }, 0);
+  });
+  document.querySelectorAll('main > section').forEach(sec =>
+    observateurFonds.observe(sec, { attributes:true, attributeFilter:['style'] }));
+  observateurFonds.observe(document.getElementById('cms-custom-sections'), { childList:true });
+  alternerFonds();
 
   // Évite d'afficher brièvement le texte par défaut avant que le contenu du CMS soit chargé
   function revealPage(){
