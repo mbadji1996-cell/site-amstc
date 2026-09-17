@@ -1,8 +1,11 @@
 ---
 title: "Sédentarité : une heure de sport ne rattrape pas une journée assise"
 date: 2026-09-17T10:00:00.000Z
-excerpt: "Entretien avec le Dr Bineta Guèye, cardiologue : on peut faire une heure de sport par jour et rester sédentaire les vingt-trois autres. Pourquoi l’immobilité prolongée pèse sur le cœur, le métabolisme et le moral, et comment bouger davantage sans forcément faire du sport."
-image: ""
+excerpt: "Entretien avec le Dr Bineta Guèye, cardiologue : on peut faire une
+  heure de sport par jour et rester sédentaire les vingt-trois autres. Pourquoi
+  l’immobilité prolongée pèse sur le cœur, le métabolisme et le moral, et
+  comment bouger davantage sans forcément faire du sport."
+image: https://www.lesechos.fr/monde/enjeux-internationaux/la-sedentarite-un-mal-qui-coute-plus-de-27-milliards-de-dollars-par-an-1870821
 reserve: false
 ---
 
@@ -70,21 +73,6 @@ reserve: false
 .html-importe .art{padding: 16px 14px 48px;}
 .html-importe .art .fig{padding: 12px 10px 10px;}
 .html-importe .art .recap{padding: 6px 18px 20px;}
-}
-
-/* Adaptation 1400 px (site AMSTC) */
-@media (min-width:1200px){
-  /* Le bloc s'aligne sur le conteneur du site plutot que sur son propre
-     retrait lateral. */
-  .html-importe .art{padding-left:0; padding-right:0;}
-  /* Colonne de lecture un peu plus large, schemas nettement plus grands. */
-  .html-importe .art p, .html-importe .art h2, .html-importe .art h3.q,
-  .html-importe .art blockquote, .html-importe .art .note,
-  .html-importe .art ul.ages, .html-importe .art .recap ol{max-width:860px;}
-  .html-importe .art .fig{max-width:980px;}
-  /* Blocs de donnees : toute la largeur disponible. */
-  .html-importe .art .fig.wide, .html-importe .art .duo,
-  .html-importe .art table.imc{max-width:none;}
 }
 </style>
 <div class="html-importe" style="position:relative;overflow:hidden">
