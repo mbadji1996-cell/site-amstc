@@ -252,42 +252,8 @@ collections:
           - { label: "Lien du bouton du bandeau", name: "cta_button_href", widget: "string", required: false, hint: "URL complète (externe) ou #ancre interne à la page d'accueil.", default: "https://consultations-amstc.org" }
           - { label: "Image de fond du bandeau", name: "cta_bg_image", widget: "image", required: false, hint: "Photo affichée en arrière-plan du bandeau. Conserver un format paysage." }
 
-      - name: "navigation"
-        label: "8. Navigation, Liens & pied de page"
-        file: "content/navigation.json"
-        fields:
-          - label: "Sous-menu 'Découvrir l'AMSTC'"
-            name: "nav_decouvrir"
-            widget: "list"
-            hint: "Liens du sous-menu 'Découvrir l'AMSTC', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
-            fields:
-              - { label: "Texte affiché", name: "label", widget: "string" }
-              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
-
-          - label: "Sous-menu 'Nos activités'"
-            name: "nav_activites"
-            widget: "list"
-            hint: "Liens du sous-menu 'Nos activités', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
-            fields:
-              - { label: "Texte affiché", name: "label", widget: "string" }
-              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
-
-          - { label: "E-mail de contact (pied de page)", name: "contact_email", widget: "string", pattern: ['^[^\s@]+@[^\s@]+\.[^\s@]+$', "Adresse e-mail invalide."] }
-
-          - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
-          - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
-          - { label: "NINEA (pied de page)", name: "ninea", widget: "string", required: false }
-          - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
-          - { label: "Adresse (pied de page)", name: "contact_address", widget: "string", required: false, hint: "Doit rester identique à celle des mentions légales et des documents officiels : la vérification Meta les compare." }
-          - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
-          - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
-          - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
-          - { label: "Lien YouTube", name: "lien_youtube", widget: "string", required: false }
-          - { label: "Lien TikTok", name: "lien_tiktok", widget: "string", required: false }
-          - { label: "Lien Telegram", name: "lien_telegram", widget: "string", required: false }
-
       - name: "mediatheque"
-        label: "9. Médiathèque"
+        label: "8. Médiathèque"
         file: "content/mediatheque.json"
         fields:
           - { label: "Accroche", name: "media_eyebrow", widget: "string" }
@@ -309,7 +275,7 @@ collections:
                   - { label: "Légende", name: "legende", widget: "string", required: false, hint: "Facultatif. Ex : Consultation au daara de Ndiassane, Gamou 2026. Laissez vide pour ne rien afficher." }
 
       - name: "prieres"
-        label: "10. Heures de prière"
+        label: "9. Heures de prière"
         file: "content/home-prieres.json"
         fields:
           - { label: "Accroche", name: "prayer_eyebrow", widget: "string", default: "Vie spirituelle" }
@@ -328,7 +294,7 @@ collections:
               - { label: "Heure", name: "time", widget: "string", hint: "Ex : 05H35" }
 
       - name: "impact"
-        label: "11. Chiffres d'impact"
+        label: "10. Chiffres d'impact"
         file: "content/home-impact.json"
         fields:
           - { label: "Accroche", name: "impact_eyebrow", widget: "string", default: "Notre impact" }
@@ -365,7 +331,7 @@ collections:
                   - { label: "Étoile (récompense / qualité)", value: "star" }
 
       - name: "temoignages"
-        label: "12. Témoignages"
+        label: "11. Témoignages"
         file: "content/home-temoignages.json"
         fields:
           - { label: "Accroche", name: "temoignages_eyebrow", widget: "string", default: "Témoignages" }
@@ -389,8 +355,12 @@ collections:
                   - { label: "Membre", value: "membre" }
               - { label: "Photo", name: "photo", widget: "image", required: false }
 
+  - name: "espace_membres"
+    label: "Espace membres"
+    files:
+
       - name: "espace_membre"
-        label: "Tableau de bord de l'espace membres"
+        label: "Tableau de bord"
         file: "content/espace-membre.json"
         fields:
           - { label: "Accroche au-dessus du titre", name: "accroche", widget: "string", required: false, default: "Espace Membres" }
@@ -403,7 +373,7 @@ collections:
           - { label: "Carte d'aide - adresse du bouton", name: "aide_lien", widget: "string", required: false, hint: "Exemple : ../guide.html" }
 
       - name: "boutique_membres"
-        label: "Boutique (espace membres)"
+        label: "Boutique"
         file: "content/boutique-membres.json"
         fields:
           - { label: "Accroche au-dessus du titre", name: "accroche", widget: "string", required: false, default: "Boutique AMSTC" }
@@ -435,7 +405,7 @@ collections:
           - { label: "Appel au don - adresse du bouton", name: "promo_lien", widget: "string", required: false, default: "/don" }
 
       - name: "connexion"
-        label: "Page de connexion (espace membres)"
+        label: "Page de connexion"
         file: "content/connexion.json"
         fields:
           - { label: "Titre", name: "titre", widget: "string", default: "Connexion" }
@@ -451,8 +421,12 @@ collections:
             fields:
               - { label: "Photo", name: "image", widget: "image" }
 
+  - name: "autres_pages"
+    label: "Autres pages"
+    files:
+
       - name: "don"
-        label: "Faire un don (page dédiée don.html)"
+        label: "Faire un don"
         file: "content/don.json"
         fields:
           - { label: "Accroche", name: "eyebrow", widget: "string" }
@@ -479,6 +453,44 @@ collections:
           - { label: "Texte - Don institutionnel", name: "institution_text", widget: "text", required: false }
           - { label: "Note de confiance (récépissé, NINEA)", name: "trust_note", widget: "string", required: false }
 
+  - name: "reglages"
+    label: "Réglages du site"
+    files:
+
+      - name: "navigation"
+        label: "Navigation, Liens & pied de page"
+        file: "content/navigation.json"
+        fields:
+          - label: "Sous-menu 'Découvrir l'AMSTC'"
+            name: "nav_decouvrir"
+            widget: "list"
+            hint: "Liens du sous-menu 'Découvrir l'AMSTC', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
+            fields:
+              - { label: "Texte affiché", name: "label", widget: "string" }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+
+          - label: "Sous-menu 'Nos activités'"
+            name: "nav_activites"
+            widget: "list"
+            hint: "Liens du sous-menu 'Nos activités', dans le menu du site. L'ordre ici définit l'ordre d'affichage."
+            fields:
+              - { label: "Texte affiché", name: "label", widget: "string" }
+              - { label: "Lien", name: "href", widget: "string", hint: "Ancre de la page d'accueil (ex: #nos-actions), chemin du site (ex: actualites), ou URL complète pour un lien externe. Une faute de frappe ici casse le lien." }
+
+          - { label: "E-mail de contact (pied de page)", name: "contact_email", widget: "string", pattern: ['^[^\s@]+@[^\s@]+\.[^\s@]+$', "Adresse e-mail invalide."] }
+
+          - { label: "Description (pied de page)", name: "footer_description", widget: "text" }
+          - { label: "Numéro de récépissé", name: "recepisse", widget: "string" }
+          - { label: "NINEA (pied de page)", name: "ninea", widget: "string", required: false }
+          - { label: "Téléphone de contact", name: "contact_phone", widget: "string", required: false }
+          - { label: "Adresse (pied de page)", name: "contact_address", widget: "string", required: false, hint: "Doit rester identique à celle des mentions légales et des documents officiels : la vérification Meta les compare." }
+          - { label: "Lien Facebook", name: "lien_facebook", widget: "string", required: false }
+          - { label: "Lien LinkedIn", name: "lien_linkedin", widget: "string", required: false }
+          - { label: "Lien Instagram", name: "lien_instagram", widget: "string", required: false }
+          - { label: "Lien YouTube", name: "lien_youtube", widget: "string", required: false }
+          - { label: "Lien TikTok", name: "lien_tiktok", widget: "string", required: false }
+          - { label: "Lien Telegram", name: "lien_telegram", widget: "string", required: false }
+
       - name: "popup-annonce"
         label: "Annonce plein écran (pop-up)"
         file: "content/popup-annonce.json"
@@ -492,6 +504,7 @@ collections:
           - { label: "Plein écran", name: "plein_ecran", widget: "boolean", default: false, required: false, hint: "L'annonce recouvre alors la quasi-totalité de l'écran - utile pour une affiche ou une bannière graphique." }
           - { label: "Texte du bouton de fermeture", name: "texte_fermeture", widget: "string", default: "OK", required: false, hint: "Affiché sur le bouton qui ferme l'annonce (ex : OK, Fermer, J'ai compris)." }
           - { label: "Durée d'affichage (secondes)", name: "duree_secondes", widget: "number", default: 12, value_type: "int", min: 1, max: 300, hint: "De 1 seconde à 5 minutes (300 s). Se ferme aussi à tout moment via le bouton de fermeture ou un clic hors de l'annonce." }
+
 
   - name: "actualites"
     label: "Réalisations"
