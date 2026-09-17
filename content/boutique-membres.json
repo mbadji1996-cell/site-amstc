@@ -1,0 +1,17 @@
+{
+  "accroche": "Boutique AMSTC",
+  "titre": "Ensemble pour le bien-être des Talibés",
+  "texte": "Découvrez notre sélection d'articles et de produits solidaires. Chaque achat contribue à soutenir l'éducation et l'accompagnement des Talibés Cheikh.",
+  "bouton": "Découvrir la boutique",
+  "image": "/assets/uploads/boutique-polo.jpg",
+  "atouts": [
+    { "icone": "coeur", "titre": "Produits solidaires", "texte": "Chaque achat soutient nos actions" },
+    { "icone": "qualite", "titre": "Qualité garantie", "texte": "Des articles soigneusement sélectionnés" },
+    { "icone": "livraison", "titre": "Remise en main propre", "texte": "Au siège ou lors de nos activités" },
+    { "icone": "durable", "titre": "Engagement durable", "texte": "Pour un avenir meilleur" }
+  ],
+  "promo_titre": "Des articles pour l'identité, des dons pour l'action.",
+  "promo_texte": "Ensemble, soutenons l'éducation et l'épanouissement des Talibés Cheikh.",
+  "promo_bouton": "Faire un don",
+  "promo_lien": "/don"
+}

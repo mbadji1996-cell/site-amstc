@@ -41,13 +41,6 @@
   .cart-count.show{display:inline;}
 
 
-  .hero{background:var(--green-deep);padding:32px 0 40px;}
-  .hero-inner{max-width:1400px;margin:0 auto;padding:0 24px;}
-  .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;}
-  .back:hover{color:var(--gold);}
-  .hero-icon{width:52px;height:52px;border-radius:12px;background:var(--amber-light);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--amber-dark);margin-bottom:14px;}
-  .hero h1{font-family:var(--display);font-size:clamp(1.6rem,4vw,2rem);font-weight:600;color:var(--white);margin-bottom:6px;}
-  .hero-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;}
 
   .wrap{max-width:1400px;margin:0 auto;padding:0 24px;}
 
@@ -66,22 +59,101 @@
   .filter-btn:hover:not(.active){border-color:var(--amber);color:var(--amber-dark);}
 
   /* Products grid */
-  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:60px;}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
   .product-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s;}
   .product-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1);transform:translateY(-3px);}
-  .product-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--amber-light);display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;}
+  .product-img{position:relative;width:100%;aspect-ratio:1/1;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;}
+  .product-badge{position:absolute;top:10px;left:10px;background:var(--green);color:#FFFFFF;border-radius:999px;
+    padding:4px 10px;font-size:0.68rem;font-weight:700;letter-spacing:0.02em;}
+  .btn-favori{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
+    background:var(--surface);color:var(--text-muted);cursor:pointer;display:grid;place-items:center;font-size:16px;}
+  .btn-favori:hover{color:#C0392B;border-color:#C0392B;}
+  .btn-favori.actif{color:#C0392B;border-color:#C0392B;}
   .product-img img{width:100%;height:100%;object-fit:cover;}
   .product-img .placeholder-icon{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:36px;color:var(--amber-dark);}
   .product-body{padding:16px 18px;flex:1;display:flex;flex-direction:column;gap:6px;}
   .product-cat{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber-dark);}
   .product-name{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--text-heading);}
   .product-desc{font-size:0.82rem;color:var(--text-muted);flex:1;}
-  .product-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
-  .product-price{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--amber-dark);}
-  .btn-add{background:var(--amber-dark);color:var(--white);border:none;padding:9px 16px;border-radius:999px;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .18s;}
-  .btn-add:hover{background:var(--amber-deeper);}
-  .btn-add.in-cart{background:var(--paper-alt);color:var(--amber-dark);border:1.5px solid var(--amber);}
+  .product-footer{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:10px;}
+  .product-price{font-family:var(--mono);font-size:1.05rem;font-weight:700;color:var(--green);}
+  :root[data-theme="dark"] .product-price{color:#7FD9A0;}
+  .btn-add{width:100%;background:var(--gold);color:var(--green-deep);border:none;padding:10px 16px;border-radius:999px;font-size:0.84rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .18s;}
+  .btn-add:hover{opacity:0.88;}
+  .btn-add.in-cart{background:var(--surface);color:var(--text-heading);border:1.5px solid var(--green);}
+  /* Sur telephone, la carte fait 156 px : le bouton garde « Ajouter » seul. */
+  @media(max-width:480px){ .btn-add-suite{display:none;} }
   .out-of-stock{font-family:var(--mono);font-size:0.7rem;color:#B23B3B;background:#FDEEEE;padding:5px 10px;border-radius:999px;}
+
+
+  /* ===== Banniere d'accueil et atouts ===== */
+  .bq-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:26px 0 24px;}
+  @media(min-width:1180px){ .bq-haut{grid-template-columns:minmax(0,1fr) 340px;} }
+  .bq-banniere{position:relative; overflow:hidden; border-radius:20px; min-height:270px;
+    background:linear-gradient(120deg, #E7F1E9 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
+    border:1px solid var(--line); display:grid; grid-template-columns:minmax(0,1fr);}
+  @media(min-width:760px){ .bq-banniere{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);} }
+  :root[data-theme="dark"] .bq-banniere{background:linear-gradient(120deg, rgba(23,118,59,0.22) 0%, rgba(6,68,28,0.18) 55%, rgba(6,68,28,0) 100%), var(--surface);}
+  .bq-ban-texte{padding:30px 32px; display:flex; flex-direction:column; justify-content:center; gap:12px; z-index:1;}
+  .bq-ban-accroche{font-family:var(--mono); font-size:0.74rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--green);}
+  .bq-banniere h1{font-family:var(--display); font-size:clamp(1.5rem,3.2vw,2.1rem); font-weight:700;
+    color:var(--text-heading); line-height:1.2; margin:0;}
+  .bq-ban-sous{color:var(--text-muted); font-size:0.96rem; max-width:46ch;}
+  .bq-ban-cta{align-self:flex-start; display:inline-flex; align-items:center; gap:9px; margin-top:4px;
+    background:var(--green-deep); color:#FFFFFF; border-radius:999px; padding:12px 22px;
+    font-weight:600; font-size:0.92rem;}
+  .bq-ban-cta:hover{background:var(--green);}
+  .bq-ban-photo{position:relative; min-height:200px;}
+  .bq-ban-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+  /* La photo se fond dans le fond de la banniere, comme sur le tableau de bord. */
+  .bq-ban-photo::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.45) 42%, rgba(244,248,244,0) 100%);}
+  :root[data-theme="dark"] .bq-ban-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.5) 42%, rgba(24,32,25,0) 100%);}
+
+  .bq-atouts{display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:start;
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:14px;}
+  @media(min-width:1180px){ .bq-atouts{grid-template-columns:1fr;} }
+  @media(max-width:640px){ .bq-atouts{grid-template-columns:1fr;} }
+  .bq-atout{display:flex; align-items:center; gap:12px; padding:8px 6px;}
+  .bq-atout-ic{width:38px; height:38px; flex:none; border-radius:11px; display:grid; place-items:center;
+    background:rgba(248,183,24,0.18); color:var(--text-accent); font-size:19px;}
+  .bq-atout-titre{font-family:var(--display); font-size:0.94rem; font-weight:700; color:var(--text-heading); line-height:1.2;}
+  .bq-atout-texte{font-size:0.82rem; color:var(--text-muted); line-height:1.35;}
+
+  /* ===== En-tete des produits ===== */
+  .bq-tete{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px;}
+  .bq-tete-ic{width:44px; height:44px; flex:none; border-radius:13px; display:grid; place-items:center;
+    background:var(--green-deep); color:var(--gold); font-size:22px;}
+  .bq-tete-textes{min-width:0;}
+  .bq-tete-titre{font-family:var(--display); font-size:1.35rem; font-weight:700; color:var(--text-heading); line-height:1.2;}
+  .bq-tete-sous{font-size:0.88rem; color:var(--text-muted);}
+  .bq-tete-outils{margin-left:auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .bq-tri{position:relative; display:flex; align-items:center; gap:8px; padding:0 12px; flex:none;
+    border:1.5px solid var(--line); border-radius:999px; background:var(--surface);}
+  .bq-tri:hover{border-color:var(--gold);}
+  .bq-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+  .bq-tri > .ti{color:var(--text-muted); font-size:16px;}
+  .bq-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
+  .bq-tri select{-webkit-appearance:none; appearance:none; border:0; outline:none; cursor:pointer;
+    padding:9px 28px 9px 2px; font-family:var(--body); font-size:0.85rem; font-weight:600;
+    color:var(--text-heading); background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317763B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center / 16px 16px;}
+  :root[data-theme="dark"] .bq-tri select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FD9A0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+  :root[data-theme="dark"] .bq-tri select option{background:#182019; color:#E8F1EC;}
+
+  /* ===== Corps : produits a gauche, appel au don a droite ===== */
+  .bq-corps{display:grid; grid-template-columns:minmax(0,1fr); gap:18px; align-items:start; padding-bottom:60px;}
+  @media(min-width:1280px){ .bq-corps{grid-template-columns:minmax(0,1fr) 300px;} }
+  .bq-don{background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%);
+    border:1px solid var(--line); border-radius:20px; padding:26px 22px; text-align:center;}
+  :root[data-theme="dark"] .bq-don{background:linear-gradient(180deg, rgba(23,118,59,0.16) 0%, var(--surface) 100%);}
+  @media(min-width:1280px){ .bq-don{position:sticky; top:16px;} }
+  .bq-don-titre{font-family:var(--display); font-size:1.08rem; font-weight:700; color:var(--text-heading); line-height:1.35;}
+  .bq-don-filet{width:46px; height:2px; background:var(--gold); margin:16px auto;}
+  .bq-don-ic{font-size:30px; color:var(--green); margin-bottom:10px;}
+  .bq-don-texte{font-size:0.88rem; color:var(--text-muted); margin-bottom:18px;}
+  .bq-don-lien{display:inline-flex; align-items:center; gap:9px; background:var(--green-deep); color:#FFFFFF;
+    border-radius:999px; padding:12px 22px; font-weight:600; font-size:0.9rem;}
+  .bq-don-lien:hover{background:var(--green);}
 
   .empty{text-align:center;padding:60px 0;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
 
@@ -213,28 +285,69 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-shopping-bag"></i></div>
-    <h1>Boutique AMSTC</h1>
-    <p class="hero-sub">Articles, livres et supports médicaux réservés aux membres</p>
-  </div>
-</div>
-
 <div class="wrap">
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
+    <!-- Banniere et atouts : textes et photo modifiables dans le CMS
+         (content/boutique-membres.json). -->
+    <div class="bq-haut">
+      <section class="bq-banniere">
+        <div class="bq-ban-texte">
+          <p class="bq-ban-accroche" id="bqAccroche">Boutique AMSTC</p>
+          <h1 id="bqTitre">Ensemble pour le bien-être des Talibés</h1>
+          <p class="bq-ban-sous" id="bqTexte">Découvrez notre sélection d'articles et de produits solidaires. Chaque achat contribue à soutenir l'éducation et l'accompagnement des Talibés Cheikh.</p>
+          <a class="bq-ban-cta" href="#nos-produits" id="bqBouton">
+            <i class="ti ti-shopping-bag" aria-hidden="true"></i> Découvrir la boutique
+            <i class="ti ti-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="bq-ban-photo" id="bqPhoto" style="display:none;"><img id="bqPhotoImg" src="" alt="" loading="lazy"></div>
+      </section>
+      <aside class="bq-atouts" id="bqAtouts"></aside>
+    </div>
+
+    <div class="bq-tete" id="nos-produits">
+      <span class="bq-tete-ic" aria-hidden="true"><i class="ti ti-shopping-bag"></i></span>
+      <div class="bq-tete-textes">
+        <p class="bq-tete-titre">Nos produits</p>
+        <p class="bq-tete-sous">Articles, livres et supports médicaux réservés aux membres.</p>
+      </div>
+      <div class="bq-tete-outils">
+        <span class="bq-tri">
+          <i class="ti ti-arrows-sort" aria-hidden="true"></i>
+          <label for="bqTri">Trier par</label>
+          <select id="bqTri" onchange="setTri(this.value)">
+            <option value="recent">Plus récents</option>
+            <option value="prix-asc">Prix croissant</option>
+            <option value="prix-desc">Prix décroissant</option>
+            <option value="nom">Nom (A-Z)</option>
+          </select>
+        </span>
+      </div>
+    </div>
+
     <div class="search-wrap" data-recherche-cacher>
-      <input class="search-input" id="searchInput" data-recherche-page type="text" placeholder="Rechercher un article…" oninput="onSearch()">
+      <input class="search-input" id="searchInput" data-recherche-page type="text" placeholder="Rechercher un produit, une catégorie…" oninput="onSearch()">
       <i class="ti ti-search search-icon" id="searchIcon"></i>
       <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="ti ti-x"></i></button>
     </div>
     <div class="filter-row" id="filterRow">
-      <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">Tout voir</button>
+      <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">Tous</button>
     </div>
-    <div class="products-grid" id="productsGrid"></div>
+
+    <div class="bq-corps">
+      <div class="products-grid" id="productsGrid"></div>
+      <aside class="bq-don">
+        <div class="bq-don-ic" aria-hidden="true"><i class="ti ti-book"></i></div>
+        <p class="bq-don-titre" id="bqPromoTitre">Des articles pour l'identité, des dons pour l'action.</p>
+        <div class="bq-don-filet" aria-hidden="true"></div>
+        <p class="bq-don-texte" id="bqPromoTexte">Ensemble, soutenons l'éducation et l'épanouissement des Talibés Cheikh.</p>
+        <a class="bq-don-lien" id="bqPromoLien" href="../don">
+          <i class="ti ti-heart" aria-hidden="true"></i> <span id="bqPromoBouton">Faire un don</span>
+        </a>
+      </aside>
+    </div>
   </div>
 </div>
 
@@ -382,8 +495,83 @@
 
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+    chargerTextes();
     renderProducts();
   })();
+
+  // ===== Textes de la banniere, des atouts et de l'appel au don =====
+  const ICONES_ATOUT = { coeur: "ti-heart-handshake", qualite: "ti-shield-check",
+    livraison: "ti-truck-delivery", durable: "ti-leaf", solidaire: "ti-users",
+    paiement: "ti-wallet" };
+  const ATOUTS_DEFAUT = [
+    { icone: "coeur", titre: "Produits solidaires", texte: "Chaque achat soutient nos actions" },
+    { icone: "qualite", titre: "Qualité garantie", texte: "Des articles soigneusement sélectionnés" },
+    { icone: "livraison", titre: "Remise en main propre", texte: "Au siège ou lors de nos activités" },
+    { icone: "durable", titre: "Engagement durable", texte: "Pour un avenir meilleur" }
+  ];
+  function poserAtouts(liste) {
+    document.getElementById("bqAtouts").innerHTML = liste.map(a => `
+      <div class="bq-atout">
+        <span class="bq-atout-ic" aria-hidden="true"><i class="ti ${escHtml(ICONES_ATOUT[a.icone] || "ti-circle-check")}"></i></span>
+        <div>
+          <p class="bq-atout-titre">${escHtml(a.titre || "")}</p>
+          <p class="bq-atout-texte">${escHtml(a.texte || "")}</p>
+        </div>
+      </div>`).join("");
+  }
+  async function chargerTextes() {
+    poserAtouts(ATOUTS_DEFAUT);
+    let d = null;
+    try {
+      const r = await fetch("../content/boutique-membres.json?t=" + Date.now());
+      if (r.ok) d = await r.json();
+    } catch (e) { /* le CMS est facultatif : les textes ecrits dans la page restent */ }
+    if (!d) return;
+    const poser = (id, valeur) => { if (valeur) document.getElementById(id).textContent = valeur; };
+    poser("bqAccroche", d.accroche);
+    poser("bqTitre", d.titre);
+    poser("bqTexte", d.texte);
+    poser("bqPromoTitre", d.promo_titre);
+    poser("bqPromoTexte", d.promo_texte);
+    poser("bqPromoBouton", d.promo_bouton);
+    if (d.bouton) {
+      document.getElementById("bqBouton").innerHTML =
+        '<i class="ti ti-shopping-bag" aria-hidden="true"></i> ' + escHtml(d.bouton)
+        + ' <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    }
+    if (d.promo_lien) document.getElementById("bqPromoLien").href = d.promo_lien;
+    if (d.image) {
+      document.getElementById("bqPhotoImg").src = d.image;
+      document.getElementById("bqPhoto").style.display = "";
+    }
+    if (Array.isArray(d.atouts) && d.atouts.length) poserAtouts(d.atouts);
+  }
+
+  // ===== Favoris : un repere personnel, garde dans ce navigateur =====
+  const CLE_FAVORIS = "amstc-boutique-favoris";
+  let favoris = new Set();
+  try { favoris = new Set(JSON.parse(localStorage.getItem(CLE_FAVORIS) || "[]")); } catch (e) { favoris = new Set(); }
+  function basculerFavori(id) {
+    if (favoris.has(id)) favoris.delete(id); else favoris.add(id);
+    try { localStorage.setItem(CLE_FAVORIS, JSON.stringify([...favoris])); } catch (e) { /* navigation privee */ }
+    renderProducts();
+  }
+
+  // Photo d'un produit : celles du carrousel d'abord, sinon l'adresse
+  // saisie dans « image_url » - c'est elle que portent les articles crees
+  // par script, sans passer par l'envoi de fichier.
+  function photoDe(p) {
+    return (p.photos && p.photos[0]) || p.image_url || "";
+  }
+
+  // Un article publie depuis moins de 30 jours porte la pastille.
+  function estNouveau(p) {
+    if (!p.created_at) return false;
+    return Date.now() - new Date(p.created_at).getTime() < 30 * 24 * 3600 * 1000;
+  }
+
+  let tri = "recent";
+  function setTri(valeur) { tri = valeur; renderProducts(); }
 
   function setFilter(f) {
     currentFilter = f;
@@ -419,6 +607,13 @@
         (p.category || '').toLowerCase().includes(searchQuery)
       );
     }
+    const prix = (p) => Number(p.price_fcfa) || 0;
+    const date = (p) => new Date(p.created_at || 0).getTime();
+    if (tri === "prix-asc") items = [...items].sort((a, b) => prix(a) - prix(b));
+    else if (tri === "prix-desc") items = [...items].sort((a, b) => prix(b) - prix(a));
+    else if (tri === "nom") items = [...items].sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "fr"));
+    else items = [...items].sort((a, b) => date(b) - date(a));
+
     const grid = document.getElementById('productsGrid');
     if (items.length === 0) {
       const msg = searchQuery
@@ -430,18 +625,28 @@
     grid.innerHTML = items.map(p => {
       const inCart = !!cart[p.id];
       const outOfStock = p.stock !== null && p.stock === 0;
-      const cover = p.photos && p.photos[0];
+      const cover = photoDe(p);
       const imgHtml = cover
         ? `<img src="${escHtml(cover)}" alt="${escHtml(p.name)}" loading="lazy">`
         : `<div class="placeholder-icon"><i class="ti ti-package"></i></div>`;
       const actionHtml = outOfStock
         ? `<span class="out-of-stock">Épuisé</span>`
         : `<button class="btn-add ${inCart ? 'in-cart' : ''}" onclick="toggleCart('${p.id}')">
-            <i class="ti ti-${inCart ? 'check' : 'plus'}"></i> ${inCart ? 'Ajouté' : 'Ajouter'}
+            <i class="ti ti-${inCart ? 'check' : 'shopping-cart-plus'}"></i> ${inCart ? 'Ajouté' : 'Ajouter'}<span class="btn-add-suite"> au panier</span>
            </button>`;
+      const favori = favoris.has(p.id);
       return `
         <div class="product-card">
-          <div class="product-img" onclick="openProductDetail('${p.id}')">${imgHtml}</div>
+          <div class="product-img" onclick="openProductDetail('${p.id}')">
+            ${imgHtml}
+            ${estNouveau(p) ? '<span class="product-badge">Nouveau</span>' : ''}
+            <button type="button" class="btn-favori ${favori ? 'actif' : ''}"
+              aria-label="${favori ? 'Retirer de mes favoris' : 'Ajouter à mes favoris'}"
+              aria-pressed="${favori}"
+              onclick="event.stopPropagation();basculerFavori('${p.id}')">
+              <i class="ti ti-heart${favori ? '-filled' : ''}"></i>
+            </button>
+          </div>
           <div class="product-body">
             ${p.category ? `<p class="product-cat">${escHtml(p.category)}</p>` : ''}
             <p class="product-name">${escHtml(p.name)}</p>
@@ -458,7 +663,7 @@
   function openProductDetail(productId) {
     const p = allProducts.find(x => x.id === productId);
     if (!p) return;
-    pdPhotos = p.photos || [];
+    pdPhotos = (p.photos && p.photos.length) ? p.photos : (p.image_url ? [p.image_url] : []);
     pdIndex = 0;
 
     document.getElementById('pdCat').textContent = p.category || '';
@@ -545,7 +750,7 @@
       return;
     }
     el.innerHTML = items.map(({ product: p, qty }) => {
-      const cover = p.photos && p.photos[0];
+      const cover = photoDe(p);
       const imgHtml = cover
         ? `<img src="${escHtml(cover)}" alt="" style="width:100%;height:100%;object-fit:cover;">`
         : `<i class="ti ti-package"></i>`;

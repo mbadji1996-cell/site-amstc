@@ -402,6 +402,38 @@ collections:
           - { label: "Carte d'aide - intitulé du bouton", name: "aide_lien_texte", widget: "string", required: false }
           - { label: "Carte d'aide - adresse du bouton", name: "aide_lien", widget: "string", required: false, hint: "Exemple : ../guide.html" }
 
+      - name: "boutique_membres"
+        label: "Boutique (espace membres)"
+        file: "content/boutique-membres.json"
+        fields:
+          - { label: "Accroche au-dessus du titre", name: "accroche", widget: "string", required: false, default: "Boutique AMSTC" }
+          - { label: "Titre de la bannière", name: "titre", widget: "string", required: false }
+          - { label: "Texte de la bannière", name: "texte", widget: "text", required: false }
+          - { label: "Intitulé du bouton", name: "bouton", widget: "string", required: false, default: "Découvrir la boutique" }
+          - { label: "Photo de la bannière", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu vers le fond. Format paysage, 1200 px de large au minimum." }
+          - label: "Atouts (les quatre encadrés à droite)"
+            name: "atouts"
+            widget: "list"
+            required: false
+            fields:
+              - label: "Icône"
+                name: "icone"
+                widget: "select"
+                default: "coeur"
+                options:
+                  - { label: "Cœur (solidarité)", value: "coeur" }
+                  - { label: "Bouclier (qualité)", value: "qualite" }
+                  - { label: "Camion (livraison)", value: "livraison" }
+                  - { label: "Feuille (durable)", value: "durable" }
+                  - { label: "Membres", value: "solidaire" }
+                  - { label: "Portefeuille (paiement)", value: "paiement" }
+              - { label: "Titre", name: "titre", widget: "string" }
+              - { label: "Texte", name: "texte", widget: "string" }
+          - { label: "Appel au don - titre", name: "promo_titre", widget: "string", required: false }
+          - { label: "Appel au don - texte", name: "promo_texte", widget: "text", required: false }
+          - { label: "Appel au don - intitulé du bouton", name: "promo_bouton", widget: "string", required: false, default: "Faire un don" }
+          - { label: "Appel au don - adresse du bouton", name: "promo_lien", widget: "string", required: false, default: "/don" }
+
       - name: "connexion"
         label: "Page de connexion (espace membres)"
         file: "content/connexion.json"
