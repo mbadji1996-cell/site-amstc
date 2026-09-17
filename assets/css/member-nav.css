@@ -225,9 +225,11 @@
 
 
 /* ===== Coquille commune de l'espace membre =====
-   Fond de page vert tres clair : les cartes blanches se detachent, et le
-   vert franc reste ou il porte l'identite - la colonne de gauche. */
-html body{background:#F4F8F4;}
+   Fond de page en degrade, du blanc (haut) vers le vert tres clair (bas),
+   comme les sections alternees de l'accueil ; le vert franc reste ou il
+   porte l'identite - la colonne de gauche. Le degrade couvre toute la
+   hauteur du document ; la couleur de fond prend le relais au-dela. */
+html body{background:#F4F8F4 linear-gradient(180deg, #FFFFFF 0%, #F4F8F4 100%) no-repeat; min-height:100vh;}
 :root[data-theme="dark"] body{background:var(--paper, #0E1710);}
 
 /* La barre du haut est claire partout, a toutes les largeurs : elle etait
