@@ -168,15 +168,11 @@
   <div class="member-tabs-inner">
     <a class="member-tab" href="./">Tableau de bord</a>
     <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
-    <div class="member-groupe">
-      <button type="button" class="member-tab member-tab-parent active" aria-expanded="false" aria-haspopup="true">Formation<span class="mt-fleche" aria-hidden="true"></span></button>
-      <div class="member-sous-menu">
-        <a class="member-sous-lien" href="formations">Formations</a>
-        <a class="member-sous-lien" href="daara">Daara</a>
-        <a class="member-sous-lien" href="medical">Enseignements médicaux</a>
-        <a class="member-sous-lien active" href="bibliotheque">Bibliothèque</a>
-      </div>
-    </div>
+    <a class="member-tab" href="daara">Espace Daara</a>
+    <a class="member-tab" href="medical">Enseignements Médicaux</a>
+    <a class="member-tab" href="formations">Autres formations</a>
+    <a class="member-tab" href="quiz">Quiz</a>
+    <a class="member-tab active" href="bibliotheque">Bibliothèque</a>
     <a class="member-tab" href="actualites">Réalisations</a>
     <a class="member-tab" href="documents">Documents officiels</a>
     <a class="member-tab" href="boutique">Boutique AMSTC</a>
@@ -262,6 +258,10 @@
 
       <label for="title">Titre</label>
       <input type="text" id="title" required>
+
+      <label for="auteur">Auteur (facultatif)</label>
+      <input type="text" id="auteur" maxlength="120" placeholder="Ex. Cheikh Ahmadou Bamba">
+      <p class="field-hint">Affiché sur la fiche du document et proposé dans le filtre « Auteur » de la page des membres.</p>
 
       <label for="excerpt">Résumé court (visible de tous, sert d'accroche)</label>
       <input type="text" id="excerpt" maxlength="200">
@@ -1078,7 +1078,7 @@
       if (permis && !permis.has(x.dossier_id || null)) return false;
       if (!q) return true;
       return normaliserRecherche(
-        [x.title, x.excerpt, nomDuDossier(x.dossier_id)].filter(Boolean).join(" ")
+        [x.title, x.auteur, x.excerpt, nomDuDossier(x.dossier_id)].filter(Boolean).join(" ")
       ).indexOf(q) !== -1;
     });
   }
@@ -1152,6 +1152,7 @@
     document.getElementById("itemId").value = item.id;
     document.getElementById("existingFilePath").value = item.file_path || "";
     document.getElementById("title").value = item.title || "";
+    document.getElementById("auteur").value = item.auteur || "";
     document.getElementById("excerpt").value = item.excerpt || "";
     document.getElementById("dossier_id").value = item.dossier_id || "";
     document.getElementById("cover_image").value = item.cover_image || "";
@@ -1215,6 +1216,7 @@
     const payload = {
       category: "bibliotheque",
       title: document.getElementById("title").value.trim(),
+      auteur: document.getElementById("auteur").value.trim() || null,
       excerpt: document.getElementById("excerpt").value.trim(),
       dossier_id: document.getElementById("dossier_id").value || null,
       cover_image: document.getElementById("cover_image").value.trim() || null,
@@ -1244,12 +1246,24 @@
       payload.file_path = existingFilePath;
     }
 
-    let error;
-    if (id) {
-      ({ error } = await supabaseClient.from("restricted_articles").update(payload).eq("id", id));
-    } else {
-      payload.created_by = currentUserId;
-      ({ error } = await supabaseClient.from("restricted_articles").insert(payload));
+    // La colonne « auteur » vient de phase110. Si le script n'a pas encore
+    // ete passe, la base repond « colonne inconnue » : on reessaie sans le
+    // champ plutot que de refuser la fiche, et on dit quoi executer.
+    async function enregistrer(charge) {
+      if (id) return supabaseClient.from("restricted_articles").update(charge).eq("id", id);
+      charge.created_by = currentUserId;
+      return supabaseClient.from("restricted_articles").insert(charge);
+    }
+    const colonneAbsente = (e) => e && (e.code === "42703" || e.code === "PGRST204"
+      || /auteur/i.test(e.message || "") && /column|colonne/i.test(e.message || ""));
+
+    let { error } = await enregistrer(Object.assign({}, payload));
+    let auteurIgnore = false;
+    if (colonneAbsente(error)) {
+      const sansAuteur = Object.assign({}, payload);
+      delete sansAuteur.auteur;
+      ({ error } = await enregistrer(sansAuteur));
+      auteurIgnore = !error;
     }
 
     rendreLaMain();
@@ -1259,7 +1273,8 @@
       return;
     }
 
-    messageEl.textContent = id ? "Contenu mis à jour." : "Contenu publié.";
+    messageEl.textContent = (id ? "Contenu mis à jour." : "Contenu publié.")
+      + (auteurIgnore ? " L'auteur n'a pas été enregistré : exécutez supabase/phase110-bibliotheque-auteur.sql." : "");
     messageEl.className = "form-message success";
     partageDeclencherConstruction();
     resetForm();

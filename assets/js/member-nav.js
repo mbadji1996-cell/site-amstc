@@ -4,11 +4,11 @@
 // et le panneau depuis les onglets déjà présents dans la page, puis pose la
 // classe has-mobile-nav qui active la bascule CSS sous 880px.
 //
-// La barre peut contenir des GROUPES (« Formation » et ses quatre espaces).
-// Sur grand écran, le CSS les ouvre au survol ; ce script ajoute le clic,
-// indispensable au tactile et au clavier. Dans le panneau mobile, le parent
-// devient un intitulé de section et ses enfants sont décalés dessous : une
-// liste à plat de treize entrées ne se lit plus.
+// La barre est A PLAT depuis que « Formation » a ete eclate en cinq
+// entrees : la colonne avait la place, et un espace s'atteint en un clic.
+// Le code des GROUPES reste ici - ouverture au clic sur grand ecran,
+// intitule de section dans le panneau mobile - pour une barre qui en
+// porterait de nouveau.
 (function () {
   var tabs = document.querySelector('.member-tabs');
   if (!tabs) return;
@@ -159,7 +159,8 @@
     'index': 'M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z',
     'profil': 'M3 6.5h18v11H3zM7 10.5h4M7 13.5h6M16.5 9.5h2M16.5 12.5h2',
     'formations': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
-    'daara': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
+    'daara': 'M12 3.2c1.9 1.3 2.9 2.8 2.9 4.4 0 1.1-.6 2.1-1.5 2.7h-2.8c-.9-.6-1.5-1.6-1.5-2.7 0-1.6 1-3.1 2.9-4.4zM5.5 10.6v9.9M18.5 10.6v9.9M4 20.5h16M8.6 20.5v-4.6a3.4 3.4 0 0 1 6.8 0v4.6',
+    'quiz': 'M12 3.6a8.4 8.4 0 1 0 0 16.8 8.4 8.4 0 0 0 0-16.8zM9.7 9.4a2.4 2.4 0 0 1 4.7.5c0 1.6-2.4 1.9-2.4 3.4M11.9 16.4h.2',
     'actualites': 'M4 20V11M10 20V4M16 20v-6M3 20h18',
     'documents': 'M6.5 3h7l4.5 4.5V21h-11.5zM13.5 3v4.5H18',
     'boutique': 'M6 7.5h12L19 21H5zM9.2 7.5V5.6a2.8 2.8 0 0 1 5.6 0v1.9',
@@ -167,9 +168,11 @@
     'forum': 'M4 5h16v10.5H9.5L4 19.5zM8 9h8M8 12h5',
     'annuaire': 'M5 3.5h14v17H5zM5 8H3M5 12H3M5 16H3M12 11.2a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2zM8.6 17a3.4 3.4 0 0 1 6.8 0',
     'mediatheque': 'M3.5 5.5h17v13h-17zM3.5 15l4.5-4 3.5 3 3-2.5 6 5M15.5 9.6a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z',
+    'cours': 'M12 3.2c1.9 1.3 2.9 2.8 2.9 4.4 0 1.1-.6 2.1-1.5 2.7h-2.8c-.9-.6-1.5-1.6-1.5-2.7 0-1.6 1-3.1 2.9-4.4zM5.5 10.6v9.9M18.5 10.6v9.9M4 20.5h16M8.6 20.5v-4.6a3.4 3.4 0 0 1 6.8 0v4.6',
+    'lecon': 'M6.2 3.5v5.2a4 4 0 0 0 8 0V3.5M10.2 12.9v2.2a4.6 4.6 0 0 0 9.2 0v-1.4M19.4 12.1a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8',
     'admin': 'M12 3.5 19.5 6v5.6c0 4.2-3.1 7.4-7.5 8.9-4.4-1.5-7.5-4.7-7.5-8.9V6z',
-    'bibliotheque': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8',
-    'medical': 'M2.5 9 12 4.5 21.5 9 12 13.5zM6.5 11.2V16c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4v-4.8'
+    'bibliotheque': 'M4 4.5h5.2v15H4zM10.6 4.5h4.2v15h-4.2zM16.4 5.6l3.4.9-2.7 13.4-3.4-.9',
+    'medical': 'M6.2 3.5v5.2a4 4 0 0 0 8 0V3.5M10.2 12.9v2.2a4.6 4.6 0 0 0 9.2 0v-1.4M19.4 12.1a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8'
   };
   var ICONE_DEFAUT = 'M4 6h16M4 12h16M4 18h16';
 
