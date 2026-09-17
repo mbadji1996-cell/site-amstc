@@ -55,33 +55,132 @@
   .search-clear.show{display:block;}
 
   .filter-row{display:flex;gap:8px;padding:8px 0 20px;flex-wrap:wrap;}
-  .filter-btn{font-size:0.85rem;font-weight:600;padding:8px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text-muted);cursor:pointer;transition:all .18s;}
-  .filter-btn.active{background:var(--indigo-light);border-color:var(--indigo);color:var(--indigo-dark);}
-  .filter-btn:hover:not(.active){border-color:var(--indigo);color:var(--indigo-dark);}
+  .filter-row{gap:9px;padding:0 0 4px;}
+  .filter-btn{display:inline-flex;align-items:center;gap:8px;font-size:0.85rem;font-weight:600;padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text-heading);cursor:pointer;transition:all .18s;}
+  .filter-btn .ti{font-size:16px;color:var(--text-muted);}
+  .filter-btn.active{background:var(--green-deep);border-color:var(--green-deep);color:#FFFFFF;}
+  .filter-btn.active .ti{color:var(--gold);}
+  .filter-btn:hover:not(.active){border-color:var(--green);color:var(--green);}
+  .filter-btn:hover:not(.active) .ti{color:var(--green);}
 
-  .directory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:60px;}
-  .member-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;transition:box-shadow .18s,transform .18s;}
-  .member-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1);transform:translateY(-3px);}
-  .member-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:10px;background:var(--paper-alt);}
+  .directory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding-bottom:18px;}
+  .member-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;transition:box-shadow .18s,transform .18s,border-color .18s;}
+  .member-card:hover{border-color:var(--gold);box-shadow:0 10px 26px rgba(6,68,28,0.1);transform:translateY(-3px);}
+  /* Pastille d'etat : member_directory ne liste que les comptes approuves
+     et actifs, la mention dit donc vrai pour chaque carte. */
+  .member-etat{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+    background:rgba(23,118,59,0.1);color:#12622F;border-radius:999px;padding:4px 10px;font-size:0.68rem;font-weight:600;}
+  :root[data-theme="dark"] .member-etat{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+  .member-etat::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .member-avatar{width:84px;height:84px;border-radius:50%;object-fit:cover;margin:6px 0 10px;background:var(--paper-alt);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);}
   .member-avatar-fallback{
-    width:72px;height:72px;border-radius:50%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;
-    background:var(--indigo-light);color:var(--indigo-dark);font-family:var(--display);font-weight:700;font-size:1.2rem;
+    width:84px;height:84px;border-radius:50%;margin:6px 0 10px;display:flex;align-items:center;justify-content:center;
+    background:rgba(23,118,59,0.1);color:var(--green);font-family:var(--display);font-weight:700;font-size:1.35rem;
   }
   .member-name{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--text-heading);}
   /* Comptes administrateurs : signalés à tous les membres dans l'annuaire. */
-  .member-role-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-deep,#AA7B11);background:#FEF6E4;padding:3px 10px;border-radius:999px;margin-top:6px;}
+  /* L'or de la charte sur ce fond creme ne tenait que 3,52 : on descend
+     d'un ton pour passer le minimum de lisibilite. */
+  .member-role-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:#8A6209;background:#FEF6E4;padding:3px 10px;border-radius:999px;margin-top:6px;}
+  :root[data-theme="dark"] .member-role-badge{color:#F0C955;background:rgba(248,183,24,0.14);}
   /* Fonction au Bureau Exécutif : vert, pour se distinguer au premier coup
      d'œil du badge doré des droits d'administration - ce sont deux choses
      différentes, et un membre du Bureau n'est pas forcément administrateur. */
   .member-bureau-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--white,#fff);background:var(--green,#17763B);padding:3px 10px;border-radius:999px;margin-top:6px;}
-  .member-domain{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--indigo-dark);background:var(--indigo-light);padding:3px 10px;border-radius:999px;margin-top:6px;}
+  .member-domain{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:#12622F;background:rgba(23,118,59,0.1);padding:4px 11px;border-radius:999px;margin-top:8px;}
+  :root[data-theme="dark"] .member-domain{background:rgba(127,217,160,0.14);color:#7FD9A0;}
   .member-city{font-size:0.82rem;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px;}
   .member-contact{
-    font-family:var(--mono);font-size:0.78rem;font-weight:600;color:#17763B;
-    display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:6px 14px;
-    border-radius:999px;border:1.5px solid #17763B;transition:background .18s ease,color .18s ease;
+    width:100%;font-family:var(--mono);font-size:0.78rem;font-weight:600;color:#12622F;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 14px;
+    border-radius:10px;background:rgba(23,118,59,0.08);border:1px solid rgba(23,118,59,0.2);
+    transition:background .18s ease,color .18s ease;
   }
-  .member-contact:hover{background:#17763B;color:var(--white);}
+  .member-contact:hover{background:#17763B;color:var(--white);border-color:#17763B;}
+  :root[data-theme="dark"] .member-contact{color:#7FD9A0;background:rgba(127,217,160,0.12);border-color:rgba(127,217,160,0.25);}
+  .member-profil{
+    width:100%;display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;
+    padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+    color:var(--text-heading);font-family:var(--body);font-size:0.82rem;font-weight:600;cursor:pointer;
+  }
+  .member-profil:hover{border-color:var(--green);color:var(--green);}
+
+
+  /* ===== Bandeau et compteur ===== */
+  .an-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin:24px 0 20px;}
+  @media(min-width:1180px){ .an-haut{grid-template-columns:minmax(0,1fr) 270px;} }
+  .an-bandeau{position:relative; overflow:hidden; border-radius:18px; border:1px solid var(--line);
+    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 52%, rgba(244,248,244,0) 100%), var(--surface);
+    display:flex; align-items:center; gap:18px; padding:26px 28px; min-height:150px;}
+  :root[data-theme="dark"] .an-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 52%, rgba(6,68,28,0) 100%), var(--surface);}
+  .an-bandeau-photo{position:absolute; inset:0 0 0 auto; width:58%; z-index:0;}
+  .an-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
+  .an-bandeau-photo::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.55) 40%, rgba(244,248,244,0.12) 100%);}
+  :root[data-theme="dark"] .an-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.6) 40%, rgba(24,32,25,0.2) 100%);}
+  .an-bandeau-texte{position:relative; z-index:1; display:flex; align-items:center; gap:18px; min-width:0;}
+  .an-bandeau-ic{width:58px; height:58px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:rgba(23,118,59,0.12); color:var(--green); font-size:26px;}
+  .an-retour{position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px;
+    font-size:0.82rem; color:var(--text-muted); margin-bottom:10px;}
+  .an-retour:hover{color:var(--green);}
+  .an-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.4vw,2.1rem); font-weight:700;
+    color:var(--text-heading); line-height:1.15; margin:0;}
+  .an-bandeau-sous{color:var(--text-muted); font-size:0.92rem; margin-top:4px;}
+  .an-compteur{display:flex; align-items:center; gap:14px; padding:20px;
+    background:var(--surface); border:1px solid var(--line); border-radius:18px;}
+  .an-compteur-ic{width:48px; height:48px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:var(--green); color:#FFFFFF; font-size:23px;}
+  .an-compteur-nombre{font-family:var(--display); font-size:1.9rem; font-weight:700; color:var(--text-heading); line-height:1;}
+  .an-compteur-label{font-size:0.86rem; color:var(--text-muted);}
+
+  /* ===== Filtres et tri ===== */
+  .an-barre{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px;}
+  .an-tri{display:flex; align-items:center; gap:8px; padding:0 12px; margin-left:auto; flex:none;
+    border:1.5px solid var(--line); border-radius:999px; background:var(--surface);}
+  .an-tri:hover{border-color:var(--gold);}
+  .an-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+  .an-tri > .ti{color:var(--text-muted); font-size:16px;}
+  .an-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
+  .an-tri select{-webkit-appearance:none; appearance:none; border:0; outline:none; cursor:pointer;
+    padding:9px 28px 9px 2px; font-family:var(--body); font-size:0.85rem; font-weight:600; color:var(--text-heading);
+    background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317763B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center / 16px 16px;}
+  :root[data-theme="dark"] .an-tri select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FD9A0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+  :root[data-theme="dark"] .an-tri select option{background:#182019; color:#E8F1EC;}
+
+  /* ===== Pagination ===== */
+  .an-pages{display:flex; align-items:center; justify-content:center; gap:7px; padding:8px 0 60px; flex-wrap:wrap;}
+  .an-page{min-width:36px; height:36px; padding:0 10px; border-radius:50%; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--text-heading);
+    font-family:var(--body); font-size:0.86rem; font-weight:600;}
+  .an-page:hover:not(:disabled){border-color:var(--green); color:var(--green);}
+  .an-page.actif{background:var(--green); border-color:var(--green); color:#FFFFFF;}
+  /* En sombre, --green est un vert clair : le texte doit y etre fonce. */
+  :root[data-theme="dark"] .an-page.actif{background:#7FD9A0; border-color:#7FD9A0; color:#06441C;}
+  .an-page:disabled{opacity:0.45; cursor:default;}
+  .an-pages-info{width:100%; text-align:center; font-family:var(--mono); font-size:0.74rem; color:var(--text-muted);}
+
+  /* ===== Fiche d'un membre ===== */
+  .an-voile{position:fixed; inset:0; z-index:1500; background:rgba(6,28,14,0.55);
+    display:none; align-items:center; justify-content:center; padding:24px;}
+  .an-voile.ouvert{display:flex;}
+  .an-fiche{background:var(--surface); border-radius:18px; width:min(420px,100%); overflow:hidden;
+    box-shadow:0 24px 60px rgba(6,28,14,0.35);}
+  .an-fiche-tete{padding:26px 24px 20px; text-align:center; background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%);}
+  :root[data-theme="dark"] .an-fiche-tete{background:linear-gradient(180deg, rgba(23,118,59,0.18) 0%, var(--surface) 100%);}
+  .an-fiche-nom{font-family:var(--display); font-size:1.2rem; font-weight:700; color:var(--text-heading); margin-top:10px;}
+  .an-fiche-corps{padding:6px 24px 24px;}
+  .an-fiche-ligne{display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    padding:10px 0; border-bottom:1px solid var(--line); font-size:0.88rem;}
+  .an-fiche-ligne:last-of-type{border-bottom:0;}
+  .an-fiche-label{color:var(--text-muted);}
+  .an-fiche-valeur{color:var(--text-heading); font-weight:600; text-align:right;}
+  .an-fiche-actions{display:flex; gap:10px; margin-top:16px;}
+  .an-fiche-actions .member-contact, .an-fiche-fermer{flex:1; justify-content:center; margin-top:0;}
+  .an-fiche-fermer{padding:9px 14px; border-radius:999px; border:1.5px solid var(--line);
+    background:var(--surface); color:var(--text-heading); font-family:var(--body); font-size:0.84rem;
+    font-weight:600; cursor:pointer;}
+  .an-fiche-fermer:hover{border-color:var(--green); color:var(--green);}
 
   .empty{text-align:center;padding:60px 0;color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;}
 
@@ -122,28 +221,62 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-address-book"></i></div>
-    <h1>Annuaire des membres</h1>
-    <p class="hero-sub">Retrouvez les membres de l'association par domaine, spécialité ou ville.</p>
-  </div>
-</div>
-
 <div class="wrap">
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
+    <div class="an-haut">
+      <section class="an-bandeau">
+        <div class="an-bandeau-photo" id="anPhoto" style="display:none;"><img id="anPhotoImg" src="" alt="" loading="lazy"></div>
+        <div class="an-bandeau-texte">
+          <span class="an-bandeau-ic" aria-hidden="true"><i class="ti ti-users"></i></span>
+          <div>
+            <a class="an-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+            <h1>Annuaire des membres</h1>
+            <p class="an-bandeau-sous">Retrouvez les membres de l'association par domaine, spécialité ou ville.</p>
+          </div>
+        </div>
+      </section>
+      <aside class="an-compteur">
+        <span class="an-compteur-ic" aria-hidden="true"><i class="ti ti-users-group"></i></span>
+        <div>
+          <div class="an-compteur-nombre" id="anNombre">0</div>
+          <div class="an-compteur-label">membres enregistrés</div>
+        </div>
+      </aside>
+    </div>
+
     <div class="search-wrap" data-recherche-cacher>
       <input type="text" class="search-input" id="searchInput" data-recherche-page placeholder="Rechercher un nom, une ville, une spécialité…" oninput="onSearch()">
       <i class="ti ti-search search-icon" id="searchIcon"></i>
       <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="ti ti-x"></i></button>
     </div>
-    <div class="filter-row" id="filterRow">
-      <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">Tous</button>
+
+    <div class="an-barre">
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" id="filter-all" onclick="setFilter('all')"><i class="ti ti-users" aria-hidden="true"></i> Tous</button>
+      </div>
+      <span class="an-tri">
+        <i class="ti ti-arrows-sort" aria-hidden="true"></i>
+        <label for="anTri">Trier par</label>
+        <select id="anTri" onchange="setTri(this.value)">
+          <option value="nom">Nom (A-Z)</option>
+          <option value="recent">Adhésions récentes</option>
+          <option value="ancien">Anciens membres</option>
+          <option value="ville">Ville</option>
+        </select>
+      </span>
     </div>
+
     <div class="directory-grid" id="directoryGrid"></div>
+    <div class="an-pages" id="anPages"></div>
+  </div>
+</div>
+
+<div class="an-voile" id="anVoile" onclick="if(event.target===this)fermerFiche()">
+  <div class="an-fiche" role="dialog" aria-modal="true" aria-labelledby="anFicheNom">
+    <div class="an-fiche-tete" id="anFicheTete"></div>
+    <div class="an-fiche-corps" id="anFicheCorps"></div>
   </div>
 </div>
 
@@ -169,7 +302,18 @@
     'medecine', 'pharmacie', 'odontologie',
     'soins_infirmiers', 'soins_obstetricaux', 'autre',
   ];
+  // Une icone par domaine, comme sur la maquette.
+  const ICONES_DOMAINE = {
+    all: 'ti-users', medecine: 'ti-stethoscope', pharmacie: 'ti-pill',
+    odontologie: 'ti-dental', soins_infirmiers: 'ti-vaccine',
+    soins_obstetricaux: 'ti-mood-kid', autre: 'ti-layout-grid',
+  };
   let allMembers = [], currentFilter = 'all', allDomains = [], searchQuery = '';
+  let tri = 'nom';
+  // 24 cartes par page : 128 membres d'un coup obligeaient a defiler
+  // longtemps, et la page devenait lourde a afficher.
+  const PAR_PAGE = 24;
+  let page = 1;
 
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
@@ -252,16 +396,39 @@
       const btn = document.createElement('button');
       btn.className = 'filter-btn';
       btn.id = 'filter-' + d;
-      btn.textContent = DOMAIN_LABELS[d] || d;
+      btn.innerHTML = '<i class="ti ' + (ICONES_DOMAINE[d] || 'ti-layout-grid') + '" aria-hidden="true"></i> '
+        + esc(DOMAIN_LABELS[d] || d);
       btn.onclick = () => setFilter(d);
       row.appendChild(btn);
     });
 
+    document.getElementById('anNombre').textContent = allMembers.length;
+    // La photo du bandeau est celle que le CMS donne a l'espace membres
+    // (content/espace-membre.json) : une seule image a tenir a jour pour
+    // le tableau de bord et l'annuaire.
+    try {
+      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.image) {
+          document.getElementById('anPhotoImg').src = d.image;
+          document.getElementById('anPhoto').style.display = '';
+        }
+      }
+    } catch (e) { /* sans photo, le bandeau garde son fond degrade */ }
     document.getElementById('pageContent').style.display = '';
     renderDirectory();
   })();
 
+  function setTri(valeur){ tri = valeur; page = 1; renderDirectory(); }
+  function allerPage(n){
+    page = n;
+    renderDirectory();
+    document.querySelector('.directory-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function setFilter(f){
+    page = 1;
     currentFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     const btn = document.getElementById('filter-' + f);
@@ -270,6 +437,7 @@
   }
 
   function onSearch(){
+    page = 1;
     searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
     const icon = document.getElementById('searchIcon');
     const clear = document.getElementById('searchClear');
@@ -279,6 +447,7 @@
   }
 
   function clearSearch(){
+    page = 1;
     document.getElementById('searchInput').value = '';
     searchQuery = '';
     document.getElementById('searchIcon').style.display = '';
@@ -295,14 +464,33 @@
       });
     }
 
+    const cleAlpha = m => [m.first_name, m.last_name].filter(Boolean).join(' ') || m.full_name || '';
+    const annee = m => Number(m.member_since) || 0;
+    if (tri === 'recent') items = [...items].sort((a, b) => annee(b) - annee(a) || cleAlpha(a).localeCompare(cleAlpha(b), 'fr'));
+    else if (tri === 'ancien') items = [...items].sort((a, b) => (annee(a) || 9999) - (annee(b) || 9999) || cleAlpha(a).localeCompare(cleAlpha(b), 'fr'));
+    else if (tri === 'ville') items = [...items].sort((a, b) =>
+      String(a.city || 'zzz').localeCompare(String(b.city || 'zzz'), 'fr', { sensitivity: 'base' })
+      || cleAlpha(a).localeCompare(cleAlpha(b), 'fr'));
+    else items = [...items].sort((a, b) => cleAlpha(a).localeCompare(cleAlpha(b), 'fr', { sensitivity: 'base' }));
+
     const grid = document.getElementById('directoryGrid');
+    const pages = document.getElementById('anPages');
     if (items.length === 0) {
       grid.innerHTML = `<p class="empty" style="grid-column:1/-1;">Aucun membre ne correspond à votre recherche.</p>`;
+      pages.innerHTML = '';
       return;
     }
 
-    grid.innerHTML = items.map(m => `
+    // La page demandee peut ne plus exister apres un filtre : on revient
+    // a la derniere page disponible plutot que d'afficher du vide.
+    const nbPages = Math.ceil(items.length / PAR_PAGE);
+    if (page > nbPages) page = nbPages;
+    const debut = (page - 1) * PAR_PAGE;
+    const visibles = items.slice(debut, debut + PAR_PAGE);
+
+    grid.innerHTML = visibles.map(m => `
       <div class="member-card">
+        <span class="member-etat">Membre actif</span>
         ${m.photo_url
           ? `<img class="member-avatar" src="${esc(m.photo_url)}" alt="${esc(displayName(m))}" loading="lazy" data-initials="${esc(memberInitials(m))}" onerror="avatarErreur(this)">`
           : `<div class="member-avatar-fallback">${esc(memberInitials(m))}</div>`}
@@ -310,12 +498,61 @@
         ${fonctionLabel(m) ? `<div class="member-bureau-badge">${esc(fonctionLabel(m))}</div>` : ''}
         ${m.role === 'super_admin' ? '<div class="member-role-badge">Super Administrateur</div>'
           : m.role === 'admin' ? '<div class="member-role-badge">Administrateur</div>' : ''}
-        ${domainLabel(m) ? `<div class="member-domain">${esc([domainLabel(m), m.specialty].filter(Boolean).join(' · '))}</div>` : ''}
+        ${domainLabel(m) ? `<div class="member-domain"><i class="ti ${esc(ICONES_DOMAINE[m.domain] || 'ti-layout-grid')}" aria-hidden="true"></i> ${esc([domainLabel(m), m.specialty].filter(Boolean).join(' · '))}</div>` : ''}
         ${m.city ? `<div class="member-city"><i class="ti ti-map-pin"></i> ${esc(m.city)}</div>` : ''}
         ${whatsappLink(m.phone) ? `<a class="member-contact" href="${esc(whatsappLink(m.phone))}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> ${esc(m.phone)}</a>` : ''}
+        <button type="button" class="member-profil" onclick="ouvrirFiche('${esc(m.id)}')">Voir le profil <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
       </div>
     `).join('');
+
+    if (nbPages <= 1) { pages.innerHTML = `<p class="an-pages-info">${items.length} membre${items.length > 1 ? 's' : ''}</p>`; return; }
+    // Fenetre de cinq numeros autour de la page courante : au-dela, la
+    // rangee de boutons deviendrait plus longue que la grille.
+    let numeros = [];
+    const premier = Math.max(1, Math.min(page - 2, nbPages - 4));
+    for (let n = premier; n <= Math.min(nbPages, premier + 4); n++) numeros.push(n);
+    pages.innerHTML =
+      `<button type="button" class="an-page" ${page === 1 ? 'disabled' : ''} onclick="allerPage(${page - 1})" aria-label="Page précédente"><i class="ti ti-chevron-left"></i></button>`
+      + numeros.map(n => `<button type="button" class="an-page ${n === page ? 'actif' : ''}" onclick="allerPage(${n})" ${n === page ? 'aria-current="page"' : ''}>${n}</button>`).join('')
+      + `<button type="button" class="an-page" ${page === nbPages ? 'disabled' : ''} onclick="allerPage(${page + 1})" aria-label="Page suivante"><i class="ti ti-chevron-right"></i></button>`
+      + `<p class="an-pages-info">${items.length} membre${items.length > 1 ? 's' : ''} · page ${page} sur ${nbPages}</p>`;
   }
+
+  /**
+   * Fiche d'un membre : ce que l'annuaire sait deja de lui, rassemble.
+   * Rien de plus que les cartes n'affichent - member_directory ne renvoie
+   * ni adresse ni courriel.
+   */
+  function ouvrirFiche(id){
+    const m = allMembers.find(x => String(x.id) === String(id));
+    if (!m) return;
+    const lien = whatsappLink(m.phone);
+    document.getElementById('anFicheTete').innerHTML =
+      (m.photo_url
+        ? `<img class="member-avatar" src="${esc(m.photo_url)}" alt="" data-initials="${esc(memberInitials(m))}" onerror="avatarErreur(this)">`
+        : `<div class="member-avatar-fallback" style="margin-left:auto;margin-right:auto;">${esc(memberInitials(m))}</div>`)
+      + `<p class="an-fiche-nom" id="anFicheNom">${esc(displayName(m))}</p>`
+      + `<span class="member-etat" style="align-self:center;">Membre actif</span>`;
+
+    const lignes = [
+      ['Domaine', [domainLabel(m), m.specialty].filter(Boolean).join(' · ')],
+      ['Ville', m.city],
+      ['Membre depuis', m.member_since],
+      ['Fonction au Bureau', fonctionLabel(m)],
+      ['Droits', m.role === 'super_admin' ? 'Super Administrateur' : (m.role === 'admin' ? 'Administrateur' : '')],
+      ['Téléphone', m.phone],
+    ].filter(([, v]) => v);
+
+    document.getElementById('anFicheCorps').innerHTML =
+      lignes.map(([l, v]) => `<div class="an-fiche-ligne"><span class="an-fiche-label">${esc(l)}</span><span class="an-fiche-valeur">${esc(v)}</span></div>`).join('')
+      + `<div class="an-fiche-actions">`
+      + (lien ? `<a class="member-contact" href="${esc(lien)}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a>` : '')
+      + `<button type="button" class="an-fiche-fermer" onclick="fermerFiche()">Fermer</button></div>`;
+
+    document.getElementById('anVoile').classList.add('ouvert');
+  }
+  function fermerFiche(){ document.getElementById('anVoile').classList.remove('ouvert'); }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fermerFiche(); });
 
   document.getElementById('signoutBtn').addEventListener('click', async () => {
     await signOut();
