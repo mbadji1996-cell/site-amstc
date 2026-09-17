@@ -232,6 +232,14 @@
 html body{background:#F4F8F4 linear-gradient(180deg, #FFFFFF 0%, #F4F8F4 100%) no-repeat; min-height:100vh;}
 :root[data-theme="dark"] body{background:var(--paper, #0E1710);}
 
+/* Cartes : bordure un peu plus marquee, le haut du degrade etant presque
+   blanc. On renforce --line sur la carte elle-meme (sa bordure la lit), puis
+   ses enfants reprennent la valeur de la page : filets, champs et
+   separateurs internes ne changent pas. Theme clair seulement. */
+html:root{--line-fin:var(--line);}
+html:root:not([data-theme="dark"]) :is([class*="card"], [class*="carte"], [class*="bloc"], .ma-liste, .confirm-box){--line:rgba(6,68,28,0.30);}
+html:root:not([data-theme="dark"]) :is([class*="card"], [class*="carte"], [class*="bloc"], .ma-liste, .confirm-box) > :not([class*="card"]):not([class*="carte"]):not([class*="bloc"]){--line:var(--line-fin);}
+
 /* La barre du haut est claire partout, a toutes les largeurs : elle etait
    verte parce qu'elle portait le logo blanc, lequel est passe dans la
    colonne. */
