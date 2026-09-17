@@ -38,7 +38,7 @@ collections:
             field: { label: "Photo", name: "image", widget: "image" }
 
           - { label: "Cartes d'intro - accroche", name: "intro_eyebrow", widget: "string", required: false }
-          - { label: "Cartes d'intro - titre", name: "intro_title", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Ensemble pour un *avenir meilleur*" }
+          - { label: "Cartes d'intro - titre", name: "intro_title", widget: "string", required: false, hint: "Mettez entre astérisques (* ou **) la partie en or : Ensemble pour un *avenir meilleur*" }
           - { label: "Cartes d'intro - sous-titre", name: "intro_subtitle", widget: "text", required: false }
 
           - label: "Les 3 cartes d'introduction"
@@ -53,7 +53,7 @@ collections:
               - { label: "Illustration", name: "image", widget: "image", required: false, hint: "Photo carrée, un soignant ou un membre en action. Laissez vide pour l'illustration par défaut." }
 
           - { label: "Accroche de la section mission", name: "mission_eyebrow", widget: "string" }
-          - { label: "Titre de la section mission", name: "mission_title", widget: "string", hint: "Mettez entre astérisques la partie en or : autour d'une *même cause*" }
+          - { label: "Titre de la section mission", name: "mission_title", widget: "string", hint: "Mettez entre astérisques (* ou **) la partie en or : autour d'une *même cause*" }
           - { label: "Mission - paragraphe 1", name: "mission_p1", widget: "markdown" }
           - { label: "Mission - paragraphe 2", name: "mission_p2", widget: "markdown" }
           - { label: "Titre du bloc emblème", name: "emblem_title", widget: "string" }
@@ -70,7 +70,7 @@ collections:
         file: "content/home-actions.json"
         fields:
           - { label: "Accroche", name: "actions_eyebrow", widget: "string" }
-          - { label: "Titre de la section", name: "actions_title", widget: "string", hint: "Mettez entre astérisques la partie en or : Le registre de nos *interventions*" }
+          - { label: "Titre de la section", name: "actions_title", widget: "string", hint: "Mettez entre astérisques (* ou **) la partie en or : Le registre de nos *interventions*" }
           - { label: "Sous-titre", name: "actions_subtitle", widget: "text" }
 
           - label: "Liste des actions (registre)"
@@ -113,7 +113,7 @@ collections:
               - { label: "Texte", name: "text", widget: "markdown" }
 
           - { label: "Accroche - Les Pionniers", name: "pioneers_title", widget: "string", default: "Les Pionniers" }
-          - { label: "Titre - Les Pionniers", name: "pioneers_accroche", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Des visages, une même *ambition*" }
+          - { label: "Titre - Les Pionniers", name: "pioneers_accroche", widget: "string", required: false, hint: "Mettez entre astérisques (* ou **) la partie en or : Des visages, une même *ambition*" }
           - { label: "Sous-titre - Les Pionniers", name: "pioneers_subtitle", widget: "string", required: false }
           - label: "Valeurs - Les Pionniers"
             name: "pioneers_valeurs"
@@ -143,7 +143,7 @@ collections:
                   hint: "Ex : Directeur du CHR de Kolda, ou Anesthésiste - Réanimateur." }
 
           - { label: "Accroche - Présidents", name: "presidents_title", widget: "string", default: "Nos Présidents" }
-          - { label: "Titre - Présidents", name: "presidents_accroche", widget: "string", required: false, hint: "Mettez entre astérisques la partie en or : Ils ont conduit *l'association*" }
+          - { label: "Titre - Présidents", name: "presidents_accroche", widget: "string", required: false, hint: "Mettez entre astérisques (* ou **) la partie en or : Ils ont conduit *l'association*" }
           - { label: "Sous-titre - Anciens présidents", name: "presidents_subtitle", widget: "string", required: false }
           - label: "Liste des anciens présidents"
             name: "presidents"
@@ -239,7 +239,7 @@ collections:
         file: "content/home-actualites.json"
         fields:
           - { label: "Accroche", name: "actus_eyebrow", widget: "string", default: "Activités" }
-          - { label: "Titre de la section", name: "actus_title", widget: "string", default: "Nos récentes *activités*", hint: "Mettez entre astérisques la partie en or. Les 3 cartes affichent automatiquement les dernières réalisations et formations, avec leur image de couverture." }
+          - { label: "Titre de la section", name: "actus_title", widget: "string", default: "Nos récentes *activités*", hint: "Mettez entre astérisques (* ou **) la partie en or. Les 3 cartes affichent automatiquement les dernières réalisations et formations, avec leur image de couverture." }
           - { label: "Sous-titre", name: "actus_subtitle", widget: "string", required: false }
 
       - name: "cta_footer"

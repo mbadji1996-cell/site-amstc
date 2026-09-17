@@ -2642,7 +2642,7 @@
     // 3 cartes d'introduction
     // En-tete des cartes : la partie entre asterisques passe en or.
     if (data.intro_eyebrow) document.getElementById('cms-intro-eyebrow').textContent = data.intro_eyebrow;
-    if (data.intro_title) document.getElementById('cms-intro-title').innerHTML = esc(data.intro_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.intro_title) document.getElementById('cms-intro-title').innerHTML = esc(data.intro_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
     if (data.intro_subtitle) document.getElementById('cms-intro-subtitle').textContent = data.intro_subtitle;
     if (Array.isArray(data.intro_cards)) {
       // « 01 - Identite » donne le badge 01 et le libelle Identite. Sans image
@@ -2671,7 +2671,7 @@
 
     // Mission
     if (data.mission_eyebrow) document.getElementById('cms-mission-eyebrow').textContent = data.mission_eyebrow;
-    if (data.mission_title) document.getElementById('cms-mission-title').innerHTML = esc(data.mission_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.mission_title) document.getElementById('cms-mission-title').innerHTML = esc(data.mission_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
     if (data.mission_p1) document.getElementById('cms-mission-p1').innerHTML = md(data.mission_p1);
     if (data.mission_p2) document.getElementById('cms-mission-p2').innerHTML = md(data.mission_p2);
     if (data.emblem_title) document.getElementById('cms-emblem-title').textContent = data.emblem_title;
@@ -2686,7 +2686,7 @@
 
     // Nos actions (registre)
     if (data.actions_eyebrow) document.getElementById('cms-actions-eyebrow').textContent = data.actions_eyebrow;
-    if (data.actions_title) document.getElementById('cms-actions-title').innerHTML = esc(data.actions_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.actions_title) document.getElementById('cms-actions-title').innerHTML = esc(data.actions_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
     if (data.actions_subtitle) document.getElementById('cms-actions-subtitle').textContent = data.actions_subtitle;
     if (Array.isArray(data.actions)) {
       // Icone : champ « icon » du CMS, sinon deduite du titre ; icone de
@@ -2740,7 +2740,7 @@
       `).join('');
     }
     // Titre avec partie en or (asterisques) et valeurs a icones.
-    const poserAccroche = (id, t) => { if (t) document.getElementById(id).innerHTML = esc(t).replace(/\*([^*]+)\*/g, '<em>$1</em>'); };
+    const poserAccroche = (id, t) => { if (t) document.getElementById(id).innerHTML = esc(t).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>'); };
     if (data.pioneers_title) document.getElementById('cms-pioneers-title').textContent = data.pioneers_title;
     poserAccroche('cms-pioneers-accroche', data.pioneers_accroche);
     if (Array.isArray(data.pioneers_valeurs)) {
@@ -2770,7 +2770,7 @@
 
     // Réalisations
     if (data.actus_eyebrow) document.getElementById('cms-actus-eyebrow').textContent = data.actus_eyebrow;
-    if (data.actus_title) document.getElementById('cms-actus-title').innerHTML = esc(data.actus_title).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    if (data.actus_title) document.getElementById('cms-actus-title').innerHTML = esc(data.actus_title).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
     if (data.actus_subtitle) document.getElementById('cms-actus-subtitle').textContent = data.actus_subtitle;
 
     // Bandeau de don
