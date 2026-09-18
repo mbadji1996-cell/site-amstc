@@ -2,7 +2,7 @@
 title: Formation sur le Dépistage du Cancer du Col de l'Utérus - 2025
 date: 2025-06-15T10:00:00.000Z
 excerpt: Contenu à venir.
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3dMtcvJMPpc9qw45XOf189jVlBs08o10TdZ8xokMbLVgueemsm4jPqRA&s=10
+image: /assets/uploads/formation-dépistage-ccu.jpeg
 ---
 Grâce à l'appui et au soutien du **Pr Omar GASSAMA**, spécialiste de renommée internationale du cancer du col de l'utérus et des pathologies liées aux Papillomavirus humains (HPV), ainsi que de la **Société Sénégalaise de Colposcopie et de Pathologie liée au Papillomavirus (SSCPP)**, 25 membres de l'Association Médico-Sociale des Talibés Cheikh (AMSTC) - dont la plupart sont des filles - ont pu bénéficier d'une formation cruciale sur le dépistage du cancer du col de l'utérus.
 
