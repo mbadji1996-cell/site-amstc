@@ -32,6 +32,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/css/don.css">
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
@@ -48,49 +50,28 @@
   header{padding:24px 0; border-bottom:1px solid var(--line); background:var(--green-deep);}
   .header-wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   .logo-img{height:42px;filter:brightness(0) invert(1);}
-  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:40px 0 18px;}
-  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
-  h1{font-size:clamp(1.9rem,4vw,2.6rem); margin-bottom:18px;}
-  .intro{font-size:1.05rem; color:var(--text-muted); max-width:60ch; margin-bottom:44px;}
-  /* Les cartes (montants, coordonnees, contact) se rangent en grille sur
-     grand ecran plutot que de s'etirer chacune sur 1400 px. */
-  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:22px;}
+  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:26px 0 0;}
+  /* Les cartes (coordonnees, contact) se rangent en grille sur grand
+     ecran plutot que de s'etirer chacune sur toute la largeur. */
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px;}
   /* align-items:stretch (le defaut) : les cartes d une meme rangee ont la
      meme hauteur. « start » les laissait a des hauteurs differentes, et
      la rangee paraissait cassee. */
-  .cards-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(420px,100%), 1fr)); gap:22px;}
-  .cards-grid .card{margin-bottom:0;}
-  .card h2{font-size:1.25rem; margin-bottom:14px;}
-  .card p{color:var(--text-muted); font-size:0.98rem; margin-bottom:10px;}
+  .cards-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(300px,100%), 1fr)); gap:18px;}
+  .card h2{font-size:1.15rem; margin-bottom:14px;}
+  .card p{color:var(--text-muted); font-size:0.95rem; margin-bottom:10px;}
   .kv{font-family:var(--mono); font-size:0.9rem; color:var(--ink); background:var(--paper-alt); border-radius:8px; padding:14px 16px; margin-top:10px;}
   .kv p{margin-bottom:4px; color:var(--ink);}
   /* Les pastilles Orange Money / Wave : assez larges pour un numero sur
-     une ligne. Trois colonnes forcees dans une carte de 420 px les
+     une ligne. Trois colonnes forcees dans une carte etroite les
      etranglaient a 120 px chacune. */
   .mobile-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:14px; margin-top:6px;}
   .mobile-item{background:var(--paper-alt); border-radius:10px; padding:16px;}
   .mobile-item strong{display:block; font-family:var(--display); color:var(--text-heading); margin-bottom:6px;}
   .mobile-item span{display:block; font-family:var(--mono); font-size:0.95rem; color:var(--ink); white-space:nowrap;}
-  .trust{font-family:var(--mono); font-size:0.8rem; color:var(--text-accent); border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin-top:36px;}
-
-  .jauge-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 28px; margin-bottom:22px; display:none;}
-  /* Le titre de la campagne est le VRAI titre de la page tant qu'une
-     collecte est ouverte : il passe de 1,05 rem - une taille d'etiquette
-     de carte - a celle d'un titre, juste sous le h1 de la page. Graisse
-     800, le plus lourd que Sora possede et que cette page charge deja ;
-     900 n'existe pas dans cette famille et donnerait un faux gras. */
-  .jauge-title{font-family:var(--display); font-weight:800;
-    font-size:clamp(1.6rem,3.6vw,2.3rem); line-height:1.15;
-    letter-spacing:-0.015em; text-wrap:balance;
-    color:var(--text-heading); margin-bottom:18px;}
-  .jauge-track{background:var(--paper-alt); border-radius:999px; height:16px; overflow:hidden; margin-bottom:10px;}
-  .jauge-fill{height:100%; background:linear-gradient(90deg, var(--green), var(--gold)); border-radius:999px; transition:width .6s ease;}
-  .jauge-amounts{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;}
-  .jauge-collecte{font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--text-heading);}
-  .jauge-objectif{font-family:var(--mono); font-size:0.85rem; color:var(--text-muted);}
-  .jauge-percent{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); margin-top:8px;}
-  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem; padding:13px 24px; border-radius:999px; background:var(--green); color:#fff; margin-top:8px;}
+  .trust{font-family:var(--mono); font-size:0.8rem; color:#8A6209; border:1px dashed var(--gold-deep); border-radius:10px; padding:14px 16px; margin:26px 0 0;}
+  :root[data-theme="dark"] .trust{color:var(--text-accent);}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.95rem; padding:13px 24px; border-radius:999px; background:var(--green); color:#fff; margin-top:8px; border:0; cursor:pointer; font-family:var(--body);}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
 
@@ -99,8 +80,8 @@
      l'administration confirme ensuite. Le dire est important, sinon le
      donateur croit avoir paye ici. */
   .declarer-card{background:var(--surface); border:1px solid var(--line);
-    border-radius:var(--radius); padding:26px 28px; margin-bottom:22px;}
-  .declarer-card h2{font-family:var(--display); font-weight:600; font-size:1.05rem;
+    border-radius:18px; padding:26px 28px;}
+  .declarer-card h2{font-family:var(--display); font-weight:700; font-size:1.15rem;
     color:var(--text-heading); margin:0 0 6px;}
   .declarer-note{font-size:0.87rem; color:var(--text-muted); margin:0 0 18px;}
   .declarer-grille{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr)); gap:14px;}
@@ -120,33 +101,20 @@
   .declarer-msg.ok{color:var(--green);}
   .declarer-msg.ko{color:#B3261E;}
 
-  /* ---- Ou deposer le don de CETTE campagne ----
-     Place dans la carte de la jauge, donc juste au-dessus du formulaire :
-     le donateur lit le numero, verse, puis declare - dans cet ordre. */
-  .depots{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
-  .depots-titre{font-family:var(--mono);font-size:0.68rem;text-transform:uppercase;
-    letter-spacing:0.06em;color:var(--text-muted);margin-bottom:9px;}
-  .depots-liste{display:flex;gap:10px;flex-wrap:wrap;}
-  .depot{background:var(--paper-alt);border-radius:9px;padding:9px 14px;min-width:0;}
-  .depot strong{display:block;font-size:0.78rem;color:var(--text-muted);font-weight:600;}
-  .depot span{font-family:var(--mono);font-size:0.95rem;color:var(--text-heading);
-    word-break:break-word;}
-  .depots-titulaire{font-size:0.82rem;color:var(--text-muted);margin-top:9px;}
-
   /* ---- Paiement direct (Wave) ----
      Vert plein : c'est l'action principale de la page quand elle est
      proposee. Le formulaire de declaration, juste en dessous, reste en
      retrait - il ne sert qu'a signaler un don deja fait. */
   .wave-card{background:var(--surface); border:1px solid var(--line);
     border-left:4px solid var(--green); border-radius:var(--radius);
-    padding:24px 26px; margin-bottom:22px; display:none;}
+    padding:24px 26px; display:none;}
   /* Affiche UNIQUEMENT sur un appareil a souris. Sur telephone, le
      serveur de Wave renvoie vers le Play Store quoi qu'il arrive (307
      vers /download puis 302) : le bouton y serait une impasse. */
   @media (hover:hover) and (pointer:fine){
     .wave-card.wave-prete{display:block;}
   }
-  .wave-card h2{font-family:var(--display); font-weight:600; font-size:1.05rem;
+  .wave-card h2{font-family:var(--display); font-weight:700; font-size:1.1rem;
     color:var(--text-heading); margin:0 0 6px;}
   .wave-texte{font-size:0.9rem; color:var(--text-muted); margin:0 0 16px;}
   .wave-btn{display:inline-flex; align-items:center; gap:9px;
@@ -168,105 +136,193 @@
 <div class="wrap">
   <a class="back" href="./">Retour à l'accueil</a>
 
-  <p class="eyebrow" id="cms-eyebrow">Nous soutenir</p>
-  <h1 id="cms-title">Faire un don</h1>
-  <p class="intro" id="cms-intro">Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation menée par nos équipes bénévoles.</p>
-
-  <div class="jauge-card" id="jauge-card">
-    <p class="jauge-title" id="jauge-title">Notre objectif de collecte</p>
-    <div class="jauge-track"><div class="jauge-fill" id="jauge-fill" style="width:0%"></div></div>
-    <div class="jauge-amounts">
-      <span class="jauge-collecte" id="jauge-collecte"></span>
-      <span class="jauge-objectif" id="jauge-objectif"></span>
-    </div>
-    <p class="jauge-percent" id="jauge-percent"></p>
-  </div>
-
-
-  <div class="wave-card" id="wave-card">
-    <h2 id="wave-titre">Payer par Wave</h2>
-    <p class="wave-texte" id="wave-texte"></p>
-    <a class="wave-btn" id="wave-lien" href="#" rel="noopener">
-      <span id="wave-label">Payer avec Wave</span>
-    </a>
-    <p class="wave-essai" id="wave-essai" style="display:none;">Paiement en cours d'essai</p>
-  </div>
-
-  <div class="declarer-card" id="declarer-card">
-    <h2>J'ai fait un don</h2>
-    <p class="declarer-note">Ce formulaire n'encaisse aucun paiement : il nous signale
-    un don que vous avez déjà envoyé, pour que nous puissions le confirmer et le
-    comptabiliser. Effectuez d'abord le transfert avec l'un des moyens ci-dessous.</p>
-    <div class="declarer-grille">
-      <div class="champ">
-        <label for="don-montant">Montant en FCFA *</label>
-        <input type="number" id="don-montant" min="1" step="1" inputmode="numeric" required>
-      </div>
-      <div class="champ">
-        <label for="don-methode">Moyen utilisé</label>
-        <select id="don-methode">
-          <option value="wave">Wave</option>
-          <option value="orange_money">Orange Money</option>
-          <option value="virement">Virement bancaire</option>
-          <option value="especes">Espèces</option>
-          <option value="autre">Autre</option>
-        </select>
-      </div>
-      <div class="champ">
-        <label for="don-reference">Référence de la transaction</label>
-        <input type="text" id="don-reference" maxlength="80" autocomplete="off">
-        <span class="champ-aide">Elle nous permet de retrouver votre versement.</span>
-      </div>
-      <div class="champ">
-        <label for="don-nom">Votre nom</label>
-        <input type="text" id="don-nom" maxlength="120" autocomplete="name">
-        <span class="champ-aide">Facultatif. Il ne sera jamais affiché sur le site.</span>
-      </div>
-      <div class="champ">
-        <label for="don-contact">Téléphone ou e-mail</label>
-        <input type="text" id="don-contact" maxlength="120" autocomplete="off">
-        <span class="champ-aide">Facultatif, pour vous adresser un reçu.</span>
-      </div>
-      <div class="champ champ-large">
-        <label for="don-message">Message</label>
-        <textarea id="don-message" rows="2" maxlength="500"></textarea>
+  <!-- ===== Bandeau ===== -->
+  <section class="dn-hero">
+    <div class="dn-hero-photo" id="dn-hero-photo" style="display:none;"><img src="" alt="" loading="lazy"></div>
+    <div class="dn-hero-texte">
+      <p class="dn-accroche" id="cms-eyebrow">Solidarité · Partage · Impact</p>
+      <h1 id="cms-title">Faire un don</h1>
+      <p class="dn-hero-sous" id="cms-soustitre">Ensemble, offrons un meilleur avenir aux talibés et aux communautés vulnérables.</p>
+      <p class="dn-hero-intro" id="cms-intro">Chaque don finance directement une consultation, une tournée sanitaire ou une campagne de sensibilisation menée par nos équipes bénévoles.</p>
+      <div class="dn-hero-actions">
+        <a class="dn-btn dn-btn-or" href="#verser" id="dn-bouton1"><i class="ti ti-heart" aria-hidden="true"></i> <span>Faire un don maintenant</span></a>
+        <a class="dn-btn dn-btn-clair" href="actualites" id="dn-bouton2"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>Découvrir nos actions</span></a>
       </div>
     </div>
-    <label class="declarer-anonyme">
-      <input type="checkbox" id="don-anonyme">
-      <span>Je préfère rester anonyme - ne pas enregistrer mon nom</span>
-    </label>
-    <div class="declarer-actions">
-      <button type="button" class="btn" id="don-envoyer">Signaler mon don</button>
-      <p class="declarer-msg" id="don-msg"></p>
+    <p class="dn-hero-citation" id="dn-citation" style="display:none;"></p>
+  </section>
+
+  <div class="dn-grille">
+    <!-- ===== Colonne de gauche ===== -->
+    <div class="dn-colonne">
+
+      <article class="dn-camp" id="camp-carte">
+        <div class="dn-camp-tete">
+          <span class="dn-camp-ic" aria-hidden="true"><i class="ti ti-heart-handshake"></i></span>
+          <div>
+            <p class="dn-camp-badge">Campagne en cours</p>
+            <h2 class="dn-camp-titre" id="camp-titre">Notre objectif de collecte</h2>
+            <p class="dn-camp-desc" id="camp-desc" style="display:none;"></p>
+          </div>
+        </div>
+        <div class="dn-jauge-chiffres">
+          <span class="dn-jauge-collecte" id="camp-collecte"></span>
+          <span class="dn-jauge-objectif" id="camp-objectif"></span>
+        </div>
+        <div class="dn-jauge-piste"><div class="dn-jauge-part" id="camp-part" style="width:0%"></div></div>
+        <div class="dn-jauge-bas">
+          <span class="dn-jauge-pourcent" id="camp-pourcent"></span>
+          <span class="dn-jauge-echeance" id="camp-echeance" style="display:none;">
+            <i class="ti ti-calendar-event" aria-hidden="true"></i><span id="camp-echeance-texte"></span>
+          </span>
+        </div>
+        <div class="dn-depots" id="camp-depots" style="display:none;"></div>
+      </article>
+
+      <section id="bloc-usages" style="display:none;">
+        <div class="dn-tete">
+          <span class="dn-tete-ic" aria-hidden="true"><i class="ti ti-target-arrow"></i></span>
+          <div>
+            <p class="dn-tete-titre">À quoi sert votre don</p>
+            <p class="dn-tete-sous">Ce que votre soutien finance concrètement.</p>
+          </div>
+        </div>
+        <div class="dn-usages" id="dn-usages"></div>
+      </section>
+
+      <figure class="dn-temoignage" id="dn-temoignage" style="display:none;">
+        <img src="" alt="" id="dn-temoignage-photo" loading="lazy">
+        <figcaption>
+          <p class="dn-temoignage-texte" id="dn-temoignage-texte"></p>
+          <p class="dn-temoignage-auteur" id="dn-temoignage-auteur"></p>
+        </figcaption>
+      </figure>
+
+      <section id="verser">
+        <div class="dn-tete">
+          <span class="dn-tete-ic" aria-hidden="true"><i class="ti ti-wallet"></i></span>
+          <div>
+            <p class="dn-tete-titre">Comment verser votre don</p>
+            <p class="dn-tete-sous">Choisissez le moyen qui vous convient, puis signalez-nous votre don.</p>
+          </div>
+        </div>
+
+        <div class="wave-card" id="wave-card" style="margin-top:16px;">
+          <h2 id="wave-titre">Payer par Wave</h2>
+          <p class="wave-texte" id="wave-texte"></p>
+          <a class="wave-btn" id="wave-lien" href="#" rel="noopener">
+            <span id="wave-label">Payer avec Wave</span>
+          </a>
+          <p class="wave-essai" id="wave-essai" style="display:none;">Paiement en cours d'essai</p>
+        </div>
+
+        <div class="cards-grid" style="margin-top:16px;">
+          <div class="card" id="carte-bank">
+            <h2 id="cms-bank-title">Virement bancaire</h2>
+            <div class="kv" id="cms-bank-details"></div>
+          </div>
+
+          <div class="card" id="carte-mobile">
+            <h2 id="cms-mobile-title">Mobile Money</h2>
+            <div class="mobile-grid" id="cms-mobile-options"></div>
+          </div>
+
+          <div class="card" id="carte-nature">
+            <h2 id="cms-nature-title">Don en nature</h2>
+            <p id="cms-nature-text">Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.</p>
+            <a href="./#contact" class="btn">Nous contacter</a>
+          </div>
+
+          <div class="card" id="carte-institution">
+            <h2 id="cms-institution-title">Don institutionnel ou partenariat</h2>
+            <p id="cms-institution-text">Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.</p>
+            <a href="mailto:contact@amstc.org" class="btn">Écrire à contact@amstc.org</a>
+          </div>
+        </div>
+      </section>
+
+      <div class="declarer-card" id="declarer-card">
+        <h2>J'ai fait un don</h2>
+        <p class="declarer-note">Ce formulaire n'encaisse aucun paiement : il nous signale
+        un don que vous avez déjà envoyé, pour que nous puissions le confirmer et le
+        comptabiliser. Effectuez d'abord le transfert avec l'un des moyens ci-dessus.</p>
+        <div class="declarer-grille">
+          <div class="champ">
+            <label for="don-montant">Montant en FCFA *</label>
+            <input type="number" id="don-montant" min="1" step="1" inputmode="numeric" required>
+          </div>
+          <div class="champ">
+            <label for="don-methode">Moyen utilisé</label>
+            <select id="don-methode">
+              <option value="wave">Wave</option>
+              <option value="orange_money">Orange Money</option>
+              <option value="virement">Virement bancaire</option>
+              <option value="especes">Espèces</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="champ">
+            <label for="don-reference">Référence de la transaction</label>
+            <input type="text" id="don-reference" maxlength="80" autocomplete="off">
+            <span class="champ-aide">Elle nous permet de retrouver votre versement.</span>
+          </div>
+          <div class="champ">
+            <label for="don-nom">Votre nom</label>
+            <input type="text" id="don-nom" maxlength="120" autocomplete="name">
+            <span class="champ-aide">Facultatif. Il ne sera jamais affiché sur le site.</span>
+          </div>
+          <div class="champ">
+            <label for="don-contact">Téléphone ou e-mail</label>
+            <input type="text" id="don-contact" maxlength="120" autocomplete="off">
+            <span class="champ-aide">Facultatif, pour vous adresser un reçu.</span>
+          </div>
+          <div class="champ champ-large">
+            <label for="don-message">Message</label>
+            <textarea id="don-message" rows="2" maxlength="500"></textarea>
+          </div>
+        </div>
+        <label class="declarer-anonyme">
+          <input type="checkbox" id="don-anonyme">
+          <span>Je préfère rester anonyme - ne pas enregistrer mon nom</span>
+        </label>
+        <div class="declarer-actions">
+          <button type="button" class="btn" id="don-envoyer">Signaler mon don</button>
+          <p class="declarer-msg" id="don-msg"></p>
+        </div>
+      </div>
+
+      <p class="trust" id="cms-trust-note">Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA - NINEA 013359139. Un reçu peut être délivré sur demande pour tout don.</p>
     </div>
-  </div>
 
-  <div class="cards-grid">
-  <div class="card" id="carte-bank">
-    <h2 id="cms-bank-title">Virement bancaire</h2>
-    <div class="kv" id="cms-bank-details"></div>
-  </div>
+    <!-- ===== Colonne de droite ===== -->
+    <aside class="dn-aside">
+      <div class="dn-montant">
+        <h2>Montant de votre don</h2>
+        <div class="dn-sommes" id="dn-sommes"></div>
+        <div class="dn-libre">
+          <span class="dn-libre-unite">FCFA</span>
+          <input type="number" id="dn-libre" min="1" step="500" inputmode="numeric" placeholder="Saisir un montant" aria-label="Montant libre en FCFA">
+        </div>
+        <button type="button" class="dn-montant-btn" id="dn-valider">
+          <i class="ti ti-heart" aria-hidden="true"></i> Faire un don
+        </button>
+        <p class="dn-montant-note">
+          <i class="ti ti-lock" aria-hidden="true"></i>
+          <span>Le versement se fait par Wave, Orange Money ou virement, depuis votre application habituelle. Ce site n'encaisse aucun paiement.</span>
+        </p>
+      </div>
 
-  <div class="card" id="carte-mobile">
-    <h2 id="cms-mobile-title">Mobile Money</h2>
-    <div class="mobile-grid" id="cms-mobile-options"></div>
+      <div class="dn-pourquoi" id="dn-pourquoi">
+        <div class="dn-pourquoi-ic" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+        <h2 id="dn-pourquoi-titre">Pourquoi donner ?</h2>
+        <p id="dn-pourquoi-texte">Votre don est un acte de solidarité qui change des vies. Il permet à des enfants d'accéder à l'éducation, de se soigner et de s'insérer dans la société.</p>
+        <a class="dn-pourquoi-lien" id="dn-pourquoi-lien" href="actualites">
+          <span id="dn-pourquoi-lien-label">En savoir plus sur notre impact</span>
+          <i class="ti ti-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </aside>
   </div>
-
-  <div class="card" id="carte-nature">
-    <h2 id="cms-nature-title">Don en nature</h2>
-    <p id="cms-nature-text">Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.</p>
-    <a href="./#contact" class="btn">Nous contacter</a>
-  </div>
-
-  <div class="card" id="carte-institution">
-    <h2 id="cms-institution-title">Don institutionnel ou partenariat</h2>
-    <p id="cms-institution-text">Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.</p>
-    <a href="mailto:contact@amstc.org" class="btn">Écrire à contact@amstc.org</a>
-  </div>
-  </div>
-
-  <p class="trust" id="cms-trust-note">Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA - NINEA 013359139. Un reçu peut être délivré sur demande pour tout don.</p>
 </div>
 
 <footer>
@@ -277,7 +333,18 @@
 <script>
   function md(s){ return s ? marked.parse(s) : ''; }
   function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // Un mot entre astérisques passe en or, comme sur la page d'accueil.
+  function titreOr(s){ return esc(s).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>'); }
 
+  const ICONES_USAGE = {
+    education:'ti-book', alimentation:'ti-bowl-spoon', hebergement:'ti-home',
+    fournitures:'ti-backpack', sante:'ti-first-aid-kit', hygiene:'ti-droplet',
+    transport:'ti-bus', coeur:'ti-heart-handshake',
+  };
+
+  // ============================================================
+  // Le contenu editorial (CMS)
+  // ============================================================
   fetch("content/don.json").then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
     // Le fichier fait autorite des lors qu'il est charge : on ecrit TOUS
@@ -289,8 +356,37 @@
       if (el) el.textContent = valeur || '';
     };
     poser('cms-eyebrow', data.eyebrow);
-    poser('cms-title', data.title);
+    document.getElementById('cms-title').innerHTML = titreOr(data.title || '');
+    poser('cms-soustitre', data.soustitre);
     poser('cms-intro', data.intro);
+    // Un sous-titre ou une introduction vides ne doivent pas laisser un
+    // blanc dans le bandeau.
+    ['cms-soustitre', 'cms-intro'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.textContent.trim()) el.style.display = 'none';
+    });
+
+    // ---- Photo du bandeau ----
+    if (data.image) {
+      const bloc = document.getElementById('dn-hero-photo');
+      bloc.querySelector('img').src = data.image;
+      bloc.style.display = '';
+    }
+    if (data.citation) {
+      const c = document.getElementById('dn-citation');
+      c.textContent = '« ' + data.citation + ' »';
+      c.style.display = '';
+    }
+
+    // ---- Les deux boutons du bandeau ----
+    const bouton = (id, libelle, lien, defautLien) => {
+      const el = document.getElementById(id);
+      if (libelle === '') { el.style.display = 'none'; return; }
+      if (libelle) el.querySelector('span').textContent = libelle;
+      el.href = lien || defautLien;
+    };
+    bouton('dn-bouton1', data.bouton, '#verser', '#verser');
+    bouton('dn-bouton2', data.bouton2, data.bouton2_lien, 'actualites');
 
     poser('cms-bank-title', data.bank_title);
     document.getElementById('cms-bank-details').innerHTML = data.bank_details ? md(data.bank_details) : '';
@@ -310,21 +406,45 @@
     if (data.trust_note) document.getElementById('cms-trust-note').textContent = data.trust_note;
     else document.getElementById('cms-trust-note').style.display = 'none';
 
-    // ---- Bouton de paiement direct ----
-    // Le lien est pose par PROPRIETE, jamais par interpolation dans du
-    // HTML : ce qui est saisi dans le CMS part tel quel, sans qu'aucun
-    // echappement puisse le transformer. Et c'est une <a> nue - aucun
-    // ecouteur de clic, aucune etape intermediaire.
-    const waveUrl = String(data.wave_url || '').trim();
-    if (waveUrl) {
-      document.getElementById('wave-lien').href = waveUrl;
-      if (data.wave_titre) document.getElementById('wave-titre').textContent = data.wave_titre;
-      if (data.wave_label) document.getElementById('wave-label').textContent = data.wave_label;
-      const t = document.getElementById('wave-texte');
-      if (data.wave_texte) t.textContent = data.wave_texte; else t.style.display = 'none';
-      if (data.wave_essai) document.getElementById('wave-essai').style.display = '';
-      document.getElementById('wave-card').classList.add('wave-prete');
+    // ---- À quoi sert le don ----
+    const usages = Array.isArray(data.usages) ? data.usages.filter(u => u && u.titre) : [];
+    if (usages.length) {
+      document.getElementById('dn-usages').innerHTML = usages.map(u => `
+        <div class="dn-usage">
+          <span class="dn-usage-ic" aria-hidden="true"><i class="ti ${esc(ICONES_USAGE[u.icone] || 'ti-heart-handshake')}"></i></span>
+          <div>
+            <p class="dn-usage-titre">${esc(u.titre)}</p>
+            ${u.texte ? `<p class="dn-usage-texte">${esc(u.texte)}</p>` : ''}
+          </div>
+        </div>`).join('');
+      document.getElementById('bloc-usages').style.display = '';
     }
+
+    // ---- Temoignage ----
+    if (data.temoignage_texte) {
+      document.getElementById('dn-temoignage-texte').textContent = '« ' + data.temoignage_texte + ' »';
+      const auteur = document.getElementById('dn-temoignage-auteur');
+      auteur.textContent = data.temoignage_auteur || '';
+      if (!data.temoignage_auteur) auteur.style.display = 'none';
+      const photo = document.getElementById('dn-temoignage-photo');
+      if (data.temoignage_photo) photo.src = data.temoignage_photo; else photo.style.display = 'none';
+      document.getElementById('dn-temoignage').style.display = '';
+    }
+
+    // ---- Pourquoi donner ----
+    poser('dn-pourquoi-titre', data.pourquoi_titre || 'Pourquoi donner ?');
+    if (data.pourquoi_texte !== undefined) poser('dn-pourquoi-texte', data.pourquoi_texte);
+    const lien = document.getElementById('dn-pourquoi-lien');
+    if (data.pourquoi_lien_label === '') lien.style.display = 'none';
+    else {
+      if (data.pourquoi_lien_label) poser('dn-pourquoi-lien-label', data.pourquoi_lien_label);
+      if (data.pourquoi_lien) lien.href = data.pourquoi_lien;
+    }
+    if (!document.getElementById('dn-pourquoi-texte').textContent.trim()
+        && !data.pourquoi_titre) document.getElementById('dn-pourquoi').style.display = 'none';
+
+    // ---- Les montants proposes ----
+    construireMontants(data.montants);
 
     // ---- Les encarts vides disparaissent ----
     // Ils etaient affiches meme vides dans Decap : un cadre avec un titre
@@ -342,10 +462,104 @@
                   && (!b || (!b.textContent.trim() && !b.querySelector('*')));
         if (vide) c.style.display = 'none';
       });
-  }).catch(() => {});
+
+    // ---- Bouton de paiement direct ----
+    // Le lien est pose par PROPRIETE, jamais par interpolation dans du
+    // HTML : ce qui est saisi dans le CMS part tel quel, sans qu'aucun
+    // echappement puisse le transformer. Et c'est une <a> nue - aucun
+    // ecouteur de clic, aucune etape intermediaire.
+    const waveUrl = String(data.wave_url || '').trim();
+    if (waveUrl) {
+      document.getElementById('wave-lien').href = waveUrl;
+      if (data.wave_titre) document.getElementById('wave-titre').textContent = data.wave_titre;
+      if (data.wave_label) document.getElementById('wave-label').textContent = data.wave_label;
+      const t = document.getElementById('wave-texte');
+      if (data.wave_texte) t.textContent = data.wave_texte; else t.style.display = 'none';
+      if (data.wave_essai) document.getElementById('wave-essai').style.display = '';
+      document.getElementById('wave-card').classList.add('wave-prete');
+    }
+    ajusterVersement();
+  }).catch(() => { construireMontants(null); });
 
   // ============================================================
-  // La jauge, et la declaration de don (phase 98)
+  // Le panneau du montant
+  // ============================================================
+  // Il ne paie rien : il prepare le montant, conduit aux moyens de
+  // versement et le reporte dans le formulaire de declaration, pour que
+  // le donateur ne le retape pas.
+  const MONTANTS_DEFAUT = [5000, 10000, 25000, 50000, 100000];
+  const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
+  const fcfaCourt = n => Number(n || 0).toLocaleString('fr-FR') + ' F';
+
+  function construireMontants(liste){
+    const valeurs = (Array.isArray(liste) ? liste : [])
+      .map(x => Number(x && typeof x === 'object' ? x.montant : x))
+      .filter(n => n > 0);
+    const sommes = valeurs.length ? valeurs : MONTANTS_DEFAUT;
+    const zone = document.getElementById('dn-sommes');
+    zone.innerHTML = sommes.map(m =>
+      `<button type="button" class="dn-somme" data-montant="${m}">${esc(fcfaCourt(m))}</button>`).join('')
+      + '<button type="button" class="dn-somme" data-montant="">Autre montant</button>';
+    zone.querySelectorAll('.dn-somme').forEach(b => b.addEventListener('click', () => choisirSomme(b)));
+    // Le deuxieme montant est propose d'avance : un panneau tout gris ne
+    // dit pas ce qu'on attend du visiteur.
+    const suggere = zone.children[Math.min(1, sommes.length - 1)];
+    if (suggere) choisirSomme(suggere, true);
+  }
+
+  function choisirSomme(bouton, discret){
+    document.getElementById('dn-sommes').querySelectorAll('.dn-somme')
+      .forEach(x => x.classList.toggle('actif', x === bouton));
+    const libre = document.getElementById('dn-libre');
+    const montant = bouton.dataset.montant;
+    if (montant) {
+      libre.value = montant;
+      document.getElementById('don-montant').value = montant;
+    } else {
+      libre.value = '';
+      if (!discret) libre.focus();
+    }
+  }
+
+  document.getElementById('dn-libre').addEventListener('input', () => {
+    const v = document.getElementById('dn-libre').value;
+    // Un montant tape a la main ne correspond plus forcement a une
+    // pastille : celle qui reste allumee doit etre la bonne.
+    document.getElementById('dn-sommes').querySelectorAll('.dn-somme')
+      .forEach(x => x.classList.toggle('actif', x.dataset.montant === v && v !== ''));
+    document.getElementById('don-montant').value = v;
+  });
+
+  // Ou conduisent les deux boutons « Faire un don ». Normalement vers la
+  // section des moyens de versement ; mais si une campagne a pris la page
+  // avec ses propres numeros, cette section est vide - on vise alors les
+  // numeros de la campagne, et la section s'efface.
+  function ajusterVersement(){
+    const sec = document.getElementById('verser');
+    const grille = document.querySelector('.cards-grid');
+    const wave = document.getElementById('wave-card');
+    sec.style.display = '';
+    const vide = getComputedStyle(grille).display === 'none'
+              && getComputedStyle(wave).display === 'none';
+    sec.style.display = vide ? 'none' : '';
+    const depots = document.getElementById('camp-depots');
+    const cible = (vide && depots.style.display !== 'none') ? '#camp-depots' : '#verser';
+    const b = document.getElementById('dn-bouton1');
+    if (b && (b.getAttribute('href') || '').charAt(0) === '#') b.setAttribute('href', cible);
+    return cible;
+  }
+
+  document.getElementById('dn-valider').addEventListener('click', () => {
+    const libre = document.getElementById('dn-libre');
+    const montant = Number(libre.value);
+    if (!montant || montant <= 0) { libre.focus(); return; }
+    document.getElementById('don-montant').value = montant;
+    const cible = document.querySelector(ajusterVersement()) || document.getElementById('declarer-card');
+    cible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ============================================================
+  // La campagne en cours, et la declaration de don (phase 98)
   // ============================================================
   // Le montant collecte n'est plus saisi a la main dans Decap : il est
   // calcule en base, comme la somme des dons CONFIRMES. Personne ne le
@@ -353,7 +567,6 @@
   const API = 'https://api.amstc.org';
   const CLE = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc4NDg3MTA2MCwiZXhwIjo0OTQwNTQ0NjYwLCJyb2xlIjoiYW5vbiJ9.At_rHwK9bgTh4eoh1ykkLGaPiVXpZBpXxtgDb_allaM';
   const enTetes = { 'Content-Type': 'application/json', 'apikey': CLE, 'Authorization': 'Bearer ' + CLE };
-  const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
   let campagneId = null;
 
   async function rpc(nom, corps) {
@@ -376,47 +589,40 @@
       const collecte = Math.max(0, Number(c.collecte) || 0);
       const percent = objectif ? Math.min(100, Math.round((collecte / objectif) * 100)) : 0;
 
-      document.getElementById('jauge-title').textContent = c.titre || 'Notre objectif de collecte';
-      document.getElementById('jauge-fill').style.width = percent + '%';
-      document.getElementById('jauge-collecte').textContent = fcfa(collecte) + ' collectés';
-      document.getElementById('jauge-objectif').textContent = 'sur ' + fcfa(objectif);
-      let bas = percent + '% de l\'objectif atteint';
+      document.getElementById('camp-titre').textContent = c.titre || 'Notre objectif de collecte';
+      const desc = document.getElementById('camp-desc');
+      desc.textContent = c.description || '';
+      desc.style.display = c.description ? '' : 'none';
+
+      document.getElementById('camp-part').style.width = percent + '%';
+      document.getElementById('camp-collecte').innerHTML =
+        esc(fcfa(collecte)) + ' <span>collectés</span>';
+      document.getElementById('camp-objectif').textContent = 'Objectif : ' + fcfa(objectif);
+      document.getElementById('camp-pourcent').textContent = percent + '% atteint';
+
+      const ech = document.getElementById('camp-echeance');
       if (c.echeance) {
         const d = new Date(c.echeance + 'T00:00:00');
-        if (!isNaN(d)) bas += ' - jusqu\'au ' + d.toLocaleDateString('fr-FR',
-          { day: 'numeric', month: 'long', year: 'numeric' });
-      }
-      document.getElementById('jauge-percent').textContent = bas;
-      // On RETIRE ce qu'un appel precedent aurait pose, avant de reposer.
-      // Sans cela, deux appels affichaient deux descriptions empilees -
-      // constate a l'ecran.
-      const carte = document.getElementById('jauge-card');
-      carte.querySelectorAll('[data-campagne]').forEach(el => el.remove());
-
-      if (c.description) {
-        const p = document.createElement('p');
-        p.className = 'declarer-note';
-        p.style.margin = '12px 0 0';
-        p.setAttribute('data-campagne', '1');
-        p.textContent = c.description;
-        carte.appendChild(p);
+        if (!isNaN(d)) {
+          document.getElementById('camp-echeance-texte').textContent = 'Jusqu\'au '
+            + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+          ech.style.display = '';
+        }
       }
 
       // Les numeros propres a la campagne. Absents, on ne montre rien :
-      // la carte Mobile Money plus bas porte les numeros generaux, et
-      // afficher un bloc vide laisserait croire a un oubli.
+      // les cartes plus bas portent les numeros generaux, et afficher un
+      // bloc vide laisserait croire a un oubli.
       const depots = [['Wave', c.depot_wave], ['Orange Money', c.depot_orange]]
         .filter(([, n]) => n);
       if (depots.length) {
-        const bloc = document.createElement('div');
-        bloc.className = 'depots';
-        bloc.setAttribute('data-campagne', '1');
-        bloc.innerHTML = '<p class="depots-titre">Où déposer votre don pour cette campagne</p>'
-          + '<div class="depots-liste">'
-          + depots.map(([op, n]) => `<div class="depot"><strong>${esc(op)}</strong><span>${esc(n)}</span></div>`).join('')
+        const bloc = document.getElementById('camp-depots');
+        bloc.innerHTML = '<p class="dn-depots-titre">Où déposer votre don pour cette campagne</p>'
+          + '<div class="dn-depots-liste">'
+          + depots.map(([op, n]) => `<div class="dn-depot"><strong>${esc(op)}</strong><span>${esc(n)}</span></div>`).join('')
           + '</div>'
-          + (c.depot_titulaire ? `<p class="depots-titulaire">Au nom de ${esc(c.depot_titulaire)}.</p>` : '');
-        carte.appendChild(bloc);
+          + (c.depot_titulaire ? `<p class="dn-depots-titulaire">Au nom de ${esc(c.depot_titulaire)}.</p>` : '');
+        bloc.style.display = '';
 
         // UNE CAMPAGNE ACTIVE OCCUPE LA PAGE SEULE. Les autres moyens de
         // don s'effacent le temps de la collecte : le visiteur ne doit pas
@@ -435,8 +641,9 @@
         if (grille) grille.style.display = 'none';
       }
 
-      carte.style.display = 'block';
-    } catch (e) { /* jauge simplement masquee */ }
+      document.getElementById('camp-carte').style.display = 'block';
+      ajusterVersement();
+    } catch (e) { /* campagne simplement masquee */ }
   }
 
   function afficher(texte, ok) {

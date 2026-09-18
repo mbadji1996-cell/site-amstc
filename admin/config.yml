@@ -543,9 +543,49 @@ collections:
         label: "Faire un don"
         file: "content/don.json"
         fields:
-          - { label: "Accroche", name: "eyebrow", widget: "string" }
-          - { label: "Titre", name: "title", widget: "string" }
+          - { label: "Accroche", name: "eyebrow", widget: "string", hint: "La petite ligne au-dessus du titre. Ex : Solidarité · Partage · Impact" }
+          - { label: "Titre", name: "title", widget: "string", hint: "Un mot entre astérisques passe en or. Ex : Faites un **don**" }
+          - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "La phrase en gras sous le titre. Laissez vide pour ne rien afficher." }
           - { label: "Texte d'introduction", name: "intro", widget: "text" }
+          - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite du bandeau, en fondu. Format paysage, 1200 px de large au minimum." }
+          - { label: "Citation du bandeau", name: "citation", widget: "string", required: false, hint: "La phrase manuscrite en bas à droite du bandeau. Les guillemets sont ajoutés tout seuls." }
+          - { label: "Bouton principal - intitulé", name: "bouton", widget: "string", required: false, default: "Faire un don maintenant", hint: "Il conduit aux moyens de versement, plus bas dans la page." }
+          - { label: "Second bouton - intitulé", name: "bouton2", widget: "string", required: false, hint: "Laissez vide pour masquer ce bouton." }
+          - { label: "Second bouton - adresse", name: "bouton2_lien", widget: "string", required: false, default: "actualites", hint: "Ex : actualites (nos réalisations), formations, ou une adresse https://… complète." }
+          - label: "Montants proposés (FCFA)"
+            name: "montants"
+            widget: "list"
+            required: false
+            field: { label: "Montant", name: "montant", widget: "number", value_type: "int", min: 1 }
+            hint: "Les pastilles du panneau « Montant de votre don ». « Autre montant » est toujours ajouté à la fin. Vide : 5 000, 10 000, 25 000, 50 000 et 100 000."
+          - label: "À quoi sert votre don"
+            name: "usages"
+            widget: "list"
+            required: false
+            hint: "Les quatre petites cartes sous la campagne. Vide : le bloc n'apparaît pas."
+            fields:
+              - { label: "Titre", name: "titre", widget: "string" }
+              - { label: "Précision", name: "texte", widget: "string", required: false }
+              - label: "Icône"
+                name: "icone"
+                widget: "select"
+                required: false
+                options:
+                  - { label: "Livre (éducation)", value: "education" }
+                  - { label: "Assiette (alimentation)", value: "alimentation" }
+                  - { label: "Maison (hébergement)", value: "hebergement" }
+                  - { label: "Cartable (fournitures)", value: "fournitures" }
+                  - { label: "Trousse de secours (santé)", value: "sante" }
+                  - { label: "Goutte (hygiène)", value: "hygiene" }
+                  - { label: "Bus (transport)", value: "transport" }
+                  - { label: "Mains (solidarité)", value: "coeur" }
+          - { label: "Témoignage - texte", name: "temoignage_texte", widget: "text", required: false, hint: "Affiché en citation sous les cartes. Vide : le bloc n'apparaît pas." }
+          - { label: "Témoignage - signature", name: "temoignage_auteur", widget: "string", required: false, hint: "Ex : Témoignage d'un parent bénéficiaire" }
+          - { label: "Témoignage - photo", name: "temoignage_photo", widget: "image", required: false }
+          - { label: "Pourquoi donner - titre", name: "pourquoi_titre", widget: "string", required: false }
+          - { label: "Pourquoi donner - texte", name: "pourquoi_texte", widget: "text", required: false }
+          - { label: "Pourquoi donner - intitulé du lien", name: "pourquoi_lien_label", widget: "string", required: false, hint: "Laissez vide pour masquer le lien." }
+          - { label: "Pourquoi donner - adresse du lien", name: "pourquoi_lien", widget: "string", required: false, default: "actualites" }
           - { label: "Lien de paiement (Wave, PayDunya…)", name: "wave_url", widget: "string", required: false, hint: "Collez ici le lien de paiement généré depuis votre compte marchand. Le visiteur y est envoyé directement, sans étape intermédiaire. Laissez vide pour masquer le bouton." }
           - { label: "Titre du bloc de paiement", name: "wave_titre", widget: "string", required: false }
           - { label: "Texte du bloc de paiement", name: "wave_texte", widget: "text", required: false }

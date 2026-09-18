@@ -13,7 +13,7 @@
     }
   ],
   "nature_text": "Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.",
-  "eyebrow": "Nous soutenir",
+  "eyebrow": "Solidarité · Partage · Impact",
   "intro": "Pour consolider son ancrage et pérenniser son action, l'AMSTC a engagé une démarche d'acquisition d'un terrain qui deviendra le siège de l'association, un lieu de référence pour ses équipes et les populations.",
   "institution_title": "Don institutionnel ou partenariat",
   "institution_text": "Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.",
@@ -26,5 +26,47 @@
   "wave_texte": "Ouvre la page de paiement Wave de l'association : scannez le QR code affiché avec votre application Wave. Le paiement s'effectue chez Wave, jamais sur ce site.",
   "wave_label": "Afficher le QR code Wave",
   "wave_url": "",
-  "wave_essai": false
+  "wave_essai": false,
+  "soustitre": "Ensemble, offrons un meilleur avenir aux talibés et aux communautés vulnérables.",
+  "image": "",
+  "citation": "Un petit geste peut avoir un grand impact.",
+  "bouton": "Faire un don maintenant",
+  "bouton2": "Découvrir nos actions",
+  "bouton2_lien": "actualites",
+  "montants": [
+    5000,
+    10000,
+    25000,
+    50000,
+    100000
+  ],
+  "usages": [
+    {
+      "icone": "education",
+      "titre": "Éducation",
+      "texte": "Frais de scolarité"
+    },
+    {
+      "icone": "sante",
+      "titre": "Santé",
+      "texte": "Consultations et médicaments"
+    },
+    {
+      "icone": "alimentation",
+      "titre": "Alimentation",
+      "texte": "Repas et denrées"
+    },
+    {
+      "icone": "fournitures",
+      "titre": "Fournitures",
+      "texte": "Matériel scolaire"
+    }
+  ],
+  "temoignage_texte": "",
+  "temoignage_auteur": "",
+  "temoignage_photo": "",
+  "pourquoi_titre": "Pourquoi donner ?",
+  "pourquoi_texte": "Votre don est un acte de solidarité qui change des vies. Il permet à des enfants d'accéder à l'éducation, de se soigner et de s'insérer dans la société.",
+  "pourquoi_lien_label": "En savoir plus sur notre impact",
+  "pourquoi_lien": "actualites"
 }
