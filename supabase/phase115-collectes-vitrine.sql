@@ -117,8 +117,16 @@ select column_name, data_type
    and column_name in ('categorie', 'image_url', 'objectif_fcfa', 'objectif_libelle')
  order by column_name;
 
-select c.titre, c.categorie, c.objectif_fcfa, a.montant_fcfa, a.participants
+-- Les deux fonctions sont bien en place.
+-- On ne les APPELLE pas ici : dans l'éditeur SQL personne n'est connecté,
+-- le contrôle d'accès refuserait, et l'échec annulerait tout le script.
+select proname, pg_get_function_identity_arguments(oid) as arguments
+  from pg_proc
+ where pronamespace = 'public'::regnamespace
+   and proname in ('collectes_avancement', 'collecte_vitrine')
+ order by proname;
+
+select c.titre, c.categorie, c.objectif_fcfa, c.objectif_libelle
   from public.collectes c
-  left join public.collectes_avancement() a on a.collecte_id = c.id
  order by c.created_at desc
  limit 10;
