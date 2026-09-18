@@ -49,8 +49,12 @@
 
   .toolbar{padding:24px 0 16px;display:flex;justify-content:flex-end;}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.88rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;transition:all .18s;}
-  .btn-primary{background:var(--violet-dark);color:var(--white);}
-  .btn-primary:hover{background:var(--violet-deeper);}
+  .btn-primary{background:var(--green-deep);color:var(--white);}
+  .btn-primary:hover{background:var(--green);}
+  /* En sombre, --green-deep devient un vert clair : le texte blanc n'y
+     tenait que 1,40. Fond clair, texte vert sombre. */
+  :root[data-theme="dark"] .btn-primary{background:#7FD9A0;color:#06441C;}
+  :root[data-theme="dark"] .btn-primary:hover{background:#9BE5B6;}
   .btn-outline{background:transparent;color:var(--text-muted);border:1.5px solid var(--line);}
   .btn-outline:hover{border-color:var(--violet);color:var(--violet-dark);}
   .btn:disabled{opacity:0.6;cursor:not-allowed;}
@@ -83,6 +87,107 @@
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
 
   /* Barre de recherche (même convention que l'annuaire des membres) */
+
+  /* ===== Bandeau ===== */
+  .fo-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:24px 0 18px; align-items:start;}
+  @media(min-width:1200px){ .fo-haut{grid-template-columns:minmax(0,1fr) 300px;} }
+  .fo-principal{min-width:0; display:flex; flex-direction:column; gap:16px;}
+  @media(max-width:1199px){
+    .fo-principal{display:contents;}
+    .fo-bandeau{order:1;} .fo-cote{order:2;} .fo-liste-zone{order:3;}
+  }
+  .fo-bandeau{position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
+    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
+    padding:26px 28px;}
+  :root[data-theme="dark"] .fo-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);}
+  .fo-bandeau-photo{position:absolute; inset:0 0 0 auto; width:52%; z-index:0;}
+  .fo-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
+  .fo-bandeau-photo::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.6) 45%, rgba(244,248,244,0.15) 100%);}
+  :root[data-theme="dark"] .fo-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.65) 45%, rgba(24,32,25,0.25) 100%);}
+  .fo-bandeau-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
+  .fo-bandeau-ic{width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:var(--green); color:#FFFFFF; font-size:28px;}
+  .fo-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
+  .fo-retour:hover{color:var(--green);}
+  .fo-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.2vw,2.1rem); font-weight:700;
+    color:var(--text-heading); line-height:1.15; margin:0;}
+  .fo-bandeau-sous{color:var(--text-muted); font-size:0.94rem; margin-top:6px; max-width:56ch;}
+  .fo-mots{position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
+  .fo-mot{display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px;
+    border:1px solid var(--line); background:var(--surface); font-size:0.84rem; font-weight:600; color:var(--text-heading);}
+  .fo-mot .ti{color:var(--green); font-size:16px;}
+
+  /* ===== Pastilles de categorie et bouton ===== */
+  .fo-barre{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .fo-cat{display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--text-heading);
+    font-family:var(--body); font-size:0.85rem; font-weight:600;}
+  .fo-cat .ti{font-size:16px; color:var(--text-muted);}
+  .fo-cat.actif{background:var(--green-deep); border-color:var(--green-deep); color:#FFFFFF;}
+  .fo-cat.actif .ti{color:var(--gold);}
+  .fo-cat:hover:not(.actif){border-color:var(--green); color:var(--green);}
+  .fo-cat:hover:not(.actif) .ti{color:var(--green);}
+  .fo-nouveau{margin-left:auto;}
+
+  /* ===== Cartes de sujet ===== */
+  .fo-sujet{display:flex; align-items:center; gap:16px; padding:16px 18px; margin-bottom:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    transition:border-color .18s, box-shadow .18s, transform .18s;}
+  .fo-sujet:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(6,68,28,0.08); transform:translateY(-2px);}
+  .fo-sujet-ic{width:48px; height:48px; flex:none; border-radius:14px; display:grid; place-items:center;
+    background:var(--green-deep); color:var(--gold); font-size:22px;}
+  .fo-sujet-corps{flex:1; min-width:0;}
+  .fo-sujet-titre{font-family:var(--display); font-size:1rem; font-weight:700; color:var(--text-heading); line-height:1.3;}
+  .fo-sujet-extrait{font-size:0.85rem; color:var(--text-muted); margin-top:3px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .fo-sujet-bas{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px;}
+  .fo-etiq{display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:600;
+    padding:4px 10px; border-radius:999px; background:rgba(23,118,59,0.1); color:#12622F;}
+  :root[data-theme="dark"] .fo-etiq{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+  .fo-sujet-par{display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--text-muted);}
+  .fo-sujet-chiffres{display:flex; gap:22px; flex:none;}
+  @media(max-width:860px){ .fo-sujet-chiffres{display:none;} }
+  .fo-chiffre{text-align:center; min-width:56px;}
+  .fo-chiffre-nb{display:flex; align-items:center; justify-content:center; gap:5px;
+    font-family:var(--display); font-weight:700; color:var(--text-heading); font-size:0.98rem;}
+  .fo-chiffre-nb .ti{color:var(--text-muted); font-size:15px;}
+  .fo-chiffre-label{font-size:0.7rem; color:var(--text-muted);}
+  .fo-dernier{display:flex; align-items:center; gap:10px; flex:none; min-width:0; max-width:230px;
+    padding-left:18px; border-left:1px solid var(--line);}
+  @media(max-width:1080px){ .fo-dernier{display:none;} }
+  .fo-dernier-photo{width:38px; height:38px; flex:none; border-radius:50%; object-fit:cover; background:var(--paper-alt);}
+  .fo-dernier-vide{width:38px; height:38px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:rgba(23,118,59,0.1); color:var(--green); font-family:var(--display); font-weight:700; font-size:0.8rem;}
+  .fo-dernier-nom{font-size:0.8rem; color:var(--text-heading); line-height:1.25;}
+  .fo-dernier-nom b{font-weight:700;}
+  .fo-dernier-date{font-family:var(--mono); font-size:0.7rem; color:var(--text-muted);}
+  .fo-sujet-fleche{flex:none; color:var(--text-muted); font-size:18px;}
+
+  /* ===== Colonne de droite ===== */
+  .fo-cote{display:grid; gap:14px;}
+  @media(min-width:1200px){ .fo-cote{position:sticky; top:16px;} }
+  .fo-carte{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 20px;}
+  .fo-carte-titre{display:flex; align-items:center; gap:9px; font-family:var(--display); font-size:0.98rem;
+    font-weight:700; color:var(--text-heading); margin-bottom:12px;}
+  .fo-carte-titre .ti{color:var(--green);}
+  .fo-appel{background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%);}
+  :root[data-theme="dark"] .fo-appel{background:linear-gradient(180deg, rgba(23,118,59,0.16) 0%, var(--surface) 100%);}
+  .fo-appel-texte{font-size:0.86rem; color:var(--text-muted); margin:6px 0 14px;}
+  .fo-stat{display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .fo-stat:last-child{border-bottom:0; padding-bottom:0;}
+  .fo-stat .ti{color:var(--text-accent); font-size:19px;}
+  .fo-stat-nb{font-family:var(--display); font-size:1.15rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
+  .fo-stat-label{font-size:0.8rem; color:var(--text-muted);}
+  .fo-recent{display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--line);}
+  .fo-recent:first-of-type{border-top:0;}
+  .fo-recent-ic{width:32px; height:32px; flex:none; border-radius:10px; display:grid; place-items:center;
+    background:rgba(23,118,59,0.1); color:var(--green); font-size:15px;}
+  .fo-recent-titre{font-size:0.84rem; font-weight:600; color:var(--text-heading); line-height:1.25;
+    display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;}
+  .fo-recent-date{font-family:var(--mono); font-size:0.68rem; color:var(--text-muted);}
+  .fo-recent .ti-chevron-right{margin-left:auto; color:var(--text-muted); font-size:16px;}
+
   .search-wrap{position:relative;max-width:520px;margin:0 0 18px;}
   .search-input{width:100%;padding:12px 42px 12px 16px;border:1.5px solid var(--line, rgba(6,68,28,0.14));border-radius:999px;font-family:inherit;font-size:0.92rem;background:var(--surface,#fff);color:inherit;}
   .search-input:focus{outline:none;border-color:var(--green,#17763B);}
@@ -127,26 +232,45 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-messages"></i></div>
-    <h1>Forum</h1>
-    <p class="hero-sub">Posez vos questions, échangez avec les autres membres de l'association</p>
-  </div>
-</div>
-
 <div class="wrap">
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
-    <div class="toolbar">
-      <button class="btn btn-primary" id="newTopicBtn"><i class="ti ti-plus"></i> Nouveau sujet</button>
-    </div>
+   <div class="fo-haut">
+    <div class="fo-principal">
+      <section class="fo-bandeau">
+        <div class="fo-bandeau-photo" id="foPhoto" style="display:none;"><img id="foPhotoImg" src="" alt="" loading="lazy"></div>
+        <div class="fo-bandeau-texte">
+          <span class="fo-bandeau-ic" aria-hidden="true"><i class="ti ti-messages"></i></span>
+          <div>
+            <a class="fo-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+            <h1>Forum de discussion</h1>
+            <p class="fo-bandeau-sous">Partagez vos idées, posez vos questions, échangez avec la communauté AMSTC et contribuez à faire grandir notre engagement.</p>
+          </div>
+        </div>
+        <div class="fo-mots">
+          <span class="fo-mot"><i class="ti ti-message-circle-2" aria-hidden="true"></i> Échanger</span>
+          <span class="fo-mot"><i class="ti ti-bulb" aria-hidden="true"></i> S'informer</span>
+          <span class="fo-mot"><i class="ti ti-share-3" aria-hidden="true"></i> Partager</span>
+          <span class="fo-mot"><i class="ti ti-heart-handshake" aria-hidden="true"></i> Entraider</span>
+        </div>
+      </section>
+
+      <div class="fo-liste-zone">
+        <div class="fo-barre" id="foCategories"></div>
 
     <div class="new-topic-card" id="newTopicCard">
       <label for="ntTitle">Titre</label>
       <input type="text" id="ntTitle" placeholder="Ex : Question sur l'organisation de la prochaine caravane médicale">
+      <label for="ntCategorie">Catégorie</label>
+      <select id="ntCategorie">
+        <option value="questions">Questions</option>
+        <option value="idees">Idées &amp; Propositions</option>
+        <option value="actualites">Actualités</option>
+        <option value="temoignages">Témoignages</option>
+        <option value="documents">Documents officiels</option>
+        <option value="autres">Autres</option>
+      </select>
       <label for="ntBody">Message</label>
       <textarea id="ntBody" placeholder="Détaillez votre question ou votre sujet de discussion…"></textarea>
       <div class="new-topic-actions">
@@ -156,12 +280,38 @@
       </div>
     </div>
 
-    <div class="search-wrap" data-recherche-cacher>
-      <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un sujet, un auteur…" oninput="onRecherche()">
-      <span class="search-icon" id="rechercheIcon">&#128269;</span>
-      <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
+        <div class="search-wrap" data-recherche-cacher>
+          <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un sujet, un mot-clé, un membre…" oninput="onRecherche()">
+          <span class="search-icon" id="rechercheIcon">&#128269;</span>
+          <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
+        </div>
+        <div class="topics-list" id="topicsList"></div>
+      </div>
     </div>
-    <div class="topics-list" id="topicsList"></div>
+
+    <aside class="fo-cote">
+      <div class="fo-carte fo-appel">
+        <p class="fo-carte-titre"><i class="ti ti-users-group" aria-hidden="true"></i> Rejoignez la discussion !</p>
+        <p class="fo-appel-texte">Votre avis compte. Ensemble, construisons une meilleure AMSTC.</p>
+        <button class="btn btn-primary" id="newTopicBtn2" style="width:100%;justify-content:center;"><i class="ti ti-plus"></i> Nouveau sujet</button>
+      </div>
+
+      <div class="fo-carte">
+        <p class="fo-carte-titre"><i class="ti ti-chart-bar" aria-hidden="true"></i> Statistiques du forum</p>
+        <div class="fo-stat"><i class="ti ti-message-circle-2" aria-hidden="true"></i>
+          <div><div class="fo-stat-nb" id="foNbSujets">0</div><div class="fo-stat-label">sujets publiés</div></div></div>
+        <div class="fo-stat"><i class="ti ti-users" aria-hidden="true"></i>
+          <div><div class="fo-stat-nb" id="foNbAuteurs">0</div><div class="fo-stat-label">membres qui ont participé</div></div></div>
+        <div class="fo-stat"><i class="ti ti-eye" aria-hidden="true"></i>
+          <div><div class="fo-stat-nb" id="foNbVues">0</div><div class="fo-stat-label">vues au total</div></div></div>
+      </div>
+
+      <div class="fo-carte">
+        <p class="fo-carte-titre"><i class="ti ti-clock-hour-4" aria-hidden="true"></i> Sujets récents</p>
+        <div id="foRecents"></div>
+      </div>
+    </aside>
+   </div>
   </div>
 </div>
 
@@ -190,6 +340,26 @@
 
   // ===== Recherche (insensible à la casse et aux accents, sans regex
   // Unicode : les caractères combinants en clair ont déjà cassé ce projet) =====
+  // Categories : la cle est ce que porte la base (phase114), le libelle
+  // ce que lit le membre. Un sujet cree avant phase114 n'a pas de
+  // categorie : il se range dans « Autres ».
+  const CATEGORIES = [
+    ['toutes', 'Tous les sujets', 'ti-messages'],
+    ['actualites', 'Actualités', 'ti-speakerphone'],
+    ['questions', 'Questions', 'ti-help-circle'],
+    ['idees', 'Idées & Propositions', 'ti-bulb'],
+    ['temoignages', 'Témoignages', 'ti-users'],
+    ['documents', 'Documents officiels', 'ti-file-description'],
+    ['autres', 'Autres', 'ti-dots'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
+  function categorieDe(t){ return LIBELLE_CAT[t.categorie] ? t.categorie : 'autres'; }
+  function initiales(nom){
+    return String(nom || 'M').split(/\s+/).filter(Boolean).slice(0, 2).map(m => m[0].toUpperCase()).join('');
+  }
+
+  let categorieChoisie = 'toutes';
   let tousLesSujets = [];
   function normaliser(s) {
     return String(s || '').toLowerCase().normalize('NFD')
@@ -215,38 +385,109 @@
       return;
     }
     tousLesSujets = data || [];
+    remplirCategories();
+    remplirStatistiques();
+    remplirRecents();
     afficherSujets();
+  }
+
+  // Seules les categories reellement utilisees recoivent une pastille :
+  // une pastille qui ne rend aucun sujet n'apprend rien.
+  function remplirCategories(){
+    const presentes = new Set(tousLesSujets.map(categorieDe));
+    const zone = document.getElementById('foCategories');
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="fo-cat ${cle === categorieChoisie ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('')
+      + `<button class="btn btn-primary fo-nouveau" id="newTopicBtn"><i class="ti ti-plus"></i> Nouveau sujet</button>`;
+    zone.querySelectorAll('.fo-cat').forEach(b => b.addEventListener('click', () => {
+      categorieChoisie = b.dataset.cat;
+      zone.querySelectorAll('.fo-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficherSujets();
+    }));
+    document.getElementById('newTopicBtn').addEventListener('click', () => toggleNewTopicForm(true));
+  }
+
+  function remplirStatistiques(){
+    const auteurs = new Set(tousLesSujets.map(t => t.author_name).filter(Boolean));
+    const vues = tousLesSujets.reduce((n, t) => n + (Number(t.vues) || 0), 0);
+    document.getElementById('foNbSujets').textContent = tousLesSujets.length;
+    document.getElementById('foNbAuteurs').textContent = auteurs.size;
+    document.getElementById('foNbVues').textContent = vues.toLocaleString('fr-FR');
+  }
+
+  function remplirRecents(){
+    const recents = [...tousLesSujets]
+      .sort((a, b) => new Date(b.last_activity_at || 0) - new Date(a.last_activity_at || 0))
+      .slice(0, 5);
+    document.getElementById('foRecents').innerHTML = recents.map(t => `
+      <a class="fo-recent" href="forum-sujet?id=${encodeURIComponent(t.id)}">
+        <span class="fo-recent-ic" aria-hidden="true"><i class="ti ${esc(ICONE_CAT[categorieDe(t)])}"></i></span>
+        <span style="min-width:0;">
+          <span class="fo-recent-titre">${esc(t.title)}</span>
+          <span class="fo-recent-date">${esc(timeAgo(t.last_activity_at))}</span>
+        </span>
+        <i class="ti ti-chevron-right" aria-hidden="true"></i>
+      </a>`).join('');
   }
 
   function afficherSujets() {
     const list = document.getElementById('topicsList');
     const q = normaliser(document.getElementById('rechercheInput').value.trim());
-    const data = q
-      ? tousLesSujets.filter(t => normaliser([t.title, t.body, t.author_name].filter(Boolean).join(' ')).includes(q))
-      : tousLesSujets;
+    const data = tousLesSujets.filter(t => {
+      if (categorieChoisie !== 'toutes' && categorieDe(t) !== categorieChoisie) return false;
+      if (!q) return true;
+      return normaliser([t.title, t.body, t.author_name, LIBELLE_CAT[categorieDe(t)]].filter(Boolean).join(' ')).includes(q);
+    });
 
     if (data.length === 0) {
-      list.innerHTML = q
-        ? '<p class="empty">Aucun sujet ne correspond à votre recherche.</p>'
+      list.innerHTML = (q || categorieChoisie !== 'toutes')
+        ? '<p class="empty">Aucun sujet ne correspond à cette recherche.</p>'
         : '<p class="empty">Aucun sujet pour le moment. Soyez le premier à en lancer un !</p>';
       return;
     }
 
-    list.innerHTML = data.map(t => `
-      <a class="topic-card" href="forum-sujet?id=${encodeURIComponent(t.id)}">
-        <div class="topic-icon"><i class="ti ti-message-circle-2"></i></div>
-        <div class="topic-body">
-          <div class="topic-title">${esc(t.title)}</div>
-          <div class="topic-excerpt">${esc((t.body || '').slice(0, 140))}</div>
-          <div class="topic-meta">
-            <span><i class="ti ti-user"></i> ${esc(t.author_name || 'Membre')}</span>
-            <span><i class="ti ti-message"></i> ${t.reply_count} réponse${t.reply_count > 1 ? 's' : ''}</span>
-            <span><i class="ti ti-clock"></i> ${timeAgo(t.last_activity_at)}</span>
-          </div>
-        </div>
-        <i class="ti ti-chevron-right topic-arrow"></i>
-      </a>
-    `).join('');
+    const dateCourte = (d) => d
+      ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+      : '';
+
+    list.innerHTML = data.map(t => {
+      const cat = categorieDe(t);
+      const dernier = t.dernier_auteur || t.author_name || 'Membre';
+      return `
+      <a class="fo-sujet" href="forum-sujet?id=${encodeURIComponent(t.id)}">
+        <span class="fo-sujet-ic" aria-hidden="true"><i class="ti ${esc(ICONE_CAT[cat])}"></i></span>
+        <span class="fo-sujet-corps">
+          <span class="fo-sujet-titre">${esc(t.title)}</span>
+          <span class="fo-sujet-extrait">${esc(t.body || '')}</span>
+          <span class="fo-sujet-bas">
+            <span class="fo-etiq"><i class="ti ${esc(ICONE_CAT[cat])}" aria-hidden="true"></i> ${esc(LIBELLE_CAT[cat])}</span>
+            <span class="fo-sujet-par"><i class="ti ti-user" aria-hidden="true"></i> ${esc(t.author_name || 'Membre')}</span>
+            <span class="fo-sujet-par"><i class="ti ti-calendar" aria-hidden="true"></i> ${esc(dateCourte(t.created_at || t.last_activity_at))}</span>
+          </span>
+        </span>
+        <span class="fo-sujet-chiffres">
+          <span class="fo-chiffre">
+            <span class="fo-chiffre-nb"><i class="ti ti-message-circle-2" aria-hidden="true"></i> ${t.reply_count || 0}</span>
+            <span class="fo-chiffre-label">réponse${(t.reply_count || 0) > 1 ? 's' : ''}</span>
+          </span>
+          <span class="fo-chiffre">
+            <span class="fo-chiffre-nb"><i class="ti ti-eye" aria-hidden="true"></i> ${Number(t.vues) || 0}</span>
+            <span class="fo-chiffre-label">vue${(Number(t.vues) || 0) > 1 ? 's' : ''}</span>
+          </span>
+        </span>
+        <span class="fo-dernier">
+          <span class="fo-dernier-vide" aria-hidden="true">${esc(initiales(dernier))}</span>
+          <span style="min-width:0;">
+            <span class="fo-dernier-nom">${t.reply_count ? 'Réponse de' : 'Ouvert par'} <b>${esc(dernier)}</b></span>
+            <span class="fo-dernier-date">${esc(timeAgo(t.last_activity_at))}</span>
+          </span>
+        </span>
+        <i class="ti ti-chevron-right fo-sujet-fleche" aria-hidden="true"></i>
+      </a>`;
+    }).join('');
   }
 
   function toggleNewTopicForm(open) {
@@ -271,11 +512,15 @@
 
     const btn = document.getElementById('ntSubmitBtn');
     btn.disabled = true;
-    const { error } = await supabaseClient.from('forum_topics').insert({
-      author_id: currentProfile.id,
-      title,
-      body,
-    });
+    const charge = { author_id: currentProfile.id, title, body,
+      categorie: document.getElementById('ntCategorie').value };
+    // La colonne « categorie » vient de phase114 : sans le script, le
+    // sujet part quand meme, rangé dans « Autres ».
+    let { error } = await supabaseClient.from('forum_topics').insert(charge);
+    if (error && (error.code === '42703' || error.code === 'PGRST204')) {
+      delete charge.categorie;
+      ({ error } = await supabaseClient.from('forum_topics').insert(charge));
+    }
     btn.disabled = false;
 
     if (error) {
@@ -295,10 +540,20 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
+    try {
+      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.image) {
+          document.getElementById('foPhotoImg').src = d.image;
+          document.getElementById('foPhoto').style.display = '';
+        }
+      }
+    } catch (e) { /* sans photo, le bandeau garde son degrade */ }
     await loadTopics();
   })();
 
-  document.getElementById('newTopicBtn').addEventListener('click', () => toggleNewTopicForm(true));
+  document.getElementById('newTopicBtn2').addEventListener('click', () => toggleNewTopicForm(true));
   document.getElementById('ntCancelBtn').addEventListener('click', () => toggleNewTopicForm(false));
   document.getElementById('ntSubmitBtn').addEventListener('click', submitNewTopic);
 
