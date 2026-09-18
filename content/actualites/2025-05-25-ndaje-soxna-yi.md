@@ -1,5 +1,5 @@
 ---
-title: "\"Ndajé Soxna yi 2026\" : Un Rendez-vous de Sororité, de Foi et de Santé
+title: "Ndajé Soxna yi 2026 : Un Rendez-vous de Sororité, de Foi et de Santé
   pour la Cellule Féminine de l'AMSTC"
 date: 2025-05-25T10:00:00.000Z
 excerpt: Picnic des Amstiennes, organisé par la Cellule féminine de l'AMSTC au
