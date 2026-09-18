@@ -1,8 +1,10 @@
 ---
 title: "Nemekou Daara Louga 2026 : 203 talibés consultés dans deux daaras"
 date: 2026-01-25T10:00:00.000Z
-excerpt: "En collaboration avec DEESS Djamil et LAMe, l'AMSTC a mobilisé 24 agents de santé pour une journée de consultations gratuites et de dons de médicaments dans les daaras de Médina Salam et Vélingara, à Louga."
-image: ""
+excerpt: En collaboration avec DEESS Djamil et LAMe, l'AMSTC a mobilisé 24
+  agents de santé pour une journée de consultations gratuites et de dons de
+  médicaments dans les daaras de Médina Salam et Vélingara, à Louga.
+image: /assets/uploads/gamou-louga-2026-02.png
 ---
 
 Le dimanche 25 janvier 2026, l'AMSTC, en collaboration avec les associations DEESS Djamil et LAMe (Louga Assistance Médicale), a réalisé une journée de consultation médicale gratuite et de don de médicaments dans deux daaras de Louga : Médina Salam et Vélingara.
