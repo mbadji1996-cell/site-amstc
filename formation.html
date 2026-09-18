@@ -177,6 +177,18 @@
       // contenu de la page. Le lecteur doit savoir que la page n'existe
       // pas, et ou aller.
       if (!res.ok) {
+        // Webinaires et masterclass ont rejoint les realisations : un
+        // ancien lien (partage, favori, moteur de recherche) y mene encore.
+        try {
+          const ailleurs = await fetch(
+            `https://raw.githubusercontent.com/${REPO}/main/content/actualites/${slug}.md`,
+            { method: "HEAD" }
+          );
+          if (ailleurs.ok) {
+            window.location.replace("article?slug=" + encodeURIComponent(slug));
+            return;
+          }
+        } catch (e) { /* on affiche le message ci-dessous */ }
         document.title = "Formation introuvable - AMSTC";
         content.innerHTML = `<h1>Cette formation n'existe pas ou plus.</h1>
           <p>Le lien est peut-être ancien, ou le contenu a été retiré.</p>
