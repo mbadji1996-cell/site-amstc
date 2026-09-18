@@ -5,7 +5,7 @@ date: 2025-02-15T10:00:00.000Z
 excerpt: "Journée de consultations gratuites à l'école coranique Darou Salam de
   Keur Massar : 200 patients pris en charge dont 175 enfants, accompagnée d'un
   don de denrées alimentaires."
-image: ""
+image: /assets/uploads/nemekou-daara-1-daara-keur-massar-01.jpg
 ---
 
 Le 15 février 2025, la commission sociale de l'AMSTC a organisé une journée de consultations médicales gratuites à l'école coranique Darou Salam de Keur Massar.
