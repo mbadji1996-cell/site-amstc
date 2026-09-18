@@ -160,11 +160,24 @@
 
       <div class="new-folder-form" id="newFolderForm">
         <div class="new-folder-row">
+          <select id="nfType" onchange="majChampsType()" style="padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;">
+            <option value="photos">Album photo</option>
+            <option value="video">Vidéo (lien YouTube)</option>
+            <option value="document">Document (lien)</option>
+          </select>
           <input type="number" id="nfYear" placeholder="Année">
           <input type="text" id="nfTitle" placeholder="Titre de l'activité (ex : Caravane médicale Dakar)">
           <button class="btn btn-primary" onclick="submitNewFolder()"><i class="ti ti-check"></i> Créer</button>
           <button class="btn btn-outline" onclick="toggleNewFolderForm()">Annuler</button>
         </div>
+        <!-- Ces trois champs ne servent qu'aux videos et aux documents :
+             une video n'est pas televersee ici, on colle son lien. -->
+        <div class="new-folder-row" id="nfLigneLien" style="display:none;margin-top:10px;">
+          <input type="url" id="nfUrl" placeholder="Lien (https://youtu.be/… ou lien du document)">
+          <input type="text" id="nfRepere" placeholder="Durée (12:45)">
+          <input type="date" id="nfDate">
+        </div>
+        <p class="assign-msg" id="nfAide" style="margin-top:8px;font-size:0.82rem;color:var(--text-muted);display:none;"></p>
         <p class="assign-msg" id="newFolderMsg" style="margin-top:10px;font-size:0.85rem;"></p>
       </div>
 
@@ -291,16 +304,58 @@
     if (!year) { msg.textContent = "Indiquez l'année."; msg.style.color = '#B23B3B'; return; }
     if (!title) { msg.textContent = 'Indiquez un titre.'; msg.style.color = '#B23B3B'; return; }
 
-    const { data, error } = await supabaseClient
-      .from('media_folders')
-      .insert({ year, title })
-      .select()
-      .single();
+    const type = document.getElementById('nfType').value;
+    const url = document.getElementById('nfUrl').value.trim();
+    const repere = document.getElementById('nfRepere').value.trim();
+    const dateMedia = document.getElementById('nfDate').value || null;
+    if (type !== 'photos' && !url) {
+      msg.textContent = type === 'video' ? 'Collez le lien de la vidéo.' : 'Collez le lien du document.';
+      msg.style.color = '#B23B3B';
+      return;
+    }
 
+    const charge = { year, title };
+    if (type !== 'photos') {
+      charge.media_type = type;
+      charge.media_url = url;
+      charge.date_media = dateMedia;
+      if (type === 'video') charge.duree = repere || null; else charge.taille = repere || null;
+    }
+
+    // Les colonnes viennent de phase113. Si le script n'a pas encore ete
+    // passe, la base repond « colonne inconnue » : on le dit clairement
+    // plutot que d'afficher un message technique.
+    let { data, error } = await supabaseClient
+      .from('media_folders').insert(charge).select().single();
+    if (error && (error.code === '42703' || error.code === 'PGRST204')) {
+      msg.innerHTML = 'Les vidéos et documents demandent le script <code>supabase/phase113-mediatheque-videos-documents.sql</code>, pas encore exécuté.';
+      msg.style.color = '#B23B3B';
+      return;
+    }
     if (error) { msg.textContent = 'Erreur : ' + error.message; msg.style.color = '#B23B3B'; return; }
 
     toggleNewFolderForm();
+    // Une video ou un document n'a pas de page d'album a ouvrir : la liste
+    // suffit, la fiche est complete des sa creation.
+    if (type !== 'photos') { await loadFolders(); return; }
     await openFolderView(data.id);
+  }
+
+  // Les champs « lien », « duree/taille » et « date » n'apparaissent que
+  // pour une video ou un document.
+  function majChampsType(){
+    const type = document.getElementById('nfType').value;
+    const ligne = document.getElementById('nfLigneLien');
+    const aide = document.getElementById('nfAide');
+    ligne.style.display = type === 'photos' ? 'none' : '';
+    aide.style.display = type === 'photos' ? 'none' : '';
+    if (type === 'video') {
+      document.getElementById('nfRepere').placeholder = 'Durée (12:45)';
+      aide.textContent = "La vidéo reste sur YouTube : mettez-la en « non répertoriée » si elle ne doit pas être publique, puis collez son lien. Rien n'est stocké sur notre serveur, et la vignette vient de YouTube.";
+    } else if (type === 'document') {
+      document.getElementById('nfRepere').placeholder = 'Poids (2,4 Mo)';
+      aide.textContent = "Le document reste là où il est hébergé (Drive, site officiel…) : collez son lien. Pour un document réservé aux membres, passez plutôt par la Bibliothèque.";
+    }
   }
 
   async function loadFolders() {

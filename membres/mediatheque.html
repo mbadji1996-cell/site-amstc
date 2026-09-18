@@ -60,6 +60,124 @@
   .folder-title{font-family:var(--display);font-size:0.97rem;font-weight:600;color:var(--text-heading);margin-bottom:4px;}
   .folder-meta{font-family:var(--mono);font-size:0.72rem;color:#8A9E8F;}
 
+
+  /* ===== Bandeau ===== */
+  .md-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:24px 0 20px; align-items:start;}
+  @media(min-width:1180px){ .md-haut{grid-template-columns:minmax(0,1fr) 300px;} }
+  .md-bandeau{position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
+    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
+    padding:26px 28px;}
+  :root[data-theme="dark"] .md-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);}
+  .md-bandeau-photo{position:absolute; inset:0 0 0 auto; width:56%; z-index:0;}
+  .md-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
+  .md-bandeau-photo::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.55) 42%, rgba(244,248,244,0.1) 100%);}
+  :root[data-theme="dark"] .md-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.6) 42%, rgba(24,32,25,0.2) 100%);}
+  .md-bandeau-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
+  .md-bandeau-ic{width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:var(--green); color:#FFFFFF; font-size:28px;}
+  .md-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
+  .md-retour:hover{color:var(--green);}
+  .md-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.4vw,2.2rem); font-weight:700;
+    color:var(--text-heading); line-height:1.15; margin:0;}
+  .md-bandeau-sous{color:var(--text-muted); font-size:0.94rem; margin-top:6px; max-width:52ch;}
+
+  /* ===== Pastilles de type ===== */
+  .md-types{position:relative; z-index:1; display:flex; gap:9px; flex-wrap:wrap; margin-top:20px;}
+  .md-type{display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:999px; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--text-heading);
+    font-family:var(--body); font-size:0.86rem; font-weight:600;}
+  .md-type .ti{font-size:16px; color:var(--text-muted);}
+  .md-type.actif{background:var(--green-deep); border-color:var(--green-deep); color:#FFFFFF;}
+  .md-type.actif .ti{color:var(--gold);}
+  .md-type:hover:not(.actif){border-color:var(--green); color:var(--green);}
+  .md-type:hover:not(.actif) .ti{color:var(--green);}
+
+  /* ===== Colonne de droite ===== */
+  .md-cote{display:grid; gap:14px;}
+  @media(min-width:1180px){ .md-cote{position:sticky; top:16px;} }
+  .md-carte{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 20px;}
+  .md-total{display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--line);}
+  .md-total-ic{width:44px; height:44px; flex:none; border-radius:12px; display:grid; place-items:center;
+    background:var(--green); color:#FFFFFF; font-size:21px;}
+  .md-total-nombre{font-family:var(--display); font-size:1.7rem; font-weight:700; color:var(--text-heading); line-height:1;}
+  .md-total-label{font-size:0.86rem; color:var(--text-muted);}
+  .md-ligne{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.9rem;}
+  .md-ligne:last-child{border-bottom:0; padding-bottom:0;}
+  .md-ligne .ti{color:var(--text-accent); font-size:18px;}
+  .md-ligne-nombre{margin-left:auto; font-family:var(--mono); font-weight:700; color:var(--text-heading);}
+  .md-filtre-titre{display:flex; align-items:center; gap:9px; font-family:var(--display); font-size:0.98rem;
+    font-weight:700; color:var(--text-heading); margin-bottom:12px;}
+  .md-filtre-titre .ti{color:var(--green);}
+  .md-champ{display:block; margin-bottom:12px;}
+  .md-champ span{display:block; font-size:0.78rem; color:var(--text-muted); margin-bottom:5px;}
+  .md-champ select, .md-champ input{width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px;
+    font-family:var(--body); font-size:0.88rem; background:var(--surface); color:var(--ink);}
+  .md-champ select{-webkit-appearance:none; appearance:none; cursor:pointer; padding-right:34px;
+    background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317763B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center / 16px 16px;}
+  :root[data-theme="dark"] .md-champ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FD9A0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+  :root[data-theme="dark"] .md-champ select option{background:#182019; color:#E8F1EC;}
+  .md-champ select:focus, .md-champ input:focus{outline:none; border-color:var(--green);}
+  .md-reinit{width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;
+    padding:10px 14px; border-radius:10px; border:1.5px solid var(--line); background:var(--surface);
+    font-family:var(--body); font-size:0.85rem; font-weight:600; color:var(--text-heading);}
+  .md-reinit:hover{border-color:var(--green); color:var(--green);}
+  .md-mot{position:relative; overflow:hidden; text-align:center; padding:24px 20px;
+    background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%); border:1px solid var(--line); border-radius:18px;}
+  :root[data-theme="dark"] .md-mot{background:linear-gradient(180deg, rgba(23,118,59,0.16) 0%, var(--surface) 100%);}
+  .md-mot-ic{width:44px; height:44px; margin:0 auto 12px; border-radius:12px; display:grid; place-items:center;
+    background:rgba(23,118,59,0.12); color:var(--green); font-size:21px;}
+  .md-mot-texte{font-family:var(--display); font-size:0.98rem; font-weight:600; color:var(--text-heading); line-height:1.4;}
+  .md-mot-filet{width:44px; height:2px; background:var(--gold); margin:14px auto 0;}
+
+  /* ===== Sections par annee ===== */
+  .md-annee-tete{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+  .md-annee-barre{width:4px; height:22px; border-radius:2px; background:var(--green); flex:none;}
+  .md-annee-titre{font-family:var(--display); font-size:1.3rem; font-weight:700; color:var(--text-heading);}
+  .md-annee-tout{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-size:0.84rem;
+    color:var(--text-accent); background:none; border:0; cursor:pointer; font-family:var(--body); font-weight:600;}
+  .md-annee-tout:hover{text-decoration:underline;}
+
+  /* ===== Cartes ===== */
+  .md-grille{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; padding-bottom:22px;}
+  .md-carte-media{height:100%; display:flex; flex-direction:column; text-align:left; padding:0; cursor:pointer;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    font-family:var(--body); transition:border-color .18s, box-shadow .18s, transform .18s;}
+  .md-carte-media:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(6,68,28,0.1); transform:translateY(-3px);}
+  .md-vignette{position:relative; width:100%; aspect-ratio:4/3; background:var(--paper-alt); overflow:hidden;}
+  .md-vignette img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+  .md-vignette-vide{position:absolute; inset:0; display:grid; place-items:center; font-size:32px; color:var(--text-accent);}
+  .md-etiq{position:absolute; top:10px; left:10px; display:inline-flex; align-items:center; gap:6px;
+    background:rgba(6,28,14,0.72); color:#FFFFFF; border-radius:999px; padding:4px 10px; font-size:0.7rem; font-weight:600;}
+  .md-compte{position:absolute; bottom:10px; right:10px; display:inline-flex; align-items:center; gap:5px;
+    background:rgba(6,28,14,0.72); color:#FFFFFF; border-radius:999px; padding:4px 10px;
+    font-family:var(--mono); font-size:0.7rem;}
+  .md-lecture{position:absolute; inset:0; display:grid; place-items:center; color:#FFFFFF; font-size:44px;
+    text-shadow:0 2px 12px rgba(0,0,0,0.45);}
+  .md-corps{padding:13px 15px 15px; display:flex; flex-direction:column; gap:4px; flex:1;}
+  .md-titre{font-family:var(--display); font-size:0.96rem; font-weight:600; color:var(--text-heading); line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .md-date{font-family:var(--mono); font-size:0.72rem; color:var(--text-muted);}
+  .md-voir{margin-top:auto; align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+    padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--surface);
+    font-size:0.8rem; font-weight:600; color:var(--text-heading);}
+  .md-carte-media:hover .md-voir{border-color:var(--green); color:var(--green);}
+
+  /* ===== Lecteur video ===== */
+  .md-voile{position:fixed; inset:0; z-index:1500; background:rgba(6,28,14,0.72);
+    display:none; align-items:center; justify-content:center; padding:24px;}
+  .md-voile.ouvert{display:flex;}
+  .md-lecteur{width:min(980px,100%); background:#000; border-radius:16px; overflow:hidden;}
+  .md-lecteur-cadre{position:relative; width:100%; aspect-ratio:16/9; background:#000;}
+  .md-lecteur-cadre iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .md-lecteur-pied{display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--surface);}
+  .md-lecteur-titre{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:0.95rem;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .md-lecteur-fermer{margin-left:auto; flex:none; padding:8px 16px; border-radius:999px; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); font-family:var(--body); font-size:0.84rem;
+    font-weight:600; color:var(--text-heading);}
+  .md-lecteur-fermer:hover{border-color:var(--green); color:var(--green);}
+
   .empty{color:var(--text-muted);font-family:var(--mono);font-size:0.85rem;padding:60px 0;text-align:center;}
 
   footer{padding:40px 0;text-align:center;}
@@ -107,23 +225,65 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-photo"></i></div>
-    <h1>Médiathèque</h1>
-    <p class="hero-sub">Photos des activités de l'association, classées par année</p>
+<div class="wrap">
+  <p class="empty" id="loadingMsg">Chargement…</p>
+
+  <div id="mediaHaut" class="md-haut" style="display:none;">
+    <section class="md-bandeau">
+      <div class="md-bandeau-photo" id="mdPhoto" style="display:none;"><img id="mdPhotoImg" src="" alt="" loading="lazy"></div>
+      <div class="md-bandeau-texte">
+        <span class="md-bandeau-ic" aria-hidden="true"><i class="ti ti-photo"></i></span>
+        <div>
+          <a class="md-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1>Médiathèque</h1>
+          <p class="md-bandeau-sous">Découvrez et explorez nos photos, vidéos et documents des activités de l'association.</p>
+        </div>
+      </div>
+      <div class="md-types" id="mdTypes"></div>
+    </section>
+
+    <aside class="md-cote">
+      <div class="md-carte">
+        <div class="md-total">
+          <span class="md-total-ic" aria-hidden="true"><i class="ti ti-library-photo"></i></span>
+          <div>
+            <div class="md-total-nombre" id="mdTotal">0</div>
+            <div class="md-total-label">médias disponibles</div>
+          </div>
+        </div>
+        <div class="md-ligne"><i class="ti ti-photo" aria-hidden="true"></i> Photos <span class="md-ligne-nombre" id="mdNbPhotos">0</span></div>
+        <div class="md-ligne"><i class="ti ti-player-play" aria-hidden="true"></i> Vidéos <span class="md-ligne-nombre" id="mdNbVideos">0</span></div>
+        <div class="md-ligne"><i class="ti ti-file-description" aria-hidden="true"></i> Documents <span class="md-ligne-nombre" id="mdNbDocs">0</span></div>
+      </div>
+
+      <div class="md-carte">
+        <p class="md-filtre-titre"><i class="ti ti-filter" aria-hidden="true"></i> Filtrer par</p>
+        <label class="md-champ"><span>Année</span>
+          <select id="mdAnnee" onchange="afficherAlbums()"></select></label>
+        <label class="md-champ" data-recherche-cacher><span>Rechercher</span>
+          <input type="text" id="rechercheInput" data-recherche-page placeholder="Rechercher un média…" oninput="onRecherche()"></label>
+        <button type="button" class="md-reinit" onclick="reinitialiserFiltres()"><i class="ti ti-refresh" aria-hidden="true"></i> Réinitialiser les filtres</button>
+      </div>
+
+      <div class="md-mot">
+        <div class="md-mot-ic" aria-hidden="true"><i class="ti ti-camera"></i></div>
+        <p class="md-mot-texte">La médiathèque,<br>une mémoire vivante de notre engagement.</p>
+        <div class="md-mot-filet" aria-hidden="true"></div>
+      </div>
+    </aside>
   </div>
+
+  <div id="pageContent" style="display:none;"></div>
 </div>
 
-<div class="wrap">
-  <div class="search-wrap" id="rechercheWrap" style="display:none;" data-recherche-cacher>
-    <input type="text" class="search-input" id="rechercheInput" data-recherche-page placeholder="Rechercher un album, une année…" oninput="onRecherche()">
-    <span class="search-icon" id="rechercheIcon">&#128269;</span>
-    <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
+<div class="md-voile" id="mdVoile" onclick="if(event.target===this)fermerVideo()">
+  <div class="md-lecteur" role="dialog" aria-modal="true" aria-label="Lecture de la vidéo">
+    <div class="md-lecteur-cadre" id="mdLecteurCadre"></div>
+    <div class="md-lecteur-pied">
+      <span class="md-lecteur-titre" id="mdLecteurTitre"></span>
+      <button type="button" class="md-lecteur-fermer" onclick="fermerVideo()">Fermer</button>
+    </div>
   </div>
-  <p class="empty" id="loadingMsg">Chargement…</p>
-  <div id="pageContent" style="display:none;"></div>
 </div>
 
 <footer>
@@ -139,9 +299,12 @@
   async function loadFolders() {
     const content = document.getElementById("pageContent");
 
+    // select("*") plutot qu'une liste de colonnes : les colonnes de
+    // phase113 (media_type, media_url...) arrivent alors d'elles-memes, et
+    // la page fonctionne aussi tant que le script n'est pas passe.
     const { data: folders, error } = await supabaseClient
       .from("media_folders")
-      .select("id, year, title, cover_path")
+      .select("*")
       .eq("is_published", true)
       .is("parent_id", null)
       .order("year", { ascending: false })
@@ -159,7 +322,7 @@
     // l'API et les albums absents de la tranche renvoyée s'affichaient à
     // tort avec 0 photo. head: true ne transfère aucune ligne.
     const countByFolder = {};
-    await Promise.all(folders.map(async f => {
+    await Promise.all(folders.filter(estAlbum).map(async f => {
       const { count } = await supabaseClient
         .from("media_photos")
         .select("id", { count: "exact", head: true })
@@ -176,34 +339,137 @@
 
     // Tout est chargé : on mémorise pour la recherche et on affiche.
     etatMediatheque = { folders, countByFolder, signedByPath };
-    document.getElementById('rechercheWrap').style.display = '';
+    remplirCompteurs();
+    remplirTypes();
+    remplirAnnees();
+    document.getElementById('mediaHaut').style.display = '';
+    // La photo du bandeau est celle du CMS pour l'espace membres : une
+    // seule image a tenir a jour pour le tableau de bord, l'annuaire et ici.
+    try {
+      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.image) {
+          document.getElementById('mdPhotoImg').src = d.image;
+          document.getElementById('mdPhoto').style.display = '';
+        }
+      }
+    } catch (e) { /* sans photo, le bandeau garde son degrade */ }
+    afficherAlbums();
+  }
+
+  // ===== Types de medias =====
+  // Une entree sans media_type est un album photo : c'est ce qu'etait
+  // toute la mediatheque avant phase113.
+  function typeDe(f){ return f.media_type || 'photos'; }
+  function estAlbum(f){ return typeDe(f) === 'photos'; }
+  const LIBELLES_TYPE = { photos: 'Photos', video: 'Vidéos', document: 'Documents' };
+  const ICONES_TYPE = { photos: 'ti-photo', video: 'ti-player-play', document: 'ti-file-description' };
+
+  /**
+   * Identifiant d'une video YouTube, quelle que soit la forme du lien
+   * (youtu.be/xxx, watch?v=xxx, /embed/xxx, /shorts/xxx). Sert a deux
+   * choses : la vignette, servie par YouTube, et le lecteur.
+   */
+  function idYouTube(url){
+    const u = String(url || '');
+    const m = u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{6,})/);
+    return m ? m[1] : null;
+  }
+  // Vignette d'une video : servie par YouTube, donc rien a stocker ni a
+  // faire transiter par notre serveur.
+  function vignetteDe(f, signedByPath){
+    if (estAlbum(f)) return (f.cover_path && signedByPath[f.cover_path]) || '';
+    if (f.cover_path && signedByPath[f.cover_path]) return signedByPath[f.cover_path];
+    const id = typeDe(f) === 'video' ? idYouTube(f.media_url) : null;
+    return id ? 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg' : '';
+  }
+
+  let videoOuverte = false;
+  function ouvrirVideo(id, titre){
+    const f = (etatMediatheque.folders || []).find(x => String(x.id) === String(id));
+    if (!f) return;
+    const yt = idYouTube(f.media_url);
+    // Le lecteur n'est cree qu'ICI : tant qu'on n'a pas clique, la page
+    // n'a envoye aucune requete a YouTube.
+    document.getElementById('mdLecteurCadre').innerHTML = yt
+      ? `<iframe src="https://www.youtube-nocookie.com/embed/${esc(yt)}?autoplay=1&rel=0" title="${esc(titre || '')}" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
+      : `<p class="empty" style="color:#fff;">Vidéo indisponible. <a href="${esc(f.media_url || '#')}" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">Ouvrir le lien</a></p>`;
+    document.getElementById('mdLecteurTitre').textContent = titre || f.title || '';
+    document.getElementById('mdVoile').classList.add('ouvert');
+    videoOuverte = true;
+  }
+  function fermerVideo(){
+    // Vider le cadre arrete la lecture : sans cela le son continue derriere.
+    document.getElementById('mdLecteurCadre').innerHTML = '';
+    document.getElementById('mdVoile').classList.remove('ouvert');
+    videoOuverte = false;
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && videoOuverte) fermerVideo(); });
+
+  // ===== Compteurs, pastilles de type, annees =====
+  let typeChoisi = 'toutes';
+  function remplirCompteurs(){
+    const { folders, countByFolder } = etatMediatheque;
+    const photos = Object.values(countByFolder).reduce((n, v) => n + v, 0);
+    const videos = folders.filter(f => typeDe(f) === 'video').length;
+    const docs = folders.filter(f => typeDe(f) === 'document').length;
+    document.getElementById('mdNbPhotos').textContent = photos;
+    document.getElementById('mdNbVideos').textContent = videos;
+    document.getElementById('mdNbDocs').textContent = docs;
+    document.getElementById('mdTotal').textContent = photos + videos + docs;
+  }
+  function remplirTypes(){
+    const presents = [...new Set(etatMediatheque.folders.map(typeDe))];
+    const zone = document.getElementById('mdTypes');
+    const boutons = [['toutes', 'Toutes', 'ti-layout-grid']]
+      .concat(['photos', 'video', 'document'].filter(t => presents.includes(t))
+        .map(t => [t, LIBELLES_TYPE[t], ICONES_TYPE[t]]));
+    zone.innerHTML = boutons.map(([cle, libelle, icone]) =>
+      `<button type="button" class="md-type ${cle === typeChoisi ? 'actif' : ''}" data-type="${cle}">
+         <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('');
+    zone.querySelectorAll('.md-type').forEach(b => b.addEventListener('click', () => {
+      typeChoisi = b.dataset.type;
+      zone.querySelectorAll('.md-type').forEach(x => x.classList.toggle('actif', x === b));
+      afficherAlbums();
+    }));
+  }
+  function remplirAnnees(){
+    const annees = [...new Set(etatMediatheque.folders.map(f => f.year).filter(Boolean))].sort((a, b) => b - a);
+    document.getElementById('mdAnnee').innerHTML = '<option value="">Toutes les années</option>'
+      + annees.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+  }
+  function reinitialiserFiltres(){
+    typeChoisi = 'toutes';
+    document.getElementById('mdAnnee').value = '';
+    const champ = document.getElementById('rechercheInput');
+    if (champ) champ.value = '';
+    remplirTypes();
     afficherAlbums();
   }
 
   // ===== Recherche d'albums (titre ou année, insensible aux accents) =====
   let etatMediatheque = null;
   function normaliser(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-  function onRecherche(){
-    const q = document.getElementById("rechercheInput").value.trim();
-    document.getElementById("rechercheIcon").style.display = q ? "none" : "";
-    document.getElementById("rechercheClear").classList.toggle("show", !!q);
-    afficherAlbums();
-  }
-  function effacerRecherche(){
-    document.getElementById("rechercheInput").value = "";
-    onRecherche();
-  }
+  function onRecherche(){ afficherAlbums(); }
 
   function afficherAlbums() {
     const content = document.getElementById("pageContent");
     const { folders, countByFolder, signedByPath } = etatMediatheque;
-    const q = normaliser(document.getElementById("rechercheInput").value.trim());
-    const visibles = q
-      ? folders.filter(f => normaliser(f.title + " " + f.year).includes(q))
-      : folders;
+    const champ = document.getElementById("rechercheInput");
+    const q = normaliser(champ ? champ.value.trim() : "");
+    const annee = document.getElementById("mdAnnee").value;
+    const visibles = folders.filter(f => {
+      if (typeChoisi !== 'toutes' && typeDe(f) !== typeChoisi) return false;
+      if (annee && String(f.year) !== String(annee)) return false;
+      if (!q) return true;
+      return normaliser([f.title, f.year, LIBELLES_TYPE[typeDe(f)]].join(" ")).includes(q);
+    });
 
     if (visibles.length === 0) {
-      content.innerHTML = '<p class="empty">Aucun album ne correspond à votre recherche.</p>';
+      content.innerHTML = '<p class="empty">Aucun média ne correspond à ces filtres.</p>';
+      document.getElementById("loadingMsg").style.display = "none";
+      content.style.display = "";
       return;
     }
 
@@ -211,25 +477,55 @@
     visibles.forEach(f => { (byYear[f.year] = byYear[f.year] || []).push(f); });
     const years = Object.keys(byYear).sort((a, b) => b - a);
 
+    const dateLisible = (f) => {
+      const d = f.date_media || f.created_at;
+      if (!d) return '';
+      try {
+        return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+      } catch (e) { return ''; }
+    };
+
+    const carte = (f) => {
+      const type = typeDe(f);
+      const cover = vignetteDe(f, signedByPath);
+      const count = countByFolder[f.id] || 0;
+      // Un album ouvre sa page, une video son lecteur, un document son lien.
+      const balise = type === 'video' ? 'button' : 'a';
+      const cible = type === 'photos'
+        ? ` href="mediatheque-dossier?id=${encodeURIComponent(f.id)}"`
+        : (type === 'document'
+            ? ` href="${esc(f.media_url || '#')}" target="_blank" rel="noopener"`
+            : ` type="button" onclick="ouvrirVideo('${esc(f.id)}', '${esc((f.title || '').replace(/'/g, "\\'"))}')"`);
+      const repere = type === 'photos'
+        ? (count ? `<span class="md-compte"><i class="ti ti-photo"></i> ${count}</span>` : '')
+        : (type === 'video'
+            ? (f.duree ? `<span class="md-compte"><i class="ti ti-clock"></i> ${esc(f.duree)}</span>` : '')
+            : (f.taille ? `<span class="md-compte"><i class="ti ti-file"></i> ${esc(f.taille)}</span>` : ''));
+      return `
+        <${balise} class="md-carte-media"${cible}>
+          <span class="md-vignette">
+            ${cover
+              ? `<img src="${esc(cover)}" alt="" loading="lazy">`
+              : `<span class="md-vignette-vide"><i class="ti ${ICONES_TYPE[type]}"></i></span>`}
+            <span class="md-etiq"><i class="ti ${ICONES_TYPE[type]}" aria-hidden="true"></i> ${esc(type === 'photos' ? 'Photo' : (type === 'video' ? 'Vidéo' : 'Document'))}</span>
+            ${type === 'video' ? '<span class="md-lecture" aria-hidden="true"><i class="ti ti-player-play-filled"></i></span>' : ''}
+            ${repere}
+          </span>
+          <span class="md-corps">
+            <span class="md-titre">${esc(f.title)}</span>
+            <span class="md-date">${esc(dateLisible(f))}</span>
+            <span class="md-voir">Voir <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+          </span>
+        </${balise}>`;
+    };
+
     content.innerHTML = years.map(year => `
       <div class="year-section">
-        <p class="year-title">${year}</p>
-        <div class="folders-grid">
-          ${byYear[year].map(f => {
-            const cover = f.cover_path && signedByPath[f.cover_path];
-            const count = countByFolder[f.id] || 0;
-            return `
-              <a class="folder-card" href="mediatheque-dossier?id=${encodeURIComponent(f.id)}">
-                ${cover
-                  ? `<img class="folder-cover" src="${cover}" alt="" loading="lazy">`
-                  : `<div class="folder-cover-placeholder"><i class="ti ti-photo"></i></div>`}
-                <div class="folder-body">
-                  <p class="folder-title">${esc(f.title)}</p>
-                  <p class="folder-meta">${count} photo${count > 1 ? 's' : ''}</p>
-                </div>
-              </a>`;
-          }).join('')}
+        <div class="md-annee-tete">
+          <span class="md-annee-barre" aria-hidden="true"></span>
+          <span class="md-annee-titre">${year}</span>
         </div>
+        <div class="md-grille">${byYear[year].map(carte).join('')}</div>
       </div>
     `).join('');
 
