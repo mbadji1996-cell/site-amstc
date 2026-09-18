@@ -100,6 +100,9 @@
     .hero-inner{padding:0 18px;}
     .page-body{padding:20px 18px 60px;}
   }
+  /* Deplacee en bas de page sur telephone (voir placerAide) : elle n'a
+     plus l'ecart de la rangee, on le lui rend. */
+  .page-body > .tb-aide{margin-top:26px;}
 
   /* ===== Reprise de formation et agenda (inspires du prototype) ===== */
   .reprise-grid{display:grid; gap:16px; margin-bottom:28px;}
@@ -485,6 +488,30 @@
     </div>
 
   </div><!-- /page-body -->
+  <script>
+    // Sur telephone, « Besoin d'aide ? » passe en dernier ; sur grand
+    // ecran, elle reprend sa place dans la rangee du haut. Deplacer le
+    // noeud plutot que le dupliquer : les textes du CMS, poses par id,
+    // restent au meme endroit.
+    (function placerAide(){
+      var ecranEtroit = window.matchMedia('(max-width: 700px)');
+      var aide = document.querySelector('.tb-aide');
+      var rangee = document.querySelector('.tb-rangee');
+      var corps = document.querySelector('.page-body');
+      if (!aide || !rangee || !corps) return;
+      function placer(){
+        var cible = ecranEtroit.matches ? corps : rangee;
+        if (aide.parentElement !== cible || cible.lastElementChild !== aide) cible.appendChild(aide);
+      }
+      placer();
+      if (ecranEtroit.addEventListener) ecranEtroit.addEventListener('change', placer);
+      else if (ecranEtroit.addListener) ecranEtroit.addListener(placer);
+      // Filet : certains navigateurs ne signalent pas le changement de la
+      // requete media (rotation, fenetre redimensionnee) ; le redimension-
+      // nement, lui, arrive toujours.
+      window.addEventListener('resize', placer);
+    })();
+  </script>
 </div>
 
 <footer>
