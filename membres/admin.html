@@ -447,12 +447,23 @@
       setBadge('badgeDons', count ?? 0);
     } catch(e) {}
 
-    // Activites dont les inscriptions sont ouvertes : la pastille
-    // rappelle qu'une liste est en train de se remplir.
+    // Personnes INSCRITES sur les activites encore ouvertes. La pastille
+    // comptait les activites ouvertes : une activite sans aucun inscrit
+    // affichait « 1 », qu'on lisait comme une inscription a traiter.
     try {
-      const { count } = await supabaseClient
-        .from('activites').select('id', { count: 'exact', head: true }).eq('is_open', true);
-      setBadge('badgeActivites', count ?? 0);
+      const { data: ouvertes } = await supabaseClient
+        .from('activites').select('id').eq('is_open', true);
+      const ids = (ouvertes || []).map(a => a.id);
+      let inscrits = 0;
+      if (ids.length) {
+        const { count } = await supabaseClient
+          .from('activite_inscriptions')
+          .select('id', { count: 'exact', head: true })
+          .in('activite_id', ids)
+          .eq('statut', 'inscrit');
+        inscrits = count ?? 0;
+      }
+      setBadge('badgeActivites', inscrits);
     } catch(e) {}
 
     // Messages WhatsApp non lus. Un membre qui ecrit attend une reponse

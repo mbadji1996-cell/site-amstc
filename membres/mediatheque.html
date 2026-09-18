@@ -47,7 +47,7 @@
 
   .wrap{max-width:1400px;margin:0 auto;padding:0 24px;}
 
-  .year-section{padding:28px 0 8px;}
+  .year-section{padding:6px 0 8px;}
   .year-title{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--text-heading);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
   .year-title::after{content:"";flex:1;height:1px;background:var(--line);}
 
@@ -62,8 +62,22 @@
 
 
   /* ===== Bandeau ===== */
+  /* Bandeau et albums dans la meme colonne : sinon les albums attendent
+     la fin de la colonne de droite, qui est deux fois plus haute, et un
+     grand vide s'installe au milieu de la page. */
   .md-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:24px 0 20px; align-items:start;}
   @media(min-width:1180px){ .md-haut{grid-template-columns:minmax(0,1fr) 300px;} }
+  .md-principal{min-width:0; display:flex; flex-direction:column; gap:18px;}
+  /* Sur une seule colonne, les compteurs et les filtres passent AVANT les
+     albums : relegues apres, il fallait defiler toute la mediatheque pour
+     les atteindre. display:contents defait la colonne pour que les trois
+     blocs se rangent d'eux-memes. */
+  @media(max-width:1179px){
+    .md-principal{display:contents;}
+    .md-bandeau{order:1;}
+    .md-cote{order:2;}
+    #pageContent{order:3;}
+  }
   .md-bandeau{position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
     background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
     padding:26px 28px;}
@@ -229,6 +243,7 @@
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="mediaHaut" class="md-haut" style="display:none;">
+    <div class="md-principal">
     <section class="md-bandeau">
       <div class="md-bandeau-photo" id="mdPhoto" style="display:none;"><img id="mdPhotoImg" src="" alt="" loading="lazy"></div>
       <div class="md-bandeau-texte">
@@ -241,6 +256,9 @@
       </div>
       <div class="md-types" id="mdTypes"></div>
     </section>
+
+    <div id="pageContent" style="display:none;"></div>
+    </div>
 
     <aside class="md-cote">
       <div class="md-carte">
@@ -272,8 +290,6 @@
       </div>
     </aside>
   </div>
-
-  <div id="pageContent" style="display:none;"></div>
 </div>
 
 <div class="md-voile" id="mdVoile" onclick="if(event.target===this)fermerVideo()">
