@@ -1,11 +1,12 @@
 ---
-title: "Sédentarité : une heure de sport ne rattrape pas une journée assise"
+title: Impact de la sédentarité sur le coeur et le corps - Entretien avec Dr
+  Bineta GUEYE, cardiologue et pionnière de l'AMSTC
 date: 2026-09-17T10:00:00.000Z
 excerpt: "Entretien avec le Dr Bineta Guèye, cardiologue : on peut faire une
   heure de sport par jour et rester sédentaire les vingt-trois autres. Pourquoi
   l’immobilité prolongée pèse sur le cœur, le métabolisme et le moral, et
   comment bouger davantage sans forcément faire du sport."
-image: https://www.lesechos.fr/monde/enjeux-internationaux/la-sedentarite-un-mal-qui-coute-plus-de-27-milliards-de-dollars-par-an-1870821
+image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsgjcSl5EgzDYL8NFQ_NnF_maxaSw5cYUm7TugdVDl9S-aHBKICHbSydoW&s=10
 reserve: false
 ---
 
