@@ -1,5 +1,6 @@
 ---
-title: Nemekou Daara Etape 3 Rufisque 2025 - Visite du Daara El Aadji A. Cissé
+title: Nemekou Daara - Etape 3 - Rufisque 2025 - Visite médicale + Don de
+  denrées au Daara El Hadji A. Cissé
 date: 2025-11-23T10:00:00.000Z
 excerpt: "Troisième visite de daara de l'année : consultations gratuites et
   important don de denrées alimentaires, de produits d'hygiène et d'un kit de
