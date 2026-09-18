@@ -120,7 +120,7 @@ Ensuite :
   depuis `membres/index.html`) permet de publier/modifier/supprimer du
   contenu réservé : type (Formation ou Réalisation), titre, résumé,
   contenu en Markdown, image de couverture, vidéo YouTube
-- Pour tout membre approuvé, `membres/formations.html` et
+- Pour tout membre approuvé, `membres/formations-cms.html` (« Autres formations ») et
   `membres/actualites.html` listent **à la fois** les articles publics
   habituels et les contenus réservés, en un seul endroit (avec un badge
   "🔒 Réservé aux membres" sur ces derniers pour les distinguer)
@@ -269,7 +269,7 @@ générique "Contenu réservé" : `membres/bibliotheque-admin.html` (accessible
 depuis la carte "Bibliothèque" du Centre d'administration), pour publier un
 livre ou un document PDF (image de couverture facultative, fichier PDF
 obligatoire). Les membres consultent la liste sur `membres/bibliotheque.html`,
-accessible depuis une carte dédiée sur `membres/formations.html` : le PDF
+accessible depuis la colonne de navigation de l'espace membres : le PDF
 s'affiche dans un lecteur en ligne (URL signée à courte durée de vie, barre
 d'outils masquée) sans possibilité de téléchargement, comme pour les
 Documents officiels. `membres/contenu-reserve-admin.html` ne gère plus que

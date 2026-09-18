@@ -8,6 +8,7 @@
   (function () {
     var p = window.location.pathname.replace(/\.html$/, "").replace(/\/$/, "");
     if (/\/membres\/(validation|cartes-admin)$/.test(p)) window.location.replace("/membres/membres-admin");
+    if (/\/membres\/formations$/.test(p)) window.location.replace("/membres/formations-cms");
   })();
 </script>
 <script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>

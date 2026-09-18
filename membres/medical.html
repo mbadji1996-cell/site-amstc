@@ -120,6 +120,7 @@
   :root[data-theme="dark"] .btn-quiz{color:#06280F;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="../assets/css/espace-cours.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 </head>
@@ -138,7 +139,7 @@
     <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <a class="member-tab" href="daara">Espace Daara</a>
     <a class="member-tab active" href="medical">Enseignements Médicaux</a>
-    <a class="member-tab" href="formations">Autres formations</a>
+    <a class="member-tab" href="formations-cms">Autres formations</a>
     <a class="member-tab" href="quiz">Quiz</a>
     <a class="member-tab" href="bibliotheque">Bibliothèque</a>
     <a class="member-tab" href="actualites">Réalisations</a>
@@ -151,35 +152,93 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-icon"><i class="ti ti-stethoscope"></i></div>
-    <h1>Enseignements Médicaux</h1>
-    <p class="hero-sub">Leçons & Quiz - Médecine · Pharmacie · Odontologie · Soins infirmiers et obstétricales</p>
-  </div>
-</div>
-
 <div class="wrap">
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <p class="empty" id="loadingMsg">Chargement…</p>
 
   <div id="pageContent" style="display:none;">
-    <div class="cat-tabs">
-      <button class="cat-tab active" id="tab-medecine" onclick="setCategory('medecine')"><i class="ti ti-heart-rate-monitor"></i> Médecine</button>
-      <button class="cat-tab" id="tab-pharmacie" onclick="setCategory('pharmacie')"><i class="ti ti-pill"></i> Pharmacie</button>
-      <button class="cat-tab" id="tab-odonto" onclick="setCategory('odonto')"><i class="ti ti-tooth"></i> Odontologie</button>
-      <button class="cat-tab" id="tab-soins_infirmiers" onclick="setCategory('soins_infirmiers')"><i class="ti ti-nurse"></i> Soins infirmiers et obstétricales</button>
-    </div>
+    <section class="ec-banniere">
+      <div class="ec-banniere-photo" id="ecPhoto" style="display:none;"><img id="ecPhotoImg" src="" alt="" loading="lazy"></div>
+      <div class="ec-banniere-texte">
+        <span class="ec-banniere-ic" aria-hidden="true"><i class="ti ti-stethoscope"></i></span>
+        <div>
+          <a class="ec-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1>Enseignements Médicaux</h1>
+          <p class="ec-soustitre">Leçons &amp; Quiz - Médecine · Pharmacie · Odontologie · Soins infirmiers</p>
+          <p class="ec-intro">Développez vos compétences en santé grâce à nos leçons et quiz, conçus pour vous accompagner dans votre parcours professionnel.</p>
+          <a class="ec-guide" href="../guide#enseignements-medicaux"><i class="ti ti-player-play" aria-hidden="true"></i> Voir le guide d'utilisation</a>
+        </div>
+      </div>
+    </section>
 
-    <div id="quizSection" class="quiz-section" style="display:none;">
-      <p class="section-label"><i class="ti ti-rosette"></i> Quiz disponibles</p>
-      <div class="quiz-grid" id="quizGrid"></div>
-    </div>
+    <div class="ec-cats" id="ecCats"></div>
 
-    <div id="lessonsSection">
-      <p class="section-label"><i class="ti ti-book"></i> Leçons</p>
-      <div class="lessons-grid" id="lessonsList"></div>
+    <div class="ec-corps">
+      <div>
+        <div class="ec-tete">
+          <span class="ec-tete-ic" aria-hidden="true"><i class="ti ti-compass"></i></span>
+          <span class="ec-tete-titre" id="ecTitreListe">Leçons recommandées</span>
+          <button type="button" class="ec-tout" id="ecTout">Voir toutes les leçons <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="ec-grille" id="lessonsList"></div>
+
+        <div id="quizSection" style="display:none;margin-top:26px;">
+          <div class="ec-tete">
+            <span class="ec-tete-ic" aria-hidden="true"><i class="ti ti-rosette"></i></span>
+            <span class="ec-tete-titre">Quiz disponibles</span>
+          </div>
+          <div class="ec-grille" id="quizGrid"></div>
+        </div>
+      </div>
+
+      <aside class="ec-cote">
+        <div class="ec-carte-cote" id="ecProgCarte" style="display:none;">
+          <p class="ec-cote-titre"><i class="ti ti-book-2" aria-hidden="true"></i> Ma progression</p>
+          <div class="ec-prog">
+            <span class="ec-anneau">
+              <svg viewBox="0 0 80 80" aria-hidden="true">
+                <circle class="ec-anneau-fond" cx="40" cy="40" r="34"></circle>
+                <circle class="ec-anneau-trait" id="ecAnneau" cx="40" cy="40" r="34" stroke-dasharray="0 214"></circle>
+              </svg>
+              <span class="ec-anneau-valeur" id="ecPct">0%</span>
+            </span>
+            <div style="min-width:0;">
+              <p class="ec-prog-label">Leçon en cours</p>
+              <p class="ec-prog-titre" id="ecCoursEnCours">-</p>
+            </div>
+          </div>
+          <div class="ec-prochaine">
+            <p class="ec-prochaine-label">Prochaine leçon</p>
+            <p class="ec-prochaine-titre" id="ecProchain">-</p>
+          </div>
+          <button type="button" class="ec-continuer" id="ecContinuer"><i class="ti ti-player-play" aria-hidden="true"></i> Continuer la leçon</button>
+        </div>
+
+        <div class="ec-carte-cote">
+          <p class="ec-cote-titre"><i class="ti ti-chart-bar" aria-hidden="true"></i> Mes statistiques</p>
+          <div class="ec-stat"><i class="ti ti-file-text" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatSuivis">0</div><div class="ec-stat-label">leçons commencées</div></div></div>
+          <div class="ec-stat"><i class="ti ti-circle-check" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatFinis">0</div><div class="ec-stat-label">leçons terminées</div></div></div>
+          <div class="ec-stat"><i class="ti ti-rosette" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatQuiz">0</div><div class="ec-stat-label">quiz réussis</div></div></div>
+        </div>
+
+        <div class="ec-citation">
+          <div class="ec-citation-ic" aria-hidden="true"><i class="ti ti-quote"></i></div>
+          <p class="ec-citation-texte">« Prendre soin de la santé, c'est prendre soin de l'avenir. »</p>
+          <p class="ec-citation-source">AMSTC</p>
+        </div>
+
+        <div class="ec-carte-cote">
+          <p class="ec-cote-titre"><i class="ti ti-grid-dots" aria-hidden="true"></i> Raccourcis</p>
+          <div class="ec-raccourcis">
+            <a class="ec-raccourci" href="quiz"><i class="ti ti-rosette" aria-hidden="true"></i> Quiz</a>
+            <a class="ec-raccourci" href="bibliotheque"><i class="ti ti-books" aria-hidden="true"></i> Bibliothèque</a>
+            <a class="ec-raccourci" href="daara"><i class="ti ti-book" aria-hidden="true"></i> Daara</a>
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
 </div>
@@ -193,7 +252,26 @@
 <script src="../assets/js/partage.js"></script>
 <script>
   let allLessons = [], allQuizzes = [], myAttempts = {}, lessonProgress = {};
-  let currentCat = 'medecine';
+  let currentCat = 'toutes';
+  let toutVoir = false;
+  const APERCU = 6;
+  const CATEGORIES = [
+    ['toutes', 'Toutes les leçons', 'ti-layout-grid'],
+    ['medecine', 'Médecine', 'ti-stethoscope'],
+    ['pharmacie', 'Pharmacie', 'ti-pill'],
+    ['odonto', 'Odontologie', 'ti-dental'],
+    ['soins_infirmiers', 'Soins infirmiers', 'ti-vaccine'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
+  const CLE_MARQUES = 'amstc-medical-marques';
+  let marques = new Set();
+  try { marques = new Set(JSON.parse(localStorage.getItem(CLE_MARQUES) || '[]')); } catch (e) { marques = new Set(); }
+  function basculerMarque(id){
+    if (marques.has(id)) marques.delete(id); else marques.add(id);
+    try { localStorage.setItem(CLE_MARQUES, JSON.stringify([...marques])); } catch (e) { /* navigation privee */ }
+    renderLessons();
+  }
   let userId = null;
 
   function renderCardStatusBanner(state) {
@@ -253,6 +331,18 @@
     });
 
     document.getElementById('pageContent').style.display = '';
+    remplirCategories();
+    try {
+      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.image) {
+          document.getElementById('ecPhotoImg').src = d.image;
+          document.getElementById('ecPhoto').style.display = '';
+        }
+      }
+    } catch (e) { /* sans photo, la banniere garde son degrade */ }
+    document.getElementById('ecTout').addEventListener('click', () => { toutVoir = !toutVoir; render(); });
     render();
     ouvrirSurLesQuiz();
   })();
@@ -263,78 +353,159 @@
   // et donc sur une section masquée.
   function ouvrirSurLesQuiz() {
     if (new URLSearchParams(location.search).get('vue') !== 'quiz') return;
-    const premiere = ['medecine','pharmacie','odonto','soins_infirmiers']
-      .find(c => allQuizzes.some(q => q.category === c));
-    if (!premiere) return;   // aucun quiz publié : on laisse la page telle quelle
-    setCategory(premiere);
+    if (!allQuizzes.length) return;   // aucun quiz publié : rien à montrer
     document.getElementById('quizSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function setCategory(cat) {
-    currentCat = cat;
-    ['medecine','pharmacie','odonto','soins_infirmiers'].forEach(c => {
-      document.getElementById('tab-' + c).classList.toggle('active', c === cat);
-    });
-    render();
+  function remplirCategories(){
+    const presentes = new Set(allLessons.map(l => l.category).concat(allQuizzes.map(q => q.category)));
+    const zone = document.getElementById('ecCats');
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="ec-cat ${cle === currentCat ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${escHtml(libelle)}</button>`).join('');
+    zone.querySelectorAll('.ec-cat').forEach(b => b.addEventListener('click', () => {
+      currentCat = b.dataset.cat;
+      toutVoir = false;
+      zone.querySelectorAll('.ec-cat').forEach(x => x.classList.toggle('actif', x === b));
+      render();
+    }));
+  }
+
+  function leconsDeLaCategorie(){
+    return currentCat === 'toutes' ? allLessons : allLessons.filter(l => l.category === currentCat);
   }
 
   function render() {
+    renderProgression();
+    renderStatistiques();
     renderQuizzes();
     renderLessons();
   }
 
+  // ===== Colonne de droite =====
+  function renderProgression(){
+    const carte = document.getElementById('ecProgCarte');
+    const enCours = allLessons.filter(l => {
+      const p = lessonProgress[l.id] || 0;
+      return p > 0 && p < 100;
+    });
+    const lecon = enCours[0];
+    if (!lecon) { carte.style.display = 'none'; return; }
+    carte.style.display = '';
+
+    const pct = lessonProgress[lecon.id] || 0;
+    const tour = 213.6;   // 2 x PI x 34, la longueur du cercle
+    document.getElementById('ecAnneau').setAttribute('stroke-dasharray', (tour * pct / 100).toFixed(1) + ' ' + tour);
+    document.getElementById('ecPct').textContent = pct + '%';
+    document.getElementById('ecCoursEnCours').textContent = lecon.title;
+
+    const suite = allLessons.find(l => l.category === lecon.category
+      && (l.order_index || 0) > (lecon.order_index || 0) && !(lessonProgress[l.id] || 0))
+      || allLessons.find(l => !(lessonProgress[l.id] || 0));
+    document.getElementById('ecProchain').textContent = suite ? suite.title : 'Aucune, vous avez tout parcouru';
+    document.getElementById('ecContinuer').onclick = () => {
+      location.href = 'lecon?id=' + encodeURIComponent(lecon.id);
+    };
+  }
+
+  function renderStatistiques(){
+    const commencees = allLessons.filter(l => (lessonProgress[l.id] || 0) > 0);
+    const finies = commencees.filter(l => (lessonProgress[l.id] || 0) >= 100);
+    // Un quiz est « reussi » a partir de la moitie des points : c'est le
+    // seuil qu'affiche deja la page d'un quiz.
+    const reussis = Object.values(myAttempts).filter(p => p >= 50).length;
+    document.getElementById('ecStatSuivis').textContent = commencees.length;
+    document.getElementById('ecStatFinis').textContent = finies.length;
+    document.getElementById('ecStatQuiz').textContent = reussis;
+  }
+
   function renderQuizzes() {
-    const quizzes = allQuizzes.filter(q => q.category === currentCat);
+    const quizzes = currentCat === 'toutes' ? allQuizzes : allQuizzes.filter(q => q.category === currentCat);
     const section = document.getElementById('quizSection');
     const grid = document.getElementById('quizGrid');
     if (quizzes.length === 0) { section.style.display = 'none'; return; }
     section.style.display = '';
     grid.innerHTML = quizzes.map(q => {
       const best = myAttempts[q.id];
-      const scoreHtml = best !== undefined
-        ? `<span class="quiz-score"><i class="ti ti-trophy"></i> Meilleur score : ${best}%</span>`
-        : `<span class="quiz-score">Non tenté</span>`;
       return `
-        <div class="quiz-card">
-          <p class="quiz-tag"><i class="ti ti-rosette"></i> Quiz</p>
-          <p class="quiz-title">${escHtml(q.title)}</p>
-          <p class="quiz-meta">${q.duration_min ? q.duration_min + ' min · ' : ''}${escHtml(q.description || '')}</p>
-          <div class="quiz-footer">
-            ${scoreHtml}
-            <a class="btn-quiz" href="quiz?id=${encodeURIComponent(q.id)}">
-              <i class="ti ti-player-play"></i> ${best !== undefined ? 'Rejouer' : 'Démarrer'}
-            </a>
+      <article class="ec-carte">
+        <a class="ec-visuel" href="quiz?id=${encodeURIComponent(q.id)}" aria-label="${escHtml(q.title)}">
+          <span class="ec-visuel-vide"><i class="ti ti-rosette"></i></span>
+          <span class="ec-etiq"><i class="ti ti-rosette" aria-hidden="true"></i> Quiz</span>
+        </a>
+        <div class="ec-carte-corps">
+          <p class="ec-carte-titre">${escHtml(q.title)}</p>
+          ${q.description ? `<p class="ec-carte-sous">${escHtml(q.description)}</p>` : ''}
+          <div class="ec-meta">
+            <span><i class="ti ${escHtml(ICONE_CAT[q.category] || 'ti-rosette')}" aria-hidden="true"></i> ${escHtml(LIBELLE_CAT[q.category] || '')}</span>
+            ${best !== undefined
+              ? `<span><i class="ti ti-trophy" aria-hidden="true"></i> Meilleur score : ${best}%</span>`
+              : '<span><i class="ti ti-player-play" aria-hidden="true"></i> Non tenté</span>'}
           </div>
-        </div>`;
+          <div class="ec-carte-bas">
+            <button type="button" class="ec-commencer" onclick="location.href='quiz?id=${encodeURIComponent(q.id)}'">
+              <i class="ti ti-player-play" aria-hidden="true"></i> ${best !== undefined ? 'Refaire' : 'Commencer'}
+            </button>
+          </div>
+        </div>
+      </article>`;
     }).join('');
   }
 
   function renderLessons() {
-    const lessons = allLessons.filter(l => l.category === currentCat);
+    const lessons = leconsDeLaCategorie();
     const list = document.getElementById('lessonsList');
+    const bouton = document.getElementById('ecTout');
+    document.getElementById('ecTitreListe').textContent = toutVoir
+      ? (currentCat === 'toutes' ? 'Toutes les leçons' : LIBELLE_CAT[currentCat])
+      : 'Leçons recommandées';
+    bouton.style.display = lessons.length > APERCU ? '' : 'none';
+    bouton.innerHTML = (toutVoir ? 'Voir moins' : 'Voir toutes les leçons')
+      + ' <i class="ti ti-arrow-' + (toutVoir ? 'up' : 'right') + '" aria-hidden="true"></i>';
+
     if (lessons.length === 0) {
-      list.innerHTML = '<p class="empty">Aucune leçon disponible pour le moment.</p>';
+      list.innerHTML = '<p class="ec-vide">Aucune leçon disponible pour le moment.</p>';
       return;
     }
-    list.innerHTML = lessons.map(l => `
-      <div class="lesson-card">
-        <a class="lesson-lien" href="lecon?id=${encodeURIComponent(l.id)}">
-          <div class="lesson-icon"><i class="ti ti-file-text"></i></div>
-          <div class="lesson-body">
-            <p class="lesson-title">${escHtml(l.title)}</p>
-            <p class="lesson-desc">${escHtml(l.description || '')}</p>
-            ${l.author ? `<p class="lesson-author"><i class="ti ti-user"></i> ${escHtml(l.author)}</p>` : ''}
-            ${(lessonProgress[l.id] || 0) >= 100
-              ? '<span class="lesson-done"><i class="ti ti-check"></i> Terminée</span>'
-              : (lessonProgress[l.id] || 0) > 0
-                ? `<div class="lesson-prog"><div class="prog-bar"><div class="prog-fill" style="width:${lessonProgress[l.id]}%"></div></div><span class="prog-lbl">${lessonProgress[l.id]}%</span></div>`
-                : ''}
-          </div>
+
+    const visibles = toutVoir ? lessons : lessons.slice(0, APERCU);
+    list.innerHTML = visibles.map(l => {
+      const pct = lessonProgress[l.id] || 0;
+      const marque = marques.has(l.id);
+      return `
+      <article class="ec-carte">
+        <a class="ec-visuel" href="lecon?id=${encodeURIComponent(l.id)}" aria-label="${escHtml(l.title)}">
+          ${l.cover_image
+            ? `<img src="${escHtml(l.cover_image)}" alt="" loading="lazy">`
+            : `<span class="ec-visuel-vide"><i class="ti ti-file-text"></i></span>`}
+          <span class="ec-etiq"><i class="ti ${escHtml(ICONE_CAT[l.category] || 'ti-file-text')}" aria-hidden="true"></i> ${escHtml(LIBELLE_CAT[l.category] || 'Leçon')}</span>
         </a>
-        <button type="button" class="lesson-partage" onclick="partagerLecon('${l.id}', this)"
-          title="Partager cette leçon" aria-label="Partager la leçon ${escHtml(l.title)}"><i class="ti ti-share"></i></button>
-        <i class="ti ti-chevron-right lesson-arrow"></i>
-      </div>`).join('');
+        <div class="ec-carte-corps">
+          <p class="ec-carte-titre">${escHtml(l.title)}</p>
+          ${l.description ? `<p class="ec-carte-sous">${escHtml(l.description)}</p>` : ''}
+          <div class="ec-meta">
+            ${l.author ? `<span><i class="ti ti-user" aria-hidden="true"></i> ${escHtml(l.author)}</span>` : ''}
+            ${pct >= 100 ? '<span><i class="ti ti-circle-check" aria-hidden="true"></i> Terminée</span>' : ''}
+          </div>
+          ${pct > 0 && pct < 100 ? `<div class="ec-barre"><span style="width:${pct}%"></span></div>` : ''}
+          <div class="ec-carte-bas">
+            <button type="button" class="ec-commencer" onclick="location.href='lecon?id=${encodeURIComponent(l.id)}'">
+              <i class="ti ti-player-play" aria-hidden="true"></i> ${pct > 0 ? 'Reprendre' : 'Commencer'}
+            </button>
+            <button type="button" class="ec-marque ${marque ? 'actif' : ''}" title="Mettre de côté"
+              aria-label="Mettre de côté" aria-pressed="${marque}" onclick="basculerMarque('${l.id}')">
+              <i class="ti ti-bookmark${marque ? '-filled' : ''}" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ec-marque" title="Partager cette leçon"
+              aria-label="Partager ${escHtml(l.title)}" onclick="partagerLecon('${l.id}', this)">
+              <i class="ti ti-share" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </article>`;
+    }).join('');
   }
 
   // Les leçons listées ici sont publiées par construction : la page

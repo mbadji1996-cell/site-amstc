@@ -140,6 +140,7 @@
   @media(max-width:500px){.cat-tab{padding:12px 14px;font-size:0.68rem;}}
 </style>
 <script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="../assets/css/espace-cours.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 </head>
@@ -158,7 +159,7 @@
     <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
     <a class="member-tab active" href="daara">Espace Daara</a>
     <a class="member-tab" href="medical">Enseignements Médicaux</a>
-    <a class="member-tab" href="formations">Autres formations</a>
+    <a class="member-tab" href="formations-cms">Autres formations</a>
     <a class="member-tab" href="quiz">Quiz</a>
     <a class="member-tab" href="bibliotheque">Bibliothèque</a>
     <a class="member-tab" href="actualites">Réalisations</a>
@@ -171,47 +172,85 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <a class="back" href="./">Espace membres</a>
-    <div class="hero-content">
-      <div class="hero-left">
-        <div class="hero-icon"><i class="ti ti-book"></i></div>
-        <h1>Espace Daara</h1>
-        <p class="hero-sub">Cours en ligne - Islam & Tarikha</p>
-      </div>
-      <div class="hero-chips" id="heroChips" style="display:none;">
-        <div class="hchip done"><i class="ti ti-check"></i> <strong id="chipDone">0</strong> terminé(s)</div>
-        <div class="hchip"><i class="ti ti-player-play"></i> <strong id="chipInProgress">0</strong> en cours</div>
-        <div class="hchip"><i class="ti ti-book"></i> <strong id="chipTotal">0</strong> au total</div>
-      </div>
-    </div>
-    <div class="cat-tabs">
-      <button class="cat-tab active" id="tab-islam" onclick="setCategory('islam')">
-        <i class="ti ti-moon-stars"></i> Islam
-      </button>
-      <button class="cat-tab" id="tab-tarikha" onclick="setCategory('tarikha')">
-        <i class="ti ti-star"></i> Tarikha
-      </button>
-    </div>
-  </div>
-</div>
-
 <div class="wrap">
   <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
   <p class="empty" id="loadingMsg">Chargement des cours…</p>
 
   <div id="pageContent" style="display:none;">
-    <!-- Section "Reprendre" -->
-    <div class="continue-section" id="continueSection" style="display:none;">
-      <p class="section-lbl"><i class="ti ti-player-play"></i> Reprendre où vous en étiez</p>
-      <div id="continueList"></div>
-    </div>
+    <section class="ec-banniere">
+      <div class="ec-banniere-photo" id="ecPhoto" style="display:none;"><img id="ecPhotoImg" src="" alt="" loading="lazy"></div>
+      <div class="ec-banniere-texte">
+        <span class="ec-banniere-ic" aria-hidden="true"><i class="ti ti-book"></i></span>
+        <div>
+          <a class="ec-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1>Espace Daara</h1>
+          <p class="ec-soustitre">Cours en ligne - Islam &amp; Tarikha</p>
+          <p class="ec-intro">Apprenez, approfondissez et vivez votre spiritualité à travers nos cours de sciences islamiques et de tarikha.</p>
+          <a class="ec-guide" href="../guide#espace-daara"><i class="ti ti-player-play" aria-hidden="true"></i> Voir le guide d'utilisation</a>
+        </div>
+      </div>
+    </section>
 
-    <!-- All courses -->
-    <div class="courses-section">
-      <p class="section-lbl" id="coursesLabel"><i class="ti ti-list"></i> Tous les cours</p>
-      <div class="courses-grid" id="coursesList"></div>
+    <div class="ec-cats" id="ecCats"></div>
+
+    <div class="ec-corps">
+      <div>
+        <div class="ec-tete">
+          <span class="ec-tete-ic" aria-hidden="true"><i class="ti ti-compass"></i></span>
+          <span class="ec-tete-titre" id="ecTitreListe">Cours recommandés</span>
+          <button type="button" class="ec-tout" id="ecTout">Voir tous les cours <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="ec-grille" id="coursesList"></div>
+      </div>
+
+      <aside class="ec-cote">
+        <div class="ec-carte-cote" id="ecProgCarte" style="display:none;">
+          <p class="ec-cote-titre"><i class="ti ti-book-2" aria-hidden="true"></i> Ma progression</p>
+          <div class="ec-prog">
+            <span class="ec-anneau">
+              <svg viewBox="0 0 80 80" aria-hidden="true">
+                <circle class="ec-anneau-fond" cx="40" cy="40" r="34"></circle>
+                <circle class="ec-anneau-trait" id="ecAnneau" cx="40" cy="40" r="34" stroke-dasharray="0 214"></circle>
+              </svg>
+              <span class="ec-anneau-valeur" id="ecPct">0%</span>
+            </span>
+            <div style="min-width:0;">
+              <p class="ec-prog-label">Cours en cours</p>
+              <p class="ec-prog-titre" id="ecCoursEnCours">-</p>
+            </div>
+          </div>
+          <div class="ec-prochaine">
+            <p class="ec-prochaine-label">Prochain cours</p>
+            <p class="ec-prochaine-titre" id="ecProchain">-</p>
+          </div>
+          <button type="button" class="ec-continuer" id="ecContinuer"><i class="ti ti-player-play" aria-hidden="true"></i> Continuer le cours</button>
+        </div>
+
+        <div class="ec-carte-cote">
+          <p class="ec-cote-titre"><i class="ti ti-chart-bar" aria-hidden="true"></i> Mes statistiques</p>
+          <div class="ec-stat"><i class="ti ti-book" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatSuivis">0</div><div class="ec-stat-label">cours commencés</div></div></div>
+          <div class="ec-stat"><i class="ti ti-circle-check" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatFinis">0</div><div class="ec-stat-label">cours terminés</div></div></div>
+          <div class="ec-stat"><i class="ti ti-clock" aria-hidden="true"></i>
+            <div><div class="ec-stat-nb" id="ecStatTemps">0</div><div class="ec-stat-label">de cours suivis</div></div></div>
+        </div>
+
+        <div class="ec-citation">
+          <div class="ec-citation-ic" aria-hidden="true"><i class="ti ti-quote"></i></div>
+          <p class="ec-citation-texte">« Celui qui emprunte un chemin à la recherche d'un savoir, Allah lui facilite par cela un chemin vers le Paradis. »</p>
+          <p class="ec-citation-source">Hadith rapporté par Mouslim</p>
+        </div>
+
+        <div class="ec-carte-cote">
+          <p class="ec-cote-titre"><i class="ti ti-grid-dots" aria-hidden="true"></i> Raccourcis</p>
+          <div class="ec-raccourcis">
+            <a class="ec-raccourci" href="quiz"><i class="ti ti-rosette" aria-hidden="true"></i> Quiz</a>
+            <a class="ec-raccourci" href="bibliotheque"><i class="ti ti-books" aria-hidden="true"></i> Bibliothèque</a>
+            <a class="ec-raccourci" href="medical"><i class="ti ti-stethoscope" aria-hidden="true"></i> Médical</a>
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
 </div>
@@ -224,7 +263,33 @@
 <script src="../assets/js/supabase-client.js"></script>
 <script src="../assets/js/partage.js"></script>
 <script>
-  let allCourses = [], progressMap = {}, currentUserId = null, currentCategory = 'islam';
+  let allCourses = [], progressMap = {}, currentUserId = null, currentCategory = 'toutes';
+  // « Voir tous les cours » bascule entre les six premiers et la liste
+  // entiere : la colonne de droite reste alors visible sans defiler.
+  let toutVoir = false;
+  const APERCU = 6;
+  const CATEGORIES = [
+    ['toutes', 'Tous les cours', 'ti-layout-grid'],
+    ['islam', 'Islam', 'ti-moon-stars'],
+    ['tarikha', 'Tarikha', 'ti-star'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
+  // Un marque-page est un repere personnel : il vit dans ce navigateur.
+  const CLE_MARQUES = 'amstc-daara-marques';
+  let marques = new Set();
+  try { marques = new Set(JSON.parse(localStorage.getItem(CLE_MARQUES) || '[]')); } catch (e) { marques = new Set(); }
+  function basculerMarque(id){
+    if (marques.has(id)) marques.delete(id); else marques.add(id);
+    try { localStorage.setItem(CLE_MARQUES, JSON.stringify([...marques])); } catch (e) { /* navigation privee */ }
+    renderCourses();
+  }
+  function dureeLisible(min){
+    const m = Number(min) || 0;
+    if (!m) return '';
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? (r ? h + ' h ' + String(r).padStart(2, '0') : h + ' h') : m + ' min';
+  }
 
   function renderCardStatusBanner(state) {
     const el = document.getElementById('cardStatusBanner');
@@ -262,116 +327,143 @@
     allCourses = coursesRes.data || [];
     (progressRes.data || []).forEach(p => { progressMap[p.course_id] = p; });
 
-    updateHeroChips();
-
     document.getElementById('pageContent').style.display = '';
+    remplirCategories();
+    try {
+      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.image) {
+          document.getElementById('ecPhotoImg').src = d.image;
+          document.getElementById('ecPhoto').style.display = '';
+        }
+      }
+    } catch (e) { /* sans photo, la banniere garde son degrade */ }
+    document.getElementById('ecTout').addEventListener('click', () => {
+      toutVoir = !toutVoir;
+      renderPage();
+    });
     renderPage();
   })();
 
-  function updateHeroChips() {
-    const catCourses = allCourses.filter(c => c.category === currentCategory);
-    const done = catCourses.filter(c => (progressMap[c.id]?.progress_pct ?? 0) === 100).length;
-    const inProgress = catCourses.filter(c => {
-      const pct = progressMap[c.id]?.progress_pct ?? 0;
-      return pct > 0 && pct < 100;
-    }).length;
-    document.getElementById('chipDone').textContent = done;
-    document.getElementById('chipInProgress').textContent = inProgress;
-    document.getElementById('chipTotal').textContent = catCourses.length;
-    document.getElementById('heroChips').style.display = catCourses.length > 0 ? '' : 'none';
+  function remplirCategories(){
+    const presentes = new Set(allCourses.map(c => c.category));
+    const zone = document.getElementById('ecCats');
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="ec-cat ${cle === currentCategory ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${escHtml(libelle)}</button>`).join('');
+    zone.querySelectorAll('.ec-cat').forEach(b => b.addEventListener('click', () => {
+      currentCategory = b.dataset.cat;
+      toutVoir = false;
+      zone.querySelectorAll('.ec-cat').forEach(x => x.classList.toggle('actif', x === b));
+      renderPage();
+    }));
   }
 
-  function setCategory(cat) {
-    currentCategory = cat;
-    ['islam','tarikha'].forEach(c => document.getElementById('tab-' + c).classList.toggle('active', c === cat));
-    updateHeroChips();
-    renderPage();
+  function coursDeLaCategorie(){
+    return currentCategory === 'toutes'
+      ? allCourses
+      : allCourses.filter(c => c.category === currentCategory);
   }
 
   function renderPage() {
-    renderContinue();
+    renderProgression();
+    renderStatistiques();
     renderCourses();
   }
 
-  function renderContinue() {
-    const inProgress = allCourses
-      .filter(c => c.category === currentCategory)
-      .filter(c => { const pct = progressMap[c.id]?.progress_pct ?? 0; return pct > 0 && pct < 100; })
-      .sort((a,b) => {
-        const da = progressMap[a.id]?.updated_at || '';
-        const db = progressMap[b.id]?.updated_at || '';
-        return db.localeCompare(da);
-      })
-      .slice(0, 2);
+  // ===== Colonne de droite : progression et statistiques =====
+  function renderProgression(){
+    const carte = document.getElementById('ecProgCarte');
+    const enCours = allCourses
+      .filter(c => { const p = progressMap[c.id]?.progress_pct ?? 0; return p > 0 && p < 100; })
+      .sort((a, b) => String(progressMap[b.id]?.updated_at || '').localeCompare(String(progressMap[a.id]?.updated_at || '')));
+    const cours = enCours[0];
+    if (!cours) { carte.style.display = 'none'; return; }
+    carte.style.display = '';
 
-    const section = document.getElementById('continueSection');
-    const list = document.getElementById('continueList');
-    if (inProgress.length === 0) { section.style.display = 'none'; return; }
-    section.style.display = '';
-    list.innerHTML = inProgress.map(c => {
-      const pct = progressMap[c.id]?.progress_pct ?? 0;
-      return `<a class="continue-card" href="cours?id=${encodeURIComponent(c.id)}">
-        <div class="continue-thumb">
-          ${c.cover_image ? `<img src="${escHtml(c.cover_image)}" alt="">` : `<i class="ti ti-book"></i>`}
-        </div>
-        <div class="continue-body">
-          <p class="continue-title">${escHtml(c.title)}</p>
-          <div class="continue-prog">
-            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-            <span class="prog-lbl">${pct}%</span>
-          </div>
-        </div>
-        <button class="btn-continue" onclick="event.preventDefault();location.href='cours?id=${encodeURIComponent(c.id)}'">
-          <i class="ti ti-player-play"></i> Reprendre
-        </button>
-      </a>`;
-    }).join('');
+    const pct = progressMap[cours.id]?.progress_pct ?? 0;
+    // 2 x PI x 34 = 213,6 : la longueur du cercle de l'anneau.
+    const tour = 213.6;
+    document.getElementById('ecAnneau').setAttribute('stroke-dasharray', (tour * pct / 100).toFixed(1) + ' ' + tour);
+    document.getElementById('ecPct').textContent = pct + '%';
+    document.getElementById('ecCoursEnCours').textContent = cours.title;
+
+    // Le cours suivant dans la meme categorie, ou le premier non commence.
+    const suite = allCourses.find(c => c.category === cours.category
+      && (c.order_index || 0) > (cours.order_index || 0)
+      && (progressMap[c.id]?.progress_pct ?? 0) === 0)
+      || allCourses.find(c => (progressMap[c.id]?.progress_pct ?? 0) === 0);
+    document.getElementById('ecProchain').textContent = suite ? suite.title : 'Aucun, vous avez tout parcouru';
+    document.getElementById('ecContinuer').onclick = () => {
+      location.href = 'cours?id=' + encodeURIComponent(cours.id);
+    };
+  }
+
+  function renderStatistiques(){
+    const commences = allCourses.filter(c => (progressMap[c.id]?.progress_pct ?? 0) > 0);
+    const finis = commences.filter(c => (progressMap[c.id]?.progress_pct ?? 0) === 100);
+    const minutes = commences.reduce((n, c) => n + (Number(c.duration_min) || 0), 0);
+    document.getElementById('ecStatSuivis').textContent = commences.length;
+    document.getElementById('ecStatFinis').textContent = finis.length;
+    document.getElementById('ecStatTemps').textContent = dureeLisible(minutes) || '0 min';
   }
 
   function renderCourses() {
     const list = document.getElementById('coursesList');
-    const filtered = allCourses.filter(c => c.category === currentCategory);
-    const lbl = document.getElementById('coursesLabel');
+    const filtres = coursDeLaCategorie();
+    const bouton = document.getElementById('ecTout');
+    document.getElementById('ecTitreListe').textContent = toutVoir
+      ? (currentCategory === 'toutes' ? 'Tous les cours' : LIBELLE_CAT[currentCategory])
+      : 'Cours recommandés';
+    bouton.style.display = filtres.length > APERCU ? '' : 'none';
+    bouton.innerHTML = (toutVoir ? 'Voir moins' : 'Voir tous les cours')
+      + ' <i class="ti ti-arrow-' + (toutVoir ? 'up' : 'right') + '" aria-hidden="true"></i>';
 
-    if (filtered.length === 0) {
-      list.innerHTML = '<p class="empty">Aucun cours disponible pour le moment.</p>';
-      lbl.style.display = 'none';
+    if (filtres.length === 0) {
+      list.innerHTML = '<p class="ec-vide">Aucun cours disponible pour le moment.</p>';
       return;
     }
-    lbl.style.display = '';
 
-    list.innerHTML = filtered.map(course => {
-      const prog = progressMap[course.id];
-      const pct = prog ? prog.progress_pct : 0;
-      const done = pct === 100;
-
-      return `<div class="course-card">
-        <a class="course-lien" href="cours?id=${encodeURIComponent(course.id)}">
-        <div class="course-thumb">
-          ${course.cover_image ? `<img src="${escHtml(course.cover_image)}" alt="">` : `<i class="ti ti-book"></i>`}
-        </div>
-        <div class="course-body">
-          <p class="course-title">${escHtml(course.title)}</p>
-          <p class="course-desc">${escHtml(course.description || '')}</p>
-          <div class="course-meta">
-            ${course.author ? `<span class="course-author"><i class="ti ti-user"></i>${escHtml(course.author)}</span>` : ''}
-            ${course.duration_min ? `<span class="course-duration"><i class="ti ti-clock"></i>${course.duration_min} min</span>` : ''}
-            ${done
-              ? '<span class="completed-badge"><i class="ti ti-check"></i> Terminé</span>'
-              : pct > 0
-                ? `<div class="continue-prog" style="flex:1;max-width:180px;">
-                    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-                    <span class="prog-lbl">${pct}%</span>
-                  </div>`
-                : '<span style="font-family:var(--mono);font-size:0.68rem;color:#c0ccc5;text-transform:uppercase;letter-spacing:0.04em;">Non démarré</span>'
-            }
+    const visibles = toutVoir ? filtres : filtres.slice(0, APERCU);
+    list.innerHTML = visibles.map(course => {
+      const pct = progressMap[course.id]?.progress_pct ?? 0;
+      const duree = dureeLisible(course.duration_min);
+      const marque = marques.has(course.id);
+      return `
+      <article class="ec-carte">
+        <a class="ec-visuel" href="cours?id=${encodeURIComponent(course.id)}" aria-label="${escHtml(course.title)}">
+          ${course.cover_image
+            ? `<img src="${escHtml(course.cover_image)}" alt="" loading="lazy">`
+            : `<span class="ec-visuel-vide"><i class="ti ti-book"></i></span>`}
+          <span class="ec-etiq"><i class="ti ${escHtml(ICONE_CAT[course.category] || 'ti-book')}" aria-hidden="true"></i> ${escHtml(LIBELLE_CAT[course.category] || 'Cours')}</span>
+        </a>
+        <div class="ec-carte-corps">
+          <p class="ec-carte-titre">${escHtml(course.title)}</p>
+          ${course.description ? `<p class="ec-carte-sous">${escHtml(course.description)}</p>` : ''}
+          <div class="ec-meta">
+            ${duree ? `<span><i class="ti ti-clock" aria-hidden="true"></i> ${escHtml(duree)}</span>` : ''}
+            ${course.author ? `<span><i class="ti ti-user" aria-hidden="true"></i> ${escHtml(course.author)}</span>` : ''}
+            ${pct === 100 ? '<span><i class="ti ti-circle-check" aria-hidden="true"></i> Terminé</span>' : ''}
+          </div>
+          ${pct > 0 && pct < 100 ? `<div class="ec-barre"><span style="width:${pct}%"></span></div>` : ''}
+          <div class="ec-carte-bas">
+            <button type="button" class="ec-commencer" onclick="location.href='cours?id=${encodeURIComponent(course.id)}'">
+              <i class="ti ti-player-play" aria-hidden="true"></i> ${pct > 0 ? 'Reprendre' : 'Commencer'}
+            </button>
+            <button type="button" class="ec-marque ${marque ? 'actif' : ''}" title="Mettre de côté"
+              aria-label="Mettre de côté" aria-pressed="${marque}" onclick="basculerMarque('${course.id}')">
+              <i class="ti ti-bookmark${marque ? '-filled' : ''}" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ec-marque" title="Partager ce cours"
+              aria-label="Partager ${escHtml(course.title)}" onclick="partagerCours('${course.id}', this)">
+              <i class="ti ti-share" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
-        </a>
-        <button type="button" class="course-partage" onclick="partagerCours('${course.id}', this)"
-          title="Partager ce cours" aria-label="Partager le cours ${escHtml(course.title)}"><i class="ti ti-share"></i></button>
-        <i class="ti ti-chevron-right course-arrow"></i>
-      </div>`;
+      </article>`;
     }).join('');
   }
 
