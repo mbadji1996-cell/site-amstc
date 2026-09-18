@@ -1,7 +1,9 @@
 ---
-title: "Visite du daara Elhadji A. Cissé à Rufisque"
+title: Nemekou Daara Etape 3 Rufisque 2025 - Visite du Daara El Aadji A. Cissé
 date: 2025-11-23T10:00:00.000Z
-excerpt: "Troisième visite de daara de l'année : consultations gratuites et important don de denrées alimentaires, de produits d'hygiène et d'un kit de soins infirmiers."
+excerpt: "Troisième visite de daara de l'année : consultations gratuites et
+  important don de denrées alimentaires, de produits d'hygiène et d'un kit de
+  soins infirmiers."
 image: ""
 ---
 
