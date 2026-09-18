@@ -5,7 +5,7 @@ date: 2025-11-23T10:00:00.000Z
 excerpt: "Troisième visite de daara de l'année : consultations gratuites et
   important don de denrées alimentaires, de produits d'hygiène et d'un kit de
   soins infirmiers."
-image: ""
+image: /assets/uploads/nemekou-daara-3-rufisque-01.jpg
 ---
 
 Le 23 novembre 2025, la commission sociale de l'AMSTC a effectué sa troisième visite de daara de l'année, au daara Elhadji A. Cissé de Rufisque, avec des consultations gratuites et une remise de dons.
