@@ -86,6 +86,9 @@
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
 </style>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
+<link rel="stylesheet" href="../assets/css/collectes.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
@@ -119,23 +122,77 @@
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-icon"><i class="ti ti-heart-handshake"></i></div>
-    <h1>Collectes</h1>
-    <p class="hero-sub">Activités à cotisation et sassos de l'association : participez par un paiement Wave / Orange Money, ou par un don en nature.</p>
+<div class="wrap">
+  <p class="loading" id="loadingMsg">Chargement…</p>
+
+  <div id="pageContent" style="display:none;">
+    <section class="bm" data-bandeau="collectes">
+      <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+      <div class="bm-texte">
+        <span class="bm-ic" aria-hidden="true"><i class="ti ti-heart-handshake"></i></span>
+        <div>
+          <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1 data-bandeau-champ="titre">Collectes et dons</h1>
+          <p class="bm-soustitre" data-bandeau-champ="soustitre">Solidarité · Partage · Impact</p>
+          <p class="bm-intro" data-bandeau-champ="texte">Ensemble, soutenons les talibés et les communautés à travers des dons utiles et durables.</p>
+        </div>
+      </div>
+      <div class="bm-actions">
+        <a class="co-bouton" href="../don"><i class="ti ti-heart" aria-hidden="true"></i> Faire un don</a>
+        <a class="bm-mot" href="#collectes-en-cours"><i class="ti ti-eye" aria-hidden="true"></i> Voir les besoins</a>
+      </div>
+    </section>
+
+    <div class="co-chiffres" id="coChiffres"></div>
+
+    <div class="co-tete">
+      <span class="co-tete-ic" aria-hidden="true"><i class="ti ti-clipboard-list"></i></span>
+      <div>
+        <p class="co-tete-titre">Nos besoins actuels</p>
+        <p class="co-tete-sous">Découvrez ce que nous recherchons en ce moment.</p>
+      </div>
+    </div>
+    <div class="co-cats" id="coCats"></div>
+
+    <div class="co-corps" id="collectes-en-cours">
+      <div>
+        <div class="co-tete">
+          <span class="co-tete-ic" aria-hidden="true"><i class="ti ti-box"></i></span>
+          <div>
+            <p class="co-tete-titre">Collectes en cours</p>
+            <p class="co-tete-sous" id="coCompte"></p>
+          </div>
+        </div>
+        <div class="co-grille" id="listeOuvertes"></div>
+
+        <div id="blocHistorique" style="display:none;margin-top:26px;">
+          <div class="co-tete">
+            <span class="co-tete-ic" aria-hidden="true"><i class="ti ti-history"></i></span>
+            <div><p class="co-tete-titre">Mes participations passées</p></div>
+          </div>
+          <div id="listeHistorique"></div>
+        </div>
+      </div>
+
+      <aside class="co-appel">
+        <div class="co-appel-ic" aria-hidden="true"><i class="ti ti-hand-love-you"></i></div>
+        <p class="co-appel-titre">Un don,<br>une vie meilleure</p>
+        <p class="co-appel-texte">Faites un don en nature ou contribuez à une collecte en cours. Chaque geste compte !</p>
+        <a class="co-appel-bouton" href="../don"><i class="ti ti-heart" aria-hidden="true"></i> Je fais un don</a>
+      </aside>
+    </div>
   </div>
 </div>
 
-<div class="wrap">
-  <p class="loading" id="loadingMsg">Chargement…</p>
-  <div id="pageContent" style="display:none;">
-    <h2>Collectes en cours</h2>
-    <div id="listeOuvertes"></div>
-    <div id="blocHistorique" style="display:none;">
-      <h2>Mes participations passées</h2>
-      <div id="listeHistorique"></div>
+<!-- La participation garde son bloc d'origine : la carte l'ouvre ici. -->
+<div class="co-voile" id="coVoile" onclick="if(event.target===this)fermerFiche()">
+  <div class="co-fiche" role="dialog" aria-modal="true" aria-labelledby="coFicheTitre">
+    <div class="co-fiche-tete">
+      <span class="co-fiche-titre" id="coFicheTitre"></span>
+      <span class="tag" id="coFicheTag"></span>
+      <button type="button" class="co-fiche-fermer" onclick="fermerFiche()" aria-label="Fermer"><i class="ti ti-x"></i></button>
     </div>
+    <div class="co-fiche-corps" id="coFicheCorps"></div>
   </div>
 </div>
 
@@ -150,16 +207,39 @@
 
   let moi = null;
   let collectes = [], items = [], mesParts = [];
+  // Avancement par collecte : des sommes, jamais qui a donne quoi
+  // (fonction collectes_avancement, phase115).
+  let avancement = {};
+  let categorieChoisie = 'toutes';
+  let ficheOuverte = null;
+
+  const CATEGORIES = [
+    ['toutes', 'Tous les besoins', 'ti-layout-grid'],
+    ['alimentation', 'Alimentation', 'ti-bowl-spoon'],
+    ['vetements', 'Vêtements', 'ti-shirt'],
+    ['sante', 'Santé', 'ti-first-aid-kit'],
+    ['education', 'Éducation', 'ti-book'],
+    ['hygiene', 'Hygiène', 'ti-droplet'],
+    ['materiel', 'Matériel scolaire', 'ti-backpack'],
+    ['autres', 'Autres', 'ti-dots-circle-horizontal'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
   let numerosPaiement = '';
   // Un seul formulaire ouvert à la fois : (collecteId, itemId|null, mode)
   let formulaireOuvert = null;
 
   async function charger(){
-    const [rC, rI, rP] = await Promise.all([
+    const [rC, rI, rP, rA] = await Promise.all([
       supabaseClient.from('collectes').select('*').order('created_at', { ascending: false }),
       supabaseClient.from('collecte_items').select('*').order('ordre'),
       supabaseClient.from('collecte_participations').select('*').eq('user_id', moi.id).order('created_at', { ascending: false }),
+      // L'avancement vient de phase115 : sans le script, la page se passe
+      // de barres plutot que d'echouer.
+      supabaseClient.rpc('collectes_avancement').then(r => r, () => ({ data: [] })),
     ]);
+    avancement = {};
+    ((rA && rA.data) || []).forEach(a => { avancement[a.collecte_id] = a; });
     if (rC.error) {
       document.getElementById('listeOuvertes').innerHTML = rC.error.code === 'PGRST202'
         ? '<p class="empty">Les collectes ne sont pas encore activées sur cette instance.</p>'
@@ -167,6 +247,7 @@
       return;
     }
     collectes = rC.data || []; items = rI.data || []; mesParts = rP.data || [];
+    remplirCategories();
 
     // La disponibilité restante des items dépend des participations de TOUS
     // les membres, que la RLS nous cache : on la demande à part, en ne
@@ -191,13 +272,140 @@
     return '';
   }
 
-  function afficher(){
+  // ===== Chiffres, pastilles, cartes =====
+  function remplirChiffres(){
     const ouvertes = collectes.filter(c => c.is_open && !limiteDepassee(c));
+    const totaux = Object.values(avancement);
+    const montant = totaux.reduce((n, a) => n + Number(a.montant_fcfa || 0), 0);
+    const participants = totaux.reduce((n, a) => n + Number(a.participants || 0), 0);
+    const annees = collectes.map(c => new Date(c.created_at).getFullYear()).filter(Boolean);
+    const depuis = annees.length ? Math.min(...annees) : new Date().getFullYear();
+    const chiffres = [
+      ['ti-box', ouvertes.length, 'collecte' + (ouvertes.length > 1 ? 's' : '') + ' en cours'],
+      ['ti-coin', montant ? fcfa(montant) : '-', 'réunis et confirmés'],
+      ['ti-users', participants || '-', 'participation' + (participants > 1 ? 's' : '')],
+      ['ti-calendar', 'Depuis ' + depuis, "années d'engagement"],
+    ];
+    document.getElementById('coChiffres').innerHTML = chiffres.map(([ic, nb, lbl]) => `
+      <div class="co-chiffre">
+        <span class="co-chiffre-ic" aria-hidden="true"><i class="ti ${ic}"></i></span>
+        <div><div class="co-chiffre-nb">${esc(nb)}</div><div class="co-chiffre-label">${esc(lbl)}</div></div>
+      </div>`).join('');
+  }
+
+  function remplirCategories(){
+    const presentes = new Set(collectes.map(c => c.categorie).filter(Boolean));
+    const zone = document.getElementById('coCats');
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="co-cat ${cle === categorieChoisie ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('');
+    // Une seule pastille n'apprend rien : la rangee et son titre s'effacent.
+    const seule = zone.children.length <= 1;
+    zone.style.display = seule ? 'none' : '';
+    zone.previousElementSibling.style.display = seule ? 'none' : '';
+    zone.querySelectorAll('.co-cat').forEach(b => b.addEventListener('click', () => {
+      categorieChoisie = b.dataset.cat;
+      zone.querySelectorAll('.co-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficher();
+    }));
+  }
+
+  // Objectif atteint : le montant confirme rapporte a l'objectif, quand il
+  // est fixe. Une cotisation sans objectif n'affiche pas de barre.
+  function pourcentage(c){
+    const objectif = Number(c.objectif_fcfa || 0);
+    if (!objectif) return null;
+    const recu = Number((avancement[c.id] || {}).montant_fcfa || 0);
+    return Math.min(100, Math.round(recu / objectif * 100));
+  }
+
+  function carteCollecte(c){
+    const pct = pourcentage(c);
+    const a = avancement[c.id] || {};
+    const cat = LIBELLE_CAT[c.categorie] ? c.categorie : '';
+    const nbItems = items.filter(i => i.collecte_id === c.id).length;
+    return `
+    <button type="button" class="co-carte" onclick="ouvrirFiche('${esc(c.id)}')">
+      <span class="co-visuel">
+        ${c.image_url
+          ? `<img src="${esc(c.image_url)}" alt="" loading="lazy">`
+          : `<span class="co-visuel-vide"><i class="ti ${esc(ICONE_CAT[cat] || 'ti-heart-handshake')}"></i></span>`}
+        <span class="co-etat">En cours</span>
+      </span>
+      <span class="co-carte-corps">
+        ${cat ? `<span class="co-meta"><span><i class="ti ${esc(ICONE_CAT[cat])}" aria-hidden="true"></i> ${esc(LIBELLE_CAT[cat])}</span></span>` : ''}
+        <span class="co-carte-titre">${esc(c.titre)}</span>
+        ${c.description ? `<span class="co-carte-desc">${esc(c.description)}</span>` : ''}
+        ${pct !== null ? `
+          <span class="co-barre">
+            <span class="co-piste"><span style="width:${pct}%"></span></span>
+            <span class="co-pourcent">${pct}%</span>
+          </span>
+          <span class="co-meta">
+            <span><i class="ti ti-coin" aria-hidden="true"></i> ${esc(fcfa(a.montant_fcfa || 0))} sur ${esc(fcfa(c.objectif_fcfa))}</span>
+          </span>` : ''}
+        ${c.objectif_libelle ? `<span class="co-meta"><span><i class="ti ti-target" aria-hidden="true"></i> ${esc(c.objectif_libelle)}</span></span>` : ''}
+        <span class="co-meta">
+          ${c.type === 'cotisation'
+            ? `<span><i class="ti ti-ticket" aria-hidden="true"></i> Cotisation ${esc(fcfa(c.montant_fcfa))}</span>`
+            : `<span><i class="ti ti-gift" aria-hidden="true"></i> Sasso${nbItems ? ' · ' + nbItems + ' item' + (nbItems > 1 ? 's' : '') : ''}</span>`}
+          ${c.date_limite ? `<span><i class="ti ti-clock" aria-hidden="true"></i> jusqu'au ${new Date(c.date_limite + 'T00:00:00').toLocaleDateString('fr-FR')}</span>` : ''}
+        </span>
+        <span class="co-savoir">En savoir plus <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+      </span>
+    </button>`;
+  }
+
+  // La fiche reprend le bloc de participation d'origine : cotisation,
+  // sasso, items, formulaires Wave et Orange Money, sans rien changer.
+  function ouvrirFiche(id){
+    const c = collectes.find(x => String(x.id) === String(id));
+    if (!c) return;
+    ficheOuverte = id;
+    document.getElementById('coFicheTitre').textContent = c.titre;
+    const tag = document.getElementById('coFicheTag');
+    tag.className = 'tag ' + c.type;
+    tag.textContent = c.type === 'cotisation' ? 'Cotisation' : 'Sasso';
+    document.getElementById('coFicheCorps').innerHTML =
+      c.type === 'cotisation' ? renduCotisation(c) : renduSasso(c);
+    document.getElementById('coVoile').classList.add('ouvert');
+    document.body.classList.add('co-ouvert');
+  }
+  function fermerFiche(){
+    ficheOuverte = null;
+    formulaireOuvert = null;
+    document.getElementById('coVoile').classList.remove('ouvert');
+    document.body.classList.remove('co-ouvert');
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ficheOuverte) fermerFiche(); });
+
+  function afficher(){
+    let ouvertes = collectes.filter(c => c.is_open && !limiteDepassee(c));
+    if (categorieChoisie !== 'toutes') ouvertes = ouvertes.filter(c => c.categorie === categorieChoisie);
     const zone = document.getElementById('listeOuvertes');
 
+    remplirChiffres();
+    document.getElementById('coCompte').textContent = ouvertes.length
+      ? ouvertes.length + ' collecte' + (ouvertes.length > 1 ? 's' : '') + ' ouverte' + (ouvertes.length > 1 ? 's' : '')
+      : '';
+
     zone.innerHTML = ouvertes.length === 0
-      ? '<p class="empty">Aucune collecte en cours pour le moment.</p>'
-      : ouvertes.map(c => c.type === 'cotisation' ? renduCotisation(c) : renduSasso(c)).join('');
+      ? `<p class="co-vide">${categorieChoisie === 'toutes'
+          ? 'Aucune collecte en cours pour le moment.'
+          : 'Aucune collecte en cours dans cette catégorie.'}</p>`
+      : ouvertes.map(carteCollecte).join('');
+
+    // La fenetre ouverte suit les changements (participation envoyee,
+    // formulaire ouvert ou ferme).
+    if (ficheOuverte) {
+      const c = collectes.find(x => String(x.id) === String(ficheOuverte));
+      if (c) {
+        document.getElementById('coFicheCorps').innerHTML =
+          c.type === 'cotisation' ? renduCotisation(c) : renduSasso(c);
+      }
+    }
 
     // Historique : mes participations sur les collectes closes ou dépassées.
     const fermees = collectes.filter(c => !c.is_open || limiteDepassee(c));

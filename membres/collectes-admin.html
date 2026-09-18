@@ -159,6 +159,30 @@
       <div class="apercu-items" id="apercuItems" style="display:none;"></div>
     </div>
 
+    <label for="cCategorie">Catégorie du besoin</label>
+    <select id="cCategorie">
+      <option value="">Sans catégorie</option>
+      <option value="alimentation">Alimentation</option>
+      <option value="vetements">Vêtements</option>
+      <option value="sante">Santé</option>
+      <option value="education">Éducation</option>
+      <option value="hygiene">Hygiène</option>
+      <option value="materiel">Matériel scolaire</option>
+      <option value="autres">Autres</option>
+    </select>
+    <p class="hint">Affichée en pastille sur la carte, et filtrable par les membres.</p>
+
+    <label for="cImage">Vignette (adresse d'une image en ligne)</label>
+    <input type="url" id="cImage" placeholder="https://amstc.org/assets/uploads/…">
+    <p class="hint">Pas d'envoi de fichier ici : collez l'adresse d'une image déjà en ligne.</p>
+
+    <label for="cObjectif">Objectif à atteindre (FCFA)</label>
+    <input type="number" id="cObjectif" min="1" step="1000" placeholder="Ex : 500000">
+    <p class="hint">Renseigné, il affiche la barre d'avancement sur la carte. Laissez vide sinon.</p>
+
+    <label for="cObjectifLibelle">Objectif en toutes lettres</label>
+    <input type="text" id="cObjectifLibelle" placeholder="Ex : 4 000 kg de riz">
+
     <label for="cLimite">Date limite (facultatif)</label>
     <input type="date" id="cLimite">
     <p class="hint" id="limiteAide" style="display:none;">Videz le champ pour retirer l'échéance.</p>
@@ -232,7 +256,8 @@
   let collecteEnEdition = null;
 
   function reinitialiserFormulaire(){
-    ['cTitre','cDesc','cMontant','cItems','cLimite'].forEach(id => document.getElementById(id).value = '');
+    ['cTitre','cDesc','cMontant','cItems','cLimite','cCategorie','cImage','cObjectif','cObjectifLibelle']
+      .forEach(id => document.getElementById(id).value = '');
     document.getElementById('cMsg').textContent = '';
     document.getElementById('cMsg').className = 'form-msg';
     apercuItems();
@@ -278,6 +303,10 @@
     document.getElementById('cType').value = c.type;
     document.getElementById('cTitre').value = c.titre || '';
     document.getElementById('cDesc').value = c.description || '';
+    document.getElementById('cCategorie').value = c.categorie || '';
+    document.getElementById('cImage').value = c.image_url || '';
+    document.getElementById('cObjectif').value = c.objectif_fcfa || '';
+    document.getElementById('cObjectifLibelle').value = c.objectif_libelle || '';
     document.getElementById('cMontant').value = c.montant_fcfa || '';
     document.getElementById('cLimite').value = c.date_limite || '';
     // La liste est reconstruite au format saisi : « Libellé : montant xN ».
@@ -338,7 +367,7 @@
   }
 
   async function appliquerCreation(type, titre, montant, lignes){
-    const { error } = await supabaseClient.rpc('creer_collecte', {
+    const { data, error } = await supabaseClient.rpc('creer_collecte', {
       p_titre: titre,
       p_description: document.getElementById('cDesc').value.trim() || null,
       p_type: type,
@@ -346,7 +375,27 @@
       p_date_limite: document.getElementById('cLimite').value || null,
       p_items: lignes.filter(l => !l.erreur),
     });
-    return error;
+    if (error) return error;
+    await enregistrerVitrine(data);
+    return null;
+  }
+
+  /**
+   * Categorie, vignette et objectif, poses apres la creation ou la
+   * modification. La fonction vient de phase115 : si le script n'a pas
+   * ete passe, on laisse filer plutot que de bloquer l'enregistrement.
+   */
+  async function enregistrerVitrine(id){
+    if (!id) return;
+    const objectif = document.getElementById('cObjectif').value;
+    const { error } = await supabaseClient.rpc('collecte_vitrine', {
+      p_id: id,
+      p_categorie: document.getElementById('cCategorie').value || null,
+      p_image_url: document.getElementById('cImage').value.trim() || null,
+      p_objectif_fcfa: objectif ? Number(objectif) : null,
+      p_objectif_libelle: document.getElementById('cObjectifLibelle').value.trim() || null,
+    });
+    if (error && error.code !== 'PGRST202') console.warn('Vitrine de la collecte :', error.message);
   }
 
   async function appliquerModification(type, titre, montant, lignes, itemsVerrouilles){
@@ -364,6 +413,7 @@
       p_is_open: null,
     });
     if (error) return error;
+    await enregistrerVitrine(collecteEnEdition);
 
     // Les items ne partent que si la liste a réellement changé : sinon un
     // remplacement inutile échouerait dès la première participation.

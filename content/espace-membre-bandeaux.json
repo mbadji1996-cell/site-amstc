@@ -46,5 +46,13 @@
     "bouton": "",
     "bouton_lien": "",
     "image": "/assets/uploads/0A2A2185.jpg"
+  },
+  "collectes": {
+    "titre": "Collectes et dons",
+    "soustitre": "Solidarité · Partage · Impact",
+    "texte": "Ensemble, soutenons les talibés et les communautés à travers des dons utiles et durables.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
   }
 }
