@@ -27,6 +27,7 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
   a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
   .wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   header{background:var(--green-deep);}
   .header-wrap{max-width:1400px; margin:0 auto; padding:14px 28px; display:flex; align-items:center; justify-content:space-between;}
@@ -38,70 +39,48 @@
   }
   .signout-btn:hover{border-color:rgba(255,255,255,0.6);}
 
-
-  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:36px 0 8px;}
-  .eyebrow{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-accent); display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .eyebrow::before{content:""; width:22px; height:1px; background:var(--gold-deep);}
-  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:14px;}
-  .intro{color:var(--text-muted); font-size:1.02rem; margin-bottom:32px;}
-  /* Grille de cartes : jusqu'a quatre par rangee sur grand ecran, moins
-     a mesure que la place manque. */
-  #list{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; align-items:start;}
-  #list > p{grid-column:1 / -1;}
-  /* Le document ouvert prend TOUTE la largeur : un PDF dans une colonne
-     de 300 px serait illisible. */
-  /* Le document ouvert occupe TOUTE la page, comme a la bibliotheque. */
+  /* Le document ouvert occupe TOUTE la page, comme a la bibliotheque :
+     un PDF dans une colonne de 300 px serait illisible. */
+  .doc-viewer{background:var(--surface);}
   .doc-viewer.plein{position:fixed; inset:0; z-index:1200; background:var(--paper);
     display:flex; flex-direction:column; border:none; border-radius:0; margin:0; padding:0;}
-  .doc-viewer.plein iframe{flex:1; height:auto; min-height:0;}
+  .doc-viewer.plein iframe{flex:1; height:auto; min-height:0; width:100%; border:0; display:block;}
   .lecteur-barre{display:flex; align-items:center; justify-content:space-between;
     gap:12px; padding:10px 16px; background:var(--green-deep); flex-shrink:0;}
   .lecteur-barre-titre{color:#fff; font-family:var(--display); font-weight:600;
     font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .lecteur-barre .btn-view{padding:8px 20px; flex-shrink:0;}
+  .lecteur-fermer{
+    font-weight:600; font-size:0.85rem; padding:8px 20px; border-radius:999px; border:none; cursor:pointer;
+    background:var(--gold); color:var(--green-deep); flex-shrink:0;
+  }
   body.lecture-ouverte{overflow:hidden;}
-  .doc-row{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px;
-    display:flex; flex-direction:column; align-items:flex-start; gap:14px; height:100%;
-  }
-  .doc-row > div{min-width:0; overflow-wrap:anywhere;}
-  .doc-title{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:1.05rem;}
-  .doc-excerpt{color:var(--text-muted); font-size:0.92rem; margin-top:4px;}
-  .doc-date{font-family:var(--mono); font-size:0.75rem; color:var(--text-muted); margin-top:6px;}
-  .doc-item{margin-bottom:0;}
-  .btn-view{
-    font-weight:600; font-size:0.85rem; padding:10px 20px; border-radius:999px; border:none; cursor:pointer;
-    background:var(--gold); color:var(--green-deep); flex-shrink:0; transition:opacity .15s ease;
-  }
-  .btn-view:hover{opacity:0.88;}
-  .btn-view:disabled{opacity:0.6; cursor:wait;}
-  .doc-viewer{
-    border:1px solid var(--line); border-radius:var(--radius); margin-top:10px;
-    padding-top:6px; background:var(--surface);
-  }
-  .doc-viewer iframe{width:100%; height:75vh; border:0; display:block;}
   .doc-viewer-note{
     font-family:var(--mono); font-size:0.72rem; color:var(--text-muted); text-align:center; padding:8px 0;
   }
   /* Le lien doit se voir : la regle globale a{color:inherit} le
      rendrait indistinct du texte de la note. */
   .doc-viewer-note a{color:var(--text-accent); text-decoration:underline;}
+  /* Document HTML importe, en plein ecran : la boite defile, la barre reste. */
+  .doc-viewer.plein .doc-html{flex:1;min-height:0;overflow:auto;background:var(--paper);padding:20px clamp(16px,4vw,48px) 60px;}
+
   .empty, .error, .loading{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
-  .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .card-status-banner{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .card-status-banner.blocked{border-left-color:#C0392B;}
   .card-status-banner-text{font-size:0.87rem;color:var(--text-muted);}
   .card-status-banner-text strong{color:var(--text-heading);}
   .card-status-banner a.btn-renew-link{background:var(--gold);color:var(--green-deep);font-weight:600;font-size:0.85rem;padding:9px 18px;border-radius:999px;white-space:nowrap;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
-  /* Document HTML importe, en plein ecran : la boite defile, la barre reste. */
-  .doc-viewer.plein .doc-html{flex:1;min-height:0;overflow:auto;background:var(--paper);padding:20px clamp(16px,4vw,48px) 60px;}
 </style>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
+<link rel="stylesheet" href="../assets/css/documents.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
 <script src="../assets/js/assistant.js" defer></script>
 <script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
@@ -132,16 +111,64 @@
 </nav>
 
 <div class="wrap">
-  <a class="back" href="./">Espace membres</a>
-  <p class="eyebrow">Espace Membres</p>
-  <h1>Documents officiels</h1>
-  <p class="intro">Statuts, Règlement intérieur, rapports et autres documents réservés aux membres approuvés de l'association.</p>
+  <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
   <noscript><p class="error">L'affichage nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
-  <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
-  <div id="list">
-    <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
+
+  <div id="pageDocs" style="display:none;">
+    <section class="bm" data-bandeau="documents">
+      <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+      <div class="bm-texte">
+        <span class="bm-ic" aria-hidden="true"><i class="ti ti-file-text"></i></span>
+        <div>
+          <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1 data-bandeau-champ="titre">Documents officiels</h1>
+          <p class="bm-soustitre" data-bandeau-champ="soustitre">Transparence et bonne gouvernance</p>
+          <p class="bm-intro" data-bandeau-champ="texte">Retrouvez ici tous les documents essentiels de l'association : statuts, règlement intérieur, rapports d'activités, procès-verbaux et autres pièces administratives.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
+
+    <div class="dc-tuiles" id="dcTuiles"></div>
+
+    <div class="dc-barre">
+      <p class="dc-barre-titre" id="dcTitreListe">Derniers documents ajoutés</p>
+      <!-- La barre du haut reprend cette recherche et masque ce champ :
+           deux champs sur la meme page semaient le doute. -->
+      <div class="dc-chercher" data-recherche-cacher>
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="search" id="dcRecherche" data-recherche-page placeholder="Rechercher un document, un mot-clé…" aria-label="Rechercher un document">
+      </div>
+      <div class="dc-outils">
+        <span class="dc-tri">
+          <i class="ti ti-arrows-sort" aria-hidden="true"></i>
+          <label for="dcTri">Trier par</label>
+          <select id="dcTri">
+            <option value="recent">Plus récents</option>
+            <option value="ancien">Plus anciens</option>
+            <option value="titre">Titre (A-Z)</option>
+            <option value="vues">Les plus consultés</option>
+          </select>
+        </span>
+        <div class="dc-vues">
+          <button type="button" class="dc-vue" id="dcVueGrille" title="Affichage en grille" aria-label="Affichage en grille"><i class="ti ti-layout-grid"></i></button>
+          <button type="button" class="dc-vue actif" id="dcVueListe" title="Affichage en liste" aria-label="Affichage en liste"><i class="ti ti-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dc-liste" id="list"><p class="dc-vide">Chargement des documents…</p></div>
+
+    <div class="dc-bas" id="dcBas" style="display:none;">
+      <p class="dc-compte" id="dcCompte"></p>
+      <div class="dc-pages" id="dcPages"></div>
+    </div>
   </div>
 </div>
+
+<!-- Un seul lecteur pour toute la page : il s'ouvre en plein écran. -->
+<div class="doc-viewer" id="docViewer" style="display:none;"></div>
 
 <footer>
   <a href="../">AMSTC - Association Médico-Sociale des Talibés Cheikh</a>
@@ -152,11 +179,63 @@
 <script src="../assets/js/import-html.js"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
-  let contenus = {};
   const DOCUMENTS_BUCKET = "documents-reserves";
+  const PAR_PAGE = 6;
+
+  // Classement des documents. La clé est ce que porte la fiche
+  // (sous_categorie, phase116) ; sans le script, tout reste dans
+  // « Tous les documents ».
+  const CATS = [
+    ['tous', 'Tous les documents', 'ti-files'],
+    ['rapports', "Rapports d'activités", 'ti-report-analytics'],
+    ['statuts', 'Statuts et règlement intérieur', 'ti-users-group'],
+    ['pv', 'Procès-verbaux', 'ti-clipboard-text'],
+    ['autres', 'Autres documents', 'ti-folder'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATS.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATS.map(([c, , i]) => [c, i]));
+  // Fond clair et texte foncé : lisible dans les deux thèmes.
+  const COULEURS = {
+    rapports: ['#FDF1D8', '#8A6209'],
+    statuts: ['#E5EEFC', '#1D4E89'],
+    pv: ['#F0E7FA', '#5B3392'],
+    autres: ['#E0F2EA', '#136A36'],
+    '': ['#E8F1EA', '#136A36'],
+  };
+
+  let contenus = {};
+  let documents = [];
+  let tailles = {};
+  let catChoisie = 'tous';
+  let tri = 'recent';
+  let page = 1;
+  let vueGrille = false;
+  try { vueGrille = localStorage.getItem('amstc-docs-vue') === 'grille'; } catch (e) { /* sans mémoire, la liste */ }
+
   function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function formatDate(d){
     return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
+  }
+  function normaliser(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function formatTaille(o){
+    const n = Number(o || 0);
+    if (!n) return '';
+    if (n < 1024 * 1024) return Math.max(1, Math.round(n / 1024)) + ' Ko';
+    return (n / (1024 * 1024)).toFixed(1).replace('.', ',') + ' Mo';
+  }
+  function estHtml(doc){
+    return !!(doc.content && /^\s*(<style[\s>]|<div class="html-importe")/i.test(doc.content));
+  }
+  function typeDe(doc){
+    if (doc.file_path) {
+      const m = String(doc.file_path).match(/\.([a-z0-9]{2,5})$/i);
+      if (m) return m[1].toUpperCase();
+      return 'FICHIER';
+    }
+    return estHtml(doc) ? 'HTML' : '';
+  }
+  function catDe(doc){
+    return LIBELLE_CAT[doc.sous_categorie] && doc.sous_categorie !== 'tous' ? doc.sous_categorie : '';
   }
 
   function renderCardStatusBanner(state) {
@@ -174,120 +253,270 @@
     }
   }
 
+  // ===== Lecture =====
   async function loadDocuments(blocked) {
     const listEl = document.getElementById("list");
     if (blocked) {
-      listEl.innerHTML = '<p class="empty">Documents verrouillés le temps de renouveler votre carte.</p>';
+      listEl.innerHTML = '<p class="dc-vide">Documents verrouillés le temps de renouveler votre carte.</p>';
+      document.querySelector('.dc-barre').style.display = 'none';
       return;
     }
     const { data, error } = await supabaseClient
       .from("restricted_articles")
-      .select("id,title,excerpt,file_path,content,created_at")
+      .select("*")
       .eq("category", "document")
       .order("created_at", { ascending: false });
 
     if (error) {
-      listEl.innerHTML = '<p class="error">Impossible de charger les documents pour le moment.</p>';
+      listEl.innerHTML = '<p class="dc-vide">Impossible de charger les documents pour le moment.</p>';
       return;
     }
 
-    if (!data || data.length === 0) {
-      listEl.innerHTML = '<p class="empty">Aucun document publié pour le moment.</p>';
-      return;
-    }
-
+    documents = data || [];
     // Le contenu HTML importe (assets/js/import-html.js) est garde par
     // identifiant : il s'affiche en plein ecran, comme un PDF, quand le
     // document n'a pas de fichier - un PV ou un rapport rediges en HTML.
     contenus = {};
-    data.forEach(doc => { if (doc.content) contenus[doc.id] = doc.content; });
-    listEl.innerHTML = data.map(doc => `
-      <div class="doc-item" data-id="${esc(doc.id)}">
-        <div class="doc-row">
-          <div>
-            <div class="doc-title">${esc(doc.title)}</div>
-            ${doc.excerpt ? `<div class="doc-excerpt">${esc(doc.excerpt)}</div>` : ""}
-            <div class="doc-date">${formatDate(doc.created_at)}</div>
-          </div>
-          <button class="btn-view" data-path="${esc(doc.file_path || "")}" data-id="${esc(doc.id)}" data-html="${doc.content && /^\s*(<style[\s>]|<div class="html-importe")/i.test(doc.content) ? "1" : ""}">Consulter</button>
-        </div>
-        <div class="doc-viewer" id="viewer-${esc(doc.id)}" style="display:none;"></div>
-      </div>
-    `).join("");
+    documents.forEach(doc => { if (doc.content) contenus[doc.id] = doc.content; });
 
-    listEl.querySelectorAll(".btn-view").forEach(btn => {
-      btn.addEventListener("click", () => toggleViewer(btn));
+    await lireTailles();
+    afficher();
+  }
+
+  // Le poids des fichiers vient du stockage lui-meme : rien a saisir a la
+  // main, et donc rien qui puisse etre faux. Si la liste est refusee, les
+  // fiches s'affichent simplement sans poids.
+  async function lireTailles(){
+    try {
+      const { data } = await supabaseClient.storage.from(DOCUMENTS_BUCKET).list('', { limit: 1000 });
+      (data || []).forEach(o => {
+        if (o && o.name && o.metadata && o.metadata.size) tailles[o.name] = o.metadata.size;
+      });
+    } catch (e) { /* sans les tailles, la page reste complete */ }
+  }
+
+  // ===== Affichage =====
+  function filtres(){
+    const q = normaliser(document.getElementById('dcRecherche').value.trim());
+    let liste = documents.filter(d => {
+      if (catChoisie !== 'tous' && (d.sous_categorie || '') !== catChoisie) return false;
+      if (!q) return true;
+      return normaliser([d.title, d.excerpt, LIBELLE_CAT[d.sous_categorie]].filter(Boolean).join(' ')).includes(q);
+    });
+    const date = d => new Date(d.created_at || 0).getTime();
+    if (tri === 'ancien') liste = liste.sort((a, b) => date(a) - date(b));
+    else if (tri === 'titre') liste = liste.sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'fr'));
+    else if (tri === 'vues') liste = liste.sort((a, b) => Number(b.vues || 0) - Number(a.vues || 0));
+    else liste = liste.sort((a, b) => date(b) - date(a));
+    return liste;
+  }
+
+  function remplirTuiles(){
+    const compte = cle => cle === 'tous'
+      ? documents.length
+      : documents.filter(d => (d.sous_categorie || '') === cle).length;
+    // Une categorie vide n'a pas de tuile - sauf « Tous », qui reste le
+    // point de retour. Sans phase116 il ne reste donc que « Tous ».
+    document.getElementById('dcTuiles').innerHTML = CATS
+      .filter(([cle]) => cle === 'tous' || compte(cle) > 0)
+      .map(([cle, libelle, icone]) => {
+        const n = compte(cle);
+        return `
+        <button type="button" class="dc-tuile ${cle === catChoisie ? 'actif' : ''}" data-cat="${cle}">
+          <span class="dc-tuile-ic" aria-hidden="true"><i class="ti ${icone}"></i></span>
+          <span>
+            <span class="dc-tuile-nom">${esc(libelle)}</span>
+            <span class="dc-tuile-nb">${n} document${n > 1 ? 's' : ''}</span>
+          </span>
+          <i class="ti ti-chevron-right dc-tuile-fleche" aria-hidden="true"></i>
+        </button>`;
+      }).join('');
+    document.getElementById('dcTuiles').querySelectorAll('.dc-tuile').forEach(b => {
+      b.addEventListener('click', () => { catChoisie = b.dataset.cat; page = 1; afficher(); });
     });
   }
 
-  async function toggleViewer(btn) {
-    const path = btn.dataset.path;
-    const viewer = document.getElementById("viewer-" + btn.dataset.id);
-    const html = btn.dataset.html ? contenus[btn.dataset.id] : null;
-    if (!path && !html) { alert("Aucun fichier associé à ce document."); return; }
+  function fiche(doc){
+    const cat = catDe(doc);
+    const [fond, encre] = COULEURS[cat] || COULEURS[''];
+    const type = typeDe(doc);
+    const taille = formatTaille(tailles[doc.file_path]);
+    const vues = Number(doc.vues || 0);
+    return `
+    <article class="dc-fiche">
+      <span class="dc-vignette" style="background:${fond};color:${encre};">
+        <i class="ti ${doc.file_path ? 'ti-file-type-pdf' : 'ti-file-text'}" aria-hidden="true"></i>
+        ${type ? `<span class="dc-vignette-ext">${esc(type)}</span>` : ''}
+      </span>
+      <div class="dc-corps">
+        ${cat ? `<span class="dc-etiq" style="background:${fond};color:${encre};">${esc(LIBELLE_CAT[cat])}</span>` : ''}
+        <p class="dc-titre">${esc(doc.title || 'Sans titre')}</p>
+        ${doc.excerpt ? `<p class="dc-resume">${esc(doc.excerpt)}</p>` : ''}
+        <p class="dc-meta">
+          <span><i class="ti ti-calendar" aria-hidden="true"></i> ${esc(formatDate(doc.created_at))}</span>
+          ${taille ? `<span><i class="ti ti-database" aria-hidden="true"></i> ${esc(taille)}</span>` : ''}
+          ${vues ? `<span><i class="ti ti-eye" aria-hidden="true"></i> ${vues} vue${vues > 1 ? 's' : ''}</span>` : ''}
+        </p>
+      </div>
+      <div class="dc-actions">
+        <button type="button" class="dc-consulter" data-id="${esc(doc.id)}"
+                data-path="${esc(doc.file_path || '')}" data-titre="${esc(doc.title || '')}"
+                data-html="${estHtml(doc) ? '1' : ''}">
+          <i class="ti ti-eye" aria-hidden="true"></i> Consulter
+        </button>
+        ${doc.file_path
+          ? `<button type="button" class="dc-telecharger" data-path="${esc(doc.file_path)}" title="Télécharger" aria-label="Télécharger ${esc(doc.title || '')}"><i class="ti ti-download"></i></button>`
+          : `<span class="dc-type">${esc(type || '-')}</span>`}
+      </div>
+    </article>`;
+  }
 
-    const isOpen = viewer.style.display !== "none";
-    if (isOpen) {
-      viewer.style.display = "none";
-      viewer.innerHTML = "";
-      viewer.classList.remove("plein");
-      document.body.classList.remove("lecture-ouverte");
-      btn.textContent = "Consulter";
-      return;
-    }
+  function afficher(){
+    remplirTuiles();
+    const liste = filtres();
+    const pages = Math.max(1, Math.ceil(liste.length / PAR_PAGE));
+    if (page > pages) page = pages;
+    const debut = (page - 1) * PAR_PAGE;
+    const visibles = liste.slice(debut, debut + PAR_PAGE);
+
+    document.getElementById('dcTitreListe').textContent = catChoisie === 'tous'
+      ? (tri === 'recent' ? 'Derniers documents ajoutés' : 'Tous les documents')
+      : LIBELLE_CAT[catChoisie];
+
+    const listEl = document.getElementById('list');
+    listEl.classList.toggle('grille', vueGrille);
+    listEl.innerHTML = visibles.length
+      ? visibles.map(fiche).join('')
+      : `<p class="dc-vide">${documents.length ? 'Aucun document ne correspond à cette recherche.' : 'Aucun document publié pour le moment.'}</p>`;
+
+    listEl.querySelectorAll('.dc-consulter').forEach(b => b.addEventListener('click', () => ouvrirDocument(b)));
+    listEl.querySelectorAll('.dc-telecharger').forEach(b => b.addEventListener('click', () => telecharger(b)));
+
+    const bas = document.getElementById('dcBas');
+    bas.style.display = liste.length ? 'flex' : 'none';
+    document.getElementById('dcCompte').textContent = liste.length
+      ? `Affichage de ${debut + 1} à ${debut + visibles.length} sur ${liste.length} document${liste.length > 1 ? 's' : ''}`
+      : '';
+    document.getElementById('dcPages').innerHTML = pages > 1
+      ? `<button type="button" class="dc-page" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} aria-label="Page précédente"><i class="ti ti-chevron-left"></i></button>`
+        + Array.from({ length: pages }, (_, i) =>
+            `<button type="button" class="dc-page ${i + 1 === page ? 'actif' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('')
+        + `<button type="button" class="dc-page" data-page="${page + 1}" ${page === pages ? 'disabled' : ''} aria-label="Page suivante"><i class="ti ti-chevron-right"></i></button>`
+      : '';
+    document.getElementById('dcPages').querySelectorAll('.dc-page').forEach(b => {
+      b.addEventListener('click', () => {
+        page = Number(b.dataset.page);
+        afficher();
+        document.querySelector('.dc-barre').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  // ===== Ouvrir, télécharger =====
+  function fermerLecteur(){
+    const viewer = document.getElementById('docViewer');
+    viewer.style.display = 'none';
+    viewer.innerHTML = '';
+    viewer.classList.remove('plein');
+    document.body.classList.remove('lecture-ouverte');
+  }
+
+  function barreLecteur(titre){
+    return `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titre)}</span>`
+      + `<button type="button" class="lecteur-fermer">Fermer</button></div>`;
+  }
+
+  // Une consultation de plus. La fonction vient de phase116 : sans le
+  // script, on n'insiste pas - le document s'ouvre quand meme.
+  function compterVue(id){
+    const doc = documents.find(d => d.id === id);
+    supabaseClient.rpc('document_compter_vue', { p_id: id }).then(({ error }) => {
+      if (error) return;
+      if (doc) { doc.vues = Number(doc.vues || 0) + 1; afficher(); }
+    }, () => {});
+  }
+
+  async function ouvrirDocument(btn){
+    const id = btn.dataset.id;
+    const path = btn.dataset.path;
+    const titre = btn.dataset.titre;
+    const html = btn.dataset.html ? contenus[id] : null;
+    if (!path && !html) { alert("Aucun fichier associé à ce document."); return; }
+    const viewer = document.getElementById('docViewer');
 
     // Document redige en HTML (import) et sans PDF : on l'affiche tel
     // quel, en plein ecran comme un PDF. Le contenu est deja confine et
     // nettoye par l'import ; seule l'administration ecrit ce champ.
     if (!path && html) {
-      const titreDoc = btn.closest(".doc-item").querySelector(".doc-title").textContent;
-      viewer.innerHTML =
-        `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titreDoc)}</span>`
-        + `<button type="button" class="btn-view lecteur-fermer">Fermer</button></div>`
-        + `<div class="doc-html">${html}</div>`;
-      viewer.style.display = "";
-      viewer.classList.add("plein");
-      document.body.classList.add("lecture-ouverte");
-      viewer.querySelector(".lecteur-fermer").addEventListener("click", () => toggleViewer(btn));
-      if (typeof rendreSommaireDepliant === "function") rendreSommaireDepliant(viewer.querySelector(".doc-html"));
-      btn.textContent = "Fermer";
+      viewer.innerHTML = barreLecteur(titre) + `<div class="doc-html">${html}</div>`;
+      viewer.style.display = '';
+      viewer.classList.add('plein');
+      document.body.classList.add('lecture-ouverte');
+      viewer.querySelector('.lecteur-fermer').addEventListener('click', fermerLecteur);
+      if (typeof rendreSommaireDepliant === "function") rendreSommaireDepliant(viewer.querySelector('.doc-html'));
+      compterVue(id);
       return;
     }
 
     // L'onglet est réservé AVANT l'appel réseau, sur les appareils qui en
     // ont besoin : ouvert après, Safari le bloquerait comme intempestif.
     const onglet = lecteurPreouvrirOnglet();
-
     btn.disabled = true;
-    btn.textContent = "Préparation…";
+    const libelle = btn.innerHTML;
+    btn.textContent = 'Préparation…';
     const { data, error } = await supabaseClient.storage
       .from(DOCUMENTS_BUCKET)
       .createSignedUrl(path, 120);
     btn.disabled = false;
+    btn.innerHTML = libelle;
 
     if (error || !data) {
       if (onglet) onglet.close();
-      btn.textContent = "Consulter";
       alert("Impossible d'afficher ce document.");
       return;
     }
 
     lecteurAfficherPdf(viewer, data.signedUrl, onglet, "doc-viewer-note");
-    viewer.classList.add("plein");
-    document.body.classList.add("lecture-ouverte");
-    const titreDoc = btn.closest(".doc-item").querySelector(".doc-title").textContent;
-    viewer.insertAdjacentHTML("afterbegin",
-      `<div class="lecteur-barre"><span class="lecteur-barre-titre">${esc(titreDoc)}</span>`
-      + `<button type="button" class="btn-view lecteur-fermer">Fermer</button></div>`);
-    viewer.querySelector(".lecteur-fermer").addEventListener("click", () => toggleViewer(btn));
-    btn.textContent = "Fermer";
+    viewer.classList.add('plein');
+    viewer.style.display = '';
+    document.body.classList.add('lecture-ouverte');
+    viewer.insertAdjacentHTML('afterbegin', barreLecteur(titre));
+    viewer.querySelector('.lecteur-fermer').addEventListener('click', fermerLecteur);
+    compterVue(id);
   }
+
+  async function telecharger(btn){
+    btn.disabled = true;
+    const { data, error } = await supabaseClient.storage
+      .from(DOCUMENTS_BUCKET)
+      .createSignedUrl(btn.dataset.path, 120, { download: true });
+    btn.disabled = false;
+    if (error || !data) { alert("Impossible de télécharger ce document."); return; }
+    // Le fichier part en téléchargement : la page ne bouge pas.
+    window.location.href = data.signedUrl;
+  }
+
+  // ===== Commandes =====
+  document.getElementById('dcRecherche').addEventListener('input', () => { page = 1; afficher(); });
+  document.getElementById('dcTri').addEventListener('change', (e) => { tri = e.target.value; page = 1; afficher(); });
+  function poserVue(grille){
+    vueGrille = grille;
+    try { localStorage.setItem('amstc-docs-vue', grille ? 'grille' : 'liste'); } catch (e) { /* sans mémoire, tant pis */ }
+    document.getElementById('dcVueGrille').classList.toggle('actif', grille);
+    document.getElementById('dcVueListe').classList.toggle('actif', !grille);
+    afficher();
+  }
+  document.getElementById('dcVueGrille').addEventListener('click', () => poserVue(true));
+  document.getElementById('dcVueListe').addEventListener('click', () => poserVue(false));
 
   (async () => {
     const result = await requireActiveMember("connexion");
     if (!result) return;
     document.getElementById("signoutBtn").style.display = "";
     document.getElementById("loadingMsg").style.display = "none";
+    document.getElementById("pageDocs").style.display = "";
+    document.getElementById('dcVueGrille').classList.toggle('actif', vueGrille);
+    document.getElementById('dcVueListe').classList.toggle('actif', !vueGrille);
     renderCardStatusBanner(result.state);
     loadDocuments(result.state === "blocked");
   })();

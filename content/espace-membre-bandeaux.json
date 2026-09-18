@@ -54,5 +54,13 @@
     "bouton": "",
     "bouton_lien": "",
     "image": "/assets/uploads/img_2428.jpg"
+  },
+  "documents": {
+    "titre": "Documents officiels",
+    "soustitre": "Transparence et bonne gouvernance",
+    "texte": "Retrouvez ici tous les documents essentiels de l'association : statuts, règlement intérieur, rapports d'activités, procès-verbaux et autres pièces administratives.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
   }
 }

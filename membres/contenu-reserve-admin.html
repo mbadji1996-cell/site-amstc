@@ -145,6 +145,16 @@
       <label for="title">Titre</label>
       <input type="text" id="title" required>
 
+      <label for="sous_categorie">Catégorie du document</label>
+      <select id="sous_categorie">
+        <option value="">À classer</option>
+        <option value="rapports">Rapports d'activités</option>
+        <option value="statuts">Statuts et règlement intérieur</option>
+        <option value="pv">Procès-verbaux</option>
+        <option value="autres">Autres documents</option>
+      </select>
+      <p class="field-hint">Range le document sous la bonne tuile de la page des membres.</p>
+
       <label for="excerpt">Résumé court (visible de tous, sert d'accroche)</label>
       <input type="text" id="excerpt" maxlength="200">
 
@@ -331,6 +341,7 @@
     document.getElementById("existingFilePath").value = item.file_path || "";
     document.getElementById("category").value = item.category || "formation";
     document.getElementById("title").value = item.title || "";
+    document.getElementById("sous_categorie").value = item.sous_categorie || "";
     document.getElementById("excerpt").value = item.excerpt || "";
     document.getElementById("cover_image").value = item.cover_image || "";
     document.getElementById("video_url").value = item.video_url || "";
@@ -388,6 +399,7 @@
       cover_image: document.getElementById("cover_image").value.trim() || null,
       video_url: document.getElementById("video_url").value.trim() || null,
       content: contentEditor.getMarkdown(),
+      sous_categorie: document.getElementById("sous_categorie").value || null,
     };
 
     if (category === "document") {
@@ -414,11 +426,16 @@
     }
 
     let error;
-    if (id) {
-      ({ error } = await supabaseClient.from("restricted_articles").update(payload).eq("id", id));
-    } else {
-      payload.created_by = currentUserId;
-      ({ error } = await supabaseClient.from("restricted_articles").insert(payload));
+    const enregistrer = async () => id
+      ? supabaseClient.from("restricted_articles").update(payload).eq("id", id)
+      : supabaseClient.from("restricted_articles").insert(payload);
+    if (!id) payload.created_by = currentUserId;
+    ({ error } = await enregistrer());
+    // Sans phase116 la colonne n'existe pas : le document part quand meme,
+    // sans son classement, plutot que d'etre refuse.
+    if (error && (error.code === "42703" || error.code === "PGRST204") && "sous_categorie" in payload) {
+      delete payload.sous_categorie;
+      ({ error } = await enregistrer());
     }
 
     submitBtn.disabled = false;

@@ -409,6 +409,17 @@ collections:
               - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
               - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
               - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Documents officiels"
+            name: "documents"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
           - label: "Collectes"
             name: "collectes"
             widget: "object"
