@@ -1,5 +1,6 @@
 {
   "nature_title": "Don en nature",
+  "pourquoi_lien_label": "En savoir plus sur notre impact",
   "mobile_options": [
     {
       "operator": "Orange Money",
@@ -13,48 +14,34 @@
     }
   ],
   "nature_text": "Médicaments, matériel médical, denrées : contactez-nous avant tout dépôt pour organiser la collecte et vérifier nos besoins actuels.",
-  "eyebrow": "Solidarité · Partage · Impact",
-  "intro": "Pour consolider son ancrage et pérenniser son action, l'AMSTC a engagé une démarche d'acquisition d'un terrain qui deviendra le siège de l'association, un lieu de référence pour ses équipes et les populations.",
-  "institution_title": "Don institutionnel ou partenariat",
-  "institution_text": "Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.",
-  "bank_title": "Virement bancaire",
-  "title": "Faire un don",
-  "trust_note": "Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA - NINEA 013359139. Un reçu peut être délivré sur demande pour tout don.",
-  "mobile_title": "Mobile Money",
-  "bank_details": "**Compte bancaire :** Disponible bientôt",
-  "wave_titre": "Payer par Wave",
-  "wave_texte": "Ouvre la page de paiement Wave de l'association : scannez le QR code affiché avec votre application Wave. Le paiement s'effectue chez Wave, jamais sur ce site.",
-  "wave_label": "Afficher le QR code Wave",
-  "wave_url": "",
-  "wave_essai": false,
-  "soustitre": "Ensemble, offrons un meilleur avenir aux talibés et aux communautés vulnérables.",
-  "image": "",
   "citation": "Un petit geste peut avoir un grand impact.",
-  "bouton": "Faire un don maintenant",
   "bouton2": "Découvrir nos actions",
-  "bouton2_lien": "actualites",
-  "montants": [
-    5000,
-    10000,
-    25000,
-    50000,
-    100000
-  ],
+  "wave_essai": false,
+  "wave_url": "",
+  "eyebrow": "Solidarité · Partage · Impact",
+  "pourquoi_lien": "actualites",
+  "bouton": "Faire un don maintenant",
+  "wave_titre": "Payer par Wave",
+  "intro": "Pour consolider son ancrage et pérenniser son action, l'AMSTC a engagé une démarche d'acquisition d'un terrain qui deviendra le siège de l'association, un lieu de référence pour ses équipes et les populations.",
+  "pourquoi_titre": "Pourquoi donner ?",
+  "wave_label": "Afficher le QR code Wave",
+  "institution_title": "Don institutionnel ou partenariat",
+  "wave_texte": "Ouvre la page de paiement Wave de l'association : scannez le QR code affiché avec votre application Wave. Le paiement par Wave sur ce site ne sont pas encore disponible.",
   "usages": [
-    {
-      "icone": "education",
-      "titre": "Éducation",
-      "texte": "Frais de scolarité"
-    },
     {
       "icone": "sante",
       "titre": "Santé",
       "texte": "Consultations et médicaments"
     },
     {
-      "icone": "alimentation",
-      "titre": "Alimentation",
-      "texte": "Repas et denrées"
+      "icone": "coeur",
+      "titre": "Sociale",
+      "texte": "Don de denrées de première nécessité aux personnes vulnérables"
+    },
+    {
+      "icone": "education",
+      "titre": "Éducation",
+      "texte": "Organisation de formations"
     },
     {
       "icone": "fournitures",
@@ -62,11 +49,24 @@
       "texte": "Matériel scolaire"
     }
   ],
-  "temoignage_texte": "",
-  "temoignage_auteur": "",
+  "pourquoi_texte": "Votre don est un acte de solidarité qui change des vies. Il permet à des sujets vulnérables de bénéficier de soins et d'un soutien inestimable !",
+  "montants": [
+    5000,
+    10000,
+    25000,
+    50000,
+    100000
+  ],
+  "institution_text": "Entreprises, ONG, institutions : écrivez-nous pour discuter d'un partenariat ou d'une convention de soutien.",
   "temoignage_photo": "",
-  "pourquoi_titre": "Pourquoi donner ?",
-  "pourquoi_texte": "Votre don est un acte de solidarité qui change des vies. Il permet à des enfants d'accéder à l'éducation, de se soigner et de s'insérer dans la société.",
-  "pourquoi_lien_label": "En savoir plus sur notre impact",
-  "pourquoi_lien": "actualites"
+  "bank_title": "Virement bancaire",
+  "soustitre": "Soutenez les actions de l'AMSTC !",
+  "title": "Faire un don",
+  "trust_note": "Association reconnue - Récépissé n° 022909/MISP/DGAT/DLPL/DAPA - NINEA 013359139. Un reçu peut être délivré sur demande pour tout don.",
+  "mobile_title": "Mobile Money",
+  "image": "",
+  "temoignage_texte": "",
+  "bouton2_lien": "actualites",
+  "temoignage_auteur": "",
+  "bank_details": "**Compte bancaire :** Disponible bientôt"
 }
