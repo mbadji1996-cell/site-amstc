@@ -1,17 +1,12 @@
 {
-  "accroche": "Nos réalisations",
-  "titre": "Ensemble pour un *impact durable*",
-  "texte": "À travers nos projets et actions sur le terrain, l'AMSTC œuvre pour l'éducation, la santé et le bien-être des talibés et des communautés. Découvrez quelques-unes de nos réalisations qui changent des vies.",
-  "image": "",
-  "citation": "« Éduquer, soigner, accompagner pour un meilleur avenir »",
-  "chiffres": [
-    { "nombre": "+ 1 950", "libelle": "Patients consultés", "icone": "sante" },
-    { "nombre": "+ 100", "libelle": "Poches de sang collectées", "icone": "beneficiaires" },
-    { "nombre": "8", "libelle": "Régions d'intervention", "icone": "regions" },
-    { "nombre": "Depuis 2014", "libelle": "Années d'engagement", "icone": "annees" }
-  ],
-  "appel_titre": "Soutenez nos actions",
   "appel_texte": "Chaque don compte pour améliorer le quotidien des talibés et des communautés.",
   "appel_bouton": "Faire un don",
+  "accroche": "Nos réalisations",
+  "citation": "« Éduquer, soigner, accompagner pour un meilleur avenir »",
+  "titre": "Ensemble pour un *impact durable*",
+  "texte": "À travers nos projets et actions sur le terrain, l'AMSTC œuvre pour l'éducation, la santé et le bien-être des talibés et des communautés. Découvrez quelques-unes de nos réalisations qui changent des vies.",
+  "image": "/assets/uploads/2026-gamou-louga-03.jpg",
+  "appel_titre": "Soutenez nos actions",
+  "chiffres": [],
   "appel_lien": "don"
 }
