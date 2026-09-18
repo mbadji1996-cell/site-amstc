@@ -1,5 +1,5 @@
 ---
-title: "Nemekou Daara Etape 4 Louga 2026 - Visite Médicale des daaras Serigne
+title: "Nemekou Daara Etape 4 Louga 2026 - Visite Médicale des Daaras Serigne
   Sam Mbaye de Médican Salam et Welingara à Welingara Walo : 203 talibés
   consultés"
 date: 2026-01-25T10:00:00.000Z
