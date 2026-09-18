@@ -539,6 +539,38 @@ collections:
           - { label: "Appel au don - bouton", name: "appel_bouton", widget: "string", required: false }
           - { label: "Appel au don - adresse", name: "appel_lien", widget: "string", required: false, default: "don" }
 
+      - name: "formations_page"
+        label: "Page Formation (bandeau)"
+        file: "content/formations-page.json"
+        fields:
+          - { label: "Accroche", name: "accroche", widget: "string", required: false, default: "Nos formations" }
+          - { label: "Titre", name: "titre", widget: "string", required: false, hint: "Mettez entre astérisques (* ou **) la partie en or : Se former pour *mieux servir*" }
+          - { label: "Texte", name: "texte", widget: "text", required: false }
+          - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Format paysage, 1200 px de large au minimum." }
+          - { label: "Citation", name: "citation", widget: "string", required: false }
+          - label: "Chiffres (quatre encadrés)"
+            name: "chiffres"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Nombre", name: "nombre", widget: "string" }
+              - { label: "Libellé", name: "libelle", widget: "string" }
+              - label: "Icône"
+                name: "icone"
+                widget: "select"
+                default: "beneficiaires"
+                options:
+                  - { label: "Bénéficiaires", value: "beneficiaires" }
+                  - { label: "Projets", value: "projets" }
+                  - { label: "Régions", value: "regions" }
+                  - { label: "Années", value: "annees" }
+                  - { label: "Santé", value: "sante" }
+                  - { label: "Éducation", value: "education" }
+          - { label: "Encadré du bas - titre", name: "appel_titre", widget: "string", required: false }
+          - { label: "Encadré du bas - texte", name: "appel_texte", widget: "text", required: false }
+          - { label: "Encadré du bas - bouton", name: "appel_bouton", widget: "string", required: false }
+          - { label: "Encadré du bas - adresse", name: "appel_lien", widget: "string", required: false, default: "don" }
+
       - name: "don"
         label: "Faire un don"
         file: "content/don.json"
