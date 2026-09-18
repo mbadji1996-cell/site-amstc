@@ -1,6 +1,6 @@
 ---
-title: Impact de la sédentarité sur le coeur et le corps - Entretien avec Dr
-  Bineta GUEYE, cardiologue et pionnière de l'AMSTC
+title: Impact de la sédentarité sur le coeur et le corps - Entretien du Dr
+  Bineta GUEYE (cardiologue et pionnière de l'AMSTC) avec SENEWEB
 date: 2026-09-17T10:00:00.000Z
 excerpt: "Entretien avec le Dr Bineta Guèye, cardiologue : on peut faire une
   heure de sport par jour et rester sédentaire les vingt-trois autres. Pourquoi
