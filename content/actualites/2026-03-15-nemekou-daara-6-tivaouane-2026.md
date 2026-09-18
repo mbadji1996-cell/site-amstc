@@ -1,5 +1,5 @@
 ---
-title: "Nemekou Daara 6 - Tivaouane 2026 : 347 talibés consultés"
+title: "Nemekou Daara - Etape 6 - Tivaouane 2026 : 347 talibés consultés"
 date: 2026-05-09T11:00:00.000Z
 excerpt: "347 talibés pris en charge en une journée à Tivaouane : 274
   consultations de médecine générale et 73 consultations dentaires, avec
