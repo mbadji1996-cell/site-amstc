@@ -3,7 +3,7 @@ title: "Syndromes pneumologiques : sémiologie radiologique thoracique"
 date: 2025-06-15T10:00:00.000Z
 categorie: "sante"
 excerpt: "Mois de la Pneumologie. Critères de validité d'une radiographie thoracique, syndromes bronchique, alvéolaire et interstitiel, pleurésie et pneumothorax, avec un quiz d'auto-évaluation."
-image: ""
+image: "/assets/uploads/syndromes-pneumologiques-01.jpg"
 ---
 
 **Organisme :** AMSTC (Association Médico-Sociale des Talibés Cheikh), Commission Pédagogique
@@ -26,6 +26,8 @@ image: ""
 
 Pour qu'une radiographie thoracique soit interprétable, elle doit répondre à des critères stricts. Une radiographie non valide peut conduire à des erreurs de diagnostic.
 
+![Diapositive 1 : critères de validité de la radiographie du thorax](/assets/uploads/syndromes-pneumologiques-02.jpg)
+
 **Les 6 critères de validité d'une radiographie du thorax :**
 
 - **Position debout :** la poche à air gastrique doit être visible en dessous du diaphragme.
@@ -45,6 +47,8 @@ Pour qu'une radiographie thoracique soit interprétable, elle doit répondre à 
 
 ### 2.1 Le syndrome bronchique
 
+![Diapositive 2 : syndrome bronchique](/assets/uploads/syndromes-pneumologiques-03.jpg)
+
 Il traduit une atteinte des voies aériennes.
 
 - Épaississement de la paroi bronchique.
@@ -53,6 +57,8 @@ Il traduit une atteinte des voies aériennes.
 - Hypersécrétion et accumulation de sécrétions bronchiques.
 
 ### 2.2 Le syndrome alvéolaire
+
+![Diapositive 3 : syndrome alvéolaire](/assets/uploads/syndromes-pneumologiques-04.jpg)
 
 Il traduit un comblement des espaces alvéolaires, le plus souvent par un liquide, un œdème ou une infection.
 
@@ -64,6 +70,8 @@ Il traduit un comblement des espaces alvéolaires, le plus souvent par un liquid
 - Évolution rapide.
 
 ### 2.3 Le syndrome interstitiel
+
+![Diapositive 4 : syndrome interstitiel](/assets/uploads/syndromes-pneumologiques-05.jpg)
 
 Il traduit une atteinte du tissu de soutien du poumon (interstitium).
 
@@ -91,6 +99,8 @@ Il traduit une atteinte du tissu de soutien du poumon (interstitium).
 
 ### 3.1 La pleurésie (épanchement liquidien)
 
+![Diapositive 5 : pleurésie](/assets/uploads/syndromes-pneumologiques-06.jpg)
+
 **Caractéristiques :** opacité de densité liquidienne, homogène, déclive (elle suit la gravité), à limite supérieure concave en haut (courbe de Damoiseau).
 
 **Signes associés, selon l'abondance :**
@@ -101,6 +111,8 @@ Il traduit une atteinte du tissu de soutien du poumon (interstitium).
 - Refoulement des éléments du médiastin vers le côté opposé.
 
 ### 3.2 Le pneumothorax (épanchement gazeux)
+
+![Diapositive 6 : pneumothorax](/assets/uploads/syndromes-pneumologiques-07.jpg)
 
 **Caractéristiques :** hyperclarté avasculaire périphérique, à limite interne nette « comme tracée au crayon », concave vers le parenchyme.
 
