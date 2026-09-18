@@ -4,7 +4,7 @@ title: 1ère édition des Journées Scientifiques, Sociales, Culturelles et
 date: 2023-04-15T10:00:00.000Z
 excerpt: "Retour sur la 1ère édition des JSSCI 2023 : 72 heures d'intégration,
   de science et de solidarité avec l'AMSTC/FMPO"
-image: /assets/uploads/00.72h-amstc-symposium-01.jpg
+image: /assets/uploads/00.72h-amstc-01.jpg
 ---
 L'Association Médico-Sociale des Talibés Cheikh de la Faculté de Médecine, de Pharmacie et d'Odontologie (AMSTC/FMPO) a marqué les esprits en organisant avec succès la toute première édition de ses **Journées Scientifiques, Sociales, Culturelles et d'Intégration (JSSCI)**.
 
