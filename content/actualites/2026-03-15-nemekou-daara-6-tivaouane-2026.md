@@ -1,8 +1,10 @@
 ---
 title: "Nemekou Daara 6 - Tivaouane 2026 : 347 talibés consultés"
 date: 2026-05-09T11:00:00.000Z
-excerpt: "347 talibés pris en charge en une journée à Tivaouane : 274 consultations de médecine générale et 73 consultations dentaires, avec traitement des cas de gale et dons de médicaments."
-image: ""
+excerpt: "347 talibés pris en charge en une journée à Tivaouane : 274
+  consultations de médecine générale et 73 consultations dentaires, avec
+  traitement des cas de gale et dons de médicaments."
+image: /assets/uploads/némékou-daara-6-tivaouane.jpg
 ---
 
 Le 9 mai 2026, l'AMSTC a organisé la 6e édition de son Nemekou Daara à Tivaouane : une journée de consultations médicales et dentaires gratuites au profit des talibés, de 11h à 15h40.
