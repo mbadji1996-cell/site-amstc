@@ -1,5 +1,6 @@
 ---
-title: "Nemekou Daara Louga 2026 : 203 talibés consultés dans deux daaras"
+title: "Nemekou Daara Etape 4 Louga - Visite Médicale des daaras Serigne Sam
+  Mbaye de Médican Salam et Welingara à Welingara Walo : 203 talibés consultés"
 date: 2026-01-25T10:00:00.000Z
 excerpt: En collaboration avec DEESS Djamil et LAMe, l'AMSTC a mobilisé 24
   agents de santé pour une journée de consultations gratuites et de dons de
