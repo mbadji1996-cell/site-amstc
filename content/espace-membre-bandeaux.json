@@ -5,7 +5,7 @@
     "texte": "Apprenez, approfondissez et vivez votre spiritualité à travers nos cours de sciences islamiques et de tarikha.",
     "bouton": "Voir le guide d'utilisation",
     "bouton_lien": "../guide",
-    "image": ""
+    "image": "/assets/uploads/cover-daara-2.jpeg"
   },
   "medical": {
     "titre": "Enseignements Médicaux",
@@ -21,7 +21,7 @@
     "texte": "Consultez en ligne les ouvrages et documents de l'association. Ce contenu n'est pas téléchargeable.",
     "bouton": "",
     "bouton_lien": "",
-    "image": ""
+    "image": "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-4.1.1&q=45&auto=format&w=1356&h=668&fit=crop"
   },
   "forum": {
     "titre": "Forum de discussion",
@@ -29,7 +29,7 @@
     "texte": "Partagez vos idées, posez vos questions, échangez avec la communauté AMSTC et contribuez à faire grandir notre engagement.",
     "bouton": "",
     "bouton_lien": "",
-    "image": ""
+    "image": "https://static.vecteezy.com/ti/vecteur-libre/p1/4413151-illustrationle-plate-de-groupe-de-personnes-en-discussion-convient-pour-element-de-conception-du-forum-d-entreprise-debat-politique-et-discuter-des-questions-actuelles-activite-gratuit-vectoriel.jpg"
   },
   "annuaire": {
     "titre": "Annuaire des membres",
@@ -37,7 +37,7 @@
     "texte": "Retrouvez les membres de l'association par domaine, spécialité ou ville.",
     "bouton": "",
     "bouton_lien": "",
-    "image": ""
+    "image": "/assets/uploads/2025-ndogou-social-2025-01.jpg"
   },
   "mediatheque": {
     "titre": "Médiathèque",
@@ -45,6 +45,6 @@
     "texte": "Découvrez et explorez nos photos, vidéos et documents des activités de l'association.",
     "bouton": "",
     "bouton_lien": "",
-    "image": ""
+    "image": "/assets/uploads/0A2A2185.jpg"
   }
 }
