@@ -66,6 +66,28 @@
   #body h2:not(.html-importe *),#body h3:not(.html-importe *){font-family:var(--display); color:var(--text-heading); margin:32px 0 12px;}
   #body h2:not(.html-importe *){font-size:1.5rem;}
   #body h3:not(.html-importe *){font-size:1.22rem;}
+  /* Illustrations dans le texte : centrées, jamais plus hautes qu'un
+     écran. Une diapositive carrée de 1400 px en couvrait plus d'un. */
+  #body img:not(.html-importe *){display:block; max-width:min(100%, 760px); max-height:80vh; width:auto; height:auto;
+    margin:8px auto 24px; border-radius:14px; border:1px solid var(--line);}
+  #body ul:not(.html-importe *), #body ol:not(.html-importe *){padding-left:1.4em; margin-bottom:20px; color:var(--text-muted);}
+  #body li:not(.html-importe *) strong{color:var(--text-heading);}
+  #body hr:not(.html-importe *){border:0; border-top:1px solid var(--line); margin:36px 0;}
+  #body blockquote:not(.html-importe *){margin:0 0 24px; padding:14px 18px; border-left:4px solid var(--gold);
+    background:var(--paper-alt, #ECEFE3); border-radius:0 12px 12px 0;}
+  #body blockquote:not(.html-importe *) p{margin-bottom:0;}
+  #body table:not(.html-importe *){width:100%; max-width:760px; border-collapse:collapse; margin:0 0 24px; font-size:0.98rem;}
+  #body th:not(.html-importe *), #body td:not(.html-importe *){padding:10px 14px; border:1px solid var(--line); text-align:left;}
+  #body th:not(.html-importe *){background:var(--paper-alt, #ECEFE3); color:var(--text-heading); font-family:var(--display);}
+  #body td:not(.html-importe *){color:var(--text-muted);}
+  /* Réponse de quiz repliée : on la déplie d'un clic. */
+  #body details:not(.html-importe *){max-width:760px; margin:-8px 0 22px; border:1px solid var(--line); border-radius:12px; padding:10px 16px;}
+  #body details:not(.html-importe *) summary{cursor:pointer; font-weight:600; color:var(--green);}
+  #body details[open]:not(.html-importe *) summary{margin-bottom:8px;}
+  #body details:not(.html-importe *) p{margin-bottom:0;}
+  /* Sur telephone, les colonnes se partagent la largeur et le texte passe
+     a la ligne : le tableau depassait de 30 px. */
+  @media (max-width:700px){ #body table:not(.html-importe *){font-size:0.86rem; table-layout:fixed;} #body th:not(.html-importe *), #body td:not(.html-importe *){padding:8px; overflow-wrap:anywhere;} }
   .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
   .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
 </style>
