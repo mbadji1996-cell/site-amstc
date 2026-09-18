@@ -1,0 +1,148 @@
+/* ============================================================
+   Réalisations et formations : bandeau, filtres et cartes
+   Partagé par la page publique « Nos réalisations » et, dans
+   l'espace membres, par « Réalisations » et « Autres formations ».
+   Les trois listes montrent la même chose : une vignette, une
+   catégorie, une date, un titre, un résumé.
+   ============================================================ */
+
+/* ===== Bandeau ===== */
+.rl-bandeau{
+  position:relative; overflow:hidden; border-radius:22px; border:1px solid var(--line);
+  background:linear-gradient(115deg, #EDF4EE 0%, #F4F8F4 52%, rgba(244,248,244,0) 100%), var(--surface);
+  padding:34px 36px; margin:26px 0 22px;
+}
+:root[data-theme="dark"] .rl-bandeau{
+  background:linear-gradient(115deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 52%, rgba(6,68,28,0) 100%), var(--surface);
+}
+.rl-bandeau-photo{position:absolute; inset:0 0 0 auto; width:46%; z-index:0;}
+.rl-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
+.rl-bandeau-photo::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.55) 40%, rgba(244,248,244,0.1) 100%);
+}
+:root[data-theme="dark"] .rl-bandeau-photo::after{
+  background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.6) 40%, rgba(24,32,25,0.2) 100%);
+}
+.rl-bandeau-texte{position:relative; z-index:1; max-width:62ch;}
+.rl-accroche{
+  display:inline-flex; align-items:center; gap:8px; margin-bottom:14px; padding:7px 15px; border-radius:999px;
+  background:var(--green-deep); color:#FFFFFF; font-size:0.8rem; font-weight:600;
+}
+.rl-accroche .ti{color:var(--gold); font-size:15px;}
+.rl-bandeau h1{
+  font-family:var(--display); font-size:clamp(1.7rem,3.6vw,2.4rem); font-weight:700;
+  color:var(--text-heading); line-height:1.15; margin:0;
+}
+.rl-bandeau h1 em{font-style:normal; color:var(--text-accent);}
+.rl-bandeau-sous{color:var(--text-muted); font-size:0.98rem; margin-top:12px; max-width:56ch;}
+.rl-citation{
+  position:absolute; right:36px; bottom:30px; z-index:1; max-width:22ch; text-align:right;
+  font-family:var(--display); font-style:italic; font-weight:600; color:var(--green-deep); line-height:1.4;
+}
+:root[data-theme="dark"] .rl-citation{color:#7FD9A0;}
+.rl-citation::after{content:""; display:block; width:70px; height:3px; border-radius:3px; background:var(--gold); margin:10px 0 0 auto;}
+@media(max-width:1100px){ .rl-citation{display:none;} }
+
+/* ===== Chiffres ===== */
+.rl-chiffres{position:relative; z-index:1; display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;}
+.rl-chiffre{
+  display:flex; align-items:center; gap:12px; padding:12px 18px; border-radius:14px;
+  background:var(--surface); border:1px solid var(--line); min-width:0;
+}
+.rl-chiffre-ic{
+  width:38px; height:38px; flex:none; border-radius:11px; display:grid; place-items:center;
+  background:rgba(23,118,59,0.12); color:var(--green); font-size:19px;
+}
+.rl-chiffre-nb{font-family:var(--display); font-size:1.15rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
+.rl-chiffre-label{font-size:0.78rem; color:var(--text-muted);}
+
+/* ===== Filtres et tri ===== */
+.rl-barre{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:20px;}
+.rl-cat{
+  display:inline-flex; align-items:center; gap:8px; padding:9px 17px; border-radius:999px; cursor:pointer;
+  border:1.5px solid var(--line); background:var(--surface); color:var(--text-heading);
+  font-family:var(--body); font-size:0.85rem; font-weight:600;
+}
+.rl-cat .ti{font-size:16px; color:var(--text-muted);}
+.rl-cat.actif{background:var(--green-deep); border-color:var(--green-deep); color:#FFFFFF;}
+.rl-cat.actif .ti{color:var(--gold);}
+.rl-cat:hover:not(.actif){border-color:var(--green); color:var(--green);}
+.rl-cat:hover:not(.actif) .ti{color:var(--green);}
+.rl-tri{
+  margin-left:auto; display:flex; align-items:center; gap:8px; padding:0 12px; flex:none;
+  border:1.5px solid var(--line); border-radius:999px; background:var(--surface);
+}
+.rl-tri:hover{border-color:var(--gold);}
+.rl-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+.rl-tri > .ti{color:var(--text-muted); font-size:16px;}
+.rl-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
+.rl-tri select{
+  -webkit-appearance:none; appearance:none; border:0; outline:none; cursor:pointer;
+  padding:9px 28px 9px 2px; font-family:var(--body); font-size:0.85rem; font-weight:600; color:var(--text-heading);
+  background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317763B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center / 16px 16px;
+}
+:root[data-theme="dark"] .rl-tri select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FD9A0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+:root[data-theme="dark"] .rl-tri select option{background:#182019; color:#E8F1EC;}
+
+/* ===== Cartes ===== */
+.rl-grille{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:20px; padding-bottom:40px;}
+.rl-carte{
+  display:flex; flex-direction:column; height:100%; overflow:hidden;
+  background:var(--surface); border:1px solid var(--line); border-radius:18px;
+  transition:border-color .18s, box-shadow .18s, transform .18s;
+}
+.rl-carte:hover{border-color:var(--gold); box-shadow:0 12px 30px rgba(6,68,28,0.1); transform:translateY(-4px);}
+.rl-visuel{position:relative; width:100%; aspect-ratio:16/10; background:var(--paper-alt); overflow:hidden;}
+.rl-visuel img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+.rl-visuel-vide{position:absolute; inset:0; display:grid; place-items:center; font-size:30px; color:var(--text-accent);}
+.rl-etiq{
+  position:absolute; top:12px; left:12px; display:inline-flex; align-items:center; gap:7px;
+  background:var(--green-deep); color:#FFFFFF; border-radius:999px; padding:6px 13px; font-size:0.74rem; font-weight:600;
+}
+.rl-etiq .ti{color:var(--gold); font-size:15px;}
+.rl-cadenas{
+  position:absolute; top:12px; right:12px; display:inline-flex; align-items:center; gap:6px;
+  background:rgba(248,183,24,0.92); color:#5C360A; border-radius:999px; padding:6px 12px; font-size:0.72rem; font-weight:700;
+}
+.rl-corps{padding:16px 18px 18px; display:flex; flex-direction:column; gap:7px; flex:1;}
+.rl-date{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:0.73rem; color:var(--text-muted);}
+.rl-titre{
+  font-family:var(--display); font-size:1.05rem; font-weight:700; color:var(--text-heading); line-height:1.3;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.rl-extrait{
+  font-size:0.88rem; color:var(--text-muted); line-height:1.5;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.rl-lien{
+  margin-top:auto; padding-top:12px; align-self:flex-start;
+  display:inline-flex; align-items:center; gap:7px; padding:8px 16px; border-radius:999px;
+  border:1px solid var(--line); background:var(--surface);
+  font-size:0.82rem; font-weight:600; color:var(--text-heading);
+}
+.rl-carte:hover .rl-lien{border-color:var(--green); color:var(--green);}
+.rl-vide{grid-column:1 / -1; text-align:center; padding:50px 0; color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;}
+
+/* ===== Appel au don ===== */
+.rl-appel{
+  display:flex; align-items:center; gap:22px; flex-wrap:wrap; margin:10px 0 60px;
+  background:var(--green-deep); color:#FFFFFF; border-radius:20px; padding:24px 30px;
+}
+.rl-appel-ic{
+  width:48px; height:48px; flex:none; border-radius:14px; display:grid; place-items:center;
+  background:rgba(255,255,255,0.14); color:var(--gold); font-size:23px;
+}
+.rl-appel-titre{font-family:var(--display); font-size:1.15rem; font-weight:700;}
+.rl-appel-texte{color:rgba(255,255,255,0.82); font-size:0.9rem;}
+.rl-appel-bouton{
+  margin-left:auto; display:inline-flex; align-items:center; gap:9px; padding:12px 24px; border-radius:999px;
+  background:var(--gold); color:#06441C; font-weight:700; font-size:0.9rem;
+}
+.rl-appel-bouton:hover{opacity:0.9;}
+@media(max-width:700px){
+  .rl-bandeau{padding:24px 20px;}
+  .rl-bandeau-photo{display:none;}
+  .rl-appel{padding:20px; gap:14px;}
+  .rl-appel-bouton{margin-left:0; width:100%; justify-content:center;}
+}

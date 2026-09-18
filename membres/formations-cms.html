@@ -70,6 +70,7 @@
   .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
   .search-clear.show{display:block;}
 </style>
+<link rel="stylesheet" href="../assets/css/realisations.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
@@ -114,7 +115,10 @@
     <span class="search-icon" id="rechercheIcon">&#128269;</span>
     <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
   </div>
-  <div id="grid" class="grid">
+  <div class="rl-barre">
+    <div class="rl-cats" id="rlCats" style="display:contents;"></div>
+  </div>
+  <div id="grid" class="rl-grille">
     <p class="loading" id="loadingMsg">Vérification de votre accès…</p>
   </div>
 </div>
@@ -150,6 +154,40 @@
 
   // ===== Recherche (insensible à la casse et aux accents) =====
   let tousLesArticles = [];
+  // ===== Categories (champ « categorie » des fiches du CMS) =====
+  const CATEGORIES = [
+    ['toutes', 'Toutes les formations', 'ti-layout-grid'],
+    ['education', 'Éducation & Islam', 'ti-book'],
+    ['sante', 'Santé', 'ti-stethoscope'],
+    ['social', 'Social', 'ti-users'],
+    ['infrastructures', 'Infrastructures', 'ti-building-community'],
+    ['evenements', 'Événements', 'ti-calendar-event'],
+    ['partenariats', 'Partenariats', 'ti-handshake'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
+  let categorieChoisie = 'toutes';
+
+  // Seules les categories reellement utilisees recoivent une pastille.
+  function remplirCategories(){
+    const presentes = new Set(tousLesArticles.map(a => a.categorie).filter(Boolean));
+    const zone = document.getElementById('rlCats');
+    if (!zone) return;
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="rl-cat ${cle === categorieChoisie ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('');
+    // Une seule pastille (« Toutes ») n'apprend rien : la barre reste vide.
+    zone.parentElement.style.display = zone.children.length > 1 ? '' : 'none';
+    zone.querySelectorAll('.rl-cat').forEach(b => b.addEventListener('click', () => {
+      categorieChoisie = b.dataset.cat;
+      zone.querySelectorAll('.rl-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficherArticles();
+    }));
+  }
+
+
   function normaliser(s){ return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
   function onRecherche(){
     const q = document.getElementById("rechercheInput").value.trim();
@@ -193,17 +231,22 @@
       ...restricted.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
     ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
 
+    remplirCategories();
     afficherArticles();
   }
 
   function afficherArticles() {
     const grid = document.getElementById("grid");
     const q = normaliser(document.getElementById("rechercheInput").value.trim());
-    const visibles = q
-      ? tousLesArticles.filter(a => normaliser([a.title, a.excerpt].filter(Boolean).join(" ")).includes(q))
-      : tousLesArticles;
+    const visibles = tousLesArticles.filter(a => {
+      if (categorieChoisie !== 'toutes' && a.categorie !== categorieChoisie) return false;
+      if (!q) return true;
+      return normaliser([a.title, a.excerpt, LIBELLE_CAT[a.categorie]].filter(Boolean).join(" ")).includes(q);
+    });
     if (visibles.length === 0) {
-      grid.innerHTML = (q ? '<p class="empty">Aucun résultat pour cette recherche.</p>' : '<p class="empty">Aucun article publié pour le moment.</p>');
+      grid.innerHTML = ((q || categorieChoisie !== 'toutes')
+        ? '<p class="rl-vide">Aucune formation ne correspond à cette recherche.</p>'
+        : '<p class="rl-vide">Aucune formation publiée pour le moment.</p>');
       return;
     }
 
@@ -211,17 +254,22 @@
       const href = a._restricted
         ? `formation-reservee?id=${encodeURIComponent(a.id)}`
         : `../formation?slug=${encodeURIComponent(a.slug)}`;
+      const cat = LIBELLE_CAT[a.categorie] ? a.categorie : '';
       return `
-        <a class="card" href="${href}">
-          ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
-          <div class="card-body">
-            <div class="card-header-row">
-              <span class="card-date">${a._date ? new Date(a._date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
-              ${a._restricted ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
-            </div>
-            <h3>${esc(a.title || 'Sans titre')}</h3>
-            <p>${esc(a.excerpt || '')}</p>
-          </div>
+        <a class="rl-carte" href="${href}">
+          <span class="rl-visuel">
+            ${a.image
+              ? `<img src="${esc(a.image)}" alt="" loading="lazy">`
+              : `<span class="rl-visuel-vide"><i class="ti ti-photo"></i></span>`}
+            ${cat ? `<span class="rl-etiq"><i class="ti ${esc(ICONE_CAT[cat])}" aria-hidden="true"></i> ${esc(LIBELLE_CAT[cat])}</span>` : ''}
+            ${a._restricted ? '<span class="rl-cadenas">🔒 Membres</span>' : ''}
+          </span>
+          <span class="rl-corps">
+            <span class="rl-date"><i class="ti ti-calendar" aria-hidden="true"></i> ${a._date ? new Date(a._date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : ''}</span>
+            <span class="rl-titre">${esc(a.title || 'Sans titre')}</span>
+            <span class="rl-extrait">${esc(a.excerpt || '')}</span>
+            <span class="rl-lien">Voir plus <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+          </span>
         </a>
       `;
     }).join("");

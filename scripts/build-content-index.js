@@ -52,6 +52,10 @@ function buildIndex(folderName) {
       // le corps est en base (scripts/reserver-contenus.js).
       reserve: /^(true|yes|oui|1)$/i.test(String(data.reserve || '').trim()),
       image: data.image || '',
+      // Categorie affichee en pastille sur la carte et servant aux
+      // filtres (Education & Islam, Sante, Social...). Vide : la carte
+      // s'affiche sans pastille et rejoint « Toutes ».
+      categorie: data.categorie || '',
       statut: data.statut || '',
       projet: data.projet || '',
       ordre: data.ordre !== undefined ? Number(data.ordre) : '',

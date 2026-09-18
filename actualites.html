@@ -72,6 +72,8 @@
   .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
   .search-clear.show{display:block;}
 </style>
+<link rel="stylesheet" href="assets/css/realisations.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 <header>
@@ -81,17 +83,55 @@
 </header>
 <div class="wrap">
   <a class="back" href="./">Retour à l'accueil</a>
-  <h1>Nos réalisations</h1>
-  <a class="reports-link" href="rapports/">📊 Voir les bilans annuels</a>
   <noscript><p class="error">L'affichage des actualités nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
+
+  <!-- Bandeau : textes, photo, citation et chiffres viennent du CMS
+       (content/realisations.json). Ce qui est écrit ici reste affiché si
+       le fichier n'arrive pas. -->
+  <section class="rl-bandeau">
+    <div class="rl-bandeau-photo" id="rlPhoto" style="display:none;"><img id="rlPhotoImg" src="" alt="" loading="lazy"></div>
+    <div class="rl-bandeau-texte">
+      <p class="rl-accroche"><i class="ti ti-award" aria-hidden="true"></i> <span id="rlAccroche">Nos réalisations</span></p>
+      <h1 id="rlTitre">Ensemble pour un <em>impact durable</em></h1>
+      <p class="rl-bandeau-sous" id="rlTexte">À travers nos projets et actions sur le terrain, l'AMSTC œuvre pour l'éducation, la santé et le bien-être des talibés et des communautés. Découvrez quelques-unes de nos réalisations qui changent des vies.</p>
+      <div class="rl-chiffres" id="rlChiffres"></div>
+    </div>
+    <p class="rl-citation" id="rlCitation"></p>
+  </section>
+
   <div class="search-wrap">
     <input type="text" class="search-input" id="rechercheInput" placeholder="Rechercher un titre, un mot-clé…" oninput="onRecherche()">
     <span class="search-icon" id="rechercheIcon">&#128269;</span>
     <button class="search-clear" id="rechercheClear" onclick="effacerRecherche()" type="button">&#10005;</button>
   </div>
-  <div id="grid" class="grid">
-    <p class="empty">Chargement des articles…</p>
+
+  <div class="rl-barre">
+    <div class="rl-cats" id="rlCats" style="display:contents;"></div>
+    <span class="rl-tri">
+      <i class="ti ti-arrows-sort" aria-hidden="true"></i>
+      <label for="rlTri">Trier par</label>
+      <select id="rlTri" onchange="setTri(this.value)">
+        <option value="recent">Plus récent</option>
+        <option value="ancien">Plus ancien</option>
+        <option value="titre">Titre (A-Z)</option>
+      </select>
+    </span>
   </div>
+
+  <div id="grid" class="rl-grille">
+    <p class="rl-vide">Chargement des articles…</p>
+  </div>
+
+  <section class="rl-appel">
+    <span class="rl-appel-ic" aria-hidden="true"><i class="ti ti-heart-handshake"></i></span>
+    <div>
+      <p class="rl-appel-titre" id="rlAppelTitre">Soutenez nos actions</p>
+      <p class="rl-appel-texte" id="rlAppelTexte">Chaque don compte pour améliorer le quotidien des talibés et des communautés.</p>
+    </div>
+    <a class="rl-appel-bouton" id="rlAppelLien" href="don"><span id="rlAppelBouton">Faire un don</span> <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+  </section>
+
+  <p style="margin:-30px 0 60px;"><a class="reports-link" href="rapports/">📊 Voir les bilans annuels</a></p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,6 +143,63 @@
     });
   }
 
+
+  // ===== Catégories =====
+  // La clé est ce que porte la fiche (CMS), le libellé ce que lit le
+  // visiteur. Une réalisation sans catégorie rejoint « Toutes ».
+  const CATEGORIES = [
+    ['toutes', 'Toutes les réalisations', 'ti-layout-grid'],
+    ['education', 'Éducation & Islam', 'ti-book'],
+    ['sante', 'Santé', 'ti-stethoscope'],
+    ['social', 'Social', 'ti-users'],
+    ['infrastructures', 'Infrastructures', 'ti-building-community'],
+    ['evenements', 'Événements', 'ti-calendar-event'],
+    ['partenariats', 'Partenariats', 'ti-handshake'],
+  ];
+  const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
+  const ICONES_CHIFFRE = {
+    beneficiaires: 'ti-users', projets: 'ti-briefcase', regions: 'ti-map-pin',
+    annees: 'ti-calendar', sante: 'ti-stethoscope', education: 'ti-book',
+  };
+  let categorieChoisie = 'toutes';
+  let tri = 'recent';
+  function setTri(v){ tri = v; afficherArticles(); }
+
+  // ===== Bandeau et appel au don (CMS) =====
+  function titreOr(t){
+    return esc(t).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
+  }
+  async function chargerBandeau(){
+    let d = null;
+    try {
+      const r = await fetch('content/realisations.json?t=' + Date.now());
+      if (r.ok) d = await r.json();
+    } catch (e) { /* le bandeau garde ce qui est écrit dans la page */ }
+    const chiffres = (d && Array.isArray(d.chiffres) && d.chiffres.length) ? d.chiffres : [];
+    document.getElementById('rlChiffres').innerHTML = chiffres.map(c => `
+      <div class="rl-chiffre">
+        <span class="rl-chiffre-ic" aria-hidden="true"><i class="ti ${esc(ICONES_CHIFFRE[c.icone] || 'ti-circle-check')}"></i></span>
+        <div>
+          <div class="rl-chiffre-nb">${esc(c.nombre || '')}</div>
+          <div class="rl-chiffre-label">${esc(c.libelle || '')}</div>
+        </div>
+      </div>`).join('');
+    if (!d) return;
+    const poser = (id, v) => { if (v) document.getElementById(id).textContent = v; };
+    poser('rlAccroche', d.accroche);
+    if (d.titre) document.getElementById('rlTitre').innerHTML = titreOr(d.titre);
+    poser('rlTexte', d.texte);
+    poser('rlAppelTitre', d.appel_titre);
+    poser('rlAppelTexte', d.appel_texte);
+    poser('rlAppelBouton', d.appel_bouton);
+    if (d.appel_lien) document.getElementById('rlAppelLien').href = d.appel_lien;
+    if (d.citation) document.getElementById('rlCitation').textContent = d.citation;
+    if (d.image) {
+      document.getElementById('rlPhotoImg').src = d.image;
+      document.getElementById('rlPhoto').style.display = '';
+    }
+  }
 
   // ===== Recherche (insensible à la casse et aux accents) =====
   let tousLesArticles = [];
@@ -142,17 +239,45 @@
       ...restrictedTeasers.map(a => ({ ...a, _restricted: true, _date: a.created_at, image: a.cover_image }))
     ].sort((a, b) => new Date(b._date || 0) - new Date(a._date || 0));
 
+    remplirCategories();
     afficherArticles();
+  }
+
+  // Seules les catégories réellement utilisées reçoivent une pastille :
+  // une pastille qui ne rend aucune réalisation n'apprend rien.
+  function remplirCategories(){
+    const presentes = new Set(tousLesArticles.map(a => a.categorie).filter(Boolean));
+    const zone = document.getElementById('rlCats');
+    zone.innerHTML = CATEGORIES
+      .filter(([cle]) => cle === 'toutes' || presentes.has(cle))
+      .map(([cle, libelle, icone]) =>
+        `<button type="button" class="rl-cat ${cle === categorieChoisie ? 'actif' : ''}" data-cat="${cle}">
+           <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('');
+    zone.querySelectorAll('.rl-cat').forEach(b => b.addEventListener('click', () => {
+      categorieChoisie = b.dataset.cat;
+      zone.querySelectorAll('.rl-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficherArticles();
+    }));
   }
 
   function afficherArticles() {
     const grid = document.getElementById("grid");
     const q = normaliser(document.getElementById("rechercheInput").value.trim());
-    const visibles = q
-      ? tousLesArticles.filter(a => normaliser([a.title, a.excerpt].filter(Boolean).join(" ")).includes(q))
-      : tousLesArticles;
+    let visibles = tousLesArticles.filter(a => {
+      if (categorieChoisie !== 'toutes' && a.categorie !== categorieChoisie) return false;
+      if (!q) return true;
+      return normaliser([a.title, a.excerpt, LIBELLE_CAT[a.categorie]].filter(Boolean).join(" ")).includes(q);
+    });
+
+    const date = (a) => new Date(a._date || 0).getTime();
+    if (tri === 'ancien') visibles = [...visibles].sort((x, y) => date(x) - date(y));
+    else if (tri === 'titre') visibles = [...visibles].sort((x, y) => String(x.title || '').localeCompare(String(y.title || ''), 'fr'));
+    else visibles = [...visibles].sort((x, y) => date(y) - date(x));
+
     if (visibles.length === 0) {
-      grid.innerHTML = (q ? '<p class="empty">Aucun résultat pour cette recherche.</p>' : '<p class="empty">Aucun article publié pour le moment.</p>');
+      grid.innerHTML = ((q || categorieChoisie !== 'toutes')
+        ? '<p class="rl-vide">Aucune réalisation ne correspond à cette recherche.</p>'
+        : '<p class="rl-vide">Aucun article publié pour le moment.</p>');
       return;
     }
 
@@ -160,21 +285,27 @@
       const href = a._restricted
         ? `membres/actualite-reservee?id=${encodeURIComponent(a.id)}`
         : `article?slug=${encodeURIComponent(a.slug)}`;
+      const cat = LIBELLE_CAT[a.categorie] ? a.categorie : '';
       return `
-        <a class="card" href="${href}">
-          ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
-          <div class="card-body">
-            <div class="card-header-row">
-              <span class="card-date">${formatDatePeriode({ date: a._date, date_debut: a.date_debut, date_fin: a.date_fin })}</span>
-              ${(a._restricted || a.reserve) ? '<span class="lock-badge">🔒 Réservé aux membres</span>' : ''}
-            </div>
-            <h3>${esc(a.title || 'Sans titre')}</h3>
-            <p>${esc(a.excerpt || '')}</p>
-          </div>
+        <a class="rl-carte" href="${href}">
+          <span class="rl-visuel">
+            ${a.image
+              ? `<img src="${esc(a.image)}" alt="" loading="lazy">`
+              : `<span class="rl-visuel-vide"><i class="ti ti-photo"></i></span>`}
+            ${cat ? `<span class="rl-etiq"><i class="ti ${esc(ICONE_CAT[cat])}" aria-hidden="true"></i> ${esc(LIBELLE_CAT[cat])}</span>` : ''}
+            ${(a._restricted || a.reserve) ? '<span class="rl-cadenas">🔒 Membres</span>' : ''}
+          </span>
+          <span class="rl-corps">
+            <span class="rl-date"><i class="ti ti-calendar" aria-hidden="true"></i> ${formatDatePeriode({ date: a._date, date_debut: a.date_debut, date_fin: a.date_fin })}</span>
+            <span class="rl-titre">${esc(a.title || 'Sans titre')}</span>
+            <span class="rl-extrait">${esc(a.excerpt || '')}</span>
+            <span class="rl-lien">Voir plus <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+          </span>
         </a>
       `;
     }).join("");
   }
+  chargerBandeau();
   loadArticles();
 </script>
 </body>
