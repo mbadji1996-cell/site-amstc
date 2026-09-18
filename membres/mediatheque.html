@@ -74,27 +74,10 @@
      blocs se rangent d'eux-memes. */
   @media(max-width:1179px){
     .md-principal{display:contents;}
-    .md-bandeau{order:1;}
+    .bm{order:1;}
     .md-cote{order:2;}
     #pageContent{order:3;}
   }
-  .md-bandeau{position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
-    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
-    padding:26px 28px;}
-  :root[data-theme="dark"] .md-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);}
-  .md-bandeau-photo{position:absolute; inset:0 0 0 auto; width:56%; z-index:0;}
-  .md-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
-  .md-bandeau-photo::after{content:""; position:absolute; inset:0;
-    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.55) 42%, rgba(244,248,244,0.1) 100%);}
-  :root[data-theme="dark"] .md-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.6) 42%, rgba(24,32,25,0.2) 100%);}
-  .md-bandeau-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
-  .md-bandeau-ic{width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
-    background:var(--green); color:#FFFFFF; font-size:28px;}
-  .md-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
-  .md-retour:hover{color:var(--green);}
-  .md-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.4vw,2.2rem); font-weight:700;
-    color:var(--text-heading); line-height:1.15; margin:0;}
-  .md-bandeau-sous{color:var(--text-muted); font-size:0.94rem; margin-top:6px; max-width:52ch;}
 
   /* ===== Pastilles de type ===== */
   .md-types{position:relative; z-index:1; display:flex; gap:9px; flex-wrap:wrap; margin-top:20px;}
@@ -205,6 +188,8 @@
   .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
   .search-clear.show{display:block;}
 </style>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
@@ -244,17 +229,17 @@
 
   <div id="mediaHaut" class="md-haut" style="display:none;">
     <div class="md-principal">
-    <section class="md-bandeau">
-      <div class="md-bandeau-photo" id="mdPhoto" style="display:none;"><img id="mdPhotoImg" src="" alt="" loading="lazy"></div>
-      <div class="md-bandeau-texte">
-        <span class="md-bandeau-ic" aria-hidden="true"><i class="ti ti-photo"></i></span>
+    <section class="bm" data-bandeau="mediatheque">
+      <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+      <div class="bm-texte">
+        <span class="bm-ic" aria-hidden="true"><i class="ti ti-photo"></i></span>
         <div>
-          <a class="md-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
-          <h1>Médiathèque</h1>
-          <p class="md-bandeau-sous">Découvrez et explorez nos photos, vidéos et documents des activités de l'association.</p>
+          <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1 data-bandeau-champ="titre">Médiathèque</h1>
+          <p class="bm-intro" data-bandeau-champ="texte">Découvrez et explorez nos photos, vidéos et documents des activités de l'association.</p>
         </div>
       </div>
-      <div class="md-types" id="mdTypes"></div>
+      <div class="md-types bm-actions" id="mdTypes"></div>
     </section>
 
     <div id="pageContent" style="display:none;"></div>
@@ -359,18 +344,6 @@
     remplirTypes();
     remplirAnnees();
     document.getElementById('mediaHaut').style.display = '';
-    // La photo du bandeau est celle du CMS pour l'espace membres : une
-    // seule image a tenir a jour pour le tableau de bord, l'annuaire et ici.
-    try {
-      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
-      if (r.ok) {
-        const d = await r.json();
-        if (d && d.image) {
-          document.getElementById('mdPhotoImg').src = d.image;
-          document.getElementById('mdPhoto').style.display = '';
-        }
-      }
-    } catch (e) { /* sans photo, le bandeau garde son degrade */ }
     afficherAlbums();
   }
 

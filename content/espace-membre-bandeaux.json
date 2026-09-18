@@ -1,0 +1,50 @@
+{
+  "daara": {
+    "titre": "Espace Daara",
+    "soustitre": "Cours en ligne - Islam & Tarikha",
+    "texte": "Apprenez, approfondissez et vivez votre spiritualité à travers nos cours de sciences islamiques et de tarikha.",
+    "bouton": "Voir le guide d'utilisation",
+    "bouton_lien": "../guide",
+    "image": ""
+  },
+  "medical": {
+    "titre": "Enseignements Médicaux",
+    "soustitre": "Leçons & Quiz - Médecine · Pharmacie · Odontologie · Soins infirmiers",
+    "texte": "Développez vos compétences en santé grâce à nos leçons et quiz, conçus pour vous accompagner dans votre parcours professionnel.",
+    "bouton": "Voir le guide d'utilisation",
+    "bouton_lien": "../guide",
+    "image": ""
+  },
+  "bibliotheque": {
+    "titre": "Bibliothèque",
+    "soustitre": "Livres et documents réservés aux membres",
+    "texte": "Consultez en ligne les ouvrages et documents de l'association. Ce contenu n'est pas téléchargeable.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
+  },
+  "forum": {
+    "titre": "Forum de discussion",
+    "soustitre": "",
+    "texte": "Partagez vos idées, posez vos questions, échangez avec la communauté AMSTC et contribuez à faire grandir notre engagement.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
+  },
+  "annuaire": {
+    "titre": "Annuaire des membres",
+    "soustitre": "",
+    "texte": "Retrouvez les membres de l'association par domaine, spécialité ou ville.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
+  },
+  "mediatheque": {
+    "titre": "Médiathèque",
+    "soustitre": "",
+    "texte": "Découvrez et explorez nos photos, vidéos et documents des activités de l'association.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
+  }
+}

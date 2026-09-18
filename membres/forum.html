@@ -94,29 +94,8 @@
   .fo-principal{min-width:0; display:flex; flex-direction:column; gap:16px;}
   @media(max-width:1199px){
     .fo-principal{display:contents;}
-    .fo-bandeau{order:1;} .fo-cote{order:2;} .fo-liste-zone{order:3;}
+    .bm{order:1;} .fo-cote{order:2;} .fo-liste-zone{order:3;}
   }
-  .fo-bandeau{position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
-    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
-    padding:26px 28px;}
-  :root[data-theme="dark"] .fo-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);}
-  .fo-bandeau-photo{position:absolute; inset:0 0 0 auto; width:52%; z-index:0;}
-  .fo-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
-  .fo-bandeau-photo::after{content:""; position:absolute; inset:0;
-    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.6) 45%, rgba(244,248,244,0.15) 100%);}
-  :root[data-theme="dark"] .fo-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.65) 45%, rgba(24,32,25,0.25) 100%);}
-  .fo-bandeau-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
-  .fo-bandeau-ic{width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
-    background:var(--green); color:#FFFFFF; font-size:28px;}
-  .fo-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
-  .fo-retour:hover{color:var(--green);}
-  .fo-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.2vw,2.1rem); font-weight:700;
-    color:var(--text-heading); line-height:1.15; margin:0;}
-  .fo-bandeau-sous{color:var(--text-muted); font-size:0.94rem; margin-top:6px; max-width:56ch;}
-  .fo-mots{position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
-  .fo-mot{display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px;
-    border:1px solid var(--line); background:var(--surface); font-size:0.84rem; font-weight:600; color:var(--text-heading);}
-  .fo-mot .ti{color:var(--green); font-size:16px;}
 
   /* ===== Pastilles de categorie et bouton ===== */
   .fo-barre{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
@@ -198,6 +177,8 @@
      clair (member-nav.css), le texte blanc n'y tiendrait pas. */
   :root[data-theme="dark"] .btn-primary{color:#06280F;}
 </style>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
@@ -238,22 +219,22 @@
   <div id="pageContent" style="display:none;">
    <div class="fo-haut">
     <div class="fo-principal">
-      <section class="fo-bandeau">
-        <div class="fo-bandeau-photo" id="foPhoto" style="display:none;"><img id="foPhotoImg" src="" alt="" loading="lazy"></div>
-        <div class="fo-bandeau-texte">
-          <span class="fo-bandeau-ic" aria-hidden="true"><i class="ti ti-messages"></i></span>
+      <section class="bm" data-bandeau="forum">
+        <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+        <div class="bm-texte">
+          <span class="bm-ic" aria-hidden="true"><i class="ti ti-messages"></i></span>
           <div>
-            <a class="fo-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
-            <h1>Forum de discussion</h1>
-            <p class="fo-bandeau-sous">Partagez vos idées, posez vos questions, échangez avec la communauté AMSTC et contribuez à faire grandir notre engagement.</p>
+            <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+            <h1 data-bandeau-champ="titre">Forum de discussion</h1>
+            <p class="bm-intro" data-bandeau-champ="texte">Partagez vos idées, posez vos questions, échangez avec la communauté AMSTC et contribuez à faire grandir notre engagement.</p>
           </div>
         </div>
-        <div class="fo-mots">
-          <span class="fo-mot"><i class="ti ti-message-circle-2" aria-hidden="true"></i> Échanger</span>
-          <span class="fo-mot"><i class="ti ti-bulb" aria-hidden="true"></i> S'informer</span>
-          <span class="fo-mot"><i class="ti ti-share-3" aria-hidden="true"></i> Partager</span>
-          <span class="fo-mot"><i class="ti ti-heart-handshake" aria-hidden="true"></i> Entraider</span>
-        </div>
+      <div class="bm-actions">
+        <span class="bm-mot"><i class="ti ti-message-circle-2" aria-hidden="true"></i> Échanger</span>
+        <span class="bm-mot"><i class="ti ti-bulb" aria-hidden="true"></i> S'informer</span>
+        <span class="bm-mot"><i class="ti ti-share-3" aria-hidden="true"></i> Partager</span>
+        <span class="bm-mot"><i class="ti ti-heart-handshake" aria-hidden="true"></i> Entraider</span>
+      </div>
       </section>
 
       <div class="fo-liste-zone">
@@ -540,16 +521,6 @@
     document.getElementById('signoutBtn').style.display = '';
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('pageContent').style.display = '';
-    try {
-      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
-      if (r.ok) {
-        const d = await r.json();
-        if (d && d.image) {
-          document.getElementById('foPhotoImg').src = d.image;
-          document.getElementById('foPhoto').style.display = '';
-        }
-      }
-    } catch (e) { /* sans photo, le bandeau garde son degrade */ }
     await loadTopics();
   })();
 

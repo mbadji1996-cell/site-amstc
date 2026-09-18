@@ -5,45 +5,7 @@
    un espace - libellés, catégories, citation - vit dans la page.
    ============================================================ */
 
-/* ===== Bannière ===== */
-.ec-banniere{
-  position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
-  background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
-  padding:26px 28px; margin:24px 0 18px;
-}
-:root[data-theme="dark"] .ec-banniere{
-  background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);
-}
-.ec-banniere-photo{position:absolute; inset:0 0 0 auto; width:52%; z-index:0;}
-.ec-banniere-photo img{width:100%; height:100%; object-fit:cover;}
-.ec-banniere-photo::after{
-  content:""; position:absolute; inset:0;
-  background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.6) 45%, rgba(244,248,244,0.15) 100%);
-}
-:root[data-theme="dark"] .ec-banniere-photo::after{
-  background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.65) 45%, rgba(24,32,25,0.25) 100%);
-}
-.ec-banniere-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
-.ec-banniere-ic{
-  width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
-  background:var(--green-deep); color:var(--gold); font-size:28px;
-}
-.ec-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
-.ec-retour:hover{color:var(--green);}
-.ec-banniere h1{
-  font-family:var(--display); font-size:clamp(1.5rem,3.2vw,2.1rem); font-weight:700;
-  color:var(--text-heading); line-height:1.15; margin:0;
-}
-.ec-soustitre{font-size:0.95rem; color:var(--green); font-weight:600; margin-top:4px;}
-:root[data-theme="dark"] .ec-soustitre{color:#7FD9A0;}
-.ec-intro{color:var(--text-muted); font-size:0.92rem; margin-top:8px; max-width:58ch;}
-.ec-guide{
-  display:inline-flex; align-items:center; gap:9px; margin-top:16px; padding:11px 20px; border-radius:999px;
-  background:var(--green-deep); color:#FFFFFF; font-weight:600; font-size:0.88rem;
-}
-.ec-guide:hover{background:var(--green);}
-:root[data-theme="dark"] .ec-guide{background:#7FD9A0; color:#06441C;}
-:root[data-theme="dark"] .ec-guide:hover{background:#9BE5B6;}
+/* La bannière est commune à tout l'espace membres : assets/css/bandeau-membre.css */
 
 /* ===== Pastilles de catégorie ===== */
 .ec-cats{display:flex; gap:9px; flex-wrap:wrap; margin-bottom:18px;}

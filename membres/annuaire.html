@@ -109,24 +109,6 @@
   /* ===== Bandeau et compteur ===== */
   .an-haut{display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin:24px 0 20px;}
   @media(min-width:1180px){ .an-haut{grid-template-columns:minmax(0,1fr) 270px;} }
-  .an-bandeau{position:relative; overflow:hidden; border-radius:18px; border:1px solid var(--line);
-    background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 52%, rgba(244,248,244,0) 100%), var(--surface);
-    display:flex; align-items:center; gap:18px; padding:26px 28px; min-height:150px;}
-  :root[data-theme="dark"] .an-bandeau{background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 52%, rgba(6,68,28,0) 100%), var(--surface);}
-  .an-bandeau-photo{position:absolute; inset:0 0 0 auto; width:58%; z-index:0;}
-  .an-bandeau-photo img{width:100%; height:100%; object-fit:cover;}
-  .an-bandeau-photo::after{content:""; position:absolute; inset:0;
-    background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.55) 40%, rgba(244,248,244,0.12) 100%);}
-  :root[data-theme="dark"] .an-bandeau-photo::after{background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.6) 40%, rgba(24,32,25,0.2) 100%);}
-  .an-bandeau-texte{position:relative; z-index:1; display:flex; align-items:center; gap:18px; min-width:0;}
-  .an-bandeau-ic{width:58px; height:58px; flex:none; border-radius:50%; display:grid; place-items:center;
-    background:rgba(23,118,59,0.12); color:var(--green); font-size:26px;}
-  .an-retour{position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px;
-    font-size:0.82rem; color:var(--text-muted); margin-bottom:10px;}
-  .an-retour:hover{color:var(--green);}
-  .an-bandeau h1{font-family:var(--display); font-size:clamp(1.5rem,3.4vw,2.1rem); font-weight:700;
-    color:var(--text-heading); line-height:1.15; margin:0;}
-  .an-bandeau-sous{color:var(--text-muted); font-size:0.92rem; margin-top:4px;}
   .an-compteur{display:flex; align-items:center; gap:14px; padding:20px;
     background:var(--surface); border:1px solid var(--line); border-radius:18px;}
   .an-compteur-ic{width:48px; height:48px; flex:none; border-radius:50%; display:grid; place-items:center;
@@ -187,6 +169,8 @@
   footer{padding:40px 0;text-align:center;}
   footer a{color:var(--green);font-family:var(--mono);font-size:0.82rem;}
 </style>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 <link rel="stylesheet" href="../assets/css/assistant.css">
@@ -226,14 +210,14 @@
 
   <div id="pageContent" style="display:none;">
     <div class="an-haut">
-      <section class="an-bandeau">
-        <div class="an-bandeau-photo" id="anPhoto" style="display:none;"><img id="anPhotoImg" src="" alt="" loading="lazy"></div>
-        <div class="an-bandeau-texte">
-          <span class="an-bandeau-ic" aria-hidden="true"><i class="ti ti-users"></i></span>
+      <section class="bm" data-bandeau="annuaire">
+        <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+        <div class="bm-texte">
+          <span class="bm-ic" aria-hidden="true"><i class="ti ti-address-book"></i></span>
           <div>
-            <a class="an-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
-            <h1>Annuaire des membres</h1>
-            <p class="an-bandeau-sous">Retrouvez les membres de l'association par domaine, spécialité ou ville.</p>
+            <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+            <h1 data-bandeau-champ="titre">Annuaire des membres</h1>
+            <p class="bm-intro" data-bandeau-champ="texte">Retrouvez les membres de l'association par domaine, spécialité ou ville.</p>
           </div>
         </div>
       </section>
@@ -403,19 +387,6 @@
     });
 
     document.getElementById('anNombre').textContent = allMembers.length;
-    // La photo du bandeau est celle que le CMS donne a l'espace membres
-    // (content/espace-membre.json) : une seule image a tenir a jour pour
-    // le tableau de bord et l'annuaire.
-    try {
-      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
-      if (r.ok) {
-        const d = await r.json();
-        if (d && d.image) {
-          document.getElementById('anPhotoImg').src = d.image;
-          document.getElementById('anPhoto').style.display = '';
-        }
-      }
-    } catch (e) { /* sans photo, le bandeau garde son fond degrade */ }
     document.getElementById('pageContent').style.display = '';
     renderDirectory();
   })();

@@ -372,6 +372,77 @@ collections:
           - { label: "Carte d'aide - intitulé du bouton", name: "aide_lien_texte", widget: "string", required: false }
           - { label: "Carte d'aide - adresse du bouton", name: "aide_lien", widget: "string", required: false, hint: "Exemple : ../guide.html" }
 
+      - name: "espace_membre_bandeaux"
+        label: "Bannières des pages (espace membres)"
+        file: "content/espace-membre-bandeaux.json"
+        fields:
+          - label: "Espace Daara"
+            name: "daara"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Enseignements Médicaux"
+            name: "medical"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Bibliothèque"
+            name: "bibliotheque"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Forum"
+            name: "forum"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Annuaire"
+            name: "annuaire"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+          - label: "Médiathèque"
+            name: "mediatheque"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Titre", name: "titre", widget: "string", required: false }
+              - { label: "Sous-titre", name: "soustitre", widget: "string", required: false, hint: "Ligne verte sous le titre. Laissez vide pour ne rien afficher." }
+              - { label: "Texte", name: "texte", widget: "text", required: false }
+              - { label: "Bouton - intitulé", name: "bouton", widget: "string", required: false, hint: "Laissez vide pour masquer le bouton." }
+              - { label: "Bouton - adresse", name: "bouton_lien", widget: "string", required: false, hint: "Exemple : ../guide" }
+              - { label: "Photo du bandeau", name: "image", widget: "image", required: false, hint: "Affichée à droite, en fondu. Format paysage, 1200 px de large au minimum. Vide : la photo de la bannière du tableau de bord est reprise." }
+
       - name: "boutique_membres"
         label: "Boutique"
         file: "content/boutique-membres.json"

@@ -141,6 +141,8 @@
 </style>
 <script src="../assets/js/retour.js" defer></script>
 <link rel="stylesheet" href="../assets/css/espace-cours.css">
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 </head>
@@ -177,16 +179,16 @@
   <p class="empty" id="loadingMsg">Chargement des cours…</p>
 
   <div id="pageContent" style="display:none;">
-    <section class="ec-banniere">
-      <div class="ec-banniere-photo" id="ecPhoto" style="display:none;"><img id="ecPhotoImg" src="" alt="" loading="lazy"></div>
-      <div class="ec-banniere-texte">
-        <span class="ec-banniere-ic" aria-hidden="true"><i class="ti ti-book"></i></span>
+    <section class="bm" data-bandeau="daara">
+      <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+      <div class="bm-texte">
+        <span class="bm-ic" aria-hidden="true"><i class="ti ti-book"></i></span>
         <div>
-          <a class="ec-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
-          <h1>Espace Daara</h1>
-          <p class="ec-soustitre">Cours en ligne - Islam &amp; Tarikha</p>
-          <p class="ec-intro">Apprenez, approfondissez et vivez votre spiritualité à travers nos cours de sciences islamiques et de tarikha.</p>
-          <a class="ec-guide" href="../guide#espace-daara"><i class="ti ti-player-play" aria-hidden="true"></i> Voir le guide d'utilisation</a>
+          <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1 data-bandeau-champ="titre">Espace Daara</h1>
+          <p class="bm-soustitre" data-bandeau-champ="soustitre">Cours en ligne - Islam &amp; Tarikha</p>
+          <p class="bm-intro" data-bandeau-champ="texte">Apprenez, approfondissez et vivez votre spiritualité à travers nos cours de sciences islamiques et de tarikha.</p>
+          <a class="bm-bouton" data-bandeau-champ="bouton" href="../guide"><i class="ti ti-player-play" aria-hidden="true"></i><span class="bm-bouton-texte">Voir le guide d'utilisation</span></a>
         </div>
       </div>
     </section>
@@ -329,16 +331,6 @@
 
     document.getElementById('pageContent').style.display = '';
     remplirCategories();
-    try {
-      const r = await fetch('../content/espace-membre.json?t=' + Date.now());
-      if (r.ok) {
-        const d = await r.json();
-        if (d && d.image) {
-          document.getElementById('ecPhotoImg').src = d.image;
-          document.getElementById('ecPhoto').style.display = '';
-        }
-      }
-    } catch (e) { /* sans photo, la banniere garde son degrade */ }
     document.getElementById('ecTout').addEventListener('click', () => {
       toutVoir = !toutVoir;
       renderPage();
