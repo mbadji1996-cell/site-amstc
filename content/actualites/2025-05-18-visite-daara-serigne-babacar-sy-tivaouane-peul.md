@@ -1,7 +1,9 @@
 ---
-title: "Visite du daara Serigne Babacar Sy à Tivaouane Peul"
+title: Nemekou Daara Etape 2 - Daara Serigne Babacar Sy à Tivaouane Peul
 date: 2025-05-18T10:00:00.000Z
-excerpt: "Consultations gratuites pour 68 personnes, don de denrées alimentaires, de matériel de première nécessité et de 40 moustiquaires imprégnées aux apprenants du daara."
+excerpt: Consultations gratuites pour 68 personnes, don de denrées alimentaires,
+  de matériel de première nécessité et de 40 moustiquaires imprégnées aux
+  apprenants du daara.
 image: ""
 ---
 
