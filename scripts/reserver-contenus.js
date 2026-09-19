@@ -36,17 +36,12 @@ const DOSSIERS = { actualites: 'actualite', formations: 'formation' };
 
 const MARQUEUR = '<!-- Contenu réservé aux membres : le texte complet est en base, pas dans ce fichier. -->';
 
+// Lecture de l'en-tete : assets/js/front-matter.js, la meme que les pages.
+const lireFrontMatter = require('../assets/js/front-matter.js').parseFrontMatter;
 function parseFrontMatter(raw) {
-  const m = raw.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/);
-  if (!m) return null;
-  const data = {};
-  let cle = null;
-  m[1].split(/\r?\n/).forEach((l) => {
-    const k = l.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
-    if (k) { cle = k[1]; data[cle] = k[2].trim().replace(/^"(.*)"$/, '$1'); }
-    else if (cle && l.trim()) data[cle] = (data[cle] + ' ' + l.trim()).trim();
-  });
-  return { entete: m[1], data, corps: m[2] };
+  const r = lireFrontMatter(raw);
+  if (!r.entete && !Object.keys(r.data).length) return null;
+  return { entete: r.entete, data: r.data, corps: r.body };
 }
 
 function estVrai(v) {

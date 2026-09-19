@@ -3,24 +3,10 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 
+// Lecture de l'en-tete : assets/js/front-matter.js, la meme que les pages.
+const lireFrontMatter = require('../assets/js/front-matter.js').parseFrontMatter;
 function parseFrontMatter(raw) {
-  const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
-  if (!match) return {};
-  const data = {};
-  let currentKey = null;
-  match[1].split(/\r?\n/).forEach(line => {
-    const keyMatch = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
-    if (keyMatch) {
-      currentKey = keyMatch[1].trim();
-      data[currentKey] = keyMatch[2].trim().replace(/^"(.*)"$/, '$1');
-    } else if (currentKey && line.trim()) {
-      // Ligne de repli YAML (valeur trop longue renvoyée à la ligne par
-      // Decap CMS) : on la rattache à la valeur en cours au lieu de la
-      // perdre silencieusement.
-      data[currentKey] = (data[currentKey] + ' ' + line.trim()).trim();
-    }
-  });
-  return data;
+  return lireFrontMatter(raw).data;
 }
 
 function buildIndex(folderName) {
