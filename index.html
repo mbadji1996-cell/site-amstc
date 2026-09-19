@@ -862,6 +862,23 @@
     flex-wrap:wrap; gap:12px; font-size:0.82rem; color:rgba(246,247,241,0.55);
   }
   .footer-bottom a{color:rgba(246,247,241,0.55);}
+  /* Sur telephone : l'identite de l'association au centre, puis Contact
+     et Reseaux face a face, puis le bas de page centre. */
+  @media (max-width:780px){
+    footer{padding:48px 0 26px;}
+    .footer-grid{grid-template-columns:minmax(0,1fr) auto; gap:30px 20px; margin-bottom:28px;}
+    .footer-grid > div:first-child{grid-column:1 / -1; text-align:center;}
+    footer .logo-img{display:block; margin:0 auto 16px;}
+    #cms-footer-description{font-size:1rem; line-height:1.6; color:rgba(246,247,241,0.9); max-width:34ch; margin:0 auto 16px;}
+    .recepisse{border:1px solid rgba(248,183,24,0.6); border-radius:999px; padding:8px 14px;
+      color:rgba(246,247,241,0.82); font-size:0.72rem; margin:4px 3px 0;}
+    .recepisse + .recepisse{margin-left:3px;}
+    footer h5{font-size:0.8rem; margin-bottom:12px;}
+    .footer-grid > div:last-child{text-align:right;}
+    .footer-grid > div:last-child .social-icons{display:grid; grid-template-columns:repeat(3, 38px); gap:10px; justify-content:end;}
+    .footer-grid > div:last-child .social-icon{width:38px; height:38px; border-color:rgba(248,183,24,0.7);}
+    .footer-bottom{flex-direction:column; align-items:center; text-align:center; gap:6px;}
+  }
   .social-icons{display:flex; flex-wrap:wrap; gap:10px;}
   .social-icon{
     width:36px; height:36px; border-radius:50%; border:1px solid rgba(246,247,241,0.25);
