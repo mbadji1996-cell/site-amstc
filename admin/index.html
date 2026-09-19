@@ -34,6 +34,17 @@
   <script>
     CMS.registerPreviewStyle('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
     CMS.registerPreviewStyle('/admin/preview.css');
+    // Le reglage du CMS (config.yml) est relu a CHAQUE ouverture : sans ce
+    // parametre, le navigateur gardait jusqu'a 10 minutes l'ancienne version,
+    // et une modification (un champ rendu facultatif, par exemple) semblait
+    // ne pas avoir pris.
+    (function () {
+      var l = document.createElement('link');
+      l.rel = 'cms-config-url';
+      l.type = 'text/yaml';
+      l.href = '/admin/config.yml?v=' + Date.now();
+      document.head.appendChild(l);
+    })();
     CMS.init();
   </script>
   <script>
