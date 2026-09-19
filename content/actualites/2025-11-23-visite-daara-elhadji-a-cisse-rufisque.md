@@ -2,8 +2,7 @@
 title: "Nemekou Daara - Étape 3 : L’AMSTC à Rufisque pour une journée de santé
   et de solidarité"
 date: 2025-11-23T10:00:00.000Z
-excerpt: Nemekou Daara - Etape 3 - Rufisque 2025 - Visite médicale + Don de
-  denrées au Daara El Hadji A. Cissé
+excerpt: Visite médicale + Don de denrées au Daara El Hadji A. Cissé de Rufisque
 image: /assets/uploads/nemekou-daara-3-rufisque-01.jpg
 ---
 Le **23 novembre 2025**, la **Commission Sociale de l’AMSTC** a poursuivi son initiative **« Nemekou Daara »** avec sa troisième visite de l’année. Direction **Rufisque**, au **Daara El Hadji A. Cissé**, pour une journée placée sous le signe de la santé, de l’hygiène et du partage.
