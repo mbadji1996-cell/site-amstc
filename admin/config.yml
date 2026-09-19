@@ -726,11 +726,11 @@ collections:
           - { label: "Événements", value: "evenements" }
           - { label: "Partenariats", value: "partenariats" }
         hint: "Pastille de la carte et filtres de la page. Facultative."
-      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
+      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
-      - { label: "Contenu de l'article", name: "body", widget: "markdown" }
+      - { label: "Contenu de l'article", name: "body", widget: "markdown", required: false }
 
   - name: "formations"
     label: "Formation"
@@ -755,11 +755,11 @@ collections:
           - { label: "Événements", value: "evenements" }
           - { label: "Partenariats", value: "partenariats" }
         hint: "Pastille de la carte et filtres de la page. Facultative."
-      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
+      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
-      - { label: "Contenu", name: "body", widget: "markdown" }
+      - { label: "Contenu", name: "body", widget: "markdown", required: false }
 
   - name: "projets"
     label: "Projets"
@@ -773,10 +773,10 @@ collections:
       - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
       - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
       - { label: "Statut", name: "statut", widget: "select", options: ["À venir", "En cours", "Terminé"], default: "En cours" }
-      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text" }
+      - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
-      - { label: "Contenu", name: "body", widget: "markdown" }
+      - { label: "Contenu", name: "body", widget: "markdown", required: false }
 
   - name: "etapes"
     label: "Étapes de projet"
@@ -791,10 +791,10 @@ collections:
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
       - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
       - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
-      - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text" }
+      - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
-      - { label: "Contenu de l'étape", name: "body", widget: "markdown" }
+      - { label: "Contenu de l'étape", name: "body", widget: "markdown", required: false }
 
   # Événements du calendrier : activités à venir ou passées que l'on veut voir
   # figurer dans l'agenda sans forcément leur consacrer un article complet
