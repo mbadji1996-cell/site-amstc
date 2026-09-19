@@ -114,18 +114,18 @@
   .vide i{display:block; font-size:30px; opacity:.55; margin-bottom:10px;}
   footer{padding:40px 0; text-align:center;}
   footer a{color:var(--green); font-family:var(--mono); font-size:0.85rem;}
+  /* L'ecart que donnait le lien « Retour a l'accueil », retire au profit
+     de la barre du site. */
+  body > .wrap:first-of-type{padding-top:36px;}
 </style>
+<link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
 
-<header>
-  <div class="header-wrap">
-    <a href="./"><img src="assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
-  </div>
-</header>
+<header class="barre-site" id="barreSite"></header>
+<script src="assets/js/barre-site.js"></script>
 
 <div class="wrap">
-  <a class="back" href="./">Retour à l'accueil</a>
 
   <p class="eyebrow">Participer</p>
   <h1 id="titrePage">S'inscrire à une activité</h1>

@@ -64,16 +64,16 @@
   .status-badge.statut-termine{background:var(--green); color:var(--white);}
   .status-badge.statut-a-venir{background:var(--surface); color:var(--text-heading); border:1px solid var(--line);}
   .empty, .error{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
+  /* L'ecart que donnait le lien « Retour a l'accueil », retire au profit
+     de la barre du site. */
+  body > .wrap:first-of-type{padding-top:36px;}
 </style>
+<link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <a href="./"><img src="assets/logo-horizontal-sm.png" alt="AMSTC" class="logo-img"></a>
-  </div>
-</header>
+<header class="barre-site" id="barreSite"></header>
+<script src="assets/js/barre-site.js"></script>
 <div class="wrap">
-  <a class="back" href="./">Retour à l'accueil</a>
   <h1>Projets</h1>
   <noscript><p class="error">L'affichage des projets nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="grid" class="grid">

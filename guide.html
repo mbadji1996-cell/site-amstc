@@ -241,14 +241,20 @@
   }
 
   ::selection{background:rgba(248,183,24,0.35);}
+  /* La barre du site reste collee en haut (75 px) : le sommaire se colle
+     juste dessous, et les ancres ne finissent plus cachees derriere. */
+  @media (min-width:901px){ .toc{top:75px; height:calc(100vh - 75px);} }
+  html{scroll-padding-top:90px;}
 </style>
+<link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
+<header class="barre-site" id="barreSite"></header>
+<script src="assets/js/barre-site.js"></script>
 
 <div class="shell">
 
   <aside class="toc">
-    <a href="./" class="toc-back">← Retour au site</a>
 
     <div class="toc-brand">
       <span class="toc-mark">✺</span>

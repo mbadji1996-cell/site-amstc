@@ -123,12 +123,15 @@ const html = `<!DOCTYPE html>
     .report-item{border:1px solid #ccc;box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
   }
 </style>
+<link rel="stylesheet" href="../assets/css/barre-site.css">
 </head>
 <body>
 
+<header class="barre-site" id="barreSite"></header>
+<script src="../assets/js/barre-site.js"></script>
+
 <header>
   <div class="wrap">
-    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapport annuel</p>
     <h1>Bilan des réalisations ${year}</h1>
     <p>${yearItems.length} réalisation${yearItems.length > 1 ? 's' : ''} - Association Médico-Sociale des Talibés Cheikh</p>
@@ -216,12 +219,15 @@ const indexHtml = `<!DOCTYPE html>
   .year-card:hover{box-shadow:0 6px 20px rgba(6,68,28,0.08);transform:translateY(-2px);}
   .year-card span{font-family:var(--mono);font-weight:400;font-size:0.85rem;color:var(--gold-deep);}
 </style>
+<link rel="stylesheet" href="../assets/css/barre-site.css">
 </head>
 <body>
 
+<header class="barre-site" id="barreSite"></header>
+<script src="../assets/js/barre-site.js"></script>
+
 <header>
   <div class="wrap">
-    <a href="../"><img src="../assets/logo-horizontal-sm.png" alt="AMSTC" class="report-logo"></a>
     <p class="eyebrow">Rapports</p>
     <h1>Bilans annuels</h1>
   </div>
