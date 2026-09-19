@@ -18,7 +18,7 @@ excerpt: >-
 
 
   Ensemble, sauvons des vies.
-image: ""
+image: /assets/uploads/514904421_10225369146610704_1438994469485181043_n.jpg
 video_youtube: https://youtu.be/VDipqKG7Q9k
 ---
 https://youtu.be/VDipqKG7Q9k
