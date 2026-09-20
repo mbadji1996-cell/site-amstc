@@ -2,8 +2,10 @@
 title: "Retour en images sur le Grand Ndogou Social 2016 (3ème édition) : Ndogou
   + EPU"
 date: 2016-06-16T10:00:00.000Z
-excerpt: Contenu à venir.
+categorie: social
+excerpt: ""
 image: /assets/uploads/515253874_10225393386816694_8601133715046877772_n.jpg
+video_youtube: https://youtu.be/Ob49cwKO6vw
 ---
 ## **Quand science et spiritualité se rencontrent…**
 
