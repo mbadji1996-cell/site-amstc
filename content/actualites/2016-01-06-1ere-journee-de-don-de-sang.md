@@ -2,6 +2,7 @@
 title: "Retour en images : La toute 1ère Journée de Don de sang de l'AMSTC (6
   janvier 2016)"
 date: 2016-01-06T10:00:00.000Z
+categorie: sante
 excerpt: >-
   Il y a des gestes qui sauvent des vies. Le 6 janvier 2016 au niveau du Hall du
   Pavillon A, l’AMSTC organisait sa toute première journée de don de sang. Une
