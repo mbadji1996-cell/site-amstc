@@ -12,7 +12,7 @@ excerpt: >-
 
 
   Retour en images sur cette journée fondatrice, qui allait donner naissance plutard au programme « Nemekou Daara yi ».
-image: ""
+image: /assets/uploads/515826219_10225384005382164_4374647019611199704_n.jpg
 video_youtube: https://youtu.be/6PFszx7xvBY
 ---
 <https://youtu.be/6PFszx7xvBY>
