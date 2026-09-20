@@ -10,15 +10,21 @@ Le **Jeudi 15 mai 2025**, à partir de **15H**, la **Commission Pédagogique*
 
 Cette initiative avait pour objectif d'offrir aux apprenants et aux membres de l'association une immersion concrète dans le monde de la recherche biomédicale de pointe et de la santé publique.
 
+![](/assets/uploads/photo_21_2026-05-18_13-00-57.jpg)
+
 ## Une Immersion au Cœur des Infrastructures de Pointe
 
 La visite a débuté par la découverte du **laboratoire P3**, une infrastructure de haute sécurité spécifique à la recherche sur les agents pathogènes à haut risque. Cette première étape a permis aux participants de mesurer les exigences techniques et sécuritaires indispensables à l'étude des maladies infectieuses les plus dangereuses.
 
 Les apprenants ont ensuite été accueillis dans les différents laboratoires de l’institut. Ils ont pu y observer comment **précision scientifique et rigueur technique se conjuguent au service de la santé publique**. Chaque espace visité a illustré le rôle crucial de la recherche appliquée dans l'amélioration des diagnostics et la lutte contre les épidémies.
 
+![](/assets/uploads/photo_9_2026-05-18_13-00-57.jpg)
+
 ## La Biobanque : Un Trésor pour la Recherche
 
 S’en est suivie une exploration de la **biobanque**, un maillon essentiel de l'écosystème de recherche. Les explications fournies ont illustré l’importance capitale de la conservation des échantillons biologiques dans la recherche scientifique. Cette infrastructure permet non seulement de conserver la mémoire biologique des pathologies, mais aussi de faciliter les études rétrospectives et les avancées thérapeutiques futures.
+
+
 
 ## Un Moment Fort : L'Échange avec le Professeur Souleymane Mboup
 
@@ -31,6 +37,8 @@ Lors de cette rencontre inspirante, le Professeur Mboup est revenu sur les grand
 * **Participer activement à la surveillance épidémiologique en Afrique.**
 
 Ce partage d'expérience a permis aux membres de l'AMSTC de mieux comprendre les enjeux stratégiques de la santé publique à l'échelle continentale et le rôle moteur de l'IRESSEF dans ce domaine.
+
+![](/assets/uploads/photo_7_2026-05-18_13-00-57.jpg)
 
 ## Une Expérience Formatrice et Inspirante
 
