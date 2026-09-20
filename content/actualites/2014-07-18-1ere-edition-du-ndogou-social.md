@@ -31,14 +31,4 @@ Merci à tous ceux qui ont participé à cette première édition et qui ont con
 
 Revivez les moments forts de ce Ndogou Social 2014 à travers nos archives et nos réseaux sociaux.
 
-![](/assets/uploads/504971525_9536602549801401_2299247961229611520_n.jpg)
-
-![](/assets/uploads/515215009_10236683756704040_2170112681176465743_n.jpg)
-
-![](/assets/uploads/504952016_9536602529801403_8460157583253964931_n.jpg)
-
-![](/assets/uploads/516191004_10236682582154677_3603211766577644669_n.jpg)
-
-![](/assets/uploads/00506423330_10212794338330109_489194225112734543_n.jpg)
-
 *AMSTC - Association Médico-Sociale des Talibés Cheikh*
