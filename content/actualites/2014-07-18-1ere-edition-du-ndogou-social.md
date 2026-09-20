@@ -5,6 +5,7 @@ date: 2014-07-18T10:00:00.000Z
 categorie: social
 excerpt: "   "
 image: /assets/uploads/00506423330_10212794338330109_489194225112734543_n.jpg
+video_youtube: https://youtu.be/ponw0---zH0
 ---
 En **2014**, l’AMSTC organisait **sa toute première édition du Ndogou Social**. Une initiative simple, mais profondément symbolique : réunir les membres de l’association autour d’**une rupture du jeun communautaire**, dans un esprit de partage, de convivialité et de fraternité.
 
