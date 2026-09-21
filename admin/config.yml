@@ -757,7 +757,8 @@ collections:
           - { label: "Campagne médicale", value: "campagne" }
           - { label: "Sensibilisation", value: "sensibilisation" }
           - { label: "Don de sang", value: "don-sang" }
-          - { label: "Ndogou et solidarité", value: "ndogou" }
+          - { label: "Ndogou", value: "ndogou" }
+          - { label: "Solidarité", value: "solidarite" }
           - { label: "Journées scientifiques", value: "jssci" }
           - { label: "EPU", value: "epu" }
           - { label: "Webinaire", value: "webinaire" }
@@ -765,7 +766,8 @@ collections:
           - { label: "Cours", value: "cours" }
           - { label: "Atelier", value: "atelier" }
           - { label: "Rencontre", value: "rencontre" }
-          - { label: "Ziara et Gamou", value: "ziara" }
+          - { label: "Ziara", value: "ziara" }
+          - { label: "Gamou", value: "gamou" }
           - { label: "Partenariat", value: "partenariat" }
           - { label: "Projet", value: "projet" }
           - { label: "Communication", value: "communication" }
@@ -797,7 +799,8 @@ collections:
           - { label: "Campagne médicale", value: "campagne" }
           - { label: "Sensibilisation", value: "sensibilisation" }
           - { label: "Don de sang", value: "don-sang" }
-          - { label: "Ndogou et solidarité", value: "ndogou" }
+          - { label: "Ndogou", value: "ndogou" }
+          - { label: "Solidarité", value: "solidarite" }
           - { label: "Journées scientifiques", value: "jssci" }
           - { label: "EPU", value: "epu" }
           - { label: "Webinaire", value: "webinaire" }
@@ -805,7 +808,8 @@ collections:
           - { label: "Cours", value: "cours" }
           - { label: "Atelier", value: "atelier" }
           - { label: "Rencontre", value: "rencontre" }
-          - { label: "Ziara et Gamou", value: "ziara" }
+          - { label: "Ziara", value: "ziara" }
+          - { label: "Gamou", value: "gamou" }
           - { label: "Partenariat", value: "partenariat" }
           - { label: "Projet", value: "projet" }
           - { label: "Communication", value: "communication" }

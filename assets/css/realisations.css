@@ -146,3 +146,29 @@
   .rl-appel{padding:20px; gap:14px;}
   .rl-appel-bouton{margin-left:0; width:100%; justify-content:center;}
 }
+
+/* ===== Pastilles repliées sur téléphone (assets/js/filtres.js) =====
+   Dix-sept activités remplissaient l'écran avant la première carte : un
+   bouton porte le filtre en cours et ouvre la liste à la demande. */
+.rl-filtre-bouton{display:none;}
+@media(max-width:820px){
+  .rl-barre{gap:10px;}
+  .rl-filtre-bouton{
+    display:inline-flex; align-items:center; gap:9px; flex:1 1 auto; min-width:0; cursor:pointer;
+    padding:11px 16px; border-radius:999px; border:1.5px solid var(--line); background:var(--surface);
+    font-family:var(--body); font-size:0.88rem; font-weight:600; color:var(--text-heading); text-align:left;
+  }
+  .rl-filtre-bouton .ti{font-size:17px; color:var(--green); flex:none;}
+  :root[data-theme="dark"] .rl-filtre-bouton .ti{color:#7FD9A0;}
+  .rl-filtre-texte{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .rl-filtre-bouton[aria-expanded="true"] .rl-filtre-chevron{transform:rotate(180deg);}
+  .rl-filtre-chevron{transition:transform .18s;}
+  /* « display:contents » est posé dans la page : il faut !important. */
+  .rl-cats{display:none !important;}
+  .rl-cats.ouvert{
+    display:flex !important; flex-direction:column; align-items:stretch; gap:8px;
+    width:100%; order:9; margin-bottom:4px;
+  }
+  .rl-cats.ouvert .rl-cat{width:100%; justify-content:flex-start;}
+  .rl-tri{margin-left:0;}
+}
