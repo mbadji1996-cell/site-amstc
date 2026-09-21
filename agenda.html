@@ -190,34 +190,59 @@
      de la barre du site. */
   body > .wrap:first-of-type{padding-top:36px;}
 </style>
+<link rel="stylesheet" href="assets/css/agenda.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
 <header class="barre-site" id="barreSite"></header>
 <script src="assets/js/barre-site.js"></script>
 <div class="wrap">
-  <h1>Agenda</h1>
-  <p class="page-sub">Nos événements, réalisations, formations et projets, mois par mois.</p>
+  <div class="ag-entete">
+    <div>
+      <div class="ag-titre-ligne">
+        <span class="ag-titre-ic" aria-hidden="true"><i class="ti ti-calendar-month"></i></span>
+        <div>
+          <h1>Agenda</h1>
+          <p class="page-sub">Nos événements, réalisations, formations et projets, mois par mois.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ce qui arrive dans les sept prochains jours. -->
+    <div class="ag-resume" id="agResume" style="display:none;">
+      <div class="ag-resume-tete">
+        <span class="ag-resume-ic" aria-hidden="true"><i class="ti ti-calendar-event"></i></span>
+        <div>
+          <p class="ag-resume-titre">Prochainement</p>
+          <p class="ag-resume-sous" id="agResumeSous"></p>
+        </div>
+        <a class="ag-resume-lien" href="#agProchains">Voir tout <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div class="ag-compteurs" id="agCompteurs"></div>
+    </div>
+  </div>
 
   <div class="toolbar">
     <div class="view-switch" role="group" aria-label="Choix de l'affichage">
-      <button class="view-btn active" id="viewCalendrier" type="button">Calendrier</button>
-      <button class="view-btn" id="viewListe" type="button">Liste</button>
+      <button class="view-btn active" id="viewCalendrier" type="button"><i class="ti ti-calendar" aria-hidden="true"></i>Calendrier</button>
+      <button class="view-btn" id="viewListe" type="button"><i class="ti ti-list" aria-hidden="true"></i>Liste</button>
     </div>
   </div>
 
   <div class="filter-bar" id="filterBar">
-    <button class="filter-pill active" data-type="tout">Tout</button>
-    <button class="filter-pill" data-type="evenements">Événements</button>
-    <button class="filter-pill" data-type="actualites">Réalisations</button>
-    <button class="filter-pill" data-type="formations">Formations</button>
-    <button class="filter-pill" data-type="projets">Projets</button>
+    <button class="filter-pill active" data-type="tout"><i class="ti ti-layout-grid" aria-hidden="true"></i>Tout</button>
+    <button class="filter-pill" data-type="evenements"><i class="ti ti-calendar-event" aria-hidden="true"></i>Événements</button>
+    <button class="filter-pill" data-type="actualites"><i class="ti ti-award" aria-hidden="true"></i>Réalisations</button>
+    <button class="filter-pill" data-type="formations"><i class="ti ti-school" aria-hidden="true"></i>Formations</button>
+    <button class="filter-pill" data-type="projets"><i class="ti ti-building-community" aria-hidden="true"></i>Projets</button>
   </div>
 
   <noscript><p class="error">L'affichage de l'agenda nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
 
   <!-- Vue calendrier -->
-  <section id="calendrierView">
+  <section id="calendrierView" class="ag-corps">
+   <div>
     <div class="cal-nav">
       <button class="cal-arrow" id="prevMonth" type="button" aria-label="Mois précédent">‹</button>
       <div class="cal-selects">
@@ -239,6 +264,18 @@
 
     <h2 class="month-title" id="monthTitle"></h2>
     <div class="month-list" id="monthList"></div>
+   </div>
+
+   <aside class="ag-aside" id="agProchains">
+     <div class="ag-carte">
+       <div class="ag-carte-tete">
+         <span class="ag-carte-ic" aria-hidden="true"><i class="ti ti-calendar-time"></i></span>
+         <span class="ag-carte-titre">Prochains rendez-vous</span>
+       </div>
+       <div id="agListeProchains"><p class="ag-vide">Chargement…</p></div>
+     </div>
+     <a class="ag-aside-bouton" href="actualites"><i class="ti ti-award" aria-hidden="true"></i> Voir nos réalisations</a>
+   </aside>
   </section>
 
   <!-- Vue liste (frise chronologique par année) -->
@@ -442,6 +479,77 @@
     timeline.innerHTML = html;
   }
 
+  // ===== Ce qui arrive =====
+  // La colonne de droite et le resume du haut regardent TOUT l'agenda,
+  // filtre compris : un filtre cache des rendez-vous, pas la realite.
+  const ICONE_TYPE = {
+    evenements: 'ti-calendar-event', actualites: 'ti-award',
+    formations: 'ti-school', projets: 'ti-building-community',
+  };
+  function libelleType(t){
+    const src = SOURCES.find(s => s.type === t);
+    return src ? src.label : '';
+  }
+  function aVenir(){
+    const aujourdhui = parseDay(dayKey(new Date()));
+    return allItems
+      .map(it => ({ it, d: parseDay(it.date_debut || it.date) }))
+      .filter(x => x.d && x.d >= aujourdhui)
+      .sort((a, b) => a.d - b.d);
+  }
+  function remplirAvenir(){
+    let liste = aVenir();
+    // Rien devant ? La colonne montre les derniers rendez-vous passes
+    // plutot qu'un cadre vide, et le dit dans son titre.
+    const passe = !liste.length;
+    if (passe) {
+      liste = allItems
+        .map(it => ({ it, d: parseDay(it.date_debut || it.date) }))
+        .filter(x => x.d)
+        .sort((a, b) => b.d - a.d);
+      const titre = document.querySelector('#agProchains .ag-carte-titre');
+      if (titre) titre.textContent = 'Derniers rendez-vous';
+    }
+    const zone = document.getElementById('agListeProchains');
+    zone.innerHTML = liste.length
+      ? liste.slice(0, 5).map(({ it, d }) => `
+        <a class="ag-prochain" href="${esc(itemHref(it))}">
+          <span class="ag-jour">
+            <span class="ag-jour-nb">${String(d.getUTCDate()).padStart(2, '0')}</span>
+            <span class="ag-jour-mois">${MOIS[d.getUTCMonth()].slice(0, 4)}</span>
+          </span>
+          <span class="ag-prochain-texte">
+            <span class="ag-prochain-titre">${esc(it.title || 'Sans titre')}</span>
+            <span class="ag-prochain-type"><i class="ti ${esc(ICONE_TYPE[it.__type] || 'ti-point')}" aria-hidden="true"></i> ${esc(libelleType(it.__type))}</span>
+          </span>
+          <i class="ti ti-arrow-right" aria-hidden="true"></i>
+        </a>`).join('')
+      : '<p class="ag-vide">Aucun rendez-vous publié pour le moment.</p>';
+
+    // Le resume du haut : ce qui tombe dans les sept prochains jours.
+    if (passe) { document.getElementById('agResume').style.display = 'none'; return; }
+    const limite = new Date(parseDay(dayKey(new Date())).getTime() + 7 * 86400000);
+    const semaine = liste.filter(x => x.d <= limite);
+    const resume = document.getElementById('agResume');
+    if (!semaine.length) { resume.style.display = 'none'; return; }
+    const n = semaine.length;
+    document.getElementById('agResumeSous').textContent =
+      n + (n > 1 ? ' rendez-vous' : ' rendez-vous') + ' dans les 7 prochains jours';
+    const parType = {};
+    semaine.forEach(x => { parType[x.it.__type] = (parType[x.it.__type] || 0) + 1; });
+    document.getElementById('agCompteurs').innerHTML = SOURCES
+      .filter(s => parType[s.type])
+      .map(s => `
+        <div class="ag-compteur">
+          <i class="ti ${esc(ICONE_TYPE[s.type])} type-${esc(s.type)}" aria-hidden="true"></i>
+          <div>
+            <div class="ag-compteur-nb">${parType[s.type]}</div>
+            <div class="ag-compteur-lbl">${esc(s.label)}${parType[s.type] > 1 ? 's' : ''}</div>
+          </div>
+        </div>`).join('');
+    resume.style.display = '';
+  }
+
   function render() {
     rebuildDayMap();
     if (currentView === 'calendrier') renderCalendar();
@@ -560,6 +668,8 @@
 
       viewYear = now.getUTCFullYear();
       viewMonth = now.getUTCMonth();
+
+      remplirAvenir();
 
       if (allItems.length === 0) {
         document.getElementById('timeline').innerHTML = '<p class="empty">Aucun contenu publié pour le moment.</p>';
