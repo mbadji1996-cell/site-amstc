@@ -1,0 +1,135 @@
+/* ============================================================
+   Lecture d'une fiche : réalisation, formation, projet, étape
+   Bandeau d'ouverture (badge, date, titre, résumé, pastilles,
+   photo), puis le texte en colonne avec, à droite, le sommaire
+   et les articles proches.
+   ============================================================ */
+
+/* ===== Bandeau ===== */
+.lc-hero{
+  position:relative; overflow:hidden; margin-bottom:34px;
+  background:linear-gradient(115deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface, #FFFFFF);
+  border-bottom:1px solid var(--line, rgba(6,68,28,0.18));
+}
+:root[data-theme="dark"] .lc-hero{
+  background:linear-gradient(115deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface, #182019);
+}
+.lc-hero-in{
+  display:grid; grid-template-columns:minmax(0,1fr); gap:26px; align-items:center;
+  padding-top:34px; padding-bottom:34px;
+}
+@media(min-width:1000px){ .lc-hero-in{grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); gap:40px;} }
+.lc-badge{
+  display:inline-flex; align-items:center; gap:8px; padding:7px 15px; border-radius:999px;
+  background:var(--green-deep, #06441C); color:#FFFFFF; font-size:0.8rem; font-weight:600;
+}
+.lc-badge .ti{color:var(--gold, #F8B718); font-size:15px;}
+.lc-date{
+  display:flex; align-items:center; gap:8px; margin-top:16px;
+  font-family:var(--mono, monospace); font-size:0.8rem; color:#8A6209;
+}
+:root[data-theme="dark"] .lc-date{color:var(--text-accent, #F0C955);}
+.lc-hero h1{
+  font-family:var(--display, sans-serif); font-weight:800; font-size:clamp(1.6rem,3.4vw,2.5rem);
+  color:var(--text-heading, #06441C); line-height:1.15; letter-spacing:-0.015em; margin:10px 0 0; text-wrap:balance;
+}
+.lc-intro{color:var(--text-muted, #5A6C60); font-size:1.02rem; margin:14px 0 0; max-width:58ch;}
+.lc-chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
+.lc-chip{
+  display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+  border:1px solid var(--line, rgba(6,68,28,0.18)); background:var(--surface, #FFFFFF);
+  font-size:0.85rem; font-weight:600; color:var(--text-heading, #06441C);
+}
+.lc-chip .ti{color:var(--green, #17763B); font-size:16px;}
+:root[data-theme="dark"] .lc-chip .ti{color:#7FD9A0;}
+.lc-chip-or{border-color:rgba(248,183,24,0.6); color:#8A6209;}
+.lc-chip-or .ti{color:#8A6209;}
+:root[data-theme="dark"] .lc-chip-or, :root[data-theme="dark"] .lc-chip-or .ti{color:var(--text-accent, #F0C955);}
+.lc-hero-photo{margin:0;}
+.lc-hero-photo img{
+  width:100%; max-height:420px; object-fit:contain; object-position:center; display:block;
+  border-radius:18px; background:var(--paper-alt, #ECEFE3);
+}
+.lc-hero .partage-zone{margin-top:18px;}
+
+/* ===== Corps : texte et colonne de droite ===== */
+.lc-corps{display:grid; grid-template-columns:minmax(0,1fr); gap:28px; align-items:start; padding-bottom:60px;}
+@media(min-width:1080px){ .lc-corps{grid-template-columns:minmax(0,1fr) 330px; gap:40px;} }
+.lc-texte{min-width:0;}
+.lc-aside{display:flex; flex-direction:column; gap:18px; min-width:0;}
+@media(min-width:1080px){ .lc-aside{position:sticky; top:96px;} }
+.lc-carte{
+  background:var(--surface, #FFFFFF); border:1px solid var(--line, rgba(6,68,28,0.18));
+  border-radius:18px; padding:20px 22px;
+}
+.lc-carte-tete{display:flex; align-items:center; gap:11px; margin-bottom:14px;}
+.lc-carte-ic{
+  width:36px; height:36px; flex:none; border-radius:11px; display:grid; place-items:center;
+  background:rgba(23,118,59,0.12); color:var(--green, #17763B); font-size:18px;
+}
+:root[data-theme="dark"] .lc-carte-ic{color:#7FD9A0;}
+.lc-carte-titre{font-family:var(--display, sans-serif); font-weight:700; font-size:1rem; color:var(--text-heading, #06441C);}
+.lc-carte-lien{margin-left:auto; font-size:0.8rem; font-weight:600; color:var(--green, #17763B); white-space:nowrap;}
+:root[data-theme="dark"] .lc-carte-lien{color:#7FD9A0;}
+
+/* Le sommaire est un depliant : ouvert par defaut, refermable partout. */
+details.lc-carte > summary{list-style:none; cursor:pointer;}
+details.lc-carte > summary::-webkit-details-marker{display:none;}
+details.lc-carte > summary.lc-carte-tete{margin-bottom:14px;}
+.lc-retour{
+  display:inline-flex; align-items:center; gap:8px; margin-bottom:14px;
+  font-size:0.84rem; font-weight:600; color:var(--green, #17763B); text-decoration:none;
+}
+.lc-retour:hover{color:var(--text-heading, #06441C);}
+:root[data-theme="dark"] .lc-retour{color:#7FD9A0;}
+
+/* Sommaire */
+.lc-som{display:flex; flex-direction:column; gap:2px; max-height:52vh; overflow-y:auto;}
+.lc-som a{
+  display:flex; align-items:flex-start; gap:11px; padding:9px 10px; border-radius:10px;
+  font-size:0.88rem; line-height:1.35; color:var(--text-muted, #5A6C60); text-decoration:none;
+}
+.lc-som a:hover{background:var(--paper-alt, #ECEFE3); color:var(--text-heading, #06441C);}
+.lc-som a.actif{background:rgba(23,118,59,0.12); color:var(--text-heading, #06441C); font-weight:600;}
+.lc-som-num{
+  width:22px; height:22px; flex:none; border-radius:50%; display:grid; place-items:center;
+  background:var(--paper-alt, #ECEFE3); color:var(--text-muted, #5A6C60);
+  font-family:var(--mono, monospace); font-size:0.7rem; font-weight:700;
+}
+.lc-som a.actif .lc-som-num{background:var(--green-deep, #06441C); color:#FFFFFF;}
+:root[data-theme="dark"] .lc-som a.actif .lc-som-num{background:#7FD9A0; color:#06441C;}
+.lc-som a.niveau-3{padding-left:34px; font-size:0.84rem;}
+.lc-som a.niveau-3 .lc-som-num{display:none;}
+
+/* Articles proches */
+.lc-proche{display:flex; gap:12px; padding:9px 0; text-decoration:none; align-items:flex-start;}
+.lc-proche + .lc-proche{border-top:1px solid var(--line, rgba(6,68,28,0.14));}
+.lc-proche-vignette{
+  width:64px; height:52px; flex:none; border-radius:10px; overflow:hidden; position:relative;
+  background:var(--paper-alt, #ECEFE3); display:grid; place-items:center; color:var(--text-muted, #5A6C60);
+}
+.lc-proche-vignette img{width:100%; height:100%; object-fit:cover; display:block;}
+.lc-proche-titre{
+  font-family:var(--display, sans-serif); font-weight:600; font-size:0.88rem; line-height:1.3;
+  color:var(--text-heading, #06441C);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.lc-proche-date{
+  display:flex; align-items:center; gap:6px; margin-top:5px;
+  font-family:var(--mono, monospace); font-size:0.72rem; color:var(--text-muted, #5A6C60);
+}
+.lc-proche:hover .lc-proche-titre{color:var(--green, #17763B);}
+:root[data-theme="dark"] .lc-proche:hover .lc-proche-titre{color:#7FD9A0;}
+
+/* Sur téléphone, le sommaire et les fiches voisines suivent le texte, et
+   le sommaire devient un dépliant. */
+@media(max-width:1079px){
+  .lc-aside{order:2;}
+  .lc-som{max-height:none;}
+  details.lc-carte > summary{
+    list-style:none; cursor:pointer; display:flex; align-items:center; gap:11px;
+    font-family:var(--display, sans-serif); font-weight:700; color:var(--text-heading, #06441C);
+  }
+  details.lc-carte > summary::-webkit-details-marker{display:none;}
+  details.lc-carte[open] > summary{margin-bottom:12px;}
+}

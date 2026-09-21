@@ -49,13 +49,6 @@
   .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:36px 0 20px;}
   .art-date{font-family:var(--mono); font-size:0.78rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
   h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:2rem; margin:10px 0 28px;}
-  /* Couverture : hauteur PLAFONNEE. En pleine largeur (1400 px), une
-     affiche verticale devenait un mur ; on la montre entiere, centree, sur
-     un fond neutre, sans depasser un ecran. Sur telephone, la largeur
-     commande, sans plafond. */
-  #cover{display:none; width:100%; max-height:520px; object-fit:contain; object-position:center;
-    background:var(--paper-alt, #ECEFE3); border-radius:14px; margin-bottom:28px;}
-  @media (max-width:700px){ #cover{max-height:none;} }
   /* Un contenu IMPORTÉ depuis un fichier HTML (assets/js/import-html.js)
      apporte son propre style, confiné à .html-importe ; les règles de
      la page ne doivent pas le recouvrir - #body h2 battrait
@@ -91,21 +84,23 @@
   .video-embed{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#000;}
   .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
 </style>
+<link rel="stylesheet" href="assets/css/lecture.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
 <header class="barre-site" id="barreSite"></header>
 <script src="assets/js/barre-site.js"></script>
-<div class="wrap">
-  <a class="back" href="actualites">Toutes nos réalisations</a>
+<div class="lc-page">
   <noscript><p>L'affichage de cet article nécessite JavaScript. Veuillez l'activer, ou nous écrire à contact@amstc.org.</p></noscript>
   <div id="content">
-    <p>Chargement…</p>
+    <p class="wrap" style="padding-top:40px;">Chargement…</p>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="assets/js/front-matter.js"></script>
+<script src="assets/js/lecture.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script src="assets/js/import-html.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -172,6 +167,44 @@
     return DOMPurify.sanitize(marked.parse(b));
   }
 
+  // Le type d'activite de la fiche : meme liste que les pages de liste.
+  const LIBELLE_CAT = {
+    'consultations': ['Consultations', 'ti-stethoscope'],
+    'campagne': ['Campagne médicale', 'ti-vaccine'],
+    'sensibilisation': ['Sensibilisation', 'ti-speakerphone'],
+    'don-sang': ['Don de sang', 'ti-droplet'],
+    'ndogou': ['Ndogou et solidarité', 'ti-bowl-spoon'],
+    'jssci': ['Journées scientifiques', 'ti-microscope'],
+    'epu': ['EPU', 'ti-presentation'],
+    'webinaire': ['Webinaire', 'ti-device-laptop'],
+    'masterclass': ['Masterclass', 'ti-school'],
+    'cours': ['Cours', 'ti-book'],
+    'atelier': ['Atelier', 'ti-tools'],
+    'rencontre': ['Rencontre', 'ti-users'],
+    'ziara': ['Ziara et Gamou', 'ti-building-mosque'],
+    'partenariat': ['Partenariat', 'ti-handshake'],
+    'projet': ['Projet', 'ti-briefcase'],
+    'communication': ['Communication', 'ti-broadcast'],
+    'vie-associative': ['Vie associative', 'ti-flag'],
+  };
+  function pastilleCategorie(data){
+    const c = LIBELLE_CAT[data.categorie];
+    return c ? { icone: c[1], texte: c[0] } : null;
+  }
+  // Apres l'affichage : sommaire, fiches voisines, partage.
+  function finirLecture(data, slug, prefixe, fichier, page){
+    const corps = document.getElementById('body');
+    if (corps && typeof lectureSommaire === 'function') {
+      lectureSommaire(corps, document.getElementById('lcSommaire'));
+    }
+    if (typeof lectureProches === 'function') {
+      lectureProches({ fichier: fichier, slug: slug, categorie: data.categorie,
+        page: page, cible: document.getElementById('lcProches') });
+    }
+    if (corps && typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(corps);
+    partageInit({ conteneur: 'partageZone', prefixe: prefixe, cle: 'slug' });
+  }
+
   async function loadArticle() {
     const slug = new URLSearchParams(window.location.search).get("slug");
     const content = document.getElementById("content");
@@ -186,9 +219,7 @@
       // pas, et ou aller.
       if (!res.ok) {
         document.title = "Article introuvable - AMSTC";
-        content.innerHTML = `<h1>Cet article n'existe pas ou plus.</h1>
-          <p>Le lien est peut-être ancien, ou le contenu a été retiré.</p>
-          <p><a href="actualites">Toutes nos réalisations &rarr;</a></p>`;
+        content.innerHTML = `<div class="wrap" style="padding:60px 28px;"><h1 style="font-family:var(--display);color:var(--text-heading);">Cet article n'existe pas ou plus.</h1><p style="color:var(--text-muted);margin:12px 0;">Le lien est peut-être ancien, ou le contenu a été retiré.</p><p><a href="actualites">Toutes nos réalisations &rarr;</a></p></div>`;
         return;
       }
       const raw = await res.text();
@@ -213,15 +244,16 @@
             if (!err && ligne && ligne.content) { corpsHtml = rendreCorps(ligne.content); etat = "lecteur"; }
           }
         } catch (e) { /* sans client Supabase : on reste sur l'invitation */ }
-        content.innerHTML = `
-          <span class="art-date">${formatDatePeriode(data)}</span>
-          <span class="lock-badge" style="display:inline-block;font-family:var(--mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;background:rgba(6,68,28,0.08);color:var(--green-deep);border-radius:999px;padding:4px 10px;margin:0 0 10px 10px;">🔒 Réservé aux membres</span>
-          <h1>${esc(data.title || '')}</h1>
-          <div id="partageZone" class="partage-zone"></div>
-          ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
-          ${data.excerpt ? `<p class="reserve-resume" style="font-size:1.05rem;color:var(--text-muted);margin:14px 0 22px;">${esc(data.excerpt)}</p>` : ""}
-          ${etat === "lecteur" ? `<div id="body">${corpsHtml}</div>` : `
-          <div class="reserve-porte" style="border:1.5px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:22px 24px;margin:8px 0 30px;background:var(--paper-alt);">
+        const CHIPS = [pastilleCategorie(data), { icone: 'ti-lock', texte: 'Réservé aux membres', or: true }];
+        const VIDEO = null;
+        content.innerHTML = lectureGabarit({
+          badge: 'Nos réalisations', badgeIcone: 'ti-award',
+          retourHref: 'actualites', retourTexte: 'Toutes nos réalisations',
+          date: formatDatePeriode(data), titre: data.title || '', intro: data.excerpt || '',
+          chips: CHIPS,
+          image: data.image || '', videoId: VIDEO,
+          avant: etat === "lecteur" ? '' : `
+          <div class="reserve-porte" style="border:1.5px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:22px 24px;margin:0 0 30px;background:var(--paper-alt);">
             <p style="font-weight:600;color:var(--text-heading);margin:0 0 6px;">${etat === "connecte"
               ? "Cette réalisation est réservée aux membres approuvés."
               : "Cette réalisation est réservée aux membres de l'AMSTC."}</p>
@@ -230,14 +262,15 @@
               : "Connectez-vous à l'espace membres pour la lire. Pas encore de compte ? L'inscription prend deux minutes."}</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               ${etat === "connecte"
-                ? `<a class="btn-reserve" href="membres/profil" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir mon compte</a>`
+                ? `<a class="btn-reserve" href="membres/profil" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir ma carte de membre</a>`
                 : `<a class="btn-reserve" href="membres/connexion?suite=${retour}" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Se connecter</a>
                    <a href="membres/inscription" style="display:inline-block;background:var(--paper);color:var(--green-deep);font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;border:1.5px solid var(--line);">S'inscrire</a>`}
             </div>
-          </div>`}
-        `;
-        partageInit({ conteneur: 'partageZone', prefixe: 'a', cle: 'slug' });
-        if (etat === "lecteur" && typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('body'));
+          </div>`,
+          corps: etat === "lecteur" ? corpsHtml : null,
+          titreProches: 'Réalisations proches', lienProches: 'actualites', lienProchesTexte: 'Voir tout',
+        });
+        finirLecture(data, slug, 'a', 'content/actualites-index.json', 'article');
         return;
       }
       document.title = (data.title || "Article") + " - AMSTC";
@@ -251,17 +284,19 @@
       }
       injectArticleSchema(data, "Réalisations");
       const ytId = youtubeEmbedId(data.video_youtube);
-      content.innerHTML = `
-        <span class="art-date">${formatDatePeriode(data)}</span>
-        <h1>${esc(data.title || '')}</h1>
-        <div id="partageZone" class="partage-zone"></div>
-        ${data.image ? `<img id="cover" src="${esc(data.image)}" style="display:block">` : ""}
-        ${ytId ? `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${ytId}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : ""}
-        <div id="body">${rendreCorps(body)}</div>
-      `;
-      // Après l'injection du contenu : le bouton a besoin de son conteneur.
-      if (typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(document.getElementById('body'));
-      partageInit({ conteneur: 'partageZone', prefixe: 'a', cle: 'slug' });
+      const CHIPS = [pastilleCategorie(data)];
+      const VIDEO = ytId;
+      content.innerHTML = lectureGabarit({
+        badge: 'Nos réalisations', badgeIcone: 'ti-award',
+        retourHref: 'actualites', retourTexte: 'Toutes nos réalisations',
+        date: formatDatePeriode(data), titre: data.title || '', intro: data.excerpt || '',
+        chips: CHIPS,
+        image: data.image || '', videoId: VIDEO,
+        avant: '',
+        corps: rendreCorps(body),
+        titreProches: 'Réalisations proches', lienProches: 'actualites', lienProchesTexte: 'Voir tout',
+      });
+      finirLecture(data, slug, 'a', 'content/actualites-index.json', 'article');
     } catch (e) {
       content.innerHTML = "<p>Impossible de charger cet article.</p>";
     }
