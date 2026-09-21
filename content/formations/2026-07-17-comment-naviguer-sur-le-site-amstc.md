@@ -1,6 +1,7 @@
 ---
 title: "Comment naviguer sur le site AMSTC"
 date: 2026-07-17T11:00:00.000Z
+categorie: "cours"
 excerpt: "Un guide pas à pas pour se repérer sur amstc.org : le site public, la création de compte, et tout ce que propose l'espace membres."
 image: ""
 ---

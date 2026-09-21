@@ -711,21 +711,32 @@ collections:
     preview_path: "article.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
-      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
-      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
+      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
       - label: "Catégorie"
         name: "categorie"
         widget: "select"
         required: false
         options:
-          - { label: "Éducation & Islam", value: "education" }
-          - { label: "Santé", value: "sante" }
-          - { label: "Social", value: "social" }
-          - { label: "Infrastructures", value: "infrastructures" }
-          - { label: "Événements", value: "evenements" }
-          - { label: "Partenariats", value: "partenariats" }
-        hint: "Pastille de la carte et filtres de la page. Facultative."
+          - { label: "Consultations", value: "consultations" }
+          - { label: "Campagne médicale", value: "campagne" }
+          - { label: "Sensibilisation", value: "sensibilisation" }
+          - { label: "Don de sang", value: "don-sang" }
+          - { label: "Ndogou et solidarité", value: "ndogou" }
+          - { label: "Journées scientifiques", value: "jssci" }
+          - { label: "EPU", value: "epu" }
+          - { label: "Webinaire", value: "webinaire" }
+          - { label: "Masterclass", value: "masterclass" }
+          - { label: "Cours", value: "cours" }
+          - { label: "Atelier", value: "atelier" }
+          - { label: "Rencontre", value: "rencontre" }
+          - { label: "Ziara et Gamou", value: "ziara" }
+          - { label: "Partenariat", value: "partenariat" }
+          - { label: "Projet", value: "projet" }
+          - { label: "Communication", value: "communication" }
+          - { label: "Vie associative", value: "vie-associative" }
+        hint: "Le type d'activité : il donne la pastille de la carte et les filtres de la page. Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -740,21 +751,32 @@ collections:
     preview_path: "formation.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
-      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
-      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
+      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
       - label: "Catégorie"
         name: "categorie"
         widget: "select"
         required: false
         options:
-          - { label: "Éducation & Islam", value: "education" }
-          - { label: "Santé", value: "sante" }
-          - { label: "Social", value: "social" }
-          - { label: "Infrastructures", value: "infrastructures" }
-          - { label: "Événements", value: "evenements" }
-          - { label: "Partenariats", value: "partenariats" }
-        hint: "Pastille de la carte et filtres de la page. Facultative."
+          - { label: "Consultations", value: "consultations" }
+          - { label: "Campagne médicale", value: "campagne" }
+          - { label: "Sensibilisation", value: "sensibilisation" }
+          - { label: "Don de sang", value: "don-sang" }
+          - { label: "Ndogou et solidarité", value: "ndogou" }
+          - { label: "Journées scientifiques", value: "jssci" }
+          - { label: "EPU", value: "epu" }
+          - { label: "Webinaire", value: "webinaire" }
+          - { label: "Masterclass", value: "masterclass" }
+          - { label: "Cours", value: "cours" }
+          - { label: "Atelier", value: "atelier" }
+          - { label: "Rencontre", value: "rencontre" }
+          - { label: "Ziara et Gamou", value: "ziara" }
+          - { label: "Partenariat", value: "partenariat" }
+          - { label: "Projet", value: "projet" }
+          - { label: "Communication", value: "communication" }
+          - { label: "Vie associative", value: "vie-associative" }
+        hint: "Le type d'activité : il donne la pastille de la carte et les filtres de la page. Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -769,9 +791,9 @@ collections:
     preview_path: "projet.html?slug={{slug}}"
     fields:
       - { label: "Titre", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
-      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
-      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
+      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
       - { label: "Statut", name: "statut", widget: "select", options: ["À venir", "En cours", "Terminé"], default: "En cours" }
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
@@ -788,9 +810,9 @@ collections:
       - { label: "Projet associé", name: "projet", widget: "relation", collection: "projets", search_fields: ["title"], display_fields: ["title"], value_field: "{{slug}}", hint: "Le projet auquel cette étape appartient." }
       - { label: "Titre de l'étape", name: "title", widget: "string" }
       - { label: "Ordre d'affichage", name: "ordre", widget: "number", default: 1, hint: "Détermine la position de l'étape dans la frise (1 = première), indépendamment de la date." }
-      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
-      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
-      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
+      - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
       - { label: "Résumé (affiché dans la frise du projet)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -808,8 +830,8 @@ collections:
     summary: "{{title}} - {{date}}"
     fields:
       - { label: "Titre de l'activité", name: "title", widget: "string" }
-      - { label: "Date de début", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", hint: "Premier jour de l'activité. Pour une activité d'une seule journée, laissez la date de fin vide." }
-      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", required: false, default: "", hint: "Dernier jour de l'activité. L'événement s'affichera alors sur toutes les cases du calendrier concernées." }
+      - { label: "Date de début", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Premier jour de l'activité. Pour une activité d'une seule journée, laissez la date de fin vide." }
+      - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Dernier jour de l'activité. L'événement s'affichera alors sur toutes les cases du calendrier concernées." }
       - { label: "Lieu (facultatif)", name: "lieu", widget: "string", required: false, hint: "Ex : FMPO, UCAD - Daara de Ndiassane - Tivaouane…" }
       - { label: "Description (facultatif)", name: "excerpt", widget: "text", required: false }
       - { label: "Image (facultatif)", name: "image", widget: "image", required: false }
@@ -832,9 +854,9 @@ collections:
           - { label: "Titre", name: "titre", widget: "string", hint: "Ex : Caravane Nationale 2026 - Phase 1, Mbour" }
           - { label: "Sous-titre (avant l'ouverture)", name: "sous_titre", widget: "text", hint: "Ex : Ouverture le 19 août 2026. Le direct démarre ici même : gardez la page à portée de main." }
           - { label: "Image de fond (facultatif)", name: "image", widget: "image", required: false, hint: "Affichée derrière le bandeau sur les deux sites, assombrie automatiquement pour garder le texte lisible." }
-          - { label: "Date et heure d'ouverture", name: "date_debut", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Le compte à rebours vise ce moment, puis la section passe en EN DIRECT." }
-          - { label: "Date et heure de clôture", name: "date_fin", widget: "datetime", format: "YYYY-MM-DDTHH:mm", hint: "Après ce moment, la section affiche le bilan final." }
-          - { label: "Retirer de l'accueil le (facultatif)", name: "date_retrait", widget: "datetime", format: "YYYY-MM-DDTHH:mm", required: false, default: "", hint: "Laissez vide pour un retrait automatique 7 jours après la clôture." }
+          - { label: "Date et heure d'ouverture", name: "date_debut", widget: "datetime", format: "YYYY-MM-DDTHH:mm", date_format: "DD/MM/YYYY", time_format: "HH:mm", hint: "Le compte à rebours vise ce moment, puis la section passe en EN DIRECT." }
+          - { label: "Date et heure de clôture", name: "date_fin", widget: "datetime", format: "YYYY-MM-DDTHH:mm", date_format: "DD/MM/YYYY", time_format: "HH:mm", hint: "Après ce moment, la section affiche le bilan final." }
+          - { label: "Retirer de l'accueil le (facultatif)", name: "date_retrait", widget: "datetime", format: "YYYY-MM-DDTHH:mm", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false, default: "", hint: "Laissez vide pour un retrait automatique 7 jours après la clôture." }
           - { label: "Message de clôture", name: "message_fin", widget: "text", required: false, hint: "Affiché après la clôture, au-dessus des chiffres finaux." }
           - label: "Phases / étapes / jours"
             name: "phases"

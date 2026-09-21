@@ -2,7 +2,7 @@
 title: "Retour sur la journée d’Accueil des Nouveaux Bacheliers 2019 : Une porte
   d’entrée dans la famille AMSTC"
 date: 2019-01-15T10:00:00.000Z
-categorie: evenements
+categorie: "rencontre"
 excerpt: En Janvier 2019, la journée d’Accueil des Nouveaux Bacheliers de la
   Faculté de Médecine, de Pharmacie et d’Odontologie (FMPO) a été organisée
   par l’Amicale des Étudiants de la FMPO au niveau du Grand Hall de la faculté.

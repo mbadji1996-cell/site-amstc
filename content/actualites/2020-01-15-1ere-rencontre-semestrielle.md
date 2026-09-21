@@ -2,6 +2,7 @@
 title: " Retour sur la 1ère Rencontre Semestrielle de l’AMSTC (2020) : Quand la
   fraternité se nourrissait d’enseignements religieux"
 date: 2020-01-15T10:00:00.000Z
+categorie: "rencontre"
 excerpt: L’objectif n’était pas seulement de transmettre un savoir, mais aussi
   de renforcer les liens entre les membres autour d’une même identité
   spirituelle. La rencontre semestrielle devenait ainsi un espace de

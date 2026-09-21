@@ -2,6 +2,7 @@
 title: 1ère édition des Journées Scientifiques, Sociales, Culturelles et
   d'Intégration (JSSCI 2023)
 date: 2023-04-15T10:00:00.000Z
+categorie: "jssci"
 excerpt: "Retour sur la 1ère édition des JSSCI 2023 : 72 heures d'intégration,
   de science et de solidarité avec l'AMSTC/FMPO"
 image: /assets/uploads/00.72h-amstc-01.jpg

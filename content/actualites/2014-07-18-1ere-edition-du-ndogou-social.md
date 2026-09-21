@@ -2,7 +2,7 @@
 title: "Retour sur le Ndogou Social 2014 : La 1ère édition d’un moment de
   partage et de fraternité"
 date: 2014-07-18T10:00:00.000Z
-categorie: social
+categorie: "ndogou"
 excerpt: "   "
 image: /assets/uploads/00506423330_10212794338330109_489194225112734543_n.jpg
 video_youtube: https://youtu.be/ponw0---zH0

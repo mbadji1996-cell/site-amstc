@@ -5,7 +5,7 @@ title: "Wébinaire sur \"L'hypertension artérielle : les nouvelles
 date: 2026-09-20
 date_debut: ""
 date_fin: ""
-categorie: sante
+categorie: "webinaire"
 excerpt: >-
   Bienvenue dans ce nouveau webinaire organisé par l'AMSTC (Association
   Médico-Sociale des Talibés Cheikh) ! 

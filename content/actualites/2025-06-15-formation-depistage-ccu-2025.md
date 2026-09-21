@@ -1,6 +1,7 @@
 ---
 title: Formation sur le Dépistage du Cancer du Col de l'Utérus - 2025
 date: 2025-06-15T10:00:00.000Z
+categorie: "atelier"
 excerpt: Formation, Prévention et Dépistage du Cancer du Col de l'Utérus
 image: /assets/uploads/formation-dépistage-ccu.jpeg
 ---

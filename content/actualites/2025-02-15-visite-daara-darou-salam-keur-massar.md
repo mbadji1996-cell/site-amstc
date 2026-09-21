@@ -2,6 +2,7 @@
 title: "Nemekou Daara - Etape 1 - Keur Massar : Visite médicale de l'Internat
   Darou Salam : 200 patients consultés"
 date: 2025-02-15T10:00:00.000Z
+categorie: "consultations"
 excerpt: "Journée de consultations gratuites à l'école coranique Darou Salam de
   Keur Massar : 200 patients pris en charge dont 175 enfants, accompagnée d'un
   don de denrées alimentaires."

@@ -2,7 +2,7 @@
 title: "Retour en images : La toute 1ère Journée de consultation dans un daara
   de l’AMSTC (24 avril 2016)"
 date: 2016-04-24T10:00:00.000Z
-categorie: sante
+categorie: "consultations"
 excerpt: >-
   Il y a des dates qui marquent le début d’une belle aventure. Pour
   l’Association Médico-Sociale des Talibés Cheikh (AMSTC), le dimanche 24 avril

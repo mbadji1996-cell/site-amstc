@@ -1,6 +1,7 @@
 ---
 title: Bienvenue sur notre nouveau site
 date: 2026-07-17T10:00:00.000Z
+categorie: "communication"
 excerpt: "L'AMSTC lance amstc.org : un site public pour découvrir l'association
   et un espace membres complet pour ses adhérents. Tour d'horizon de ce qu'on y
   trouve."

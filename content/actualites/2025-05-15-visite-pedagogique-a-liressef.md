@@ -2,6 +2,7 @@
 title: "Visite Pédagogique de l'AMSTC à l'IRESSEF : Une Immersion au Cœur de
   l'Excellence Scientifique"
 date: 2025-05-15T15:00:00.000Z
+categorie: "partenariat"
 excerpt: Visite organisée par la Commission Pédagogique à l'Institut de
   Recherche en Santé de Surveillance Épidémiologique et de Formation (IRESSEF).
 image: /assets/uploads/photo_7_2026-05-18_13-00-57.jpg
