@@ -17,11 +17,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projets - AMSTC</title>
 <link rel="canonical" href="https://amstc.org/projets">
-<meta name="description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<meta name="description" content="Les projets de l'AMSTC : santé, éducation, infrastructures et appui aux daaras.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AMSTC">
 <meta property="og:title" content="Projets - AMSTC">
-<meta property="og:description" content="Les projets menés ou portés par l'AMSTC - Association Médico-Sociale des Talibés Cheikh.">
+<meta property="og:description" content="Les projets de l'AMSTC : santé, éducation, infrastructures et appui aux daaras.">
 <meta property="og:url" content="https://amstc.org/projets">
 <meta property="og:image" content="https://amstc.org/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -41,44 +41,70 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.6;}
   a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
   .wrap{max-width:1400px; margin:0 auto; padding:0 28px;}
   header{padding:24px 0; border-bottom:1px solid var(--line); background:var(--green-deep);}
   .logo-img{height:42px;filter:brightness(0) invert(1);}
-  .back{font-family:var(--mono); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-accent); display:inline-block; margin:36px 0 8px;}
-  h1{font-family:var(--display); font-weight:600; color:var(--text-heading); font-size:2.1rem; margin-bottom:40px;}
-  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; padding-bottom:90px;}
-  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
-  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; transition:transform .2s ease, box-shadow .2s ease; position:relative;}
-  .card:hover{transform:translateY(-4px); box-shadow:0 12px 32px rgba(6,68,28,0.10);}
-  .card img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--paper-alt);}
-  .card-body{padding:20px 22px;}
-  .card-date{font-family:var(--mono); font-size:0.72rem; color:var(--text-accent); text-transform:uppercase; letter-spacing:0.06em;}
-  .card h3{font-family:var(--display); font-size:1.15rem; color:var(--text-heading); margin:8px 0 8px;}
-  .card p{font-size:0.92rem; color:var(--text-muted);}
-  .status-badge{
-    position:absolute; top:14px; right:14px; font-family:var(--mono); font-size:0.68rem; text-transform:uppercase;
-    letter-spacing:0.05em; padding:5px 11px; border-radius:999px; background:var(--surface); color:var(--text-heading);
-    box-shadow:0 2px 8px rgba(6,68,28,0.15);
-  }
-  .status-badge.statut-en-cours{background:var(--gold); color:var(--green-deep);}
-  .status-badge.statut-termine{background:var(--green); color:var(--white);}
-  .status-badge.statut-a-venir{background:var(--surface); color:var(--text-heading); border:1px solid var(--line);}
-  .empty, .error{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
-  /* L'ecart que donnait le lien « Retour a l'accueil », retire au profit
-     de la barre du site. */
-  body > .wrap:first-of-type{padding-top:36px;}
+  .error{color:var(--text-muted); font-family:var(--mono); font-size:0.85rem; padding:20px 0;}
 </style>
+<link rel="stylesheet" href="assets/css/realisations.css">
+<link rel="stylesheet" href="assets/css/projets.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="assets/css/barre-site.css">
 </head>
 <body>
 <header class="barre-site" id="barreSite"></header>
 <script src="assets/js/barre-site.js"></script>
 <div class="wrap">
-  <h1>Projets</h1>
   <noscript><p class="error">L'affichage des projets nécessite JavaScript. Veuillez l'activer dans votre navigateur, ou nous écrire à contact@amstc.org.</p></noscript>
-  <div id="grid" class="grid">
-    <p class="empty">Chargement des projets…</p>
+
+  <!-- Bandeau : textes, photo, citation et chiffres viennent du CMS
+       (content/projets-page.json). Ce qui est écrit ici reste affiché si
+       le fichier n'arrive pas. -->
+  <section class="rl-bandeau">
+    <div class="rl-bandeau-photo" id="pjPhoto" style="display:none;"><img id="pjPhotoImg" src="" alt="" loading="lazy"></div>
+    <div class="rl-bandeau-texte">
+      <p class="rl-accroche"><i class="ti ti-building-community" aria-hidden="true"></i> <span id="pjAccroche">Nos projets</span></p>
+      <h1 id="pjTitre">Ensemble pour un <em>avenir meilleur</em></h1>
+      <p class="rl-bandeau-sous" id="pjTexte">Découvrez nos projets en cours et réalisés pour améliorer l'accès aux soins, à l'éducation et aux conditions de vie des talibés et des communautés.</p>
+    </div>
+    <p class="rl-citation" id="pjCitation"></p>
+  </section>
+
+  <div class="rl-barre">
+    <div class="rl-cats" id="pjCats" style="display:contents;"></div>
+    <span class="rl-tri">
+      <i class="ti ti-arrows-sort" aria-hidden="true"></i>
+      <label for="pjTri">Trier par</label>
+      <select id="pjTri">
+        <option value="recent">Plus récent</option>
+        <option value="ancien">Plus ancien</option>
+        <option value="titre">Titre (A-Z)</option>
+      </select>
+    </span>
   </div>
+
+  <div class="pj-corps">
+    <div class="pj-grille" id="grid">
+      <p class="pj-vide">Chargement des projets…</p>
+    </div>
+
+    <aside class="pj-aside">
+      <div class="pj-carte-aside" id="pjBlocChiffres">
+        <p class="pj-aside-titre">Nos projets en chiffres</p>
+        <div class="pj-chiffres" id="pjChiffres"></div>
+      </div>
+
+      <div class="pj-appel" id="pjAppel">
+        <div class="pj-appel-ic" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+        <p class="pj-aside-titre" id="pjAppelTitre">Soutenez nos projets</p>
+        <p class="pj-appel-texte" id="pjAppelTexte">Votre don permet de concrétiser ces actions et d'offrir un avenir meilleur aux talibés.</p>
+        <a class="pj-appel-bouton" id="pjAppelLien" href="don"><i class="ti ti-heart" aria-hidden="true"></i> <span id="pjAppelBouton">Faire un don</span></a>
+      </div>
+    </aside>
+  </div>
+
+  <p class="pj-citation" id="pjCitationBas" style="display:none;"></p>
 </div>
 
 <script>
@@ -87,37 +113,156 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function slugifyStatut(s) {
-    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  // ===== Domaines d'intervention (champ « domaine » du CMS) =====
+  const DOMAINES = [
+    ['sante', 'Santé', 'ti-stethoscope'],
+    ['education', 'Éducation', 'ti-book'],
+    ['infrastructures', 'Infrastructures', 'ti-building-community'],
+    ['formation', 'Formation', 'ti-school'],
+    ['social', 'Social', 'ti-users'],
+    ['solidarite', 'Solidarité', 'ti-heart-handshake'],
+  ];
+  const LIBELLE_DOM = Object.fromEntries(DOMAINES.map(([c, l]) => [c, l]));
+  const ICONE_DOM = Object.fromEntries(DOMAINES.map(([c, , i]) => [c, i]));
+  const ICONES_CHIFFRE = {
+    projets: 'ti-stack-2', beneficiaires: 'ti-users', communautes: 'ti-users',
+    talibes: 'ti-heart', domaines: 'ti-school', regions: 'ti-map-pin', annees: 'ti-calendar',
+  };
+
+  let projets = [];
+  let filtre = 'tous';
+  let tri = 'recent';
+
+  // ===== Bandeau, chiffres et appel au don (CMS) =====
+  function titreOr(t){
+    return esc(t).replace(/\*\*?([^*]+)\*\*?/g, '<em>$1</em>');
   }
-  async function loadArticles() {
-    const grid = document.getElementById("grid");
+  async function chargerBandeau(){
+    let d = null;
     try {
-      const res = await fetch("content/projets-index.json");
-      if (!res.ok) throw new Error("index indisponible");
-      const articles = await res.json();
-
-      if (articles.length === 0) {
-        grid.innerHTML = '<p class="empty">Aucun projet publié pour le moment.</p>';
-        return;
-      }
-
-      grid.innerHTML = articles.map(a => `
-        <a class="card" href="projet?slug=${encodeURIComponent(a.slug)}">
-          ${a.statut ? `<span class="status-badge statut-${slugifyStatut(a.statut)}">${esc(a.statut)}</span>` : ""}
-          ${a.image ? `<img src="${esc(a.image)}" alt="">` : ""}
-          <div class="card-body">
-            <span class="card-date">${formatDatePeriode(a)}</span>
-            <h3>${esc(a.title || 'Sans titre')}</h3>
-            <p>${esc(a.excerpt || '')}</p>
-          </div>
-        </a>
-      `).join("");
-    } catch (e) {
-      grid.innerHTML = '<p class="error">Impossible de charger les projets pour le moment.</p>';
+      const r = await fetch('content/projets-page.json?t=' + Date.now());
+      if (r.ok) d = await r.json();
+    } catch (e) { /* le bandeau garde ce qui est écrit dans la page */ }
+    if (!d) { remplirChiffres(null); return; }
+    const poser = (id, v) => { if (v) document.getElementById(id).textContent = v; };
+    poser('pjAccroche', d.accroche);
+    if (d.titre) document.getElementById('pjTitre').innerHTML = titreOr(d.titre);
+    poser('pjTexte', d.texte);
+    poser('pjAppelTitre', d.appel_titre);
+    poser('pjAppelTexte', d.appel_texte);
+    poser('pjAppelBouton', d.appel_bouton);
+    if (d.appel_lien) document.getElementById('pjAppelLien').href = d.appel_lien;
+    if (d.citation) document.getElementById('pjCitation').textContent = d.citation;
+    if (d.citation_bas) {
+      const c = document.getElementById('pjCitationBas');
+      c.innerHTML = '<i class="ti ti-plant" aria-hidden="true"></i> « ' + esc(d.citation_bas) + ' »';
+      c.style.display = '';
     }
+    if (d.image) {
+      document.getElementById('pjPhotoImg').src = d.image;
+      document.getElementById('pjPhoto').style.display = '';
+    }
+    remplirChiffres(d.chiffres);
   }
-  loadArticles();
+
+  // Les chiffres viennent du CMS ; sans eux, on compte au moins les
+  // projets publiés plutôt que de laisser un cadre vide.
+  function remplirChiffres(liste){
+    const saisis = (Array.isArray(liste) ? liste : []).filter(c => c && c.nombre);
+    const chiffres = saisis.length ? saisis : [
+      { nombre: String(projets.length), libelle: 'Projets publiés', icone: 'projets' },
+      { nombre: String(projets.filter(p => estEnCours(p)).length), libelle: 'Projets en cours', icone: 'annees' },
+    ];
+    const zone = document.getElementById('pjChiffres');
+    zone.innerHTML = chiffres.map(c => `
+      <div class="pj-chiffre">
+        <span class="pj-chiffre-ic" aria-hidden="true"><i class="ti ${esc(ICONES_CHIFFRE[c.icone] || 'ti-stack-2')}"></i></span>
+        <div class="pj-chiffre-nb">${esc(c.nombre)}</div>
+        <div class="pj-chiffre-label">${esc(c.libelle || '')}</div>
+      </div>`).join('');
+    document.getElementById('pjBlocChiffres').style.display = chiffres.length ? '' : 'none';
+  }
+
+  function slugifyStatut(s) {
+    return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+  function estEnCours(p){ return slugifyStatut(p.statut) === 'en-cours'; }
+
+  // ===== Pastilles : état des projets, puis domaines réellement utilisés =====
+  function remplirFiltres(){
+    const etats = [['tous', 'Tous les projets', 'ti-layout-grid']];
+    if (projets.some(p => estEnCours(p))) etats.push(['en-cours', 'En cours', 'ti-progress']);
+    if (projets.some(p => slugifyStatut(p.statut) === 'termine')) etats.push(['termine', 'Réalisés', 'ti-check']);
+    if (projets.some(p => slugifyStatut(p.statut) === 'a-venir')) etats.push(['a-venir', 'À venir', 'ti-hourglass']);
+    const presents = new Set(projets.map(p => p.domaine).filter(Boolean));
+    const doms = DOMAINES.filter(([cle]) => presents.has(cle)).map(([cle, l, i]) => ['dom-' + cle, l, i]);
+
+    const zone = document.getElementById('pjCats');
+    zone.innerHTML = etats.concat(doms).map(([cle, libelle, icone]) =>
+      `<button type="button" class="rl-cat ${cle === filtre ? 'actif' : ''}" data-cat="${cle}">
+         <i class="ti ${icone}" aria-hidden="true"></i> ${esc(libelle)}</button>`).join('');
+    zone.querySelectorAll('.rl-cat').forEach(b => b.addEventListener('click', () => {
+      filtre = b.dataset.cat;
+      zone.querySelectorAll('.rl-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficher();
+    }));
+  }
+
+  function carte(p){
+    const etat = slugifyStatut(p.statut);
+    const dom = LIBELLE_DOM[p.domaine] ? p.domaine : '';
+    return `
+    <a class="pj-carte" href="projet?slug=${encodeURIComponent(p.slug)}">
+      <span class="pj-visuel">
+        ${p.image
+          ? `<img src="${esc(p.image)}" alt="" loading="lazy">`
+          : `<span class="pj-visuel-vide"><i class="ti ti-building-community"></i></span>`}
+        ${p.statut ? `<span class="pj-etat ${esc(etat)}"><i class="ti ${etat === 'termine' ? 'ti-check' : etat === 'a-venir' ? 'ti-hourglass' : 'ti-progress'}" aria-hidden="true"></i> ${esc(p.statut)}</span>` : ''}
+      </span>
+      <span class="pj-corps-carte">
+        <span class="pj-date"><i class="ti ti-calendar" aria-hidden="true"></i> ${formatDatePeriode(p)}</span>
+        <span class="pj-titre">${esc(p.title || 'Sans titre')}</span>
+        <span class="pj-extrait">${esc(p.excerpt || '')}</span>
+        <span class="pj-pied">
+          ${dom ? `<span class="pj-domaine"><i class="ti ${esc(ICONE_DOM[dom])}" aria-hidden="true"></i> ${esc(LIBELLE_DOM[dom])}</span>` : ''}
+          <span class="pj-lien">Voir le détail <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+        </span>
+      </span>
+    </a>`;
+  }
+
+  function afficher(){
+    let visibles = projets.filter(p => {
+      if (filtre === 'tous') return true;
+      if (filtre.startsWith('dom-')) return p.domaine === filtre.slice(4);
+      return slugifyStatut(p.statut) === filtre;
+    });
+    const date = p => new Date(p.date || 0).getTime();
+    if (tri === 'ancien') visibles = [...visibles].sort((a, b) => date(a) - date(b));
+    else if (tri === 'titre') visibles = [...visibles].sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'fr'));
+    else visibles = [...visibles].sort((a, b) => date(b) - date(a));
+
+    document.getElementById('grid').innerHTML = visibles.length
+      ? visibles.map(carte).join('')
+      : `<p class="pj-vide">${projets.length ? 'Aucun projet ne correspond à ce filtre.' : 'Aucun projet publié pour le moment.'}</p>`;
+  }
+
+  document.getElementById('pjTri').addEventListener('change', (e) => { tri = e.target.value; afficher(); });
+
+  async function charger(){
+    try {
+      const res = await fetch('content/projets-index.json');
+      projets = res.ok ? await res.json() : [];
+    } catch (e) {
+      document.getElementById('grid').innerHTML = '<p class="pj-vide">Impossible de charger les projets pour le moment.</p>';
+      return;
+    }
+    remplirFiltres();
+    afficher();
+    await chargerBandeau();
+  }
+  charger();
 </script>
 </body>
 </html>

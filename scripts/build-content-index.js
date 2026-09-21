@@ -43,6 +43,9 @@ function buildIndex(folderName) {
       // s'affiche sans pastille et rejoint « Toutes ».
       categorie: data.categorie || '',
       statut: data.statut || '',
+      // Domaine d'intervention d'un projet : sante, education,
+      // infrastructures... Sert aux pastilles de la page Projets.
+      domaine: data.domaine || '',
       projet: data.projet || '',
       ordre: data.ordre !== undefined ? Number(data.ordre) : '',
       // Propres aux événements du calendrier (content/evenements)
