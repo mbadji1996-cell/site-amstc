@@ -14,7 +14,7 @@
   </url>
   <url>
     <loc>https://amstc.org/formations</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -513,6 +513,12 @@
   <url>
     <loc>https://amstc.org/article?slug=2014-07-18-1ere-edition-du-ndogou-social</loc>
     <lastmod>2014-07-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://amstc.org/formation?slug=2026-09-20-hypertension-arterielle-nouvelles-recommandations</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
