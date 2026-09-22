@@ -9,6 +9,13 @@ function parseFrontMatter(raw) {
   return lireFrontMatter(raw).data;
 }
 
+// Une valeur seule, une liste, ou rien : toujours une liste propre.
+function listeCategories(valeur) {
+  if (Array.isArray(valeur)) return valeur.map(v => String(v).trim()).filter(Boolean);
+  const t = String(valeur || '').trim();
+  return t ? [t] : [];
+}
+
 function buildIndex(folderName) {
   const dir = path.join(ROOT, 'content', folderName);
   const outFile = path.join(ROOT, 'content', `${folderName}-index.json`);
@@ -38,10 +45,12 @@ function buildIndex(folderName) {
       // le corps est en base (scripts/reserver-contenus.js).
       reserve: /^(true|yes|oui|1)$/i.test(String(data.reserve || '').trim()),
       image: data.image || '',
-      // Categorie affichee en pastille sur la carte et servant aux
-      // filtres (Education & Islam, Sante, Social...). Vide : la carte
-      // s'affiche sans pastille et rejoint « Toutes ».
-      categorie: data.categorie || '',
+      // Activites de la fiche : une fiche peut en porter plusieurs (un
+      // gamou couvert medicalement est un gamou ET des consultations).
+      // L'index ecrit toujours une LISTE ; « categorie » garde la
+      // premiere valeur, pour ce qui lit encore une chaine.
+      categorie: listeCategories(data.categorie)[0] || '',
+      categories: listeCategories(data.categorie),
       statut: data.statut || '',
       // Domaine d'intervention d'un projet : sante, education,
       // infrastructures... Sert aux pastilles de la page Projets.

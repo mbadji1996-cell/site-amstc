@@ -9,6 +9,9 @@
     "reserve": false,
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsgjcSl5EgzDYL8NFQ_NnF_maxaSw5cYUm7TugdVDl9S-aHBKICHbSydoW&s=10",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -26,6 +29,9 @@
     "reserve": false,
     "image": "",
     "categorie": "cours",
+    "categories": [
+      "cours"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -43,6 +49,9 @@
     "reserve": false,
     "image": "",
     "categorie": "cours",
+    "categories": [
+      "cours"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -60,6 +69,9 @@
     "reserve": false,
     "image": "",
     "categorie": "sensibilisation",
+    "categories": [
+      "sensibilisation"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -77,6 +89,9 @@
     "reserve": false,
     "image": "/assets/uploads/syndromes-pneumologiques-01.jpg",
     "categorie": "cours",
+    "categories": [
+      "cours"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -94,6 +109,9 @@
     "reserve": false,
     "image": "",
     "categorie": "sensibilisation",
+    "categories": [
+      "sensibilisation"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",

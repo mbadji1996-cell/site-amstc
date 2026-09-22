@@ -748,9 +748,10 @@ collections:
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
       - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
       - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
-      - label: "Catégorie"
+      - label: "Activités"
         name: "categorie"
         widget: "select"
+        multiple: true
         required: false
         options:
           - { label: "Consultations", value: "consultations" }
@@ -772,7 +773,7 @@ collections:
           - { label: "Projet", value: "projet" }
           - { label: "Communication", value: "communication" }
           - { label: "Vie associative", value: "vie-associative" }
-        hint: "Le type d'activité : il donne la pastille de la carte et les filtres de la page. Facultatif."
+        hint: "Le ou les types d'activité. Un gamou couvert médicalement porte par exemple « Gamou » et « Consultations ». Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
@@ -790,9 +791,10 @@ collections:
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, hint: "Date de référence : elle sert au classement, au nom du fichier et au bilan annuel. Pour une activité sur plusieurs jours, complétez en plus les deux champs ci-dessous." }
       - { label: "Date de début (facultatif)", name: "date_debut", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "À remplir seulement si l'activité s'étale sur plusieurs jours. Si vous laissez vide, c'est la date ci-dessus qui sert de début." }
       - { label: "Date de fin (facultatif)", name: "date_fin", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, required: false, default: "", hint: "Renseignée, la fiche affichera « du ... au ... » au lieu d'une date seule." }
-      - label: "Catégorie"
+      - label: "Activités"
         name: "categorie"
         widget: "select"
+        multiple: true
         required: false
         options:
           - { label: "Consultations", value: "consultations" }
@@ -814,7 +816,7 @@ collections:
           - { label: "Projet", value: "projet" }
           - { label: "Communication", value: "communication" }
           - { label: "Vie associative", value: "vie-associative" }
-        hint: "Le type d'activité : il donne la pastille de la carte et les filtres de la page. Facultatif."
+        hint: "Le ou les types d'activité. Un gamou couvert médicalement porte par exemple « Gamou » et « Consultations ». Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }

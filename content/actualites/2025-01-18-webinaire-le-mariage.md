@@ -1,7 +1,8 @@
 ---
 title: "Webinaire : Le mariage - Obligations et traditions prophétiques"
 date: 2025-01-18T21:00:00.000Z
-categorie: "webinaire"
+categorie:
+  - webinaire
 excerpt: « Parlons-en ! » Échange sur le groupe WhatsApp autour des obligations
   et traditions prophétiques du mariage.
 image: /assets/uploads/parlons-en-le-mariage-preview-01.jpg

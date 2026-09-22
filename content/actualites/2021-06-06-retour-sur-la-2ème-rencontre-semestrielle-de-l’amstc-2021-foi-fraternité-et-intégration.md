@@ -4,7 +4,8 @@ title: "Retour sur la 2ème Rencontre Semestrielle de l’AMSTC (2021) : Foi,
 date: 2021-06-06
 date_debut: ""
 date_fin: ""
-categorie: "rencontre"
+categorie:
+  - rencontre
 excerpt: Au-delà des enseignements, cette deuxième édition avait pour objectif
   majeur d’intégrer les nouveaux membres au sein de la famille AMSTC. Les
   anciens ont joué un rôle clé en accompagnant les nouveaux, en répondant à

@@ -1,7 +1,8 @@
 ---
 title: "Syndromes pneumologiques : sémiologie radiologique thoracique"
 date: 2025-06-15T10:00:00.000Z
-categorie: "cours"
+categorie:
+  - cours
 excerpt: "Mois de la Pneumologie. Critères de validité d'une radiographie thoracique, syndromes bronchique, alvéolaire et interstitiel, pleurésie et pneumothorax, avec un quiz d'auto-évaluation."
 image: "/assets/uploads/syndromes-pneumologiques-01.jpg"
 ---

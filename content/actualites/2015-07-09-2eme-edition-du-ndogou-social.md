@@ -2,7 +2,9 @@
 title: "Retour en image : Le Grand Ndogou Social de 2015 (2ème édition) : Unir
   la science et la solidarité !"
 date: 2015-07-09T10:00:00.000Z
-categorie: "ndogou"
+categorie:
+  - ndogou
+  - epu
 excerpt: >
   Le jeudi 9 juillet 2015 illustre à la perfection l'essence même de
   l'Association Médico-Sociale des Talibés Cheikh (AMSTC). Ce jour-là, au cœur

@@ -2,7 +2,8 @@
 title: Nemekou Daara - Etape 2 - Visite médicale + Don de denrées au Daara
   Serigne Babacar Sy de Tivaouane Peul
 date: 2025-05-18T10:00:00.000Z
-categorie: "consultations"
+categorie:
+  - consultations
 excerpt: Consultations gratuites pour 68 personnes, don de denrées alimentaires,
   de matériel de première nécessité et de 40 moustiquaires imprégnées aux
   apprenants du daara.

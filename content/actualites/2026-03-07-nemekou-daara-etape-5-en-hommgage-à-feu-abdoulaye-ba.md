@@ -5,7 +5,8 @@ title: "Nemekou Daara - Etape 5 - Ramadan (en hommgage à Feu Abdoulaye BA) :
 date: 2026-03-07
 date_debut: ""
 date_fin: ""
-categorie: "consultations"
+categorie:
+  - consultations
 excerpt: |-
   3 Daaras ont bénéficié de soins et de dons de denrées : 
   1.Daaral Houda de Grand Dakar

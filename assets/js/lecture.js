@@ -7,7 +7,7 @@
         construit le sommaire a partir des titres du texte, et
         souligne celui qu'on est en train de lire.
 
-     lectureProches({fichier, slug, categorie, page, cible, libelles})
+     lectureProches({fichier, slug, categories, page, cible})
         propose trois fiches voisines, de la meme categorie quand il
         y en a, sinon les plus recentes.
 
@@ -90,8 +90,13 @@
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (liste) {
         var autres = (liste || []).filter(function (a) { return a.slug !== options.slug; });
-        var memeType = options.categorie
-          ? autres.filter(function (a) { return a.categorie === options.categorie; })
+        // Proches = au moins une activite en commun.
+        var cats = options.categories || (options.categorie ? [options.categorie] : []);
+        var memeType = cats.length
+          ? autres.filter(function (a) {
+              var siennes = a.categories || (a.categorie ? [a.categorie] : []);
+              return siennes.some(function (c) { return cats.indexOf(c) !== -1; });
+            })
           : [];
         // De la meme categorie d'abord, completees par les plus recentes.
         var choix = memeType.concat(autres.filter(function (a) { return memeType.indexOf(a) === -1; })).slice(0, 3);

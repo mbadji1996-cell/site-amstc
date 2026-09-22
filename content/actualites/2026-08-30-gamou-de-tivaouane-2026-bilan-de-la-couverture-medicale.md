@@ -1,7 +1,9 @@
 ---
 title: "Gamou de Tivaouane 2026 : bilan de la couverture médicale"
 date: 2026-08-30
-categorie: "consultations"
+categorie:
+  - consultations
+  - gamou
 excerpt: "875 consultations sur six sites de Tivaouane, en deux jours, et un registre tenu pour la première fois sur une plateforme numérique"
 image: /assets/uploads/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-cou-couverture.jpg
 ---

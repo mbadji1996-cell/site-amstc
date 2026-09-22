@@ -9,6 +9,9 @@
     "reserve": false,
     "image": "/assets/uploads/pp.png",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -26,6 +29,10 @@
     "reserve": false,
     "image": "/assets/uploads/2026-08-30-gamou-de-tivaouane-2026-bilan-de-la-cou-couverture.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -43,6 +50,9 @@
     "reserve": false,
     "image": "/assets/uploads/consultation-amstc.jpg",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -60,6 +70,9 @@
     "reserve": false,
     "image": "/assets/uploads/site.jpg",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -77,6 +90,9 @@
     "reserve": false,
     "image": "/assets/uploads/00.affiche-jssci-2026-72h-amstc_affiche.jpg",
     "categorie": "jssci",
+    "categories": [
+      "jssci"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -94,6 +110,9 @@
     "reserve": false,
     "image": "/assets/uploads/match-day-2026.jpg",
     "categorie": "vie-associative",
+    "categories": [
+      "vie-associative"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -111,6 +130,9 @@
     "reserve": false,
     "image": "/assets/uploads/némékou-daara-6-tivaouane.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -128,6 +150,9 @@
     "reserve": false,
     "image": "/assets/uploads/nemekou-daara-5-ramadan.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -145,6 +170,10 @@
     "reserve": false,
     "image": "/assets/uploads/affiche-ndogou.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -162,6 +191,9 @@
     "reserve": false,
     "image": "/assets/uploads/gamou-louga-2026-02-lq.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -179,6 +211,10 @@
     "reserve": false,
     "image": "/assets/uploads/gamou-louga-2026-02.png",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -196,6 +232,9 @@
     "reserve": false,
     "image": "/assets/uploads/nemekou-daara-3-rufisque-01.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -213,6 +252,9 @@
     "reserve": false,
     "image": "",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -230,6 +272,9 @@
     "reserve": false,
     "image": "/assets/uploads/formation-dépistage-ccu.jpeg",
     "categorie": "atelier",
+    "categories": [
+      "atelier"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -247,6 +292,9 @@
     "reserve": false,
     "image": "/assets/uploads/ndajé-soxna-yi-2025.jpg",
     "categorie": "rencontre",
+    "categories": [
+      "rencontre"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -264,6 +312,9 @@
     "reserve": false,
     "image": "/assets/uploads/nemekou-daara-2-daara-tivaouane-peulh-01.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -281,6 +332,9 @@
     "reserve": false,
     "image": "/assets/uploads/photo_7_2026-05-18_13-00-57.jpg",
     "categorie": "partenariat",
+    "categories": [
+      "partenariat"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -298,6 +352,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -315,6 +373,9 @@
     "reserve": false,
     "image": "",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -332,6 +393,9 @@
     "reserve": false,
     "image": "/assets/uploads/screenshot-2026-07-15-214457.png",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -349,6 +413,9 @@
     "reserve": false,
     "image": "/assets/uploads/48h-de-l-amstc-01.jpg",
     "categorie": "jssci",
+    "categories": [
+      "jssci"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -366,6 +433,9 @@
     "reserve": false,
     "image": "",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -383,6 +453,10 @@
     "reserve": false,
     "image": "/assets/uploads/00.cotisations-01.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -400,6 +474,9 @@
     "reserve": false,
     "image": "/assets/uploads/nemekou-daara-1-daara-keur-massar-01.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -417,6 +494,10 @@
     "reserve": false,
     "image": "",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -434,6 +515,9 @@
     "reserve": false,
     "image": "/assets/uploads/parlons-en-le-mariage-preview-01.jpg",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -451,6 +535,9 @@
     "reserve": false,
     "image": "",
     "categorie": "rencontre",
+    "categories": [
+      "rencontre"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -468,6 +555,9 @@
     "reserve": false,
     "image": "",
     "categorie": "sensibilisation",
+    "categories": [
+      "sensibilisation"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -485,6 +575,9 @@
     "reserve": false,
     "image": "",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -502,6 +595,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -519,6 +616,9 @@
     "reserve": false,
     "image": "/assets/uploads/00.affiche-96h-01.jpg",
     "categorie": "jssci",
+    "categories": [
+      "jssci"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -536,6 +636,9 @@
     "reserve": false,
     "image": "",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -553,6 +656,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -570,6 +677,9 @@
     "reserve": false,
     "image": "",
     "categorie": "masterclass",
+    "categories": [
+      "masterclass"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -587,6 +697,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -604,6 +718,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -621,6 +739,9 @@
     "reserve": false,
     "image": "",
     "categorie": "vie-associative",
+    "categories": [
+      "vie-associative"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -638,6 +759,9 @@
     "reserve": false,
     "image": "",
     "categorie": "campagne",
+    "categories": [
+      "campagne"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -655,6 +779,9 @@
     "reserve": false,
     "image": "",
     "categorie": "webinaire",
+    "categories": [
+      "webinaire"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -672,6 +799,9 @@
     "reserve": false,
     "image": "",
     "categorie": "sensibilisation",
+    "categories": [
+      "sensibilisation"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -689,6 +819,10 @@
     "reserve": false,
     "image": "/assets/uploads/2023-09-27-couverture-medicale-gamou-tivaouane-202-couverture.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -706,6 +840,10 @@
     "reserve": false,
     "image": "/assets/uploads/00.wadjal-gamou-2023-02.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -723,6 +861,9 @@
     "reserve": false,
     "image": "/assets/uploads/00.72h-amstc-01.jpg",
     "categorie": "jssci",
+    "categories": [
+      "jssci"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -740,6 +881,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -757,6 +902,10 @@
     "reserve": false,
     "image": "",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -774,6 +923,9 @@
     "reserve": false,
     "image": "",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -791,6 +943,10 @@
     "reserve": false,
     "image": "",
     "categorie": "consultations",
+    "categories": [
+      "consultations",
+      "gamou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -808,6 +964,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -825,6 +985,9 @@
     "reserve": false,
     "image": "",
     "categorie": "campagne",
+    "categories": [
+      "campagne"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -842,6 +1005,9 @@
     "reserve": false,
     "image": "",
     "categorie": "ziara",
+    "categories": [
+      "ziara"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -859,6 +1025,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -876,6 +1046,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -893,6 +1067,9 @@
     "reserve": false,
     "image": "/assets/uploads/rencontre-semestrielle-intégration-des-nouveaux-membres-2e-edition.jpg",
     "categorie": "rencontre",
+    "categories": [
+      "rencontre"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -910,6 +1087,9 @@
     "reserve": false,
     "image": "",
     "categorie": "ziara",
+    "categories": [
+      "ziara"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -927,6 +1107,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -944,6 +1128,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -961,6 +1149,9 @@
     "reserve": false,
     "image": "",
     "categorie": "atelier",
+    "categories": [
+      "atelier"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -978,6 +1169,9 @@
     "reserve": false,
     "image": "/assets/uploads/2020-1ere-rencontre-semestrielle-06.jpg",
     "categorie": "rencontre",
+    "categories": [
+      "rencontre"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -995,6 +1189,10 @@
     "reserve": false,
     "image": "",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1012,6 +1210,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1029,6 +1231,10 @@
     "reserve": false,
     "image": "",
     "categorie": "gamou",
+    "categories": [
+      "gamou",
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1046,6 +1252,9 @@
     "reserve": false,
     "image": "",
     "categorie": "epu",
+    "categories": [
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1063,6 +1272,9 @@
     "reserve": false,
     "image": "",
     "categorie": "epu",
+    "categories": [
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1080,6 +1292,9 @@
     "reserve": false,
     "image": "",
     "categorie": "don-sang",
+    "categories": [
+      "don-sang"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1097,6 +1312,9 @@
     "reserve": false,
     "image": "",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1114,6 +1332,9 @@
     "reserve": false,
     "image": "",
     "categorie": "rencontre",
+    "categories": [
+      "rencontre"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1131,6 +1352,10 @@
     "reserve": false,
     "image": "/assets/uploads/img-20180609-wa0195.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1148,6 +1373,9 @@
     "reserve": false,
     "image": "/assets/uploads/00.logo-amstc_seul.jpg",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1165,6 +1393,10 @@
     "reserve": false,
     "image": "/assets/uploads/img-20170611-wa0037.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1182,6 +1414,10 @@
     "reserve": false,
     "image": "/assets/uploads/515253874_10225393386816694_8601133715046877772_n.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1199,6 +1435,9 @@
     "reserve": false,
     "image": "/assets/uploads/515826219_10225384005382164_4374647019611199704_n.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1216,6 +1455,9 @@
     "reserve": false,
     "image": "/assets/uploads/515018057_10225382396461942_1395855052759385266_n.jpg",
     "categorie": "consultations",
+    "categories": [
+      "consultations"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1233,6 +1475,9 @@
     "reserve": false,
     "image": "/assets/uploads/514904421_10225369146610704_1438994469485181043_n.jpg",
     "categorie": "don-sang",
+    "categories": [
+      "don-sang"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1250,6 +1495,10 @@
     "reserve": false,
     "image": "/assets/uploads/515273423_10225338816612473_2543970973708109751_n.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou",
+      "epu"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1267,6 +1516,9 @@
     "reserve": false,
     "image": "/assets/uploads/amstc-premier-logo-2015.jpg",
     "categorie": "communication",
+    "categories": [
+      "communication"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",
@@ -1284,6 +1536,9 @@
     "reserve": false,
     "image": "/assets/uploads/00506423330_10212794338330109_489194225112734543_n.jpg",
     "categorie": "ndogou",
+    "categories": [
+      "ndogou"
+    ],
     "statut": "",
     "domaine": "",
     "projet": "",

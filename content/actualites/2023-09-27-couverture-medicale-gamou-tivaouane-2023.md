@@ -1,7 +1,9 @@
 ---
 title: "Couverture médicale du Gamou de Tivaouane 2023"
 date: 2023-09-27
-categorie: "consultations"
+categorie:
+  - consultations
+  - gamou
 excerpt: "731 personnes consultées, 64 soignants bénévoles et quatre postes de soins : retour sur les 48 heures de couverture médicale assurées par l'AMSTC lors du Gamou de Tivaouane 2023."
 image: /assets/uploads/2023-09-27-couverture-medicale-gamou-tivaouane-202-couverture.jpg
 ---

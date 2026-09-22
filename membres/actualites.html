@@ -178,12 +178,18 @@
     ['vie-associative', 'Vie associative', 'ti-flag'],
   ];
   const LIBELLE_CAT = Object.fromEntries(CATEGORIES.map(([c, l]) => [c, l]));
+  // Une fiche peut porter plusieurs activites : le CMS ecrit une liste,
+  // les anciennes fiches une valeur seule. On lit les deux.
+  function catsDe(a){
+    const v = a.categories || a.categorie;
+    return (Array.isArray(v) ? v : (v ? [v] : [])).filter(c => LIBELLE_CAT[c]);
+  }
   const ICONE_CAT = Object.fromEntries(CATEGORIES.map(([c, , i]) => [c, i]));
   let categorieChoisie = 'toutes';
 
   // Seules les categories reellement utilisees recoivent une pastille.
   function remplirCategories(){
-    const presentes = new Set(tousLesArticles.map(a => a.categorie).filter(Boolean));
+    const presentes = new Set(tousLesArticles.flatMap(catsDe));
     const zone = document.getElementById('rlCats');
     if (!zone) return;
     zone.innerHTML = CATEGORIES
@@ -252,9 +258,9 @@
     const grid = document.getElementById("grid");
     const q = normaliser(document.getElementById("rechercheInput").value.trim());
     const visibles = tousLesArticles.filter(a => {
-      if (categorieChoisie !== 'toutes' && a.categorie !== categorieChoisie) return false;
+      if (categorieChoisie !== 'toutes' && !catsDe(a).includes(categorieChoisie)) return false;
       if (!q) return true;
-      return normaliser([a.title, a.excerpt, LIBELLE_CAT[a.categorie]].filter(Boolean).join(" ")).includes(q);
+      return normaliser([a.title, a.excerpt, ...catsDe(a).map(c => LIBELLE_CAT[c])].filter(Boolean).join(" ")).includes(q);
     });
     if (visibles.length === 0) {
       grid.innerHTML = ((q || categorieChoisie !== 'toutes')
@@ -267,7 +273,7 @@
       const href = a._restricted
         ? `actualite-reservee?id=${encodeURIComponent(a.id)}`
         : `../article?slug=${encodeURIComponent(a.slug)}`;
-      const cat = LIBELLE_CAT[a.categorie] ? a.categorie : '';
+      const cat = catsDe(a)[0] || '';
       return `
         <a class="rl-carte" href="${href}">
           <span class="rl-visuel">

@@ -189,9 +189,16 @@
     'communication': ['Communication', 'ti-broadcast'],
     'vie-associative': ['Vie associative', 'ti-flag'],
   };
-  function pastilleCategorie(data){
-    const c = LIBELLE_CAT[data.categorie];
-    return c ? { icone: c[1], texte: c[0] } : null;
+  // Une fiche peut porter plusieurs activites : autant de pastilles.
+  function pastillesCategories(data){
+    const v = data.categories || data.categorie;
+    return (Array.isArray(v) ? v : (v ? [v] : []))
+      .filter(c => LIBELLE_CAT[c])
+      .map(c => ({ icone: LIBELLE_CAT[c][1], texte: LIBELLE_CAT[c][0] }));
+  }
+  function catsDe(data){
+    const v = data.categories || data.categorie;
+    return (Array.isArray(v) ? v : (v ? [v] : [])).filter(c => LIBELLE_CAT[c]);
   }
   // Apres l'affichage : sommaire, fiches voisines, partage.
   function finirLecture(data, slug, prefixe, fichier, page){
@@ -200,7 +207,7 @@
       lectureSommaire(corps, document.getElementById('lcSommaire'));
     }
     if (typeof lectureProches === 'function') {
-      lectureProches({ fichier: fichier, slug: slug, categorie: data.categorie,
+      lectureProches({ fichier: fichier, slug: slug, categories: catsDe(data),
         page: page, cible: document.getElementById('lcProches') });
     }
     if (corps && typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(corps);
@@ -258,7 +265,7 @@
             if (!err && ligne && ligne.content) { corpsHtml = rendreCorps(ligne.content); etat = "lecteur"; }
           }
         } catch (e) { /* sans client Supabase : on reste sur l'invitation */ }
-        const CHIPS = [pastilleCategorie(data), { icone: 'ti-lock', texte: 'Réservé aux membres', or: true }];
+        const CHIPS = pastillesCategories(data).concat([{ icone: 'ti-lock', texte: 'Réservé aux membres', or: true }]);
         const VIDEO = null;
         content.innerHTML = lectureGabarit({
           badge: 'Nos formations', badgeIcone: 'ti-school',
@@ -298,7 +305,7 @@
       }
       injectArticleSchema(data, "Formation");
       const ytId = youtubeEmbedId(data.video_youtube);
-      const CHIPS = [pastilleCategorie(data)];
+      const CHIPS = pastillesCategories(data);
       const VIDEO = ytId;
       content.innerHTML = lectureGabarit({
         badge: 'Nos formations', badgeIcone: 'ti-school',

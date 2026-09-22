@@ -2,7 +2,8 @@
 title: "Notre identité d'aujourd'hui : L'alliance parfaite entre notre foi et
   notre vocation médicale"
 date: 2017-01-15T10:00:00.000Z
-categorie: "communication"
+categorie:
+  - communication
 excerpt: Contenu à venir.
 image: /assets/uploads/00.logo-amstc_seul.jpg
 ---

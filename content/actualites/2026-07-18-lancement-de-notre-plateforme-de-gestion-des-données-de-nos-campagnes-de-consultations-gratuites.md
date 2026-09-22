@@ -2,7 +2,8 @@
 title: Lancement de notre plateforme de gestion des données de nos campagnes de
   consultations gratuites
 date: 2026-07-18T20:00:00.000+00:00
-categorie: "communication"
+categorie:
+  - communication
 excerpt: La gestion de nos campagnes de consultations gratuites entre dans l'ère
   numérique
 image: /assets/uploads/consultation-amstc.jpg
