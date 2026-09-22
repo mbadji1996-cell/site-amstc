@@ -325,16 +325,44 @@
   // Couverture par lecon : un quiz reprend la photo de son cours.
   let couvertures = {};
 
-  async function montrerAccueil(userId){
+  function messageAccueil(texte){
     document.getElementById('loadingMsg').style.display = 'none';
     document.getElementById('quizAccueil').style.display = '';
+    document.getElementById('quizListe').innerHTML = '<p class="ec-vide">' + escHtml(texte) + '</p>';
+  }
 
-    const [qz, qs, tent, lec] = await Promise.all([
-      supabaseClient.from('quizzes').select('*').eq('is_published', true).order('created_at', { ascending: false }),
-      supabaseClient.from('quiz_questions').select('quiz_id'),
-      supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId),
-      supabaseClient.from('medical_lessons').select('id, cover_image'),
-    ]);
+  async function montrerAccueil(userId){
+    const accueil = document.getElementById('quizAccueil');
+    // Page servie depuis un vieux cache : son balisage n'a pas encore la
+    // liste. On la recharge une fois, plutot que de laisser un ecran vide.
+    if (!accueil) {
+      if (!sessionStorage.getItem('quiz-recharge')) {
+        sessionStorage.setItem('quiz-recharge', '1');
+        location.reload();
+      }
+      return;
+    }
+    sessionStorage.removeItem('quiz-recharge');
+    document.getElementById('loadingMsg').style.display = 'none';
+    accueil.style.display = '';
+
+    let qz, qs, tent, lec;
+    try {
+      [qz, qs, tent, lec] = await Promise.all([
+        supabaseClient.from('quizzes').select('*').eq('is_published', true).order('created_at', { ascending: false }),
+        supabaseClient.from('quiz_questions').select('quiz_id'),
+        supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId),
+        supabaseClient.from('medical_lessons').select('id, cover_image'),
+      ]);
+    } catch (e) {
+      // Une page blanche n'apprend rien : on dit ce qui a manque.
+      messageAccueil('Impossible de charger les quiz pour le moment. ' + (e && e.message ? e.message : ''));
+      return;
+    }
+    if (qz && qz.error) {
+      messageAccueil('Impossible de charger les quiz : ' + qz.error.message);
+      return;
+    }
     tousLesQuiz = qz.data || [];
     couvertures = {};
     (lec.data || []).forEach(l => { if (l.cover_image) couvertures[l.id] = l.cover_image; });
