@@ -394,7 +394,7 @@
     document.getElementById('quizBar').style.width = pct + '%';
     document.getElementById('qCounter').textContent = `Question ${currentQ + 1} / ${total}`;
     document.getElementById('questionNum').textContent = `Question ${currentQ + 1}`;
-    document.getElementById('questionText').textContent = q.question_text;
+    document.getElementById('questionText').textContent = q.question;
     document.getElementById('nextBtn').style.display = 'none';
     document.getElementById('explanationBox').style.display = 'none';
     // Re-trigger slide animation
@@ -506,7 +506,7 @@
       }).join('');
       const expHtml = q.explanation ? `<p class="corr-exp"><i class="ti ti-info-circle"></i> ${escHtml(q.explanation)}</p>` : '';
       return `<div class="corr-item">
-        <p class="corr-q">${qi+1}. ${escHtml(q.question_text)}</p>
+        <p class="corr-q">${qi+1}. ${escHtml(q.question)}</p>
         <div class="corr-opts">${optHtml}</div>
         ${expHtml}
       </div>`;

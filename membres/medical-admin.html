@@ -601,7 +601,7 @@
       const { data: qs } = await supabaseClient.from('quiz_questions').select('*').eq('quiz_id', id).order('order_index');
       (qs || []).forEach(q => {
         const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '["","","",""]');
-        questionRows.push({ id: q.id, text: q.question_text, opts, correct: q.correct_index, expl: q.explanation || '' });
+        questionRows.push({ id: q.id, text: q.question, opts, correct: q.correct_index, expl: q.explanation || '' });
       });
     } else {
       document.getElementById('quizModalTitle').textContent = 'Nouveau quiz';
@@ -787,7 +787,7 @@
       const qPayloads = questionRows.map((q, i) => ({
         quiz_id: quizId,
         order_index: i,
-        question_text: q.text.trim(),
+        question: q.text.trim(),
         options: q.opts,
         correct_index: q.correct,
         explanation: q.expl.trim() || null
