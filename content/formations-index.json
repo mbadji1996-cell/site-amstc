@@ -26,8 +26,8 @@
     "date_debut": "",
     "date_fin": "",
     "excerpt": "Cours hebdomadaire sur le Mukhtasar Cheikh Sidiya Al-Akhdar (fiqh malikite), chaque samedi à 20h, animé par la Commission Pédagogique dans le groupe WhatsApp.",
-    "reserve": false,
-    "image": "",
+    "reserve": true,
+    "image": "/assets/uploads/cours-lakhdari.jpg",
     "categorie": "cours",
     "categories": [
       "cours"
