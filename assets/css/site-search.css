@@ -148,3 +148,6 @@
 /* Sous 880 px, la recherche quitte le bord de l'ecran pour le menu
    (site-search.js pose l'entree). Voir dark-mode.css, meme seuil. */
 :root.a-menu-recherche .site-search-btn { display: none; }
+
+/* Ni la loupe flottante, ni son voile. */
+@media print{ .site-search-btn, .site-search-overlay{display:none !important;} }

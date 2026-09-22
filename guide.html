@@ -244,6 +244,24 @@
   /* La barre du site reste collee en haut (75 px) : le sommaire se colle
      juste dessous, et les ancres ne finissent plus cachees derriere. */
   @media (min-width:901px){ .toc{top:75px; height:calc(100vh - 75px);} }
+
+  /* ===== Impression et export PDF (scripts/build-guide-pdf.js) =====
+     Le sommaire lateral et la barre du site ne servent qu'a l'ecran ; le
+     texte reprend toute la page, et une fiche ne se coupe pas en deux. */
+  @media print{
+    header.barre-site, .toc, .toc-back, .page-footer{display:none !important;}
+    .shell{display:block; max-width:none;}
+    main{padding:0 !important;}
+    body{background:#FFFFFF;}
+    .tier-section{break-inside:auto;}
+    .page-card, .faq-item{break-inside:avoid;}
+    .page-card{box-shadow:none;}
+    details.page-card > summary{list-style:none;}
+    details.page-card .chev{display:none;}
+    .tier-head h2{break-after:avoid;}
+    h3{break-after:avoid;}
+    a{color:inherit; text-decoration:none;}
+  }
   html{scroll-padding-top:90px;}
 </style>
 <link rel="stylesheet" href="assets/css/barre-site.css">
@@ -297,7 +315,7 @@
         <li><a href="#membres-etats" data-toc class="sub">États de la carte</a></li>
         <li><a href="#membres-acces" data-toc class="sub">Créer un compte / se connecter</a></li>
         <li><a href="#membres-tableau" data-toc class="sub">Tableau de bord</a></li>
-        <li><a href="#membres-formations" data-toc class="sub">Formations (sous-hub)</a></li>
+        <li><a href="#membres-formations" data-toc class="sub">Formations</a></li>
         <li><a href="#membres-realisations" data-toc class="sub">Réalisations</a></li>
         <li><a href="#membres-documents" data-toc class="sub">Documents officiels</a></li>
         <li><a href="#membres-collectes" data-toc class="sub">Collectes</a></li>
@@ -705,9 +723,12 @@
       <div class="tier-head"><span class="tier-num">02</span><h2>Espace membres</h2></div>
       <p class="tier-desc">
         Réservé aux comptes créés via <strong>Espace membres → Créer un compte</strong> puis approuvés
-        par un administrateur. Une fois connecté, une barre de navigation à 9 onglets apparaît en haut
-        de chaque page principale : <strong>Tableau de bord · Formations · Réalisations · Documents
-        officiels · Boutique AMSTC · Forum · Annuaire · Médiathèque · Carte de membre et Cotisations</strong>.
+        par un administrateur. Une fois connecté, un menu latéral accompagne chaque page :
+        <strong>Tableau de bord · Carte de membre et Cotisations · Espace Daara · Enseignements Médicaux ·
+        Autres formations · Quiz · Bibliothèque · Réalisations · Documents officiels · Boutique AMSTC ·
+        Collectes · Forum · Annuaire · Médiathèque</strong>, et le Centre d'administration pour qui en a
+        les droits. En haut, une recherche, les annonces et un bouton « Voir le site » ; sur téléphone,
+        la recherche se replie derrière une loupe.
       </p>
 
       <div class="subsection" id="membres-etats">
@@ -780,8 +801,8 @@
       </div>
 
       <div class="subsection" id="membres-formations">
-        <h3>Formations (sous-hub)</h3>
-        <p class="subsection-desc">L'onglet « Formations » ouvre un carrefour de quatre modules, chacun avec sa propre page.</p>
+        <h3>Formations</h3>
+        <p class="subsection-desc">Les quatre modules de formation ont chacun leur entrée dans le menu latéral : Espace Daara, Enseignements Médicaux, Autres formations et Quiz, auxquels s'ajoute la Bibliothèque. L'ancien carrefour « Formations » a été supprimé, il ne faisait que répéter ces choix.</p>
 
         <details class="page-card">
           <summary>

@@ -56,6 +56,9 @@
   --section-alt: #17211A;
 }
 
+/* Rien de flottant sur une page imprimée : ni thème, ni retour en haut. */
+@media print{ .theme-toggle-btn, .defilement-btn, .outils-entete{display:none !important;} }
+
 /* ===== Bouton flottant (créé dynamiquement par theme-toggle.js) ===== */
 .theme-toggle-btn {
   position: fixed;
