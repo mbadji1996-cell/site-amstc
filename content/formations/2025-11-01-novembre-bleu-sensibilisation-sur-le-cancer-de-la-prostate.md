@@ -7,7 +7,7 @@ categorie:
   - sensibilisation
 excerpt: Définition, Facteurs de risque, Symptomatologie, Prévention du Cancer
   de la prostate
-image: /assets/uploads/pp.jpg
+image: /assets/uploads/pp-novembre-bleu.jpg
 reserve: false
 ---
 ## Définition
