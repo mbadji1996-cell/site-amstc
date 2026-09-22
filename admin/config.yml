@@ -778,6 +778,7 @@ collections:
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
+      - { label: "Lien vers le cours dans l'espace membres", name: "lien_membres", widget: "string", required: false, hint: "Facultatif, et utile seulement si la fiche est réservée : le bouton de l'encadré « réservé aux membres » y conduit. Exemples : membres/daara, membres/medical, membres/cours?id=… (copiez l'adresse depuis l'espace membres). Vide : le bouton mène à la liste de l'espace membres." }
       - { label: "Contenu de l'article", name: "body", widget: "markdown", required: false }
 
   - name: "formations"
@@ -821,6 +822,7 @@ collections:
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
       - { label: "Vidéo YouTube", name: "video_youtube", widget: "string", required: false, hint: "Lien complet de la vidéo (ex: https://www.youtube.com/watch?v=XXXXXXXXXXX)" }
       - { label: "Réservé aux membres", name: "reserve", widget: "boolean", default: false, required: false, hint: "Coché : le titre, le résumé et l'image restent visibles de tous avec un cadenas ; le contenu complet n'est lisible qu'une fois connecté à l'espace membres. Le texte réservé n'est jamais publié dans le dépôt public." }
+      - { label: "Lien vers le cours dans l'espace membres", name: "lien_membres", widget: "string", required: false, hint: "Facultatif, et utile seulement si la fiche est réservée : le bouton de l'encadré « réservé aux membres » y conduit. Exemples : membres/daara, membres/medical, membres/cours?id=… (copiez l'adresse depuis l'espace membres). Vide : le bouton mène à la liste de l'espace membres." }
       - { label: "Contenu", name: "body", widget: "markdown", required: false }
 
   - name: "projets"

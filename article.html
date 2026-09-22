@@ -243,6 +243,10 @@
       if (reserve) {
         document.title = (data.title || "Réalisation") + " - AMSTC";
         const retour = encodeURIComponent(location.pathname.replace(/^\//, '') + location.search);
+        // Ou lire ce contenu une fois l'acces actif : la fiche peut le
+        // dire (champ « Lien vers le cours dans l'espace membres » du
+        // CMS) ; sinon, la liste de l'espace membres.
+        const lienMembres = String(data.lien_membres || '').trim() || 'membres/actualites';
         let corpsHtml = null, etat = "anonyme";
         try {
           const { data: sess } = await supabaseClient.auth.getSession();
@@ -266,7 +270,7 @@
             <p style="font-weight:600;color:var(--text-heading);margin:0 0 16px;">Réalisation réservée aux membres disposant d'un compte</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               ${etat === "connecte"
-                ? `<a class="btn-reserve" href="membres/actualites" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir la réalisation</a>`
+                ? `<a class="btn-reserve" href="${esc(lienMembres)}" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir la réalisation</a>`
                 : `<a class="btn-reserve" href="membres/connexion?suite=${retour}" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Se connecter</a>
                    <a href="membres/inscription" style="display:inline-block;background:var(--paper);color:var(--green-deep);font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;border:1.5px solid var(--line);">S'inscrire</a>`}
             </div>
