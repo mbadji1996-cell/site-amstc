@@ -413,6 +413,13 @@
     document.getElementById('ecStatQuiz').textContent = reussis;
   }
 
+  // La couverture d'un quiz est celle de sa lecon (lesson_id).
+  function couvertureQuiz(q){
+    if (!q.lesson_id) return '';
+    const lecon = allLessons.find(l => l.id === q.lesson_id);
+    return (lecon && lecon.cover_image) || '';
+  }
+
   function renderQuizzes() {
     const quizzes = currentCat === 'toutes' ? allQuizzes : allQuizzes.filter(q => q.category === currentCat);
     const section = document.getElementById('quizSection');
@@ -424,7 +431,9 @@
       return `
       <article class="ec-carte">
         <a class="ec-visuel" href="quiz?id=${encodeURIComponent(q.id)}" aria-label="${escHtml(q.title)}">
-          <span class="ec-visuel-vide"><i class="ti ti-rosette"></i></span>
+          ${couvertureQuiz(q)
+            ? `<img src="${escHtml(couvertureQuiz(q))}" alt="" loading="lazy">`
+            : `<span class="ec-visuel-vide"><i class="ti ti-rosette"></i></span>`}
           <span class="ec-etiq"><i class="ti ti-rosette" aria-hidden="true"></i> Quiz</span>
         </a>
         <div class="ec-carte-corps">
