@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>

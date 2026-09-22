@@ -139,6 +139,7 @@
   tabs.insertBefore(toggle, inner);
   tabs.appendChild(panel);
   tabs.classList.add('has-mobile-nav');
+  document.documentElement.classList.remove('ms-attente');
 })();
 
 
@@ -270,6 +271,9 @@
   rail.appendChild(liste);
   document.body.appendChild(rail);
   document.documentElement.classList.add('a-rail');
+  // La navigation est en place : le ruban peut reprendre sa place
+  // (sous 1024 px) sans clignoter.
+  document.documentElement.classList.remove('ms-attente');
 
   // ---- Centre d'administration, pour les seuls comptes admin ----
   // Le role n'est connu qu'une fois le profil charge (evenement publie par

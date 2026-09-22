@@ -159,6 +159,12 @@
    le menu hamburger deja en service - rien ne change sur telephone. */
 .ms-rail{display:none;}
 
+/* Le ruban d'onglets brut n'apparait pas avant la navigation : sur grand
+   ecran il disparaitra de toute facon (la colonne le remplace), et sur
+   telephone il garde sa place pour ne pas faire sauter la page. */
+html.ms-attente .member-tabs{visibility:hidden;}
+@media (min-width:1024px){ html.ms-attente .member-tabs{display:none;} }
+
 @media (min-width:1024px){
   :root{--ms-rail:252px;}
   html.a-rail body{padding-left:var(--ms-rail);}
