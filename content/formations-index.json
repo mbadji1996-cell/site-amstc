@@ -60,6 +60,26 @@
     "lien": ""
   },
   {
+    "slug": "2025-11-01-novembre-bleu-sensibilisation-sur-le-cancer-de-la-prostate",
+    "title": "Novembre Bleu - Sensibilisation sur le cancer de la prostate",
+    "date": "2025-11-01",
+    "date_debut": "",
+    "date_fin": "",
+    "excerpt": "Définition, Facteurs de risque, Symptomatologie, Prévention du Cancer de la prostate",
+    "reserve": false,
+    "image": "/assets/uploads/pp.jpg",
+    "categorie": "sensibilisation",
+    "categories": [
+      "sensibilisation"
+    ],
+    "statut": "",
+    "domaine": "",
+    "projet": "",
+    "ordre": "",
+    "lieu": "",
+    "lien": ""
+  },
+  {
     "slug": "2025-10-01-octobre-rose-2025",
     "title": "Octobre Rose 2025 - Sensibilisation contre le cancer du sein et les cancers de la femme",
     "date": "2025-10-01T10:00:00.000Z",
