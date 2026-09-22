@@ -1,6 +1,6 @@
 ---
 title: Octobre Rose - Sensibilisation au cancer du sein
-date: 2024-10-01T10:00:00.000Z
+date: 2025-10-01
 categorie:
   - sensibilisation
 excerpt: Définition, facteurs de risque, symptômes et prévention du cancer du
