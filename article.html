@@ -263,12 +263,7 @@
           image: data.image || '', videoId: VIDEO,
           avant: etat === "lecteur" ? '' : `
           <div class="reserve-porte" style="border:1.5px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:22px 24px;margin:0 0 30px;background:var(--paper-alt);">
-            <p style="font-weight:600;color:var(--text-heading);margin:0 0 6px;">${etat === "connecte"
-              ? "Cette réalisation est réservée aux membres approuvés."
-              : "Cette réalisation est réservée aux membres de l'AMSTC."}</p>
-            <p style="color:var(--text-muted);margin:0 0 16px;">${etat === "connecte"
-              ? "Votre compte est en attente de validation, ou votre carte n'est plus valide. Vous pourrez la lire dès que votre accès sera actif."
-              : "Connectez-vous à l'espace membres pour la lire. Pas encore de compte ? L'inscription prend deux minutes."}</p>
+            <p style="font-weight:600;color:var(--text-heading);margin:0 0 16px;">Réalisation réservée aux membres disposant d'un compte</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               ${etat === "connecte"
                 ? `<a class="btn-reserve" href="membres/profil" style="display:inline-block;background:var(--green);color:#fff;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Voir ma carte de membre</a>`
