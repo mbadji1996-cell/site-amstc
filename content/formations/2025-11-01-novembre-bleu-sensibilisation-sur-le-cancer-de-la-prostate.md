@@ -14,15 +14,11 @@ reserve: false
 
 Tumeur maligne développée aux dépens du tissu glandulaire de la prostate (le plus souvent un adénocarcinome). C’est un cancer préférentiellement androgéno-dépendant, dont la fréquence augmente de façon très significative avec l'âge.
 
-
-
 ## Épidémiologie
 
 * Dans le monde : 2e cancer le plus fréquent chez l'homme et 5e cause de décès par cancer dans la population masculine mondiale.
 * Population masculine : C'est le cancer le plus fréquemment diagnostiqué chez l'homme de plus de 50 ans. L'incidence et la mortalité sont particulièrement élevées chez les hommes d'origine afro-descendante (Afrique subsaharienne et Caraïbes).
 * Au Sénégal et en Afrique subsaharienne : C'est le 1er cancer chez l'homme en termes d'incidence et de mortalité.
-
-
 
 ## Les facteurs de risque
 
@@ -34,8 +30,6 @@ Tumeur maligne développée aux dépens du tissu glandulaire de la prostate (le 
   * Alimentation riche en graisses saturées et en viandes rouges.
   * Obésité et surpoids.
   * Sédentarité.
-
-
 
 ## Symptomatologie
 
@@ -65,8 +59,6 @@ Le cancer de la prostate évolue longtemps de manière insidieuse et asymptomati
   * Altération de l'état général (fatigue, amaigrissement, anémie).
   * Signes de compression médullaire ou rétention aiguë d'urines.
 
-
-
 ## Prévention primaire
 
 Il n'existe pas de prévention primaire totalement spécifique, mais certaines mesures d'hygiène de vie sont recommandées :
@@ -74,8 +66,6 @@ Il n'existe pas de prévention primaire totalement spécifique, mais certaines m
 * Alimentation équilibrée : Réduction de la consommation de graisses animales, de viandes transformées et de produits très riches en calcium.
 * Apport en antioxydants : Consommation d'aliments riches en lycopène (tomates cuites), en sélénium et en fruits/légumes.
 * Activité physique régulière : Maintien d'un poids de santé et prévention du surpoids.
-
-
 
 ## Prévention secondaire et dépistage
 
@@ -91,3 +81,5 @@ Le dépistage individuel ciblé permet de détecter la maladie à un stade préc
 * Population générale : Discussion du dépistage individuel à partir de 50 ans.
 * Populations à haut risque (hommes noirs / antécédents familiaux directs) : Dépistage recommandé dès 40 à 45 ans.
 * Confirmations diagnostiques : En cas d'anomalie du PSA ou du TR, le diagnostic de certitude repose sur l'IRM prostatique suivie de biopsies prostatiques échoguidées.
+
+![](/assets/uploads/novemvbre-bleu-1-01.jpg)
