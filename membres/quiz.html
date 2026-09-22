@@ -436,11 +436,14 @@
   }
 
   (async () => {
-    if (!quizId) { await montrerAccueil(userId); return; }
+    // L'acces d'abord : la liste des quiz est reservee aux membres, et
+    // les tentatives ne se lisent qu'avec un identifiant.
     const result = await requireActiveMember('connexion');
     if (!result) return;
     userId = result.profile.id;
     document.getElementById('signoutBtn').style.display = '';
+
+    if (!quizId) { await montrerAccueil(userId); return; }
 
     if (result.state === 'blocked') {
       document.getElementById('loadingMsg').style.display = 'none';
