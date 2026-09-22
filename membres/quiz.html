@@ -230,7 +230,7 @@
   </div>
 
   <div id="introScreen" style="display:none;">
-    <a class="back" href="medical">Enseignements médicaux</a>
+    <a class="back" href="quiz">Tous les quiz</a>
     <div style="height:20px;"></div>
     <div class="card-status-banner" id="cardStatusBanner" style="display:none;"></div>
     <div class="quiz-intro-card">
@@ -276,7 +276,7 @@
 
   <!-- RESULTS -->
   <div id="resultScreen">
-    <a class="back" href="medical">Enseignements médicaux</a>
+    <a class="back" href="quiz">Tous les quiz</a>
     <div style="height:20px;"></div>
 
     <div class="result-card">
@@ -293,7 +293,7 @@
       </div>
       <div class="result-btns">
         <button class="btn btn-primary" id="replayBtn"><i class="ti ti-refresh"></i> Rejouer</button>
-        <a class="btn btn-outline" href="medical"><i class="ti ti-arrow-left"></i> Retour aux leçons</a>
+        <a class="btn btn-outline" href="quiz"><i class="ti ti-arrow-left"></i> Tous les quiz</a>
       </div>
     </div>
 
@@ -547,7 +547,7 @@
     currentQ = 0;
     document.getElementById('introScreen').style.display = 'none';
     document.getElementById('resultScreen').style.display = 'none';
-    document.getElementById('quizScreen').style.display = '';
+    document.getElementById('quizScreen').style.display = 'block';
     if (quiz.duration_min) startTimer(quiz.duration_min * 60);
     renderQuestion();
   }
@@ -674,7 +674,7 @@
     renderCorrection();
     await renderHistory();
 
-    document.getElementById('resultScreen').style.display = '';
+    document.getElementById('resultScreen').style.display = 'block';
   }
 
   function renderCorrection() {
@@ -730,7 +730,7 @@
 
   // Keyboard shortcuts: 1-4 select answer, Enter/Space go next
   document.addEventListener('keydown', e => {
-    if (document.getElementById('quizScreen').style.display === 'none') return;
+    if (getComputedStyle(document.getElementById('quizScreen')).display === 'none') return;
     const key = e.key;
     if (['1','2','3','4'].includes(key)) {
       const idx = parseInt(key) - 1;
