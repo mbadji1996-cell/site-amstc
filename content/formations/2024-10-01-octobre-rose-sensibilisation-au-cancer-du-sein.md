@@ -5,7 +5,7 @@ categorie:
   - sensibilisation
 excerpt: Définition, facteurs de risque, symptômes et prévention du cancer du
   sein, à l'occasion d'Octobre Rose.
-image: /assets/uploads/pp-octobre-rose.jpg
+image: ""
 ---
 ## Définition
 
