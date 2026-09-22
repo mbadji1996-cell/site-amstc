@@ -754,25 +754,25 @@ collections:
         multiple: true
         required: false
         options:
-          - { label: "Consultations", value: "consultations" }
-          - { label: "Campagne médicale", value: "campagne" }
-          - { label: "Sensibilisation", value: "sensibilisation" }
-          - { label: "Don de sang", value: "don-sang" }
-          - { label: "Ndogou", value: "ndogou" }
-          - { label: "Solidarité", value: "solidarite" }
-          - { label: "Journées scientifiques", value: "jssci" }
-          - { label: "EPU", value: "epu" }
-          - { label: "Webinaire", value: "webinaire" }
-          - { label: "Masterclass", value: "masterclass" }
-          - { label: "Cours", value: "cours" }
           - { label: "Atelier", value: "atelier" }
-          - { label: "Rencontre", value: "rencontre" }
-          - { label: "Ziara", value: "ziara" }
+          - { label: "Campagne médicale", value: "campagne" }
+          - { label: "Communication", value: "communication" }
+          - { label: "Consultations", value: "consultations" }
+          - { label: "Cours", value: "cours" }
+          - { label: "Don de sang", value: "don-sang" }
+          - { label: "EPU", value: "epu" }
           - { label: "Gamou", value: "gamou" }
+          - { label: "Journées scientifiques", value: "jssci" }
+          - { label: "Masterclass", value: "masterclass" }
+          - { label: "Ndogou", value: "ndogou" }
           - { label: "Partenariat", value: "partenariat" }
           - { label: "Projet", value: "projet" }
-          - { label: "Communication", value: "communication" }
+          - { label: "Rencontre", value: "rencontre" }
+          - { label: "Sensibilisation", value: "sensibilisation" }
+          - { label: "Solidarité", value: "solidarite" }
           - { label: "Vie associative", value: "vie-associative" }
+          - { label: "Webinaire", value: "webinaire" }
+          - { label: "Ziara", value: "ziara" }
         hint: "Le ou les types d'activité. Un gamou couvert médicalement porte par exemple « Gamou » et « Consultations ». Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
@@ -797,25 +797,25 @@ collections:
         multiple: true
         required: false
         options:
-          - { label: "Consultations", value: "consultations" }
-          - { label: "Campagne médicale", value: "campagne" }
-          - { label: "Sensibilisation", value: "sensibilisation" }
-          - { label: "Don de sang", value: "don-sang" }
-          - { label: "Ndogou", value: "ndogou" }
-          - { label: "Solidarité", value: "solidarite" }
-          - { label: "Journées scientifiques", value: "jssci" }
-          - { label: "EPU", value: "epu" }
-          - { label: "Webinaire", value: "webinaire" }
-          - { label: "Masterclass", value: "masterclass" }
-          - { label: "Cours", value: "cours" }
           - { label: "Atelier", value: "atelier" }
-          - { label: "Rencontre", value: "rencontre" }
-          - { label: "Ziara", value: "ziara" }
+          - { label: "Campagne médicale", value: "campagne" }
+          - { label: "Communication", value: "communication" }
+          - { label: "Consultations", value: "consultations" }
+          - { label: "Cours", value: "cours" }
+          - { label: "Don de sang", value: "don-sang" }
+          - { label: "EPU", value: "epu" }
           - { label: "Gamou", value: "gamou" }
+          - { label: "Journées scientifiques", value: "jssci" }
+          - { label: "Masterclass", value: "masterclass" }
+          - { label: "Ndogou", value: "ndogou" }
           - { label: "Partenariat", value: "partenariat" }
           - { label: "Projet", value: "projet" }
-          - { label: "Communication", value: "communication" }
+          - { label: "Rencontre", value: "rencontre" }
+          - { label: "Sensibilisation", value: "sensibilisation" }
+          - { label: "Solidarité", value: "solidarite" }
           - { label: "Vie associative", value: "vie-associative" }
+          - { label: "Webinaire", value: "webinaire" }
+          - { label: "Ziara", value: "ziara" }
         hint: "Le ou les types d'activité. Un gamou couvert médicalement porte par exemple « Gamou » et « Consultations ». Facultatif."
       - { label: "Résumé (affiché dans la liste)", name: "excerpt", widget: "text", required: false }
       - { label: "Image de couverture", name: "image", widget: "image", required: false }
@@ -840,10 +840,10 @@ collections:
         widget: "select"
         required: false
         options:
-          - { label: "Santé", value: "sante" }
           - { label: "Éducation", value: "education" }
-          - { label: "Infrastructures", value: "infrastructures" }
           - { label: "Formation", value: "formation" }
+          - { label: "Infrastructures", value: "infrastructures" }
+          - { label: "Santé", value: "sante" }
           - { label: "Social", value: "social" }
           - { label: "Solidarité", value: "solidarite" }
         hint: "Pastille de la carte et filtres de la page Projets. Facultatif."
