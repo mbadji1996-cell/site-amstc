@@ -11,16 +11,12 @@ image: /assets/uploads/pp-octobre-rose.jpg
 
 Néoformation maligne primitive ou secondaire développée aux dépens des glandes mammaires. C'est un cancer hormonodépendant.
 
-
-
 ## Épidémiologie
 
 * 1er cancer et 4e cause de décès au monde en 2022, avec 2,3 millions de cas féminins et 670 000 décès dus au cancer du sein.
 * 2e cause de décès par cancer pour toute la population féminine, mais principale cause de décès chez les femmes noires.
 * 2e cancer au Sénégal, avec environ 1 800 cas par an.
 * 2e cause de mortalité par cancer en Afrique.
-
-
 
 ## Les facteurs de risque
 
@@ -59,8 +55,6 @@ Signes physiques et modifications visibles :
 * Mastectomie et/ou annexectomie prophylactiques pour certaines femmes à risque.
 * Éviter l'utilisation prolongée de contraceptifs oraux (au-delà de 10 ans) et le traitement hormonal substitutif.   
 
-
-
 ## Prévention secondaire
 
 Elle s'adresse à toutes les femmes et passe par :
@@ -85,4 +79,4 @@ Elle s'adresse à toutes les femmes et passe par :
 
 ![](/assets/uploads/octobre-rose-2024-2-01.jpg)
 
-![](/assets/uploads/octobre-rose-2024-4-01.jpg)
+![](/assets/uploads/octobre-rose-2024-4-01.jpg "Ensemble, dison STOP au cancer du sein !")
