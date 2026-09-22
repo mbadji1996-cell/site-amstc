@@ -158,6 +158,9 @@
   :root[data-theme="dark"] .opt-btn.selected .opt-letter{color:#06280F;}
 </style>
 <script src="../assets/js/retour.js" defer></script>
+<link rel="stylesheet" href="../assets/css/bandeau-membre.css">
+<script src="../assets/js/bandeau-membre.js" defer></script>
+<link rel="stylesheet" href="../assets/css/espace-cours.css">
 <link rel="stylesheet" href="../assets/css/member-nav.css">
 <script src="../assets/js/member-nav.js" defer></script>
 </head>
@@ -195,6 +198,35 @@
   <p class="loading-full" id="loadingMsg">Chargement du quiz…</p>
 
   <!-- INTRO -->
+  <!-- Accueil : la liste des quiz, quand aucun n'est choisi. -->
+  <div id="quizAccueil" style="display:none;">
+    <section class="bm" data-bandeau="quiz">
+      <div class="bm-photo" data-bandeau-champ="image" style="display:none;"><img src="" alt="" loading="lazy"></div>
+      <div class="bm-texte">
+        <span class="bm-ic" aria-hidden="true"><i class="ti ti-rosette"></i></span>
+        <div>
+          <a class="bm-retour" href="./"><i class="ti ti-arrow-left" aria-hidden="true"></i> Espace membres</a>
+          <h1 data-bandeau-champ="titre">Quiz</h1>
+          <p class="bm-soustitre" data-bandeau-champ="soustitre">Réviser · S'évaluer · Progresser</p>
+          <p class="bm-intro" data-bandeau-champ="texte">Testez vos connaissances en quelques minutes, et retrouvez votre meilleur score à chaque tentative.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="ec-chiffres" id="quizChiffres"></div>
+
+    <div class="ec-cats" id="quizChips" style="display:none;"></div>
+
+    <div class="ec-tete">
+      <span class="ec-tete-ic" aria-hidden="true"><i class="ti ti-rosette"></i></span>
+      <div>
+        <span class="ec-tete-titre">Quiz disponibles</span>
+        <span class="ec-tete-sous" id="quizCompte"></span>
+      </div>
+    </div>
+    <div class="ec-grille" id="quizListe"></div>
+  </div>
+
   <div id="introScreen" style="display:none;">
     <a class="back" href="medical">Enseignements médicaux</a>
     <div style="height:20px;"></div>
@@ -279,6 +311,109 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 <script>
+  // ===== Accueil : tous les quiz publies =====
+  const LIBELLE_FILIERE = {
+    medecine: ['Médecine', 'ti-stethoscope'],
+    pharmacie: ['Pharmacie', 'ti-pill'],
+    odonto: ['Odontologie', 'ti-dental'],
+    soins_infirmiers: ['Soins infirmiers', 'ti-vaccine'],
+  };
+  let tousLesQuiz = [], mesScores = {}, nbQuestions = {}, filiere = 'toutes';
+
+  async function montrerAccueil(userId){
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('quizAccueil').style.display = '';
+
+    const [qz, qs, tent] = await Promise.all([
+      supabaseClient.from('quizzes').select('*').eq('is_published', true).order('created_at', { ascending: false }),
+      supabaseClient.from('quiz_questions').select('quiz_id'),
+      supabaseClient.from('quiz_attempts').select('quiz_id, score, total').eq('user_id', userId),
+    ]);
+    tousLesQuiz = qz.data || [];
+    nbQuestions = {};
+    (qs.data || []).forEach(q => { nbQuestions[q.quiz_id] = (nbQuestions[q.quiz_id] || 0) + 1; });
+    mesScores = {};
+    (tent.data || []).forEach(t => {
+      const pct = t.total ? Math.round((t.score / t.total) * 100) : 0;
+      if (mesScores[t.quiz_id] === undefined || pct > mesScores[t.quiz_id]) mesScores[t.quiz_id] = pct;
+    });
+
+    remplirChiffres(tent.data || []);
+    remplirChips();
+    afficherQuiz();
+  }
+
+  function remplirChiffres(tentatives){
+    const scores = Object.values(mesScores);
+    const meilleur = scores.length ? Math.max(...scores) : null;
+    const chiffres = [
+      ['ti-rosette', tousLesQuiz.length, 'quiz disponible' + (tousLesQuiz.length > 1 ? 's' : '')],
+      ['ti-player-play', tentatives.length, 'tentative' + (tentatives.length > 1 ? 's' : '')],
+      ['ti-trophy', meilleur === null ? '-' : meilleur + '%', 'meilleur score'],
+    ];
+    document.getElementById('quizChiffres').innerHTML = chiffres.map(([ic, nb, lbl]) => `
+      <div class="ec-chiffre">
+        <span class="ec-chiffre-ic" aria-hidden="true"><i class="ti ${ic}"></i></span>
+        <div><div class="ec-chiffre-nb">${escHtml(String(nb))}</div><div class="ec-chiffre-label">${escHtml(lbl)}</div></div>
+      </div>`).join('');
+  }
+
+  // Une filiere sans quiz n'a pas de pastille : elle ne filtrerait rien.
+  function remplirChips(){
+    const presentes = new Set(tousLesQuiz.map(q => q.category).filter(Boolean));
+    const liste = [['toutes', 'Tous les quiz', 'ti-layout-grid']].concat(
+      Object.keys(LIBELLE_FILIERE)
+        .filter(c => presentes.has(c))
+        .map(c => [c, LIBELLE_FILIERE[c][0], LIBELLE_FILIERE[c][1]]));
+    const zone = document.getElementById('quizChips');
+    zone.style.display = liste.length > 1 ? '' : 'none';
+    zone.innerHTML = liste.map(([cle, libelle, icone]) =>
+      `<button type="button" class="ec-cat ${cle === filiere ? 'actif' : ''}" data-cat="${cle}">
+         <i class="ti ${icone}" aria-hidden="true"></i> ${escHtml(libelle)}</button>`).join('');
+    zone.querySelectorAll('.ec-cat').forEach(b => b.addEventListener('click', () => {
+      filiere = b.dataset.cat;
+      zone.querySelectorAll('.ec-cat').forEach(x => x.classList.toggle('actif', x === b));
+      afficherQuiz();
+    }));
+  }
+
+  function afficherQuiz(){
+    const visibles = filiere === 'toutes' ? tousLesQuiz : tousLesQuiz.filter(q => q.category === filiere);
+    document.getElementById('quizCompte').textContent = visibles.length
+      ? visibles.length + ' quiz' + (visibles.length > 1 ? ' proposés' : ' proposé')
+      : '';
+    document.getElementById('quizListe').innerHTML = visibles.length
+      ? visibles.map(q => {
+          const best = mesScores[q.id];
+          const n = nbQuestions[q.id] || 0;
+          const fil = LIBELLE_FILIERE[q.category];
+          return `
+          <article class="ec-carte">
+            <a class="ec-visuel" href="quiz?id=${encodeURIComponent(q.id)}" aria-label="${escHtml(q.title)}">
+              <span class="ec-visuel-vide"><i class="ti ti-rosette"></i></span>
+              <span class="ec-etiq"><i class="ti ti-rosette" aria-hidden="true"></i> Quiz</span>
+            </a>
+            <div class="ec-carte-corps">
+              <p class="ec-carte-titre">${escHtml(q.title)}</p>
+              ${q.description ? `<p class="ec-carte-sous">${escHtml(q.description)}</p>` : ''}
+              <div class="ec-meta">
+                ${fil ? `<span><i class="ti ${fil[1]}" aria-hidden="true"></i> ${escHtml(fil[0])}</span>` : ''}
+                ${n ? `<span><i class="ti ti-help" aria-hidden="true"></i> ${n} question${n > 1 ? 's' : ''}</span>` : ''}
+                ${best !== undefined
+                  ? `<span><i class="ti ti-trophy" aria-hidden="true"></i> Meilleur score : ${best}%</span>`
+                  : '<span><i class="ti ti-player-play" aria-hidden="true"></i> Non tenté</span>'}
+              </div>
+              <div class="ec-carte-bas">
+                <button type="button" class="ec-commencer" onclick="location.href='quiz?id=${encodeURIComponent(q.id)}'">
+                  <i class="ti ti-player-play" aria-hidden="true"></i> ${best !== undefined ? 'Refaire' : 'Commencer'}
+                </button>
+              </div>
+            </div>
+          </article>`;
+        }).join('')
+      : '<p class="ec-vide">Aucun quiz publié pour le moment.</p>';
+  }
+
   const params = new URLSearchParams(location.search);
   const quizId = params.get('id');
   let quiz = null, questions = [], userId = null;
@@ -301,7 +436,7 @@
   }
 
   (async () => {
-    if (!quizId) { location.href = 'medical'; return; }
+    if (!quizId) { await montrerAccueil(userId); return; }
     const result = await requireActiveMember('connexion');
     if (!result) return;
     userId = result.profile.id;
@@ -326,7 +461,7 @@
       supabaseClient.from('quiz_attempts').select('score, total, created_at').eq('quiz_id', quizId).eq('user_id', userId).order('created_at', { ascending: false }).limit(20)
     ]);
 
-    if (!quizRes.data) { location.href = 'medical'; return; }
+    if (!quizRes.data) { location.href = 'quiz'; return; }
     quiz = quizRes.data;
     questions = qRes.data || [];
 

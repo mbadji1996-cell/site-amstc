@@ -62,5 +62,13 @@
     "bouton": "",
     "bouton_lien": "",
     "image": ""
+  },
+  "quiz": {
+    "titre": "Quiz",
+    "soustitre": "Réviser · S'évaluer · Progresser",
+    "texte": "Testez vos connaissances en quelques minutes, et retrouvez votre meilleur score à chaque tentative.",
+    "bouton": "",
+    "bouton_lien": "",
+    "image": ""
   }
 }

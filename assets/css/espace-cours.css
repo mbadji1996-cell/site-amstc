@@ -137,3 +137,19 @@
   grid-column:1 / -1; text-align:center; padding:40px 0;
   color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;
 }
+
+/* ===== Rangée de chiffres (accueil des quiz) ===== */
+.ec-chiffres{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:20px;}
+.ec-chiffre{
+  display:flex; align-items:center; gap:13px; padding:14px 16px; border-radius:16px;
+  background:var(--surface); border:1px solid var(--line);
+}
+.ec-chiffre-ic{
+  width:40px; height:40px; flex:none; border-radius:12px; display:grid; place-items:center;
+  background:rgba(23,118,59,0.12); color:var(--green); font-size:19px;
+}
+:root[data-theme="dark"] .ec-chiffre-ic{color:#7FD9A0;}
+.ec-chiffre-nb{font-family:var(--display); font-size:1.25rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
+.ec-chiffre-label{font-size:0.78rem; color:var(--text-muted);}
+/* Sous-titre d'un en-tête de section : le décompte des cartes. */
+.ec-tete-sous{display:block; font-size:0.84rem; color:var(--text-muted);}
