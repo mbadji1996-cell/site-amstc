@@ -107,9 +107,10 @@
     "date_fin": "",
     "excerpt": "Définition, facteurs de risque, symptômes et prévention du cancer du sein, à l'occasion d'Octobre Rose.",
     "reserve": false,
-    "image": "",
-    "categorie": "sensibilisation",
+    "image": "/assets/uploads/pp.jpg",
+    "categorie": "cours",
     "categories": [
+      "cours",
       "sensibilisation"
     ],
     "statut": "",
