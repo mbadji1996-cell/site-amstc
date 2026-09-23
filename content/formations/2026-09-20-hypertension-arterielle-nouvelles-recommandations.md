@@ -20,6 +20,10 @@ reserve: false
 <style>
 .html-importe{--h-deep:#06441C; --h-green:#17763B; --h-gold:#F8B718; --h-goldink:#8A6209; --h-red:#B3261E; --h-ink:var(--ink,#0B2E17); --h-head:var(--text-heading,#06441C); --h-muted:var(--text-muted,#5A6C60); --h-surface:var(--surface,#FFFFFF); --h-alt:var(--paper-alt,#ECEFE3); --h-line:var(--line,rgba(6,68,28,0.22));}
 .html-importe{color:var(--h-ink); font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; font-size:1.05rem; line-height:1.72;}
+/* Sur fond sombre, l'or foncé des petites lignes devient illisible : il
+   s'éclaircit, comme le fait déjà l'accent du site. */
+:root[data-theme="dark"] .html-importe{--h-goldink:#F0C955;}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .html-importe{--h-goldink:#F0C955;} }
 .html-importe .hta{margin:0 auto; padding:4px 0 24px;}
 .html-importe .hta *{box-sizing:border-box;}
 .html-importe .hta p{color:var(--h-ink); margin:0 0 16px; max-width:760px;}
@@ -174,7 +178,7 @@ reserve: false
 </div>
 
 <figure class="fig"><svg viewBox="0 0 560 280" role="img" aria-label="Profil tensionnel sur 24 heures : le dipper baisse la nuit de plus de 10 pour cent, le non-dipper reste haut">
-  <rect x="380" y="46" width="160" height="128" fill="#06441C" fill-opacity=".07"></rect>
+  <rect x="380" y="46" width="160" height="128" fill="currentColor" fill-opacity=".09"></rect>
   <text x="460" y="40" text-anchor="middle" class="tx-m" font-size="12">Période nocturne</text>
   <line x1="60" y1="174" x2="540" y2="174" stroke="#9AA79E" stroke-width="1"></line>
   <line x1="60" y1="46" x2="60" y2="174" stroke="#9AA79E" stroke-width="1"></line>
