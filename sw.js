@@ -22,13 +22,17 @@
    suivante - invisible dans l'application Android, qui garde son cache
    d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v6";
+const CACHE_VERSION = "amstc-v7";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
   "/assets/icon-192.png",
   "/assets/icon-512.png",
   "/assets/css/dark-mode.css",
+  // La police d'icones est servie par le site depuis qu'un CDN muet
+  // laissait les pages sans le moindre pictogramme.
+  "/assets/vendor/tabler-amstc.css",
+  "/assets/vendor/tabler-amstc.woff2",
   "/assets/css/site-search.css",
   "/assets/js/theme-toggle.js",
   "/assets/js/site-search.js"

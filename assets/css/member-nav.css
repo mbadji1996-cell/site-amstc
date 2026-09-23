@@ -616,3 +616,25 @@ html:root:not([data-theme="dark"]){--text-accent:#8A6209;}
 html header{padding:0;}
 html header .header-wrap{max-width:1400px; margin:0 auto; padding:14px 28px;
   display:flex; align-items:center; justify-content:space-between;}
+
+/* ===== Outils de l'entete : theme et recherche =====
+   Leur dessin par defaut (dark-mode.css) suppose un bandeau vert : bord
+   et icone blancs, fond translucide. Dans l'espace membres, la barre du
+   haut est BLANCHE en theme clair - le bouton de bascule y devenait
+   invisible, et la bascule clair/sombre introuvable a la souris.
+   On reprend ici le dessin des boutons poses sur fond clair. Le prefixe
+   « html » ne sert qu'a passer devant la regle generale, sans dependre
+   de l'ordre de chargement des feuilles. */
+html .outils-entete .menu-extra{
+  border-color:var(--line, rgba(6,68,28,0.16));
+  background:var(--surface, #FFFFFF);
+  color:var(--green-deep, #06441C);
+  box-shadow:0 1px 3px rgba(6,68,28,0.12);
+}
+html .outils-entete .menu-extra:hover{
+  background:var(--paper-alt, #ECEFE3); border-color:var(--green, #17763B);
+}
+:root[data-theme="dark"] .outils-entete .menu-extra{
+  color:var(--text-accent, #F0C955);
+  box-shadow:none;
+}

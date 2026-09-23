@@ -6,56 +6,60 @@
    changement de dessin se fait ici une fois pour toutes.
    Les textes et la photo sont modifiables dans le CMS
    (content/espace-membre-bandeaux.json).
+
+   VERT FONCÉ, et non plus un dégradé clair. Le tableau de bord
+   ouvre sur une bannière vert profond ; les pages qui suivaient
+   ouvraient sur un vert très pâle, presque blanc, et l'espace
+   semblait changer de maison d'une page à l'autre. Le dégradé est
+   maintenant celui du tableau de bord, dans les deux thèmes : le
+   fond est le même de jour comme de nuit, seuls les textes
+   posés dessus restent clairs.
    ============================================================ */
 
 .bm{
-  position:relative; overflow:hidden; border-radius:20px; border:1px solid var(--line);
-  background:linear-gradient(110deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface);
+  position:relative; overflow:hidden; border-radius:20px; border:0;
+  background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
   padding:26px 28px; margin:24px 0 18px;
 }
-:root[data-theme="dark"] .bm{
-  background:linear-gradient(110deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface);
-}
-/* La photo occupe la moitié droite et se fond dans le fond du bandeau. */
+/* La photo occupe la moitié droite et se fond dans le vert du bandeau. */
 .bm-photo{position:absolute; inset:0 0 0 auto; width:54%; z-index:0;}
 .bm-photo img{width:100%; height:100%; object-fit:cover;}
 .bm-photo::after{
   content:""; position:absolute; inset:0;
-  background:linear-gradient(90deg, #F4F8F4 0%, rgba(244,248,244,0.6) 45%, rgba(244,248,244,0.15) 100%);
-}
-:root[data-theme="dark"] .bm-photo::after{
-  background:linear-gradient(90deg, var(--surface) 0%, rgba(24,32,25,0.65) 45%, rgba(24,32,25,0.25) 100%);
+  background:linear-gradient(90deg, #06441C 0%, rgba(8,77,33,0.72) 38%, rgba(18,98,47,0.18) 100%);
 }
 .bm-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
 .bm-ic{
   width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
-  background:var(--green-deep); color:var(--gold); font-size:28px;
+  background:rgba(255,255,255,0.13); border:1px solid rgba(255,255,255,0.24);
+  color:var(--gold, #F8B718); font-size:28px;
 }
-.bm-retour{display:inline-flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;}
-.bm-retour:hover{color:var(--green);}
+.bm-retour{
+  display:inline-flex; align-items:center; gap:7px; font-size:0.82rem;
+  color:rgba(255,255,255,0.72); margin-bottom:8px;
+}
+.bm-retour:hover{color:#FFFFFF;}
 .bm h1{
   font-family:var(--display); font-size:clamp(1.5rem,3.2vw,2.1rem); font-weight:700;
-  color:var(--text-heading); line-height:1.15; margin:0;
+  color:#FFFFFF; line-height:1.15; margin:0;
 }
-.bm-soustitre{font-size:0.95rem; color:var(--green); font-weight:600; margin-top:4px;}
-:root[data-theme="dark"] .bm-soustitre{color:#7FD9A0;}
-.bm-intro{color:var(--text-muted); font-size:0.93rem; margin-top:8px; max-width:58ch;}
+.bm-soustitre{font-size:0.95rem; color:#FFE3A0; font-weight:600; margin-top:4px;}
+.bm-intro{color:rgba(255,255,255,0.86); font-size:0.93rem; margin-top:8px; max-width:58ch;}
 .bm-bouton{
   display:inline-flex; align-items:center; gap:9px; margin-top:16px; padding:11px 20px; border-radius:999px;
-  background:var(--green-deep); color:#FFFFFF; font-weight:600; font-size:0.88rem;
+  background:var(--gold, #F8B718); color:#06441C; font-weight:600; font-size:0.88rem;
 }
-.bm-bouton:hover{background:var(--green);}
-:root[data-theme="dark"] .bm-bouton{background:#7FD9A0; color:#06441C;}
-:root[data-theme="dark"] .bm-bouton:hover{background:#9BE5B6;}
+.bm-bouton:hover{background:#FFD35C; color:#06441C;}
 /* Rangée de pastilles sous le texte : mots-clés du forum, types de la
    médiathèque, catégories de la bibliothèque. */
 .bm-actions{position:relative; z-index:1; display:flex; gap:9px; flex-wrap:wrap; margin-top:18px;}
 .bm-mot{
   display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px;
-  border:1px solid var(--line); background:var(--surface);
-  font-size:0.84rem; font-weight:600; color:var(--text-heading);
+  border:1px solid rgba(255,255,255,0.24); background:rgba(255,255,255,0.13);
+  font-size:0.84rem; font-weight:600; color:#FFFFFF;
 }
-.bm-mot .ti{color:var(--green); font-size:16px;}
+.bm-mot:hover{background:rgba(255,255,255,0.22);}
+.bm-mot .ti{color:#FFE3A0; font-size:16px;}
 @media(max-width:620px){
   .bm{padding:20px;}
   .bm-photo{display:none;}
