@@ -76,6 +76,8 @@ reserve: false
 .html-importe .hta .source{font-size:0.88rem; color:var(--h-muted); max-width:760px; margin-top:26px; padding-top:14px; border-top:1px solid var(--h-line);}
 @media (max-width:760px){
 .html-importe .hta .hero{grid-template-columns:1fr; gap:20px;}
+.html-importe .hta .fig{overflow-x:auto; padding:14px 14px 10px;}
+.html-importe .hta .fig svg{min-width:460px;}
 .html-importe .hta .keys{grid-template-columns:repeat(2,1fr);}
 .html-importe .hta .keys li{border-left:0; padding-left:0; border-top:1px solid var(--h-line);}
 .html-importe .hta .keys li:nth-child(-n+2){border-top:0;}
