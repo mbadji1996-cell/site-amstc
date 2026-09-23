@@ -111,14 +111,13 @@ reserve: false
     <text x="220" y="130" text-anchor="middle" class="tx-m" font-size="12">130</text>
     <text x="280" y="130" text-anchor="middle" class="tx-m" font-size="12">140</text>
     <text x="520" y="130" text-anchor="end" class="tx-m" font-size="12">180 mmHg</text>
-    <text x="280" y="148" text-anchor="middle" class="tx-m" font-size="12">Pression artérielle systolique au cabinet</text>
     <line x1="220" y1="40" x2="220" y2="66" stroke="#8A6209" stroke-width="2"></line>
     <text x="214" y="34" text-anchor="end" class="tx-h" font-size="12.5" font-weight="700">130 / 80 : seuil ACC/AHA (USA)</text>
     <line x1="280" y1="176" x2="280" y2="108" stroke="#B3261E" stroke-width="2"></line>
     <text x="286" y="192" class="tx-h" font-size="12.5" font-weight="700">140 / 90 : seuil ESC 2024 (Europe)</text>
     <text x="286" y="210" class="tx-m" font-size="12">Confirmation hors cabinet obligatoire</text>
     <text x="40" y="232" class="tx-m" font-size="12">Cible sous traitement : PAS &lt; 130 mmHg, 120 à 129 si bien toléré.</text>
-  </svg><figcaption>Les deux seuils diagnostiques en vigueur, et la nouvelle catégorie « PA élevée » entre les deux.</figcaption></figure>
+  </svg><figcaption>Pression artérielle systolique mesurée au cabinet : les deux seuils diagnostiques en vigueur, et la nouvelle catégorie « PA élevée » entre les deux.</figcaption></figure>
 </section>
 
 <ul class="keys">
@@ -178,11 +177,11 @@ reserve: false
   <line x1="60" y1="174" x2="540" y2="174" stroke="#9AA79E" stroke-width="1"></line>
   <line x1="60" y1="46" x2="60" y2="174" stroke="#9AA79E" stroke-width="1"></line>
   <text x="54" y="50" text-anchor="end" class="tx-m" font-size="12.5">150</text>
-  <text x="54" y="118" text-anchor="end" class="tx-m" font-size="12.5">125</text>
+  <text x="54" y="114" text-anchor="end" class="tx-m" font-size="12.5">125</text>
   <text x="54" y="178" text-anchor="end" class="tx-m" font-size="12.5">100</text>
   <text x="26" y="112" text-anchor="middle" class="tx-m" font-size="12.5" transform="rotate(-90 26 112)">PAS (mmHg)</text>
-  <polyline points="60,136 140,129 220,138 300,148 380,177 460,189 540,136" fill="none" stroke="#17763B" stroke-width="3"></polyline>
-  <polyline points="60,136 140,129 220,134 300,134 380,138 460,141 540,131" fill="none" stroke="#B3261E" stroke-width="3" stroke-dasharray="7 5"></polyline>
+  <polyline points="60,84 140,77 220,87 300,97 380,128 460,141 540,84" fill="none" stroke="#17763B" stroke-width="3"></polyline>
+  <polyline points="60,84 140,77 220,82 300,82 380,87 460,90 540,79" fill="none" stroke="#B3261E" stroke-width="3" stroke-dasharray="7 5"></polyline>
   <text x="60" y="192" text-anchor="middle" class="tx-m" font-size="12.5">08 h</text>
   <text x="220" y="192" text-anchor="middle" class="tx-m" font-size="12.5">16 h</text>
   <text x="380" y="192" text-anchor="middle" class="tx-m" font-size="12.5">00 h</text>
@@ -191,8 +190,7 @@ reserve: false
   <text x="84" y="220" class="tx" font-size="13">Dipper : baisse nocturne de plus de 10 %, profil normal</text>
   <rect x="60" y="242" width="14" height="4" fill="#B3261E"></rect>
   <text x="84" y="248" class="tx" font-size="13">Non-dipper : pas de baisse la nuit, risque majoré</text>
-  <text x="60" y="270" class="tx-m" font-size="12">Un profil non-dipper fait chercher une apnée du sommeil, une insuffisance rénale ou un diabète.</text>
-</svg><figcaption>Ce que seule la MAPA peut montrer : le comportement de la pression pendant le sommeil.</figcaption></figure>
+</svg><figcaption>Ce que seule la MAPA peut montrer : le comportement de la pression pendant le sommeil. Un profil non-dipper fait chercher une apnée du sommeil, une insuffisance rénale ou un diabète.</figcaption></figure>
 
 <h3>Les quatre profils tensionnels</h3>
 
@@ -260,7 +258,7 @@ reserve: false
   <line x1="215" y1="40" x2="215" y2="212" stroke="#9AA79E" stroke-width="1"></line>
   <text x="205" y="60" text-anchor="end" class="tx" font-size="13">Régime DASH</text>
   <rect x="215" y="46" width="288" height="22" rx="4" fill="#17763B"></rect>
-  <text x="511" y="62" text-anchor="end" fill="#FFFFFF" font-size="12" font-weight="700">-8 à -14</text>
+  <text x="494" y="62" text-anchor="end" fill="#FFFFFF" font-size="12" font-weight="700">-8 à -14</text>
   <text x="205" y="102" text-anchor="end" class="tx" font-size="13">Sel &lt; 5 g / jour</text>
   <rect x="215" y="88" width="206" height="22" rx="4" fill="#17763B" fill-opacity=".85"></rect>
   <text x="429" y="104" class="tx" font-size="12" font-weight="700">-5 à -10</text>
