@@ -27,7 +27,7 @@ reserve: false
 .html-importe .hta h3{font-family:'Sora','Inter',sans-serif; font-weight:600; color:var(--h-head); font-size:1.16rem; line-height:1.35; margin:30px 0 10px; padding-left:16px; border-left:4px solid var(--h-green); max-width:760px;}
 .html-importe .hta .kicker{font-family:'Sora',sans-serif; font-weight:600; color:var(--h-goldink); font-size:0.95rem; letter-spacing:.02em; margin:0 0 10px;}
 .html-importe .hta .lead{font-size:1.24rem; line-height:1.55; color:var(--h-head); font-family:'Sora','Inter',sans-serif; font-weight:500;}
-.html-importe .hta .hero{display:grid; grid-template-columns:1.05fr 1fr; gap:34px; align-items:center; padding:6px 0 20px;}
+.html-importe .hta .hero{display:grid; grid-template-columns:1fr; gap:22px; padding:6px 0 20px; max-width:760px;}
 .html-importe .hta .who{display:flex; align-items:flex-start; gap:14px; margin-top:20px; padding:14px 16px; border:1px solid var(--h-line); border-left:5px solid var(--h-gold); border-radius:12px; background:var(--h-surface);}
 .html-importe .hta .who .ini{flex:0 0 auto; width:48px; height:48px; border-radius:50%; background:var(--h-deep); color:#fff; font-family:'Sora',sans-serif; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:1rem;}
 .html-importe .hta .who strong{display:block; font-family:'Sora',sans-serif; color:var(--h-head); font-size:1.05rem;}
@@ -40,7 +40,7 @@ reserve: false
 .html-importe .hta .fig{margin:22px 0 28px; max-width:760px; background:var(--h-surface); border:1px solid var(--h-line); border-radius:16px; padding:18px 18px 12px;}
 .html-importe .hta .fig svg{display:block; width:100%; height:auto; font-family:'Inter',-apple-system,sans-serif;}
 .html-importe .hta .fig figcaption{font-size:0.87rem; color:var(--h-muted); margin-top:8px; padding-top:8px; border-top:1px dashed var(--h-line);}
-.html-importe .hta .hero-fig{margin:0; max-width:none;}
+.html-importe .hta .hero-fig{margin:0; max-width:760px;}
 .html-importe .hta svg .tx{fill:var(--h-ink);}
 .html-importe .hta svg .tx-h{fill:var(--h-head);}
 .html-importe .hta svg .tx-m{fill:var(--h-muted);}
@@ -177,16 +177,16 @@ reserve: false
   <text x="460" y="40" text-anchor="middle" class="tx-m" font-size="12">Période nocturne</text>
   <line x1="60" y1="174" x2="540" y2="174" stroke="#9AA79E" stroke-width="1"></line>
   <line x1="60" y1="46" x2="60" y2="174" stroke="#9AA79E" stroke-width="1"></line>
-  <text x="54" y="50" text-anchor="end" class="tx-m" font-size="11">150</text>
-  <text x="54" y="118" text-anchor="end" class="tx-m" font-size="11">125</text>
-  <text x="54" y="178" text-anchor="end" class="tx-m" font-size="11">100</text>
-  <text x="26" y="112" text-anchor="middle" class="tx-m" font-size="11" transform="rotate(-90 26 112)">PAS (mmHg)</text>
+  <text x="54" y="50" text-anchor="end" class="tx-m" font-size="12.5">150</text>
+  <text x="54" y="118" text-anchor="end" class="tx-m" font-size="12.5">125</text>
+  <text x="54" y="178" text-anchor="end" class="tx-m" font-size="12.5">100</text>
+  <text x="26" y="112" text-anchor="middle" class="tx-m" font-size="12.5" transform="rotate(-90 26 112)">PAS (mmHg)</text>
   <polyline points="60,136 140,129 220,138 300,148 380,177 460,189 540,136" fill="none" stroke="#17763B" stroke-width="3"></polyline>
   <polyline points="60,136 140,129 220,134 300,134 380,138 460,141 540,131" fill="none" stroke="#B3261E" stroke-width="3" stroke-dasharray="7 5"></polyline>
-  <text x="60" y="192" text-anchor="middle" class="tx-m" font-size="11">08 h</text>
-  <text x="220" y="192" text-anchor="middle" class="tx-m" font-size="11">16 h</text>
-  <text x="380" y="192" text-anchor="middle" class="tx-m" font-size="11">00 h</text>
-  <text x="540" y="192" text-anchor="middle" class="tx-m" font-size="11">08 h</text>
+  <text x="60" y="192" text-anchor="middle" class="tx-m" font-size="12.5">08 h</text>
+  <text x="220" y="192" text-anchor="middle" class="tx-m" font-size="12.5">16 h</text>
+  <text x="380" y="192" text-anchor="middle" class="tx-m" font-size="12.5">00 h</text>
+  <text x="540" y="192" text-anchor="middle" class="tx-m" font-size="12.5">08 h</text>
   <rect x="60" y="214" width="14" height="4" fill="#17763B"></rect>
   <text x="84" y="220" class="tx" font-size="13">Dipper : baisse nocturne de plus de 10 %, profil normal</text>
   <rect x="60" y="242" width="14" height="4" fill="#B3261E"></rect>
