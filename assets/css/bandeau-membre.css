@@ -22,12 +22,14 @@
   padding:26px 28px; margin:24px 0 18px;
 }
 /* La photo occupe la moitié droite et se fond dans le vert du bandeau. */
-.bm-photo{position:absolute; inset:0 0 0 auto; width:54%; z-index:0;}
-.bm-photo img{width:100%; height:100%; object-fit:cover;}
-.bm-photo::after{
-  content:""; position:absolute; inset:0;
-  background:linear-gradient(90deg, #06441C 0%, rgba(8,77,33,0.72) 38%, rgba(18,98,47,0.18) 100%);
+.bm-photo{
+  position:absolute; inset:0 0 0 auto; width:54%; z-index:0;
+  /* La photo s efface en fondu - un masque, et non un voile de couleur :
+     le fond est un degrade, un voile uni y laissait une bande visible. */
+  -webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 30%, #000 68%);
+  mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 30%, #000 68%);
 }
+.bm-photo img{width:100%; height:100%; object-fit:cover;}
 .bm-texte{position:relative; z-index:1; display:flex; align-items:flex-start; gap:18px;}
 .bm-ic{
   width:64px; height:64px; flex:none; border-radius:50%; display:grid; place-items:center;
