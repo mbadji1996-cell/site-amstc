@@ -1,6 +1,5 @@
 ---
-title: "Hypertension artérielle : signes, diagnostic et prise en charge - les
-  nouvelles recommandations"
+title: "Hypertension artérielle : les nouvelles recommandations (2025 - 2026)"
 date: 2026-09-20
 date_debut: ""
 date_fin: ""
