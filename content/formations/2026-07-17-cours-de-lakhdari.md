@@ -8,4 +8,5 @@ excerpt: Cours hebdomadaire sur le Mukhtasar Cheikh Sidiya Al-Akhdar (fiqh
   groupe WhatsApp.
 image: /assets/uploads/cours-lakhdari.jpg
 reserve: true
+lien_membres: https://amstc.org/c/34fc59a0-8362-43f8-b27d-4b3a494e8335
 ---
