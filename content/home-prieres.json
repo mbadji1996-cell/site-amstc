@@ -3,8 +3,8 @@
   "prayer_title": "Heures de prière",
   "prayer_subtitle": "Consultez chaque semaine les horaires de prière et nourrissez votre esprit avec le Coran et la Sunna.",
   "prayer_city": "Dakar",
-  "prayer_period_hijri": "du 06 au 12 Rabi ath-Thani 1448H",
-  "prayer_period_gregorian": "du Vendredi 18 au Jeudi 24 Septembre 2026",
+  "prayer_period_hijri": "du 13 au 19 Rabi ath-Thani 1448H",
+  "prayer_period_gregorian": "du Vendredi 25 Septembre au Jeudi 1er Octobre 2026",
   "prayer_times": [
     {
       "label": "Fadjar",
@@ -24,11 +24,11 @@
     },
     {
       "label": "Timis",
-      "time": "19H 14"
+      "time": "19H 09"
     },
     {
       "label": "Guéwé",
-      "time": "20H 14"
+      "time": "20H 09"
     }
   ]
 }
