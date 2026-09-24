@@ -8,11 +8,8 @@
 /* ===== Bandeau ===== */
 .lc-hero{
   position:relative; overflow:hidden; margin-bottom:34px;
-  background:linear-gradient(115deg, #EDF4EE 0%, #F4F8F4 55%, rgba(244,248,244,0) 100%), var(--surface, #FFFFFF);
-  border-bottom:1px solid var(--line, rgba(6,68,28,0.18));
-}
-:root[data-theme="dark"] .lc-hero{
-  background:linear-gradient(115deg, rgba(23,118,59,0.2) 0%, rgba(6,68,28,0.16) 55%, rgba(6,68,28,0) 100%), var(--surface, #182019);
+  background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
+  border-bottom:0;
 }
 .lc-hero-in{
   display:grid; grid-template-columns:minmax(0,1fr); gap:26px; align-items:center;
@@ -21,48 +18,46 @@
 @media(min-width:1000px){ .lc-hero-in{grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); gap:40px;} }
 .lc-badge{
   display:inline-flex; align-items:center; gap:8px; padding:7px 15px; border-radius:999px;
-  background:var(--green-deep, #06441C); color:#FFFFFF; font-size:0.8rem; font-weight:600;
+  background:rgba(255,255,255,0.13); border:1px solid rgba(255,255,255,0.24);
+  color:#FFFFFF; font-size:0.8rem; font-weight:600;
 }
 .lc-badge .ti{color:var(--gold, #F8B718); font-size:15px;}
 .lc-date{
   display:flex; align-items:center; gap:8px; margin-top:16px;
-  font-family:var(--mono, monospace); font-size:0.8rem; color:#8A6209;
+  font-family:var(--mono, monospace); font-size:0.8rem; color:#FFE3A0;
 }
-:root[data-theme="dark"] .lc-date{color:var(--text-accent, #F0C955);}
 .lc-hero h1{
   font-family:var(--display, sans-serif); font-weight:800; font-size:clamp(1.6rem,3.4vw,2.5rem);
-  color:var(--text-heading, #06441C); line-height:1.15; letter-spacing:-0.015em; margin:10px 0 0; text-wrap:balance;
+  color:#FFFFFF; line-height:1.15; letter-spacing:-0.015em; margin:10px 0 0; text-wrap:balance;
 }
-.lc-intro{color:var(--text-muted, #5A6C60); font-size:1.02rem; margin:14px 0 0; max-width:58ch;}
+.lc-intro{color:rgba(255,255,255,0.86); font-size:1.02rem; margin:14px 0 0; max-width:58ch;}
 .lc-chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
 .lc-chip{
   display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
-  border:1px solid var(--line, rgba(6,68,28,0.18)); background:var(--surface, #FFFFFF);
-  font-size:0.85rem; font-weight:600; color:var(--text-heading, #06441C);
+  border:1px solid rgba(255,255,255,0.24); background:rgba(255,255,255,0.13);
+  font-size:0.85rem; font-weight:600; color:#FFFFFF;
 }
-.lc-chip .ti{color:var(--green, #17763B); font-size:16px;}
-:root[data-theme="dark"] .lc-chip .ti{color:#7FD9A0;}
-.lc-chip-or{border-color:rgba(248,183,24,0.6); color:#8A6209;}
-.lc-chip-or .ti{color:#8A6209;}
-:root[data-theme="dark"] .lc-chip-or, :root[data-theme="dark"] .lc-chip-or .ti{color:var(--text-accent, #F0C955);}
+.lc-chip .ti{color:#FFE3A0; font-size:16px;}
+/* Le cadenas des contenus reserves : en or plein, il se distingue des
+   pastilles d'activite sans crier. */
+.lc-chip-or{border-color:rgba(248,183,24,0.7); background:rgba(248,183,24,0.18); color:#FFE3A0;}
+.lc-chip-or .ti{color:var(--gold, #F8B718);}
 /* ===== Support a telecharger =====
    Un bouton plein, pose sous les pastilles : le support d'un cours ou
    d'un webinaire est souvent ce que le lecteur vient chercher. */
 .lc-doc{margin:18px 0 0;}
 .lc-doc-lien{
   display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:999px;
-  background:var(--green-deep, #06441C); color:#FFFFFF;
+  background:var(--gold, #F8B718); color:#06441C;
   font-size:0.92rem; font-weight:600; text-decoration:none;
   transition:background .18s ease;
 }
-.lc-doc-lien:hover{background:var(--green, #17763B); color:#FFFFFF;}
-.lc-doc-lien .ti{font-size:19px; color:var(--gold, #F8B718);}
+.lc-doc-lien:hover{background:#FFD35C; color:#06441C;}
+.lc-doc-lien .ti{font-size:19px; color:#06441C;}
 .lc-doc-poids{
   font-family:var(--mono, monospace); font-size:0.72rem; letter-spacing:0.04em;
-  padding:4px 9px; border-radius:999px; background:rgba(255,255,255,0.16); color:#FFFFFF;
+  padding:4px 9px; border-radius:999px; background:rgba(6,68,28,0.14); color:#06441C;
 }
-:root[data-theme="dark"] .lc-doc-lien{background:#12622F;}
-:root[data-theme="dark"] .lc-doc-lien:hover{background:#17763B;}
 
 .lc-hero-photo{margin:0;}
 .lc-hero-photo img{
@@ -70,6 +65,14 @@
   border-radius:18px; background:var(--paper-alt, #ECEFE3);
 }
 .lc-hero .partage-zone{margin-top:18px;}
+/* partage.js pose son propre style, prevu pour un fond clair : vert sur
+   vert, le bouton disparaissait. Deux classes suffisent a passer devant,
+   sans dependre de l'ordre de chargement. */
+.lc-hero .btn-partage{
+  background:transparent; color:#FFFFFF; border-color:rgba(255,255,255,0.4);
+}
+.lc-hero .btn-partage:hover{border-color:#FFFFFF;}
+.lc-hero .partage-msg{color:rgba(255,255,255,0.7);}
 
 /* ===== Corps : texte et colonne de droite ===== */
 .lc-corps{display:grid; grid-template-columns:minmax(0,1fr); gap:28px; align-items:start; padding-bottom:60px;}
@@ -97,10 +100,9 @@ details.lc-carte > summary::-webkit-details-marker{display:none;}
 details.lc-carte > summary.lc-carte-tete{margin-bottom:14px;}
 .lc-retour{
   display:inline-flex; align-items:center; gap:8px; margin-bottom:14px;
-  font-size:0.84rem; font-weight:600; color:var(--green, #17763B); text-decoration:none;
+  font-size:0.84rem; font-weight:600; color:rgba(255,255,255,0.75); text-decoration:none;
 }
-.lc-retour:hover{color:var(--text-heading, #06441C);}
-:root[data-theme="dark"] .lc-retour{color:#7FD9A0;}
+.lc-retour:hover{color:#FFFFFF;}
 
 /* Sommaire */
 .lc-som{display:flex; flex-direction:column; gap:2px; max-height:52vh; overflow-y:auto;}
