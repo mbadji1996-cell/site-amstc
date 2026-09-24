@@ -22,7 +22,7 @@
    suivante - invisible dans l'application Android, qui garde son cache
    d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v7";
+const CACHE_VERSION = "amstc-v8";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
@@ -33,6 +33,11 @@ const SHELL_ASSETS = [
   // laissait les pages sans le moindre pictogramme.
   "/assets/vendor/tabler-amstc.css",
   "/assets/vendor/tabler-amstc.woff2",
+  // Les bibliotheques du site depuis qu'elles ne viennent plus d'un CDN :
+  // sans elles, un article ne s'affiche pas et l'espace membres ne s'ouvre pas.
+  "/assets/vendor/supabase-js-2.117.1.min.js",
+  "/assets/vendor/marked-15.0.12.min.js",
+  "/assets/vendor/purify-3.4.16.min.js",
   "/assets/css/site-search.css",
   "/assets/js/theme-toggle.js",
   "/assets/js/site-search.js"
