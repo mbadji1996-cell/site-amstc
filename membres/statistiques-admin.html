@@ -47,6 +47,19 @@
   .barre-val.or{background:var(--gold-deep);}
   .barre-nb{font-family:var(--mono);font-size:0.78rem;color:var(--text-muted);min-width:52px;text-align:right;}
   .vide{color:var(--text-muted);font-size:0.86rem;font-style:italic;}
+
+  /* Usage de l'espace membres */
+  .periodes{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+  .periode{border:1.5px solid var(--line);background:var(--surface);color:var(--text-heading);
+    border-radius:999px;padding:7px 15px;font-family:var(--body);font-size:0.82rem;font-weight:600;cursor:pointer;}
+  .periode.actif{background:var(--green-deep);border-color:var(--green-deep);color:#FFFFFF;}
+  /* Frise des jours : une barre par jour, hauteur proportionnelle. Rien de
+     plus qu'un div par jour - lisible a l'impression, sans bibliotheque. */
+  .frise{display:flex;align-items:flex-end;gap:3px;height:96px;margin-top:4px;}
+  .frise-jour{flex:1;min-width:3px;background:var(--green);border-radius:3px 3px 0 0;min-height:2px;}
+  .frise-jour.creux{background:var(--paper-alt);}
+  .frise-pieds{display:flex;justify-content:space-between;font-family:var(--mono);
+    font-size:0.68rem;color:var(--text-muted);margin-top:6px;}
   .note{font-size:0.78rem;color:var(--text-muted);margin-top:10px;}
   .erreur{background:#FDEEEE;color:#B23B3B;border-radius:10px;padding:12px 16px;font-size:0.9rem;margin-bottom:16px;}
   .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
@@ -111,6 +124,14 @@
     <button class="btn-sm" onclick="exporterCsv()">&#8681; Exporter en CSV</button>
     <button class="btn-sm" onclick="window.print()">&#128424; Imprimer</button>
   </div>
+  <h2>Usage de l'espace membres</h2>
+  <div class="periodes" id="periodes">
+    <button type="button" class="periode" data-jours="7">7 jours</button>
+    <button type="button" class="periode actif" data-jours="30">30 jours</button>
+    <button type="button" class="periode" data-jours="90">90 jours</button>
+  </div>
+  <div id="usage"><p class="vide">Chargement de l'usage…</p></div>
+
   <div id="contenu"></div>
 </div>
 <div class="wrap"><p id="loadingMsg" style="font-family:var(--mono);font-size:0.85rem;color:var(--text-muted);">Chargement des statistiques…</p></div>
@@ -348,10 +369,154 @@
     `;
   }
 
+  // ===== Usage de l'espace membres (phase 117) =====
+  // Le nom de la rubrique est celui du fichier de la page : on le traduit
+  // ici, et on laisse tel quel ce qui n'est pas connu - une page ajoutee
+  // demain apparaitra sous son nom brut plutot que de disparaitre.
+  const LIBELLE_ESPACE = {
+    'index': 'Tableau de bord', 'profil': 'Mon profil', 'daara': 'Espace Daara',
+    'cours': 'Daara : un cours', 'lecon': 'Enseignements : une leçon',
+    'medical': 'Enseignements Médicaux', 'quiz': 'Quiz', 'bibliotheque': 'Bibliothèque',
+    'actualites': 'Réalisations', 'formations-cms': 'Autres formations',
+    'documents': 'Documents officiels', 'boutique': 'Boutique', 'collectes': 'Collectes',
+    'forum': 'Forum', 'forum-sujet': 'Forum : un sujet', 'annuaire': 'Annuaire',
+    'mediatheque': 'Médiathèque', 'mediatheque-dossier': 'Médiathèque : un dossier',
+    'reclamer-carte': 'Carte de membre', 'invitation': 'Invitation',
+    'actualite-reservee': 'Réalisation réservée', 'formation-reservee': 'Formation réservée',
+    'admin': 'Centre d\'administration',
+  };
+  function libelleEspace(cle){
+    if (LIBELLE_ESPACE[cle]) return LIBELLE_ESPACE[cle];
+    if (/-admin$/.test(cle)) return 'Administration : ' + cle.replace(/-admin$/, '');
+    return cle;
+  }
+  let usageJours = 30;
+  let usageExport = [];
+
+  function frise(serie, jours){
+    if (!serie.length) return '<p class="vide">Aucune visite enregistrée sur la période.</p>';
+    const max = Math.max(...serie.map(j => j.visites)) || 1;
+    // Les jours sans visite doivent se voir : c'est l'information.
+    const parJour = new Map(serie.map(j => [j.jour, j]));
+    const tous = [];
+    const fin = new Date();
+    for (let i = jours - 1; i >= 0; i--) {
+      const d = new Date(fin.getFullYear(), fin.getMonth(), fin.getDate() - i);
+      const cle = d.toISOString().slice(0, 10);
+      tous.push([cle, parJour.get(cle)]);
+    }
+    const barres = tous.map(([cle, j]) => {
+      const v = j ? j.visites : 0;
+      const h = v ? Math.max(4, Math.round(v / max * 100)) : 2;
+      const date = new Date(cle + 'T12:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+      return `<span class="frise-jour${v ? '' : ' creux'}" style="height:${h}%"
+        title="${esc(date)} : ${nb(v)} ouverture(s)"></span>`;
+    }).join('');
+    const premier = new Date(tous[0][0] + 'T12:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    return `<div class="frise">${barres}</div>
+      <div class="frise-pieds"><span>${esc(premier)}</span><span>aujourd'hui</span></div>`;
+  }
+
+  function rendreUsage(k){
+    const zone = document.getElementById('usage');
+    const c = k.comptes || {}, cx = k.connexions || {}, v = k.visites || {};
+    const espaces = (k.espaces || []).map(e => [libelleEspace(e.espace), e.visites, e.membres]);
+    const ct = k.contenus || {}, as = k.assiduite || {};
+    const approuves = Number(c.approuves || 0);
+    const part = n => approuves ? Math.round(Number(n || 0) / approuves * 100) + ' % des membres' : '';
+    const journal = (k.visites && Number(k.visites.total || 0) > 0);
+
+    usageExport = [
+      [], ['Usage de l\'espace membres', 'Derniers ' + k.jours + ' jours'],
+      ['Membres approuvés', approuves],
+      ['Connectés au moins une fois (7 j)', cx.j7 || 0],
+      ['Connectés au moins une fois (30 j)', cx.j30 || 0],
+      ['Connectés au moins une fois (90 j)', cx.j90 || 0],
+      ['Jamais connectés', cx.jamais || 0],
+      ['Membres venus sur la période', v.membres || 0],
+      ['Ouvertures de page', v.total || 0],
+      ['Venus un seul jour', as.un_jour || 0],
+      ['Venus 2 à 6 jours', as.deux_six || 0],
+      ['Venus 7 jours ou plus', as.sept_plus || 0],
+      [], ['Rubrique', 'Ouvertures', 'Membres'],
+      ...espaces.map(e => [e[0], e[1], e[2]]),
+      [], ['Activité de contenu', 'Sur la période'],
+      ['Tentatives de quiz', ct.quiz_tentatives || 0],
+      ['Membres ayant tenté un quiz', ct.quiz_membres || 0],
+      ['Leçons suivies', ct.lecons || 0],
+      ['Cours du Daara suivis', ct.cours_daara || 0],
+      ['Sujets ouverts au forum', ct.forum_sujets || 0],
+      ['Réponses au forum', ct.forum_reponses || 0],
+      ['Commandes à la boutique', ct.commandes || 0],
+      ['Participations aux collectes', ct.participations || 0],
+    ];
+
+    zone.innerHTML = `
+      <div class="kpis">
+        ${kpi(nb(v.membres || 0), 'Membres venus', part(v.membres))}
+        ${kpi(nb(v.total || 0), 'Pages ouvertes', 'sur ' + k.jours + ' jours')}
+        ${kpi(nb(cx.j30 || 0), 'Connectés (30 j)', nb(cx.j7 || 0) + ' cette semaine')}
+        ${kpi(nb(cx.jamais || 0), 'Jamais connectés', cx.jamais ? 'compte créé, jamais ouvert' : 'tout le monde est venu', Number(cx.jamais || 0) > 0)}
+      </div>
+
+      ${journal ? `
+      <h2>Rubriques les plus ouvertes</h2>
+      <div class="bloc">${barres(espaces.map(e => [e[0], e[1]]))}</div>
+      <p class="note">Nombre d'ouvertures de page. La colonne « membres » du CSV dit combien de personnes différentes chaque rubrique a touchées.</p>
+
+      <h2>Jour par jour</h2>
+      <div class="bloc">${frise(k.serie || [], k.jours)}</div>
+
+      <h2>Assiduité</h2>
+      <div class="bloc">${barres([
+        ['Venus un seul jour', as.un_jour || 0],
+        ['Venus 2 à 6 jours', as.deux_six || 0],
+        ['Venus 7 jours ou plus', as.sept_plus || 0],
+      ], { or: true })}</div>
+      <p class="note">Un espace qui sert se reconnaît à la troisième ligne : des membres qui reviennent, pas des visites uniques.</p>
+      ` : `
+      <div class="bloc"><p class="vide">Le journal des visites est vide pour cette période. Il se remplit à partir des prochaines ouvertures de page ; les chiffres ci-dessous, eux, sont déjà justes.</p></div>`}
+
+      <h2>Activité de contenu</h2>
+      <div class="bloc">${barres([
+        ['Tentatives de quiz', ct.quiz_tentatives || 0],
+        ['Leçons suivies', ct.lecons || 0],
+        ['Cours du Daara suivis', ct.cours_daara || 0],
+        ['Sujets ouverts au forum', ct.forum_sujets || 0],
+        ['Réponses au forum', ct.forum_reponses || 0],
+        ['Commandes à la boutique', ct.commandes || 0],
+        ['Participations aux collectes', ct.participations || 0],
+      ].filter(l => l[1] > 0), { pourcent: false })}</div>
+      <p class="note">Ces chiffres sont lus dans les tables de contenu : ils ne dépendent pas du journal des visites et couvrent donc toute l'histoire de l'espace.</p>
+    `;
+  }
+
+  async function chargerUsage(jours){
+    usageJours = jours || usageJours;
+    const zone = document.getElementById('usage');
+    zone.innerHTML = '<p class="vide">Chargement de l\'usage…</p>';
+    const { data, error } = await supabaseClient.rpc('usage_kpi', { p_jours: usageJours });
+    if (error || !data) {
+      usageExport = [];
+      zone.innerHTML = `<div class="bloc"><p class="vide">Les indicateurs d'usage ne sont pas encore disponibles.
+        Exécutez <code>supabase/phase117-usage-espace-membres.sql</code> dans l'éditeur SQL de Supabase pour les activer.</p>
+        <p class="note">${esc((error && error.message) || 'Fonction usage_kpi introuvable.')}</p></div>`;
+      return;
+    }
+    rendreUsage(data);
+  }
+
+  document.getElementById('periodes').addEventListener('click', e => {
+    const b = e.target.closest('.periode');
+    if (!b) return;
+    document.querySelectorAll('.periode').forEach(x => x.classList.toggle('actif', x === b));
+    chargerUsage(Number(b.dataset.jours));
+  });
+
   function exporterCsv(){
     // Point-virgule et BOM : Excel en configuration française ouvre alors le
     // fichier en colonnes, accents compris, sans étape d'import.
-    const contenu = '﻿' + statsExport
+    const contenu = '﻿' + statsExport.concat(usageExport)
       .map(l => (l || []).map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(';'))
       .join('\r\n');
     const lien = document.createElement('a');
@@ -388,6 +553,7 @@
     }
 
     rendre(rProfils.data || [], rValidite.data || [], rCotis.data || []);
+    chargerUsage(30);
   })();
 </script>
 

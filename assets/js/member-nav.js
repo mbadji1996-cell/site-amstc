@@ -573,3 +573,31 @@
     } catch (e) { /* l'absence d'annonces ne doit rien bloquer */ }
   })();
 })();
+
+/* ===== Journal d'usage (phase 117) =====
+   Une ligne par membre, par rubrique et par jour : de quoi savoir quelles
+   rubriques de l'espace servent vraiment, sans reconstituer le parcours de
+   qui que ce soit. L'appel est volontairement muet - tant que le script
+   SQL n'est pas passé, la fonction n'existe pas, et la page doit
+   continuer comme si de rien n'était. */
+(function () {
+  var fait = false;
+
+  function rubrique() {
+    var f = location.pathname.split('/').pop().replace(/\.html$/, '');
+    return f || 'index';
+  }
+
+  function noter() {
+    if (fait || typeof supabaseClient === 'undefined') return;
+    fait = true;
+    try {
+      var r = supabaseClient.rpc('usage_visite', { p_espace: rubrique() });
+      if (r && typeof r.then === 'function') r.then(function () {}, function () {});
+    } catch (e) { /* le journal ne parle jamais plus fort que la page */ }
+  }
+
+  // Le profil peut arriver avant nous (script differe) comme apres.
+  if (window.profilMembre) noter();
+  window.addEventListener('membre-pret', noter);
+})();
