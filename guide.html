@@ -331,7 +331,7 @@
       <span class="toc-group-label">3 · Administration</span>
       <nav><ul>
         <li><a href="#admin" data-toc>Vue d'ensemble</a></li>
-        <li><a href="#admin-membres" data-toc class="sub">Membres &amp; paiements</a></li>
+        <li><a href="#admin-membres" data-toc class="sub">Membres, paiements &amp; statistiques</a></li>
         <li><a href="#admin-contenu" data-toc class="sub">Contenus &amp; formations</a></li>
         <li><a href="#admin-boutique-media" data-toc class="sub">Boutique &amp; médiathèque</a></li>
         <li><a href="#admin-cms" data-toc class="sub">CMS du site public</a></li>
@@ -379,6 +379,22 @@
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">+</span> Projets, Agenda et Faire un don refaits</p>
         <p class="faq-a">Chacune de ces pages a un bandeau modifiable dans le CMS, des filtres et une colonne de droite (chiffres, prochains rendez-vous, montants du don).</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">+</span> Un document à télécharger sur une fiche</p>
+        <p class="faq-a">Une réalisation ou une formation peut porter un <strong>PDF</strong> : support d'un webinaire, compte rendu, diaporama. Un bouton apparaît sous les étiquettes, avec le poids du fichier annoncé avant le téléchargement. Deux champs dans le CMS : « Document à télécharger (PDF) » et, facultatif, l'intitulé du bouton.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">+</span> Les indicateurs d'usage de l'espace membres <span class="badge admin">Admin</span></p>
+        <p class="faq-a">La page <strong>Statistiques</strong> s'ouvre désormais sur l'usage : membres venus, pages ouvertes, connexions, comptes jamais utilisés, classement des rubriques, frise jour par jour et assiduité, sur 7, 30 ou 90 jours. Le journal retient une ligne par membre, par rubrique et par jour - assez pour piloter, trop peu pour surveiller qui que ce soit.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">+</span> Les bandeaux passent au vert profond</p>
+        <p class="faq-a">Réalisations, Formations, Projets, Faire un don, les pages de l'espace membres et l'ouverture des articles partagent le vert du tableau de bord. Le site ne change plus d'allure d'une page à l'autre.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">+</span> Le site ne dépend plus de serveurs extérieurs</p>
+        <p class="faq-a">Les pictogrammes et les neuf bibliothèques du site (affichage des articles, espace membres, CMS, export Excel, PDF, graphiques) étaient chargés depuis des serveurs tiers : quand ils répondaient mal, les icônes disparaissaient et certaines pages ne s'affichaient plus. Tout est maintenant servi par amstc.org. Si une page vous semble incomplète après une mise à jour, un <strong>Ctrl+F5</strong> suffit.</p>
       </div>
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">+</span> Sur téléphone, tout ce qui peut se replier se replie</p>
@@ -1037,6 +1053,21 @@
           </div>
         </details>
 
+        <details class="page-card">
+          <summary>
+            <span class="page-title">Statistiques</span>
+            <span class="page-path">/membres/statistiques-admin</span>
+            <span class="page-badges"><span class="badge admin">Admin</span></span>
+            <span class="chev">&#9656;</span>
+          </summary>
+          <div class="page-body">
+            <p>Deux lectures sur une même page. D'abord <strong>l'usage de l'espace membres</strong> sur 7, 30 ou 90 jours : combien de membres sont venus et quelle part des approuvés ils représentent, combien de pages ont été ouvertes, combien de comptes se sont connectés et combien ne l'ont <em>jamais</em> fait ; puis le classement des rubriques les plus ouvertes, une frise jour par jour où les jours creux se voient, l'assiduité (venus un seul jour, 2 à 6 jours, 7 jours ou plus) et l'activité de contenu (quiz, leçons, cours du Daara, forum, boutique, collectes).</p>
+            <p>Ensuite <strong>l'état de l'association</strong> : membres actifs, comptes en attente, répartition par domaine, par région et par localité, année d'adhésion, type d'adhérent, inscriptions des douze derniers mois, cartes de membre et encaissements de l'année.</p>
+            <p>Deux boutons en haut : <strong>Exporter en CSV</strong> (tout, usage compris, ouvrable dans Excel) et <strong>Imprimer</strong>.</p>
+            <p>Ce que le journal d'usage ne fait pas : il n'enregistre ni l'heure exacte, ni l'adresse du visiteur, et ne permet pas de reconstituer le parcours d'un membre. Il compte les ouvertures par rubrique et par jour, et lui seul est réservé aux administrateurs.</p>
+          </div>
+        </details>
+
       </div>
 
       <div class="subsection" id="admin-contenu">
@@ -1136,6 +1167,7 @@
           
             <p>Depuis septembre 2026 : le <strong>résumé et le contenu ne sont plus obligatoires</strong> ; les champs de date n'affichent plus d'heure ; le champ <strong>« Activités »</strong> accepte plusieurs choix par fiche et ses options sont classées par ordre alphabétique.</p>
             <p>Nouvelles entrées dans <strong>Autres pages</strong> : « Page Formation (bandeau) » et « Page Projets (bandeau) », sur le modèle de la page Réalisations. Les bandeaux de l'espace membres se modifient dans <strong>Espace membres</strong>, et la page « Faire un don » a gagné ses montants proposés, « à quoi sert votre don » et son témoignage.</p>
+            <p>Sur les Réalisations et les Formations, deux champs permettent de joindre un <strong>document à télécharger</strong> : le PDF lui-même (téléversé comme une image) et, facultatif, l'intitulé du bouton - « Télécharger le support », « Télécharger le compte rendu ». Le poids du fichier s'affiche tout seul sur la fiche.</p>
             <p>Le réglage du CMS est relu à chaque ouverture : une modification s'applique dès la page rechargée, sans attendre.</p>
           </div>
         </details>
