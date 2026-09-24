@@ -45,6 +45,25 @@
 .lc-chip-or{border-color:rgba(248,183,24,0.6); color:#8A6209;}
 .lc-chip-or .ti{color:#8A6209;}
 :root[data-theme="dark"] .lc-chip-or, :root[data-theme="dark"] .lc-chip-or .ti{color:var(--text-accent, #F0C955);}
+/* ===== Support a telecharger =====
+   Un bouton plein, pose sous les pastilles : le support d'un cours ou
+   d'un webinaire est souvent ce que le lecteur vient chercher. */
+.lc-doc{margin:18px 0 0;}
+.lc-doc-lien{
+  display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:999px;
+  background:var(--green-deep, #06441C); color:#FFFFFF;
+  font-size:0.92rem; font-weight:600; text-decoration:none;
+  transition:background .18s ease;
+}
+.lc-doc-lien:hover{background:var(--green, #17763B); color:#FFFFFF;}
+.lc-doc-lien .ti{font-size:19px; color:var(--gold, #F8B718);}
+.lc-doc-poids{
+  font-family:var(--mono, monospace); font-size:0.72rem; letter-spacing:0.04em;
+  padding:4px 9px; border-radius:999px; background:rgba(255,255,255,0.16); color:#FFFFFF;
+}
+:root[data-theme="dark"] .lc-doc-lien{background:#12622F;}
+:root[data-theme="dark"] .lc-doc-lien:hover{background:#17763B;}
+
 .lc-hero-photo{margin:0;}
 .lc-hero-photo img{
   width:100%; max-height:420px; object-fit:contain; object-position:center; display:block;

@@ -24,5 +24,7 @@ excerpt: >-
   - Le point sur les nouvelles recommandations concernant la prise en charge et la prévention de cette maladie silencieuse.
 image: /assets/uploads/pp.png
 video_youtube: https://youtu.be/4HWS5mQluqM
+document: /assets/uploads/hta-nouvelles-recommandations-dr-fall.pdf
+document_nom: Télécharger le support du webinaire
 reserve: false
 ---

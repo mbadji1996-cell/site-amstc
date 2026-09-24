@@ -13,6 +13,8 @@ excerpt: "Le support complet du webinaire du Dr Papa Mouhamadou Diarra Fall,
   hypertensives et cas particuliers."
 image: /assets/uploads/webinaire-hta-nouvelles-recommandations.png
 video_youtube: https://youtu.be/4HWS5mQluqM
+document: /assets/uploads/hta-nouvelles-recommandations-dr-fall.pdf
+document_nom: Télécharger le support du webinaire
 reserve: false
 ---
 

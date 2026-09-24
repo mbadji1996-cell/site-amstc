@@ -151,6 +151,13 @@
       + '<h1>' + ech(o.titre || '') + '</h1>'
       + (o.intro ? '<p class="lc-intro">' + ech(o.intro) + '</p>' : '')
       + (chips ? '<div class="lc-chips">' + chips + '</div>' : '')
+      // Support a telecharger : le poids s'affiche des qu'on le connait
+      // (lectureDocument ci-dessous), pour qui lit sur son forfait.
+      + (o.document ? '<p class="lc-doc"><a class="lc-doc-lien" id="lcDocument" href="'
+          + ech(o.document.url) + '" download>'
+          + '<i class="ti ti-file-type-pdf" aria-hidden="true"></i> '
+          + ech(o.document.nom || 'Telecharger le document')
+          + '<span class="lc-doc-poids" id="lcDocumentPoids">PDF</span></a></p>' : '')
       + '<div id="partageZone" class="partage-zone"></div>'
       + '</div>'
       + (o.image ? '<figure class="lc-hero-photo"><img src="' + ech(o.image) + '" alt=""></figure>' : '')
@@ -177,5 +184,23 @@
       + '</aside></div>';
   }
 
+  // Le poids du fichier n'est connu que du serveur : on le demande sans
+  // telecharger le document (requete HEAD), et on se tait si la reponse
+  // ne le dit pas - un bouton sans poids vaut mieux qu'un bouton absent.
+  function lectureDocument() {
+    var lien = document.getElementById('lcDocument');
+    var zone = document.getElementById('lcDocumentPoids');
+    if (!lien || !zone) return;
+    fetch(lien.getAttribute('href'), { method: 'HEAD' }).then(function (r) {
+      var n = Number(r.headers.get('content-length'));
+      if (!n) return;
+      var ko = n / 1024;
+      zone.textContent = ko >= 1024
+        ? 'PDF, ' + (ko / 1024).toFixed(1).replace('.', ',') + ' Mo'
+        : 'PDF, ' + Math.round(ko) + ' Ko';
+    }).catch(function () { /* le bouton garde « PDF » */ });
+  }
+
+  window.lectureDocument = lectureDocument;
   window.lectureGabarit = lectureGabarit;
 })();

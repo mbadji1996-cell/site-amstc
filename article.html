@@ -212,6 +212,7 @@
     }
     if (corps && typeof rendreSommaireDepliant === 'function') rendreSommaireDepliant(corps);
     partageInit({ conteneur: 'partageZone', prefixe: prefixe, cle: 'slug' });
+    if (typeof lectureDocument === 'function') lectureDocument();
   }
 
   async function loadArticle() {
@@ -265,6 +266,9 @@
           date: formatDatePeriode(data), titre: data.title || '', intro: data.excerpt || '',
           chips: CHIPS,
           image: data.image || '', videoId: VIDEO,
+          document: data.document
+            ? { url: data.document, nom: data.document_nom || 'Télécharger le support' }
+            : null,
           avant: etat === "lecteur" ? '' : `
           <div class="reserve-porte" style="border:1.5px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:22px 24px;margin:0 0 30px;background:var(--paper-alt);">
             <p style="font-weight:600;color:var(--text-heading);margin:0 0 16px;">Réalisation réservée aux membres disposant d'un compte</p>
@@ -300,6 +304,9 @@
         date: formatDatePeriode(data), titre: data.title || '', intro: data.excerpt || '',
         chips: CHIPS,
         image: data.image || '', videoId: VIDEO,
+        document: data.document
+          ? { url: data.document, nom: data.document_nom || 'Télécharger le support' }
+          : null,
         avant: '',
         corps: rendreCorps(body),
         titreProches: 'Réalisations proches', lienProches: 'actualites', lienProchesTexte: 'Voir tout',
