@@ -71,6 +71,136 @@
     }).observe(document.body, { childList: true, subtree: true });
   </script>
   <script>
+    // ===== Barre de recherche dans l'entete =====
+    // Decap n'en propose qu'une, dans la colonne de gauche, sous le mot
+    // « Collections » : une ligne grise, facile a manquer, et hors champ
+    // des que la fenetre retrecit. Celle-ci vit dans la barre du haut,
+    // visible partout, y compris sur telephone.
+    //
+    // Elle n'invente rien : elle appelle la recherche DE DECAP, par ses
+    // routes #/collections/<nom>/search/<terme> et #/search/<terme>.
+    // Filtrer nous-memes les cartes affichees aurait ignore les fiches
+    // que la liste n'a pas encore dessinees - la moitie des realisations.
+    (function () {
+      var champ = null;
+      var minuteur = null;
+
+      function collection() {
+        var m = /^#\/collections\/([^\/]+)/.exec(location.hash || '');
+        return m ? m[1] : '';
+      }
+      function terme() {
+        var m = /\/search\/([^\/?]+)/.exec(location.hash || '');
+        try { return m ? decodeURIComponent(m[1]) : ''; } catch (e) { return ''; }
+      }
+      // « Rechercher dans Realisations… » : le nom de la collection vient
+      // de son entree dans la colonne de gauche - le titre de la liste,
+      // lui, disparait des qu'on affiche des resultats de recherche.
+      function portee() {
+        var col = collection();
+        if (col) {
+          var lien = document.querySelector('a[href$="/collections/' + col + '"]');
+          if (lien && lien.textContent.trim()) return lien.textContent.trim();
+        }
+        var t = document.querySelector('[class*="CollectionTopHeading"]');
+        return t && t.textContent.trim() ? t.textContent.trim() : '';
+      }
+      function placeholder() {
+        if (!champ) return;
+        var nom = portee();
+        champ.placeholder = nom ? 'Rechercher dans ' + nom + '…' : 'Rechercher…';
+      }
+
+      function aller(valeur) {
+        var t = (valeur || '').trim();
+        var col = collection();
+        var cible;
+        if (!t) cible = col ? '#/collections/' + col : '#/';
+        else if (col) cible = '#/collections/' + col + '/search/' + encodeURIComponent(t);
+        else cible = '#/search/' + encodeURIComponent(t);
+        if (location.hash === cible) return;
+        // replace et non assign : une recherche tapee lettre a lettre ne
+        // doit pas remplir l'historique de dix pages intermediaires.
+        location.replace(cible);
+      }
+
+      function fabriquer() {
+        var form = document.createElement('form');
+        form.id = 'amstc-cms-recherche';
+        form.setAttribute('role', 'search');
+        // Largeur et non « flex-basis » : sous 800 px la barre de Decap
+        // s'empile en colonne, ou une base de 260 px devient une HAUTEUR
+        // de 260 px - le champ occupait alors un quart de l'ecran.
+        form.style.cssText = 'display:flex;align-items:center;gap:6px;margin-left:16px;'
+          + 'background:#fff;border:1px solid #dfe3e6;border-radius:6px;padding:0 10px;'
+          + 'box-sizing:border-box;width:260px;max-width:100%;flex:0 0 auto;'
+          + 'height:32px;min-height:32px;align-self:center;';
+
+        var loupe = document.createElement('span');
+        loupe.textContent = '\u2315';
+        loupe.setAttribute('aria-hidden', 'true');
+        loupe.style.cssText = 'color:#7b8391;font-size:15px;line-height:1;flex:none;';
+
+        champ = document.createElement('input');
+        champ.type = 'search';
+        champ.id = 'amstc-cms-recherche-champ';
+        champ.setAttribute('aria-label', 'Rechercher une fiche');
+        champ.autocomplete = 'off';
+        champ.style.cssText = 'border:0;outline:none;background:transparent;font-family:Inter,sans-serif;'
+          + 'font-size:13px;color:#1c2027;width:100%;min-width:0;';
+
+        champ.addEventListener('input', function () {
+          clearTimeout(minuteur);
+          var v = champ.value;
+          // Une lettre seule ne cherche rien d'utile et fait clignoter la
+          // liste : on attend deux caracteres, ou le champ vide.
+          if (v.trim().length === 1) return;
+          minuteur = setTimeout(function () { aller(v); }, 350);
+        });
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          clearTimeout(minuteur);
+          aller(champ.value);
+        });
+        champ.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { champ.value = ''; clearTimeout(minuteur); aller(''); }
+        });
+
+        form.appendChild(loupe);
+        form.appendChild(champ);
+        return form;
+      }
+
+      function poser() {
+        if (document.getElementById('amstc-cms-recherche')) { placeholder(); return; }
+        var barre = document.querySelector('[class*="AppHeaderContent"]')
+          || document.querySelector('header nav, header');
+        if (!barre) return;
+        var actif = document.activeElement;
+        barre.appendChild(fabriquer());
+        champ.value = terme();
+        placeholder();
+        // Si l'on ecrivait au moment ou Decap a redessine sa barre, on
+        // rend la main au champ, curseur en fin de mot.
+        if (actif && actif.id === 'amstc-cms-recherche-champ') {
+          champ.focus();
+          champ.setSelectionRange(champ.value.length, champ.value.length);
+        }
+      }
+
+      new MutationObserver(poser).observe(document.body, { childList: true, subtree: true });
+      window.addEventListener('hashchange', function () {
+        if (!champ) return;
+        placeholder();
+        // Le champ ne se recopie que si l'on n'est pas en train d'y
+        // ecrire : sinon un aller-retour de route effacerait la frappe.
+        if (document.activeElement !== champ) champ.value = terme();
+      });
+      poser();
+    })();
+  </script>
+
+  <script>
     // ===== Bouton OK sur le calendrier des champs date/heure =====
     // Le sélecteur de date de Decap (bibliothèque MUI) se ferme uniquement en
     // cliquant à côté - déroutant : on ne sait pas si la date est validée.

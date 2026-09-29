@@ -76,3 +76,13 @@
     display: none !important;
   }
 }
+
+/* La barre de recherche posée dans l'en-tête (admin/index.html) : une fois
+   l'en-tête empilé en colonne, elle prend toute la largeur plutôt que de
+   rester décalée de 16 px sur un demi-écran. */
+@media (max-width: 800px) {
+  #amstc-cms-recherche {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
