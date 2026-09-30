@@ -22,7 +22,7 @@
    suivante - invisible dans l'application Android, qui garde son cache
    d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v8";
+const CACHE_VERSION = "amstc-v9";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
@@ -32,6 +32,9 @@ const SHELL_ASSETS = [
   // La police d'icones est servie par le site depuis qu'un CDN muet
   // laissait les pages sans le moindre pictogramme.
   "/assets/vendor/tabler-amstc.css",
+  // Les polices aussi sont servies par le site : sans cette feuille,
+  // une page hors ligne s'afficherait dans la police du systeme.
+  "/assets/vendor/fonts-amstc.css",
   "/assets/vendor/tabler-amstc.woff2",
   // Les bibliotheques du site depuis qu'elles ne viennent plus d'un CDN :
   // sans elles, un article ne s'affiche pas et l'espace membres ne s'ouvre pas.
