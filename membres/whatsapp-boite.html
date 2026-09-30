@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -216,6 +216,25 @@
     <button class="signout-btn" id="signoutBtn" style="display:none;">Se déconnecter</button>
   </div>
 </header>
+
+<nav class="member-tabs">
+  <div class="member-tabs-inner">
+    <a class="member-tab active" href="./">Tableau de bord</a>
+    <a class="member-tab" href="profil">Carte de membre et Cotisations</a>
+    <a class="member-tab" href="daara">Espace Daara</a>
+    <a class="member-tab" href="medical">Enseignements Médicaux</a>
+    <a class="member-tab" href="formations-cms">Autres formations</a>
+    <a class="member-tab" href="quiz">Quiz</a>
+    <a class="member-tab" href="bibliotheque">Bibliothèque</a>
+    <a class="member-tab" href="actualites">Réalisations</a>
+    <a class="member-tab" href="documents">Documents officiels</a>
+    <a class="member-tab" href="boutique">Boutique AMSTC</a>
+    <a class="member-tab" href="collectes">Collectes</a>
+    <a class="member-tab" href="forum">Forum</a>
+    <a class="member-tab" href="annuaire">Annuaire</a>
+    <a class="member-tab" href="mediatheque">Médiathèque</a>
+  </div>
+</nav>
 
 <div class="loading-msg" id="loadingMsg">Vérification des droits…</div>
 
