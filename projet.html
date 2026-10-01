@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="assets/css/dark-mode.css">
+<link rel="stylesheet" href="assets/css/octobre-rose.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <script src="assets/js/defilement.js" defer></script>
 <script src="assets/js/collecte-live.js" defer></script>
@@ -34,7 +35,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -92,7 +93,7 @@
     display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px;
     padding:16px 20px; transition:box-shadow .18s ease, transform .18s ease;
   }
-  .etape-card:hover{box-shadow:0 8px 20px rgba(6,68,28,0.10); transform:translateY(-2px);}
+  .etape-card:hover{box-shadow:0 8px 20px rgba(var(--green-deep-rgb, 6,68,28),0.10); transform:translateY(-2px);}
   .etape-date{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-accent);}
   .etape-card h3{font-family:var(--display); font-size:1.05rem; color:var(--text-heading); margin:4px 0 6px;}
   .etape-card p{color:var(--text-muted); font-size:0.92rem; margin:0;}

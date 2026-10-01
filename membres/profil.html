@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --radius:14px;
     --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
   }
@@ -41,7 +42,7 @@
 
   /* ===== CARTE MEMBRE (template officiel, dessinée sur canvas) ===== */
   .member-card-neo{margin-bottom:20px; max-width:540px;}
-  #mcCarteImg{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 12px 40px rgba(6,68,28,0.22);background:var(--surface);}
+  #mcCarteImg{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 12px 40px rgba(var(--green-deep-rgb, 6,68,28),0.22);background:var(--surface);}
   .mc-sous-carte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;padding:0 4px;}
   .mc-sous-info{font-size:0.82rem;color:var(--text-muted);}
   .mc-status-pill{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px;border-radius:999px;}
@@ -161,8 +162,8 @@
     font-size:0.86rem; font-weight:600; color:var(--green);
   }
   .pf-retour:hover{background:var(--green); color:var(--white);}
-  :root[data-theme="dark"] .pf-retour{border-color:#7FD9A0; color:#7FD9A0;}
-  :root[data-theme="dark"] .pf-retour:hover{background:#17763B; color:#FFFFFF;}
+  :root[data-theme="dark"] .pf-retour{border-color:var(--green-soft, #7FD9A0); color:var(--green-soft, #7FD9A0);}
+  :root[data-theme="dark"] .pf-retour:hover{background:var(--green, #17763B); color:#FFFFFF;}
   .pf-retour svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   .page-title{font-size:clamp(1.6rem,4.2vw,2.3rem); font-weight:700;}
   .pf-intro{color:var(--text-muted); font-size:0.98rem; margin-top:10px; max-width:58ch;}
@@ -185,9 +186,9 @@
   .pf-carte-tete{display:flex; align-items:center; gap:12px;}
   .pf-ic{width:44px; height:44px; flex:none; border-radius:12px; display:grid; place-items:center;}
   .pf-ic svg{width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
-  .pf-ic-vert{background:#06441C; color:#FFFFFF;}
-  :root[data-theme="dark"] .pf-ic-vert{background:#17763B;}
-  .pf-ic-or{background:var(--gold); color:#06441C;}
+  .pf-ic-vert{background:var(--green-deep, #06441C); color:#FFFFFF;}
+  :root[data-theme="dark"] .pf-ic-vert{background:var(--green, #17763B);}
+  .pf-ic-or{background:var(--gold); color:var(--green-deep, #06441C);}
   .pf-carte-titre{font-family:var(--display); font-size:1.05rem; font-weight:600; color:var(--text-heading); line-height:1.25;}
   .pf-carte-texte{font-size:0.88rem; color:var(--text-muted); line-height:1.5;}
   .pf-statut-ligne{font-family:var(--display); font-size:1.02rem; font-weight:600; color:var(--text-heading);}
@@ -214,11 +215,11 @@
   .pf-bouton svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   /* Blanc sur l'or fonce ne tient que 3,78 : on reprend le bouton or de
      la charte, texte vert profond. */
-  .pf-bouton-or{background:var(--gold); color:#06441C;}
+  .pf-bouton-or{background:var(--gold); color:var(--green-deep, #06441C);}
   .pf-bouton-or:hover{background:#8A6209; color:#FFFFFF;}
-  .pf-bouton-vert{background:#06441C; color:#FFFFFF;}
-  .pf-bouton-vert:hover{background:#17763B;}
-  :root[data-theme="dark"] .pf-bouton-vert{background:#17763B;}
+  .pf-bouton-vert{background:var(--green-deep, #06441C); color:#FFFFFF;}
+  .pf-bouton-vert:hover{background:var(--green, #17763B);}
+  :root[data-theme="dark"] .pf-bouton-vert{background:var(--green, #17763B);}
 
   /* Deux colonnes : les sections a gauche, l'aide a droite. */
   .pf-colonnes{display:grid; gap:18px; align-items:start;}
@@ -242,8 +243,8 @@
     font-size:0.87rem; font-weight:600; color:var(--text-muted); white-space:nowrap;
   }
   .pf-onglet:hover{background:var(--paper-alt); color:var(--text-heading);}
-  .pf-onglet.active{background:#06441C; color:#FFFFFF;}
-  :root[data-theme="dark"] .pf-onglet.active{background:#17763B;}
+  .pf-onglet.active{background:var(--green-deep, #06441C); color:#FFFFFF;}
+  :root[data-theme="dark"] .pf-onglet.active{background:var(--green, #17763B);}
   .pf-onglet svg{width:17px; height:17px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
   @media(max-width:560px){
     .pf-onglets{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;}
@@ -276,10 +277,10 @@
     border:1px dashed rgba(170,123,17,0.45); background:rgba(255,255,255,0.6);
   }
   :root[data-theme="dark"] .pf-mois span{background:transparent;}
-  .pf-mois span.paye{background:#F8B718; border:1px solid #F8B718; color:#06441C;}
-  .pf-mois span.courant{border:1.5px solid #06441C; color:var(--text-heading);}
+  .pf-mois span.paye{background:#F8B718; border:1px solid #F8B718; color:var(--green-deep, #06441C);}
+  .pf-mois span.courant{border:1.5px solid var(--green-deep, #06441C); color:var(--text-heading);}
   :root[data-theme="dark"] .pf-mois span.courant{border-color:#F0C955;}
-  .pf-mois span.paye.courant{border-color:#06441C;}
+  .pf-mois span.paye.courant{border-color:var(--green-deep, #06441C);}
   .pf-cotis-etat{font-size:0.85rem; color:var(--text-heading); font-weight:600;}
   .pf-cotis-tarif{font-size:0.8rem; color:var(--text-muted);}
 </style>

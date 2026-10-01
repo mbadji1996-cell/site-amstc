@@ -7,7 +7,7 @@
 
 .co-bouton{
   display:inline-flex; align-items:center; gap:9px; padding:9px 18px; border-radius:999px;
-  background:var(--gold); color:#06441C; font-weight:700; font-size:0.86rem;
+  background:var(--gold); color:var(--green-deep, #06441C); font-weight:700; font-size:0.86rem;
 }
 .co-bouton:hover{opacity:0.9;}
 
@@ -19,7 +19,7 @@
 }
 .co-chiffre-ic{
   width:42px; height:42px; flex:none; border-radius:12px; display:grid; place-items:center;
-  background:rgba(23,118,59,0.12); color:var(--green); font-size:20px;
+  background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green); font-size:20px;
 }
 .co-chiffre-nb{font-family:var(--display); font-size:1.3rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
 .co-chiffre-label{font-size:0.8rem; color:var(--text-muted);}
@@ -28,7 +28,7 @@
 .co-tete{display:flex; align-items:center; gap:13px; margin-bottom:14px;}
 .co-tete-ic{
   width:40px; height:40px; flex:none; border-radius:12px; display:grid; place-items:center;
-  background:rgba(23,118,59,0.12); color:var(--green); font-size:19px;
+  background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green); font-size:19px;
 }
 .co-tete-titre{font-family:var(--display); font-size:1.2rem; font-weight:700; color:var(--text-heading); line-height:1.2;}
 .co-tete-sous{font-size:0.86rem; color:var(--text-muted);}
@@ -58,7 +58,7 @@
   font-family:var(--body); padding:0;
   transition:border-color .18s, box-shadow .18s, transform .18s;
 }
-.co-carte:hover{border-color:var(--gold); box-shadow:0 12px 28px rgba(6,68,28,0.1); transform:translateY(-3px);}
+.co-carte:hover{border-color:var(--gold); box-shadow:0 12px 28px rgba(var(--green-deep-rgb, 6,68,28),0.1); transform:translateY(-3px);}
 .co-visuel{position:relative; width:100%; aspect-ratio:16/10; background:var(--paper-alt); overflow:hidden;}
 .co-visuel img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
 .co-visuel-vide{position:absolute; inset:0; display:grid; place-items:center; font-size:30px; color:var(--text-accent);}
@@ -91,7 +91,7 @@
   background:var(--green-deep); color:#FFFFFF; font-family:var(--body); font-size:0.84rem; font-weight:600;
 }
 .co-carte:hover .co-savoir{background:var(--green);}
-:root[data-theme="dark"] .co-savoir{background:#7FD9A0; color:#06441C;}
+:root[data-theme="dark"] .co-savoir{background:var(--green-soft, #7FD9A0); color:var(--green-deep, #06441C);}
 .co-vide{grid-column:1 / -1; padding:40px 0; text-align:center; color:var(--text-muted); font-family:var(--mono); font-size:0.85rem;}
 
 /* ===== Appel au don ===== */
@@ -103,13 +103,13 @@
 @media(min-width:1240px){ .co-appel{position:sticky; top:16px;} }
 .co-appel-ic{
   width:54px; height:54px; margin:0 auto 14px; border-radius:16px; display:grid; place-items:center;
-  background:rgba(23,118,59,0.12); color:var(--green); font-size:26px;
+  background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green); font-size:26px;
 }
 .co-appel-titre{font-family:var(--display); font-size:1.2rem; font-weight:700; color:var(--text-heading); line-height:1.3;}
 .co-appel-texte{font-size:0.86rem; color:var(--text-muted); margin:12px 0 18px;}
 .co-appel-bouton{
   display:inline-flex; align-items:center; justify-content:center; gap:9px; width:100%;
-  padding:12px 20px; border-radius:999px; background:var(--gold); color:#06441C; font-weight:700; font-size:0.88rem;
+  padding:12px 20px; border-radius:999px; background:var(--gold); color:var(--green-deep, #06441C); font-weight:700; font-size:0.88rem;
 }
 .co-appel-bouton:hover{opacity:0.9;}
 

@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --radius:14px;
     --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
     --rose-light:#FCE8EF; --rose:#D6538A; --rose-dark:#A83A67; --rose-deeper:#7A2A4A;
@@ -51,7 +52,7 @@
 
   .folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:20px;}
   .folder-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:box-shadow .18s,transform .18s;}
-  .folder-card:hover{box-shadow:0 8px 24px rgba(6,68,28,0.1);transform:translateY(-3px);}
+  .folder-card:hover{box-shadow:0 8px 24px rgba(var(--green-deep-rgb, 6,68,28),0.1);transform:translateY(-3px);}
   .folder-cover{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--rose-light);display:block;}
   .folder-cover-placeholder{width:100%;aspect-ratio:4/3;background:var(--rose-light);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--rose-dark);}
   .folder-body{padding:14px 16px;}
@@ -119,9 +120,9 @@
   .md-reinit:hover{border-color:var(--green); color:var(--green);}
   .md-mot{position:relative; overflow:hidden; text-align:center; padding:24px 20px;
     background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%); border:1px solid var(--line); border-radius:18px;}
-  :root[data-theme="dark"] .md-mot{background:linear-gradient(180deg, rgba(23,118,59,0.16) 0%, var(--surface) 100%);}
+  :root[data-theme="dark"] .md-mot{background:linear-gradient(180deg, rgba(var(--green-rgb, 23,118,59),0.16) 0%, var(--surface) 100%);}
   .md-mot-ic{width:44px; height:44px; margin:0 auto 12px; border-radius:12px; display:grid; place-items:center;
-    background:rgba(23,118,59,0.12); color:var(--green); font-size:21px;}
+    background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green); font-size:21px;}
   .md-mot-texte{font-family:var(--display); font-size:0.98rem; font-weight:600; color:var(--text-heading); line-height:1.4;}
   .md-mot-filet{width:44px; height:2px; background:var(--gold); margin:14px auto 0;}
 
@@ -138,7 +139,7 @@
   .md-carte-media{height:100%; display:flex; flex-direction:column; text-align:left; padding:0; cursor:pointer;
     background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden;
     font-family:var(--body); transition:border-color .18s, box-shadow .18s, transform .18s;}
-  .md-carte-media:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(6,68,28,0.1); transform:translateY(-3px);}
+  .md-carte-media:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(var(--green-deep-rgb, 6,68,28),0.1); transform:translateY(-3px);}
   .md-vignette{position:relative; width:100%; aspect-ratio:4/3; background:var(--paper-alt); overflow:hidden;}
   .md-vignette img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
   .md-vignette-vide{position:absolute; inset:0; display:grid; place-items:center; font-size:32px; color:var(--text-accent);}
@@ -181,7 +182,7 @@
   /* Barre de recherche (même convention que l'annuaire des membres) */
   .search-wrap{position:relative;max-width:520px;margin:22px 0 4px;}
   .search-input{width:100%;padding:12px 42px 12px 16px;border:1.5px solid var(--line, rgba(6,68,28,0.14));border-radius:999px;font-family:inherit;font-size:0.92rem;background:var(--surface,#fff);color:inherit;}
-  .search-input:focus{outline:none;border-color:var(--green,#17763B);}
+  .search-input:focus{outline:none;border-color:var(--green,var(--green, #17763B));}
   .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#8A9E8F;pointer-events:none;}
   .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#8A9E8F;font-size:1rem;cursor:pointer;display:none;}
   .search-clear.show{display:block;}

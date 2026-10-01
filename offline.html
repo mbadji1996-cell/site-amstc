@@ -2,13 +2,15 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hors ligne - AMSTC</title>
 <meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/css/octobre-rose.css">
 <style>
   :root{
     --ink:#0B2E17; --green-deep:#06441C; --gold:#F8B718;
-    --paper:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{

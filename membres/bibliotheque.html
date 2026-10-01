@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,8 +20,8 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
-    --shadow:0 12px 32px rgba(6,68,28,0.10); --radius:14px;
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
+    --shadow:0 12px 32px rgba(var(--green-deep-rgb, 6,68,28),0.10); --radius:14px;
     --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -64,7 +65,7 @@
     border:1.5px solid var(--line); border-radius:12px; background:var(--surface);
     transition:border-color .15s ease, box-shadow .15s ease;}
   .bib-filtre:hover{border-color:var(--gold);}
-  .bib-filtre:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+  .bib-filtre:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(var(--green-rgb, 23,118,59),0.12);}
   .bib-filtre label{position:absolute; left:14px; top:7px; font-size:0.68rem; font-weight:600;
     color:var(--text-muted); pointer-events:none;}
   .bib-filtre select{-webkit-appearance:none; -moz-appearance:none; appearance:none; width:100%;
@@ -80,8 +81,8 @@
   .bib-compteur{display:flex; align-items:center; gap:14px; padding:16px 18px;
     background:var(--surface); border:1px solid var(--line); border-radius:14px;}
   .bib-compteur-ic{width:42px; height:42px; flex:none; border-radius:12px; display:grid; place-items:center; font-size:21px;}
-  .bib-compteur:nth-child(1) .bib-compteur-ic{background:rgba(23,118,59,0.12); color:var(--green);}
-  .bib-compteur:nth-child(2) .bib-compteur-ic{background:rgba(23,118,59,0.12); color:var(--green);}
+  .bib-compteur:nth-child(1) .bib-compteur-ic{background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green);}
+  .bib-compteur:nth-child(2) .bib-compteur-ic{background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green);}
   .bib-compteur:nth-child(3) .bib-compteur-ic{background:rgba(248,183,24,0.2); color:var(--text-accent);}
   .bib-compteur-nombre{font-family:var(--display); font-size:1.5rem; font-weight:700; color:var(--text-heading); line-height:1.1;}
   .bib-compteur-label{font-size:0.86rem; color:var(--text-muted);}
@@ -162,7 +163,7 @@
     display:flex; flex-direction:column; gap:10px; height:100%;
     transition:border-color .18s ease, box-shadow .18s ease;
   }
-  .book-row:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(6,68,28,0.08);}
+  .book-row:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(var(--green-deep-rgb, 6,68,28),0.08);}
   .book-main{display:flex; flex-direction:column; gap:10px; flex:1; min-width:0;}
   .book-cover, .book-cover-placeholder{width:94px; height:128px; border-radius:8px; flex:none;
     background:var(--paper-alt); align-self:center;}

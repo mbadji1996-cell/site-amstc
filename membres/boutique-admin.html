@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --radius:14px;
     --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
     --amber-light:#FAEEDA; --amber:#D4870A; --amber-dark:#854F0B; --amber-deeper:#5C360A;
@@ -88,7 +89,7 @@
   .s-pending{background:#FEF6E4;color:var(--gold-deep);}
   .s-paid{background:#EAF3DE;color:#3B6D11;}
   .s-processing{background:var(--amber-light);color:var(--amber-dark);}
-  .s-shipped{background:#E3F1E7;color:#12622F;}
+  .s-shipped{background:#E3F1E7;color:var(--green-deep-3, #12622F);}
   .s-cancelled{background:#FDEEEE;color:#B23B3B;}
   .order-items{font-size:0.78rem;color:var(--text-muted);}
   .order-total{font-family:var(--mono);font-weight:600;color:var(--amber-dark);}

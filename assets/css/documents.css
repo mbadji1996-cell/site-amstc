@@ -12,12 +12,12 @@
   border:1px solid var(--line); border-radius:16px; background:var(--surface); font-family:var(--body);
   transition:border-color .18s, box-shadow .18s, transform .18s;
 }
-.dc-tuile:hover{border-color:var(--gold); transform:translateY(-2px); box-shadow:0 10px 24px rgba(6,68,28,0.08);}
+.dc-tuile:hover{border-color:var(--gold); transform:translateY(-2px); box-shadow:0 10px 24px rgba(var(--green-deep-rgb, 6,68,28),0.08);}
 .dc-tuile-ic{
   width:46px; height:46px; flex:none; border-radius:14px; display:grid; place-items:center;
-  background:rgba(23,118,59,0.12); color:var(--green); font-size:22px;
+  background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green); font-size:22px;
 }
-:root[data-theme="dark"] .dc-tuile-ic{color:#7FD9A0;}
+:root[data-theme="dark"] .dc-tuile-ic{color:var(--green-soft, #7FD9A0);}
 .dc-tuile-nom{font-family:var(--display); font-weight:700; font-size:0.95rem; color:var(--text-heading); line-height:1.2;}
 .dc-tuile-nom, .dc-tuile-nb{display:block;}
 .dc-tuile-nb{font-size:0.8rem; color:var(--text-muted); margin-top:2px;}
@@ -55,7 +55,7 @@
   border:1.5px solid var(--line); border-radius:999px; background:var(--surface);
 }
 .dc-tri:hover{border-color:var(--gold);}
-.dc-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+.dc-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(var(--green-rgb, 23,118,59),0.12);}
 .dc-tri > .ti{color:var(--text-muted); font-size:16px;}
 .dc-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
 .dc-tri select{
@@ -71,7 +71,7 @@
   background:transparent; color:var(--text-muted); font-size:17px;
 }
 .dc-vue.actif{background:var(--green-deep); color:#FFFFFF;}
-:root[data-theme="dark"] .dc-vue.actif{background:#7FD9A0; color:#06441C;}
+:root[data-theme="dark"] .dc-vue.actif{background:var(--green-soft, #7FD9A0); color:var(--green-deep, #06441C);}
 
 /* ===== Liste des documents ===== */
 /* Les fiches d'une meme rangee ont la meme hauteur, avec ou sans resume :
@@ -84,7 +84,7 @@
   background:var(--surface); border:1px solid var(--line); border-radius:16px;
   transition:border-color .18s, box-shadow .18s;
 }
-.dc-fiche:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(6,68,28,0.08);}
+.dc-fiche:hover{border-color:var(--gold); box-shadow:0 10px 24px rgba(var(--green-deep-rgb, 6,68,28),0.08);}
 .dc-liste.grille .dc-fiche{flex-direction:column; gap:12px;}
 .dc-vignette{
   width:62px; height:72px; flex:none; border-radius:12px; display:grid; place-items:center;
@@ -121,7 +121,7 @@
 }
 .dc-consulter:hover{background:var(--green);}
 .dc-consulter:disabled{opacity:0.6; cursor:wait;}
-:root[data-theme="dark"] .dc-consulter{background:#7FD9A0; color:#06441C;}
+:root[data-theme="dark"] .dc-consulter{background:var(--green-soft, #7FD9A0); color:var(--green-deep, #06441C);}
 .dc-telecharger{
   width:36px; height:36px; display:grid; place-items:center; border-radius:10px; cursor:pointer;
   border:1.5px solid var(--line); background:var(--surface); color:var(--text-muted); font-size:17px;
@@ -144,7 +144,7 @@
 }
 .dc-page:hover:not(:disabled):not(.actif){border-color:var(--green); color:var(--green);}
 .dc-page.actif{background:var(--green-deep); border-color:var(--green-deep); color:#FFFFFF;}
-:root[data-theme="dark"] .dc-page.actif{background:#7FD9A0; border-color:#7FD9A0; color:#06441C;}
+:root[data-theme="dark"] .dc-page.actif{background:var(--green-soft, #7FD9A0); border-color:var(--green-soft, #7FD9A0); color:var(--green-deep, #06441C);}
 .dc-page:disabled{opacity:0.45; cursor:default;}
 
 /* ===== Téléphone =====

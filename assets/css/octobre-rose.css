@@ -1,0 +1,102 @@
+/* ============================================================
+   Octobre Rose - habillage saisonnier
+   Posé par le script en tête de chaque page : la classe « octobre-rose »
+   n'est sur <html> que pendant le mois d'octobre. Le 1er novembre, elle
+   ne l'est plus, et le site reprend ses verts sans qu'on y touche.
+
+   CE FICHIER NE FAIT QUE REDEFINIR DES JETONS. Toute la charte passe par
+   eux depuis scripts/jetons-couleur.py : redéfinir six verts suffit à
+   repeindre bandeaux, boutons, pastilles et colonnes de l'espace
+   membres. Les rares couleurs qui gardent leur sens - le vert d'un
+   paiement confirmé, le rouge d'une alerte, l'or de l'association -
+   ne bougent pas.
+
+   La spécificité (html.octobre-rose) l'emporte sur le :root de chaque
+   page sans dépendre de l'ordre de chargement.
+
+   POUR ARRÊTER L'HABILLAGE AVANT LA FIN DU MOIS : vider ce fichier
+   suffit. La classe continuera d'être posée, mais elle ne repeindra
+   plus rien, et le site reprendra ses verts à la première visite. Pas
+   besoin de toucher aux soixante-dix pages.
+
+   L'HABILLAGE REVIENDRA SEUL CHAQUE OCTOBRE. C'est voulu : la campagne
+   est annuelle. Pour qu'il ne revienne pas, remplacer dans le script en
+   tête des pages « getMonth()===9 » par une année précise, ou retirer
+   ce fichier du dépôt.
+   ============================================================ */
+
+html.octobre-rose {
+  /* Les six verts de la charte deviennent la gamme du ruban rose.
+     Contrastes mesurés sur blanc : #C2185B à 5,6:1 pour le texte
+     courant, #6D1038 à 12,5:1 sous le texte blanc des bandeaux. */
+  --green-deep: #6D1038;
+  --green-deep-2: #93134B;
+  --green-deep-3: #B81D5B;
+  --green: #C2185B;
+  --green-rgb: 194, 24, 91;
+  --green-deep-rgb: 109, 16, 56;
+  --green-light: #E84A86;
+  --green-soft: #F8A5C2;
+
+  /* Les tons neutres prennent la même teinte, sinon le gris-vert des
+     textes secondaires jure avec le rose. */
+  --ink: #2B0F1C;
+  --text-muted: #6E5460;
+  --paper-alt: #FBEDF2;
+  --section-alt: #FDF5F8;
+  --line: rgba(109, 16, 56, 0.22);
+  --line-fin: rgba(109, 16, 56, 0.12);
+  --shadow: 0 12px 32px rgba(109, 16, 56, 0.18);
+}
+
+html.octobre-rose[data-theme="dark"] {
+  --green: #F06292;
+  --green-light: #F06292;
+  --green-soft: #F8A5C2;
+  --text-heading: #F8A5C2;
+  --ink: #F4E7EC;
+  --text-muted: #BCA2AD;
+  --paper: #150A10;
+  --paper-alt: #1F0F17;
+  --section-alt: #1F0F17;
+  --surface: #211119;
+  --line: rgba(255, 255, 255, 0.14);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== Les cartes de la page d'accueil =====
+   Elles portent leur propre petite palette, déclarée sur la carte. La
+   variante « or » n'est pas touchée : l'or reste l'or. */
+html.octobre-rose .intro-card {
+  --c-tint: #FDF2F6;
+  --c-blob: #F6CFDC;
+  --c-btn-hover: #93134B;
+}
+html.octobre-rose .intro-card.theme-menthe {
+  --c-tint: #FCEDF3;
+  --c-blob: #F3C6D7;
+}
+html.octobre-rose[data-theme="dark"] .intro-card {
+  --c-tint: #23121A;
+}
+html.octobre-rose[data-theme="dark"] .intro-card.theme-menthe {
+  --c-tint: #24141C;
+}
+
+/* ===== Le ruban, discrètement =====
+   Un liseré rose en haut de page : le signe de la campagne, sans rien
+   ajouter au contenu ni déplacer quoi que ce soit. */
+html.octobre-rose body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  background: linear-gradient(90deg, #C2185B 0%, #F06292 50%, #C2185B 100%);
+  pointer-events: none;
+}
+@media print {
+  html.octobre-rose body::before { display: none; }
+}

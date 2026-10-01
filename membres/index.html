@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --radius:14px;
     --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
   }
@@ -62,7 +63,7 @@
      les rendent visibles et explicites à l'arrivée. */
   .espaces-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
   .espace-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:13px;align-items:center;transition:border-color .18s, box-shadow .18s, transform .18s;}
-  .espace-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(6,68,28,0.08);transform:translateY(-2px);}
+  .espace-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(var(--green-deep-rgb, 6,68,28),0.08);transform:translateY(-2px);}
   .espace-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
   .espace-icon{width:40px;height:40px;border-radius:10px;background:var(--paper-alt);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--text-accent);flex-shrink:0;}
   .espace-body{min-width:0;}
@@ -107,10 +108,10 @@
   @media (min-width:820px){ .reprise-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);} }
   .reprise-card{
     display:flex; flex-direction:column; gap:10px; padding:22px 24px; border-radius:12px;
-    background:linear-gradient(150deg, #17763B 0%, #06441C 100%); color:#fff;
+    background:linear-gradient(150deg, var(--green, #17763B) 0%, var(--green-deep, #06441C) 100%); color:#fff;
     transition:transform .18s ease, box-shadow .18s ease;
   }
-  .reprise-card:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(6,68,28,0.24);}
+  .reprise-card:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(var(--green-deep-rgb, 6,68,28),0.24);}
   .reprise-card:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
   /* Or clair : sur le vert, var(--gold) ne donnait que 3,19:1 pour ce petit texte. */
   .reprise-label{font-family:var(--mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:#FFE3A0;}
@@ -132,7 +133,7 @@
   /* ===== Banniere ===== */
   .tb-banniere{
     position:relative; overflow:hidden; border-radius:16px; margin-bottom:24px;
-    background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
+    background:linear-gradient(103deg, var(--green-deep, #06441C) 0%, var(--green-deep-2, #0A5324) 48%, var(--green-deep-3, #12622F) 100%);
     padding:36px 38px; min-height:232px; display:flex; align-items:center;
   }
   .tb-ban-photo{
@@ -175,14 +176,14 @@
     background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
     transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
   }
-  a.tb-carte:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(6,68,28,0.1); transform:translateY(-2px);}
+  a.tb-carte:hover{border-color:var(--gold); box-shadow:0 10px 26px rgba(var(--green-deep-rgb, 6,68,28),0.1); transform:translateY(-2px);}
   a.tb-carte:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
   .tb-carte-tete{display:flex; align-items:center; gap:12px;}
   .tb-carte-ic{
     width:42px; height:42px; flex:none; border-radius:11px; display:grid; place-items:center;
-    background:rgba(23,118,59,0.1); color:#12622F;
+    background:rgba(var(--green-rgb, 23,118,59),0.1); color:var(--green-deep-3, #12622F);
   }
-  :root[data-theme="dark"] .tb-carte-ic{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+  :root[data-theme="dark"] .tb-carte-ic{background:rgba(127,217,160,0.14); color:var(--green-soft, #7FD9A0);}
   .tb-carte-ic svg{width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
   .tb-carte-label{font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.12em; color:#8A6209;}
   :root[data-theme="dark"] .tb-carte-label{color:var(--text-accent);}
@@ -193,28 +194,28 @@
 
   /* La progression est la carte principale : des qu'il y a la place pour
      quatre pistes, elle en prend deux. */
-  .tb-progression{background:rgba(23,118,59,0.055); border-color:rgba(23,118,59,0.2);}
+  .tb-progression{background:rgba(var(--green-rgb, 23,118,59),0.055); border-color:rgba(var(--green-rgb, 23,118,59),0.2);}
   @media(min-width:1180px){ .tb-progression{grid-column:span 2;} }
   :root[data-theme="dark"] .tb-progression{background:rgba(127,217,160,0.07); border-color:rgba(127,217,160,0.2);}
   .tb-prog-jauge{display:flex; align-items:center; gap:14px;}
-  .tb-prog-piste{flex:1; height:8px; border-radius:999px; background:rgba(6,68,28,0.13); overflow:hidden;}
+  .tb-prog-piste{flex:1; height:8px; border-radius:999px; background:rgba(var(--green-deep-rgb, 6,68,28),0.13); overflow:hidden;}
   :root[data-theme="dark"] .tb-prog-piste{background:rgba(255,255,255,0.15);}
-  .tb-prog-piste span{display:block; height:100%; border-radius:999px; background:#17763B;}
-  :root[data-theme="dark"] .tb-prog-piste span{background:#35B872;}
+  .tb-prog-piste span{display:block; height:100%; border-radius:999px; background:var(--green, #17763B);}
+  :root[data-theme="dark"] .tb-prog-piste span{background:var(--green-light, #35B872);}
   .tb-prog-pct{font-family:var(--mono); font-size:0.82rem; font-weight:600; color:var(--text-heading); flex:none;}
   .tb-prog-btn{
     align-self:flex-start; display:inline-flex; align-items:center; gap:9px;
-    padding:11px 20px; border-radius:999px; background:#06441C; color:#FFFFFF;
+    padding:11px 20px; border-radius:999px; background:var(--green-deep, #06441C); color:#FFFFFF;
     font-size:0.88rem; font-weight:600;
   }
-  :root[data-theme="dark"] .tb-prog-btn{background:#17763B;}
-  .tb-progression:hover .tb-prog-btn{background:#17763B;}
+  :root[data-theme="dark"] .tb-prog-btn{background:var(--green, #17763B);}
+  .tb-progression:hover .tb-prog-btn{background:var(--green, #17763B);}
   .tb-prog-btn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   .tb-aide .tb-carte-ic{background:rgba(248,183,24,0.18); color:#8A6209;}
   /* Carte Administration : jaune de la charte, comme la carte Cotisation du profil. */
   .tb-admin{background:#FEF6E4; border-color:rgba(248,183,24,0.5);}
   a.tb-admin:hover{border-color:var(--gold);}
-  .tb-admin .tb-carte-ic{background:var(--gold); color:#06441C;}
+  .tb-admin .tb-carte-ic{background:var(--gold); color:var(--green-deep, #06441C);}
   .tb-admin .tb-carte-fleche{color:#8A6209;}
   :root[data-theme="dark"] .tb-admin{background:rgba(248,183,24,0.1); border-color:rgba(248,183,24,0.3);}
   :root[data-theme="dark"] .tb-admin .tb-carte-fleche{color:#F0C955;}
@@ -230,16 +231,16 @@
   /* ===== Titre de section avec pastille ===== */
   .tb-section-tete{display:flex; align-items:center; gap:13px; margin:0 0 16px;}
   .tb-section-ic{width:38px; height:38px; flex:none; border-radius:11px; display:grid; place-items:center;
-    background:#06441C; color:#F8B718;}
-  :root[data-theme="dark"] .tb-section-ic{background:#17763B;}
+    background:var(--green-deep, #06441C); color:#F8B718;}
+  :root[data-theme="dark"] .tb-section-ic{background:var(--green, #17763B);}
   .tb-section-ic svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
   .tb-section-titre{font-family:var(--display); font-size:1.18rem; font-weight:600; color:var(--text-heading);}
 
   /* Pastilles d'icones : jaune et vert en alternance. */
   .espaces-grid .espace-card:nth-child(odd) .espace-icon{background:rgba(248,183,24,0.2); color:#8A6209;}
-  .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(23,118,59,0.12); color:#12622F;}
+  .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green-deep-3, #12622F);}
   :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(odd) .espace-icon{background:rgba(248,183,24,0.18); color:#F0C955;}
-  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+  :root[data-theme="dark"] .espaces-grid .espace-card:nth-child(even) .espace-icon{background:rgba(127,217,160,0.14); color:var(--green-soft, #7FD9A0);}
   .espace-card[hidden]{display:none;}
   .tb-rien{font-size:0.9rem; color:var(--text-muted); padding:10px 2px;}
 </style>

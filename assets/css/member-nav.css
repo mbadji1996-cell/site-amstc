@@ -3,7 +3,7 @@
    dans onze pages, et les autres n'en avaient pas du tout - le Daara, le
    Medical, la Bibliotheque et l'administration n'offraient que le lien
    « retour » de leur bandeau. Sur mobile, member-nav.js la replie en menu. */
-.member-tabs{background:#06441C;border-top:1px solid rgba(255,255,255,0.08);}
+.member-tabs{background:var(--green-deep, #06441C);border-top:1px solid rgba(255,255,255,0.08);}
 .member-tabs-inner{max-width:1400px;margin:0 auto;padding:0 28px;display:flex;justify-content:safe center;gap:2px;overflow-x:auto;}
 .member-tab{font-family:'JetBrains Mono',monospace;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.45);padding:14px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s;flex-shrink:0;text-decoration:none;}
 .member-tab:hover{color:rgba(255,255,255,0.8);}
@@ -44,7 +44,7 @@
      deux pixels de haut, invisible, avec une barre de defilement. En
      fixed il echappe a la boite ; member-nav.js le place sous l'onglet. */
   display:none;position:fixed;z-index:60;min-width:230px;
-  background:#06441C;border:1px solid rgba(255,255,255,0.14);border-top:0;
+  background:var(--green-deep, #06441C);border:1px solid rgba(255,255,255,0.14);border-top:0;
   border-radius:0 0 10px 10px;padding:6px;box-shadow:0 12px 28px rgba(0,0,0,0.32);
 }
 .member-tabs .member-groupe.ouvert .member-sous-menu,
@@ -96,7 +96,7 @@
     background:rgba(248,183,24,0.22); border-color:#F8B718;
   }
   .member-nav-toggle.ouvert .mn-bouton{
-    background:#F8B718; border-color:#F8B718; color:#06441C;
+    background:#F8B718; border-color:#F8B718; color:var(--green-deep, #06441C);
   }
   .member-nav-toggle .mn-burger{ font-size:15px; line-height:1; flex-shrink:0; }
   .member-nav-toggle .mn-mot{ letter-spacing:0.08em; }
@@ -105,7 +105,7 @@
   .member-nav-toggle:focus-visible{ outline:2px solid #F8B718; outline-offset:-3px; }
 
   .member-tabs.has-mobile-nav .member-nav-panel.open{
-    display:block; background:#06441C;
+    display:block; background:var(--green-deep, #06441C);
     border-top:1px solid rgba(255,255,255,0.08); padding:6px 12px 14px;
   }
   .member-nav-panel a{
@@ -132,12 +132,12 @@
 /* ===== Sommaire d'un contenu importé, replié sur téléphone =====
    Pose par assets/js/import-html.js (rendreSommaireDepliant) sous 1100 px :
    la colonne laterale du fichier devient un depliant en tete du contenu. */
-.sommaire-mobile{border:1.5px solid rgba(6,68,28,0.14);border-radius:12px;background:#F6F7F1;margin:0 0 18px;overflow:hidden;}
+.sommaire-mobile{border:1.5px solid rgba(var(--green-deep-rgb, 6,68,28),0.14);border-radius:12px;background:#F6F7F1;margin:0 0 18px;overflow:hidden;}
 .sommaire-mobile>summary{list-style:none;cursor:pointer;user-select:none;padding:13px 16px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:#AA7B11;display:flex;align-items:center;gap:10px;}
 .sommaire-mobile>summary::-webkit-details-marker{display:none;}
 .sommaire-mobile>summary::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .18s;flex:none;}
 .sommaire-mobile[open]>summary::before{transform:rotate(45deg);}
-.sommaire-mobile>summary::after{content:"Toucher pour ouvrir";margin-left:auto;font-size:0.62rem;letter-spacing:0.04em;color:rgba(6,68,28,0.5);text-transform:none;}
+.sommaire-mobile>summary::after{content:"Toucher pour ouvrir";margin-left:auto;font-size:0.62rem;letter-spacing:0.04em;color:rgba(var(--green-deep-rgb, 6,68,28),0.5);text-transform:none;}
 .sommaire-mobile[open]>summary::after{content:"Fermer";}
 .sommaire-mobile nav{padding:0 12px 12px !important;}
 .sommaire-mobile nav ol,.sommaire-mobile nav ul{list-style:none;margin:0;padding:0;}
@@ -173,7 +173,7 @@ html.ms-attente .member-tabs{visibility:hidden;}
   .ms-rail{
     display:flex; flex-direction:column; gap:4px;
     position:fixed; left:0; top:0; bottom:0; width:var(--ms-rail); z-index:50;
-    background:#06441C; border-right:1px solid rgba(255,255,255,0.09);
+    background:var(--green-deep, #06441C); border-right:1px solid rgba(255,255,255,0.09);
     padding:18px 14px 22px; overflow-y:auto; overscroll-behavior:contain;
   }
   .ms-marque{display:block; padding:6px 8px 20px;}
@@ -193,8 +193,8 @@ html.ms-attente .member-tabs{visibility:hidden;}
   /* La page ouverte est une pastille pleine : c'est le seul repere de
      position une fois le ruban d'onglets retire. Un vert plus clair se
      detacherait mal du fond, d'ou l'or - deja la couleur de l'onglet actif. */
-  .ms-lien.active{background:#F8B718; color:#06441C; font-weight:600;}
-  .ms-lien.active:hover{background:#F8B718; color:#06441C;}
+  .ms-lien.active{background:#F8B718; color:var(--green-deep, #06441C); font-weight:600;}
+  .ms-lien.active:hover{background:#F8B718; color:var(--green-deep, #06441C);}
 
   .ms-ic{flex:none; width:20px; height:20px; display:block;}
   .ms-ic svg{width:20px; height:20px; display:block; fill:none; stroke:currentColor;
@@ -243,7 +243,7 @@ html body{background:#F4F8F4 linear-gradient(180deg, #FFFFFF 0%, #F4F8F4 100%) n
    ses enfants reprennent la valeur de la page : filets, champs et
    separateurs internes ne changent pas. Theme clair seulement. */
 html:root{--line-fin:var(--line);}
-html:root:not([data-theme="dark"]) :is([class*="card"], [class*="carte"], [class*="bloc"], .ma-liste, .confirm-box){--line:rgba(6,68,28,0.30);}
+html:root:not([data-theme="dark"]) :is([class*="card"], [class*="carte"], [class*="bloc"], .ma-liste, .confirm-box){--line:rgba(var(--green-deep-rgb, 6,68,28),0.30);}
 html:root:not([data-theme="dark"]) :is([class*="card"], [class*="carte"], [class*="bloc"], .ma-liste, .confirm-box) > :not([class*="card"]):not([class*="carte"]):not([class*="bloc"]){--line:var(--line-fin);}
 
 /* La barre du haut est claire partout, a toutes les largeurs : elle etait
@@ -255,30 +255,30 @@ html header .logo-img{filter:none;}
    reste la seule marque de la page. */
 @media(min-width:1024px){ html.a-rail header .logo-img{display:none;} }
 /* Deconnexion en or de la charte, texte vert profond (6,36). */
-html .signout-btn{background:#F8B718; color:#06441C; border-color:#F8B718; font-weight:600;}
+html .signout-btn{background:#F8B718; color:var(--green-deep, #06441C); border-color:#F8B718; font-weight:600;}
 html .signout-btn:hover{background:#AA7B11; border-color:#AA7B11; color:#FFFFFF;}
 /* Le panier de la boutique vivait sur le vert. */
-html .cart-btn{background:var(--paper-alt, #ECEFE3); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-heading, #06441C);}
-html .cart-btn:hover{background:var(--surface, #FFFFFF); border-color:#17763B;}
+html .cart-btn{background:var(--paper-alt, #ECEFE3); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-heading, var(--green-deep, #06441C));}
+html .cart-btn:hover{background:var(--surface, #FFFFFF); border-color:var(--green, #17763B);}
 
 /* ===== Entete de page : plus de bandeau vert =====
    Le titre se pose sur le fond clair. Les enfants prevus pour du blanc sur
    vert reprennent les couleurs de texte de la charte. */
 html .hero{background:none; border-bottom:0; padding:26px 0 6px;}
-html .hero h1, html .hero-name{color:var(--text-heading, #06441C);}
+html .hero h1, html .hero-name{color:var(--text-heading, var(--green-deep, #06441C));}
 html .hero-sub{color:var(--text-muted, #5A6C60);}
-html .hero .back, html .hero-inner .back{color:#17763B;}
-html .hero .back:hover, html .hero-inner .back:hover{color:var(--text-heading, #06441C);}
-:root[data-theme="dark"] .hero .back, :root[data-theme="dark"] .hero-inner .back{color:#7FD9A0;}
+html .hero .back, html .hero-inner .back{color:var(--green, #17763B);}
+html .hero .back:hover, html .hero-inner .back:hover{color:var(--text-heading, var(--green-deep, #06441C));}
+:root[data-theme="dark"] .hero .back, :root[data-theme="dark"] .hero-inner .back{color:var(--green-soft, #7FD9A0);}
 /* Chiffres du centre d'administration et jetons du Daara. */
 html .hstat{background:var(--surface, #FFFFFF); border-color:var(--line, rgba(6,68,28,0.16)); backdrop-filter:none;}
-html .hstat-val{color:var(--text-heading, #06441C);}
+html .hstat-val{color:var(--text-heading, var(--green-deep, #06441C));}
 html .hstat-lbl{color:var(--text-muted, #5A6C60);}
 html .hchip{background:var(--surface, #FFFFFF); border-color:var(--line, rgba(6,68,28,0.16)); color:var(--text-muted, #5A6C60);}
-html .hchip strong{color:var(--text-heading, #06441C);}
+html .hchip strong{color:var(--text-heading, var(--green-deep, #06441C));}
 html .cat-tabs{border-top-color:var(--line, rgba(6,68,28,0.16));}
 html .cat-tab{color:var(--text-muted, #5A6C60);}
-html .cat-tab:hover:not(.active){color:var(--text-heading, #06441C);}
+html .cat-tab:hover:not(.active){color:var(--text-heading, var(--green-deep, #06441C));}
 /* Le vert d'eau de l'onglet actif du Daara etait prevu pour du fond vert :
    sur clair il ne tient que 3,07 - on descend au ton fonce de la meme famille. */
 html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
@@ -291,7 +291,7 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
   border:1.5px solid var(--line, rgba(6,68,28,0.16)); border-radius:999px;
   background:var(--paper-alt, #ECEFE3);
 }
-.ms-recherche:focus-within{border-color:#17763B; background:var(--surface, #FFFFFF);}
+.ms-recherche:focus-within{border-color:var(--green, #17763B); background:var(--surface, #FFFFFF);}
 /* La loupe ne sert que sur telephone : ailleurs le champ est deja la. */
 .ms-loupe{display:none;}
 .ms-recherche > svg{width:17px; height:17px; flex:none; fill:none; stroke:var(--text-muted, #5A6C60); stroke-width:2; stroke-linecap:round;}
@@ -302,16 +302,16 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
 .ms-suggestions{
   display:none; position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:120;
   background:var(--surface, #FFFFFF); border:1px solid var(--line, rgba(6,68,28,0.16));
-  border-radius:12px; box-shadow:var(--shadow, 0 12px 32px rgba(6,68,28,0.18));
+  border-radius:12px; box-shadow:var(--shadow, 0 12px 32px rgba(var(--green-deep-rgb, 6,68,28),0.18));
   padding:6px; max-height:320px; overflow-y:auto;
 }
 .ms-suggestions.ouvert{display:block;}
 .ms-suggestion{
   display:block; width:100%; text-align:left; padding:10px 13px; border:0; background:none;
   border-radius:9px; cursor:pointer; font-family:var(--body, 'Inter', sans-serif);
-  font-size:0.88rem; color:var(--text-heading, #06441C); text-decoration:none;
+  font-size:0.88rem; color:var(--text-heading, var(--green-deep, #06441C)); text-decoration:none;
 }
-.ms-suggestion:hover, .ms-suggestion.vise{background:rgba(23,118,59,0.1);}
+.ms-suggestion:hover, .ms-suggestion.vise{background:rgba(var(--green-rgb, 23,118,59),0.1);}
 :root[data-theme="dark"] .ms-suggestion:hover, :root[data-theme="dark"] .ms-suggestion.vise{background:rgba(127,217,160,0.14);}
 .ms-suggestion-vide{padding:10px 13px; font-size:0.86rem; color:var(--text-muted, #5A6C60);}
 .ms-outils{display:flex; align-items:center; gap:12px; margin-left:auto; flex:none;}
@@ -320,28 +320,28 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
   border:1px solid var(--line, rgba(6,68,28,0.16)); background:var(--surface, #FFFFFF);
   cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted, #5A6C60);
 }
-.ms-cloche:hover{border-color:#17763B; color:#17763B;}
+.ms-cloche:hover{border-color:var(--green, #17763B); color:var(--green, #17763B);}
 .ms-cloche svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
 /* Lien vers le site public : pastille contour, a cote de la cloche. */
 .ms-site{
   display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 15px; flex:none;
-  border:1.5px solid rgba(23,118,59,0.35); border-radius:999px; background:var(--surface, #FFFFFF);
+  border:1.5px solid rgba(var(--green-rgb, 23,118,59),0.35); border-radius:999px; background:var(--surface, #FFFFFF);
   font-family:var(--body, 'Inter', sans-serif); font-size:0.84rem; font-weight:600;
-  color:var(--text-heading, #06441C); text-decoration:none; white-space:nowrap;
+  color:var(--text-heading, var(--green-deep, #06441C)); text-decoration:none; white-space:nowrap;
 }
-.ms-site:hover{border-color:#17763B; color:#17763B;}
+.ms-site:hover{border-color:var(--green, #17763B); color:var(--green, #17763B);}
 .ms-site:focus-visible{outline:2px solid var(--gold, #F8B718); outline-offset:2px;}
 .ms-site svg{width:17px; height:17px; flex:none; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
 :root[data-theme="dark"] .ms-site{border-color:rgba(127,217,160,0.35); color:#E8F1EC;}
-:root[data-theme="dark"] .ms-site:hover{border-color:#7FD9A0; color:#7FD9A0;}
+:root[data-theme="dark"] .ms-site:hover{border-color:var(--green-soft, #7FD9A0); color:var(--green-soft, #7FD9A0);}
 .ms-point{position:absolute; top:6px; right:7px; width:9px; height:9px; border-radius:50%;
   background:#C0392B; border:2px solid var(--surface, #FFFFFF); display:none;}
 .ms-point.visible{display:block;}
-.ms-membre{display:flex; align-items:center; gap:9px; font-size:0.88rem; font-weight:600; color:var(--text-heading, #06441C);}
+.ms-membre{display:flex; align-items:center; gap:9px; font-size:0.88rem; font-weight:600; color:var(--text-heading, var(--green-deep, #06441C));}
 .ms-avatar{
   width:34px; height:34px; flex:none; border-radius:50%; background:var(--gold, #F8B718);
   display:flex; align-items:center; justify-content:center; overflow:hidden;
-  font-size:12px; font-weight:700; color:#06441C;
+  font-size:12px; font-weight:700; color:var(--green-deep, #06441C);
 }
 .ms-avatar img{width:100%; height:100%; object-fit:cover;}
 @media(max-width:700px){
@@ -361,7 +361,7 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
     border-radius:50%; border:1px solid rgba(255,255,255,0.28); background:rgba(255,255,255,0.12); color:#FFFFFF;
   }
   .ms-loupe svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round;}
-  .ms-loupe[aria-expanded="true"]{background:#F8B718; border-color:#F8B718; color:#06441C;}
+  .ms-loupe[aria-expanded="true"]{background:#F8B718; border-color:#F8B718; color:var(--green-deep, #06441C);}
   .ms-membre .ms-nom{display:none;}
   /* Sur telephone, le lien vers le site se reduit a son icone ronde. */
   .ms-site{width:34px; height:34px; padding:0; justify-content:center;}
@@ -383,23 +383,23 @@ html .cat-tab.active{color:var(--teal-dark, #0F6E56);}
   display:none; align-items:center; justify-content:center; padding:20px;}
 .ms-annonces.ouvert{display:flex;}
 .ms-annonces-boite{background:var(--surface, #FFFFFF); border-radius:16px;
-  box-shadow:0 24px 60px rgba(6,68,28,0.35); max-width:480px; width:100%; max-height:85vh;
+  box-shadow:0 24px 60px rgba(var(--green-deep-rgb, 6,68,28),0.35); max-width:480px; width:100%; max-height:85vh;
   display:flex; flex-direction:column;}
 .ms-annonces-tete{padding:22px 26px 14px; border-bottom:1px solid var(--line, rgba(6,68,28,0.16));
   display:flex; align-items:center; gap:10px;}
 .ms-annonces-tete svg{width:21px; height:21px; flex:none; fill:none; stroke:var(--text-accent, #AA7B11);
   stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
-.ms-annonces-titre{font-family:var(--display, 'Sora', sans-serif); font-size:1.1rem; font-weight:700; color:var(--text-heading, #06441C);}
+.ms-annonces-titre{font-family:var(--display, 'Sora', sans-serif); font-size:1.1rem; font-weight:700; color:var(--text-heading, var(--green-deep, #06441C));}
 .ms-annonces-corps{padding:10px 26px; overflow-y:auto;}
 .ms-annonce{padding:16px 0; border-bottom:1px solid var(--paper-alt, #ECEFE3);}
 .ms-annonce:last-child{border-bottom:none;}
 .ms-annonce img{width:100%; max-height:220px; object-fit:cover; border-radius:10px; display:block; margin-bottom:12px;}
-.ms-annonce-titre{font-weight:600; font-size:0.95rem; color:var(--text-heading, #06441C); margin-bottom:6px;}
+.ms-annonce-titre{font-weight:600; font-size:0.95rem; color:var(--text-heading, var(--green-deep, #06441C)); margin-bottom:6px;}
 .ms-annonce-texte{font-size:0.87rem; color:var(--text-muted, #5A6C60); white-space:pre-wrap;}
 .ms-annonces-pied{padding:16px 26px 22px;}
-.ms-annonces-ok{width:100%; background:#17763B; color:#FFFFFF; border:none; padding:12px;
+.ms-annonces-ok{width:100%; background:var(--green, #17763B); color:#FFFFFF; border:none; padding:12px;
   border-radius:999px; font-size:0.9rem; font-weight:600; cursor:pointer;}
-.ms-annonces-ok:hover{background:#06441C;}
+.ms-annonces-ok:hover{background:var(--green-deep, #06441C);}
 
 
 /* ===== Cartes a icone : le style du tableau de bord, partout =====
@@ -479,7 +479,7 @@ html .section-card:nth-child(even) .item-icon,
 html .section-card:nth-child(even) .continue-thumb,
 html .section-card:nth-child(even) .course-thumb,
 html .section-card:nth-child(even) .accordion-icon{
-  background:rgba(23,118,59,0.12); color:#12622F;
+  background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green-deep-3, #12622F);
 }
 :root[data-theme="dark"] .admin-card-icon,
 :root[data-theme="dark"] .module-icon,
@@ -555,7 +555,7 @@ html .section-card:nth-child(even) .accordion-icon{
 :root[data-theme="dark"] .section-card:nth-child(even) .continue-thumb,
 :root[data-theme="dark"] .section-card:nth-child(even) .course-thumb,
 :root[data-theme="dark"] .section-card:nth-child(even) .accordion-icon{
-  background:rgba(127,217,160,0.14); color:#7FD9A0;
+  background:rgba(127,217,160,0.14); color:var(--green-soft, #7FD9A0);
 }
 /* Tuile d'en-tete de page : jaune, comme la premiere carte. */
 html .hero-icon, html .quiz-icon{border-radius:14px; background:rgba(248,183,24,0.2); color:#8A6209;}
@@ -581,10 +581,10 @@ html .admin-card-sub, html .topic-meta{color:var(--text-muted, #5A6C60);}
    forum, indigo annuaire, ambre boutique, rose mediatheque). Les variables
    sont redefinies ici ; html:root l'emporte sur le :root des pages. */
 html:root{
-  --blue-light:#E3F1E7; --blue:#17763B; --blue-dark:#12622F; --blue-deeper:#06441C;
-  --teal-light:#E3F1E7; --teal:#17763B; --teal-dark:#12622F; --teal-deeper:#06441C;
-  --violet-light:#E3F1E7; --violet:#17763B; --violet-dark:#12622F; --violet-deeper:#06441C;
-  --indigo-light:#E3F1E7; --indigo:#17763B; --indigo-dark:#12622F; --indigo-deeper:#06441C;
+  --blue-light:#E3F1E7; --blue:var(--green, #17763B); --blue-dark:var(--green-deep-3, #12622F); --blue-deeper:var(--green-deep, #06441C);
+  --teal-light:#E3F1E7; --teal:var(--green, #17763B); --teal-dark:var(--green-deep-3, #12622F); --teal-deeper:var(--green-deep, #06441C);
+  --violet-light:#E3F1E7; --violet:var(--green, #17763B); --violet-dark:var(--green-deep-3, #12622F); --violet-deeper:var(--green-deep, #06441C);
+  --indigo-light:#E3F1E7; --indigo:var(--green, #17763B); --indigo-dark:var(--green-deep-3, #12622F); --indigo-deeper:var(--green-deep, #06441C);
   --amber-light:#FEF1D1; --amber:#D9A21B; --amber-dark:#8A6209; --amber-deeper:#5C4206;
   --rose-light:#FEF1D1; --rose:#D9A21B; --rose-dark:#8A6209; --rose-deeper:#5C4206;
 }
@@ -592,10 +592,10 @@ html:root{
 html:root[data-theme="dark"]{
   /* En sombre, -dark et -deeper (surtout du texte) passent en tons clairs ;
      les boutons qui les prennent en fond recoivent un texte fonce, page par page. */
-  --blue-light:rgba(127,217,160,0.14); --blue:#17763B; --blue-dark:#7FD9A0; --blue-deeper:#A8E6BE;
-  --teal-light:rgba(127,217,160,0.14); --teal:#17763B; --teal-dark:#7FD9A0; --teal-deeper:#A8E6BE;
-  --violet-light:rgba(127,217,160,0.14); --violet:#17763B; --violet-dark:#7FD9A0; --violet-deeper:#A8E6BE;
-  --indigo-light:rgba(127,217,160,0.14); --indigo:#17763B; --indigo-dark:#7FD9A0; --indigo-deeper:#A8E6BE;
+  --blue-light:rgba(127,217,160,0.14); --blue:var(--green, #17763B); --blue-dark:var(--green-soft, #7FD9A0); --blue-deeper:#A8E6BE;
+  --teal-light:rgba(127,217,160,0.14); --teal:var(--green, #17763B); --teal-dark:var(--green-soft, #7FD9A0); --teal-deeper:#A8E6BE;
+  --violet-light:rgba(127,217,160,0.14); --violet:var(--green, #17763B); --violet-dark:var(--green-soft, #7FD9A0); --violet-deeper:#A8E6BE;
+  --indigo-light:rgba(127,217,160,0.14); --indigo:var(--green, #17763B); --indigo-dark:var(--green-soft, #7FD9A0); --indigo-deeper:#A8E6BE;
   --amber-light:rgba(248,183,24,0.16); --amber:#D9A21B; --amber-dark:#F0C955; --amber-deeper:#F7D88A;
   --rose-light:rgba(248,183,24,0.16); --rose:#D9A21B; --rose-dark:#F0C955; --rose-deeper:#F7D88A;
 }
@@ -629,7 +629,7 @@ html .outils-entete .menu-extra{
   border-color:var(--line, rgba(6,68,28,0.16));
   background:var(--surface, #FFFFFF);
   color:var(--green-deep, #06441C);
-  box-shadow:0 1px 3px rgba(6,68,28,0.12);
+  box-shadow:0 1px 3px rgba(var(--green-deep-rgb, 6,68,28),0.12);
 }
 html .outils-entete .menu-extra:hover{
   background:var(--paper-alt, #ECEFE3); border-color:var(--green, #17763B);

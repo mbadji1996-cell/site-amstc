@@ -9,7 +9,7 @@
 /* ===== Bandeau ===== */
 .rl-bandeau{
   position:relative; overflow:hidden; border-radius:22px; border:0;
-  background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
+  background:linear-gradient(103deg, var(--green-deep, #06441C) 0%, var(--green-deep-2, #0A5324) 48%, var(--green-deep-3, #12622F) 100%);
   padding:34px 36px; margin:26px 0 22px;
 }
 .rl-bandeau-photo{
@@ -70,7 +70,7 @@
   border:1.5px solid var(--line); border-radius:999px; background:var(--surface);
 }
 .rl-tri:hover{border-color:var(--gold);}
-.rl-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+.rl-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(var(--green-rgb, 23,118,59),0.12);}
 .rl-tri > .ti{color:var(--text-muted); font-size:16px;}
 .rl-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
 .rl-tri select{
@@ -88,7 +88,7 @@
   background:var(--surface); border:1px solid var(--line); border-radius:18px;
   transition:border-color .18s, box-shadow .18s, transform .18s;
 }
-.rl-carte:hover{border-color:var(--gold); box-shadow:0 12px 30px rgba(6,68,28,0.1); transform:translateY(-4px);}
+.rl-carte:hover{border-color:var(--gold); box-shadow:0 12px 30px rgba(var(--green-deep-rgb, 6,68,28),0.1); transform:translateY(-4px);}
 .rl-visuel{position:relative; width:100%; aspect-ratio:16/10; background:var(--paper-alt); overflow:hidden;}
 .rl-visuel img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
 .rl-visuel-vide{position:absolute; inset:0; display:grid; place-items:center; font-size:30px; color:var(--text-accent);}
@@ -133,7 +133,7 @@
 .rl-appel-texte{color:rgba(255,255,255,0.82); font-size:0.9rem;}
 .rl-appel-bouton{
   margin-left:auto; display:inline-flex; align-items:center; gap:9px; padding:12px 24px; border-radius:999px;
-  background:var(--gold); color:#06441C; font-weight:700; font-size:0.9rem;
+  background:var(--gold); color:var(--green-deep, #06441C); font-weight:700; font-size:0.9rem;
 }
 .rl-appel-bouton:hover{opacity:0.9;}
 @media(max-width:700px){
@@ -155,7 +155,7 @@
     font-family:var(--body); font-size:0.88rem; font-weight:600; color:var(--text-heading); text-align:left;
   }
   .rl-filtre-bouton .ti{font-size:17px; color:var(--green); flex:none;}
-  :root[data-theme="dark"] .rl-filtre-bouton .ti{color:#7FD9A0;}
+  :root[data-theme="dark"] .rl-filtre-bouton .ti{color:var(--green-soft, #7FD9A0);}
   .rl-filtre-texte{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .rl-filtre-bouton[aria-expanded="true"] .rl-filtre-chevron{transform:rotate(180deg);}
   .rl-filtre-chevron{transition:transform .18s;}

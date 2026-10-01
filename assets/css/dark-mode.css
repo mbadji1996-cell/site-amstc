@@ -34,7 +34,20 @@
      servent (la fenêtre de recadrage de la photo, dans profil.html)
      perdaient purement et simplement leur ombre en thème clair, la
      propriété devenant invalide. */
-  --shadow: 0 12px 32px rgba(6, 68, 28, 0.18);
+  --shadow: 0 12px 32px rgba(var(--green-deep-rgb, 6,68,28), 0.18);
+  /* Les quatre verts qui n'avaient pas de nom : les deux tons
+     intermediaires des degrades de bandeau, et les deux verts clairs du
+     theme sombre. Nommes pour que la palette entiere puisse changer -
+     Octobre Rose - sans reecrire les feuilles. */
+  --green-deep-2: #0A5324;
+  --green-deep-3: #12622F;
+  --green-light: #35B872;
+  --green-soft: #7FD9A0;
+  /* Les memes verts en composantes, pour les teintes transparentes :
+     rgba() ne sait pas lire un #code, mais accepte un var() qui porte
+     les trois nombres. */
+  --green-rgb: 23, 118, 59;
+  --green-deep-rgb: 6, 68, 28;
 }
 
 :root[data-theme="dark"] {
@@ -45,7 +58,7 @@
   --paper-alt: #17211A;
   --line: rgba(255, 255, 255, 0.14);
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-  --text-heading: #7FD9A0;
+  --text-heading: var(--green-soft, #7FD9A0);
   --text-accent: #F0C955;
   --surface: #182019;
   --text-muted: #9BB0A2;

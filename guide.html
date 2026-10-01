@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="assets/css/dark-mode.css">
+<link rel="stylesheet" href="assets/css/octobre-rose.css">
 <script src="assets/js/theme-toggle.js" defer></script>
 <script src="assets/js/defilement.js" defer></script>
 <link rel="stylesheet" href="assets/css/site-search.css">
@@ -38,8 +39,8 @@
     --ink:#0B2E17;
     --ink-soft:#48594E;
     --ink-faint:#8A9E8F;
-    --line:rgba(6,68,28,0.22);
-    --line-strong:rgba(6,68,28,0.24);
+    --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
+    --line-strong:rgba(var(--green-deep-rgb, 6,68,28),0.24);
     --green:#17763B;
     --green-deep:#06441C;
     --gold:#F8B718;
@@ -48,11 +49,11 @@
     --slate-bg:#EEF1F7;
     --lock:#B23B3B;
     --lock-bg:#FDEEEE;
-    --sidebar-bg:#06441C;
+    --sidebar-bg:var(--green-deep, #06441C);
     --sidebar-ink:rgba(255,255,255,0.68);
     --sidebar-ink-strong:#FFFFFF;
     --sidebar-line:rgba(255,255,255,0.12);
-    --shadow:0 1px 2px rgba(6,68,28,0.06), 0 8px 24px rgba(6,68,28,0.06);
+    --shadow:0 1px 2px rgba(var(--green-deep-rgb, 6,68,28),0.06), 0 8px 24px rgba(var(--green-deep-rgb, 6,68,28),0.06);
     --display:'Sora', sans-serif;
     --body:'Inter', -apple-system, sans-serif;
     --mono:'JetBrains Mono', monospace;
@@ -161,7 +162,7 @@
   }
   .badge.public{background:var(--paper-alt); color:var(--text-heading);}
   .badge.member{background:rgba(248,183,24,0.16); color:var(--text-accent);}
-  .badge.card{background:rgba(23,118,59,0.12); color:var(--green);}
+  .badge.card{background:rgba(var(--green-rgb, 23,118,59),0.12); color:var(--green);}
   .badge.admin{background:var(--slate-bg); color:var(--slate);}
   .badge.locked{background:var(--lock-bg); color:var(--lock);}
 
@@ -393,6 +394,10 @@
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">+</span> Le site ne dépend plus de serveurs extérieurs</p>
         <p class="faq-a">Les pictogrammes et les neuf bibliothèques du site (affichage des articles, espace membres, CMS, export Excel, PDF, graphiques) étaient chargés depuis des serveurs tiers : quand ils répondaient mal, les icônes disparaissaient et certaines pages ne s'affichaient plus. Tout est maintenant servi par amstc.org. Si une page vous semble incomplète après une mise à jour, un <strong>Ctrl+F5</strong> suffit.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q"><span class="qmark">+</span> Octobre Rose : le site passe au rose tout le mois</p>
+        <p class="faq-a">Du 1er au 31 octobre, les verts de la charte cèdent la place à la gamme du ruban rose - bandeaux, boutons, pastilles, colonne de l'espace membres - et un fin liseré rose coiffe chaque page. L'or de l'association ne change pas, et les couleurs qui portent un sens non plus : un paiement confirmé reste vert, une alerte reste rouge. Le 1er novembre, le site reprend ses verts tout seul, sans que personne n'intervienne. L'habillage revient chaque année ; pour l'arrêter plus tôt, il suffit de vider le fichier <code>assets/css/octobre-rose.css</code>.</p>
       </div>
       <div class="faq-item">
         <p class="faq-q"><span class="qmark">+</span> Sur téléphone, tout ce qui peut se replier se replie</p>

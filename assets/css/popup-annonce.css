@@ -13,7 +13,7 @@
 .popup-annonce-card{
   position:relative;
   background:var(--surface, #FFFFFF); border-radius:18px;
-  box-shadow:0 30px 80px rgba(6,68,28,0.4);
+  box-shadow:0 30px 80px rgba(var(--green-deep-rgb, 6,68,28),0.4);
   width:fit-content; max-width:min(80vw, 1100px); max-height:90vh;
   display:flex; flex-direction:column; overflow:hidden;
 }
@@ -87,6 +87,6 @@
 .popup-annonce-ok{
   font-family:var(--body); font-weight:600; font-size:0.9rem;
   padding:9px 22px; border-radius:999px; cursor:pointer;
-  background:transparent; color:var(--text-heading, #06441C); border:1.5px solid var(--line, rgba(6,68,28,0.14));
+  background:transparent; color:var(--text-heading, var(--green-deep, #06441C)); border:1.5px solid var(--line, rgba(6,68,28,0.14));
 }
 .popup-annonce-ok:hover{ background:var(--paper-alt, #ECEFE3); }

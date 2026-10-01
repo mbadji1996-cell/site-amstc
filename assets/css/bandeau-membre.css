@@ -18,7 +18,7 @@
 
 .bm{
   position:relative; overflow:hidden; border-radius:20px; border:0;
-  background:linear-gradient(103deg, #06441C 0%, #0A5324 48%, #12622F 100%);
+  background:linear-gradient(103deg, var(--green-deep, #06441C) 0%, var(--green-deep-2, #0A5324) 48%, var(--green-deep-3, #12622F) 100%);
   padding:26px 28px; margin:24px 0 18px;
 }
 /* La photo occupe la moitié droite et se fond dans le vert du bandeau. */
@@ -49,9 +49,9 @@
 .bm-intro{color:rgba(255,255,255,0.86); font-size:0.93rem; margin-top:8px; max-width:58ch;}
 .bm-bouton{
   display:inline-flex; align-items:center; gap:9px; margin-top:16px; padding:11px 20px; border-radius:999px;
-  background:var(--gold, #F8B718); color:#06441C; font-weight:600; font-size:0.88rem;
+  background:var(--gold, #F8B718); color:var(--green-deep, #06441C); font-weight:600; font-size:0.88rem;
 }
-.bm-bouton:hover{background:#FFD35C; color:#06441C;}
+.bm-bouton:hover{background:#FFD35C; color:var(--green-deep, #06441C);}
 /* Rangée de pastilles sous le texte : mots-clés du forum, types de la
    médiathèque, catégories de la bibliothèque. */
 .bm-actions{position:relative; z-index:1; display:flex; gap:9px; flex-wrap:wrap; margin-top:18px;}

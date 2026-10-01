@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* La rangee d'onglets reste cachee jusqu'a ce que member-nav.js pose la navigation ; au pire trois secondes, si le script n'arrive pas. */try{var d=document.documentElement;d.classList.add('ms-attente');setTimeout(function(){d.classList.remove('ms-attente');},3000);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,7 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
     --radius:14px;
     --display:'Sora',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
     --indigo-light:#E8EAFB; --indigo:#5B5FC7; --indigo-dark:#3F4299; --indigo-deeper:#2A2C6B;
@@ -63,17 +64,17 @@
 
   .directory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding-bottom:18px;}
   .member-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;transition:box-shadow .18s,transform .18s,border-color .18s;}
-  .member-card:hover{border-color:var(--gold);box-shadow:0 10px 26px rgba(6,68,28,0.1);transform:translateY(-3px);}
+  .member-card:hover{border-color:var(--gold);box-shadow:0 10px 26px rgba(var(--green-deep-rgb, 6,68,28),0.1);transform:translateY(-3px);}
   /* Pastille d'etat : member_directory ne liste que les comptes approuves
      et actifs, la mention dit donc vrai pour chaque carte. */
   .member-etat{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
-    background:rgba(23,118,59,0.1);color:#12622F;border-radius:999px;padding:4px 10px;font-size:0.68rem;font-weight:600;}
-  :root[data-theme="dark"] .member-etat{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+    background:rgba(var(--green-rgb, 23,118,59),0.1);color:var(--green-deep-3, #12622F);border-radius:999px;padding:4px 10px;font-size:0.68rem;font-weight:600;}
+  :root[data-theme="dark"] .member-etat{background:rgba(127,217,160,0.14);color:var(--green-soft, #7FD9A0);}
   .member-etat::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
   .member-avatar{width:84px;height:84px;border-radius:50%;object-fit:cover;margin:6px 0 10px;background:var(--paper-alt);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);}
   .member-avatar-fallback{
     width:84px;height:84px;border-radius:50%;margin:6px 0 10px;display:flex;align-items:center;justify-content:center;
-    background:rgba(23,118,59,0.1);color:var(--green);font-family:var(--display);font-weight:700;font-size:1.35rem;
+    background:rgba(var(--green-rgb, 23,118,59),0.1);color:var(--green);font-family:var(--display);font-weight:700;font-size:1.35rem;
   }
   .member-name{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--text-heading);}
   /* Comptes administrateurs : signalés à tous les membres dans l'annuaire. */
@@ -84,18 +85,18 @@
   /* Fonction au Bureau Exécutif : vert, pour se distinguer au premier coup
      d'œil du badge doré des droits d'administration - ce sont deux choses
      différentes, et un membre du Bureau n'est pas forcément administrateur. */
-  .member-bureau-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--white,#fff);background:var(--green,#17763B);padding:3px 10px;border-radius:999px;margin-top:6px;}
-  .member-domain{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:#12622F;background:rgba(23,118,59,0.1);padding:4px 11px;border-radius:999px;margin-top:8px;}
-  :root[data-theme="dark"] .member-domain{background:rgba(127,217,160,0.14);color:#7FD9A0;}
+  .member-bureau-badge{font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--white,#fff);background:var(--green,var(--green, #17763B));padding:3px 10px;border-radius:999px;margin-top:6px;}
+  .member-domain{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:var(--green-deep-3, #12622F);background:rgba(var(--green-rgb, 23,118,59),0.1);padding:4px 11px;border-radius:999px;margin-top:8px;}
+  :root[data-theme="dark"] .member-domain{background:rgba(127,217,160,0.14);color:var(--green-soft, #7FD9A0);}
   .member-city{font-size:0.82rem;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px;}
   .member-contact{
-    width:100%;font-family:var(--mono);font-size:0.78rem;font-weight:600;color:#12622F;
+    width:100%;font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--green-deep-3, #12622F);
     display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 14px;
-    border-radius:10px;background:rgba(23,118,59,0.08);border:1px solid rgba(23,118,59,0.2);
+    border-radius:10px;background:rgba(var(--green-rgb, 23,118,59),0.08);border:1px solid rgba(var(--green-rgb, 23,118,59),0.2);
     transition:background .18s ease,color .18s ease;
   }
-  .member-contact:hover{background:#17763B;color:var(--white);border-color:#17763B;}
-  :root[data-theme="dark"] .member-contact{color:#7FD9A0;background:rgba(127,217,160,0.12);border-color:rgba(127,217,160,0.25);}
+  .member-contact:hover{background:var(--green, #17763B);color:var(--white);border-color:var(--green, #17763B);}
+  :root[data-theme="dark"] .member-contact{color:var(--green-soft, #7FD9A0);background:rgba(127,217,160,0.12);border-color:rgba(127,217,160,0.25);}
   .member-profil{
     width:100%;display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;
     padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
@@ -119,7 +120,7 @@
   .an-tri{display:flex; align-items:center; gap:8px; padding:0 12px; margin-left:auto; flex:none;
     border:1.5px solid var(--line); border-radius:999px; background:var(--surface);}
   .an-tri:hover{border-color:var(--gold);}
-  .an-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(23,118,59,0.12);}
+  .an-tri:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(var(--green-rgb, 23,118,59),0.12);}
   .an-tri > .ti{color:var(--text-muted); font-size:16px;}
   .an-tri label{font-size:0.82rem; color:var(--text-muted); white-space:nowrap;}
   .an-tri select{-webkit-appearance:none; appearance:none; border:0; outline:none; cursor:pointer;
@@ -136,7 +137,7 @@
   .an-page:hover:not(:disabled){border-color:var(--green); color:var(--green);}
   .an-page.actif{background:var(--green); border-color:var(--green); color:#FFFFFF;}
   /* En sombre, --green est un vert clair : le texte doit y etre fonce. */
-  :root[data-theme="dark"] .an-page.actif{background:#7FD9A0; border-color:#7FD9A0; color:#06441C;}
+  :root[data-theme="dark"] .an-page.actif{background:var(--green-soft, #7FD9A0); border-color:var(--green-soft, #7FD9A0); color:var(--green-deep, #06441C);}
   .an-page:disabled{opacity:0.45; cursor:default;}
   .an-pages-info{width:100%; text-align:center; font-family:var(--mono); font-size:0.74rem; color:var(--text-muted);}
 
@@ -147,7 +148,7 @@
   .an-fiche{background:var(--surface); border-radius:18px; width:min(420px,100%); overflow:hidden;
     box-shadow:0 24px 60px rgba(6,28,14,0.35);}
   .an-fiche-tete{padding:26px 24px 20px; text-align:center; background:linear-gradient(180deg, #F1F7F2 0%, var(--surface) 100%);}
-  :root[data-theme="dark"] .an-fiche-tete{background:linear-gradient(180deg, rgba(23,118,59,0.18) 0%, var(--surface) 100%);}
+  :root[data-theme="dark"] .an-fiche-tete{background:linear-gradient(180deg, rgba(var(--green-rgb, 23,118,59),0.18) 0%, var(--surface) 100%);}
   .an-fiche-nom{font-family:var(--display); font-size:1.2rem; font-weight:700; color:var(--text-heading); margin-top:10px;}
   .an-fiche-corps{padding:6px 24px 24px;}
   .an-fiche-ligne{display:flex; align-items:baseline; justify-content:space-between; gap:14px;

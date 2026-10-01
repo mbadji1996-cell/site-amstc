@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('amstc-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}/* Octobre Rose : la classe n'est posee que pendant le mois d'octobre, et disparait d'elle-meme le 1er novembre. */try{if(new Date().getMonth()===9){document.documentElement.classList.add('octobre-rose');}}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/css/dark-mode.css">
+<link rel="stylesheet" href="../assets/css/octobre-rose.css">
 <script src="../assets/js/theme-toggle.js" defer></script>
 <script src="../assets/js/defilement.js" defer></script>
 <script src="../assets/js/oeil-mot-de-passe.js" defer></script>
@@ -21,8 +22,8 @@
 <style>
   :root{
     --ink:#0B2E17; --green:#17763B; --green-deep:#06441C; --gold:#F8B718; --gold-deep:#AA7B11;
-    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(6,68,28,0.22);
-    --shadow:0 12px 32px rgba(6,68,28,0.10); --radius:14px;
+    --paper:#FFFFFF; --paper-alt:#ECEFE3; --white:#FFFFFF; --line:rgba(var(--green-deep-rgb, 6,68,28),0.22);
+    --shadow:0 12px 32px rgba(var(--green-deep-rgb, 6,68,28),0.10); --radius:14px;
     --display:'Sora', sans-serif; --body:'Inter', -apple-system, sans-serif; --mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -102,7 +103,7 @@
   @keyframes cxB{ from{transform:scale(1.16) translate(-2%,-1%);} to{transform:scale(1.04) translate(1%,1%);} }
   @keyframes cxC{ from{transform:scale(1.12) translate(3%,0);} to{transform:scale(1.12) translate(-3%,0);} }
   @keyframes cxD{ from{transform:scale(1.12) translate(0,2.5%);} to{transform:scale(1.04) translate(0,-1.5%);} }
-  .photo-voile{position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,68,28,0) 38%, rgba(6,68,28,0.88) 100%);}
+  .photo-voile{position:absolute; inset:0; background:linear-gradient(180deg, rgba(var(--green-deep-rgb, 6,68,28),0) 38%, rgba(var(--green-deep-rgb, 6,68,28),0.88) 100%);}
   .photo-texte{position:absolute; left:36px; right:36px; bottom:34px; color:var(--white);}
   .photo-accroche{font-family:var(--display); font-weight:600; font-size:1.55rem; line-height:1.25;}
   .photo-sous{font-size:0.96rem; color:rgba(255,255,255,0.85); margin-top:8px; max-width:38ch;}
@@ -115,14 +116,14 @@
   /* ===== Champs facon maquette : icone + libelle + saisie dans un cadre ===== */
   .champ{
     display:flex; align-items:center; gap:12px; margin-top:14px; padding:9px 14px;
-    border:1.5px solid var(--line); border-radius:12px; background:rgba(6,68,28,0.035);
+    border:1.5px solid var(--line); border-radius:12px; background:rgba(var(--green-deep-rgb, 6,68,28),0.035);
     transition:border-color .15s ease, background .15s ease;
   }
   :root[data-theme="dark"] .champ{background:rgba(255,255,255,0.05);}
   .champ:focus-within{border-color:var(--green); background:var(--surface);}
   .champ-icone{flex:none; width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
-    background:rgba(23,118,59,0.1); color:var(--green);}
-  :root[data-theme="dark"] .champ-icone{background:rgba(127,217,160,0.14); color:#7FD9A0;}
+    background:rgba(var(--green-rgb, 23,118,59),0.1); color:var(--green);}
+  :root[data-theme="dark"] .champ-icone{background:rgba(127,217,160,0.14); color:var(--green-soft, #7FD9A0);}
   .champ-icone svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
   .champ-corps{flex:1; min-width:0;}
   .champ-corps label{display:block; margin:0; font-size:0.72rem; font-weight:600; letter-spacing:0.02em; color:var(--text-muted);}
@@ -139,13 +140,13 @@
   .ligne-options .rester{margin-top:0;}
   .lien-oubli{font-size:0.86rem; font-weight:600; color:var(--green);}
   .lien-oubli:hover{text-decoration:underline;}
-  :root[data-theme="dark"] .lien-oubli{color:#7FD9A0;}
+  :root[data-theme="dark"] .lien-oubli{color:var(--green-soft, #7FD9A0);}
   /* Bouton principal : vert plein, comme la maquette (Google garde son fond clair). */
   .btn:not(.btn-google){background:var(--green-deep); color:var(--white);}
   .btn:not(.btn-google):hover{background:var(--green); color:var(--white);}
   /* En sombre, le vert profond se confond avec le fond : on remonte d'un ton,
      sans aller jusqu'au vert clair qui ne tiendrait pas le texte blanc. */
-  :root[data-theme="dark"] .btn:not(.btn-google){background:#17763B;}
+  :root[data-theme="dark"] .btn:not(.btn-google){background:var(--green, #17763B);}
   :root[data-theme="dark"] .btn:not(.btn-google):hover{background:#1E8E49; color:#06280F;}
   .btn svg{fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   .btn-fleche{width:17px; height:17px;}
@@ -220,7 +221,7 @@
     font-family:var(--body); transition:border-color .15s ease, background .15s ease;
   }
   .choice-option:hover{border-color:var(--green);}
-  .choice-option.actif{border-color:var(--green); background:rgba(23,118,59,0.08); box-shadow:inset 0 0 0 1px var(--green);}
+  .choice-option.actif{border-color:var(--green); background:rgba(var(--green-rgb, 23,118,59),0.08); box-shadow:inset 0 0 0 1px var(--green);}
   :root[data-theme="dark"] .choice-option.actif{background:rgba(127,217,160,0.1);}
   .choice-option:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
   .choice-title{font-family:var(--display); font-weight:600; font-size:0.95rem; color:var(--text-heading);}

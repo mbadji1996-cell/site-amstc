@@ -24,7 +24,7 @@
   cursor: pointer;
   background: var(--gold, #F8B718);
   color: var(--green-deep, #06441C);
-  box-shadow: 0 6px 20px rgba(6, 68, 28, 0.22);
+  box-shadow: 0 6px 20px rgba(var(--green-deep-rgb, 6,68,28), 0.22);
 }
 .assistant-bouton:hover { opacity: 0.9; }
 .assistant-bouton span {
@@ -51,7 +51,7 @@
   background: var(--surface, #FFFFFF);
   border: 1px solid var(--line, rgba(6, 68, 28, 0.14));
   border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(6, 68, 28, 0.20);
+  box-shadow: 0 16px 40px rgba(var(--green-deep-rgb, 6,68,28), 0.20);
   overflow: hidden;
 }
 .assistant-panneau.ouvert { display: flex; }
