@@ -427,6 +427,7 @@
 
     usageExport = [
       [], ['Usage de l\'espace membres', 'Derniers ' + k.jours + ' jours'],
+      ['Comptes super-administrateur écartés', k.exclus || 0],
       ['Membres approuvés', approuves],
       ['Connectés au moins une fois (7 j)', cx.j7 || 0],
       ['Connectés au moins une fois (30 j)', cx.j30 || 0],
@@ -457,6 +458,9 @@
         ${kpi(nb(cx.j30 || 0), 'Connectés (30 j)', nb(cx.j7 || 0) + ' cette semaine')}
         ${kpi(nb(cx.jamais || 0), 'Jamais connectés', cx.jamais ? 'compte créé, jamais ouvert' : 'tout le monde est venu', Number(cx.jamais || 0) > 0)}
       </div>
+      ${Number(k.exclus || 0) > 0 ? `<p class="note">Compte(s) super-administrateur écarté(s) de toute cette section :
+        ${nb(k.exclus)} - les vérifications faites en tenant le site ne disent rien de l'usage réel.
+        Les chiffres de l'association, plus bas, les comptent normalement.</p>` : ''}
 
       ${journal ? `
       <h2>Rubriques les plus ouvertes</h2>
@@ -498,7 +502,8 @@
     if (error || !data) {
       usageExport = [];
       zone.innerHTML = `<div class="bloc"><p class="vide">Les indicateurs d'usage ne sont pas encore disponibles.
-        Exécutez <code>supabase/phase117-usage-espace-membres.sql</code> dans l'éditeur SQL de Supabase pour les activer.</p>
+        Exécutez <code>supabase/phase117-usage-espace-membres.sql</code> puis
+        <code>supabase/phase118-usage-hors-super-admin.sql</code> dans l'éditeur SQL de Supabase pour les activer.</p>
         <p class="note">${esc((error && error.message) || 'Fonction usage_kpi introuvable.')}</p></div>`;
       return;
     }
