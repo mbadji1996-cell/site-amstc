@@ -100,3 +100,72 @@ html.octobre-rose body::before {
 @media print {
   html.octobre-rose body::before { display: none; }
 }
+
+/* ===== Le hero du mois =====
+   Pendant octobre, le hero habituel s'efface et celui-ci prend sa place.
+   Le texte à gauche, l'affiche à droite : l'affiche porte déjà ses
+   propres mots, poser les nôtres par-dessus les rendrait illisibles.
+   Vider cette feuille rend la page à son hero d'origine. */
+html.octobre-rose .hero { display: none; }
+html.octobre-rose #hero-octobre {
+  display: block;
+  position: relative;
+  padding: 54px 0 48px;
+  background: linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
+  color: #FFFFFF;
+}
+html.octobre-rose .hero-or-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  html.octobre-rose .hero-or-grille { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 44px; }
+}
+html.octobre-rose .hero-or-eyebrow {
+  font-family: var(--mono, monospace);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #FFE3A0;
+  margin-bottom: 14px;
+}
+html.octobre-rose #hero-octobre h1 {
+  font-family: var(--display, sans-serif);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: #FFFFFF;
+  text-wrap: balance;
+}
+html.octobre-rose #hero-octobre h1 em { font-style: normal; color: #FFD3E2; }
+html.octobre-rose .hero-or-intro {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin: 16px 0 0;
+  max-width: 60ch;
+}
+html.octobre-rose .hero-or-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+html.octobre-rose .hero-or-ctas .btn-ghost { border-color: rgba(255, 255, 255, 0.5); color: #FFFFFF; }
+html.octobre-rose .hero-or-ctas .btn-ghost:hover { border-color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
+
+/* L'affiche est montrée ENTIÈRE : elle est verticale, et un recadrage
+   lui couperait soit le ruban, soit les trois messages. */
+html.octobre-rose .hero-or-affiche { margin: 0; justify-self: center; }
+html.octobre-rose .hero-or-affiche img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 520px;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+}
+@media (max-width: 899px) {
+  html.octobre-rose #hero-octobre { padding: 36px 0 34px; }
+  html.octobre-rose .hero-or-affiche img { max-height: 420px; }
+}
