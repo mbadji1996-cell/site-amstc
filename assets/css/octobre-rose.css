@@ -150,8 +150,6 @@ html.octobre-rose .hero-or-intro {
   max-width: 60ch;
 }
 html.octobre-rose .hero-or-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-html.octobre-rose .hero-or-ctas .btn-ghost { border-color: rgba(255, 255, 255, 0.5); color: #FFFFFF; }
-html.octobre-rose .hero-or-ctas .btn-ghost:hover { border-color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
 
 /* L'affiche est montrée ENTIÈRE : elle est verticale, et un recadrage
    lui couperait soit le ruban, soit les trois messages. */
