@@ -1,4 +1,4 @@
-/* Icones Tabler 2.47.0, reduites aux 189 icones utilisees par le site.
+/* Icones Tabler 2.47.0, reduites aux 192 icones utilisees par le site.
    Fichier ENGENDRE par scripts/construire-icones.py : ne pas modifier a
    la main. Pour ajouter une icone, l'utiliser dans une page puis
    relancer le script. */
@@ -136,6 +136,7 @@
 .ti-message-2::before{content:"\eaec";}
 .ti-message-circle-2::before{content:"\ed3f";}
 .ti-messages::before{content:"\eb6c";}
+.ti-microphone::before{content:"\eaf0";}
 .ti-microscope::before{content:"\ef64";}
 .ti-mood-kid::before{content:"\ec03";}
 .ti-mood-smile::before{content:"\eaf7";}
@@ -169,6 +170,7 @@
 .ti-route::before{content:"\eb17";}
 .ti-school::before{content:"\ecf7";}
 .ti-search::before{content:"\eb1c";}
+.ti-search-off::before{content:"\f19c";}
 .ti-send::before{content:"\eb1e";}
 .ti-share::before{content:"\eb21";}
 .ti-share-3::before{content:"\f7bd";}
@@ -182,6 +184,7 @@
 .ti-stack-2::before{content:"\eef7";}
 .ti-star::before{content:"\eb2e";}
 .ti-stethoscope::before{content:"\edbe";}
+.ti-sticker::before{content:"\eb2f";}
 .ti-tag::before{content:"\eb34";}
 .ti-target::before{content:"\eb35";}
 .ti-target-arrow::before{content:"\f51a";}

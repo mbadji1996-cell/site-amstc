@@ -26,7 +26,12 @@
        2,6:1, sous le seuil de 4,5. Fixe, il tient 5,6:1 dans les deux
        themes - et une bulle envoyee se distingue toujours du fond. */
     --vert-plein:var(--green, #17763B);
+    /* Le rouge des alertes. Il garde son sens dans les deux saisons -
+       un delai expire n'est ni vert ni rose - mais pas sa valeur :
+       #B23B3B ne tient que 3,3:1 sur un fond sombre. */
+    --alerte:#B23B3B;
   }
+  :root[data-theme="dark"]{ --alerte:#E8938C; }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;}
   a{color:inherit;text-decoration:none;}
@@ -39,7 +44,14 @@
   .wrap{max-width:1400px;margin:0 auto;padding:0 24px 48px;}
   .page-header{padding:26px 0 16px;}
   .back{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-accent,var(--gold-deep));display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
-  .page-title{font-family:var(--display);font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700;color:var(--text-heading,var(--green-deep));line-height:1.15;}
+  .page-title{font-family:var(--display);font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700;color:var(--text-heading,var(--green-deep));line-height:1.15;
+    display:flex;align-items:center;gap:12px;}
+  /* Le medaillon du titre prend la couleur du site, pas le vert de la
+     marque : un seul rond vert au milieu d'un ecran rose passerait
+     pour un oubli. */
+  .titre-pastille{width:42px;height:42px;border-radius:12px;flex-shrink:0;
+    background:var(--vert-plein);color:#fff;font-size:24px;
+    display:inline-flex;align-items:center;justify-content:center;}
   .page-sub{color:var(--text-muted,#5A6B5E);font-size:0.9rem;margin-top:6px;max-width:70ch;}
   .loading-msg{color:var(--text-muted,#5A6B5E);font-family:var(--mono);font-size:0.85rem;padding:80px 0;text-align:center;}
 
@@ -51,8 +63,12 @@
     border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
     background:var(--surface,var(--white));}
 
-  .pane-liste{display:flex;flex-direction:column;min-height:0;}
-  .pane-fil{display:flex;flex-direction:column;min-height:0;}
+  /* min-width:0 autant que min-height:0 : une cellule de grille vaut
+     par defaut la largeur de son contenu, et la liste debordait alors
+     de l'ecran du telephone - la date et la fin de l'apercu etaient
+     coupees net, sans que la page paraisse defiler. */
+  .pane-liste{display:flex;flex-direction:column;min-height:0;min-width:0;}
+  .pane-fil{display:flex;flex-direction:column;min-height:0;min-width:0;}
 
   /* Sur téléphone les deux panneaux se relaient : la liste, puis le fil
      qui la remplace. Deux colonnes de 180 px n'auraient servi ni l'une
@@ -68,30 +84,98 @@
 
   /* Pas de défilement propre sur téléphone : la page s'en charge. */
   .liste{flex:1;min-height:0;}
-  .conv{display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
-    padding:13px 14px;border-bottom:1px solid var(--paper-alt);font-family:var(--body);color:var(--ink);}
+  /* Le medaillon donne a chaque conversation un point d'accroche que
+     sept noms alignes n'avaient pas. Sa teinte vient du numero, elle
+     ne bouge donc jamais pour une meme personne : c'est ce qui la rend
+     reconnaissable avant meme d'avoir lu le nom. */
+  .avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-size:0.82rem;font-weight:700;letter-spacing:0.02em;
+    user-select:none;}
+
+  .filtre-zone{display:flex;align-items:center;gap:8px;padding:9px 14px;
+    border-bottom:1px solid var(--line);background:var(--paper);flex-shrink:0;}
+  .filtre-zone i{color:var(--text-muted,#8A9E8F);font-size:16px;flex-shrink:0;}
+  .filtre-zone input{flex:1;min-width:0;border:none;background:none;font-family:var(--body);
+    font-size:0.85rem;color:var(--ink);padding:2px 0;}
+  .filtre-zone input:focus{outline:none;}
+  .filtre-zone input::placeholder{color:var(--text-muted,#8A9E8F);}
+  .filtre-zone:focus-within{box-shadow:inset 0 -2px 0 var(--green);}
+
+  /* min-width:0 partout ou un texte doit pouvoir etre tronque : un
+     <button> en display:flex garde sinon la largeur de son contenu, et
+     c'est la liste entiere qui se met a defiler lateralement. */
+  .liste{overflow-x:hidden;}
+  .conv{display:flex;gap:11px;width:100%;min-width:0;text-align:left;background:none;border:none;cursor:pointer;
+    padding:12px 14px;border-bottom:1px solid var(--paper-alt);font-family:var(--body);color:var(--ink);}
   .conv:hover{background:var(--paper);}
+  /* Le liseré porte la selection a lui seul : un fond plein, derriere
+     des etiquettes deja colorees, rendait la ligne illisible. */
   .conv.actif{background:var(--paper);box-shadow:inset 3px 0 0 var(--green);}
-  .conv-haut{display:flex;align-items:baseline;gap:8px;}
-  .conv-nom{font-weight:600;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .conv-corps{flex:1;min-width:0;overflow:hidden;}
+  .conv-haut{display:flex;align-items:baseline;gap:8px;min-width:0;}
+  .conv-nom{font-weight:600;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  /* Un message non lu se voit a la graisse du nom et a la pastille.
+     Teinter toute la ligne aurait concurrence le liseré de selection. */
+  .conv.non-lu .conv-nom{font-weight:700;}
+  .conv.non-lu .conv-apercu{color:var(--ink);}
   .conv-date{margin-left:auto;font-family:var(--mono);font-size:0.66rem;color:var(--text-muted,#8A9E8F);white-space:nowrap;flex-shrink:0;}
-  .conv-apercu{font-size:0.82rem;color:var(--text-muted,#5A6B5E);margin-top:2px;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .conv-bas{display:flex;align-items:center;gap:8px;margin-top:5px;}
+  .conv.non-lu .conv-date{color:var(--green);}
+  /* display:block est indispensable : les trois points de suspension
+     ne s'appliquent pas a une boite en ligne, et l'apercu etait coupe
+     net au milieu d'un mot. */
+  .conv-apercu{display:block;font-size:0.82rem;color:var(--text-muted,#5A6B5E);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .conv-apercu i{font-size:14px;vertical-align:-2px;margin-right:3px;opacity:.8;}
+  .conv-bas{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;}
   .pastille{background:var(--vert-plein);color:#fff;font-family:var(--mono);font-size:0.62rem;
     border-radius:999px;padding:2px 7px;font-weight:600;}
   .etiq{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.05em;
-    border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--text-muted,#8A9E8F);}
+    border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--text-muted,#8A9E8F);
+    white-space:nowrap;}
+  /* Trois etats, trois poids. « Fenetre fermee » interdit de repondre :
+     il ne peut pas avoir l'air de « Membre », qui n'interdit rien.
+     Les couleurs d'alerte gardent leur sens et ne suivent pas la
+     saison - un delai qui expire n'est ni vert ni rose. */
+  /* --green, et non --text-accent : ce dernier vaut l'or en theme
+     sombre, ce qui rendait « fenetre ouverte » et « fenetre qui se
+     referme » de la meme couleur. */
+  .etiq-ouvert{border-color:rgba(var(--green-rgb, 23,118,59),0.45);color:var(--green);}
+  .etiq-bientot{border-color:rgba(170,123,17,0.5);color:var(--gold-deep);
+    background:rgba(248,183,24,0.10);}
+  .etiq-ferme{border-color:rgba(178,59,59,0.35);color:var(--alerte);
+    background:rgba(178,59,59,0.07);}
 
-  .fil-entete{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);
+  .fil-entete{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);
     background:var(--paper);flex-shrink:0;}
   .retour-liste{background:none;border:none;cursor:pointer;color:var(--text-heading,var(--green-deep));
     font-size:1.15rem;line-height:1;padding:4px;display:inline-flex;}
+  .fil-entete .avatar{width:38px;height:38px;font-size:0.76rem;}
+  .fil-ident{min-width:0;display:flex;flex-direction:column;}
   .fil-nom{font-weight:600;font-size:0.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .fil-num{font-family:var(--mono);font-size:0.7rem;color:var(--text-muted,#8A9E8F);}
+  /* Le delai restant se decidait jusqu'ici tout en bas, au-dessus du
+     champ. Il remonte ici : on sait si l'on peut repondre AVANT de
+     lire la conversation, pas apres l'avoir lue. */
+  .fil-chips{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  /* Tant qu'aucune conversation n'est choisie, l'entete n'a ni nom ni
+     numero a porter : un medaillon vide et un tiret ne renseignent
+     personne. Sur telephone le panneau entier est deja masque. */
+  .boite:not(.fil-ouvert) .fil-entete{display:none;}
+  @media(max-width:560px){ .fil-chips .etiq-registre{display:none;} }
 
+  /* Un fond propre au fil : la conversation devient une surface, et
+     non la suite de la page. La teinte vient du jeton, elle suit donc
+     la saison comme le reste. */
   .fil{overflow-y:auto;flex:1;min-height:0;padding:16px 14px;display:flex;flex-direction:column;gap:10px;
-    background:var(--paper);}
+    background:var(--paper);
+    background-image:linear-gradient(rgba(var(--green-rgb, 23,118,59),0.035),rgba(var(--green-rgb, 23,118,59),0.035));}
+
+  /* Sans repere de jour, trois semaines d'echanges se lisent comme un
+     seul bloc : les heures seules ne disent pas de quel jour. */
+  .jour{align-self:center;font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;
+    letter-spacing:0.07em;color:var(--text-muted,#5A6B5E);background:var(--surface,var(--white));
+    border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin:6px 0 2px;}
 
   /* Le fil ouvert occupe l'écran entier, comme une messagerie : une
      seule zone qui défile, le pouce sait où il agit. Le bouton retour
@@ -138,7 +222,7 @@
 
   .fenetre{font-size:0.76rem;padding:8px 14px;border-top:1px solid var(--line);flex-shrink:0;}
   .fenetre-ok{color:var(--text-muted,#5A6B5E);}
-  .fenetre-ko{color:#B23B3B;background:rgba(178,59,59,0.07);}
+  .fenetre-ko{color:var(--alerte);background:rgba(178,59,59,0.07);}
 
   /* position:relative sert d'ancrage au popover d'emojis, seul enfant
      positionne en absolu de cette barre : il ne participe donc pas a
@@ -175,7 +259,13 @@
   .env-btn{background:var(--vert-plein);color:#fff;border:none;width:44px;height:44px;border-radius:50%;
     cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;}
   .env-btn:disabled{opacity:.45;cursor:not-allowed;}
-  .env-msg{font-size:0.78rem;padding:0 14px 10px;color:#B23B3B;}
+  /* Un envoi passe par Meta : il peut prendre deux secondes. Sans
+     signe, on reclique. */
+  .env-btn.envoi{opacity:1;}
+  .env-btn.envoi i{animation:tourne .8s linear infinite;}
+  @keyframes tourne{to{transform:rotate(360deg);}}
+  @media(prefers-reduced-motion:reduce){ .env-btn.envoi i{animation:none;} }
+  .env-msg{font-size:0.78rem;padding:0 14px 10px;color:var(--alerte);}
   .env-msg:empty{display:none;}
 
   .vide{padding:40px 20px;text-align:center;color:var(--text-muted,#8A9E8F);font-size:0.85rem;}
@@ -240,7 +330,10 @@
 <div class="wrap" id="pageContent" style="display:none;">
   <div class="page-header">
     <a class="back" href="admin">Centre d'administration</a>
-    <h1 class="page-title">Boîte WhatsApp</h1>
+    <h1 class="page-title">
+      <span class="titre-pastille" aria-hidden="true"><i class="ti ti-brand-whatsapp"></i></span>
+      Boîte WhatsApp
+    </h1>
     <p class="page-sub">Les messages que les membres écrivent au numéro de l'association, et les réponses qui leur sont faites - d'ici comme depuis Telegram.</p>
   </div>
 
@@ -252,8 +345,14 @@
     <aside class="pane-liste" id="paneListe">
       <p class="pane-titre">
         <i class="ti ti-messages"></i> Conversations
+        <span id="compte"></span>
         <span class="rafraichi" id="rafraichi"></span>
       </p>
+      <div class="filtre-zone">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="search" id="filtre" autocomplete="off"
+          placeholder="Filtrer par nom ou numéro…" aria-label="Filtrer les conversations">
+      </div>
       <div class="liste" id="liste">
         <p class="vide">Chargement…</p>
       </div>
@@ -264,10 +363,12 @@
         <button type="button" class="retour-liste" id="retourListe" aria-label="Revenir aux conversations">
           <i class="ti ti-arrow-left"></i>
         </button>
-        <span>
-          <span class="fil-nom" id="filNom">-</span><br>
+        <span class="avatar" id="filAvatar" aria-hidden="true"></span>
+        <span class="fil-ident">
+          <span class="fil-nom" id="filNom">-</span>
           <span class="fil-num" id="filNum"></span>
         </span>
+        <span class="fil-chips" id="filChips"></span>
       </div>
       <div class="fil" id="fil">
         <p class="fil-vide">Choisissez une conversation.</p>
@@ -302,6 +403,82 @@
   let minuteur = null;
 
   const $ = (id) => document.getElementById(id);
+
+  // ---------- Le medaillon ----------
+  // Huit teintes verifiees a 4,5:1 sous du texte blanc. Elles ne
+  // suivent pas la saison : ce sont des couleurs d'identite, pas les
+  // couleurs du site, et aucune n'est verte - sans quoi elles
+  // passeraient en octobre pour un reste de l'ancienne charte.
+  const TEINTES = ['#6F4A9B', '#A2621C', '#A8356B', '#2F6490',
+                   '#9B4430', '#7A3B5E', '#4B4F9B', '#8C5A2B'];
+
+  // Le numero, jamais le nom : un contact renomme garderait sa couleur.
+  function teinte(cle) {
+    let h = 0;
+    const s = String(cle || '');
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return TEINTES[h % TEINTES.length];
+  }
+
+  // Deux lettres au plus. Un numero sans nom donne ses deux derniers
+  // chiffres, qui distinguent mieux que « ++ ».
+  function initiales(nom, tel) {
+    const mots = String(nom || '').trim().split(/\s+/).filter(Boolean);
+    if (!mots.length) return String(tel || '').slice(-2) || '?';
+    if (mots.length === 1) return mots[0].slice(0, 2).toUpperCase();
+    return (mots[0][0] + mots[mots.length - 1][0]).toUpperCase();
+  }
+
+  function medaillon(nom, tel, classe) {
+    return '<span class="' + (classe || 'avatar') + '" aria-hidden="true"'
+      + ' style="background:' + teinte(tel) + '">'
+      + echapper(initiales(nom, tel)) + '</span>';
+  }
+
+  // ---------- L'apercu d'un message qui n'est pas du texte ----------
+  // Le webhook range ces messages sous une marque de repli entre
+  // crochets, utile en base. Montree telle quelle a l'administrateur,
+  // « [message de type reaction] » ne dit rien de plus qu'une icone et
+  // un mot, et dit moins bien.
+  // Les motifs se lisent sur la forme SANS ACCENTS du texte : « vidéo »
+  // s'ecrit donc « video » ici.
+  const REPLIS = [
+    [/^une image$/,          'ti-photo',        'Photo'],
+    [/^un message vocal$/,   'ti-microphone',   'Message vocal'],
+    [/^une video$/,          'ti-video',        'Vidéo'],
+    [/^un document/,         'ti-file-text',    'Document'],
+    [/^un autocollant$/,     'ti-sticker',      'Autocollant'],
+    [/^une position$/,       'ti-map-pin',      'Position'],
+    [/^une fiche contact$/,  'ti-address-book', 'Fiche contact'],
+    [/^une reaction/,        'ti-mood-smile',   'Réaction'],
+    [/^message de type/,     'ti-message-2',    'Message non textuel'],
+  ];
+
+  function apercu(texte) {
+    const brut = String(texte || '');
+    const m = brut.match(/^\[([^\]]*)\]\s*(.*)$/s);
+    if (!m) return echapper(brut);
+    const dedans = m[1].trim();
+    const suite = m[2].trim();
+    // Sans accents ni majuscules : le webhook ecrit « réaction », une
+    // ligne plus ancienne peut porter « reaction », et les deux
+    // designent la meme chose.
+    const cle = sansAccents(dedans);
+    for (const [motif, icone, mot] of REPLIS) {
+      if (motif.test(cle)) {
+        // « un document : facture.pdf » et « une réaction 👍 » portent
+        // leur precision apres le mot generique : elle vaut mieux que
+        // lui, on la garde.
+        const precision = dedans.replace(/^un document\s*:?\s*/i, '')
+                                .replace(/^une r[ée]action\s*/i, '')
+                                .replace(/^message de type\s*/i, '');
+        const fin = (precision && precision !== dedans) ? ' ' + precision : '';
+        return '<i class="ti ' + icone + '"></i>'
+          + echapper(mot + fin + (suite ? ' · ' + suite : ''));
+      }
+    }
+    return echapper(dedans + (suite ? ' ' + suite : ''));
+  }
 
   function echapper(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => (
@@ -354,6 +531,31 @@
     return h > 0 ? h + ' h ' + String(min).padStart(2, '0') : min + ' min';
   }
 
+  // Sous deux heures, le delai cesse d'etre une information pour
+  // devenir une echeance : l'etiquette change de ton.
+  function etiquetteFenetre(jusquA) {
+    const reste = resteFenetre(jusquA);
+    if (!reste) {
+      return '<span class="etiq etiq-ferme">Fenêtre fermée</span>';
+    }
+    const presse = new Date(jusquA).getTime() - Date.now() < 2 * 3600000;
+    return '<span class="etiq ' + (presse ? 'etiq-bientot' : 'etiq-ouvert') + '">'
+      + 'Réponse ' + echapper(reste) + '</span>';
+  }
+
+  // Le jour d'un message, dit comme on le dirait a l'oral. L'annee ne
+  // parait que si ce n'est pas celle en cours.
+  function libelleJour(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    if (d.toDateString() === now.toDateString()) return "Aujourd'hui";
+    const hier = new Date(now); hier.setDate(now.getDate() - 1);
+    if (d.toDateString() === hier.toDateString()) return 'Hier';
+    const options = { day: 'numeric', month: 'long' };
+    if (d.getFullYear() !== now.getFullYear()) options.year = 'numeric';
+    return d.toLocaleDateString('fr-FR', options);
+  }
+
   // La hauteur du cadre depend de ce qui le precede - titre, chapeau,
   // avertissement -, dont la hauteur varie avec la largeur de l'ecran et
   // la taille de police du lecteur. Une valeur en dur la manquait de 57
@@ -388,28 +590,68 @@
     }
   }
 
+  // Le filtre porte sur le nom ET le numero : on cherche parfois
+  // quelqu'un dont on n'a que les quatre derniers chiffres. Les
+  // accents sont neutralises des deux cotes, « Fatimata » se trouve en
+  // tapant « fatima ».
+  function sansAccents(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  function conversationsVisibles() {
+    const champ = $('filtre');
+    const q = sansAccents(champ ? champ.value.trim() : '');
+    if (!q) return conversations;
+    // Les chiffres ne sont compares QUE si la recherche en contient :
+    // « includes('') » est toujours vrai, et une recherche par nom
+    // laissait donc passer la liste entiere.
+    const chiffres = q.replace(/\D/g, '');
+    return conversations.filter(c =>
+      sansAccents(c.nom).includes(q)
+      || (chiffres && String(c.telephone || '').includes(chiffres)),
+    );
+  }
+
   function rendreListe() {
     const zone = $('liste');
-    if (!conversations.length) {
+    const total = conversations.length;
+    const nonLues = conversations.reduce((n, c) => n + (c.non_lus > 0 ? 1 : 0), 0);
+    // Le compteur annonce les non lues quand il y en a : c'est le
+    // chiffre qui decide s'il faut ouvrir cet ecran maintenant. La
+    // pastille les distingue du total, que « 8 / 8 » laissait deviner.
+    $('compte').innerHTML = !total ? ''
+      : (nonLues ? '<span class="pastille">' + nonLues + '</span> sur ' + total
+                 : String(total));
+
+    if (!total) {
       zone.innerHTML = '<p class="vide"><i class="ti ti-inbox"></i>'
         + 'Aucun message reçu pour l\'instant.<br>Les messages des membres apparaîtront ici.</p>';
       return;
     }
-    zone.innerHTML = conversations.map(c => {
-      const reste = resteFenetre(c.fenetre_jusqu_a);
+    const visibles = conversationsVisibles();
+    if (!visibles.length) {
+      zone.innerHTML = '<p class="vide"><i class="ti ti-search-off"></i>'
+        + 'Aucune conversation ne correspond.</p>';
+      return;
+    }
+    zone.innerHTML = visibles.map(c => {
       const prefixe = c.dernier_sens === 'sortant' ? 'Vous : ' : '';
-      return '<button type="button" class="conv' + (c.telephone === courant ? ' actif' : '') + '"'
+      return '<button type="button" class="conv' + (c.telephone === courant ? ' actif' : '')
+        + (c.non_lus > 0 ? ' non-lu' : '') + '"'
         + ' data-tel="' + echapper(c.telephone) + '">'
-        + '<span class="conv-haut">'
-        +   '<span class="conv-nom">' + echapper(c.nom) + '</span>'
-        +   '<span class="conv-date">' + echapper(dateCourte(c.dernier_le)) + '</span>'
-        + '</span>'
-        + '<span class="conv-apercu">' + echapper(prefixe + (c.dernier_texte || '')) + '</span>'
-        + '<span class="conv-bas">'
-        +   (c.non_lus > 0 ? '<span class="pastille">' + c.non_lus + '</span>' : '')
-        +   (c.est_membre ? '<span class="etiq">Membre</span>' : '<span class="etiq">Hors registre</span>')
-        +   (reste ? '<span class="etiq">Réponse ' + echapper(reste) + '</span>'
-                   : '<span class="etiq">Fenêtre fermée</span>')
+        + medaillon(c.nom, c.telephone)
+        + '<span class="conv-corps">'
+        +   '<span class="conv-haut">'
+        +     '<span class="conv-nom">' + echapper(c.nom) + '</span>'
+        +     '<span class="conv-date">' + echapper(dateCourte(c.dernier_le)) + '</span>'
+        +   '</span>'
+        +   '<span class="conv-apercu">' + echapper(prefixe) + apercu(c.dernier_texte) + '</span>'
+        +   '<span class="conv-bas">'
+        +     (c.non_lus > 0 ? '<span class="pastille">' + c.non_lus + '</span>' : '')
+        +     (c.est_membre ? '<span class="etiq">Membre</span>'
+                            : '<span class="etiq">Hors registre</span>')
+        +     etiquetteFenetre(c.fenetre_jusqu_a)
+        +   '</span>'
         + '</span>'
         + '</button>';
     }).join('');
@@ -430,8 +672,12 @@
     fermerEmoji();
     dernierFilSignature = null;
     const conv = conversations.find(c => c.telephone === tel);
-    $('filNom').textContent = conv ? conv.nom : '+' + tel;
+    const nom = conv ? conv.nom : '+' + tel;
+    $('filNom').textContent = nom;
     $('filNum').textContent = '+' + tel;
+    const av = $('filAvatar');
+    av.textContent = initiales(nom, tel);
+    av.style.background = teinte(tel);
     $('envMsg').textContent = '';
     $('fil').innerHTML = '<p class="fil-vide">Chargement…</p>';
     rendreListe();
@@ -515,8 +761,15 @@
       }),
     );
 
+    let jourPose = null;
     zone.innerHTML = messages.map(m => {
       const sortant = m.sens === 'sortant';
+      // Le repere n'apparait qu'au changement de jour, en tete du
+      // premier message de ce jour-la.
+      const jour = new Date(m.cree_le).toDateString();
+      const separateur = (jour !== jourPose)
+        ? '<p class="jour">' + echapper(libelleJour(m.cree_le)) + '</p>' : '';
+      jourPose = jour;
       // Telegram donne « Prenom Nom (@pseudo) » : l'arobase n'apprend
       // rien de plus que le nom, et fait passer le pied a deux lignes
       // sur un telephone.
@@ -530,7 +783,8 @@
       // complet entre crochets : une legende par-dessus le dupliquerait.
       const legende = !m.media_path ? echapper(m.texte)
         : (mediaOk ? echapper(texteSansEtiquette(m.texte)) : '');
-      return '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
+      return separateur
+        + '<div class="bulle ' + (sortant ? 'bulle-sortant' : 'bulle-entrant') + '">'
         + media + legende
         + '<span class="bulle-pied">' + echapper(pied) + '</span>'
         + '</div>';
@@ -550,11 +804,18 @@
     const bouton = $('envoyer');
     if (!courant) {
       zone.style.display = 'none';
+      $('filChips').innerHTML = '';
       champ.disabled = true; bouton.disabled = true;
       $('emojiBtn').disabled = true;
       return;
     }
     const reste = conv ? resteFenetre(conv.fenetre_jusqu_a) : null;
+    // L'entete porte l'etat : on sait avant de lire si l'on pourra
+    // repondre. Le bas de l'ecran garde l'explication, la ou elle sert.
+    $('filChips').innerHTML =
+      (conv ? (conv.est_membre ? '<span class="etiq etiq-registre">Membre</span>'
+                               : '<span class="etiq etiq-registre">Hors registre</span>') : '')
+      + (conv ? etiquetteFenetre(conv.fenetre_jusqu_a) : '');
     zone.style.display = 'block';
     if (reste) {
       zone.className = 'fenetre fenetre-ok';
@@ -617,7 +878,10 @@
     const texte = champ.value.trim();
     if (!texte || !courant) return;
     const bouton = $('envoyer');
+    const icone = bouton.querySelector('i');
     bouton.disabled = true; champ.disabled = true;
+    bouton.classList.add('envoi');
+    if (icone) icone.className = 'ti ti-loader-2';
     $('envMsg').textContent = '';
     try {
       const { data, error } = await supabaseClient.functions.invoke('whatsapp-repondre', {
@@ -633,6 +897,8 @@
     } catch (e) {
       $('envMsg').textContent = await detailErreur(e);
     } finally {
+      bouton.classList.remove('envoi');
+      if (icone) icone.className = 'ti ti-send';
       champ.disabled = false;
       majFenetre();
       champ.focus();
@@ -663,6 +929,13 @@
       if (bt) insererEmoji(bt.textContent);
     });
     $('emojiBtn').addEventListener('click', basculerEmoji);
+
+    // Le filtre ne redessine que la liste : il ne touche ni au fil
+    // ouvert, ni au sondage de quinze secondes.
+    $('filtre').addEventListener('input', rendreListe);
+    $('filtre').addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') { ev.target.value = ''; rendreListe(); }
+    });
     // Toucher ailleurs referme le popover - sur telephone surtout, ou
     // il n'y a pas de survol pour deviner qu'on est "sorti" de la zone.
     document.addEventListener('click', (ev) => {

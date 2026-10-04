@@ -22,7 +22,7 @@
    suivante - invisible dans l'application Android, qui garde son cache
    d'une session à l'autre.
    ============================================================ */
-const CACHE_VERSION = "amstc-v11";
+const CACHE_VERSION = "amstc-v12";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",

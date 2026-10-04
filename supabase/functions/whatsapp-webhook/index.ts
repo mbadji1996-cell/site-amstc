@@ -258,6 +258,10 @@ function resume(m: Record<string, any>): string {
     case "sticker":  return "[un autocollant]";
     case "location": return "[une position]";
     case "contacts": return "[une fiche contact]";
+    // Un pouce levé sur une de nos réponses arrivait jusqu'ici sous la
+    // forme « [message de type reaction] », un texte de repli technique
+    // qui finissait sous les yeux de l'administrateur. L'emoji dit tout.
+    case "reaction": return "[une réaction" + (m.reaction?.emoji ? " " + m.reaction.emoji : "") + "]";
     // Un clic sur le bouton d'un modèle revient sous cette forme.
     case "button":   return String(m.button?.text ?? "[un bouton]");
     case "interactive":
