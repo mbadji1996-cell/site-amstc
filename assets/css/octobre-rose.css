@@ -111,7 +111,14 @@ html.octobre-rose #hero-octobre {
   display: block;
   position: relative;
   padding: 54px 0 48px;
-  background: linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
+  /* Le voile AVANT l'image dans la pile : dense a gauche pour que le
+     titre et le paragraphe se lisent, plus leger a droite pour laisser
+     paraitre le ruban. La couleur de repli couvre le temps du
+     chargement, et sur les reseaux ou l'image n'arrive jamais. */
+  background:
+    linear-gradient(100deg, rgba(109,16,56,0.96) 0%, rgba(147,19,75,0.90) 42%, rgba(194,24,91,0.58) 100%),
+    url("../uploads/octobre-rose-fond.jpg") center / cover no-repeat,
+    linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
   color: #FFFFFF;
 }
 html.octobre-rose .hero-or-grille {
@@ -164,6 +171,14 @@ html.octobre-rose .hero-or-affiche img {
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 @media (max-width: 899px) {
-  html.octobre-rose #hero-octobre { padding: 36px 0 34px; }
+  html.octobre-rose #hero-octobre {
+    padding: 36px 0 34px;
+    /* Sur telephone, le texte occupe toute la largeur : le voile ne peut
+       plus s'alleger d'un cote sans passer sous les mots. */
+    background:
+      linear-gradient(160deg, rgba(109,16,56,0.96) 0%, rgba(147,19,75,0.92) 55%, rgba(194,24,91,0.80) 100%),
+      url("../uploads/octobre-rose-fond.jpg") center / cover no-repeat,
+      linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
+  }
   html.octobre-rose .hero-or-affiche img { max-height: 420px; }
 }
