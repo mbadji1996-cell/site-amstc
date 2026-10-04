@@ -108,7 +108,14 @@ html.octobre-rose body::before {
    Vider cette feuille rend la page à son hero d'origine. */
 html.octobre-rose .hero { display: none; }
 html.octobre-rose #hero-octobre {
-  display: block;
+  /* Le hero occupe le premier ecran a lui seul : la collecte de fonds
+     apparaissait sous l'affiche sans qu'on ait defile, et deux appels se
+     disputaient le premier regard. 77 px : la hauteur de l'entete, qui
+     reste collee en haut. */
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 77px);
+  min-height: calc(100svh - 77px);
   position: relative;
   padding: 54px 0 48px;
   /* Le voile AVANT l'image dans la pile : dense a gauche pour que le
@@ -121,6 +128,7 @@ html.octobre-rose #hero-octobre {
     linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
   color: #FFFFFF;
 }
+html.octobre-rose #hero-octobre > .wrap { width: 100%; }
 html.octobre-rose .hero-or-grille {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
