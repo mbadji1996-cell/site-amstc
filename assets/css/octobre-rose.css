@@ -27,14 +27,16 @@
 
 html.octobre-rose {
   /* Les six verts de la charte deviennent la gamme du ruban rose.
-     Contrastes mesurés sur blanc : #C2185B à 5,6:1 pour le texte
-     courant, #6D1038 à 12,5:1 sous le texte blanc des bandeaux. */
-  --green-deep: #6D1038;
-  --green-deep-2: #93134B;
-  --green-deep-3: #B81D5B;
+     Le ton le plus sombre porte DEUX roles : le fond des surfaces
+     foncees - entete, pied de page, colonne des membres - et la couleur
+     des titres sur blanc. D'ou #AD1457 : 6,97 dans les deux sens, quand
+     le bordeaux precedent assombrissait tout le site pour rien. */
+  --green-deep: #AD1457;
+  --green-deep-2: #C2185B;
+  --green-deep-3: #D81B60;
   --green: #C2185B;
   --green-rgb: 194, 24, 91;
-  --green-deep-rgb: 109, 16, 56;
+  --green-deep-rgb: 173, 20, 87;
   --green-light: #E84A86;
   --green-soft: #F8A5C2;
 
@@ -44,9 +46,9 @@ html.octobre-rose {
   --text-muted: #6E5460;
   --paper-alt: #FBEDF2;
   --section-alt: #FDF5F8;
-  --line: rgba(109, 16, 56, 0.22);
-  --line-fin: rgba(109, 16, 56, 0.12);
-  --shadow: 0 12px 32px rgba(109, 16, 56, 0.18);
+  --line: rgba(173, 20, 87, 0.22);
+  --line-fin: rgba(173, 20, 87, 0.12);
+  --shadow: 0 12px 32px rgba(173, 20, 87, 0.18);
 }
 
 html.octobre-rose[data-theme="dark"] {
@@ -70,7 +72,7 @@ html.octobre-rose[data-theme="dark"] {
 html.octobre-rose .intro-card {
   --c-tint: #FDF2F6;
   --c-blob: #F6CFDC;
-  --c-btn-hover: #93134B;
+  --c-btn-hover: #AD1457;
 }
 html.octobre-rose .intro-card.theme-menthe {
   --c-tint: #FCEDF3;
@@ -123,9 +125,9 @@ html.octobre-rose #hero-octobre {
      paraitre le ruban. La couleur de repli couvre le temps du
      chargement, et sur les reseaux ou l'image n'arrive jamais. */
   background:
-    linear-gradient(100deg, rgba(109,16,56,0.96) 0%, rgba(147,19,75,0.90) 42%, rgba(194,24,91,0.58) 100%),
+    linear-gradient(100deg, rgba(173,20,87,0.95) 0%, rgba(194,24,91,0.88) 42%, rgba(216,27,96,0.56) 100%),
     url("../uploads/octobre-rose-fond.jpg") center / cover no-repeat,
-    linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
+    linear-gradient(135deg, #AD1457 0%, #C2185B 48%, #D81B60 100%);
   color: #FFFFFF;
 }
 html.octobre-rose #hero-octobre > .wrap { width: 100%; }
@@ -184,9 +186,9 @@ html.octobre-rose .hero-or-affiche img {
     /* Sur telephone, le texte occupe toute la largeur : le voile ne peut
        plus s'alleger d'un cote sans passer sous les mots. */
     background:
-      linear-gradient(160deg, rgba(109,16,56,0.96) 0%, rgba(147,19,75,0.92) 55%, rgba(194,24,91,0.80) 100%),
+      linear-gradient(160deg, rgba(173,20,87,0.95) 0%, rgba(194,24,91,0.90) 55%, rgba(216,27,96,0.78) 100%),
       url("../uploads/octobre-rose-fond.jpg") center / cover no-repeat,
-      linear-gradient(135deg, #6D1038 0%, #93134B 48%, #C2185B 100%);
+      linear-gradient(135deg, #AD1457 0%, #C2185B 48%, #D81B60 100%);
   }
   html.octobre-rose .hero-or-affiche img { max-height: 420px; }
 }
