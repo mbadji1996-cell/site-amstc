@@ -441,17 +441,24 @@
   // « [message de type reaction] » ne dit rien de plus qu'une icone et
   // un mot, et dit moins bien.
   // Les motifs se lisent sur la forme SANS ACCENTS du texte : « vidéo »
-  // s'ecrit donc « video » ici.
+  // s'ecrit donc « video » ici. Le quatrieme element est le prefixe a
+  // retirer pour ne garder que la precision - un nom de fichier, un
+  // emoji - ou null quand il n'y a rien a garder.
   const REPLIS = [
-    [/^une image$/,          'ti-photo',        'Photo'],
-    [/^un message vocal$/,   'ti-microphone',   'Message vocal'],
-    [/^une video$/,          'ti-video',        'Vidéo'],
-    [/^un document/,         'ti-file-text',    'Document'],
-    [/^un autocollant$/,     'ti-sticker',      'Autocollant'],
-    [/^une position$/,       'ti-map-pin',      'Position'],
-    [/^une fiche contact$/,  'ti-address-book', 'Fiche contact'],
-    [/^une reaction/,        'ti-mood-smile',   'Réaction'],
-    [/^message de type/,     'ti-message-2',    'Message non textuel'],
+    [/^une image$/,          'ti-photo',        'Photo',             null],
+    [/^un message vocal$/,   'ti-microphone',   'Message vocal',     null],
+    [/^une video$/,          'ti-video',        'Vidéo',             null],
+    [/^un document/,         'ti-file-text',    'Document',          /^un document\s*:?\s*/i],
+    [/^un autocollant$/,     'ti-sticker',      'Autocollant',       null],
+    [/^une position$/,       'ti-map-pin',      'Position',          null],
+    [/^une fiche contact$/,  'ti-address-book', 'Fiche contact',     null],
+    // Deux formes pour la meme chose : le webhook ecrit « une réaction
+    // 👍 » depuis le 5 octobre 2026, les lignes anterieures portent
+    // « message de type reaction », leur emoji n'ayant pas ete garde.
+    [/^(une reaction|message de type reaction)/, 'ti-mood-smile', 'Réaction',
+                             /^(une r[ée]action|message de type reaction)\s*/i],
+    [/^message de type/,     'ti-message-2',    'Message non textuel',
+                             /^message de type\s*/i],
   ];
 
   function apercu(texte) {
@@ -464,15 +471,14 @@
     // ligne plus ancienne peut porter « reaction », et les deux
     // designent la meme chose.
     const cle = sansAccents(dedans);
-    for (const [motif, icone, mot] of REPLIS) {
+    for (const [motif, icone, mot, prefixe] of REPLIS) {
       if (motif.test(cle)) {
         // « un document : facture.pdf » et « une réaction 👍 » portent
         // leur precision apres le mot generique : elle vaut mieux que
-        // lui, on la garde.
-        const precision = dedans.replace(/^un document\s*:?\s*/i, '')
-                                .replace(/^une r[ée]action\s*/i, '')
-                                .replace(/^message de type\s*/i, '');
-        const fin = (precision && precision !== dedans) ? ' ' + precision : '';
+        // lui, on la garde. Prelevee sur le texte accentue, pour qu'un
+        // nom de fichier ne perde pas ses accents en chemin.
+        const precision = prefixe ? dedans.replace(prefixe, '').trim() : '';
+        const fin = precision ? ' ' + precision : '';
         return '<i class="ti ' + icone + '"></i>'
           + echapper(mot + fin + (suite ? ' · ' + suite : ''));
       }
