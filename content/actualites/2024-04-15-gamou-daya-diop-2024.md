@@ -5,6 +5,6 @@ categorie:
   - gamou
   - consultations
 excerpt: "Contenu à venir."
-image: ""
+image: /assets/uploads/2024-04-15-gamou-daya-diop-2024-couverture.jpg
 ---
 

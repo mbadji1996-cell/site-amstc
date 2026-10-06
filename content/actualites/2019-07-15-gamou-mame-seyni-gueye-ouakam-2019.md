@@ -5,6 +5,6 @@ categorie:
   - gamou
   - consultations
 excerpt: "Contenu à venir."
-image: ""
+image: /assets/uploads/2019-07-15-gamou-mame-seyni-gueye-ouakam-2019-couverture.jpg
 ---
 

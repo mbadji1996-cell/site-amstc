@@ -4,6 +4,6 @@ date: 2024-03-06T10:00:00.000Z
 categorie:
   - vie-associative
 excerpt: "Contenu à venir."
-image: ""
+image: /assets/uploads/2024-03-06-ag-ordinaire-06-mars-2024-couverture.jpg
 ---
 

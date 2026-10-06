@@ -5,6 +5,6 @@ categorie:
   - ndogou
   - epu
 excerpt: "Contenu à venir."
-image: ""
+image: /assets/uploads/2024-07-15-ndogou-sociale-2024-couverture.jpg
 ---
 

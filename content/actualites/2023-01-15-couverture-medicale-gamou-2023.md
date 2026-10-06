@@ -5,6 +5,6 @@ categorie:
   - consultations
   - gamou
 excerpt: "Contenu à venir."
-image: ""
+image: /assets/uploads/2023-01-15-couverture-medicale-gamou-2023-couverture.jpg
 ---
 

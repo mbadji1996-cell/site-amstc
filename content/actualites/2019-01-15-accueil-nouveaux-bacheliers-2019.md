@@ -9,7 +9,7 @@ excerpt: En Janvier 2019, la journée d’Accueil des Nouveaux Bacheliers de la
   par l’Amicale des Étudiants de la FMPO au niveau du Grand Hall de la faculté.
   À cette occasion, l’AMSTC-FMPO y a été représentée, marquant sa présence parmi
   les associations étudiantes.
-image: ""
+image: /assets/uploads/2019-01-15-accueil-nouveaux-bacheliers-2019-couverture.jpg
 ---
 En **Janvier 2019,** la journée d’Accueil des Nouveaux Bacheliers de la Faculté de Médecine, de Pharmacie et d’Odontologie (FMPO) a été organisée par **l’Amicale des Étudiants de la FMPO** au niveau du **Grand Hall** de la faculté. À cette occasion, l’**AMSTC-FMPO** y a été représentée, marquant sa présence parmi les associations étudiantes.
 
