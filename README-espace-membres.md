@@ -741,6 +741,11 @@ prend généralement de quelques minutes à quelques heures.
    6,1 Mo. Le poids n'est mesurable que pour une image hébergée sur un
    serveur qui l'autorise ; ailleurs, l'envoi n'est pas bloqué.
 
+   > Depuis le 6 octobre 2026, `scripts/alleger-televersements.py` ramène
+   > les téléversements à 1800 px au plus long côté. Le même fichier pèse
+   > désormais 392 Ko, et le plafond de Meta ne se rencontre plus guère.
+   > Pensez à relancer ce script après une série d'ajouts dans le CMS.
+
    **LE PIÈGE À CONNAÎTRE, il fait échouer la création à coup sûr** :
    dans la section *Contenu*, le sélecteur **« Type de variable »** doit
    être sur **« Nom »**, jamais sur « Valeur numérique ». Sur « Valeur

@@ -11,7 +11,7 @@ excerpt: "Le support complet du webinaire du Dr Papa Mouhamadou Diarra Fall,
   et ACC/AHA, confirmation par MAPA et automesure, les quatre profils
   tensionnels, risque SCORE2, bithérapie d'emblée, HTA résistante, urgences
   hypertensives et cas particuliers."
-image: /assets/uploads/webinaire-hta-nouvelles-recommandations.png
+image: /assets/uploads/webinaire-hta-nouvelles-recommandations.jpg
 video_youtube: https://youtu.be/4HWS5mQluqM
 document: /assets/uploads/hta-nouvelles-recommandations-dr-fall.pdf
 document_nom: Télécharger le support du webinaire
