@@ -2,6 +2,7 @@
 title: "« Nemekou Daara » : Programme d'appui aux daaras"
 date: 2025-02-15T10:00:00.000Z
 statut: En cours
+domaine: sante
 excerpt: "Programme d'appui aux daaras : consultations médicales gratuites et
   dons de denrées alimentaires, étape par étape, dans plusieurs daara du
   Sénégal."

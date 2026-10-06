@@ -2,6 +2,7 @@
 title: "Un terrain à Tivaouane : siège, espace médico-social et résidence d'accueil"
 date: 2026-08-30
 statut: En cours
+domaine: infrastructures
 excerpt: "L'AMSTC lance un appel à contribution pour acquérir un terrain à
   Tivaouane, socle de son futur siège, d'un espace de prise en charge
   médico-sociale et d'une résidence d'accueil. Premier palier : 5 000 000 FCFA sur un total de 15 000 000."
