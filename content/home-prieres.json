@@ -3,16 +3,16 @@
   "prayer_title": "Heures de prière",
   "prayer_subtitle": "Consultez chaque semaine les horaires de prière et nourrissez votre esprit avec le Coran et la Sunna.",
   "prayer_city": "Dakar",
-  "prayer_period_hijri": "du 20 au 26 Rabi ath-Thani 1448H",
-  "prayer_period_gregorian": "du Vendredi 02 au Jeudi 08 Octobre 2026",
+  "prayer_period_hijri": "27 RABBI ATH THAANI AU 03 JUMMADAA AL AWWAL 1448H",
+  "prayer_period_gregorian": "du Vendredi 09 au Jeudi 15 Octobre 2026",
   "prayer_times": [
     {
       "label": "Fadjar",
-      "time": "05H 45"
+      "time": "05H 46"
     },
     {
       "label": "Souba",
-      "time": "06H 00"
+      "time": "06H 01"
     },
     {
       "label": "Tisbar",
@@ -24,11 +24,11 @@
     },
     {
       "label": "Timis",
-      "time": "19H 04"
+      "time": "19H 01"
     },
     {
       "label": "Guéwé",
-      "time": "20H 04"
+      "time": "20H 01"
     }
   ]
 }
