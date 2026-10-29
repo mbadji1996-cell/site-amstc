@@ -3,16 +3,16 @@
   "prayer_title": "Heures de prière",
   "prayer_subtitle": "Consultez chaque semaine les horaires de prière et nourrissez votre esprit avec le Coran et la Sunna.",
   "prayer_city": "Dakar",
-  "prayer_period_hijri": "du 11 au 17 Jumada al-Awwal 1448H",
-  "prayer_period_gregorian": "du Vendredi 23 au Jeudi 29 Octobre 2026",
+  "prayer_period_hijri": "du 18 au 24 Jumada al-Awwal 1448H",
+  "prayer_period_gregorian": " vendredi 30 Octobre au Jeudi 05 Novembre 2026",
   "prayer_times": [
     {
       "label": "Fadjar",
-      "time": "05H 49"
+      "time": "05H 51"
     },
     {
       "label": "Souba",
-      "time": "06H 04"
+      "time": "06H 06"
     },
     {
       "label": "Tisbar",
@@ -24,11 +24,11 @@
     },
     {
       "label": "Timis",
-      "time": "18H 51"
+      "time": "18H 48"
     },
     {
       "label": "Guéwé",
-      "time": "19H 51"
+      "time": "19H 48"
     }
   ]
 }
