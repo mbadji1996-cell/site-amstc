@@ -96,13 +96,21 @@ Le TTL affiché doit être inférieur ou égal à 300.
 
 ## 2. Créer le serveur
 
-Dans la console Hetzner : **CPX22**, même datacenter que l'actuel
-(la latence vers la Storage Box compte pour les sauvegardes), image
-**Ubuntu 24.04**, et **votre clé SSH existante** - celle qui ouvre déjà
-l'ancien serveur.
+Dans la console Hetzner, **Create a server** :
 
-Notez l'adresse IP du nouveau serveur. Dans la suite, `NOUVEAU` la
-désigne.
+| Réglage | Valeur | Pourquoi |
+|---|---|---|
+| Location | **Falkenstein (fsn1)** | l'actuel est en `fsn1-dc8` ; la Storage Box est dans la même région, et la sauvegarde nocturne y transite |
+| Image | **Ubuntu 26.04 LTS** | celle du serveur actuel. Une migration n'est pas le moment de changer deux variables à la fois : Coolify 4.7.5 est déjà éprouvé dessus chez vous |
+| Type | Shared · **Regular Performance** · **CPX22** | 2 vCPU, 4 Go, 80 Go, 16,49 € |
+| SSH key | `amstc-vps-admin` | empreinte `SHA256:mGAvjIgzr8qurSX+afSbSCJ1SWNJvF9VNS7t2IpoWOg` - c'est la clé qui ouvre déjà l'ancien serveur |
+| Volumes, Firewall, Placement group | aucun | le pare-feu se fait en `ufw` à l'étape 4 |
+| Backups (+20 %) | **non** | vous avez déjà vos sauvegardes, locales et sur Storage Box |
+| IPv6 | laisser activé | gratuit, et l'actuel en a un |
+| Name | `ajamat-cpx22` | l'actuel s'appelle `ajamat` |
+
+Notez l'adresse IP affichée après la création. Dans la suite, `NOUVEAU`
+la désigne.
 
 ```bash
 ssh root@NOUVEAU 'hostnamectl; free -m | head -2; df -h / | tail -1'
