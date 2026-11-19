@@ -332,11 +332,18 @@ Les huit codes doivent être identiques à ceux d'avant la migration :
   Recopiez la clé de la Storage Box (`/root/.ssh/storagebox*`) et la
   ligne de crontab depuis l'ancien serveur.
 
-  Le script sépare désormais les deux rétentions : **3 jours** pour les
-  archives de fichiers, **14 jours** pour les dumps de bases. Sur
-  l'ancien serveur, quatorze jours des deux occupaient 28 Go pour
-  quinze copies quasi identiques des mêmes photos. Attendu désormais :
-  environ 7 Go.
+  Le script sait désormais distinguer les deux rétentions, mais **la
+  valeur par défaut ne change rien** : l'envoi distant se fait avec
+  `rsync --delete`, donc le dépôt distant reflète le dossier local.
+  Abaisser la rétention locale amputerait aussi la copie distante, et
+  un fichier supprimé par erreur deviendrait irrécupérable au bout de
+  trois jours.
+
+  Pour gagner ces 22 Go sans perdre de profondeur, il faut d'abord
+  retirer `--delete` de l'envoi et purger le distant séparément. Tant
+  que ce n'est pas fait, comptez **29 Go de sauvegardes** : avec 24 Go
+  de données, cela fait 53 Go sur les 80 du CPX22, soit 66 %. Cela
+  passe.
 - **Remettre les TTL à 3600** une fois tout confirmé.
 
 Après une semaine sans incident, supprimez l'ancien serveur depuis la
