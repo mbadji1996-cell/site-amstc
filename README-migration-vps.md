@@ -79,7 +79,28 @@ environ 24 Go - auxquels s'ajoutent 11 Go de sauvegardes locales, soit
 
 ---
 
-## 1. La veille - abaisser les TTL DNS
+## 1. Les TTL : rien a faire
+
+Verifie le 19 novembre aupres des serveurs de noms eux-memes : les deux
+enregistrements `api` sont deja servis avec un **TTL de 300 secondes**.
+Chez Cloudflare, « Auto » sur un enregistrement en « DNS only » vaut
+cinq minutes.
+
+```
+api.amstc.org                A  167.233.231.165  ttl = 300
+api.consultations-amstc.org  A  167.233.231.165  ttl = 300
+```
+
+> Un `nslookup -debug` renvoie plusieurs TTL : celui des serveurs de
+> noms (1800 s) et celui de l'enregistrement demande. Prendre le
+> premier venu m'a fait annoncer quatre heures d'attente la ou il n'y
+> en a aucune. Demandez toujours au serveur de noms faisant autorite,
+> et lisez le TTL de la section ANSWERS qui porte l'adresse.
+
+La section ci-dessous ne vaut donc que si vos TTL ont ete remontes un
+jour. Sinon, passez directement a l'etape 2.
+
+## 1 bis. Si les TTL ont ete remontes - les rabaisser la veille
 
 Vos enregistrements sont à 2 heures. Tant qu'ils y restent, la bascule
 traînera deux heures. La veille au soir, chez votre registrar, passez à
