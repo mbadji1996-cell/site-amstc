@@ -519,6 +519,27 @@ order by 1;
 Un `diff` entre les deux sorties doit être vide. Compter les lignes des
 seules tables métier ne l'aurait pas vu.
 
+## Un sixieme composant retire : postgres-meta
+
+Mesure au repos sur le nouveau serveur, `supabase-meta` consommait
+**12,2 % du coeur unique** a lui seul - plus que Kong. Or il ne sert
+qu'a l'explorateur de schema de Studio, qui est eteint.
+
+Les deux instances sont arretees. La charge est tombee de 1,98 a 1,03,
+la pression CPU de 38 a 28 %, et les six points de controle rendent
+toujours les memes codes.
+
+Il se rallume comme Studio, en une commande, le jour ou vous ouvrez
+l'interface :
+
+```bash
+docker start supabase-meta-rffqs8ck1ckdixkuu2xjo5sc supabase-studio-rffqs8ck1ckdixkuu2xjo5sc
+```
+
+Sur un seul coeur, ce genre de service qui tourne pour personne coute
+bien plus cher qu'il n'y parait : sur l'ancienne machine a quatre
+coeurs, ces memes 12 % se lisaient 3 % et ne sautaient pas aux yeux.
+
 ## Ce qui reste, dans l'ordre
 
 1. **Essayer depuis un navigateur** par le fichier `hosts` (étape 10) :
