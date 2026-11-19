@@ -1,7 +1,16 @@
-# Migration du VPS vers un CPX22
+# Migration du VPS vers un CPX12
 
-Du **CPX32 (4 vCPU, 8 Go, 160 Go, 29,99 €)** vers le **CPX22 (2 vCPU,
-4 Go, 80 Go, 16,49 €)**. Économie : 13,50 € par mois, 162 € par an.
+Du **CPX32 à Falkenstein** vers un **CPX12 à Helsinki** : 1 vCPU, 2 Go,
+40 Go, **9,99 €/mois** IPv4 comprise.
+
+Attention, les prix de la grille publique sont ceux d'Helsinki ;
+Falkenstein porte un supplément de 2 à 3 €. Vérifiez la ligne de votre
+facture actuelle pour connaître l'économie exacte - elle tourne autour
+de **20 € par mois, 240 € par an**.
+
+**Sontencare ne migre pas.** Le projet n'avance plus, et ses 201 Mo
+sont précisément ce qui permet au CPX12 de tenir. Ses données restent
+dans les sauvegardes, redéployables le jour où il repart.
 
 Ce document est une suite de commandes à exécuter dans l'ordre. Chaque
 étape dit ce qu'elle fait et comment vérifier qu'elle a réussi.
@@ -100,14 +109,14 @@ Dans la console Hetzner, **Create a server** :
 
 | Réglage | Valeur | Pourquoi |
 |---|---|---|
-| Location | **Falkenstein (fsn1)** | l'actuel est en `fsn1-dc8` ; la Storage Box est dans la même région, et la sauvegarde nocturne y transite |
+| Location | **Helsinki (hel1)** | la moins chère des localisations, et surtout **celle de votre Storage Box** : mesurée à 33,6 ms de Falkenstein quand les deux datacenters allemands sont à 1,6 et 3,6 ms. La sauvegarde nocturne cesse de traverser l'Europe |
 | Image | **Ubuntu 26.04 LTS** | celle du serveur actuel. Une migration n'est pas le moment de changer deux variables à la fois : Coolify 4.7.5 est déjà éprouvé dessus chez vous |
-| Type | Shared · **Regular Performance** · **CPX22** | 2 vCPU, 4 Go, 80 Go, 16,49 € |
+| Type | Shared · **Regular Performance** · **CPX12** | 1 vCPU, 2 Go, 40 Go. 9,49 € + 0,50 € d'IPv4 = **9,99 €/mois** |
 | SSH key | `amstc-vps-admin` | empreinte `SHA256:mGAvjIgzr8qurSX+afSbSCJ1SWNJvF9VNS7t2IpoWOg` - c'est la clé qui ouvre déjà l'ancien serveur |
 | Volumes, Firewall, Placement group | aucun | le pare-feu se fait en `ufw` à l'étape 4 |
 | Backups (+20 %) | **non** | vous avez déjà vos sauvegardes, locales et sur Storage Box |
 | IPv6 | laisser activé | gratuit, et l'actuel en a un |
-| Name | `ajamat-cpx22` | l'actuel s'appelle `ajamat` |
+| Name | `ajamat-cpx12` | l'actuel s'appelle `ajamat` |
 
 Notez l'adresse IP affichée après la création. Dans la suite, `NOUVEAU`
 la désigne.
