@@ -29,6 +29,15 @@ set -uo pipefail
 DEST="${AMSTC_BACKUP_DIR:-/var/backups/amstc}"
 RETENTION_JOURS="${AMSTC_BACKUP_RETENTION:-14}"
 
+# Les archives de fichiers se gardent MOINS LONGTEMPS que les dumps, et
+# la raison tient en deux chiffres : une nuit de dumps pèse 58 Mo, une
+# nuit d'archives de fichiers pèse 2 Go. Quatorze jours des deux, c'est
+# 28 Go de disque pour quinze copies quasi identiques des mêmes 13 000
+# photos - alors que la copie distante, elle, les garde.
+# Les dumps restent à quatorze jours : ils ne coûtent presque rien et ce
+# sont eux qu'on veut pouvoir remonter loin en arrière.
+RETENTION_FICHIERS="${AMSTC_BACKUP_RETENTION_FICHIERS:-3}"
+
 # Destination distante (rsync). Vide = sauvegarde locale seulement.
 # Exemple Hetzner Storage Box : u123456@u123456.your-storagebox.de:amstc/
 DISTANT="${AMSTC_BACKUP_REMOTE:-}"
@@ -234,7 +243,7 @@ fi
 
 # ---------- Rotation ----------
 find "$DEST" -name '*.sql.gz' -mtime "+${RETENTION_JOURS}" -delete 2>/dev/null
-find "$DEST" -name '*.tar.gz' -mtime "+${RETENTION_JOURS}" -delete 2>/dev/null
+find "$DEST" -name '*.tar.gz' -mtime "+${RETENTION_FICHIERS}" -delete 2>/dev/null
 
 dire "Sauvegardes présentes : $(ls -1 "$DEST"/*.gz 2>/dev/null | wc -l) fichiers, $(du -sh "$DEST" 2>/dev/null | cut -f1)"
 
