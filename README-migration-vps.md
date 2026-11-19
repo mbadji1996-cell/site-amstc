@@ -594,3 +594,81 @@ le reste - mais ni ses fichiers ni sa base n'ont été transférés, et il
 n'a pas été déployé. Ses 201 Mo sont précisément ce qui permet au CPX12
 de tenir. Ses données restent dans les sauvegardes, redéployables le
 jour où le projet repart.
+
+---
+
+# Bascule du 19 novembre 2026, au soir
+
+Faite. `api.amstc.org` et `api.consultations-amstc.org` sont servis
+depuis Helsinki, certificats Let's Encrypt valides jusqu'au 17 février.
+
+## Le piège du certificat, et les quinze minutes de coupure
+
+Traefik avait tenté d'obtenir le certificat **avant** la bascule, à
+18h03 et 18h08. Let's Encrypt validait alors contre l'ancien serveur,
+qui répondait 404 au défi. Après ces échecs, Traefik attend avant de
+réessayer - et pendant ce temps il sert son certificat auto-signé
+`TRAEFIK DEFAULT CERT`. Les visiteurs dont le DNS avait propagé
+tombaient sur une connexion refusée.
+
+**La règle : redémarrer Traefik juste après le changement de DNS.**
+
+```bash
+ssh root@NOUVEAU 'docker restart coolify-proxy'
+```
+
+Le certificat a été délivré dans les secondes qui ont suivi. Pour la
+seconde zone, faite dans cet ordre, la coupure s'est limitée à une
+minute au lieu de quinze.
+
+> Un détail qui m'a fait perdre du temps : mon poste résolvait encore
+> l'ancienne adresse alors que 8.8.8.8 et 1.1.1.1 servaient la
+> nouvelle. Mes contrôles passaient au vert en interrogeant l'ancien
+> serveur. **Videz le cache DNS** (`ipconfig /flushdns`) ou forcez
+> l'adresse avec `curl --resolve` avant de conclure quoi que ce soit.
+
+## La crontab contenait trois taches, pas une
+
+Celle-là aurait pu passer inaperçue jusqu'au lendemain matin :
+
+```
+0 3 * * *  sauvegarde
+0 8 * * *  select public.rapport_matinal(false)
+0 8 * * *  select public.envoyer_rappels_cartes(45)
+```
+
+Les deux de 8 h interrogent la base de l'espace membres. Laissées sur
+l'ancien serveur, elles auraient tourné contre une **base figée** :
+rapport matinal périmé, et rappels de cartes calculés sur des données
+mortes - donc envoyés à des membres qui ont peut-être cotisé depuis.
+
+Les trois ont été déplacées. L'ancienne crontab est conservée dans
+`/root/crontab.avant-migration` sur l'ancien serveur.
+
+**À vérifier avant toute bascule :** `crontab -l` sur l'ancien serveur,
+et se demander pour chaque ligne contre quelle base elle travaille.
+
+## Mesures après bascule
+
+| | |
+|---|---|
+| Espace membres | 400, 200, 400, 200, 403 - certificat vérifié |
+| Consultations | 401 sur REST et auth, identique à l'ancien serveur |
+| Sites publics | `amstc.org`, `consultations-amstc.org`, `sontencare.com` : 200 |
+| Mémoire | 1 162 Mo sur 1 909 |
+| Charge | 0,88 sur 1 vCPU |
+| Pression mémoire | 0,00 |
+| Sauvegarde nocturne | **9 secondes d'envoi** contre 38 depuis Falkenstein |
+
+## Ce qui n'est plus sauvegardé
+
+**La base de sontencare.** Elle vivait sur l'ancien serveur, dont la
+crontab vient d'être retirée pour éviter que deux machines écrivent
+dans le même dossier distant. Ses sauvegardes existantes resteront sur
+la Storage Box quatorze jours, puis la purge du nouveau serveur les
+emportera comme les autres.
+
+Avant de supprimer l'ancien serveur, décidez : soit vous mettez
+sontencare de côté une bonne fois - un dump et une archive des fichiers
+rangés ailleurs qu'à la Storage Box - soit vous le remettez en
+sauvegarde sur son propre dossier distant.
