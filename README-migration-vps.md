@@ -65,7 +65,8 @@ y avait avant.
 Les bases se restaurent depuis les dumps plutôt qu'en copiant les
 volumes : Postgres repart propre, et les **3,9 Go de WAL accumulés ne
 font pas le voyage**. C'est ce qui ramène l'empreinte disque de 62 à
-environ 24 Go.
+environ 24 Go - auxquels s'ajoutent 11 Go de sauvegardes locales, soit
+35 Go sur les 80 du CPX22.
 
 ---
 
@@ -332,18 +333,21 @@ Les huit codes doivent être identiques à ceux d'avant la migration :
   Recopiez la clé de la Storage Box (`/root/.ssh/storagebox*`) et la
   ligne de crontab depuis l'ancien serveur.
 
-  Le script sait désormais distinguer les deux rétentions, mais **la
-  valeur par défaut ne change rien** : l'envoi distant se fait avec
-  `rsync --delete`, donc le dépôt distant reflète le dossier local.
-  Abaisser la rétention locale amputerait aussi la copie distante, et
-  un fichier supprimé par erreur deviendrait irrécupérable au bout de
-  trois jours.
+  Le script gère désormais quatre rétentions, parce qu'il y a deux
+  lieux et deux poids. L'envoi ne se fait plus avec `rsync --delete` :
+  le distant n'est plus le reflet du local, il accumule, et une
+  fonction de purge décide seule de ce qu'il garde - en lisant la date
+  dans le nom des fichiers, la Storage Box n'offrant pas `find`.
 
-  Pour gagner ces 22 Go sans perdre de profondeur, il faut d'abord
-  retirer `--delete` de l'envoi et purger le distant séparément. Tant
-  que ce n'est pas fait, comptez **29 Go de sauvegardes** : avec 24 Go
-  de données, cela fait 53 Go sur les 80 du CPX22, soit 66 %. Cela
-  passe.
+  | | local | distant |
+  |---|---|---|
+  | archives de fichiers (2 Go/nuit) | 3 jours | 14 jours |
+  | dumps de bases (58 Mo/nuit) | 14 jours | 60 jours |
+
+  Résultat mesuré le 19 novembre : **11 Go en local au lieu de 29**,
+  profondeur distante intacte, et l'historique des bases passé de 14 à
+  60 jours. Avec 24 Go de données, cela fait **35 Go sur les 80 du
+  CPX22, soit 44 %**.
 - **Remettre les TTL à 3600** une fois tout confirmé.
 
 Après une semaine sans incident, supprimez l'ancien serveur depuis la

@@ -29,22 +29,24 @@ set -uo pipefail
 DEST="${AMSTC_BACKUP_DIR:-/var/backups/amstc}"
 RETENTION_JOURS="${AMSTC_BACKUP_RETENTION:-14}"
 
-# Rétention distincte pour les archives de fichiers, qui pèsent 2 Go par
-# nuit quand une nuit de dumps en pèse 58 Mo. Quatorze jours des deux,
-# c'est 28 Go pour quinze copies quasi identiques des mêmes 13 000
-# photos.
+# Quatre rétentions, parce que deux lieux et deux poids.
 #
-# ATTENTION AVANT DE L'ABAISSER. L'envoi distant se fait avec
-# « rsync --delete » : le dépôt distant REFLÈTE le dossier local. Une
-# rétention locale de trois jours ampute donc aussi la copie distante,
-# et un fichier supprimé par erreur devient irrécupérable au bout de
-# trois jours. Ce n'est pas le rôle d'une sauvegarde.
+# Une nuit de dumps pèse 58 Mo, une nuit d'archives de fichiers 2 Go.
+# Garder quatorze jours des deux EN LOCAL, c'était 28 Go de disque pour
+# quinze copies quasi identiques des mêmes 13 000 photos.
 #
-# La valeur par défaut reste donc celle des dumps. Pour garder peu de
-# place en local SANS perdre de profondeur, il faut d'abord retirer
-# « --delete » de l'envoi et purger le distant séparément - tant que ce
-# n'est pas fait, laissez ce réglage tranquille.
-RETENTION_FICHIERS="${AMSTC_BACKUP_RETENTION_FICHIERS:-$RETENTION_JOURS}"
+# Le local ne sert qu'à réparer une bêtise de la veille ; c'est le
+# distant qui tient la profondeur, et il ne coûte pas le disque du VPS.
+# D'où des archives de fichiers gardées trois jours ici et quatorze
+# là-bas, et des dumps - minuscules - poussés à soixante jours sur le
+# distant : c'est la donnée qu'on voudra vraiment pouvoir remonter loin.
+#
+# Ceci ne tient QUE parce que l'envoi ne se fait plus avec
+# « rsync --delete ». Si vous le remettez, le distant redeviendra le
+# reflet du local et ces trois jours deviendront trois jours partout.
+RETENTION_FICHIERS="${AMSTC_BACKUP_RETENTION_FICHIERS:-3}"
+RETENTION_DISTANT_FICHIERS="${AMSTC_BACKUP_RETENTION_DISTANT_FICHIERS:-14}"
+RETENTION_DISTANT_DUMPS="${AMSTC_BACKUP_RETENTION_DISTANT_DUMPS:-60}"
 
 # Destination distante (rsync). Vide = sauvegarde locale seulement.
 # Exemple Hetzner Storage Box : u123456@u123456.your-storagebox.de:amstc/
@@ -235,11 +237,18 @@ if [ -n "$DISTANT" ]; then
     dire "  (pas de clé $CLE : on s'en remet aux clés par défaut)"
   fi
 
+  # PAS de --delete, et c'est délibéré. Avec lui, le dépôt distant
+  # reflétait le dossier local : raccourcir la rétention ici raccourcissait
+  # la sauvegarde là-bas, ce qui vide une copie de secours de son sens.
+  # Sans lui, le distant accumule - et c'est « purger_distant », plus bas,
+  # qui décide seul de ce qu'il garde.
+  #
   # BatchMode interdit toute invite : en cas de problème la copie échoue
   # franchement au lieu de rester bloquée jusqu'au prochain redémarrage.
-  if rsync -a --delete -e "ssh $OPTIONS_SSH" \
-       "$DEST/" "$DISTANT" 2>&1; then
+  ENVOI_OK=0
+  if rsync -a -e "ssh $OPTIONS_SSH" "$DEST/" "$DISTANT" 2>&1; then
     dire "  OK"
+    ENVOI_OK=1
   else
     dire "  ECHEC : la copie hors serveur n'a pas abouti"
     ECHECS=$((ECHECS + 1))
@@ -249,7 +258,104 @@ else
   dire "Les sauvegardes ne survivraient pas à une panne du VPS."
 fi
 
-# ---------- Rotation ----------
+# ---------- Purge du dépôt distant ----------
+# La Storage Box n'offre pas « find » : on ne peut pas y chercher par
+# date de fichier. Mais nos noms PORTENT leur date - 2026-11-04_0300_… -
+# et c'est plus sûr ainsi : une date lue dans le nom ne bouge pas quand
+# rsync recopie un fichier.
+#
+# Cette fonction efface des sauvegardes. Elle s'abstient donc dès que
+# quelque chose ne lui plaît pas, plutôt que de deviner.
+purger_distant() {
+  [ -z "$DISTANT" ] && return 0
+
+  # Un envoi raté ce soir et une purge quand même, c'est la profondeur
+  # qui recule sans que rien ne la remplace.
+  if [ "${ENVOI_OK:-0}" -ne 1 ]; then
+    dire "  purge distante annulée : l'envoi de ce soir n'a pas abouti"
+    return 0
+  fi
+
+  local hote chemin liste total aujourdhui lim_f lib_d a_effacer n lot
+  hote="${DISTANT%%:*}"
+  chemin="${DISTANT#*:}"
+  chemin="${chemin%/}"
+
+  liste=$(ssh $OPTIONS_SSH "$hote" ls "$chemin" 2>/dev/null \
+          | tr -d '\r' \
+          | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}_.+\.(sql|tar)\.gz$')
+  total=$(printf '%s\n' "$liste" | grep -c . )
+
+  # Liste vide : soit la connexion a échoué, soit le dépôt est vide.
+  # Dans les deux cas il n'y a rien à purger, et surtout rien à deviner.
+  if [ "$total" -lt 1 ]; then
+    dire "  purge distante ignorée : dépôt illisible ou vide"
+    return 0
+  fi
+
+  aujourdhui=$(date +%Y%m%d)
+  lim_f=$(date -d "-${RETENTION_DISTANT_FICHIERS} days" +%Y%m%d 2>/dev/null) || return 0
+  lim_d=$(date -d "-${RETENTION_DISTANT_DUMPS} days" +%Y%m%d 2>/dev/null) || return 0
+
+  a_effacer=""
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    d=$(printf '%s' "$f" | cut -c1-10 | tr -d '-')
+    # Une date illisible ou postérieure à aujourd'hui : on ne touche pas.
+    case "$d" in ''|*[!0-9]*) continue ;; esac
+    [ "$d" -ge "$aujourdhui" ] && continue
+    case "$f" in
+      *.tar.gz) [ "$d" -lt "$lim_f" ] && a_effacer="$a_effacer $f" ;;
+      *.sql.gz) [ "$d" -lt "$lim_d" ] && a_effacer="$a_effacer $f" ;;
+    esac
+  done <<EOF_LISTE
+$liste
+EOF_LISTE
+
+  n=$(printf '%s\n' $a_effacer | grep -c . )
+  if [ "$n" -lt 1 ]; then
+    dire "  purge distante : rien à retirer ($total fichiers conservés)"
+    return 0
+  fi
+
+  # Garde-fou. Si la purge veut emporter l'essentiel du dépôt, c'est que
+  # quelque chose cloche - une horloge déréglée, un paramètre à zéro.
+  # On s'arrête et on le dit, plutôt que de vider la sauvegarde.
+  if [ "$((n * 10))" -gt "$((total * 7))" ]; then
+    dire "  purge distante REFUSEE : $n fichiers sur $total, c'est trop."
+    dire "  Vérifiez les rétentions et la date du serveur avant d'insister."
+    ECHECS=$((ECHECS + 1))
+    return 0
+  fi
+
+  if [ "$MODE_TEST" -eq 1 ]; then
+    dire "  purge distante (MODE TEST) : $n fichiers seraient retirés sur $total"
+    return 0
+  fi
+
+  # Par lots : le shell restreint de la Storage Box n'aime pas les
+  # lignes de commande sans fin.
+  lot=""
+  i=0
+  for f in $a_effacer; do
+    lot="$lot '$chemin/$f'"
+    i=$((i + 1))
+    if [ "$i" -ge 20 ]; then
+      eval "ssh $OPTIONS_SSH '$hote' rm $lot" >/dev/null 2>&1
+      lot=""; i=0
+    fi
+  done
+  [ -n "$lot" ] && eval "ssh $OPTIONS_SSH '$hote' rm $lot" >/dev/null 2>&1
+
+  dire "  purge distante : $n fichiers retirés, $((total - n)) conservés"
+  dire "  (archives de fichiers ${RETENTION_DISTANT_FICHIERS} j, dumps ${RETENTION_DISTANT_DUMPS} j)"
+}
+
+purger_distant
+
+# ---------- Rotation locale ----------
+# Le local ne garde que de quoi réparer une bêtise récente ; la
+# profondeur est au bout du fil, sur la Storage Box.
 find "$DEST" -name '*.sql.gz' -mtime "+${RETENTION_JOURS}" -delete 2>/dev/null
 find "$DEST" -name '*.tar.gz' -mtime "+${RETENTION_FICHIERS}" -delete 2>/dev/null
 
