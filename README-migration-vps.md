@@ -431,3 +431,124 @@ minutes avec un TTL à 300.
 C'est la raison pour laquelle on abaisse les TTL la veille et on garde
 l'ancienne machine une semaine : **la marche arrière doit rester plus
 rapide que le diagnostic**.
+
+---
+
+# Journal : migration du 19 novembre 2026
+
+Le nouveau serveur **existe, tourne et porte vos données**. Rien n'est
+en production : le DNS pointe toujours sur l'ancien.
+
+| | |
+|---|---|
+| Adresse | `2.29.182.131` |
+| Localisation | `hel1-dc2`, Helsinki |
+| Gabarit | CPX12 - 1 vCPU, 1 909 Mo, 38 Go |
+| Storage Box | **0,77 ms** (33,8 ms depuis Falkenstein) |
+| Conteneurs | 20, aucun en mauvais état |
+| Mémoire | **985 Mo de conteneurs**, 1 111 Mo utilisés sur 1 909 |
+| Disque | 17 Go sur 38 (46 %) |
+
+## Ce qui tient le budget mémoire
+
+L'estimation était de 1 395 Mo. Le relevé donne 985. Deux réglages
+expliquent l'écart :
+
+| | ancien (4 vCPU) | nouveau (1 vCPU) |
+|---|---|---|
+| Kong ×2 | 530 Mo | **186 Mo** - un worker nginx par cœur, donc un seul |
+| Postgres ×2 | 613 Mo | **155 Mo** - `shared_buffers` 128 → 32 Mo, `max_connections` 100 → 50 |
+
+Le réglage Postgres n'est pas une contorsion : la base de l'espace
+membres pèse 34 Mo, celle des consultations 18. Trente-deux mégaoctets
+de cache les tiennent presque entières, et les cent connexions
+réservaient de la mémoire pour des clients qui ne viennent jamais.
+
+## Données vérifiées table par table
+
+| | tables | contenu |
+|---|---|---|
+| Espace membres | **77 identiques** | 315 profils, 94 messages WhatsApp, 13 237 fichiers, 13 fonctions Edge |
+| Consultations | **38 identiques** | 881 consultations, 318 profils, 6 sites, 104 médicaments |
+
+Les six points de contrôle rendent les mêmes codes que l'ancien
+serveur, testés avec `curl --resolve` comme si le DNS avait déjà
+basculé : 400, 200, 400, 200, 403, 401.
+
+## Deux pièges de plus, en sus des trois déjà documentés
+
+**4. Les réseaux Docker n'existent pas sur la machine neuve.** Coolify
+en crée un par service, et le fichier de composition les déclare
+`external`. Sans eux, `docker compose up` télécharge les images puis ne
+démarre rien, en disant seulement `network ... could not be found` :
+
+```bash
+for n in rffqs8ck1ckdixkuu2xjo5sc qmy744bqv0xnafmr9nndu34t; do
+  docker network create --driver bridge --attachable "$n"
+  docker network connect "$n" coolify-proxy
+done
+```
+
+Le raccordement du proxy est aussi indispensable que la création : sans
+lui Traefik ne voit pas les conteneurs et ne route rien.
+
+**5. `pg_dumpall` restaure dans l'ordre alphabétique**, donc
+`auth.identities` **avant** `auth.users`. La clé étrangère, déjà créée
+par l'amorçage du conteneur neuf, refuse l'insertion. Résultat : une
+base qui paraît complète, 315 comptes bien présents - et **personne ne
+peut se connecter**, les 333 lignes qui relient un compte à son mode
+d'authentification manquant à l'appel.
+
+Même chose pour `sessions`, `refresh_tokens`, `mfa_amr_claims` et
+`one_time_tokens`. Une fois `auth.users` peuplée, il suffit de rejouer
+les blocs `COPY` concernés, dans cet ordre.
+
+**Le contrôle qui l'aurait vu** - à faire sur les deux serveurs et à
+comparer :
+
+```sql
+select table_schema||'.'||table_name||' = '||
+  (xpath('/row/c/text()', query_to_xml(
+    'select count(*) as c from '||quote_ident(table_schema)||'.'||quote_ident(table_name),
+    false, true, '')))[1]::text::int
+from information_schema.tables
+where table_schema in ('public','auth','storage') and table_type='BASE TABLE'
+order by 1;
+```
+
+Un `diff` entre les deux sorties doit être vide. Compter les lignes des
+seules tables métier ne l'aurait pas vu.
+
+## Ce qui reste, dans l'ordre
+
+1. **Essayer depuis un navigateur** par le fichier `hosts` (étape 10) :
+   connexion à l'espace membres, une page qui lit la base, une photo du
+   Storage, un envoi WhatsApp.
+2. **Abaisser les TTL à 300** la veille de la bascule.
+3. **Basculer le DNS** sur `2.29.182.131` - quatre enregistrements.
+   Traefik demandera alors ses certificats ; comptez une à deux minutes
+   avant que le HTTPS réponde.
+4. **Poser le cron de sauvegarde**, et seulement à ce moment-là :
+
+   ```bash
+   ssh root@2.29.182.131 'crontab -l 2>/dev/null; echo "0 3 * * * AMSTC_BACKUP_REMOTE=\"u649821@u649821.your-storagebox.de:amstc/\" /bin/bash /root/sauvegarde-amstc.sh" | crontab -'
+   ```
+
+   > **Pas avant la bascule.** Les deux serveurs écriraient dans le même
+   > dossier distant, sous les mêmes noms de fichiers, et la purge
+   > distante trancherait entre des sauvegardes qu'elle croirait
+   > redondantes. Le script et la clé sont déjà en place sur le nouveau
+   > serveur, l'essai à blanc est passé : il ne manque que cette ligne.
+
+5. **Retirer le cron de l'ancien serveur** le même jour.
+6. **Remettre les TTL à 3600**, puis supprimer l'ancien serveur après
+   une semaine sans incident.
+
+## Ce qui ne migre pas
+
+**Sontencare** (`plateforme-sanitaire`) reste sur l'ancien serveur. Sa
+configuration est présente dans le Coolify du nouveau - restaurée avec
+le reste - mais ni ses fichiers ni sa base n'ont été transférés, et il
+n'a pas été déployé. Ses 201 Mo sont précisément ce qui permet au CPX12
+de tenir. Ses données restent dans les sauvegardes, redéployables le
+jour où le projet repart.
