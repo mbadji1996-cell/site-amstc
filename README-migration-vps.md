@@ -204,18 +204,67 @@ scp root@ANCIEN:/var/backups/amstc/*_coolify-config_base.sql.gz /tmp/
 scp /tmp/*_coolify-config_base.sql.gz root@NOUVEAU:/tmp/coolify.sql.gz
 ```
 
-Sur le nouveau serveur :
+### Trois pièges, et ils coûtent cher
+
+**1. `APP_KEY` doit précéder la restauration.** Coolify chiffre les
+variables d'environnement avec cette clé. Une base restaurée sous une
+autre clé rend vos 248 secrets indéchiffrables - jetons Meta, clés
+Supabase, mots de passe Postgres. Alignez-la, ainsi qu'`APP_ID`, AVANT
+de restaurer :
+
+```bash
+# depuis votre poste
+ssh root@ANCIEN 'grep -E "^(APP_KEY|APP_ID)=" /data/coolify/source/.env' > /tmp/cles.env
+scp /tmp/cles.env root@NOUVEAU:/tmp/
+ssh root@NOUVEAU 'f=/data/coolify/source/.env; cp $f $f.avant;   grep -vE "^(APP_KEY|APP_ID)=" $f > /tmp/n && cat /tmp/cles.env >> /tmp/n && mv /tmp/n $f'
+```
+
+Ne touchez PAS à `DB_PASSWORD` ni `REDIS_PASSWORD` : ils appartiennent
+aux conteneurs neufs.
+
+**2. Un `docker restart` ne relit pas le `.env`.** Le conteneur garde
+l'environnement qu'il avait à sa création. Il faut le **recréer** :
+
+```bash
+cd /data/coolify/source
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate coolify
+docker exec coolify printenv APP_KEY | sha256sum | cut -c1-12   # doit valoir celle de l'ancien
+```
+
+**3. `pg_dumpall` réinitialise le mot de passe du rôle.** Le dump
+contient un `ALTER ROLE coolify ... PASSWORD` : après restauration, la
+base attend le mot de passe de l'ANCIEN serveur, tandis que le `.env`
+porte celui du nouveau. Remettez le rôle en accord avec le `.env` :
+
+```bash
+ssh root@NOUVEAU 'PW=$(grep ^DB_PASSWORD= /data/coolify/source/.env | cut -d= -f2-);   printf "ALTER ROLE coolify WITH PASSWORD %s%s%s;
+" "'" "$PW" "'"   | docker exec -i coolify-db psql -U coolify -d postgres'
+```
+
+### La restauration
 
 ```bash
 docker stop coolify coolify-realtime 2>/dev/null
+docker exec coolify-db psql -U coolify -d postgres -c 'DROP DATABASE IF EXISTS coolify'
 gunzip -c /tmp/coolify.sql.gz | docker exec -i coolify-db psql -U coolify -d postgres
-docker start coolify coolify-realtime
 ```
 
-Rechargez l'interface : vos trois services doivent apparaître, à
-l'arrêt. **Vérifiez qu'un service affiche bien ses variables
-d'environnement** avant de continuer - c'est le test qui dit si la
-restauration a pris.
+Une seule erreur est attendue : `role "coolify" already exists`.
+
+### Le contrôle qui dit si tout a pris
+
+```bash
+docker exec coolify php artisan tinker --execute '
+  $ok=0; $ko=0;
+  foreach (\App\Models\EnvironmentVariable::limit(400)->get() as $v) {
+    try { $v->value; $ok++; } catch (\Throwable $e) { $ko++; }
+  }
+  echo "dechiffrees $ok, en echec $ko
+";'
+```
+
+**`en echec 0` ou rien ne marchera.** Si le compte est non nul, c'est
+que l'un des trois pièges ci-dessus n'a pas été désamorcé.
 
 ---
 
