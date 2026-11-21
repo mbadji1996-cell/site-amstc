@@ -25,7 +25,7 @@ perdre : les composants retirés ne servaient pas.
 
 | Retiré | Mo | Pourquoi |
 |---|---|---|
-| MinIO ×2 | 246 | inutilisé - voir `README-sauvegardes.md` |
+| ~~MinIO ×2~~ | ~~246~~ | **À NE PAS ARRÊTER.** Voir l'avertissement ci-dessous |
 | logflare / analytics ×2 | 336 | journaux jamais consultés |
 | Studio ×2 | 293 | se rallume à la demande, voir plus bas |
 | Realtime ×2 | 99 | **zéro abonnement en 7 jours** sur les deux piles |
@@ -35,6 +35,21 @@ perdre : les composants retirés ne servaient pas.
 | backends Postgres libérés | ~930 | Realtime et Supavisor tenaient 14 connexions par base |
 
 Les deux Postgres sont retombés de 969 à 414 Mo et de 574 à 199 Mo.
+
+> **MinIO était une erreur, et elle a causé une panne le 21 novembre.**
+> `README-sauvegardes.md` le disait « présent mais inutilisé » ; je l'ai
+> cru sans vérifier. En réalité `storage-api` est configuré avec
+> `STORAGE_S3_ENDPOINT` et lit ses fichiers **à travers** MinIO - les
+> 8 126 fichiers `xl.meta` du volume sont sa disposition interne.
+>
+> Sans MinIO, la bibliothèque reste bloquée à « Chargement du
+> document… 0 % », puis Kong rend « The upstream server is timing
+> out ». Et le piège : le service Storage répond toujours 400 à une
+> requête vide, donc **le contrôle de vivacité passe au vert alors que
+> plus aucun fichier ne se télécharge**.
+>
+> MinIO ne coûte que 90 Mo pour les deux piles. Le gain réel du
+> dégraissage est donc de 1 024 Mo, pas 1 114.
 
 **Budget sur le CPX22** : 2 368 Mo de conteneurs + ~1 000 Mo d'hôte =
 **3,4 Go sur 4**. Serré mais tenable, avec le fichier d'échange de
@@ -350,7 +365,7 @@ Pour ne pas réimporter les 1 114 Mo que vous venez d'économiser :
 
 ```bash
 ssh root@NOUVEAU 'docker stop \
-  supabase-minio-rffqs8ck1ckdixkuu2xjo5sc supabase-minio-qmy744bqv0xnafmr9nndu34t \
+\
   imgproxy-rffqs8ck1ckdixkuu2xjo5sc imgproxy-qmy744bqv0xnafmr9nndu34t \
   supabase-vector-rffqs8ck1ckdixkuu2xjo5sc supabase-vector-qmy744bqv0xnafmr9nndu34t \
   supabase-analytics-rffqs8ck1ckdixkuu2xjo5sc supabase-analytics-qmy744bqv0xnafmr9nndu34t \
@@ -743,3 +758,71 @@ serveur derriere.
   stabiliser vers 25 a 28 Go. A regarder dans une semaine.
 - **La premiere sauvegarde automatique** a 3 h, la premiere execution du
   rapport matinal et des rappels de cartes a 8 h.
+
+---
+
+# Correctif du 21 novembre 2026 : MinIO, et une lecon de verification
+
+La bibliotheque de l'espace membres restait bloquee a « Chargement du
+document… 0 % », puis Kong rendait « The upstream server is timing
+out ». Cause : **MinIO ne tournait pas**.
+
+## Pourquoi je m'etais trompe
+
+`README-sauvegardes.md` affirmait « MinIO est present mais inutilise ».
+Je l'ai cru sans verifier, l'ai arrete sur l'ancien serveur le 19, puis
+ne l'ai jamais deploye sur le nouveau.
+
+Les faits, verifies depuis :
+
+```
+8 126 fichiers xl.meta dans le volume    <- disposition interne de MinIO
+storage-api : STORAGE_S3_ENDPOINT        <- il lit A TRAVERS MinIO
+```
+
+Les deux documents sont corriges. MinIO ne coute que **90 Mo** pour les
+deux piles : l'erreur portait sur sa necessite, jamais sur son poids.
+
+## Le controle qui ne voyait rien
+
+Mon controle de sante interrogeait `/storage/v1/object/list/avatars` et
+attendait un code 400. Il l'obtenait - **meme sans MinIO**. Le service
+Storage repond parfaitement aux requetes vides ; il n'echoue qu'au
+moment de lire un fichier reel.
+
+**Pour verifier le Storage, il faut telecharger un fichier.** Un code de
+reponse sur une requete vide ne prouve que l'existence du service.
+
+C'est la meme famille d'erreur que `auth.identities` : une base qui
+paraissait complete avec 315 comptes, et ou personne ne pouvait se
+connecter. Dans les deux cas, le controle mesurait ce qui etait facile
+a mesurer, pas ce dont l'utilisateur avait besoin.
+
+## Studio : ce que l'utilisateur voyait
+
+« Les deux API ne fonctionnent plus » signifiait en realite que
+`api.amstc.org/project/default` - l'adresse de **Studio** - rendait
+« name resolution failed ». Les API, elles, repondaient correctement
+tout du long.
+
+Studio etait arrete pour economiser la memoire, et Kong ne trouvait
+plus ou router. Il est rallumé, avec `postgres-meta` dont il depend.
+
+## Budget memoire reel
+
+| | |
+|---|---|
+| Conteneurs | 1 218 Mo en 24 services |
+| Memoire utilisee | 1 405 Mo sur 1 909 (74 %) |
+| Pression memoire | 0,08 une fois le demarrage passe |
+| Pression CPU | ~31 % |
+
+Studio et `meta` pesent **519 Mo** a eux quatre. Ils peuvent rester
+eteints entre deux usages si la marge devient trop mince :
+
+```bash
+docker stop supabase-studio-rffqs8ck1ckdixkuu2xjo5sc supabase-studio-qmy744bqv0xnafmr9nndu34t \
+            supabase-meta-rffqs8ck1ckdixkuu2xjo5sc  supabase-meta-qmy744bqv0xnafmr9nndu34t
+```
+
+`docker start` sur les memes noms les rouvre en trente secondes.

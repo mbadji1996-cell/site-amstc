@@ -22,8 +22,20 @@ Le script `supabase/sauvegarde-vps.sh` traite le tout d'un coup :
 
 - **Bases de données** : `pg_dumpall` complet (rôles compris), compressé.
 - **Fichiers** : photos des membres et pièces jointes du Storage
-  (~12 000 fichiers, sur le disque du conteneur `supabase-storage-*` -
-  MinIO est présent mais inutilisé).
+  (~13 000 fichiers, sur le disque du conteneur `supabase-storage-*`).
+
+  > **MinIO n'est PAS inutilisé** - cette page l'a affirmé jusqu'au
+  > 21 novembre 2026, et cette phrase a coûté une panne. `storage-api`
+  > tourne avec `STORAGE_S3_ENDPOINT` : il ne lit pas le disque
+  > directement, il passe **par MinIO**. Les 8 126 fichiers `xl.meta`
+  > du volume sont la disposition interne de MinIO, pas celle de
+  > Supabase.
+  >
+  > Arrêter MinIO casse donc tout ce qui lit un fichier : bibliothèque,
+  > documents officiels, photos des membres. Le service Storage
+  > continue pourtant de répondre aux requêtes vides, si bien qu'un
+  > contrôle de vivacité ne voit rien. **Pour vérifier le Storage, il
+  > faut télécharger un fichier**, pas interroger le service.
 - **Copie hors du serveur** : envoi vers un espace distant (voir plus bas).
 - **Rotation** : les sauvegardes de plus de 14 jours sont effacées.
 
