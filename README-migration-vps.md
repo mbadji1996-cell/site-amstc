@@ -672,3 +672,74 @@ Avant de supprimer l'ancien serveur, décidez : soit vous mettez
 sontencare de côté une bonne fois - un dump et une archive des fichiers
 rangés ailleurs qu'à la Storage Box - soit vous le remettez en
 sauvegarde sur son propre dossier distant.
+
+---
+
+# Migration close - 21 novembre 2026
+
+Tout tourne sur `2.29.182.131` (Helsinki, CPX12, 9,99 EUR/mois).
+L'ancien CPX32 de Falkenstein a ete supprime.
+
+## Etat final verifie depuis une machine sans cache
+
+```
+api.amstc.org              REST 400 · AUTH 200 · sante 200 · webhook 403
+api.consultations-amstc    REST 401
+coolify.sontencare.com     302
+sontencare.com             200   (Cloudflare Worker, sans serveur)
+amstc.org                  200   (GitHub Pages, jamais touche)
+```
+
+Certificats valides partout. Machine : 1 118 Mo sur 1 909, charge 1,09
+sur 1 vCPU, pression memoire nulle, 23 Go de disque sur 38, 18
+conteneurs, 3 taches cron.
+
+## Ce qui a bouge dans Cloudflare
+
+| Zone | Enregistrement | Avant | Apres |
+|---|---|---|---|
+| `amstc.org` | `api` A | 167.233.231.165 | **2.29.182.131** |
+| `consultations-amstc.org` | `api` A | 167.233.231.165 | **2.29.182.131** |
+| `sontencare.com` | `@` et `www` A | 167.233.231.165 | **supprimes**, remplaces par un Worker |
+| `sontencare.com` | `coolify` A | 167.233.231.165 | **2.29.182.131** |
+
+Le TXT de verification Google a ete conserve. Aucun MX n'existait sur
+`sontencare.com`, donc aucun courrier a casser.
+
+## www.sontencare.com : abandonne, et pourquoi
+
+Cloudflare n'a cree pour ce nom qu'un enregistrement de type 65
+(HTTPS/SVCB), sans les A ni AAAA qui vont avec. Resultat : il se
+resolvait depuis Helsinki, mais pas depuis Dakar - `getaddrinfo failed`
+sur le poste, et un navigateur aurait echoue pareil.
+
+Deux tentatives de rattachement au Worker n'y ont rien change. Le
+domaine racine fonctionne, c'est lui qui compte, et le cout du
+contournement depassait le benefice. Si `www` devient necessaire un
+jour : retirer le domaine personnalise du Worker, puis une regle de
+redirection vers le domaine racine.
+
+> Lecon de methode : mes lectures de `nslookup` sous Windows ont
+> plusieurs fois confondu l'adresse du serveur interroge avec la
+> reponse, et m'ont fait annoncer des choses fausses. Ce qui a tranche,
+> c'est `socket.getaddrinfo` en Python - la meme resolution qu'un
+> navigateur - et `curl` depuis une machine tierce. Interrogez toujours
+> deux points de vue avant de conclure.
+
+## Sontencare
+
+L'application ne migre pas. Ses donnees sont a trois endroits : la
+Storage Box dans son dossier `sontencare/` (hors de la purge
+nocturne), le disque de l'association, et le depot git pour le code -
+l'image portait un hash de commit.
+
+Le domaine sert une page d'attente depuis un Worker Cloudflare, sans
+serveur derriere.
+
+## Ce qu'il reste a surveiller
+
+- **Le disque** : 23 Go sur 38, soit 63 %. La sauvegarde nocturne ajoute
+  environ 2 Go par passage et en garde trois jours ; cela devrait se
+  stabiliser vers 25 a 28 Go. A regarder dans une semaine.
+- **La premiere sauvegarde automatique** a 3 h, la premiere execution du
+  rapport matinal et des rappels de cartes a 8 h.
