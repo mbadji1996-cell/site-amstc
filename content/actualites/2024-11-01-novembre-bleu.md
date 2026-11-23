@@ -1,9 +1,8 @@
 ---
-title: "Novembre Bleu - Sensibilisation au cancer de la prostate"
+title: Novembre Bleu - Sensibilisation au cancer de la prostate
 date: 2024-11-01T10:00:00.000Z
 categorie:
   - sensibilisation
-excerpt: "Contenu à venir."
-image: ""
+excerpt: Contenu à venir.
+image: /assets/uploads/novemvbre-bleu-2024.jpg
 ---
-
